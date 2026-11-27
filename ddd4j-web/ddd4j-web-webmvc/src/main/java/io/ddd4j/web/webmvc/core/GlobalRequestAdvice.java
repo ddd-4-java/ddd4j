@@ -25,16 +25,41 @@ import java.util.Map;
 @Slf4j(topic = "==> RequestBody")
 public class GlobalRequestAdvice implements RequestBodyAdvice {
 
+    /**
+     * \u58f0\u660e\u5f53\u524d\u5168\u5c40 Advice \u53ef\u53c2\u4e0e MVC \u8bf7\u6c42\u4f53\u8bfb\u53d6\u3002
+     * @param methodParameter \u5f53\u524d\u63a7\u5236\u5668\u53c2\u6570\u7684\u58f0\u660e
+     * @param type \u76ee\u6807 Java \u7c7b\u578b\u6216\u58f0\u660e\u7684\u6cdb\u578b\u7c7b\u578b
+     * @param aClass \u5f53\u524d\u6d88\u606f\u4f53\u6240\u4f7f\u7528\u7684\u6d88\u606f\u8f6c\u6362\u5668\u7c7b\u578b
+     * @return \u5f53\u524d Advice \u53ef\u4ee5\u5904\u7406\u65f6\u8fd4\u56de true
+     */
     @Override
     public boolean supports(MethodParameter methodParameter, Type type, Class<? extends HttpMessageConverter<?>> aClass) {
         return true;
     }
 
+    /**
+     * \u5728\u6d88\u606f\u8f6c\u6362\u524d\u8fd4\u56de\u5f53\u524d Spring HTTP \u8f93\u5165\u5bf9\u8c61\u3002
+     * @param httpInputMessage \u4ece\u4e2d\u8bfb\u53d6\u5f53\u524d\u8bf7\u6c42\u6b63\u6587\u7684 HTTP \u8f93\u5165\u5bf9\u8c61
+     * @param methodParameter \u5f53\u524d\u63a7\u5236\u5668\u53c2\u6570\u7684\u58f0\u660e
+     * @param type \u76ee\u6807 Java \u7c7b\u578b\u6216\u58f0\u660e\u7684\u6cdb\u578b\u7c7b\u578b
+     * @param aClass \u5f53\u524d\u6d88\u606f\u4f53\u6240\u4f7f\u7528\u7684\u6d88\u606f\u8f6c\u6362\u5668\u7c7b\u578b
+     * @return \u7ee7\u7eed\u4ea4\u7ed9\u6d88\u606f\u8f6c\u6362\u5668\u7684\u8f93\u5165\u6d88\u606f
+     * @throws IOException \u5f53\u524d\u6846\u67b6\u8bf7\u6c42\u5904\u7406\u3001\u6d88\u606f\u8bfb\u5199\u6216\u53c2\u6570\u8f6c\u6362\u5931\u8d25
+     */
     @Override
     public HttpInputMessage beforeBodyRead(HttpInputMessage httpInputMessage, MethodParameter methodParameter, Type type, Class<? extends HttpMessageConverter<?>> aClass) throws IOException {
         return httpInputMessage;
     }
 
+    /**
+     * \u5728\u8bf7\u6c42\u4f53\u8f6c\u6362\u5b8c\u6210\u540e\u5c06\u8bfb\u53d6\u7ed3\u679c\u4ea4\u7ed9\u63a7\u5236\u5668\u3002
+     * @param o Spring \u5df2\u8bfb\u51fa\u7684\u6b63\u6587\u6216\u7a7a\u6b63\u6587\u5bf9\u8c61
+     * @param httpInputMessage \u4ece\u4e2d\u8bfb\u53d6\u5f53\u524d\u8bf7\u6c42\u6b63\u6587\u7684 HTTP \u8f93\u5165\u5bf9\u8c61
+     * @param methodParameter \u5f53\u524d\u63a7\u5236\u5668\u53c2\u6570\u7684\u58f0\u660e
+     * @param type \u76ee\u6807 Java \u7c7b\u578b\u6216\u58f0\u660e\u7684\u6cdb\u578b\u7c7b\u578b
+     * @param aClass \u5f53\u524d\u6d88\u606f\u4f53\u6240\u4f7f\u7528\u7684\u6d88\u606f\u8f6c\u6362\u5668\u7c7b\u578b
+     * @return \u63d0\u4ea4\u7ed9\u63a7\u5236\u5668\u7684\u8bf7\u6c42\u4f53\u5bf9\u8c61
+     */
     @Override
     public Object afterBodyRead(Object o, HttpInputMessage httpInputMessage, MethodParameter methodParameter, Type type, Class<? extends HttpMessageConverter<?>> aClass) {
         Map<String, Object> objectMap = BeanKit.toMapClean(o);
@@ -44,6 +69,15 @@ public class GlobalRequestAdvice implements RequestBodyAdvice {
         return o;
     }
 
+    /**
+     * \u63d0\u4f9b\u7a7a\u8bf7\u6c42\u4f53\u573a\u666f\u7684\u5904\u7406\u56de\u8c03\u3002
+     * @param o Spring \u5df2\u8bfb\u51fa\u7684\u6b63\u6587\u6216\u7a7a\u6b63\u6587\u5bf9\u8c61
+     * @param httpInputMessage \u4ece\u4e2d\u8bfb\u53d6\u5f53\u524d\u8bf7\u6c42\u6b63\u6587\u7684 HTTP \u8f93\u5165\u5bf9\u8c61
+     * @param methodParameter \u5f53\u524d\u63a7\u5236\u5668\u53c2\u6570\u7684\u58f0\u660e
+     * @param type \u76ee\u6807 Java \u7c7b\u578b\u6216\u58f0\u660e\u7684\u6cdb\u578b\u7c7b\u578b
+     * @param aClass \u5f53\u524d\u6d88\u606f\u4f53\u6240\u4f7f\u7528\u7684\u6d88\u606f\u8f6c\u6362\u5668\u7c7b\u578b
+     * @return \u7a7a\u8bf7\u6c42\u4f53\u5bf9\u5e94\u7684\u63a7\u5236\u5668\u8f93\u5165\u503c
+     */
     @Override
     public Object handleEmptyBody(Object o, HttpInputMessage httpInputMessage, MethodParameter methodParameter, Type type, Class<? extends HttpMessageConverter<?>> aClass) {
         return o;

@@ -10,12 +10,16 @@ package io.ddd4j.core.cqrs.readmodel;
 public interface TypedEventHandler<E> {
 
     /**
-     * 支持的事件类型名称。
+     * \u652f\u6301\u7684\u4e8b\u4ef6\u7c7b\u578b\u540d\u79f0\u3002
+     *
+     * @return \u4e8b\u4ef6\u7c7b\u578b\u540d\u79f0
      */
     String getEventType();
 
     /**
-     * 支持的事件 Java 类型。
+     * \u652f\u6301\u7684\u4e8b\u4ef6 Java \u7c7b\u578b\u3002
+     *
+     * @return \u4e8b\u4ef6 Java \u7c7b\u578b
      */
     Class<E> getEventClass();
 

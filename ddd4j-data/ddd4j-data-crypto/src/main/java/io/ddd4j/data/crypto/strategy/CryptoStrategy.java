@@ -50,14 +50,15 @@ public interface CryptoStrategy {
     <T> T decrypt(String value, SymmetricAlgorithmType algorithmType, String encMode, String padMode, String key, String iv, boolean plainIsEncode, Class<T> rtType);
 
     /**
-     * hmac 签名
+     * hmac \u7b7e\u540d
+     * @param value \u5f85\u7b7e\u540d\u7684\u503c
+     * @param key Base64 \u683c\u5f0f\u7684\u5bc6\u94a5\u5b57\u7b26\u4e32\u3010\u5fc5\u987b\u3011
+     * @param iv Base64 \u683c\u5f0f\u7684\u521d\u59cb\u5411\u91cf\uff0c\u52a0\u5bc6\u6a21\u5f0f\u4e3a cbc,cfb,ofb \u65f6\u8be5\u53c2\u6570\u4e0d\u80fd\u4e3a\u7a7a\uff0c\u89e3\u7801\u540e\u957f\u5ea6 \u4e3a 16 \u4f4d\uff0c\u53ef\u81ea\u5b9a\u4e49\u3010\u975e\u5fc5\u987b\u3011
+     * @param plainIsEncode \u660e\u6587\u662f\u5426\u8fdb\u884c\u4e86 base64 \u7f16\u7801 true/false \u3010\u975e\u5fc5\u987b\u3011
+     * @param <T> \u5b57\u6bb5\u7c7b\u578b
+     * @return \u7b7e\u540d\u540e\u7684\u5b57\u7b26\u4e32
      *
-     * @param value         待签名的值
-     * @param key           Base64 格式的密钥字符串【必须】
-     * @param iv            Base64 格式的初始向量，加密模式为 cbc,cfb,ofb 时该参数不能为空，解码后长度 为 16 位，可自定义【非必须】
-     * @param plainIsEncode 明文是否进行了 base64 编码 true/false 【非必须】
-     * @param <T>           字段类型
-     * @return 签名后的字符串
+     * @param hmacAlgorithm HMAC \u7b97\u6cd5
      */
     <T> String hmac(T value, HmacAlgorithm hmacAlgorithm, String key, String iv, boolean plainIsEncode);
 

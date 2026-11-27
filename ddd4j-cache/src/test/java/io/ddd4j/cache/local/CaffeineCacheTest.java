@@ -15,6 +15,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class CaffeineCacheTest {
 
+    /**
+     * \u521b\u5efa\u6700\u591a\u5b58\u50a8 100 \u4e2a\u6761\u76ee\u4e14\u5728\u5199\u5165\u540e\u8fc7\u671f\u7684 Caffeine \u7f13\u5b58\u3002
+     * @param writeSeconds \u5199\u5165\u540e\u7684\u5b58\u6d3b\u65f6\u95f4\uff0c\u5355\u4f4d\u4e3a\u79d2
+     * @return \u5f53\u524d\u7528\u4f8b\u4f7f\u7528\u7684 Caffeine \u672c\u5730\u7f13\u5b58
+     */
     private CaffeineCache<String, String> buildWithTtl(long writeSeconds) {
         CacheConfig config = CacheConfig.builder("test")
                 .maximumSize(100)
@@ -23,6 +28,7 @@ class CaffeineCacheTest {
         return CaffeineCache.create(config);
     }
 
+    /** \u9a8c\u8bc1<code>cache.getIfPresent("k1")</code> \u7b49\u4e8e <code>"v1"</code>\u3002 */
     @Test
     void putAndGetIfPresent_shouldStoreAndRetrieve() {
         CaffeineCache<String, String> cache = buildWithTtl(300);
@@ -32,6 +38,7 @@ class CaffeineCacheTest {
         assertThat(cache.getIfPresent("k1")).isEqualTo("v1");
     }
 
+    /** \u9a8c\u8bc1<code>cache.getIfPresent("missing")</code>\u4e3a\u7a7a\u3002 */
     @Test
     void getIfPresent_shouldReturnNullForMissingKey() {
         CaffeineCache<String, String> cache = buildWithTtl(300);
@@ -39,6 +46,7 @@ class CaffeineCacheTest {
         assertThat(cache.getIfPresent("missing")).isNull();
     }
 
+    /** \u9a8c\u8bc1<code>value</code> \u7b49\u4e8e <code>"loaded-k1"</code>\uff0c<code>cache.getIfPresent("k1")</code> \u7b49\u4e8e <code>"loaded-k1"</code>\u3002 */
     @Test
     void getWithMappingFunction_shouldLoadOnMiss() {
         CaffeineCache<String, String> cache = buildWithTtl(300);
@@ -49,6 +57,7 @@ class CaffeineCacheTest {
         assertThat(cache.getIfPresent("k1")).isEqualTo("loaded-k1");
     }
 
+    /** \u9a8c\u8bc1<code>second</code> \u7b49\u4e8e <code>"v1"</code>\uff0c<code>counter.get()</code> \u7b49\u4e8e <code>1</code>\u3002 */
     @Test
     void getWithMappingFunction_shouldNotReloadWhenPresent() {
         CaffeineCache<String, String> cache = buildWithTtl(300);
@@ -61,6 +70,7 @@ class CaffeineCacheTest {
         assertThat(counter.get()).isEqualTo(1);
     }
 
+    /** \u9a8c\u8bc1<code>cache.getIfPresent("k1")</code>\u4e3a\u7a7a\u3002 */
     @Test
     void invalidate_shouldRemoveKey() {
         CaffeineCache<String, String> cache = buildWithTtl(300);
@@ -71,6 +81,7 @@ class CaffeineCacheTest {
         assertThat(cache.getIfPresent("k1")).isNull();
     }
 
+    /** \u9a8c\u8bc1<code>cache.estimatedSize()</code>\u4e3a\u96f6\u3002 */
     @Test
     void invalidateAll_shouldClearEverything() {
         CaffeineCache<String, String> cache = buildWithTtl(300);
@@ -82,6 +93,7 @@ class CaffeineCacheTest {
         assertThat(cache.estimatedSize()).isZero();
     }
 
+    /** \u9a8c\u8bc1<code>cache.getIfPresent("k1")</code> \u7b49\u4e8e <code>"v1"</code>\uff0c<code>cache.getIfPresent("k2")</code> \u7b49\u4e8e <code>"v2"</code>\u3002 */
     @Test
     void putAll_shouldStoreMultipleEntries() {
         CaffeineCache<String, String> cache = buildWithTtl(300);
@@ -92,6 +104,7 @@ class CaffeineCacheTest {
         assertThat(cache.getIfPresent("k2")).isEqualTo("v2");
     }
 
+    /** \u9a8c\u8bc1<code>first</code>\u4e3a\u771f\uff0c<code>second</code>\u4e3a\u5047\uff0c<code>cache.getIfPresent("k1")</code> \u7b49\u4e8e <code>"v1"</code>\u3002 */
     @Test
     void putIfAbsent_shouldReturnTrueForNewKeyAndFalseForExisting() {
         CaffeineCache<String, String> cache = buildWithTtl(300);
@@ -104,6 +117,7 @@ class CaffeineCacheTest {
         assertThat(cache.getIfPresent("k1")).isEqualTo("v1");
     }
 
+    /** \u9a8c\u8bc1<code>replaced</code>\u4e3a\u771f\uff0c<code>cache.getIfPresent("k1")</code> \u7b49\u4e8e <code>"v2"</code>\u3002 */
     @Test
     void replace_shouldSwapWhenExpectedMatches() {
         CaffeineCache<String, String> cache = buildWithTtl(300);
@@ -115,6 +129,7 @@ class CaffeineCacheTest {
         assertThat(cache.getIfPresent("k1")).isEqualTo("v2");
     }
 
+    /** \u9a8c\u8bc1<code>replaced</code>\u4e3a\u5047\uff0c<code>cache.getIfPresent("k1")</code> \u7b49\u4e8e <code>"v1"</code>\u3002 */
     @Test
     void replace_shouldFailWhenExpectedMismatches() {
         CaffeineCache<String, String> cache = buildWithTtl(300);
@@ -126,6 +141,7 @@ class CaffeineCacheTest {
         assertThat(cache.getIfPresent("k1")).isEqualTo("v1");
     }
 
+    /** \u9a8c\u8bc1<code>removed</code>\u4e3a\u5047\uff0c<code>cache.getIfPresent("k1")</code> \u7b49\u4e8e <code>"v1"</code>\uff0c<code>cache.getIfPresent("k1")</code>\u4e3a\u7a7a\u3002 */
     @Test
     void removeIf_shouldDeleteOnlyWhenExpectedMatches() {
         CaffeineCache<String, String> cache = buildWithTtl(300);
@@ -140,6 +156,7 @@ class CaffeineCacheTest {
         assertThat(cache.getIfPresent("k1")).isNull();
     }
 
+    /** \u9a8c\u8bc1<code>first</code> \u7b49\u4e8e <code>5</code>\uff0c<code>second</code> \u7b49\u4e8e <code>8</code>\u3002 */
     @Test
     void increment_shouldAddToCounter() {
         CaffeineCache<String, Object> cache = CaffeineCache.create(
@@ -152,6 +169,7 @@ class CaffeineCacheTest {
         assertThat(second).isEqualTo(8);
     }
 
+    /** \u9a8c\u8bc1<code>remaining</code> \u7b49\u4e8e <code>7</code>\u3002 */
     @Test
     void stockDecrement_shouldDeductStock() {
         CaffeineCache<String, Object> cache = CaffeineCache.create(
@@ -163,6 +181,7 @@ class CaffeineCacheTest {
         assertThat(remaining).isEqualTo(7);
     }
 
+    /** \u9a8c\u8bc1<code>result</code> \u5c0f\u4e8e <code>0</code>\u3002 */
     @Test
     void stockDecrement_shouldReturnNotEnoughWhenInsufficient() {
         CaffeineCache<String, Object> cache = CaffeineCache.create(
@@ -174,6 +193,10 @@ class CaffeineCacheTest {
         assertThat(result).isLessThan(0);
     }
 
+    /**
+     * \u9a8c\u8bc1<code>cache.getIfPresent("k1")</code> \u7b49\u4e8e <code>"v1"</code>\uff0c<code>cache.getIfPresent("k1")</code>\u4e3a\u7a7a\u3002
+     * @throws InterruptedException \u7b49\u5f85\u6d4b\u8bd5\u64cd\u4f5c\u65f6\u88ab\u4e2d\u65ad
+     */
     @Test
     void expireAfterWrite_shouldEvictKeyAfterTtl() throws InterruptedException {
         CaffeineCache<String, String> cache = buildWithTtl(1);
@@ -187,6 +210,7 @@ class CaffeineCacheTest {
         assertThat(cache.getIfPresent("k1")).isNull();
     }
 
+    /** \u9a8c\u8bc1<code>cache.get("k1")</code> \u7b49\u4e8e <code>"v1"</code>\uff0c<code>cache.get("missing")</code>\u4e3a\u7a7a\u3002 */
     @Test
     void get_onNonLoadingCache_shouldBehaveLikeGetIfPresent() {
         CaffeineCache<String, String> cache = buildWithTtl(300);
@@ -196,6 +220,7 @@ class CaffeineCacheTest {
         assertThat(cache.get("missing")).isNull();
     }
 
+    /** \u9a8c\u8bc1<code>cache.get("k1")</code> \u7b49\u4e8e <code>"auto-k1"</code>\u3002 */
     @Test
     void createLoading_shouldAutoLoadOnGet() {
         CacheConfig config = CacheConfig.builder("test").maximumSize(100).build();
@@ -204,6 +229,7 @@ class CaffeineCacheTest {
         assertThat(cache.get("k1")).isEqualTo("auto-k1");
     }
 
+    /** \u9a8c\u8bc1<code>cache.unwrap()</code>\u975e\u7a7a\u3002 */
     @Test
     void unwrap_shouldReturnUnderlyingCaffeineCache() {
         CaffeineCache<String, String> cache = buildWithTtl(300);

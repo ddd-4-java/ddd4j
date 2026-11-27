@@ -16,11 +16,21 @@ import java.util.Objects;
  */
 public final class FormatDateFunction implements NamedQLFunction {
 
+    /**
+     * \u8fd4\u56de\u8868\u8fbe\u5f0f\u4e2d\u6ce8\u518c\u7684\u51fd\u6570\u540d\u3002
+     * @return {@code formatDate}
+     */
     @Override
     public String name() {
         return "formatDate";
     }
 
+    /**
+     * \u5c06 Date \u6216 java.time \u65e5\u671f\u6309\u6307\u5b9a\u683c\u5f0f\u8f6c\u4e3a\u5b57\u7b26\u4e32\u3002
+     * @param qContext \u8868\u8fbe\u5f0f\u4e0a\u4e0b\u6587
+     * @param parameters \u65e5\u671f\u5bf9\u8c61\u548c\u683c\u5f0f
+     * @return \u683c\u5f0f\u5316\u7ed3\u679c\uff1b\u65e5\u671f\u4e3a null \u65f6\u8fd4\u56de null
+     */
     @Override
     public Object call(QContext qContext, Parameters parameters) {
         FunctionArguments.requireSize(parameters, 2, name());

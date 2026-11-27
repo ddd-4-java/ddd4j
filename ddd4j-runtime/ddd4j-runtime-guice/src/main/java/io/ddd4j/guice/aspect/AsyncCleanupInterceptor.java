@@ -38,6 +38,12 @@ import org.aopalliance.intercept.MethodInvocation;
 @Slf4j
 public class AsyncCleanupInterceptor implements MethodInterceptor {
 
+    /**
+     * \u6267\u884c\u5f02\u6b65\u88ab\u62e6\u622a\u65b9\u6cd5\uff0c\u5e76\u6839\u636e\u7ed3\u679c\u5b89\u6392\u7ebf\u7a0b\u4e0a\u4e0b\u6587\u6e05\u7406\u3002
+     * @param invocation \u5f85\u6267\u884c\u7684\u62e6\u622a\u65b9\u6cd5\u8c03\u7528
+     * @return \u5f02\u6b65\u8c03\u7528\u6216\u76ee\u6807\u65b9\u6cd5\u8fd4\u56de\u7684\u7ed3\u679c
+     * @throws Throwable \u76ee\u6807\u65b9\u6cd5\u6267\u884c\u6216\u5176\u5f02\u6b65\u5305\u88c5\u5931\u8d25
+     */
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
         try {

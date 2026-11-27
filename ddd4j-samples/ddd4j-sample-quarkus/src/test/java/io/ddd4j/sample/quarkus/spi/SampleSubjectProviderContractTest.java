@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class SampleSubjectProviderContractTest {
 
+    /** \u9a8c\u8bc1<code>principal</code>\u975e\u7a7a\uff0c<code>principal.getPerms().contains("order:refund")</code>\u4e3a\u771f\u3002 */
     @Test
     void createsMutablePrincipalPermissions() {
         SampleSubjectProvider provider = new SampleSubjectProvider();

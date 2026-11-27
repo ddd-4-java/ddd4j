@@ -38,6 +38,7 @@ import java.util.Objects;
  */
 public final class ExcelFiller {
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>ExcelFiller</code> \u5b9e\u4f8b\u3002 */
     private ExcelFiller() {
     }
 
@@ -140,7 +141,11 @@ public final class ExcelFiller {
     }
 
     /**
-     * 把模板流包装为可重复读的内存流（填充场景下 easyexcel 会多次读取）。
+     * \u628a\u6a21\u677f\u6d41\u5305\u88c5\u4e3a\u53ef\u91cd\u590d\u8bfb\u7684\u5185\u5b58\u6d41\uff08\u586b\u5145\u573a\u666f\u4e0b easyexcel \u4f1a\u591a\u6b21\u8bfb\u53d6\uff09\u3002
+     *
+     * @param in \u7531\u8c03\u7528\u65b9\u7ba1\u7406\u7684\u8f93\u5165\u6d41
+     * @return \u53ef\u8bfb\u53d6\u539f\u59cb\u8f93\u5165\u4e14\u5173\u95ed\u65f6\u4fdd\u7559\u5916\u90e8\u8f93\u5165\u7684\u6d41
+     * @throws IOException \u8bfb\u53d6\u539f\u59cb\u8f93\u5165\u6d41\u5931\u8d25
      */
     private static InputStream toNonClosingStream(InputStream in) throws IOException {
         if (in instanceof ByteArrayInputStream) {

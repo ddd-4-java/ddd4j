@@ -47,15 +47,32 @@ import java.util.concurrent.Callable;
  */
 public final class VertxOrderRoutes {
 
+    /** \u5546\u54c1\u4ea4\u6613\u54cd\u5e94\u58f0\u660e\u7684 JSON \u5a92\u4f53\u7c7b\u578b\u3002 */
     private static final String JSON_CONTENT_TYPE = "application/json";
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>VertxOrderRoutes</code> \u5b9e\u4f8b\u3002 */
     private VertxOrderRoutes() {
     }
 
+    /**
+     * \u4e3a\u6307\u5b9a\u8ba4\u8bc1\u6a21\u5f0f\u88c5\u914d\u5546\u54c1\u4ea4\u6613\u8def\u7531\u3002
+     * @param vertx \u5f53\u524d\u5e94\u7528\u7684 Vert.x \u5b9e\u4f8b
+     * @param catalog \u5df2\u88c5\u914d\u7684\u5546\u54c1\u4ea4\u6613\u64cd\u4f5c
+     * @param mode HTTP \u8def\u7531\u4f7f\u7528\u7684\u8ba4\u8bc1\u6a21\u5f0f
+     * @return \u914d\u7f6e\u597d\u5546\u54c1\u4ea4\u6613\u8def\u7531\u7684 Router
+     */
     public static Router router(Vertx vertx, CatalogEndpoints catalog, AuthenticationMode mode) {
         return router(vertx, catalog, mode, null);
     }
 
+    /**
+     * \u7ec4\u88c5\u6307\u5b9a\u8ba4\u8bc1\u6a21\u5f0f\u4e0b\u7684 Vert.x \u5546\u54c1\u4ea4\u6613\u8def\u7531\u3002
+     * @param vertx \u62e5\u6709\u5f53\u524d HTTP \u670d\u52a1\u5668\u7684 Vert.x \u5b9e\u4f8b
+     * @param catalog \u5f53\u524d\u5546\u54c1\u4ea4\u6613\u5165\u53e3
+     * @param mode \u5f53\u524d\u5546\u54c1\u4ea4\u6613\u8def\u7531\u542f\u7528\u7684\u8ba4\u8bc1\u6a21\u5f0f
+     * @param lifecycle \u7531\u5f53\u524d\u5e94\u7528\u6301\u6709\u5e76\u5728\u5173\u95ed\u65f6\u56de\u6536\u7684\u8ba4\u8bc1\u751f\u547d\u5468\u671f
+     * @return \u5df2\u7ecf\u88c5\u914d\u5f53\u524d\u8bbf\u95ee\u7b56\u7565\u7684\u8def\u7531\u5668
+     */
     static Router router(Vertx vertx, CatalogEndpoints catalog, AuthenticationMode mode,
                          VertxOrderApplication lifecycle) {
         Vertx actualVertx = Objects.requireNonNull(vertx, "vertx must not be null");
@@ -89,6 +106,12 @@ public final class VertxOrderRoutes {
         return router;
     }
 
+    /**
+     * \u5728\u5e94\u7528\u751f\u547d\u5468\u671f\u5185\u8c03\u5ea6\u5f53\u524d HTTP \u5546\u54c1\u4ea4\u6613\u64cd\u4f5c\u3002
+     * @param lifecycle \u7531\u5f53\u524d\u5e94\u7528\u6301\u6709\u5e76\u5728\u5173\u95ed\u65f6\u56de\u6536\u7684\u8ba4\u8bc1\u751f\u547d\u5468\u671f
+     * @param ctx \u5f53\u524d Web \u6846\u67b6\u7684\u8bf7\u6c42\u4e0a\u4e0b\u6587
+     * @param call \u5f85\u6267\u884c\u7684\u4ea4\u6613\u8c03\u7528
+     */
     private static void trade(VertxOrderApplication lifecycle, RoutingContext ctx, Callable<Reply> call) {
         var task = Objects.isNull(lifecycle) ? Ddd4jVertxContext.executeBlocking(ctx, call)
                 : lifecycle.execute(ctx, call);
@@ -96,6 +119,14 @@ public final class VertxOrderRoutes {
                 .putHeader("Content-Type", JSON_CONTENT_TYPE).end(reply.getBody())).onFailure(ctx::fail);
     }
 
+    /**
+     * \u7531\u5f53\u524d\u5e94\u7528\u8fd0\u884c\u6240\u63a5\u6536\u7684\u4e1a\u52a1\u64cd\u4f5c\u5e76\u53d1\u9001\u54cd\u5e94\u3002
+     * @param <T> \u5f53\u524d\u793a\u4f8b\u6240\u4f7f\u7528\u7684\u6570\u636e\u6216\u6846\u67b6\u7c7b\u578b
+     * @param lifecycle \u7531\u5f53\u524d\u5e94\u7528\u6301\u6709\u5e76\u5728\u5173\u95ed\u65f6\u56de\u6536\u7684\u8ba4\u8bc1\u751f\u547d\u5468\u671f
+     * @param context \u5f53\u524d Vert.x \u8def\u7531\u4e0a\u4e0b\u6587
+     * @param operation \u5f53\u524d\u8bf7\u6c42\u7684\u5546\u54c1\u4ea4\u6613\u64cd\u4f5c\u6216\u5f85\u6267\u884c\u7684\u5de5\u4f5c\u56de\u8c03
+     * @param status \u5546\u54c1\u72b6\u6001\u6761\u4ef6\u6587\u672c
+     */
     private static <T> void execute(VertxOrderApplication lifecycle, RoutingContext context, Callable<T> operation, int status) {
         var task = Objects.isNull(lifecycle) ? Ddd4jVertxContext.executeBlocking(context, operation)
                 : lifecycle.execute(context, operation);
@@ -108,6 +139,12 @@ public final class VertxOrderRoutes {
                 }));
     }
 
+    /**
+     * \u5c06\u5df2\u786e\u5b9a\u7684\u72b6\u6001\u548c\u6b63\u6587\u5199\u5165\u5f53\u524d Vert.x \u54cd\u5e94\u3002
+     * @param context \u5f53\u524d Vert.x \u8def\u7531\u4e0a\u4e0b\u6587
+     * @param status \u5546\u54c1\u72b6\u6001\u6761\u4ef6\u6587\u672c
+     * @param response \u5f53\u524d\u539f\u751f HTTP \u54cd\u5e94\u6216\u54cd\u5e94\u6784\u5efa\u5668
+     */
     private static void respond(RoutingContext context, int status, Object response) {
         context.response().setStatusCode(status).putHeader("Content-Type", JSON_CONTENT_TYPE)
                 .end(Json.encode(response));
@@ -116,33 +153,41 @@ public final class VertxOrderRoutes {
     /** 登录令牌响应。 */
     public final static class TokenResponse {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u5f53\u524d\u793a\u4f8b\u7b7e\u53d1\u6216\u8fd4\u56de\u5ba2\u6237\u7aef\u7684\u4f1a\u8bdd\u4ee4\u724c\u3002 */
         private final String token;
 
         /**
- * @param token 登录令牌
- */
+         * 初始化 <code>TokenResponse</code> 使用的 <code>token</code>。
+         *
+         * @param token \u767b\u5f55\u4ee4\u724c
+         */
         @JsonCreator()
         public TokenResponse(@JsonProperty("token") String token) {
             this.token = token;
         }
 
-        /**
- * @return 登录令牌
- */
+        /** @return \u767b\u5f55\u4ee4\u724c */
         @JsonProperty("token")
         public String token() {
             return token;
         }
 
-        /**
- * @return 登录令牌
- */
+        /** @return \u767b\u5f55\u4ee4\u724c */
         public String getToken() {
             return token;
         }
 
+        /**
+         * 根据<code>token</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -155,6 +200,11 @@ public final class VertxOrderRoutes {
             return Objects.equals(this.token, other.token);
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 1;
@@ -162,6 +212,11 @@ public final class VertxOrderRoutes {
             return result;
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>token</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "VertxOrderRoutes.TokenResponse(token=" + token + ")";

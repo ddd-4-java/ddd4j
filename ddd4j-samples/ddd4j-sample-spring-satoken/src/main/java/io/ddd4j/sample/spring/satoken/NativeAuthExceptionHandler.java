@@ -14,24 +14,30 @@ import org.springframework.web.server.ResponseStatusException;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class NativeAuthExceptionHandler {
     /**
-     * @param failure 原生认证异常
-     * @return 未认证响应
+     * 执行 <code>authentication</code>，调用 <code>ResponseEntity.status</code>。
+     *
+     * @param failure \u539f\u751f\u8ba4\u8bc1\u5f02\u5e38
+     * @return \u672a\u8ba4\u8bc1\u54cd\u5e94
      */
     @ExceptionHandler(NotLoginException.class)
     public ResponseEntity<String> authentication(NotLoginException failure) {
         return ResponseEntity.status(401).body("authentication required");
     }
     /**
-     * @param failure 原生授权异常
-     * @return 禁止访问响应
+     * 执行 <code>authorization</code>，调用 <code>ResponseEntity.status</code>。
+     *
+     * @param failure \u539f\u751f\u6388\u6743\u5f02\u5e38
+     * @return \u7981\u6b62\u8bbf\u95ee\u54cd\u5e94
      */
     @ExceptionHandler(NotPermissionException.class)
     public ResponseEntity<String> authorization(NotPermissionException failure) {
         return ResponseEntity.status(403).body("permission denied");
     }
     /**
-     * @param failure 入口明确的状态异常
-     * @return 保留 HTTP 状态的响应
+     * 执行 <code>status</code>，调用 <code>ResponseEntity.status</code>、<code>failure.getStatusCode</code>。
+     *
+     * @param failure \u5165\u53e3\u660e\u786e\u7684\u72b6\u6001\u5f02\u5e38
+     * @return \u4fdd\u7559 HTTP \u72b6\u6001\u7684\u54cd\u5e94
      */
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<String> status(ResponseStatusException failure) {

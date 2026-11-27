@@ -16,6 +16,7 @@ import lombok.Data;
 @Data
 public class SequenceProperties {
 
+    /** \u5e8f\u5217\u914d\u7f6e\u524d\u7f00\u3002 */
     public static final String PREFIX = "sequence";
 
     /**

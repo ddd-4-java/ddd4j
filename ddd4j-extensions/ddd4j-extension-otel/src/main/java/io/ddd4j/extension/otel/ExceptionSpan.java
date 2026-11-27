@@ -22,6 +22,7 @@ import java.util.Objects;
  */
 public final class ExceptionSpan {
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>ExceptionSpan</code> \u5b9e\u4f8b\u3002 */
     private ExceptionSpan() {
     }
 
@@ -47,7 +48,10 @@ public final class ExceptionSpan {
     }
 
     /**
-     * 在指定 Span 上记录异常。
+     * \u5728\u6307\u5b9a Span \u4e0a\u8bb0\u5f55\u5f02\u5e38\u3002
+     *
+     * @param span \u8ffd\u8e2a\u7247\u6bb5
+     * @param throwable \u5f02\u5e38
      */
     public static void record(Span span, Throwable throwable) {
         if (Objects.isNull(throwable) || Objects.isNull(span)) {

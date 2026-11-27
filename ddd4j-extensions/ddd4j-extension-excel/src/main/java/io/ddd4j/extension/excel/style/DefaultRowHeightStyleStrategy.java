@@ -21,6 +21,7 @@ public class DefaultRowHeightStyleStrategy extends AbstractRowHeightStyleStrateg
      */
     public static final short DEFAULT_HEADER_ROW_HEIGHT = 600;
 
+    /** \u9996\u884c\u8868\u5934\u4f7f\u7528\u7684\u9ad8\u5ea6\u3002 */
     private final short headerRowHeight;
 
     /**
@@ -39,6 +40,11 @@ public class DefaultRowHeightStyleStrategy extends AbstractRowHeightStyleStrateg
         this.headerRowHeight = headerRowHeight;
     }
 
+    /**
+     * \u4ec5\u4e3a\u7b2c\u4e00\u884c\u8868\u5934\u8bbe\u7f6e\u914d\u7f6e\u7684\u9ad8\u5ea6\u3002
+     * @param row \u5f53\u524d\u6b63\u5728\u5199\u5165\u7684\u884c
+     * @param relativeRowIndex \u76f8\u5bf9\u8868\u5934\u6216\u5185\u5bb9\u8d77\u70b9\u7684\u884c\u7d22\u5f15
+     */
     @Override
     protected void setHeadColumnHeight(Row row, int relativeRowIndex) {
         if (relativeRowIndex == 0) {
@@ -46,6 +52,11 @@ public class DefaultRowHeightStyleStrategy extends AbstractRowHeightStyleStrateg
         }
     }
 
+    /**
+     * \u4fdd\u7559\u5185\u5bb9\u884c\u7684 Excel \u9ed8\u8ba4\u884c\u9ad8\u3002
+     * @param row \u5f53\u524d\u6b63\u5728\u5199\u5165\u7684\u884c
+     * @param relativeRowIndex \u76f8\u5bf9\u8868\u5934\u6216\u5185\u5bb9\u8d77\u70b9\u7684\u884c\u7d22\u5f15
+     */
     @Override
     protected void setContentColumnHeight(Row row, int relativeRowIndex) {
         // 内容行使用 Excel 默认行高

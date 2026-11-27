@@ -117,6 +117,12 @@ public class GoodsSpu extends AggregateRoot<Long> {
                 .applicableShopIds(List.of(Long.toString(shopId))).skus(List.of(sku)).build();
     }
 
+    /**
+     * \u8981\u6c42\u6587\u672c\u975e\u7a7a\u767d\u3001\u957f\u5ea6\u4e0d\u8d85\u8fc7\u9650\u5236\u4e14\u65e0\u9996\u5c3e\u7a7a\u767d\u3002
+     * @param value \u5f85\u6821\u9a8c\u6587\u672c
+     * @param max \u5b57\u7b26\u4e32\u957f\u5ea6\u4e0a\u9650
+     * @throws IllegalArgumentException \u6587\u672c\u4e3a\u7a7a\u767d\u3001\u8fc7\u957f\u6216\u542b\u9996\u5c3e\u7a7a\u767d
+     */
     static void requireText(String value, int max) {
         if (StrKit.isBlank(value) || value.length() > max || !value.equals(value.strip())) {
             throw new IllegalArgumentException("名称或编码为空、超长或含首尾空白");
@@ -168,6 +174,11 @@ public class GoodsSpu extends AggregateRoot<Long> {
                 .build();
     }
 
+    /**
+     * 读取<code>id</code>提供给调用方。
+     *
+     * @return 实际返回<code>id</code>，供调用方取得当前值
+     */
     @Override
     public Long id() {
         return id;

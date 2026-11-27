@@ -43,15 +43,24 @@ import com.google.zxing.qrcode.QRCodeWriter;
  */
 public class DefaultQrCodeService implements QrCodeService, AutoCloseable {
 
+    /** \u9ed8\u8ba4\u5141\u8bb8\u7684\u6700\u5927\u6279\u91cf\u6570\u91cf\u3002 */
     public static final int DEFAULT_MAX_BATCH_SIZE = 100;
 
+    /** \u8c03\u5ea6\u6279\u91cf\u4e8c\u7ef4\u7801\u751f\u6210\u4efb\u52a1\u7684\u6267\u884c\u5668\u3002 */
     private final ExecutorService executorService;
+    /** \u5355\u4e2a\u6279\u91cf\u751f\u6210\u8bf7\u6c42\u5141\u8bb8\u5305\u542b\u7684\u6700\u5927\u9879\u76ee\u6570\u3002 */
     private final int maxBatchSize;
 
+    /** \u4f7f\u7528\u9ed8\u8ba4\u5e76\u53d1\u5ea6\u548c\u6279\u91cf\u4e0a\u9650\u521b\u5efa\u4e8c\u7ef4\u7801\u670d\u52a1\u3002 */
     public DefaultQrCodeService() {
         this(Math.min(Runtime.getRuntime().availableProcessors(), 8), DEFAULT_MAX_BATCH_SIZE);
     }
 
+    /**
+     * \u4f7f\u7528\u6307\u5b9a\u5e76\u53d1\u5ea6\u548c\u6279\u91cf\u4e0a\u9650\u521b\u5efa\u4e8c\u7ef4\u7801\u670d\u52a1\u3002
+     * @param concurrency \u5de5\u4f5c\u7ebf\u7a0b\u6570\u91cf
+     * @param maxBatchSize \u6700\u5927\u6279\u91cf\u6570\u91cf
+     */
     public DefaultQrCodeService(int concurrency, int maxBatchSize) {
         if (concurrency <= 0 || maxBatchSize <= 0) {
             throw new IllegalArgumentException("concurrency and maxBatchSize must be positive");
@@ -60,6 +69,14 @@ public class DefaultQrCodeService implements QrCodeService, AutoCloseable {
         this.maxBatchSize = maxBatchSize;
     }
 
+    /**
+     * 生成调用所需的标识或结果。
+     *
+     * <p>此实现调用 <code>command.getRequest()</code>。</p>
+     *
+     * @param command 生成命令
+     * @return 二维码产物
+     */
     @Override
     public QrCodeArtifact generate(GenerateQrCodeCommand command) {
         Objects.requireNonNull(command, "command must not be null");
@@ -71,6 +88,14 @@ public class DefaultQrCodeService implements QrCodeService, AutoCloseable {
                 .build();
     }
 
+    /**
+     * 将传入内容解码为可读取的数据。
+     *
+     * <p>此实现调用 <code>command.getRequest()</code>。</p>
+     *
+     * @param command 解码命令
+     * @return 识别结果
+     */
     @Override
     public QrCodeScanResult decode(DecodeQrCodeCommand command) {
         Objects.requireNonNull(command, "command must not be null");
@@ -78,6 +103,14 @@ public class DefaultQrCodeService implements QrCodeService, AutoCloseable {
         return new QrCodeScanResult(command.getCorrelationId(), decode(command.getRequest().getBytes()));
     }
 
+    /**
+     * 根据批量请求生成二维码结果。
+     *
+     * <p>此实现调用 <code>items.size()</code>。</p>
+     *
+     * @param items 批量项目
+     * @return 批量结果
+     */
     @Override
     public QrCodeBatchResult generateBatch(List<QrCodeBatchItem> items) {
         Objects.requireNonNull(items, "items must not be null");
@@ -104,6 +137,11 @@ public class DefaultQrCodeService implements QrCodeService, AutoCloseable {
         return new QrCodeBatchResult(results);
     }
 
+    /**
+     * \u6784\u9020\u6279\u91cf\u9879\u76ee\u7684\u6267\u884c\u4efb\u52a1\uff0c\u5728\u8fd0\u884c\u65f6\u6821\u9a8c\u9879\u76ee\u6807\u8bc6\u5e76\u751f\u6210\u4e8c\u7ef4\u7801\u3002
+     * @param item \u5f85\u751f\u6210\u4e8c\u7ef4\u7801\u7684\u6279\u91cf\u9879\u76ee
+     * @return \u4ea7\u751f\u8be5\u9879\u76ee\u6210\u529f\u7ed3\u679c\u7684\u53ef\u8c03\u5ea6\u4efb\u52a1
+     */
     private Callable<QrCodeBatchItemResult> createBatchTask(final QrCodeBatchItem item) {
         return () -> {
             Objects.requireNonNull(item, "batch item must not be null");
@@ -118,6 +156,13 @@ public class DefaultQrCodeService implements QrCodeService, AutoCloseable {
         };
     }
 
+    /**
+     * \u6784\u9020\u65e0\u6cd5\u5b8c\u6210\u7684\u6279\u91cf\u9879\u76ee\u7684\u8bca\u65ad\u7ed3\u679c\u3002
+     * @param item \u6267\u884c\u5931\u8d25\u7684\u9879\u76ee\uff0c\u7f3a\u5c11\u9879\u76ee\u6570\u636e\u65f6\u53ef\u4ee5\u4e3a\u7a7a
+     * @param errorCode \u5931\u8d25\u7c7b\u522b
+     * @param errorMessage \u5931\u8d25\u8bf4\u660e
+     * @return \u4fdd\u7559\u53ef\u7528\u9879\u76ee\u6807\u8bc6\u7684\u5931\u8d25\u7ed3\u679c
+     */
     private QrCodeBatchItemResult failure(QrCodeBatchItem item, String errorCode, String errorMessage) {
         return QrCodeBatchItemResult.builder()
                 .itemId(Objects.nonNull(item) ? item.getItemId() : null)
@@ -127,6 +172,12 @@ public class DefaultQrCodeService implements QrCodeService, AutoCloseable {
                 .build();
     }
 
+    /**
+     * \u4f7f\u7528 ZXing \u6309\u6307\u5b9a\u5c3a\u5bf8\u5c06\u6587\u672c\u7f16\u7801\u4e3a PNG \u4e8c\u7ef4\u7801\u3002
+     * @param request \u5305\u542b\u7f16\u7801\u6587\u672c\u53ca\u50cf\u7d20\u5c3a\u5bf8\u7684\u8bf7\u6c42
+     * @return \u751f\u6210\u7684 PNG \u56fe\u50cf\u5b57\u8282
+     * @throws IllegalStateException \u7f16\u7801\u4e8c\u7ef4\u7801\u6216\u5199\u51fa\u56fe\u50cf\u5931\u8d25
+     */
     private QrCodeOutput encode(io.ddd4j.extension.qrcode.model.QrCodeRequest request) {
         try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
             BitMatrix matrix = new QRCodeWriter().encode(request.getContent(), BarcodeFormat.QR_CODE,
@@ -138,6 +189,12 @@ public class DefaultQrCodeService implements QrCodeService, AutoCloseable {
         }
     }
 
+    /**
+     * \u5c06\u8f93\u5165\u5b57\u8282\u8bfb\u53d6\u4e3a\u56fe\u50cf\u540e\u8c03\u7528 ZXing \u8bc6\u522b\u4e8c\u7ef4\u7801\u3002
+     * @param bytes \u5f85\u8bc6\u522b\u7684\u56fe\u50cf\u5b57\u8282
+     * @return \u5305\u542b\u8bc6\u522b\u6587\u672c\u7684\u5355\u9879\u7ed3\u679c\u5217\u8868
+     * @throws IllegalStateException \u56fe\u50cf\u65e0\u6cd5\u8bfb\u53d6\u6216\u4e8c\u7ef4\u7801\u8bc6\u522b\u5931\u8d25
+     */
     private List<QrCodeDecodeResult> decode(byte[] bytes) {
         try {
             BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes));
@@ -152,6 +209,10 @@ public class DefaultQrCodeService implements QrCodeService, AutoCloseable {
         }
     }
 
+    /**
+     * \u4e3a\u6279\u91cf\u4e8c\u7ef4\u7801\u5de5\u4f5c\u4efb\u52a1\u521b\u5efa\u53ef\u8bc6\u522b\u7684\u5b88\u62a4\u7ebf\u7a0b\u5de5\u5382\u3002
+     * @return \u4ee5\u9012\u589e\u5e8f\u53f7\u4e3a\u7ebf\u7a0b\u547d\u540d\u7684\u7ebf\u7a0b\u5de5\u5382
+     */
     private ThreadFactory daemonThreadFactory() {
         AtomicInteger counter = new AtomicInteger();
         return runnable -> {
@@ -161,6 +222,11 @@ public class DefaultQrCodeService implements QrCodeService, AutoCloseable {
         };
     }
 
+    /**
+     * 结束当前组件持有的资源。
+     *
+     * <p>此实现调用 <code>executorService.shutdownNow()</code>。</p>
+     */
     @Override
     public void close() {
         executorService.shutdownNow();

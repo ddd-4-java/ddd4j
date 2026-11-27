@@ -51,19 +51,27 @@ public final class HttpSpan {
      * 标准化 HTTP 属性键（遵循 OTel 语义约定）。
      */
     public static final AttributeKey<String> ATTR_HTTP_METHOD = AttributeKey.stringKey("http.request.method");
+    /** Span \u5c5e\u6027\u952e {@code http.route}\u3002 */
     public static final AttributeKey<String> ATTR_HTTP_ROUTE = AttributeKey.stringKey("http.route");
+    /** Span \u5c5e\u6027\u952e {@code http.response.status_code}\u3002 */
     public static final AttributeKey<String> ATTR_HTTP_STATUS = AttributeKey.stringKey("http.response.status_code");
+    /** Span \u5c5e\u6027\u952e {@code url.path}\u3002 */
     public static final AttributeKey<String> ATTR_URL_PATH = AttributeKey.stringKey("url.path");
+    /** Span \u5c5e\u6027\u952e {@code url.scheme}\u3002 */
     public static final AttributeKey<String> ATTR_URL_SCHEME = AttributeKey.stringKey("url.scheme");
+    /** Span \u5c5e\u6027\u952e {@code user_agent.original}\u3002 */
     public static final AttributeKey<String> ATTR_USER_AGENT = AttributeKey.stringKey("user_agent.original");
+    /** Span \u5c5e\u6027\u952e {@code client.address}\u3002 */
     public static final AttributeKey<String> ATTR_CLIENT_IP = AttributeKey.stringKey("client.address");
 
     /**
      * 业务级属性。
      */
     public static final AttributeKey<String> ATTR_DDD4J_REQUEST_ID = AttributeKey.stringKey("ddd4j.request.id");
+    /** Span \u5c5e\u6027\u952e {@code ddd4j.tenant.id}\u3002 */
     public static final AttributeKey<String> ATTR_DDD4J_TENANT_ID = AttributeKey.stringKey("ddd4j.tenant.id");
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>HttpSpan</code> \u5b9e\u4f8b\u3002 */
     private HttpSpan() {
     }
 
@@ -131,7 +139,10 @@ public final class HttpSpan {
     }
 
     /**
-     * 在 span 上记录异常并标记 ERROR。
+     * \u5728 span \u4e0a\u8bb0\u5f55\u5f02\u5e38\u5e76\u6807\u8bb0 ERROR\u3002
+     *
+     * @param span \u8ffd\u8e2a\u7247\u6bb5
+     * @param t \u5f02\u5e38
      */
     public static void recordError(Span span, Throwable t) {
         if (Objects.isNull(span) || Objects.isNull(t)) {
@@ -162,7 +173,10 @@ public final class HttpSpan {
     }
 
     /**
-     * 安全获取当前 Context 的 Scope（noop fallback）。
+     * \u5b89\u5168\u83b7\u53d6\u5f53\u524d Context \u7684 Scope\uff08noop fallback\uff09\u3002
+     *
+     * @param span \u8ffd\u8e2a\u7247\u6bb5
+     * @return \u5f53\u524d\u4f5c\u7528\u57df
      */
     public static Scope makeCurrent(Span span) {
         if (Objects.isNull(span) || !span.getSpanContext().isValid()) {
@@ -171,6 +185,7 @@ public final class HttpSpan {
         return span.makeCurrent();
     }
 
+    /** \u5c06\u8ddf\u8e2a\u4e0a\u4e0b\u6587\u5199\u5165 HTTP \u6216\u6d88\u606f\u4f20\u8f93\u5934\u7684\u4f20\u64ad\u9002\u914d\u5668\u3002 */
     private static final TextMapSetter<Map<String, String>> SETTER = new TextMapSetter<Map<String, String>>() {
         @Override
         public void set(Map<String, String> carrier, String key, String value) {
@@ -180,6 +195,7 @@ public final class HttpSpan {
         }
     };
 
+    /** \u4ece HTTP \u6216\u6d88\u606f\u4f20\u8f93\u5934\u8bfb\u53d6\u8ddf\u8e2a\u4e0a\u4e0b\u6587\u7684\u4f20\u64ad\u9002\u914d\u5668\u3002 */
     private static final TextMapGetter<Map<String, String>> GETTER = new TextMapGetter<Map<String, String>>() {
         @Override
         public Iterable<String> keys(Map<String, String> carrier) {

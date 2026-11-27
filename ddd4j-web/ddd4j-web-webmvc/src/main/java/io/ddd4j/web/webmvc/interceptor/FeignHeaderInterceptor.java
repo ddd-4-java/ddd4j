@@ -29,7 +29,9 @@ public class FeignHeaderInterceptor implements RequestInterceptor, Ordered {
      * 系统 ID 请求头名称列表
      */
     public static final String[] HEADER_SYSTEM_IDS = new String[]{"system_id", "system-id", "systemId"};
+    /** \u662f\u5426\u5c06\u5f53\u524d Web \u8bf7\u6c42\u5934\u590d\u5236\u5230 Feign \u8c03\u7528\u3002 */
     private static final String[] USE_WEB_HEADERS = new String[]{"tenant-id", "system-id", "third-session", "enterprise-id", "shop-id", "app-id", "switch-tenant-id", "Authorization", "client-type", "own-language"};
+    /** \u5e94\u7981\u6b62\u8f6c\u53d1 Authorization \u7684\u76ee\u6807\u96c6\u5408\u3002 */
     private static final String[] REMOVE_AUTHORIZATION_HEADER_TARGETS = new String[]{"cloud-mall-api", "cloud-pay-api", "subscribe-service"};
 
     /**
@@ -112,6 +114,10 @@ public class FeignHeaderInterceptor implements RequestInterceptor, Ordered {
         }
     }
 
+    /**
+     * \u8fd4\u56de HTTP \u8bf7\u6c42\u5934\u8f6c\u53d1\u62e6\u622a\u5668\u6267\u884c\u4f18\u5148\u7ea7\u3002
+     * @return \u5f53\u524d\u62e6\u622a\u5668\u7684 Spring \u6392\u5e8f\u503c
+     */
     @Override
     public int getOrder() {
         return -100;

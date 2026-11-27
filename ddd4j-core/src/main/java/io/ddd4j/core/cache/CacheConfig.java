@@ -79,6 +79,10 @@ public final class CacheConfig {
      */
     private final transient Consumer<String> removalListener;
 
+    /**
+     * \u7528\u7ed9\u5b9a\u503c\u521d\u59cb\u5316 <code>CacheConfig</code> \u5b9e\u4f8b\u3002
+     * @param builder \u79fb\u9664\u76d1\u542c\u5668\uff08\u952e\u7ea7\u56de\u8c03\uff09
+     */
     private CacheConfig(Builder builder) {
         this.name = builder.name;
         this.maximumSize = builder.maximumSize;
@@ -115,46 +119,90 @@ public final class CacheConfig {
 
     // ==================== Getters ====================
 
+    /**
+     * \u83b7\u53d6\u7f13\u5b58\u540d\u79f0\u3002
+     * @return \u7f13\u5b58\u540d\u79f0
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * \u83b7\u53d6\u6700\u5927\u5bb9\u91cf\u3002
+     * @return \u6700\u5927\u5bb9\u91cf
+     */
     public long getMaximumSize() {
         return maximumSize;
     }
 
+    /**
+     * \u83b7\u53d6\u5199\u540e\u8fc7\u671f\u79d2\u6570\u3002
+     * @return \u5199\u540e\u8fc7\u671f\u79d2\u6570
+     */
     public long getExpireAfterWriteSeconds() {
         return expireAfterWriteSeconds;
     }
 
+    /**
+     * \u83b7\u53d6\u8bbf\u95ee\u540e\u8fc7\u671f\u79d2\u6570\u3002
+     * @return \u8bbf\u95ee\u540e\u8fc7\u671f\u79d2\u6570
+     */
     public long getExpireAfterAccessSeconds() {
         return expireAfterAccessSeconds;
     }
 
+    /**
+     * \u83b7\u53d6\u5199\u540e\u5237\u65b0\u79d2\u6570\u3002
+     * @return \u5199\u540e\u5237\u65b0\u79d2\u6570
+     */
     public long getRefreshAfterWriteSeconds() {
         return refreshAfterWriteSeconds;
     }
 
+    /**
+     * \u83b7\u53d6\u521d\u59cb\u5bb9\u91cf\u3002
+     * @return \u521d\u59cb\u5bb9\u91cf
+     */
     public int getInitialCapacity() {
         return initialCapacity;
     }
 
+    /**
+     * \u83b7\u53d6\u662f\u5426\u8bb0\u5f55\u7edf\u8ba1\u4fe1\u606f\u3002
+     * @return \u662f\u5426\u8bb0\u5f55\u7edf\u8ba1\u4fe1\u606f
+     */
     public boolean isRecordStats() {
         return recordStats;
     }
 
+    /**
+     * \u83b7\u53d6\u7f13\u5b58\u7c7b\u578b\u3002
+     * @return \u7f13\u5b58\u7c7b\u578b
+     */
     public CacheType getCacheType() {
         return cacheType;
     }
 
+    /**
+     * \u83b7\u53d6\u672c\u5730\u7f13\u5b58\u6700\u5927\u6761\u76ee\u6570\u3002
+     * @return \u672c\u5730\u7f13\u5b58\u6700\u5927\u6761\u76ee\u6570
+     */
     public int getLocalLimit() {
         return localLimit;
     }
 
+    /**
+     * \u83b7\u53d6\u662f\u5426\u540c\u6b65\u672c\u5730\u7f13\u5b58\u3002
+     * @return \u662f\u5426\u540c\u6b65\u672c\u5730\u7f13\u5b58
+     */
     public boolean isSyncLocal() {
         return syncLocal;
     }
 
+    /**
+     * \u83b7\u53d6\u79fb\u9664\u76d1\u542c\u5668\u3002
+     * @return \u79fb\u9664\u76d1\u542c\u5668
+     */
     public Consumer<String> getRemovalListener() {
         return removalListener;
     }
@@ -166,16 +214,27 @@ public final class CacheConfig {
      */
     public static final class Builder {
 
+        /** \u6784\u5efa\u540e\u7528\u4e8e\u6ce8\u518c\u7f13\u5b58\u7684\u540d\u79f0\u3002 */
         private final String name;
+        /** \u7f13\u5b58\u5141\u8bb8\u4fdd\u7559\u7684\u6700\u5927\u6761\u76ee\u6570\u3002 */
         private long maximumSize = DEFAULT_MAXIMUM_SIZE;
+        /** \u81ea\u6700\u540e\u4e00\u6b21\u5199\u5165\u8d77\u7684\u8fc7\u671f\u79d2\u6570\u3002 */
         private long expireAfterWriteSeconds = 0L;
+        /** \u81ea\u6700\u540e\u4e00\u6b21\u8bbf\u95ee\u8d77\u7684\u8fc7\u671f\u79d2\u6570\u3002 */
         private long expireAfterAccessSeconds = 0L;
+        /** \u81ea\u5199\u5165\u8d77\u5141\u8bb8\u81ea\u52a8\u5237\u65b0\u7f13\u5b58\u503c\u7684\u79d2\u6570\u3002 */
         private long refreshAfterWriteSeconds = 0L;
+        /** \u7f13\u5b58\u6784\u5efa\u540e\u9884\u7559\u7684\u521d\u59cb\u6761\u76ee\u5bb9\u91cf\u3002 */
         private int initialCapacity = 0;
+        /** \u662f\u5426\u542f\u7528\u547d\u4e2d\u3001\u52a0\u8f7d\u7b49\u7f13\u5b58\u7edf\u8ba1\u3002 */
         private boolean recordStats = false;
+        /** \u7531\u7f13\u5b58\u7ba1\u7406\u5668\u9009\u62e9\u7684\u7f13\u5b58\u5b9e\u73b0\u7c7b\u578b\u3002 */
         private CacheType cacheType = CacheType.LOCAL;
+        /** \u591a\u7ea7\u7f13\u5b58\u7684\u672c\u5730\u5c42\u5141\u8bb8\u4fdd\u7559\u7684\u6700\u5927\u6761\u76ee\u6570\u3002 */
         private int localLimit = 100;
+        /** \u662f\u5426\u5c06\u8fdc\u7aef\u66f4\u65b0\u540c\u6b65\u5230\u672c\u5730\u7f13\u5b58\u3002 */
         private boolean syncLocal = false;
+        /** \u6761\u76ee\u4ece\u7f13\u5b58\u4e2d\u79fb\u9664\u540e\u63a5\u6536\u901a\u77e5\u7684\u76d1\u542c\u5668\u3002 */
         private Consumer<String> removalListener = null;
 
         /**
@@ -210,7 +269,10 @@ public final class CacheConfig {
         }
 
         /**
-         * 设置最大容量。
+         * \u8bbe\u7f6e\u6700\u5927\u5bb9\u91cf\u3002
+         *
+         * @param maximumSize \u6700\u5927\u6761\u76ee\u6570
+         * @return \u5f53\u524d\u6784\u5efa\u5668\uff0c\u4f9b\u94fe\u5f0f\u914d\u7f6e
          */
         public Builder maximumSize(long maximumSize) {
             this.maximumSize = maximumSize;
@@ -218,7 +280,10 @@ public final class CacheConfig {
         }
 
         /**
-         * 设置写后过期时间（秒）。
+         * \u8bbe\u7f6e\u5199\u540e\u8fc7\u671f\u65f6\u95f4\uff08\u79d2\uff09\u3002
+         *
+         * @param seconds \u65f6\u957f\uff0c\u5355\u4f4d\u4e3a\u79d2\uff1b0 \u8868\u793a\u7981\u7528\u76f8\u5e94\u8fc7\u671f\u6216\u5237\u65b0
+         * @return \u5f53\u524d\u6784\u5efa\u5668\uff0c\u4f9b\u94fe\u5f0f\u914d\u7f6e
          */
         public Builder expireAfterWriteSeconds(long seconds) {
             this.expireAfterWriteSeconds = seconds;
@@ -226,7 +291,10 @@ public final class CacheConfig {
         }
 
         /**
-         * 设置访问后过期时间（秒）。
+         * \u8bbe\u7f6e\u8bbf\u95ee\u540e\u8fc7\u671f\u65f6\u95f4\uff08\u79d2\uff09\u3002
+         *
+         * @param seconds \u65f6\u957f\uff0c\u5355\u4f4d\u4e3a\u79d2\uff1b0 \u8868\u793a\u7981\u7528\u76f8\u5e94\u8fc7\u671f\u6216\u5237\u65b0
+         * @return \u5f53\u524d\u6784\u5efa\u5668\uff0c\u4f9b\u94fe\u5f0f\u914d\u7f6e
          */
         public Builder expireAfterAccessSeconds(long seconds) {
             this.expireAfterAccessSeconds = seconds;
@@ -234,7 +302,10 @@ public final class CacheConfig {
         }
 
         /**
-         * 设置写后刷新时间（秒）。
+         * \u8bbe\u7f6e\u5199\u540e\u5237\u65b0\u65f6\u95f4\uff08\u79d2\uff09\u3002
+         *
+         * @param seconds \u65f6\u957f\uff0c\u5355\u4f4d\u4e3a\u79d2\uff1b0 \u8868\u793a\u7981\u7528\u76f8\u5e94\u8fc7\u671f\u6216\u5237\u65b0
+         * @return \u5f53\u524d\u6784\u5efa\u5668\uff0c\u4f9b\u94fe\u5f0f\u914d\u7f6e
          */
         public Builder refreshAfterWriteSeconds(long seconds) {
             this.refreshAfterWriteSeconds = seconds;
@@ -242,7 +313,10 @@ public final class CacheConfig {
         }
 
         /**
-         * 设置初始容量。
+         * \u8bbe\u7f6e\u521d\u59cb\u5bb9\u91cf\u3002
+         *
+         * @param initialCapacity \u521d\u59cb\u5bb9\u91cf
+         * @return \u5f53\u524d\u6784\u5efa\u5668\uff0c\u4f9b\u94fe\u5f0f\u914d\u7f6e
          */
         public Builder initialCapacity(int initialCapacity) {
             this.initialCapacity = initialCapacity;
@@ -250,7 +324,10 @@ public final class CacheConfig {
         }
 
         /**
-         * 设置是否记录统计信息。
+         * \u8bbe\u7f6e\u662f\u5426\u8bb0\u5f55\u7edf\u8ba1\u4fe1\u606f\u3002
+         *
+         * @param recordStats \u662f\u5426\u8bb0\u5f55\u7edf\u8ba1\u4fe1\u606f
+         * @return \u5f53\u524d\u6784\u5efa\u5668\uff0c\u4f9b\u94fe\u5f0f\u914d\u7f6e
          */
         public Builder recordStats(boolean recordStats) {
             this.recordStats = recordStats;
@@ -258,7 +335,10 @@ public final class CacheConfig {
         }
 
         /**
-         * 设置缓存类型。
+         * \u8bbe\u7f6e\u7f13\u5b58\u7c7b\u578b\u3002
+         *
+         * @param cacheType \u7f13\u5b58\u7c7b\u578b
+         * @return \u5f53\u524d\u6784\u5efa\u5668\uff0c\u4f9b\u94fe\u5f0f\u914d\u7f6e
          */
         public Builder cacheType(CacheType cacheType) {
             this.cacheType = cacheType;
@@ -266,7 +346,10 @@ public final class CacheConfig {
         }
 
         /**
-         * 设置本地缓存限制（多级缓存时本地缓存最大条目数）。
+         * \u8bbe\u7f6e\u672c\u5730\u7f13\u5b58\u9650\u5236\uff08\u591a\u7ea7\u7f13\u5b58\u65f6\u672c\u5730\u7f13\u5b58\u6700\u5927\u6761\u76ee\u6570\uff09\u3002
+         *
+         * @param localLimit \u672c\u5730\u7f13\u5b58\u6700\u5927\u6761\u76ee\u6570
+         * @return \u5f53\u524d\u6784\u5efa\u5668\uff0c\u4f9b\u94fe\u5f0f\u914d\u7f6e
          */
         public Builder localLimit(int localLimit) {
             this.localLimit = localLimit;
@@ -274,7 +357,10 @@ public final class CacheConfig {
         }
 
         /**
-         * 设置是否同步本地缓存（多级缓存时远程变更是否广播同步本地）。
+         * \u8bbe\u7f6e\u662f\u5426\u540c\u6b65\u672c\u5730\u7f13\u5b58\uff08\u591a\u7ea7\u7f13\u5b58\u65f6\u8fdc\u7a0b\u53d8\u66f4\u662f\u5426\u5e7f\u64ad\u540c\u6b65\u672c\u5730\uff09\u3002
+         *
+         * @param syncLocal \u662f\u5426\u5e7f\u64ad\u540c\u6b65\u672c\u5730\u7f13\u5b58
+         * @return \u5f53\u524d\u6784\u5efa\u5668\uff0c\u4f9b\u94fe\u5f0f\u914d\u7f6e
          */
         public Builder syncLocal(boolean syncLocal) {
             this.syncLocal = syncLocal;
@@ -282,7 +368,10 @@ public final class CacheConfig {
         }
 
         /**
-         * 设置移除监听器。
+         * \u8bbe\u7f6e\u79fb\u9664\u76d1\u542c\u5668\u3002
+         *
+         * @param removalListener \u952e\u7ea7\u79fb\u9664\u76d1\u542c\u5668
+         * @return \u5f53\u524d\u6784\u5efa\u5668\uff0c\u4f9b\u94fe\u5f0f\u914d\u7f6e
          */
         public Builder removalListener(Consumer<String> removalListener) {
             this.removalListener = removalListener;

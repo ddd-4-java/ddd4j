@@ -69,6 +69,10 @@ public class SpringCommandBus implements CommandBus, SmartInitializingSingleton 
      */
     private final ApplicationContext applicationContext;
 
+    /**
+     * \u521b\u5efa\u901a\u8fc7 Spring \u4e0a\u4e0b\u6587\u67e5\u627e\u6267\u884c\u5668\u7684\u547d\u4ee4\u603b\u7ebf\u3002
+     * @param applicationContext Spring \u5e94\u7528\u4e0a\u4e0b\u6587
+     */
     public SpringCommandBus(ApplicationContext applicationContext) {
         Objects.requireNonNull(applicationContext, "applicationContext must not be null");
         this.applicationContext = applicationContext;

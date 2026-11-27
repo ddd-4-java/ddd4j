@@ -28,12 +28,14 @@ import static org.hamcrest.Matchers.hasSize;
 @io.quarkus.test.junit.TestProfile(io.ddd4j.sample.quarkus.satoken.GoodsStandaloneProfile.class)
 class GoodsQueryHttpContractTest {
 
+    /** \u8bf7\u6c42 <code>GET /api/goods/count</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\uff0c\u54cd\u5e94\u4e2d\u7684 <code>data</code> \u7b49\u4e8e <code>0</code>\u3002 */
     @Test
     void emptyCatalogHasZeroCount() {
         given().when().get("/api/goods/count")
                 .then().statusCode(200).body("data", equalTo(0));
     }
 
+    /** \u8bf7\u6c42 <code>GET /api/goods/list</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\u3002 */
     @Test
     void emptyCatalogHasEmptyList() {
         given().when().get("/api/goods/list")

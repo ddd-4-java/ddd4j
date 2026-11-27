@@ -82,6 +82,7 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
         return this;
     }
 
+    /** \u6309\u914d\u7f6e\u6ce8\u518c MyBatis \u4f1a\u8bdd\u548c ORM \u670d\u52a1\u7ed1\u5b9a\u3002 */
     @Override
     protected void configure() {
         for (Class<?> repositoryImpl : repositoryToMapper.keySet()) {
@@ -89,6 +90,10 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
         }
     }
 
+    /**
+     * \u5c06\u5df2\u6ce8\u518c Mapper \u6ce8\u5165\u5bf9\u5e94 Repository\u3002
+     * @param injector Guice \u6ce8\u5165\u5668
+     */
     @SuppressWarnings({"rawtypes", "unchecked"})
     public void initRepositories(Injector injector) {
         SqlSession sqlSession = injector.getInstance(SqlSession.class);
@@ -110,6 +115,10 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
         log.info("Repository mapper injection completed: {} repositories", repositoryToMapper.size());
     }
 
+    /**
+     * \u521b\u5efa\u5305\u542b\u5df2\u6ce8\u518c Mapper \u4e0e\u62e6\u622a\u5668\u7684\u4f1a\u8bdd\u5de5\u5382\u3002
+     * @return MyBatis \u4f1a\u8bdd\u5de5\u5382
+     */
     @Provides
     @Singleton
     public SqlSessionFactory sqlSessionFactory() {
@@ -132,6 +141,11 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
         return factory;
     }
 
+    /**
+     * \u4ece\u4f1a\u8bdd\u5de5\u5382\u521b\u5efa\u6309\u7ebf\u7a0b\u7ba1\u7406\u7684\u4f1a\u8bdd\u4ee3\u7406\u3002
+     * @param sqlSessionFactory MyBatis \u4f1a\u8bdd\u5de5\u5382
+     * @return MyBatis \u4f1a\u8bdd
+     */
     @Provides
     @Singleton
     public SqlSession sqlSession(SqlSessionFactory sqlSessionFactory) {

@@ -60,7 +60,9 @@ public class RabbitMQClient implements MQClient {
     private final RabbitMQProperties properties;
 
     /**
-     * 构造方法 1：注入原生 connection（runtime 自动装配用）。
+     * \u6784\u9020\u65b9\u6cd5 1\uff1a\u6ce8\u5165\u539f\u751f connection\uff08runtime \u81ea\u52a8\u88c5\u914d\u7528\uff09\u3002
+     *
+     * @param connection \u5df2\u521b\u5efa\u7684 RabbitMQ \u8fde\u63a5
      */
     public RabbitMQClient(Connection connection) {
         this.connectionRef.set(Objects.requireNonNull(connection, "RabbitMQ Connection is required"));
@@ -68,13 +70,20 @@ public class RabbitMQClient implements MQClient {
     }
 
     /**
-     * 构造方法 2：自行根据 properties 构造 connection（lazy）。
+     * \u6784\u9020\u65b9\u6cd5 2\uff1a\u81ea\u884c\u6839\u636e properties \u6784\u9020 connection\uff08lazy\uff09\u3002
+     *
+     * @param properties RabbitMQ \u8fde\u63a5\u914d\u7f6e
      */
     public RabbitMQClient(RabbitMQProperties properties) {
         this.connectionRef.set(null);
         this.properties = Objects.requireNonNull(properties, "RabbitMQ Properties is required");
     }
 
+    /**
+     * 返回此消息适配器在 DDD4J 中登记的实现名。
+     *
+     * @return 实际返回<code>"rabbit"</code>，供调用方取得当前值
+     */
     @Override
     public String impl() {
         return "rabbit";
@@ -82,6 +91,14 @@ public class RabbitMQClient implements MQClient {
 
     // ========================= 生产者 =========================
 
+    /**
+     * 准备消息生产者并返回可发布事件的入口。
+     *
+     * <p>RabbitMQ 实现调用 <code>connection().createChannel()</code>。</p>
+     *
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 接收待发布事件的函数
+     */
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         try {
@@ -115,6 +132,16 @@ public class RabbitMQClient implements MQClient {
 
     // ========================= 消费者 =========================
 
+    /**
+     * 为监听器建立消息消费所需的订阅和客户端资源。
+     *
+     * <p>RabbitMQ 实现调用 <code>connection()</code>。</p>
+     *
+     * @param listener 监听器定义
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 此实现返回<code>true</code>
+     * @throws Exception 当前框架、存储或底层客户端无法完成此操作时
+     */
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         Connection connection = connection();
@@ -218,7 +245,10 @@ public class RabbitMQClient implements MQClient {
     }
 
     /**
-     * 优先读取 ddd4j 标准消息 ID，兼容旧键，最后回退到 AMQP 原生 messageId。
+     * \u4f18\u5148\u8bfb\u53d6 ddd4j \u6807\u51c6\u6d88\u606f ID\uff0c\u517c\u5bb9\u65e7\u952e\uff0c\u6700\u540e\u56de\u9000\u5230 AMQP \u539f\u751f messageId\u3002
+     *
+     * @param properties \u6536\u5230\u7684 AMQP \u6d88\u606f\u5c5e\u6027
+     * @return AMQP \u6d88\u606f\u5c5e\u6027\u643a\u5e26\u7684\u6807\u8bc6
      */
     static String messageId(AMQP.BasicProperties properties) {
         Map<String, Object> headers = properties.getHeaders();
@@ -236,6 +266,10 @@ public class RabbitMQClient implements MQClient {
 
     // ========================= 连接管理（双构造共享的最小辅助）=========================
 
+    /**
+     * \u53d6\u5f97\u5f53\u524d\u9002\u914d\u5668\u4f7f\u7528\u7684\u539f\u751f\u8fde\u63a5\u6216\u5ba2\u6237\u7aef\uff0c\u7f3a\u5c11\u5b9e\u4f8b\u65f6\u5efa\u7acb\u8fde\u63a5\u3002
+     * @return \u4f9b\u53d1\u5e03\u6216\u6d88\u8d39\u64cd\u4f5c\u4f7f\u7528\u7684\u539f\u751f\u8fde\u63a5\u6216\u5ba2\u6237\u7aef
+     */
     private Connection connection() {
         Connection c = connectionRef.get();
         if (Objects.isNull(c)) {

@@ -32,6 +32,7 @@ import java.util.Objects;
 @Getter
 public class Permission extends AggregateRoot<String> {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -112,6 +113,10 @@ public class Permission extends AggregateRoot<String> {
         this.status = Status.DISABLED;
     }
 
+    /**
+     * \u8bfb\u53d6\u6743\u9650 ID\uff08\u4e0e permissionCode \u4e00\u81f4\uff0c\u7b80\u5316\u793a\u4f8b\uff09\u3002
+     * @return \u6743\u9650 ID\uff08\u4e0e permissionCode \u4e00\u81f4\uff0c\u7b80\u5316\u793a\u4f8b\uff09
+     */
     @Override
     public String id() {
         return permissionId;

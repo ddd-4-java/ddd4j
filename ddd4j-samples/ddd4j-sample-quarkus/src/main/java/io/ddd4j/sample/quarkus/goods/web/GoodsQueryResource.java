@@ -62,10 +62,13 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class GoodsQueryResource extends TenantAwareResource {
 
+    /** \u5904\u7406\u5546\u54c1\u521b\u5efa\u3001\u7ef4\u62a4\u548c\u67e5\u8be2\u64cd\u4f5c\u7684\u5e94\u7528\u670d\u52a1\u3002 */
     private final GoodsApplicationService applicationService;
 
     /**
-     * @param applicationService 商品应用服务
+     * 初始化 <code>GoodsQueryResource</code> 使用的 <code>applicationService</code>。
+     *
+     * @param applicationService \u5546\u54c1\u5e94\u7528\u670d\u52a1
      */
     @Inject
     public GoodsQueryResource(GoodsApplicationService applicationService) {

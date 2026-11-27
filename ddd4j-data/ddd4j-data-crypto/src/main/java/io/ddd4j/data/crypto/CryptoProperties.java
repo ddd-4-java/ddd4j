@@ -22,11 +22,7 @@ public class CryptoProperties {
      */
     public static final String PREFIX = "crypto";
 
-    /**
-     * 加密解密方式，default:默认的行为，internal:内部加密，flksec:弗兰科信息
-     *
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
-     */
+    /** \u52a0\u5bc6\u89e3\u5bc6\u65b9\u5f0f\uff0cdefault:\u9ed8\u8ba4\u7684\u884c\u4e3a\uff0cinternal:\u5185\u90e8\u52a0\u5bc6\uff0cflksec:\u5f17\u5170\u79d1\u4fe1\u606f */
     private CryptoType type = CryptoType.INTERNAL;
 
     /**
@@ -70,6 +66,7 @@ public class CryptoProperties {
      * 弗兰科信息加密服务地址
      */
     private String flksecAddress;
+    /** FLKSEC \u5bc6\u7801\u670d\u52a1\u7684\u8fde\u63a5\u7aef\u53e3\u3002 */
     private String flksecPort;
 
 }

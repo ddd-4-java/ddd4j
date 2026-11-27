@@ -26,13 +26,21 @@ import java.util.*;
 @SuppressWarnings("unchecked")
 public class InMemorySubject implements Subject {
 
+    /** Token \u5230\u8eab\u4efd\u4e3b\u4f53\u7684\u7f13\u5b58\u4e1a\u52a1\u540d\u3002 */
     public static final String PRINCIPALS_BY_TOKEN_CACHE = "ddd4j:subject:principals-by-token";
+    /** \u767b\u5f55\u6807\u8bc6\u5230\u8eab\u4efd\u4e3b\u4f53\u7684\u7f13\u5b58\u4e1a\u52a1\u540d\u3002 */
     public static final String PRINCIPALS_BY_LOGIN_ID_CACHE = "ddd4j:subject:principals-by-login-id";
+    /** \u767b\u5f55\u6807\u8bc6\u5230 Token \u7684\u7f13\u5b58\u4e1a\u52a1\u540d\u3002 */
     public static final String TOKEN_BY_LOGIN_ID_CACHE = "ddd4j:subject:token-by-login-id";
+    /** \u8d26\u53f7\u7981\u7528\u622a\u6b62\u65f6\u95f4\u7684\u7f13\u5b58\u4e1a\u52a1\u540d\u3002 */
     public static final String DISABLED_UNTIL_CACHE = "ddd4j:subject:disabled-until";
+    /** \u5f53\u524d Token \u7684\u7f13\u5b58\u4e1a\u52a1\u540d\u3002 */
     public static final String CURRENT_TOKEN_CACHE = "ddd4j:subject:current-token";
+    /** \u5728\u7981\u7528\u7f13\u5b58\u4e2d\u8868\u793a\u8d26\u53f7\u6c38\u4e45\u7981\u7528\u7684\u6807\u8bb0\u503c\u3002 */
     private static final long PERMANENT_DISABLE = -1L;
+    /** \u521b\u5efa\u767b\u5f55\u72b6\u6001\u7f13\u5b58\u65f6\u4f7f\u7528\u7684\u6c38\u4e0d\u8fc7\u671f\u914d\u7f6e\u3002 */
     private static final long NO_EXPIRE_SECONDS = 0L;
+    /** \u6d88\u8d39\u767b\u5f55\u3001\u9000\u51fa\u548c\u4f1a\u8bdd\u53d8\u66f4\u7b49\u8ba4\u8bc1\u4e8b\u4ef6\u7684\u56de\u8c03\u3002 */
     private final java.util.function.Consumer<Object> eventPublisher;
 
     /**
@@ -63,6 +71,14 @@ public class InMemorySubject implements Subject {
         clearCurrentToken();
     }
 
+    /**
+     * 读取当前会话的认证主体。
+     *
+     * <p>此实现调用 <code>currentToken()</code>。</p>
+     *
+     * @param <T> AuthPrincipal 子类型
+     * @return 当前会话绑定的主体
+     */
     @Override
     public <T extends AuthPrincipal> T getPrincipal() {
         String token = currentToken();
@@ -72,16 +88,42 @@ public class InMemorySubject implements Subject {
         return (T) principalByToken(token);
     }
 
+    /**
+     * 查询指定登录标识关联的认证主体。
+     *
+     * <p>此实现调用 <code>principalByLoginId(loginId)</code>。</p>
+     *
+     * @param <T> AuthPrincipal 子类型
+     * @param loginId 登录账号 ID
+     * @return 给定登录标识关联的主体
+     */
     @Override
     public <T extends AuthPrincipal> T getPrincipalByLoginId(Object loginId) {
         return (T) principalByLoginId(loginId);
     }
 
+    /**
+     * 查询指定令牌关联的认证主体。
+     *
+     * <p>此实现调用 <code>principalByToken(tokenValue)</code>。</p>
+     *
+     * @param <T> AuthPrincipal 子类型
+     * @param tokenValue 会话凭证（Token / SessionId）
+     * @return 给定令牌关联的主体
+     */
     @Override
     public <T extends AuthPrincipal> T getPrincipalByToken(String tokenValue) {
         return (T) principalByToken(tokenValue);
     }
 
+    /**
+     * 以传入的凭据启动认证会话。
+     *
+     * <p>此实现调用 <code>validate(request)</code>。</p>
+     *
+     * @param request 登录请求（loginId + 密码 + 扩展信息 + 有效期）
+     * @return 实际返回<code>token</code>
+     */
     @Override
     public String login(AuthRequest request) {
         try {
@@ -100,6 +142,11 @@ public class InMemorySubject implements Subject {
         }
     }
 
+    /**
+     * 结束由当前调用指定的认证会话。
+     *
+     * <p>此实现调用 <code>currentToken()</code>。</p>
+     */
     @Override
     public void logout() {
         String token = currentToken();
@@ -115,6 +162,13 @@ public class InMemorySubject implements Subject {
         clearCurrentToken();
     }
 
+    /**
+     * 结束由当前调用指定的认证会话。
+     *
+     * <p>此实现调用 <code>cacheKey(loginId)</code>。</p>
+     *
+     * @param loginId 账号 ID
+     */
     @Override
     public void logout(Object loginId) {
         String loginIdKey = cacheKey(loginId);
@@ -129,11 +183,25 @@ public class InMemorySubject implements Subject {
         }
     }
 
+    /**
+     * 强制结束指定身份关联的登录会话。
+     *
+     * <p>此实现调用 <code>logout(loginId)</code>。</p>
+     *
+     * @param loginId 账号 ID
+     */
     @Override
     public void kickout(Object loginId) {
         logout(loginId);
     }
 
+    /**
+     * 刷新当前实现所持有的数据或状态。
+     *
+     * <p>此实现调用 <code>getPrincipal()</code>。</p>
+     *
+     * @return 根据执行路径返回<code>null</code>、<code>newToken</code>
+     */
     @Override
     public String refresh() {
         AuthPrincipal principal = getPrincipal();
@@ -149,31 +217,82 @@ public class InMemorySubject implements Subject {
         return newToken;
     }
 
+    /**
+     * 校验当前调用传入的数据或凭据。
+     *
+     * <p>此实现调用 <code>getPrincipalByToken(token)</code>。</p>
+     *
+     * @param <T> AuthPrincipal 子类型
+     * @param token 会话凭证
+     * @return 实际返回<code>getPrincipalByToken(token)</code>
+     */
     @Override
     public <T extends AuthPrincipal> T verify(String token) {
         return getPrincipalByToken(token);
     }
 
+    /**
+     * 检查身份是否拥有指定权限。
+     *
+     * <p>此实现调用 <code>hasPermission(getPrincipal(), permission)</code>。</p>
+     *
+     * @param permission 权限标识（如 {@code "order:create"}）
+     * @return 请求的权限被授予时为真
+     */
     @Override
     public boolean isPermitted(String permission) {
         return hasPermission(getPrincipal(), permission);
     }
 
+    /**
+     * 检查身份是否拥有指定权限。
+     *
+     * <p>此实现调用 <code>hasPermission(getPrincipalByLoginId(loginId), permission)</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @param permission 权限标识
+     * @return 请求的权限被授予时为真
+     */
     @Override
     public boolean isPermitted(Object loginId, String permission) {
         return hasPermission(getPrincipalByLoginId(loginId), permission);
     }
 
+    /**
+     * 检查身份是否拥有指定权限。
+     *
+     * <p>此实现调用 <code>permissionChecks(getPrincipal(), permissions)</code>。</p>
+     *
+     * @param permissions 权限标识列表
+     * @return 请求的权限被授予时为真
+     */
     @Override
     public boolean[] isPermitted(String... permissions) {
         return permissionChecks(getPrincipal(), permissions);
     }
 
+    /**
+     * 检查身份是否拥有指定权限。
+     *
+     * <p>此实现调用 <code>permissionChecks(getPrincipalByLoginId(loginId), permissions)</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @param permissions 权限标识列表
+     * @return 请求的权限被授予时为真
+     */
     @Override
     public boolean[] isPermitted(Object loginId, String... permissions) {
         return permissionChecks(getPrincipalByLoginId(loginId), permissions);
     }
 
+    /**
+     * 检查身份是否具有给定权限中的任意一项。
+     *
+     * <p>此实现调用 <code>isPermitted(permissions)</code>。</p>
+     *
+     * @param permissions 权限标识列表
+     * @return 至少有一项请求权限被授予时为真
+     */
     @Override
     public boolean isPermittedAny(String... permissions) {
         for (boolean permitted : isPermitted(permissions)) {
@@ -184,6 +303,15 @@ public class InMemorySubject implements Subject {
         return false;
     }
 
+    /**
+     * 检查身份是否具有给定权限中的任意一项。
+     *
+     * <p>此实现调用 <code>isPermitted(loginId, permissions)</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @param permissions 权限标识列表
+     * @return 至少有一项请求权限被授予时为真
+     */
     @Override
     public boolean isPermittedAny(Object loginId, String... permissions) {
         for (boolean permitted : isPermitted(loginId, permissions)) {
@@ -194,36 +322,89 @@ public class InMemorySubject implements Subject {
         return false;
     }
 
+    /**
+     * 检查身份是否具有全部给定权限。
+     *
+     * <p>此实现调用 <code>allTrue(isPermitted(permissions))</code>。</p>
+     *
+     * @param permissions 权限标识列表
+     * @return 所有请求权限都被授予时为真
+     */
     @Override
     public boolean isPermittedAll(String... permissions) {
         return allTrue(isPermitted(permissions));
     }
 
+    /**
+     * 检查身份是否具有全部给定权限。
+     *
+     * <p>此实现调用 <code>allTrue(isPermitted(loginId, permissions))</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @param permissions 权限标识列表
+     * @return 所有请求权限都被授予时为真
+     */
     @Override
     public boolean isPermittedAll(Object loginId, String... permissions) {
         return allTrue(isPermitted(loginId, permissions));
     }
 
+    /**
+     * \u68c0\u67e5\u7ed9\u5b9a\u6807\u8bc6\u662f\u5426\u5339\u914d\u4e3b\u4f53\u7684\u89d2\u8272\u7f16\u7801\u6216\u7f16\u53f7\u3002
+     * @param roleIdentifier \u5f85\u68c0\u67e5\u7684\u89d2\u8272\u6807\u8bc6
+     * @return \u5b58\u5728\u5339\u914d\u89d2\u8272\u65f6\u8fd4\u56de true
+     */
     @Override
     public boolean hasRole(String roleIdentifier) {
         return hasRole(getPrincipal(), roleIdentifier);
     }
 
+    /**
+     * \u68c0\u67e5\u7ed9\u5b9a\u6807\u8bc6\u662f\u5426\u5339\u914d\u4e3b\u4f53\u7684\u89d2\u8272\u7f16\u7801\u6216\u7f16\u53f7\u3002
+     * @param loginId \u767b\u5f55\u6807\u8bc6
+     * @param roleIdentifier \u5f85\u68c0\u67e5\u7684\u89d2\u8272\u6807\u8bc6
+     * @return \u5b58\u5728\u5339\u914d\u89d2\u8272\u65f6\u8fd4\u56de true
+     */
     @Override
     public boolean hasRole(Object loginId, String roleIdentifier) {
         return hasRole(getPrincipalByLoginId(loginId), roleIdentifier);
     }
 
+    /**
+     * 按输入顺序逐项判断身份的角色归属。
+     *
+     * <p>此实现调用 <code>roleChecks(getPrincipal(), roleIdentifiers)</code>。</p>
+     *
+     * @param roleIdentifiers 角色标识列表
+     * @return 实际返回<code>roleChecks(getPrincipal(), roleIdentifiers)</code>
+     */
     @Override
     public boolean[] hasRoles(String... roleIdentifiers) {
         return roleChecks(getPrincipal(), roleIdentifiers);
     }
 
+    /**
+     * 按输入顺序逐项判断身份的角色归属。
+     *
+     * <p>此实现调用 <code>roleChecks(getPrincipalByLoginId(loginId), roleIdentifiers)</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @param roleIdentifiers 角色标识列表
+     * @return 实际返回<code>roleChecks(getPrincipalByLoginId(loginId), roleIdentifiers)</code>
+     */
     @Override
     public boolean[] hasRoles(Object loginId, String... roleIdentifiers) {
         return roleChecks(getPrincipalByLoginId(loginId), roleIdentifiers);
     }
 
+    /**
+     * 检查身份是否具有给定角色中的任意一个。
+     *
+     * <p>此实现调用 <code>hasRoles(roleIdentifiers)</code>。</p>
+     *
+     * @param roleIdentifiers 角色标识列表
+     * @return 至少具有一个指定角色时为真
+     */
     @Override
     public boolean hasAnyRole(String... roleIdentifiers) {
         for (boolean hasRole : hasRoles(roleIdentifiers)) {
@@ -234,6 +415,15 @@ public class InMemorySubject implements Subject {
         return false;
     }
 
+    /**
+     * 检查身份是否具有给定角色中的任意一个。
+     *
+     * <p>此实现调用 <code>hasRoles(loginId, roleIdentifiers)</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @param roleIdentifiers 角色标识列表
+     * @return 至少具有一个指定角色时为真
+     */
     @Override
     public boolean hasAnyRole(Object loginId, String... roleIdentifiers) {
         for (boolean hasRole : hasRoles(loginId, roleIdentifiers)) {
@@ -244,49 +434,119 @@ public class InMemorySubject implements Subject {
         return false;
     }
 
+    /**
+     * 检查身份是否具有全部给定角色。
+     *
+     * <p>此实现调用 <code>allTrue(hasRoles(roleIdentifiers))</code>。</p>
+     *
+     * @param roleIdentifiers 角色标识列表
+     * @return 具有全部指定角色时为真
+     */
     @Override
     public boolean hasAllRole(String... roleIdentifiers) {
         return allTrue(hasRoles(roleIdentifiers));
     }
 
+    /**
+     * 检查身份是否具有全部给定角色。
+     *
+     * <p>此实现调用 <code>allTrue(hasRoles(loginId, roleIdentifiers))</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @param roleIdentifiers 角色标识列表
+     * @return 具有全部指定角色时为真
+     */
     @Override
     public boolean hasAllRole(Object loginId, String... roleIdentifiers) {
         return allTrue(hasRoles(loginId, roleIdentifiers));
     }
 
+    /**
+     * 检查当前会话是否已经认证。
+     *
+     * <p>此实现调用 <code>getPrincipal()</code>。</p>
+     *
+     * @return 当前会话通过身份认证时为真
+     */
     @Override
     public boolean isAuthenticated() {
         return Objects.nonNull(getPrincipal());
     }
 
+    /**
+     * 检查当前会话是否已经认证。
+     *
+     * <p>此实现调用 <code>principalByLoginId(loginId)</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @return 当前会话通过身份认证时为真
+     */
     @Override
     public boolean isAuthenticated(Object loginId) {
         return Objects.nonNull(principalByLoginId(loginId));
     }
 
+    /**
+     * 判断当前身份是否由记住登录状态恢复。
+     *
+     * @return 此实现返回<code>false</code>
+     */
     @Override
     public boolean isRemembered() {
         return false;
     }
 
+    /**
+     * 检查当前认证实现是否将给定设备识别为受信设备。
+     *
+     * <p>此实现调用 <code>getPrincipal()</code>。</p>
+     *
+     * @param deviceId 设备标识
+     * @return 实际返回<code>Objects.nonNull(principal) &amp;&amp; Objects.equals(principal.getDeviceId(), deviceId)</code>
+     */
     @Override
     public boolean isTrustDeviceId(String deviceId) {
         AuthPrincipal principal = getPrincipal();
         return Objects.nonNull(principal) && Objects.equals(principal.getDeviceId(), deviceId);
     }
 
+    /**
+     * 检查当前认证实现是否将给定设备识别为受信设备。
+     *
+     * <p>此实现调用 <code>getPrincipalByLoginId(userId)</code>。</p>
+     *
+     * @param userId 用户 ID
+     * @param deviceId 设备标识
+     * @return 实际返回<code>Objects.nonNull(principal) &amp;&amp; Objects.equals(principal.getDeviceId(), deviceId)</code>
+     */
     @Override
     public boolean isTrustDeviceId(Object userId, String deviceId) {
         AuthPrincipal principal = getPrincipalByLoginId(userId);
         return Objects.nonNull(principal) && Objects.equals(principal.getDeviceId(), deviceId);
     }
 
+    /**
+     * 封禁账号，被封禁的账号在封禁期内无法登录。
+     *
+     * <p>此实现调用 <code>Instant.now().plusSeconds(timeout).getEpochSecond()</code>。</p>
+     *
+     * @param loginId 账号 ID
+     * @param timeout 封禁时长（秒），{@code -1} 代表永久封禁
+     */
     @Override
     public void disable(Object loginId, long timeout) {
         long disabledUntil = timeout < 0 ? PERMANENT_DISABLE : Instant.now().plusSeconds(timeout).getEpochSecond();
         CacheKit.put(DISABLED_UNTIL_CACHE, cacheKey(loginId), disabledUntil);
     }
 
+    /**
+     * 判断当前限制是否禁止指定身份执行相应操作。
+     *
+     * <p>此实现调用 <code>CacheKit.get(DISABLED_UNTIL_CACHE, cacheKey(loginId))</code>。</p>
+     *
+     * @param loginId 账号 ID
+     * @return 根据执行路径返回<code>false</code>、<code>true</code>、<code>disabled</code>
+     */
     @Override
     public boolean isDisabled(Object loginId) {
         Long disabledUntil = CacheKit.get(DISABLED_UNTIL_CACHE, cacheKey(loginId));
@@ -303,11 +563,19 @@ public class InMemorySubject implements Subject {
         return disabled;
     }
 
+    /**
+     * 解除指定身份的禁用限制。
+     *
+     * <p>此实现调用 <code>CacheKit.invalidate(DISABLED_UNTIL_CACHE, cacheKey(loginId))</code>。</p>
+     *
+     * @param loginId 账号 ID
+     */
     @Override
     public void untieDisable(Object loginId) {
         CacheKit.invalidate(DISABLED_UNTIL_CACHE, cacheKey(loginId));
     }
 
+    /** \u786e\u4fdd\u4e3b\u4f53\u3001\u4ee4\u724c\u3001\u8d26\u53f7\u7981\u7528\u72b6\u6001\u548c\u5f53\u524d\u7ebf\u7a0b\u4f1a\u8bdd\u4f7f\u7528\u7684\u7f13\u5b58\u5747\u5df2\u6ce8\u518c\u3002 */
     private void ensureCaches() {
         ensureCache(PRINCIPALS_BY_TOKEN_CACHE);
         ensureCache(PRINCIPALS_BY_LOGIN_ID_CACHE);
@@ -316,12 +584,21 @@ public class InMemorySubject implements Subject {
         ensureCache(CURRENT_TOKEN_CACHE);
     }
 
+    /**
+     * \u5f53\u6307\u5b9a\u7f13\u5b58\u5c1a\u672a\u6ce8\u518c\u65f6\u521b\u5efa\u4e00\u4e2a\u6c38\u4e0d\u8fc7\u671f\u7684\u672c\u5730\u7f13\u5b58\u3002
+     * @param cacheName \u7f13\u5b58\u6ce8\u518c\u540d\u79f0
+     */
     private void ensureCache(String cacheName) {
         if (Objects.isNull(CacheKit.getCache(cacheName))) {
             CacheKit.build(cacheName, NO_EXPIRE_SECONDS);
         }
     }
 
+    /**
+     * \u6309\u4ee4\u724c\u8bfb\u53d6\u4e3b\u4f53\uff0c\u7a7a\u767d\u4ee4\u724c\u76f4\u63a5\u89c6\u4e3a\u7f3a\u5931\u3002
+     * @param token \u767b\u5f55\u4ee4\u724c
+     * @return \u8ba4\u8bc1\u4e3b\u4f53\uff0c\u627e\u4e0d\u5230\u65f6\u8fd4\u56de\u7a7a
+     */
     private AuthPrincipal principalByToken(String token) {
         if (StrKit.isBlank(token)) {
             return null;
@@ -329,6 +606,11 @@ public class InMemorySubject implements Subject {
         return CacheKit.get(PRINCIPALS_BY_TOKEN_CACHE, token);
     }
 
+    /**
+     * \u6309\u767b\u5f55\u6807\u8bc6\u8bfb\u53d6\u5df2\u7f13\u5b58\u7684\u8ba4\u8bc1\u4e3b\u4f53\u3002
+     * @param loginId \u767b\u5f55\u6807\u8bc6
+     * @return \u8ba4\u8bc1\u4e3b\u4f53\uff0c\u6807\u8bc6\u4e3a\u7a7a\u6216\u67e5\u4e0d\u5230\u65f6\u8fd4\u56de\u7a7a
+     */
     private AuthPrincipal principalByLoginId(Object loginId) {
         if (Objects.isNull(loginId)) {
             return null;
@@ -336,26 +618,50 @@ public class InMemorySubject implements Subject {
         return CacheKit.get(PRINCIPALS_BY_LOGIN_ID_CACHE, cacheKey(loginId));
     }
 
+    /**
+     * \u5c06\u975e\u7a7a\u767b\u5f55\u6807\u8bc6\u8f6c\u6362\u4e3a\u7f13\u5b58\u952e\u3002
+     * @param key \u7f13\u5b58\u952e
+     * @return \u767b\u5f55\u6807\u8bc6\u7684\u5b57\u7b26\u4e32\u5f62\u5f0f
+     * @throws NullPointerException \u767b\u5f55\u6807\u8bc6\u4e3a\u7a7a
+     */
     private String cacheKey(Object key) {
         return String.valueOf(Objects.requireNonNull(key, "cache key must not be null"));
     }
 
+    /**
+     * \u8bfb\u53d6\u4e0e\u5f53\u524d\u7ebf\u7a0b\u7ed1\u5b9a\u7684\u767b\u5f55\u4ee4\u724c\u3002
+     * @return \u5f53\u524d\u7ebf\u7a0b\u7684\u4ee4\u724c\uff0c\u6ca1\u6709\u7ed1\u5b9a\u65f6\u8fd4\u56de\u7a7a
+     */
     private String currentToken() {
         return CacheKit.get(CURRENT_TOKEN_CACHE, currentTokenKey());
     }
 
+    /**
+     * \u5728\u5f53\u524d\u7ebf\u7a0b\u5bf9\u5e94\u7684\u4f1a\u8bdd\u952e\u4e0b\u4fdd\u5b58\u767b\u5f55\u4ee4\u724c\u3002
+     * @param token \u767b\u5f55\u4ee4\u724c
+     */
     private void setCurrentToken(String token) {
         CacheKit.put(CURRENT_TOKEN_CACHE, currentTokenKey(), token);
     }
 
+    /** \u6e05\u9664\u5f53\u524d\u7ebf\u7a0b\u5bf9\u5e94\u7684\u4ee4\u724c\u7ed1\u5b9a\u3002 */
     private void clearCurrentToken() {
         CacheKit.invalidate(CURRENT_TOKEN_CACHE, currentTokenKey());
     }
 
+    /**
+     * \u7528\u7ebf\u7a0b\u7f16\u53f7\u751f\u6210\u5f53\u524d\u7ebf\u7a0b\u7684\u4ee4\u724c\u7f13\u5b58\u952e\u3002
+     * @return \u5e26\u7ebf\u7a0b\u524d\u7f00\u7684\u4ee4\u724c\u7f13\u5b58\u952e
+     */
     private String currentTokenKey() {
         return "thread:" + Thread.currentThread().getId();
     }
 
+    /**
+     * \u68c0\u67e5\u767b\u5f55\u6807\u8bc6\u3001\u8d26\u53f7\u7981\u7528\u72b6\u6001\u548c\u793a\u4f8b\u767b\u5f55\u573a\u666f\u7684\u5fc5\u586b\u4fe1\u606f\u3002
+     * @param request \u767b\u5f55\u8bf7\u6c42
+     * @throws IllegalArgumentException \u8bf7\u6c42\u7f3a\u5c11\u767b\u5f55\u6807\u8bc6\u3001\u8d26\u53f7\u88ab\u7981\u7528\u6216\u767b\u5f55\u573a\u666f\u6821\u9a8c\u5931\u8d25
+     */
     private void validate(AuthRequest request) {
         if (Objects.isNull(request) || Objects.isNull(request.getLoginId())) {
             throw new IllegalArgumentException("loginId must not be null");
@@ -372,6 +678,11 @@ public class InMemorySubject implements Subject {
         }
     }
 
+    /**
+     * \u8865\u9f50\u4e3b\u4f53\u6807\u8bc6\u548c\u8bbe\u5907\u7c7b\u578b\uff0c\u5e76\u5c06\u767b\u5f55\u9644\u52a0\u4fe1\u606f\u5199\u5165\u4e3b\u4f53\u8d44\u6599\u3002
+     * @param request \u767b\u5f55\u8bf7\u6c42
+     * @return \u5df2\u8865\u9f50\u4fe1\u606f\u7684\u8ba4\u8bc1\u4e3b\u4f53
+     */
     private AuthPrincipal normalizePrincipal(AuthRequest request) {
         AuthPrincipal principal = request.getPrincipal();
         if (Objects.isNull(principal)) {
@@ -391,11 +702,22 @@ public class InMemorySubject implements Subject {
         return principal;
     }
 
+    /**
+     * \u4e3a\u672c\u6b21\u767b\u5f55\u751f\u6210\u5305\u542b\u8ba4\u8bc1\u57df\u548c\u968f\u673a UUID \u7684\u4ee4\u724c\u3002
+     * @param request \u767b\u5f55\u8bf7\u6c42
+     * @return \u65b0\u767b\u5f55\u4ee4\u724c
+     */
     private String createToken(AuthRequest request) {
         String realm = StrKit.isBlank(request.getRealm()) ? "default" : request.getRealm();
         return realm + ":" + UUID.randomUUID();
     }
 
+    /**
+     * \u68c0\u67e5\u4e3b\u4f53\u5305\u542b\u7ed9\u5b9a\u7684\u975e\u7a7a\u767d\u6743\u9650\u6807\u8bc6\u3002
+     * @param principal \u5f53\u524d\u8ba4\u8bc1\u4e3b\u4f53
+     * @param permission \u5f85\u68c0\u67e5\u7684\u6743\u9650\u6807\u8bc6
+     * @return \u5b58\u5728\u8be5\u6743\u9650\u65f6\u8fd4\u56de true
+     */
     private boolean hasPermission(AuthPrincipal principal, String permission) {
         if (Objects.isNull(principal) || StrKit.isBlank(permission)) {
             return false;
@@ -404,6 +726,12 @@ public class InMemorySubject implements Subject {
         return Objects.nonNull(permissions) && permissions.contains(permission);
     }
 
+    /**
+     * \u9010\u4e2a\u68c0\u67e5\u6743\u9650\uff0c\u4fdd\u6301\u8f93\u5165\u987a\u5e8f\u3002
+     * @param principal \u5f53\u524d\u8ba4\u8bc1\u4e3b\u4f53
+     * @param permissions \u5f85\u68c0\u67e5\u7684\u6743\u9650\u6807\u8bc6\u5e8f\u5217
+     * @return \u6743\u9650\u68c0\u67e5\u7ed3\u679c\uff0c\u672a\u63d0\u4f9b\u6743\u9650\u65f6\u8fd4\u56de\u7a7a\u6570\u7ec4
+     */
     private boolean[] permissionChecks(AuthPrincipal principal, String... permissions) {
         if (Objects.isNull(permissions) || permissions.length == 0) {
             return new boolean[0];
@@ -415,6 +743,12 @@ public class InMemorySubject implements Subject {
         return result;
     }
 
+    /**
+     * \u68c0\u67e5\u7ed9\u5b9a\u6807\u8bc6\u662f\u5426\u5339\u914d\u4e3b\u4f53\u7684\u89d2\u8272\u7f16\u7801\u6216\u7f16\u53f7\u3002
+     * @param principal \u5f53\u524d\u8ba4\u8bc1\u4e3b\u4f53
+     * @param roleIdentifier \u5f85\u68c0\u67e5\u7684\u89d2\u8272\u6807\u8bc6
+     * @return \u5b58\u5728\u5339\u914d\u89d2\u8272\u65f6\u8fd4\u56de true
+     */
     private boolean hasRole(AuthPrincipal principal, String roleIdentifier) {
         if (Objects.isNull(principal) || StrKit.isBlank(roleIdentifier)) {
             return false;
@@ -422,6 +756,12 @@ public class InMemorySubject implements Subject {
         return roleIdentifiers(principal).contains(roleIdentifier);
     }
 
+    /**
+     * \u9010\u4e2a\u68c0\u67e5\u89d2\u8272\uff0c\u4fdd\u6301\u8f93\u5165\u987a\u5e8f\u3002
+     * @param principal \u5f53\u524d\u8ba4\u8bc1\u4e3b\u4f53
+     * @param roleIdentifiers \u5f85\u68c0\u67e5\u7684\u89d2\u8272\u6807\u8bc6\u5e8f\u5217
+     * @return \u89d2\u8272\u68c0\u67e5\u7ed3\u679c\uff0c\u672a\u63d0\u4f9b\u89d2\u8272\u65f6\u8fd4\u56de\u7a7a\u6570\u7ec4
+     */
     private boolean[] roleChecks(AuthPrincipal principal, String... roleIdentifiers) {
         if (Objects.isNull(roleIdentifiers) || roleIdentifiers.length == 0) {
             return new boolean[0];
@@ -433,6 +773,11 @@ public class InMemorySubject implements Subject {
         return result;
     }
 
+    /**
+     * \u6c47\u603b\u4e3b\u4f53\u7684\u4e3b\u89d2\u8272\u548c\u5176\u4ed6\u89d2\u8272\u7684\u7f16\u7801\u4e0e\u7f16\u53f7\u3002
+     * @param principal \u5f53\u524d\u8ba4\u8bc1\u4e3b\u4f53
+     * @return \u7528\u4e8e\u89d2\u8272\u5339\u914d\u7684\u5b57\u7b26\u4e32\u6807\u8bc6\u5217\u8868
+     */
     private List<String> roleIdentifiers(AuthPrincipal principal) {
         if (Objects.isNull(principal)) {
             return Collections.emptyList();
@@ -460,6 +805,11 @@ public class InMemorySubject implements Subject {
         return roles;
     }
 
+    /**
+     * \u8981\u6c42\u81f3\u5c11\u5b58\u5728\u4e00\u4e2a\u68c0\u67e5\u7ed3\u679c\u4e14\u6240\u6709\u68c0\u67e5\u901a\u8fc7\u3002
+     * @param values \u6309\u8f93\u5165\u987a\u5e8f\u6392\u5217\u7684\u68c0\u67e5\u7ed3\u679c
+     * @return \u7ed3\u679c\u975e\u7a7a\u4e14\u5168\u4e3a true \u65f6\u8fd4\u56de true
+     */
     private boolean allTrue(boolean[] values) {
         if (values.length == 0) {
             return false;

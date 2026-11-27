@@ -22,6 +22,7 @@ import java.util.Objects;
  * 各鉴权样例共用的认证、授权与请求作用域断言。
  */
 public final class SampleContractAssertions {
+    /** \u9650\u5236\u5de5\u5177\u7c7b\u5b9e\u4f8b\u5316\u3002 */
     private SampleContractAssertions() {
     }
 
@@ -63,10 +64,21 @@ public final class SampleContractAssertions {
         clean(driver, engine + " invalid token request cleanup");
     }
 
+    /**
+     * \u65ad\u8a00\u4e00\u6b21\u8bf7\u6c42\u7ed3\u675f\u540e\u6ca1\u6709\u6b8b\u7559\u7684\u8ba4\u8bc1\u4e3b\u4f53\u3002
+     * @param driver \u53ef\u8bfb\u53d6\u5f53\u524d\u8ba4\u8bc1\u4e3b\u4f53\u7684\u793a\u4f8b\u9a71\u52a8
+     * @param message \u65ad\u8a00\u5931\u8d25\u65f6\u7684\u63d0\u793a
+     */
     private static void clean(AuthSampleDriver driver, String message) {
         check(!driver.contextPrincipal().isPresent(), message);
     }
 
+    /**
+     * \u65ad\u8a00\u6267\u884c\u64cd\u4f5c\u65f6\u4f1a\u629b\u51fa\u6307\u5b9a\u7c7b\u578b\u7684\u8fd0\u884c\u65f6\u5f02\u5e38\u3002
+     * @param type \u671f\u671b\u7684\u5f02\u5e38\u7c7b\u578b
+     * @param operation \u88ab\u9a8c\u8bc1\u7684\u64cd\u4f5c
+     * @param message \u65ad\u8a00\u5931\u8d25\u65f6\u7684\u63d0\u793a
+     */
     private static void failure(Class<? extends RuntimeException> type, Runnable operation, String message) {
         try {
             operation.run();
@@ -79,6 +91,11 @@ public final class SampleContractAssertions {
         throw new AssertionError(message);
     }
 
+    /**
+     * \u5728\u6761\u4ef6\u4e0d\u6ee1\u8db3\u65f6\u629b\u51fa\u5e26\u7ed9\u5b9a\u6d88\u606f\u7684\u65ad\u8a00\u5931\u8d25\u3002
+     * @param condition \u5f85\u9a8c\u8bc1\u7684\u6761\u4ef6
+     * @param message \u65ad\u8a00\u5931\u8d25\u65f6\u7684\u63d0\u793a
+     */
     private static void check(boolean condition, String message) {
         if (!condition) {
             throw new AssertionError(message);

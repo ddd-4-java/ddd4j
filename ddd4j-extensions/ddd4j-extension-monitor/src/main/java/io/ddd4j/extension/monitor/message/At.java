@@ -23,14 +23,18 @@ public class At {
     private Boolean isAtAll = false;
 
     /**
-     * 创建一个空 @（不 @ 任何用户）。
+     * \u521b\u5efa\u4e00\u4e2a\u7a7a @\uff08\u4e0d @ \u4efb\u4f55\u7528\u6237\uff09\u3002
+     *
+     * @return \u7a7a\u901a\u77e5\u914d\u7f6e
      */
     public static At none() {
         return new At();
     }
 
     /**
-     * 创建一个 @ 全体。
+     * \u521b\u5efa\u4e00\u4e2a @ \u5168\u4f53\u3002
+     *
+     * @return \u5168\u4f53\u901a\u77e5\u914d\u7f6e
      */
     public static At all() {
         At at = new At();
@@ -39,9 +43,10 @@ public class At {
     }
 
     /**
-     * 创建一个针对指定手机号列表的 @。
+     * \u521b\u5efa\u4e00\u4e2a\u9488\u5bf9\u6307\u5b9a\u624b\u673a\u53f7\u5217\u8868\u7684 @\u3002
+     * @param mobiles \u624b\u673a\u53f7\u5217\u8868
      *
-     * @param mobiles 手机号列表
+     * @return \u9488\u5bf9\u624b\u673a\u53f7\u5217\u8868\u7684\u901a\u77e5\u914d\u7f6e
      */
     public static At ofMobiles(List<String> mobiles) {
         At at = new At();

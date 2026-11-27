@@ -60,9 +60,17 @@ public enum ResultCode implements IEnum<Integer> {
     LOGIN_FIRST(60003, "请先登录"),
     ;
 
+    /** 保存 <code>code</code> 对应的 <code>Integer</code> 数据。 */
     private final Integer code;
+    /** 保存 <code>desc</code> 对应的 <code>String</code> 数据。 */
     private final String desc;
 
+    /**
+     * 初始化 <code>ResultCode</code> 使用的 <code>code</code>、<code>desc</code>。
+     *
+     * @param code 随响应返回的业务状态编码
+     * @param desc 传入此操作的 <code>String</code> 类型 <code>desc</code>
+     */
     private ResultCode(Integer code, String desc) {
         this.code = code;
         this.desc = desc;

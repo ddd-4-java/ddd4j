@@ -24,6 +24,15 @@ import io.ddd4j.core.i18n.I18nProvider;
  */
 public class DefaultI18nProvider implements I18nProvider {
 
+    /**
+     * 按提供的条件读取或解析消息文本。
+     *
+     * <p>此实现调用 <code>I18nProvider.DEFAULT.getMessage(key, args)</code>。</p>
+     *
+     * @param key 消息 key
+     * @param args 格式化参数
+     * @return 实际返回<code>I18nProvider.DEFAULT.getMessage(key, args)</code>
+     */
     @Override
     public String getMessage(String key, Object... args) {
         return I18nProvider.DEFAULT.getMessage(key, args);

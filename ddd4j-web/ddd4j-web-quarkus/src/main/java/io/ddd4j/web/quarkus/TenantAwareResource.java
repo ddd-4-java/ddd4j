@@ -133,6 +133,9 @@ public class TenantAwareResource {
 
     /**
      * HTTP 200 + R.ok(data)
+     *
+     * @param data \u54cd\u5e94\u6570\u636e
+     * @return \u5305\u542b\u6210\u529f\u7ed3\u679c\u7684 HTTP \u54cd\u5e94
      */
     protected Response ok(Object data) {
         return Response.ok(R.ok(data)).build();
@@ -140,6 +143,8 @@ public class TenantAwareResource {
 
     /**
      * HTTP 200 + R.ok()
+     *
+     * @return \u4e0d\u5e26\u6570\u636e\u7684\u6210\u529f\u54cd\u5e94
      */
     protected Response ok() {
         return Response.ok(R.ok()).build();
@@ -147,6 +152,10 @@ public class TenantAwareResource {
 
     /**
      * HTTP 200 + R.fail(code, message)
+     *
+     * @param code \u4e1a\u52a1\u9519\u8bef\u7801
+     * @param message \u9519\u8bef\u6d88\u606f
+     * @return \u5305\u542b\u4e1a\u52a1\u9519\u8bef\u7684 HTTP \u54cd\u5e94
      */
     protected Response fail(int code, String message) {
         return Response.ok(R.fail(code, message)).build();
@@ -154,34 +163,49 @@ public class TenantAwareResource {
 
     /**
      * HTTP 200 + R.fail(message)
+     *
+     * @param message \u9519\u8bef\u6d88\u606f
+     * @return \u5305\u542b\u5931\u8d25\u7ed3\u679c\u7684 HTTP \u54cd\u5e94
      */
     protected Response fail(String message) {
         return Response.ok(R.fail(message)).build();
     }
 
     /**
-     * HTTP 200 + 404 语义
+     * HTTP 200 + 404 \u8bed\u4e49
+     *
+     * @param message \u672a\u627e\u5230\u8d44\u6e90\u7684\u8bf4\u660e
+     * @return \u5305\u542b 404 \u4e1a\u52a1\u7801\u7684 HTTP \u54cd\u5e94
      */
     protected Response notFound(String message) {
         return Response.ok(R.fail(404, message)).build();
     }
 
     /**
-     * HTTP 200 + 401 语义
+     * HTTP 200 + 401 \u8bed\u4e49
+     *
+     * @param message \u672a\u6388\u6743\u7684\u8bf4\u660e
+     * @return \u5305\u542b 401 \u4e1a\u52a1\u7801\u7684 HTTP \u54cd\u5e94
      */
     protected Response unauthorized(String message) {
         return Response.ok(R.fail(401, message)).build();
     }
 
     /**
-     * HTTP 200 + 400 语义
+     * HTTP 200 + 400 \u8bed\u4e49
+     *
+     * @param message \u9519\u8bef\u8bf7\u6c42\u7684\u8bf4\u660e
+     * @return \u5305\u542b 400 \u4e1a\u52a1\u7801\u7684 HTTP \u54cd\u5e94
      */
     protected Response badRequest(String message) {
         return Response.ok(R.fail(400, message)).build();
     }
 
     /**
-     * HTTP 200 + 500 语义
+     * HTTP 200 + 500 \u8bed\u4e49
+     *
+     * @param message \u670d\u52a1\u7aef\u9519\u8bef\u7684\u8bf4\u660e
+     * @return \u5305\u542b 500 \u4e1a\u52a1\u7801\u7684 HTTP \u54cd\u5e94
      */
     protected Response serverError(String message) {
         return Response.ok(R.fail(500, message)).build();
@@ -190,7 +214,13 @@ public class TenantAwareResource {
     // ========== 分页便捷方法 ==========
 
     /**
-     * 将分页记录映射转换
+     * \u5c06\u5206\u9875\u8bb0\u5f55\u6620\u5c04\u8f6c\u6362
+     *
+     * @param <T> \u539f\u8bb0\u5f55\u7c7b\u578b
+     * @param <R> \u76ee\u6807\u8bb0\u5f55\u7c7b\u578b
+     * @param page \u539f\u5206\u9875\u6570\u636e
+     * @param func \u8bb0\u5f55\u6620\u5c04\u51fd\u6570
+     * @return \u6620\u5c04\u540e\u7684\u5206\u9875\u6570\u636e
      */
     protected <T, R> Page<R> transfer(Page<T> page, Function<T, R> func) {
         List<R> results = page.getRecords().stream().map(func).toList();

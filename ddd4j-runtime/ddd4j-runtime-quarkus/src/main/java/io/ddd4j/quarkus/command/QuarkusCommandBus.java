@@ -40,6 +40,10 @@ public class QuarkusCommandBus implements CommandBus {
     @Inject
     Instance<CommandExecutor<?>> executors;
 
+    /**
+     * \u5728\u5e94\u7528\u542f\u52a8\u540e\u6536\u96c6 CDI \u6267\u884c\u5668\uff0c\u5e76\u521b\u5efa\u5171\u4eab\u547d\u4ee4\u603b\u7ebf\u3002
+     * @param event \u5f53\u524d\u6846\u67b6\u751f\u547d\u5468\u671f\u6216\u5bb9\u5668\u542f\u52a8\u4e8b\u4ef6
+     */
     void onStart(@Observes StartupEvent event) {
         for (CommandExecutor<?> executor : executors) {
             for (Class<? extends Command> commandType : executor.supportedCommands()) {
@@ -80,6 +84,12 @@ public class QuarkusCommandBus implements CommandBus {
         return (Result<R>) executor.execute(command);
     }
 
+    /**
+     * 执行 <code>find Executor</code>，调用 <code>executorMap.get</code>、<code>command.getClass</code>、<code>candidate.supportedCommands</code>。
+     *
+     * @param command 传入此操作的 <code>Command</code> 类型 <code>command</code>
+     * @return 按条件返回 <code>executor</code>、<code>candidate</code>、<code>null</code>
+     */
     private CommandExecutor<?> findExecutor(Command command) {
         CommandExecutor<?> executor = executorMap.get(command.getClass());
         if (Objects.nonNull(executor)) {

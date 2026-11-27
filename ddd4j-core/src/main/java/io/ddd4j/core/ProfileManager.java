@@ -13,6 +13,7 @@ package io.ddd4j.core;
  */
 public class ProfileManager {
 
+    /** \u8bfb\u53d6\u5f53\u524d\u8fd0\u884c\u914d\u7f6e\u4e2d\u5df2\u542f\u7528\u73af\u5883\u7684\u51fd\u6570\u3002 */
     private final java.util.function.Supplier<String[]> activeProfilesSupplier;
 
     /**

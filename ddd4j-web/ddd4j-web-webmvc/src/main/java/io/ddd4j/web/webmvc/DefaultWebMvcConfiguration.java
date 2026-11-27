@@ -48,7 +48,10 @@ import java.util.TimeZone;
 public class DefaultWebMvcConfiguration {
 
     /**
-     * Profile 管理器：根据活跃环境配置切换。
+     * Profile \u7ba1\u7406\u5668\uff1a\u6839\u636e\u6d3b\u8dc3\u73af\u5883\u914d\u7f6e\u5207\u6362\u3002
+     *
+     * @param environment Spring \u73af\u5883
+     * @return \u914d\u7f6e\u6216\u5904\u7406\u540e\u7684\u7ec4\u4ef6
      */
     @Bean
     public ProfileManager profileManager(Environment environment) {
@@ -56,7 +59,9 @@ public class DefaultWebMvcConfiguration {
     }
 
     /**
-     * 请求上下文过滤器（线程上下文可继承）。
+     * \u8bf7\u6c42\u4e0a\u4e0b\u6587\u8fc7\u6ee4\u5668\uff08\u7ebf\u7a0b\u4e0a\u4e0b\u6587\u53ef\u7ee7\u627f\uff09\u3002
+     *
+     * @return \u914d\u7f6e\u6216\u5904\u7406\u540e\u7684\u7ec4\u4ef6
      */
     @Bean(name = "ddd4jRequestContextFilter")
     public RequestContextFilter requestContextFilter() {
@@ -73,7 +78,9 @@ public class DefaultWebMvcConfiguration {
 		*/
 
     /**
-     * 语言切换拦截器。
+     * \u8bed\u8a00\u5207\u6362\u62e6\u622a\u5668\u3002
+     *
+     * @return \u914d\u7f6e\u6216\u5904\u7406\u540e\u7684\u7ec4\u4ef6
      */
     @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {
@@ -83,7 +90,9 @@ public class DefaultWebMvcConfiguration {
     }
 
     /**
-     * 区域解析器（基于请求头 X-Locale）。
+     * \u533a\u57df\u89e3\u6790\u5668\uff08\u57fa\u4e8e\u8bf7\u6c42\u5934 X-Locale\uff09\u3002
+     *
+     * @return \u914d\u7f6e\u6216\u5904\u7406\u540e\u7684\u7ec4\u4ef6
      */
     @Bean
     public LocaleResolver localeResolver() {
@@ -95,7 +104,10 @@ public class DefaultWebMvcConfiguration {
     }
 
     /**
-     * MVC 验证器（集成国际化消息源）。
+     * MVC \u9a8c\u8bc1\u5668\uff08\u96c6\u6210\u56fd\u9645\u5316\u6d88\u606f\u6e90\uff09\u3002
+     *
+     * @param messageSource \u6d88\u606f\u6e90
+     * @return \u914d\u7f6e\u6216\u5904\u7406\u540e\u7684\u7ec4\u4ef6
      */
     @Bean
     @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
@@ -106,21 +118,39 @@ public class DefaultWebMvcConfiguration {
         return factoryBean;
     }
 
+    /**
+     * \u521b\u5efa\u6216\u914d\u7f6e bearerSubjectAuthenticator \u7ec4\u4ef6\u3002
+     * @return \u914d\u7f6e\u6216\u5904\u7406\u540e\u7684\u7ed3\u679c
+     */
     @Bean
     public BearerSubjectAuthenticator bearerSubjectAuthenticator() {
         return new BearerSubjectAuthenticator();
     }
 
+    /**
+     * \u521b\u5efa\u6216\u914d\u7f6e webExceptionTranslator \u7ec4\u4ef6\u3002
+     * @return \u914d\u7f6e\u6216\u5904\u7406\u540e\u7684\u7ed3\u679c
+     */
     @Bean
     public WebExceptionTranslator webExceptionTranslator() {
         return new DefaultWebExceptionTranslator();
     }
 
+    /**
+     * \u521b\u5efa\u6216\u914d\u7f6e ddd4jWebMvcExceptionHandler \u7ec4\u4ef6\u3002
+     * @param exceptionTranslator \u5f02\u5e38\u8f6c\u6362\u5668
+     * @return \u914d\u7f6e\u6216\u5904\u7406\u540e\u7684\u7ed3\u679c
+     */
     @Bean
     public Ddd4jWebMvcExceptionHandler ddd4jWebMvcExceptionHandler(WebExceptionTranslator exceptionTranslator) {
         return new Ddd4jWebMvcExceptionHandler(exceptionTranslator);
     }
 
+    /**
+     * \u521b\u5efa\u6216\u914d\u7f6e webAccessPolicy \u7ec4\u4ef6\u3002
+     * @param environment Spring \u73af\u5883
+     * @return \u914d\u7f6e\u6216\u5904\u7406\u540e\u7684\u7ed3\u679c
+     */
     @Bean
     public WebAccessPolicy webAccessPolicy(Environment environment) {
         String[] publicPaths = environment.getProperty("ddd4j.web.public-paths", String[].class,
@@ -129,6 +159,11 @@ public class DefaultWebMvcConfiguration {
         return new PathWebAccessPolicy(List.of(publicPaths), AuthenticationMode.REQUIRED);
     }
 
+    /**
+     * \u521b\u5efa\u6216\u914d\u7f6e webRequestContextFactory \u7ec4\u4ef6\u3002
+     * @param environment Spring \u73af\u5883
+     * @return \u914d\u7f6e\u6216\u5904\u7406\u540e\u7684\u7ed3\u679c
+     */
     @Bean
     public WebRequestContextFactory webRequestContextFactory(Environment environment) {
         boolean trustForwardedHeaders = environment.getProperty("ddd4j.web.trust-forwarded-headers",
@@ -138,17 +173,34 @@ public class DefaultWebMvcConfiguration {
         return new WebRequestContextFactory(RequestIdGenerator.uuid(), clientIpResolver);
     }
 
+    /**
+     * \u521b\u5efa\u6216\u914d\u7f6e webRequestLifecycle \u7ec4\u4ef6\u3002
+     * @param authenticator Bearer \u8ba4\u8bc1\u5668
+     * @param accessPolicy \u65b9\u6cd5\u53c2\u6570
+     * @return \u914d\u7f6e\u6216\u5904\u7406\u540e\u7684\u7ed3\u679c
+     */
     @Bean
     public WebRequestLifecycle webRequestLifecycle(BearerSubjectAuthenticator authenticator,
                                                    WebAccessPolicy accessPolicy) {
         return new WebRequestLifecycle(authenticator, accessPolicy);
     }
 
+    /**
+     * \u521b\u5efa\u6216\u914d\u7f6e webIdempotencyLifecycle \u7ec4\u4ef6\u3002
+     * @return \u914d\u7f6e\u6216\u5904\u7406\u540e\u7684\u7ed3\u679c
+     */
     @Bean
     public WebIdempotencyLifecycle webIdempotencyLifecycle() {
         return new WebIdempotencyLifecycle(new CacheIdempotencyGuard());
     }
 
+    /**
+     * \u521b\u5efa\u6216\u914d\u7f6e ddd4jWebMvcInterceptor \u7ec4\u4ef6\u3002
+     * @param contextFactory \u8bf7\u6c42\u4e0a\u4e0b\u6587\u5de5\u5382
+     * @param requestLifecycle \u8bf7\u6c42\u751f\u547d\u5468\u671f
+     * @param idempotencyLifecycle \u65b9\u6cd5\u53c2\u6570
+     * @return \u914d\u7f6e\u6216\u5904\u7406\u540e\u7684\u7ed3\u679c
+     */
     @Bean
     public Ddd4jWebMvcInterceptor ddd4jWebMvcInterceptor(WebRequestContextFactory contextFactory,
                                                          WebRequestLifecycle requestLifecycle,
@@ -157,7 +209,10 @@ public class DefaultWebMvcConfiguration {
     }
 
     /**
-     * 注册不依赖 Spring Boot Actuator 的显式 readiness 端点。
+     * \u6ce8\u518c\u4e0d\u4f9d\u8d56 Spring Boot Actuator \u7684\u663e\u5f0f readiness \u7aef\u70b9\u3002
+     *
+     * @param readinessRegistry \u5c31\u7eea\u72b6\u6001\u6ce8\u518c\u8868
+     * @return \u914d\u7f6e\u6216\u5904\u7406\u540e\u7684\u7ec4\u4ef6
      */
     @Bean
     public Ddd4jWebMvcReadinessController ddd4jWebMvcReadinessController(
@@ -166,7 +221,12 @@ public class DefaultWebMvcConfiguration {
     }
 
     /**
-     * 自定义 WebMVC 配置器。
+     * \u81ea\u5b9a\u4e49 WebMVC \u914d\u7f6e\u5668\u3002
+     *
+     * @param localeChangeInterceptor \u8bed\u8a00\u73af\u5883\u5207\u6362\u62e6\u622a\u5668
+     * @param localResourceProperteis \u672c\u5730\u8d44\u6e90\u914d\u7f6e
+     * @param ddd4jWebMvcInterceptor DDD4J Web \u62e6\u622a\u5668
+     * @return \u914d\u7f6e\u6216\u5904\u7406\u540e\u7684\u7ec4\u4ef6
      */
     @Bean
     public DefaultWebMvcConfigurer defaultWebMvcConfigurer(LocalResourceProperteis localResourceProperteis,

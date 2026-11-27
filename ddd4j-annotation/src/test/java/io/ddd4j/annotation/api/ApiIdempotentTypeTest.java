@@ -14,18 +14,21 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class ApiIdempotentTypeTest {
 
+    /** \u9a8c\u8bc1<code>ApiIdempotentType.values()</code> \u4ec5\u5305\u542b <code>ApiIdempotentType.TOKEN</code>\u3001<code>ApiIdempotentType.ARGS</code>\u3002 */
     @Test
     void values_shouldContainTokenAndArgs() {
         assertThat(ApiIdempotentType.values())
                 .containsExactlyInAnyOrder(ApiIdempotentType.TOKEN, ApiIdempotentType.ARGS);
     }
 
+    /** \u9a8c\u8bc1<code>ApiIdempotentType.valueOfIgnoreCase("TOKEN")</code> \u7b49\u4e8e <code>ApiIdempotentType.TOKEN</code>\uff0c<code>ApiIdempotentType.valueOfIgnoreCase("ARGS")</code> \u7b49\u4e8e <code>ApiIdempotentType.ARGS</code>\u3002 */
     @Test
     void valueOfIgnoreCase_shouldResolveExactName() {
         assertThat(ApiIdempotentType.valueOfIgnoreCase("TOKEN")).isEqualTo(ApiIdempotentType.TOKEN);
         assertThat(ApiIdempotentType.valueOfIgnoreCase("ARGS")).isEqualTo(ApiIdempotentType.ARGS);
     }
 
+    /** \u9a8c\u8bc1<code>ApiIdempotentType.valueOfIgnoreCase("UNKNOWN")</code> \u629b\u51fa <code>NoSuchElementException.class</code>\u3002 */
     @Test
     void valueOfIgnoreCase_shouldThrowForUnknown() {
         assertThatThrownBy(() -> ApiIdempotentType.valueOfIgnoreCase("UNKNOWN"))
@@ -33,18 +36,21 @@ class ApiIdempotentTypeTest {
                 .hasMessageContaining("UNKNOWN");
     }
 
+    /** \u9a8c\u8bc1<code>ApiIdempotentType.valueOfIgnoreCase(null)</code> \u629b\u51fa <code>NoSuchElementException.class</code>\u3002 */
     @Test
     void valueOfIgnoreCase_shouldThrowForNull() {
         assertThatThrownBy(() -> ApiIdempotentType.valueOfIgnoreCase(null))
                 .isInstanceOf(NoSuchElementException.class);
     }
 
+    /** \u9a8c\u8bc1<code>ApiIdempotentType.TOKEN.equals(ApiIdempotentType.TOKEN)</code>\u4e3a\u771f\uff0c<code>ApiIdempotentType.TOKEN.equals(ApiIdempotentType.ARGS)</code>\u4e3a\u5047\u3002 */
     @Test
     void equals_enum_shouldCompareByName() {
         assertThat(ApiIdempotentType.TOKEN.equals(ApiIdempotentType.TOKEN)).isTrue();
         assertThat(ApiIdempotentType.TOKEN.equals(ApiIdempotentType.ARGS)).isFalse();
     }
 
+    /** \u9a8c\u8bc1<code>ApiIdempotentType.TOKEN.equals("TOKEN")</code>\u4e3a\u771f\uff0c<code>ApiIdempotentType.ARGS.equals("ARGS")</code>\u4e3a\u771f\uff0c<code>ApiIdempotentType.TOKEN.equals("ARGS")</code>\u4e3a\u5047\u3002 */
     @Test
     void equals_string_shouldCompareIgnoreCaseViaValueOf() {
         assertThat(ApiIdempotentType.TOKEN.equals("TOKEN")).isTrue();

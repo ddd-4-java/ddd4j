@@ -238,10 +238,18 @@ public class NestedRegionTemplate {
         return regionEnum.isChinaMainland();
     }
 
+    /**
+     * \u8fd4\u56de IP \u5730\u533a\u67e5\u8be2\u5b9e\u73b0\u3002
+     * @return IP \u5730\u533a\u67e5\u8be2\u5b9e\u73b0
+     */
     public IpRegionTemplate getIp2RegionTemplate() {
         return ipRegionTemplate;
     }
 
+    /**
+     * \u8fd4\u56de\u592a\u5e73\u6d0b\u7f51\u7edc\u5730\u533a\u67e5\u8be2\u5b9e\u73b0\u3002
+     * @return \u592a\u5e73\u6d0b\u7f51\u7edc\u5730\u533a\u67e5\u8be2\u5b9e\u73b0
+     */
     public PconlineRegionTemplate getPconlineRegionTemplate() {
         return pconlineRegionTemplate;
     }

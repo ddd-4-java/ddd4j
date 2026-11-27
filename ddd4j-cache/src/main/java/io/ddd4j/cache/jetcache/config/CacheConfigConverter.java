@@ -17,6 +17,7 @@ import java.time.Duration;
  */
 public final class CacheConfigConverter {
 
+    /** \u9650\u5236\u914d\u7f6e\u8f6c\u6362\u5de5\u5177\u7c7b\u5b9e\u4f8b\u5316\u3002 */
     private CacheConfigConverter() {
     }
 

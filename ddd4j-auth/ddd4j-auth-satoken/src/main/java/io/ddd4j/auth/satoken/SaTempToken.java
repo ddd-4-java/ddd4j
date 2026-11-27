@@ -21,23 +21,21 @@ import java.io.Serializable;
 public class SaTempToken implements Serializable {
 
     /**
-     * 认证方式
-     * - password，密码登录：用户输入账号和密码
-     * - qrcode，扫码登录：用户扫描二维码登录
-     * - sms，短信登录：用户输入手机号和验证码登录
-     * - face，人脸登录：用户人脸识别登录
-     * - dingtalk-ma，钉钉小程序登录：用户在钉钉小程序内登录
-     * - dingtalk-scancode，钉钉扫码登录：用户使用钉钉扫码登录
-     * - dingtalk-tmpcode，钉钉临时码登录：用户在钉钉客户端/App内免密登录
-     * - wx-ma，微信小程序登录：用户在微信小程序内登录
-     * - wx-mp，微信公众平台登录：用户在微信公众号内登录
-     * - zheliban，浙里办登录：用户在浙里办内登录，如：学在浙江、学在xx系列
-     * - app，应用免登：通过appKey和appSecret进行免登
-     * - cas，Cas登录：通过标准的JWT登录
-     * - jwt，JWT登录：通过标准的JWT登录
-     * - pac4j，三方登录：基于Pac4j进行各类三方登录
-     *
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * \u8ba4\u8bc1\u65b9\u5f0f
+     *  - password\uff0c\u5bc6\u7801\u767b\u5f55\uff1a\u7528\u6237\u8f93\u5165\u8d26\u53f7\u548c\u5bc6\u7801
+     *  - qrcode\uff0c\u626b\u7801\u767b\u5f55\uff1a\u7528\u6237\u626b\u63cf\u4e8c\u7ef4\u7801\u767b\u5f55
+     *  - sms\uff0c\u77ed\u4fe1\u767b\u5f55\uff1a\u7528\u6237\u8f93\u5165\u624b\u673a\u53f7\u548c\u9a8c\u8bc1\u7801\u767b\u5f55
+     *  - face\uff0c\u4eba\u8138\u767b\u5f55\uff1a\u7528\u6237\u4eba\u8138\u8bc6\u522b\u767b\u5f55
+     *  - dingtalk-ma\uff0c\u9489\u9489\u5c0f\u7a0b\u5e8f\u767b\u5f55\uff1a\u7528\u6237\u5728\u9489\u9489\u5c0f\u7a0b\u5e8f\u5185\u767b\u5f55
+     *  - dingtalk-scancode\uff0c\u9489\u9489\u626b\u7801\u767b\u5f55\uff1a\u7528\u6237\u4f7f\u7528\u9489\u9489\u626b\u7801\u767b\u5f55
+     *  - dingtalk-tmpcode\uff0c\u9489\u9489\u4e34\u65f6\u7801\u767b\u5f55\uff1a\u7528\u6237\u5728\u9489\u9489\u5ba2\u6237\u7aef/App\u5185\u514d\u5bc6\u767b\u5f55
+     *  - wx-ma\uff0c\u5fae\u4fe1\u5c0f\u7a0b\u5e8f\u767b\u5f55\uff1a\u7528\u6237\u5728\u5fae\u4fe1\u5c0f\u7a0b\u5e8f\u5185\u767b\u5f55
+     *  - wx-mp\uff0c\u5fae\u4fe1\u516c\u4f17\u5e73\u53f0\u767b\u5f55\uff1a\u7528\u6237\u5728\u5fae\u4fe1\u516c\u4f17\u53f7\u5185\u767b\u5f55
+     *  - zheliban\uff0c\u6d59\u91cc\u529e\u767b\u5f55\uff1a\u7528\u6237\u5728\u6d59\u91cc\u529e\u5185\u767b\u5f55\uff0c\u5982\uff1a\u5b66\u5728\u6d59\u6c5f\u3001\u5b66\u5728xx\u7cfb\u5217
+     *  - app\uff0c\u5e94\u7528\u514d\u767b\uff1a\u901a\u8fc7appKey\u548cappSecret\u8fdb\u884c\u514d\u767b
+     *  - cas\uff0cCas\u767b\u5f55\uff1a\u901a\u8fc7\u6807\u51c6\u7684JWT\u767b\u5f55
+     *  - jwt\uff0cJWT\u767b\u5f55\uff1a\u901a\u8fc7\u6807\u51c6\u7684JWT\u767b\u5f55
+     *  - pac4j\uff0c\u4e09\u65b9\u767b\u5f55\uff1a\u57fa\u4e8ePac4j\u8fdb\u884c\u5404\u7c7b\u4e09\u65b9\u767b\u5f55
      */
     private String authType;
 

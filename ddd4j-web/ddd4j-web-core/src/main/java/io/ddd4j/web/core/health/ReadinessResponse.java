@@ -12,8 +12,10 @@ import java.util.Objects;
 
 public final class ReadinessResponse {
 
+    /** Java 序列化版本标识。 */
     private static final long serialVersionUID = 0L;
 
+    /** \u5f53\u524d\u8fd0\u884c\u7ec4\u4ef6\u662f\u5426\u5df2\u7ecf\u8fbe\u5230\u5c31\u7eea\u6761\u4ef6\u3002 */
     private final boolean ready;
 
     /**
@@ -26,19 +28,33 @@ public final class ReadinessResponse {
     }
 
     /**
- * @param ready 当前应用是否可接收流量
- */
+     * 初始化 <code>ReadinessResponse</code> 使用的 <code>ready</code>。
+     *
+     * @param ready \u5f53\u524d\u5e94\u7528\u662f\u5426\u53ef\u63a5\u6536\u6d41\u91cf
+     */
 
     @JsonCreator()
     public ReadinessResponse(@JsonProperty("ready") boolean ready) {
         this.ready = ready;
     }
 
+    /**
+     * \u8fd4\u56de\u5c31\u7eea\u72b6\u6001\u3002
+     * @return \u5c31\u7eea\u72b6\u6001
+     */
     @JsonProperty("ready")
     public boolean ready() {
         return ready;
     }
 
+    /**
+     * 根据<code>ready</code>比较对象的值是否相等。
+     *
+     * <p>只比较运行时类型相同的对象。</p>
+     *
+     * @param obj 用来比较或转换的输入对象
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -51,6 +67,11 @@ public final class ReadinessResponse {
         return this.ready == other.ready;
     }
 
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         int result = 0;
@@ -58,6 +79,11 @@ public final class ReadinessResponse {
         return result;
     }
 
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>ready</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "ReadinessResponse[ready=" + ready + "]";

@@ -41,14 +41,21 @@ public final class AuthSpan {
      * 鉴权相关标准化属性键。
      */
     public static final AttributeKey<String> ATTR_AUTH_FRAMEWORK = AttributeKey.stringKey("auth.framework");
+    /** Span \u5c5e\u6027\u952e {@code auth.login_id}\u3002 */
     public static final AttributeKey<String> ATTR_AUTH_LOGIN_ID = AttributeKey.stringKey("auth.login_id");
+    /** Span \u5c5e\u6027\u952e {@code auth.success}\u3002 */
     public static final AttributeKey<Boolean> ATTR_AUTH_SUCCESS = AttributeKey.booleanKey("auth.success");
+    /** Span \u5c5e\u6027\u952e {@code auth.operation}\u3002 */
     public static final AttributeKey<String> ATTR_AUTH_OPERATION = AttributeKey.stringKey("auth.operation");
+    /** Span \u5c5e\u6027\u952e {@code auth.role}\u3002 */
     public static final AttributeKey<String> ATTR_AUTH_ROLE = AttributeKey.stringKey("auth.role");
+    /** Span \u5c5e\u6027\u952e {@code auth.permission}\u3002 */
     public static final AttributeKey<String> ATTR_AUTH_PERMISSION = AttributeKey.stringKey("auth.permission");
 
+    /** \u8ba4\u8bc1\u8ddf\u8e2a\u5b57\u6bb5\u7f3a\u5c11\u6846\u67b6\u6807\u8bc6\u65f6\u4f7f\u7528\u7684\u9ed8\u8ba4\u540d\u79f0\u3002 */
     private static final String DEFAULT_FRAMEWORK = "ddd4j";
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>AuthSpan</code> \u5b9e\u4f8b\u3002 */
     private AuthSpan() {
     }
 
@@ -120,7 +127,9 @@ public final class AuthSpan {
     }
 
     /**
-     * 包装 {@link SubjectKit#logout(Object)}（按 loginId 登出）。
+     * \u5305\u88c5 {@link SubjectKit#logout(Object)}\uff08\u6309 loginId \u767b\u51fa\uff09\u3002
+     *
+     * @param loginId \u767b\u5f55\u6807\u8bc6
      */
     public static void logout(Object loginId) {
         if (!Ddd4jOtel.isAvailable()) {
@@ -149,7 +158,11 @@ public final class AuthSpan {
     }
 
     /**
-     * 包装 {@link SubjectKit#verify(String)}。
+     * \u5305\u88c5 {@link SubjectKit#verify(String)}\u3002
+     *
+     * @param <T> \u8fd4\u56de\u503c\u7c7b\u578b
+     * @param token \u8eab\u4efd\u4ee4\u724c
+     * @return \u5df2\u9a8c\u8bc1\u8eab\u4efd\u4e3b\u4f53
      */
     public static <T extends AuthPrincipal> T verify(String token) {
         if (!Ddd4jOtel.isAvailable()) {
@@ -184,7 +197,10 @@ public final class AuthSpan {
     }
 
     /**
-     * 包装 {@link SubjectKit#hasRole(String)}。
+     * \u5305\u88c5 {@link SubjectKit#hasRole(String)}\u3002
+     *
+     * @param roleIdentifier \u89d2\u8272\u6807\u8bc6
+     * @return \u5177\u6709\u6307\u5b9a\u89d2\u8272\u65f6\u4e3a true
      */
     public static boolean hasRole(String roleIdentifier) {
         if (!Ddd4jOtel.isAvailable()) {
@@ -208,7 +224,10 @@ public final class AuthSpan {
     }
 
     /**
-     * 包装 {@link SubjectKit#hasPermission(String)}。
+     * \u5305\u88c5 {@link SubjectKit#hasPermission(String)}\u3002
+     *
+     * @param permission \u6743\u9650\u6807\u8bc6
+     * @return \u5177\u6709\u6307\u5b9a\u6743\u9650\u65f6\u4e3a true
      */
     public static boolean hasPermission(String permission) {
         if (!Ddd4jOtel.isAvailable()) {
@@ -232,7 +251,9 @@ public final class AuthSpan {
     }
 
     /**
-     * 包装 {@link SubjectKit#isLogin()}。
+     * \u5305\u88c5 {@link SubjectKit#isLogin()}\u3002
+     *
+     * @return \u5df2\u767b\u5f55\u65f6\u4e3a true
      */
     public static boolean isLogin() {
         if (!Ddd4jOtel.isAvailable()) {
@@ -254,7 +275,9 @@ public final class AuthSpan {
     }
 
     /**
-     * 包装 {@link SubjectKit#kickout(Object)}。
+     * \u5305\u88c5 {@link SubjectKit#kickout(Object)}\u3002
+     *
+     * @param loginId \u767b\u5f55\u6807\u8bc6
      */
     public static void kickout(Object loginId) {
         if (!Ddd4jOtel.isAvailable()) {
@@ -282,6 +305,10 @@ public final class AuthSpan {
         }
     }
 
+    /**
+     * \u628a\u5f53\u524d\u4f1a\u8bdd\u7684\u767b\u5f55\u6807\u8bc6\u8865\u5230\u8ba4\u8bc1\u8ddf\u8e2a Span\u3002
+     * @param span \u63a5\u6536\u5f53\u524d\u8ddf\u8e2a\u5c5e\u6027\u7684 Span
+     */
     private static void attachCurrentLoginId(Span span) {
         try {
             AuthPrincipal principal = SubjectKit.getPrincipal();

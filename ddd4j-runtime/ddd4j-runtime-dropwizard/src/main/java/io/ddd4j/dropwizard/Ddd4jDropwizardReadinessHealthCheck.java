@@ -11,13 +11,22 @@ import java.util.Objects;
  */
 public class Ddd4jDropwizardReadinessHealthCheck extends HealthCheck {
 
+    /** \u6c47\u603b\u5f53\u524d\u7ec4\u4ef6\u5c31\u7eea\u72b6\u6001\u7684\u6ce8\u518c\u8868\u3002 */
     private final RuntimeReadinessRegistry readinessRegistry;
 
+    /**
+     * \u4f7f\u7528 ddd4j \u5c31\u7eea\u6ce8\u518c\u8868\u521b\u5efa\u5065\u5eb7\u68c0\u67e5\u3002
+     * @param readinessRegistry \u5c31\u7eea\u6ce8\u518c\u8868
+     */
     public Ddd4jDropwizardReadinessHealthCheck(RuntimeReadinessRegistry readinessRegistry) {
         this.readinessRegistry = Objects.requireNonNull(readinessRegistry,
                 "readinessRegistry must not be null");
     }
 
+    /**
+     * \u8bfb\u53d6\u5f53\u524d\u8fd0\u884c\u65f6\u5c31\u7eea\u62a5\u544a\u5e76\u8f6c\u6362\u4e3a Dropwizard \u5065\u5eb7\u7ed3\u679c\u3002
+     * @return \u5e94\u7528\u7684\u5c31\u7eea\u5065\u5eb7\u68c0\u67e5\u7ed3\u679c
+     */
     @Override
     protected Result check() {
         ReadinessReport report = readinessRegistry.readiness();

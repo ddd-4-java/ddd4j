@@ -9,6 +9,7 @@ import jakarta.ws.rs.core.Response;
 
 /** JAX-RS 的商品交易 CQRS 入口。 */
 public abstract class CatalogCqrsResource extends CatalogResource {
+    /** CQRS \u793a\u4f8b\u7684 HTTP \u64cd\u4f5c\u5165\u53e3\u3002 */
     private final CatalogCqrs catalog;
 
     /**

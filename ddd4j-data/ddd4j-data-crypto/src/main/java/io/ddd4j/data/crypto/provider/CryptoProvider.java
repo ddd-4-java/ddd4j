@@ -17,11 +17,12 @@ public interface CryptoProvider {
     <T> String encrypt(T value);
 
     /**
-     * 字段解密
+     * \u5b57\u6bb5\u89e3\u5bc6
+     * @param value \u5f85\u89e3\u5bc6\u5b57\u6bb5\u7684\u503c
+     * @param <T> \u5b57\u6bb5\u7c7b\u578b
+     * @return T \u89e3\u5bc6\u540e\u7684\u5b57\u6bb5\u503c
      *
-     * @param value 待解密字段的值
-     * @param <T>   字段类型
-     * @return T 解密后的字段值
+     * @param rtType \u89e3\u5bc6\u7ed3\u679c\u7c7b\u578b
      */
     <T> T decrypt(String value, Class<T> rtType);
 

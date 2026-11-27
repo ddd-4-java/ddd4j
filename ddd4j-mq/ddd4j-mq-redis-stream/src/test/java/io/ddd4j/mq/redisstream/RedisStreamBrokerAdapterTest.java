@@ -23,14 +23,12 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Redis Stream Acknowledgment 及 Jedis / Redisson / Lettuce 三种客户端 SPI 适配契约测试。
- *
- * <p>发布与消费已整合进 {@link RedisStreamClient}，相关单测见其模块；此处保留 SPI 层契约。
- *
+ * \u9a8c\u8bc1 Redis Stream \u6d88\u606f\u786e\u8ba4\u7684\u5e76\u53d1\u4e0e\u91cd\u8bd5\u884c\u4e3a\uff0c\u4ee5\u53ca Jedis\u3001Redisson \u548c Lettuce \u7684\u547d\u4ee4\u6620\u5c04\u3002
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 class RedisStreamBrokerAdapterTest {
 
+    /** \u9a8c\u8bc1\u624b\u52a8\u786e\u8ba4\u901a\u8fc7 Jedis \u5411\u6307\u5b9a\u6d88\u8d39\u8005\u7ec4\u53d1\u9001 XACK\uff0c\u5e76\u6807\u8bb0\u6d88\u606f\u5df2\u786e\u8ba4\u3002 */
     @Test
     void manualAckShouldMapToXack() {
         UnifiedJedis jedis = mock(UnifiedJedis.class);
@@ -49,6 +47,7 @@ class RedisStreamBrokerAdapterTest {
         assertTrue(ack.isAcknowledged());
     }
 
+    /** \u9a8c\u8bc1 Redisson \u9002\u914d\u5c42\u6dfb\u52a0\u6d88\u606f\u3001\u521b\u5efa\u6d88\u8d39\u8005\u7ec4\u53ca\u53d1\u9001\u786e\u8ba4\uff0c\u5e76\u5c06\u6d88\u606f\u6807\u8bc6\u8f6c\u4e3a\u5b57\u7b26\u4e32\u3002 */
     @Test
     void redissonOperationsShouldMapStreamCommands() {
         RedissonClient client = mock(RedissonClient.class);
@@ -67,6 +66,7 @@ class RedisStreamBrokerAdapterTest {
         verify(stream).ack("sample", new StreamMessageId(1L, 0L));
     }
 
+    /** \u9a8c\u8bc1 Lettuce \u9002\u914d\u5c42\u5c06\u6dfb\u52a0\u6d88\u606f\u3001\u521b\u5efa\u6d88\u8d39\u8005\u7ec4\u53ca\u786e\u8ba4\u6620\u5c04\u4e3a\u5bf9\u5e94\u7684 Redis \u547d\u4ee4\u3002 */
     @Test
     void lettuceOperationsShouldMapStreamCommands() {
         RedisCommands<String, String> commands = mock(RedisCommands.class);

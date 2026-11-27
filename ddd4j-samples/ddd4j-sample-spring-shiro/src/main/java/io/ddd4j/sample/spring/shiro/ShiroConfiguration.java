@@ -19,9 +19,7 @@ import jakarta.servlet.http.HttpServletResponse;
 /** 使用原生 Shiro Realm、Servlet Subject 绑定及 finally 恢复上下文。 */
 @Configuration(proxyBeanMethods = false)
 public class ShiroConfiguration implements WebMvcConfigurer {
-    /**
-     * @return 独立演示安全管理器；关闭时释放原生资源
-     */
+    /** @return \u72ec\u7acb\u6f14\u793a\u5b89\u5168\u7ba1\u7406\u5668\uff1b\u5173\u95ed\u65f6\u91ca\u653e\u539f\u751f\u8d44\u6e90 */
     @Bean(destroyMethod = "destroy")
     public DefaultWebSecurityManager securityManager() {
         Ini ini = new Ini();
@@ -29,8 +27,8 @@ public class ShiroConfiguration implements WebMvcConfigurer {
         return new DefaultWebSecurityManager(new IniRealm(ini));
     }
     /**
-     * @param manager 原生安全管理器
-     * @return 真正创建及释放请求 Subject 的 Shiro 过滤器
+     * @param manager \u539f\u751f\u5b89\u5168\u7ba1\u7406\u5668
+     * @return \u771f\u6b63\u521b\u5efa\u53ca\u91ca\u653e\u8bf7\u6c42 Subject \u7684 Shiro \u8fc7\u6ee4\u5668
      */
     @Bean
     public FilterRegistrationBean<AbstractShiroFilter> shiroFilter(DefaultWebSecurityManager manager) {
@@ -40,6 +38,10 @@ public class ShiroConfiguration implements WebMvcConfigurer {
         registration.setOrder(-100);
         return registration;
     }
+    /**
+     * \u5411 Spring MVC \u6ce8\u518c\u5f53\u524d\u793a\u4f8b\u4f7f\u7528\u7684\u539f\u751f\u8ba4\u8bc1\u62e6\u622a\u5668\u3002
+     * @param registry Spring MVC \u7684\u62e6\u622a\u5668\u6ce8\u518c\u5668
+     */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new HandlerInterceptor() {

@@ -17,11 +17,7 @@ package io.ddd4j.core.constant;
  */
 public class XHeaders {
 
-    /**
-     * 客户端唯一请求ID
-     *
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
-     */
+    /** \u5ba2\u6237\u7aef\u552f\u4e00\u8bf7\u6c42ID */
     public static final String X_REQUEST_ID = "X-Request-Id";
 
     /**

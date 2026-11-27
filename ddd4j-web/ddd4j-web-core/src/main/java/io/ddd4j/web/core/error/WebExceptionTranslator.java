@@ -6,5 +6,10 @@ package io.ddd4j.web.core.error;
 @FunctionalInterface
 public interface WebExceptionTranslator {
 
+    /**
+     * \u5c06\u5f02\u5e38\u8f6c\u6362\u4e3a\u6846\u67b6\u65e0\u5173\u7684 Web \u9519\u8bef\u3002
+     * @param throwable \u539f\u59cb\u5f02\u5e38
+     * @return Web \u9519\u8bef
+     */
     WebError translate(Throwable throwable);
 }

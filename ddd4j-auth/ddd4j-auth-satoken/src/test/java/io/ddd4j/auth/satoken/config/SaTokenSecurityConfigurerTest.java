@@ -16,9 +16,12 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
  */
 class SaTokenSecurityConfigurerTest {
 
+    /** \u8fdb\u5165\u6d4b\u8bd5\u573a\u666f\u524d\u6ce8\u518c\u7684\u914d\u7f6e\u3002 */
     private SaTokenConfig originalConfig;
+    /** \u8fdb\u5165\u6d4b\u8bd5\u573a\u666f\u524d\u6ce8\u518c\u7684\u8ba4\u8bc1\u903b\u8f91\u3002 */
     private StpLogic originalLogic;
 
+    /** \u6d4b\u8bd5\u524d\u4f9d\u6b21\u6062\u590d\u6216\u5b89\u88c5\u914d\u7f6e<code>SaManager</code>\u3002 */
     @BeforeEach
     void setUp() {
         originalConfig = SaManager.getConfig();
@@ -26,12 +29,14 @@ class SaTokenSecurityConfigurerTest {
         SaManager.setConfig(new SaTokenConfig().setIsPrint(false).setIsLog(false));
     }
 
+    /** \u6d4b\u8bd5\u540e\u4f9d\u6b21\u6062\u590d\u6216\u5b89\u88c5\u767b\u5f55\u903b\u8f91<code>StpUtil</code>\u3001\u6062\u590d\u6216\u5b89\u88c5\u914d\u7f6e<code>SaManager</code>\u3002 */
     @AfterEach
     void tearDown() {
         StpUtil.setStpLogic(originalLogic);
         SaManager.setConfig(originalConfig);
     }
 
+    /** \u9a8c\u8bc1<code>SaManager.getConfig().getTokenName()</code> \u7b49\u4e8e <code>"orders-token"</code>\uff0c<code>SaManager.getConfig().getTimeout()</code> \u7b49\u4e8e <code>300L</code>\uff0c<code>SaManager.getConfig().getTokenSessionCheckLogin()</code>\u4e3a\u771f\u3002 */
     @Test
     void configure_shouldInstallNamespacedSessionConfiguration() {
         SaTokenSecurityProperties properties = new SaTokenSecurityProperties();
@@ -49,6 +54,7 @@ class SaTokenSecurityConfigurerTest {
         assertThat(SaManager.getConfig().getTokenSessionCheckLogin()).isTrue();
     }
 
+    /** \u9a8c\u8bc1<code>SaTokenSecurityConfigurer.configure(properties)</code> \u629b\u51fa <code>IllegalArgumentException</code>\u3002 */
     @Test
     void configure_shouldRejectJwtWithoutProductionSecret() {
         SaTokenSecurityProperties properties = new SaTokenSecurityProperties();
@@ -61,6 +67,7 @@ class SaTokenSecurityConfigurerTest {
                 .withMessageContaining("jwtSecretKey");
     }
 
+    /** \u9a8c\u8bc1<code>SaTokenSecurityConfigurer.configure(properties)</code> \u629b\u51fa <code>IllegalArgumentException</code>\u3002 */
     @Test
     void configure_shouldRejectJwtWithoutIssuerOrAudience() {
         SaTokenSecurityProperties properties = new SaTokenSecurityProperties();

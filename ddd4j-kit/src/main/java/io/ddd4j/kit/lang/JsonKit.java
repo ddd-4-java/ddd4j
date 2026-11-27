@@ -42,6 +42,7 @@ import java.util.*;
 @Slf4j(topic = "### DDD4J-KIT : JsonKit ###")
 public class JsonKit {
 
+    /** \u65e5\u671f\u65f6\u95f4\u683c\u5f0f\u6a21\u677f\u3002 */
     public static final String YYYYMMDDHHMMSS = "yyyy-MM-dd HH:mm:ss";
     /**
      * Redis ObjectMapper（带 DefaultTyping，用于 Redis 序列化）
@@ -52,13 +53,18 @@ public class JsonKit {
      */
     public static final TypeReference<String> STRING_TYPE = new TypeReference<String>() {
     };
+    /** \u6574\u6570 JSON \u7c7b\u578b\u5f15\u7528\u3002 */
     public static final TypeReference<Integer> INTEGER_TYPE = new TypeReference<Integer>() {
     };
+    /** \u957f\u6574\u6570 JSON \u7c7b\u578b\u5f15\u7528\u3002 */
     public static final TypeReference<Long> LONG_TYPE = new TypeReference<Long>() {
     };
+    /** \u53cc\u7cbe\u5ea6 JSON \u7c7b\u578b\u5f15\u7528\u3002 */
     public static final TypeReference<Double> DOUBLE_TYPE = new TypeReference<Double>() {
     };
+    /** \u53ea\u542b\u5e74\u6708\u65e5\u7684\u517c\u5bb9\u65e5\u671f\u683c\u5f0f\u3002 */
     private static final String DATE_PATTERN = "yyyy-MM-dd";
+    /** \u542b\u5e74\u6708\u65e5\u53ca\u79d2\u7684\u517c\u5bb9\u65e5\u671f\u65f6\u95f4\u683c\u5f0f\u3002 */
     private static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
     /**
      * 默认 ObjectMapper（用于普通 JSON 序列化）
@@ -66,7 +72,9 @@ public class JsonKit {
     public static final ObjectMapper DEFAULT_OBJECT_MAPPER = defaultObjectMapper();
 
     /**
-     * 创建默认 ObjectMapper
+     * \u521b\u5efa\u9ed8\u8ba4 ObjectMapper
+     *
+     * @return \u5b8c\u6210\u65e5\u671f\u4e0e\u65f6\u95f4\u7c7b\u578b\u5e8f\u5217\u5316\u914d\u7f6e\u7684 ObjectMapper \u5b9e\u4f8b
      */
     public static ObjectMapper defaultObjectMapper() {
         JavaTimeModule javaTimeModule = new JavaTimeModule();
@@ -86,7 +94,9 @@ public class JsonKit {
     }
 
     /**
-     * 创建 Redis ObjectMapper（带 DefaultTyping）
+     * \u521b\u5efa Redis ObjectMapper\uff08\u5e26 DefaultTyping\uff09
+     *
+     * @return \u542f\u7528\u9ed8\u8ba4\u7c7b\u578b\u4fe1\u606f\uff08DefaultTyping\uff09\u7684 ObjectMapper \u5b9e\u4f8b
      */
     public static ObjectMapper redisObjectMapper() {
         ObjectMapper objectMapper = JsonMapper.builder()
@@ -101,7 +111,12 @@ public class JsonKit {
     }
 
     /**
-     * 创建自定义 ObjectMapper
+     * \u521b\u5efa\u81ea\u5b9a\u4e49 ObjectMapper
+     *
+     * @param datePattern \u65e5\u671f\u683c\u5f0f\u6a21\u5f0f\u4e32
+     * @param dateTimePattern \u65e5\u671f\u65f6\u95f4\u683c\u5f0f\u6a21\u5f0f\u4e32
+     * @param timePattern \u65f6\u95f4\u683c\u5f0f\u6a21\u5f0f\u4e32
+     * @return \u6309\u6307\u5b9a\u6a21\u5f0f\u5e8f\u5217\u5316\u65f6\u95f4\u7c7b\u578b\u7684 ObjectMapper \u5b9e\u4f8b
      */
     public static ObjectMapper buildObjectMapper(String datePattern, String dateTimePattern, String timePattern) {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -138,7 +153,10 @@ public class JsonKit {
     }
 
     /**
-     * 对象转 JSON 字符串
+     * \u5bf9\u8c61\u8f6c JSON \u5b57\u7b26\u4e32
+     *
+     * @param object \u5f85\u5e8f\u5217\u5316\u7684\u5bf9\u8c61
+     * @return JSON \u5b57\u7b26\u4e32\uff1b\u5bf9\u8c61\u4e3a null \u65f6\u8fd4\u56de null\uff0c\u5e8f\u5217\u5316\u5931\u8d25\u65f6\u8fd4\u56de\u7a7a\u5b57\u7b26\u4e32
      */
     public static String toJson(Object object) {
         if (Objects.isNull(object)) {
@@ -156,7 +174,10 @@ public class JsonKit {
     }
 
     /**
-     * JSON 字符串转 Map
+     * JSON \u5b57\u7b26\u4e32\u8f6c Map
+     *
+     * @param json JSON \u5bf9\u8c61\u5b57\u7b26\u4e32
+     * @return \u89e3\u6790\u5f97\u5230\u7684\u952e\u503c\u5bf9 Map\uff1b\u89e3\u6790\u5931\u8d25\u65f6\u8fd4\u56de\u7a7a Map
      */
     public static Map<String, Object> toMap(String json) {
         Map<String, Object> map = new HashMap<>();
@@ -189,7 +210,10 @@ public class JsonKit {
     }
 
     /**
-     * JSON 字符串转 Map 列表
+     * JSON \u5b57\u7b26\u4e32\u8f6c Map \u5217\u8868
+     *
+     * @param json JSON \u6570\u7ec4\u5b57\u7b26\u4e32
+     * @return \u7531\u5404\u5bf9\u8c61\u5143\u7d20\u7ec4\u6210\u7684 Map \u5217\u8868\uff1b\u89e3\u6790\u5931\u8d25\u65f6\u8fd4\u56de null
      */
     public static List<Map<String, Object>> toMapList(String json) {
         try {
@@ -208,7 +232,10 @@ public class JsonKit {
     }
 
     /**
-     * 对象转格式化 JSON 字符串
+     * \u5bf9\u8c61\u8f6c\u683c\u5f0f\u5316 JSON \u5b57\u7b26\u4e32
+     *
+     * @param object \u5f85\u5e8f\u5217\u5316\u7684\u5bf9\u8c61
+     * @return \u5e26\u7f29\u8fdb\u683c\u5f0f\u7684 JSON \u5b57\u7b26\u4e32\uff1b\u5e8f\u5217\u5316\u5931\u8d25\u65f6\u8fd4\u56de\u7a7a\u5b57\u7b26\u4e32
      */
     public static String toJsonWithDefaultPrettyPrinter(Object object) {
         try {
@@ -220,7 +247,12 @@ public class JsonKit {
     }
 
     /**
-     * JSON 字符串转对象
+     * JSON \u5b57\u7b26\u4e32\u8f6c\u5bf9\u8c61
+     *
+     * @param object JSON \u5b57\u7b26\u4e32\u6216\u5df2\u8f6c\u6362\u7684\u76ee\u6807\u5bf9\u8c61
+     * @param clazz \u76ee\u6807\u7c7b\u578b
+     * @param <T> \u76ee\u6807\u7c7b\u578b
+     * @return \u8f6c\u6362\u540e\u7684\u5bf9\u8c61\uff1b\u8f93\u5165\u4e3a\u7a7a\u3001\u7a7a\u767d\u6216\u89e3\u6790\u5931\u8d25\u65f6\u8fd4\u56de null
      */
     public static <T> T toObject(Object object, Class<T> clazz) {
         if (Objects.isNull(object)) {
@@ -243,7 +275,12 @@ public class JsonKit {
     }
 
     /**
-     * JSON 字符串转对象（带 JavaType）
+     * JSON \u5b57\u7b26\u4e32\u8f6c\u5bf9\u8c61\uff08\u5e26 JavaType\uff09
+     *
+     * @param object JSON \u5b57\u7b26\u4e32\u6216\u5df2\u8f6c\u6362\u7684\u76ee\u6807\u5bf9\u8c61
+     * @param javaType \u76ee\u6807 Java \u7c7b\u578b
+     * @param <T> \u76ee\u6807\u7c7b\u578b
+     * @return \u8f6c\u6362\u540e\u7684\u5bf9\u8c61\uff1b\u8f93\u5165\u4e3a\u7a7a\u3001\u7a7a\u767d\u6216\u89e3\u6790\u5931\u8d25\u65f6\u8fd4\u56de null
      */
     public static <T> T toObject(Object object, JavaType javaType) {
         if (Objects.isNull(object)) {
@@ -266,7 +303,12 @@ public class JsonKit {
     }
 
     /**
-     * JSON 字符串转列表
+     * JSON \u5b57\u7b26\u4e32\u8f6c\u5217\u8868
+     *
+     * @param object JSON \u6570\u7ec4\u5b57\u7b26\u4e32\u6216\u5df2\u8f6c\u6362\u7684\u5217\u8868
+     * @param beanType \u5217\u8868\u5143\u7d20\u7c7b\u578b
+     * @param <T> \u5217\u8868\u5143\u7d20\u7c7b\u578b
+     * @return \u8f6c\u6362\u540e\u7684\u5217\u8868\uff1b\u8f93\u5165\u4e3a null \u65f6\u8fd4\u56de\u7a7a\u5217\u8868\uff0c\u4e3a\u7a7a\u767d\u5b57\u7b26\u4e32\u65f6\u8fd4\u56de null
      */
     public static <T> List<T> toList(Object object, Class<T> beanType) {
         if (Objects.isNull(object)) {
@@ -290,7 +332,12 @@ public class JsonKit {
     }
 
     /**
-     * JSON 字符串转对象（带 TypeReference）
+     * JSON \u5b57\u7b26\u4e32\u8f6c\u5bf9\u8c61\uff08\u5e26 TypeReference\uff09
+     *
+     * @param object JSON \u5b57\u7b26\u4e32\u6216\u5df2\u8f6c\u6362\u7684\u76ee\u6807\u5bf9\u8c61
+     * @param typeReference \u76ee\u6807\u7c7b\u578b\u5f15\u7528
+     * @param <T> \u76ee\u6807\u7c7b\u578b
+     * @return \u8f6c\u6362\u540e\u7684\u5bf9\u8c61\uff1b\u8f93\u5165\u4e3a\u7a7a\u3001\u7a7a\u767d\u6216\u89e3\u6790\u5931\u8d25\u65f6\u8fd4\u56de null
      */
     public static <T> T toPojo(Object object, TypeReference<T> typeReference) {
         if (Objects.isNull(object)) {
@@ -313,35 +360,53 @@ public class JsonKit {
     }
 
     /**
-     * 判断是否为 JSON 对象字符串
+     * \u5224\u65ad\u662f\u5426\u4e3a JSON \u5bf9\u8c61\u5b57\u7b26\u4e32
+     *
+     * @param str \u5f85\u6821\u9a8c\u7684\u5b57\u7b26\u4e32
+     * @return \u5b57\u7b26\u4e32\u4ee5\u82b1\u62ec\u53f7\u5305\u88f9\uff08JSON \u5bf9\u8c61\u5f62\u5f0f\uff09\u65f6\u8fd4\u56de true\uff0c\u5426\u5219\u8fd4\u56de false
      */
     public static boolean isJson(String str) {
         return str.startsWith("{") && str.endsWith("}");
     }
 
     /**
-     * 判断是否为 JSON 数组字符串
+     * \u5224\u65ad\u662f\u5426\u4e3a JSON \u6570\u7ec4\u5b57\u7b26\u4e32
+     *
+     * @param str \u5f85\u6821\u9a8c\u7684\u5b57\u7b26\u4e32
+     * @return \u5b57\u7b26\u4e32\u4ee5\u65b9\u62ec\u53f7\u5305\u88f9\uff08JSON \u6570\u7ec4\u5f62\u5f0f\uff09\u65f6\u8fd4\u56de true\uff0c\u5426\u5219\u8fd4\u56de false
      */
     public static boolean isJsonArray(String str) {
         return str.startsWith("[") && str.endsWith("]");
     }
 
     /**
-     * 构建集合类型
+     * \u6784\u5efa\u96c6\u5408\u7c7b\u578b
+     *
+     * @param collectionClass \u96c6\u5408\u7c7b\u578b
+     * @param elementClass \u5143\u7d20\u7c7b\u578b
+     * @return \u5bf9\u5e94\u7684\u96c6\u5408 JavaType
      */
     public static JavaType buildCollectionType(Class<? extends Collection> collectionClass, Class<?> elementClass) {
         return DEFAULT_OBJECT_MAPPER.getTypeFactory().constructCollectionType(collectionClass, elementClass);
     }
 
     /**
-     * 构建 Map 类型
+     * \u6784\u5efa Map \u7c7b\u578b
+     *
+     * @param mapClass Map \u7c7b\u578b
+     * @param keyClass \u952e\u7c7b\u578b
+     * @param valueClass \u503c\u7c7b\u578b
+     * @return \u5bf9\u5e94\u7684\u6620\u5c04 JavaType
      */
     public static JavaType buildMapType(Class<? extends Map> mapClass, Class<?> keyClass, Class<?> valueClass) {
         return DEFAULT_OBJECT_MAPPER.getTypeFactory().constructMapType(mapClass, keyClass, valueClass);
     }
 
     /**
-     * 更新对象
+     * \u66f4\u65b0\u5bf9\u8c61
+     *
+     * @param jsonString \u5305\u542b\u5f85\u66f4\u65b0\u5b57\u6bb5\u7684 JSON \u5b57\u7b26\u4e32
+     * @param object \u5f85\u66f4\u65b0\u7684\u76ee\u6807\u5bf9\u8c61
      */
     public static void update(String jsonString, Object object) {
         try {
@@ -352,11 +417,12 @@ public class JsonKit {
     }
 
     /**
-     * 类型转换（合并自 JacksonKit）
+     * \u7c7b\u578b\u8f6c\u6362\uff08\u5408\u5e76\u81ea JacksonKit\uff09
+     * @param value \u6e90\u5bf9\u8c61
+     * @param valueType \u76ee\u6807\u7c7b\u578b
+     * @return \u8f6c\u6362\u540e\u7684\u5bf9\u8c61
      *
-     * @param value     源对象
-     * @param valueType 目标类型
-     * @return 转换后的对象
+     * @param <T> \u76ee\u6807\u7c7b\u578b
      */
     public static <T> T toType(Object value, Class<T> valueType) {
         // 1、如果value为空，直接返回null
@@ -379,17 +445,30 @@ public class JsonKit {
         }
     }
 
+    /**
+     * \u6309 JSON \u6570\u5b57\u3001\u5e03\u5c14\u3001\u6587\u672c\u6216\u5176\u4ed6\u8282\u70b9\u7c7b\u578b\u53d6\u51fa Java \u503c\u3002
+     * @param childNode \u5f85\u8f6c\u6362\u7684 Jackson \u6811\u8282\u70b9
+     * @return JSON \u8282\u70b9\u5bf9\u5e94\u7684 Java \u503c
+     */
     private static Object getNodeValue(JsonNode childNode) {
         return childNode.isBigDecimal() ? childNode.decimalValue() : childNode.isDouble() ? childNode.asDouble() :
                 childNode.isFloat() ? childNode.floatValue() : childNode.isLong() ? childNode.asLong() :
                         childNode.isInt() ? childNode.asInt() : childNode.isBoolean() ? childNode.asBoolean() : childNode.asText();
     }
 
+    /** \u89e3\u6790\u79d2\u7ea7\u548c\u6beb\u79d2\u7ea7\u65f6\u95f4\u6587\u672c\uff0c\u7f3a\u5c11\u5c0f\u6570\u90e8\u5206\u65f6\u8865\u9f50\u6beb\u79d2\u3002 */
     private static class BaseSimpleDateFormat extends SimpleDateFormat {
+        /** \u4f7f\u7528\u5e26\u6beb\u79d2\u7684\u65e5\u671f\u65f6\u95f4\u6a21\u5f0f\u521d\u59cb\u5316\u683c\u5f0f\u5668\u3002 */
         public BaseSimpleDateFormat() {
             super("yyyy-MM-dd HH:mm:ss.SSS");
         }
 
+        /**
+         * \u5728\u7f3a\u5c11\u6beb\u79d2\u540e\u7f00\u7684\u79d2\u7ea7\u6587\u672c\u4e0a\u8865\u96f6\uff0c\u518d\u4ea4\u7ed9\u65e5\u671f\u65f6\u95f4\u683c\u5f0f\u5668\u89e3\u6790\u3002
+         * @param source \u79d2\u7ea7\u6216\u6beb\u79d2\u7ea7\u65e5\u671f\u65f6\u95f4\u6587\u672c
+         * @return \u89e3\u6790\u540e\u7684\u65e5\u671f
+         * @throws ParseException \u6587\u672c\u4e0d\u80fd\u6309\u65e5\u671f\u65f6\u95f4\u6a21\u5f0f\u89e3\u6790
+         */
         public Date parse(String source) throws ParseException {
             if (source.length() == 19) {
                 source = source.concat(".000");

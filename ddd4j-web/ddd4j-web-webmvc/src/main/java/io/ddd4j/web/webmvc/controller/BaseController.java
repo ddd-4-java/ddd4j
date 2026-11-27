@@ -70,13 +70,21 @@ public class BaseController implements ApplicationEventPublisherAware, Applicati
     @Getter
     private ApplicationContext context;
 
+    /**
+     * \u521b\u5efa BaseController \u5b9e\u4f8b\u3002
+     * @param messageSource \u6d88\u606f\u6e90
+     * @param beanMapper Bean \u6620\u5c04\u5668
+     */
     public BaseController(NestedMessageSource messageSource, Mapper beanMapper) {
         this.messageSource = messageSource;
         this.beanMapper = beanMapper;
     }
 
     /**
-     * 统一处理异常，并抛出异常事件方便进行统一的日志实现
+     * \u7edf\u4e00\u5904\u7406\u5f02\u5e38\uff0c\u5e76\u629b\u51fa\u5f02\u5e38\u4e8b\u4ef6\u65b9\u4fbf\u8fdb\u884c\u7edf\u4e00\u7684\u65e5\u5fd7\u5b9e\u73b0
+     *
+     * @param source \u6e90\u5bf9\u8c61
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
      */
     protected void logException(Object source, Exception ex) {
         getEventPublisher().publishEvent(new AppExceptionEvent(source, ex));
@@ -93,28 +101,65 @@ public class BaseController implements ApplicationEventPublisherAware, Applicati
         return getMessageSource().getMessage(key, args, LocaleContextHolder.getLocale());
     }
 
+    /**
+     * 执行 <code>success</code>，调用 <code>ApiRestResponse.success</code>。
+     *
+     * @param <T> 当前操作使用的泛型类型
+     * @param key \u6d88\u606f\u952e
+     * @param args \u6d88\u606f\u53c2\u6570
+     * @return 返回表达式 <code>ApiRestResponse.success(getMessage(key, args))</code>
+     */
     protected <T> ApiRestResponse<T> success(String key, Object... args) {
         return ApiRestResponse.success(getMessage(key, args));
     }
 
+    /**
+     * 执行 <code>fail</code>，调用 <code>ApiRestResponse.fail</code>。
+     *
+     * @param <T> 当前操作使用的泛型类型
+     * @param key \u6d88\u606f\u952e
+     * @param args \u6d88\u606f\u53c2\u6570
+     * @return 返回表达式 <code>ApiRestResponse.fail(getMessage(key, args))</code>
+     */
     protected <T> ApiRestResponse<T> fail(String key, Object... args) {
         return ApiRestResponse.fail(getMessage(key, args));
     }
 
+    /**
+     * 执行 <code>error</code>，调用 <code>ApiRestResponse.error</code>。
+     *
+     * @param <T> 当前操作使用的泛型类型
+     * @param key \u6d88\u606f\u952e
+     * @param args \u6d88\u606f\u53c2\u6570
+     * @return 返回表达式 <code>ApiRestResponse.error(getMessage(key, args))</code>
+     */
     protected <T> ApiRestResponse<T> error(String key, Object... args) {
         return ApiRestResponse.error(getMessage(key, args));
     }
 
+    /**
+     * \u4fdd\u5b58 Spring \u63d0\u4f9b\u7684\u5bb9\u5668\u4e0a\u4e0b\u6587\u4f9b\u63a7\u5236\u5668\u67e5\u8be2\u7ec4\u4ef6\u3002
+     * @param applicationContext Spring \u5bb9\u5668\u63d0\u4f9b\u7684\u5e94\u7528\u4e0a\u4e0b\u6587
+     * @throws BeansException \u5f53\u524d\u6846\u67b6\u8bf7\u6c42\u5904\u7406\u3001\u6d88\u606f\u8bfb\u5199\u6216\u53c2\u6570\u8f6c\u6362\u5931\u8d25
+     */
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.context = applicationContext;
     }
 
+    /**
+     * \u8bbe\u7f6e\u5e94\u7528\u4e8b\u4ef6\u53d1\u5e03\u5668\u3002
+     * @param applicationEventPublisher \u8981\u5199\u5165\u7684\u503c
+     */
     @Override
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
         this.eventPublisher = applicationEventPublisher;
     }
 
+    /**
+     * \u8bbe\u7f6e\u5d4c\u5165\u5f0f\u503c\u89e3\u6790\u5668\u3002
+     * @param resolver \u8981\u5199\u5165\u7684\u503c
+     */
     @Override
     public void setEmbeddedValueResolver(StringValueResolver resolver) {
         this.valueResolver = resolver;

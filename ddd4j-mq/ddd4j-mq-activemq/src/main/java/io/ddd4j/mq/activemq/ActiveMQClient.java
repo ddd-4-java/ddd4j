@@ -30,6 +30,7 @@ import java.util.function.Consumer;
 @Slf4j(topic = "### DDD4J-MQ : ActiveMQClient ###")
 public class ActiveMQClient implements MQClient {
 
+    /** \u5f53\u524d\u6d88\u606f\u4ee3\u7406\u5ba2\u6237\u7aef\u4f7f\u7528\u7684\u8fde\u63a5\u548c\u8ba2\u9605\u914d\u7f6e\u3002 */
     private final ActiveMQProperties properties;
     /**
      * 延迟初始化的 ActiveMQ 连接工厂（构造 1 注入时不创建）
@@ -41,8 +42,10 @@ public class ActiveMQClient implements MQClient {
     private final AtomicReference<Connection> connectionRef = new AtomicReference<>();
 
     /**
-     * 双构造 1：注入外部已配置好的 ActiveMQConnectionFactory（runtime 集成用）。
-     * properties 默认为空，因为 properties 仅用于 publish 时的 message property 写入。
+     * \u53cc\u6784\u9020 1\uff1a\u6ce8\u5165\u5916\u90e8\u5df2\u914d\u7f6e\u597d\u7684 ActiveMQConnectionFactory\uff08runtime \u96c6\u6210\u7528\uff09\u3002
+     *  properties \u9ed8\u8ba4\u4e3a\u7a7a\uff0c\u56e0\u4e3a properties \u4ec5\u7528\u4e8e publish \u65f6\u7684 message property \u5199\u5165\u3002
+     *
+     * @param connectionFactory \u5df2\u914d\u7f6e\u7684 ActiveMQ \u8fde\u63a5\u5de5\u5382
      */
     public ActiveMQClient(ActiveMQConnectionFactory connectionFactory) {
         this.connectionFactory = Objects.requireNonNull(connectionFactory, "ActiveMQ ConnectionFactory is required");
@@ -50,7 +53,9 @@ public class ActiveMQClient implements MQClient {
     }
 
     /**
-     * 双构造 2：从 properties 自建 ActiveMQConnectionFactory。
+     * \u53cc\u6784\u9020 2\uff1a\u4ece properties \u81ea\u5efa ActiveMQConnectionFactory\u3002
+     *
+     * @param properties ActiveMQ \u8fde\u63a5\u5c5e\u6027
      */
     public ActiveMQClient(ActiveMQProperties properties) {
         this.properties = Objects.requireNonNull(properties, "ActiveMQ Properties is required");
@@ -59,7 +64,10 @@ public class ActiveMQClient implements MQClient {
     }
 
     /**
-     * 从 properties 自建 ActiveMQConnectionFactory（构造 2 用）。
+     * \u4ece properties \u81ea\u5efa ActiveMQConnectionFactory\uff08\u6784\u9020 2 \u7528\uff09\u3002
+     *
+     * @param properties ActiveMQ \u8fde\u63a5\u914d\u7f6e
+     * @return \u914d\u7f6e\u597d\u7684 ActiveMQ \u8fde\u63a5\u5de5\u5382
      */
     private static ActiveMQConnectionFactory buildFactory(ActiveMQProperties properties) {
         ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(properties.getBrokerUrl());
@@ -75,6 +83,11 @@ public class ActiveMQClient implements MQClient {
 
     // ========================= 生产者 =========================
 
+    /**
+     * 返回此消息适配器在 DDD4J 中登记的实现名。
+     *
+     * @return 实际返回<code>"activemq"</code>，供调用方取得当前值
+     */
     @Override
     public String impl() {
         return "activemq";
@@ -82,6 +95,14 @@ public class ActiveMQClient implements MQClient {
 
     // ========================= 消费者 =========================
 
+    /**
+     * 准备消息生产者并返回可发布事件的入口。
+     *
+     * <p>ActiveMQ 实现调用 <code>getConnection().createSession(false, Session.AUTO_ACKNOWLEDGE)</code>。</p>
+     *
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 接收待发布事件的函数
+     */
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         try {
@@ -121,6 +142,16 @@ public class ActiveMQClient implements MQClient {
 
     // ========================= 连接管理（双构造共享的最小辅助）=========================
 
+    /**
+     * 为监听器建立消息消费所需的订阅和客户端资源。
+     *
+     * <p>ActiveMQ 实现调用 <code>getConnection().createSession(false, Session.CLIENT_ACKNOWLEDGE)</code>。</p>
+     *
+     * @param listener 监听器定义
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 此实现返回<code>true</code>
+     * @throws Exception 当前框架、存储或底层客户端无法完成此操作时
+     */
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         final Session session = getConnection().createSession(false, Session.CLIENT_ACKNOWLEDGE);
@@ -160,6 +191,10 @@ public class ActiveMQClient implements MQClient {
         return true;
     }
 
+    /**
+     * \u53d6\u5f97\u5f53\u524d\u9002\u914d\u5668\u4f7f\u7528\u7684\u539f\u751f\u8fde\u63a5\u6216\u5ba2\u6237\u7aef\u3002
+     * @return \u4f9b\u53d1\u5e03\u6216\u6d88\u8d39\u64cd\u4f5c\u4f7f\u7528\u7684\u539f\u751f\u8fde\u63a5\u6216\u5ba2\u6237\u7aef
+     */
     private synchronized Connection getConnection() {
         Connection connection = connectionRef.get();
         if (Objects.isNull(connection)) {
@@ -177,7 +212,11 @@ public class ActiveMQClient implements MQClient {
     }
 
     /**
-     * 优先读取 ddd4j 标准消息 ID，兼容升级期旧键并最终回退到 JMS 原生 ID。
+     * \u4f18\u5148\u8bfb\u53d6 ddd4j \u6807\u51c6\u6d88\u606f ID\uff0c\u517c\u5bb9\u5347\u7ea7\u671f\u65e7\u952e\u5e76\u6700\u7ec8\u56de\u9000\u5230 JMS \u539f\u751f ID\u3002
+     *
+     * @param message \u6536\u5230\u7684 JMS \u6d88\u606f
+     * @return \u7528\u4e8e\u786e\u8ba4\u548c\u65e5\u5fd7\u8bb0\u5f55\u7684 JMS \u6d88\u606f\u6807\u8bc6
+     * @throws JMSException \u65e0\u6cd5\u8bfb\u53d6 JMS \u6d88\u606f\u7684\u6807\u8bc6\u5c5e\u6027
      */
     static String messageId(Message message) throws JMSException {
         String messageId = message.getStringProperty(MessageHeaders.HEADER_MESSAGE_ID);

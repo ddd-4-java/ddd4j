@@ -8,9 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication(excludeName = "org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration")
 public class SpringSampleApplication {
-    /**
-     * @param args Spring Boot 启动参数
-     */
+    /** @param args Spring Boot \u542f\u52a8\u53c2\u6570 */
     public static void main(String[] args) {
         SpringApplication.run(SpringSampleApplication.class, args);
     }

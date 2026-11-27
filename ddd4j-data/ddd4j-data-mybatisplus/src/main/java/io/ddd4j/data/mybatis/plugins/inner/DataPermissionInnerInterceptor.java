@@ -48,12 +48,25 @@ import java.util.Objects;
 @Slf4j
 public class DataPermissionInnerInterceptor implements InnerInterceptor {
 
+    /** 保存 <code>provider</code> 对应的 <code>DataScopeProvider</code> 数据。 */
     private final DataScopeProvider provider;
 
+    /**
+     * 初始化 <code>DataPermissionInnerInterceptor</code> 使用的 <code>provider</code>。
+     *
+     * @param provider 传入此操作的 <code>DataScopeProvider</code> 类型 <code>provider</code>
+     */
     public DataPermissionInnerInterceptor(DataScopeProvider provider) {
         this.provider = provider;
     }
 
+    /**
+     * 执行 <code>before Prepare</code>，调用 <code>SystemMetaObject.forObject</code>、<code>ms.getSqlCommandType</code>、<code>InterceptorIgnoreHelper.willIgnoreDataPermission</code>。
+     *
+     * @param sh 传入此操作的 <code>StatementHandler</code> 类型 <code>sh</code>
+     * @param connection 传入此操作的 <code>Connection</code> 类型 <code>connection</code>
+     * @param transactionTimeout 传入此操作的 <code>Integer</code> 类型 <code>transactionTimeout</code>
+     */
     @Override
     public void beforePrepare(StatementHandler sh, Connection connection, Integer transactionTimeout) {
         MappedStatement ms = (MappedStatement) SystemMetaObject.forObject(sh)

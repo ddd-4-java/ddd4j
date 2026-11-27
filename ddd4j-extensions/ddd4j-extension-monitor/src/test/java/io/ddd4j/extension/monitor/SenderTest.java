@@ -19,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class SenderTest {
 
+    /** \u9a8c\u8bc1<code>json</code>\u975e\u7a7a\uff0c<code>json2</code> \u7b49\u4e8e <code>Sender.renderMessage(m)</code>\u3002 */
     @Test
     void sendMarkdownTitleAndTextShouldProduceValidJson() {
         AtomicReference<String> captured = new AtomicReference<>();
@@ -40,6 +41,7 @@ class SenderTest {
         assertThat(json2).isEqualTo(Sender.renderMessage(m));
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>mobiles.add()</code>\u3001<code>sender.sendMarkdown()</code>\u3001<code>captured.get()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void sendMarkdownWithAtMobilesShouldHonorList() {
         AtomicReference<String> captured = new AtomicReference<>();
@@ -58,6 +60,7 @@ class SenderTest {
                 .contains("\"text\":\"重要通知\"");
     }
 
+    /** \u9a8c\u8bc1<code>json</code> \u5305\u542b <code>"\"at\":"</code>\u3002 */
     @Test
     void sendMarkdownWithEmptyAtMobilesShouldEmptiedAtField() {
         AtomicReference<String> captured = new AtomicReference<>();
@@ -72,6 +75,7 @@ class SenderTest {
                 .doesNotContain("\"atMobiles\"");
     }
 
+    /** \u9a8c\u8bc1<code>json</code> \u4ee5\u2026\u5f00\u5934 <code>"{"</code>\u3002 */
     @Test
     void renderMessageShouldBeJsonString() {
         Message m = Message.markdown("title", "body", null);

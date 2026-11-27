@@ -40,15 +40,17 @@ public interface CASOperation<R, V> {
     R apply(GetsResponse<V> current) throws Exception;
 
     /**
-     * CAS 最大重试次数——借鉴 Memcached {@code CASOperation.getMaxTries()}。
+     * CAS \u6700\u5927\u91cd\u8bd5\u6b21\u6570\u2014\u2014\u501f\u9274 Memcached {@code CASOperation.getMaxTries()}\u3002
      *
-     * <p>默认返回 -1（使用引擎默认 16 次）。
-     * 业务方可重写此方法控制重试策略：
-     * <ul>
-     *   <li>1 = 只尝试一次，不重试</li>
-     *   <li>-1 = 使用引擎默认（16 次）</li>
-     *   <li>N = 最多重试 N 次</li>
-     * </ul>
+     *  <p>\u9ed8\u8ba4\u8fd4\u56de -1\uff08\u4f7f\u7528\u5f15\u64ce\u9ed8\u8ba4 16 \u6b21\uff09\u3002
+     *  \u4e1a\u52a1\u65b9\u53ef\u91cd\u5199\u6b64\u65b9\u6cd5\u63a7\u5236\u91cd\u8bd5\u7b56\u7565\uff1a
+     *  <ul>
+     *    <li>1 = \u53ea\u5c1d\u8bd5\u4e00\u6b21\uff0c\u4e0d\u91cd\u8bd5</li>
+     *    <li>-1 = \u4f7f\u7528\u5f15\u64ce\u9ed8\u8ba4\uff0816 \u6b21\uff09</li>
+     *    <li>N = \u6700\u591a\u91cd\u8bd5 N \u6b21</li>
+     *  </ul>
+     *
+     * @return \u6700\u5927\u91cd\u8bd5\u6b21\u6570\uff0c-1 \u8868\u793a\u4f7f\u7528\u5f15\u64ce\u9ed8\u8ba4\u503c
      */
     default int maxRetries() {
         return -1;

@@ -34,8 +34,11 @@ import java.util.function.Consumer;
 @Slf4j
 public class BatchReadListener<T> implements ReadListener<T> {
 
+    /** \u8fbe\u5230\u8be5\u8bb0\u5f55\u6570\u65f6\u7acb\u5373\u63d0\u4ea4\u4e00\u6279\u6570\u636e\u3002 */
     private final int batchSize;
+    /** \u63a5\u6536\u5df2\u89e3\u6790\u8bb0\u5f55\u6279\u6b21\u7684\u6d88\u8d39\u56de\u8c03\u3002 */
     private final Consumer<List<T>> batchConsumer;
+    /** \u6682\u5b58\u5c1a\u672a\u63d0\u4ea4\u7ed9\u6279\u6b21\u56de\u8c03\u7684\u8bb0\u5f55\u3002 */
     private final List<T> cached;
 
     /**
@@ -53,6 +56,11 @@ public class BatchReadListener<T> implements ReadListener<T> {
         this.cached = new ArrayList<>(batchSize);
     }
 
+    /**
+     * \u7f13\u5b58\u5f53\u524d\u884c\u5e76\u5728\u8fbe\u5230\u6279\u6b21\u5927\u5c0f\u65f6\u4ea4\u7ed9\u6d88\u8d39\u56de\u8c03\u3002
+     * @param data \u5f53\u524d\u89e3\u6790\u7684\u884c
+     * @param context \u63d0\u4f9b\u5de5\u4f5c\u8868\u53ca\u884c\u53f7\u7684\u8bfb\u53d6\u4e0a\u4e0b\u6587
+     */
     @Override
     public void invoke(T data, AnalysisContext context) {
         cached.add(data);
@@ -61,18 +69,28 @@ public class BatchReadListener<T> implements ReadListener<T> {
         }
     }
 
+    /**
+     * \u63d0\u4ea4\u8bfb\u53d6\u7ed3\u675f\u65f6\u5c1a\u672a\u6d88\u8d39\u7684\u5c3e\u6279\u8bb0\u5f55\u3002
+     * @param context \u63d0\u4f9b\u5de5\u4f5c\u8868\u53ca\u884c\u53f7\u7684\u8bfb\u53d6\u4e0a\u4e0b\u6587
+     */
     @Override
     public void doAfterAllAnalysed(AnalysisContext context) {
         flush();
         log.debug("BatchReadListener finished, sheet={}", context.readSheetHolder().getSheetName());
     }
 
+    /**
+     * \u8bb0\u5f55\u574f\u884c\u7684\u7d22\u5f15\u548c\u5f02\u5e38\u4fe1\u606f\uff0c\u7ee7\u7eed\u8bfb\u53d6\u540e\u7eed\u884c\u3002
+     * @param exception \u5f53\u524d\u884c\u89e3\u6790\u5f02\u5e38
+     * @param context \u63d0\u4f9b\u5de5\u4f5c\u8868\u53ca\u884c\u53f7\u7684\u8bfb\u53d6\u4e0a\u4e0b\u6587
+     */
     @Override
     public void onException(Exception exception, AnalysisContext context) {
         // 单行失败不影响整批；记录日志后继续。如需精细错误收集，请使用 ErrorCollectingReadListener
         log.warn("Row {} parse failed, skipped: {}", context.readRowHolder().getRowIndex(), exception.getMessage());
     }
 
+    /** \u628a\u6682\u5b58\u8bb0\u5f55\u7684\u526f\u672c\u4ea4\u7ed9\u6279\u6b21\u56de\u8c03\uff0c\u5e76\u5728\u56de\u8c03\u7ed3\u675f\u540e\u6e05\u7a7a\u6682\u5b58\u5217\u8868\u3002 */
     private void flush() {
         if (cached.isEmpty()) {
             return;

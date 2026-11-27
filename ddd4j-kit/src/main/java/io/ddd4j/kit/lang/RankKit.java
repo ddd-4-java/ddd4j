@@ -19,12 +19,14 @@ import java.util.function.Function;
 public class RankKit {
 
     /**
-     * 根据指定字段进行排名，返回排名后的数据列表
+     * \u6839\u636e\u6307\u5b9a\u5b57\u6bb5\u8fdb\u884c\u6392\u540d\uff0c\u8fd4\u56de\u6392\u540d\u540e\u7684\u6570\u636e\u5217\u8868
+     * @param sortedList \u5df2\u6392\u5e8f\u6570\u636e\u5217\u8868
+     * @param type \u5206\u6570\u76f8\u540c\u65f6\u6392\u540d\u7b56\u7565
+     * @param keyExtractor \u952e\u63d0\u53d6\u5668, \u8ba1\u7b97\u6392\u540d\u7684\u5b57\u6bb5
+     * @return \u6392\u540d\u540e\u7684\u5217\u8868
      *
-     * @param sortedList   已排序数据列表
-     * @param type         分数相同时排名策略
-     * @param keyExtractor 键提取器, 计算排名的字段
-     * @return 排名后的列表
+     * @param <T> \u6570\u636e\u5143\u7d20\u7c7b\u578b
+     * @param <U> \u952e\u63d0\u53d6\u5668\u4ea7\u751f\u7684\u952e\u7c7b\u578b
      */
     public static <T, U> List<RankModel<T>> rank(RankSortTypeEnum type, List<T> sortedList, Function<? super T, ? extends U>
             keyExtractor) {
@@ -32,13 +34,15 @@ public class RankKit {
     }
 
     /**
-     * 根据指定字段进行排名，返回排名前top条数据
+     * \u6839\u636e\u6307\u5b9a\u5b57\u6bb5\u8fdb\u884c\u6392\u540d\uff0c\u8fd4\u56de\u6392\u540d\u524dtop\u6761\u6570\u636e
+     * @param sortedList \u5df2\u6392\u5e8f\u6570\u636e\u5217\u8868
+     * @param type \u5206\u6570\u76f8\u540c\u65f6\u6392\u540d\u7b56\u7565
+     * @param top \u53d6\u524dtop\u540d\u6570\u636e
+     * @param keyExtractor \u952e\u63d0\u53d6\u5668, \u8ba1\u7b97\u6392\u540d\u7684\u5b57\u6bb5
+     * @return \u6392\u540d\u540e\u7684\u5217\u8868
      *
-     * @param sortedList   已排序数据列表
-     * @param type         分数相同时排名策略
-     * @param top          取前top名数据
-     * @param keyExtractor 键提取器, 计算排名的字段
-     * @return 排名后的列表
+     * @param <T> \u6570\u636e\u5143\u7d20\u7c7b\u578b
+     * @param <U> \u952e\u63d0\u53d6\u5668\u4ea7\u751f\u7684\u952e\u7c7b\u578b
      */
     public static <T, U> List<RankModel<T>> rank(RankSortTypeEnum type, Integer top, List<T> sortedList, Function<? super T, ? extends U> keyExtractor) {
         switch (type) {
@@ -51,6 +55,15 @@ public class RankKit {
         }
     }
 
+    /**
+     * \u76f8\u540c\u952e\u5e76\u5217\u4e14\u4e4b\u540e\u53ef\u80fd\u8df3\u8fc7\u540d\u6b21\u3002
+     * @param <T> \u88ab\u6392\u540d\u7684\u5143\u7d20\u7c7b\u578b
+     * @param <U> \u6bd4\u8f83\u662f\u5426\u5e76\u5217\u7684\u6392\u540d\u952e\u7c7b\u578b
+     * @param top \u8981\u4fdd\u7559\u7684\u540d\u6b21\u4e0a\u9650\uff0c\u7a7a\u503c\u6216\u975e\u6b63\u6570\u65f6\u4e0d\u9650\u5236
+     * @param sortedList \u5df2\u6392\u5e8f\u4e14\u7b49\u5f85\u9644\u52a0\u540d\u6b21\u7684\u8bb0\u5f55
+     * @param keyExtractor \u63d0\u53d6\u7528\u4e8e\u5224\u5b9a\u5e76\u5217\u7684\u6392\u540d\u952e
+     * @return \u542b\u540d\u6b21\u548c\u539f\u8bb0\u5f55\u7684\u6392\u540d\u5217\u8868
+     */
     private static <T, U> List<RankModel<T>> doRankSameNonContinuous(Integer top, List<T> sortedList, Function<? super T, ? extends U> keyExtractor) {
         List<RankModel<T>> result = new ArrayList<>();
         int rankNumber = 0;
@@ -69,6 +82,15 @@ public class RankKit {
         return result;
     }
 
+    /**
+     * \u76f8\u540c\u952e\u5e76\u5217\u4e14\u4e4b\u540e\u8fde\u7eed\u8ba1\u540d\u6b21\u3002
+     * @param <T> \u88ab\u6392\u540d\u7684\u5143\u7d20\u7c7b\u578b
+     * @param <U> \u6bd4\u8f83\u662f\u5426\u5e76\u5217\u7684\u6392\u540d\u952e\u7c7b\u578b
+     * @param top \u8981\u4fdd\u7559\u7684\u540d\u6b21\u4e0a\u9650\uff0c\u7a7a\u503c\u6216\u975e\u6b63\u6570\u65f6\u4e0d\u9650\u5236
+     * @param sortedList \u5df2\u6392\u5e8f\u4e14\u7b49\u5f85\u9644\u52a0\u540d\u6b21\u7684\u8bb0\u5f55
+     * @param keyExtractor \u63d0\u53d6\u7528\u4e8e\u5224\u5b9a\u5e76\u5217\u7684\u6392\u540d\u952e
+     * @return \u542b\u540d\u6b21\u548c\u539f\u8bb0\u5f55\u7684\u6392\u540d\u5217\u8868
+     */
     private static <T, U> List<RankModel<T>> doRankSameContinuous(Integer top, List<T> sortedList, Function<? super T, ? extends U> keyExtractor) {
         List<RankModel<T>> result = new ArrayList<>();
         int rankNumber = 0;
@@ -85,6 +107,13 @@ public class RankKit {
         return result;
     }
 
+    /**
+     * \u6309\u5217\u8868\u987a\u5e8f\u9010\u884c\u8ba1\u540d\u6b21\u3002
+     * @param <T> \u88ab\u6392\u540d\u7684\u5143\u7d20\u7c7b\u578b
+     * @param top \u8981\u4fdd\u7559\u7684\u540d\u6b21\u4e0a\u9650\uff0c\u7a7a\u503c\u6216\u975e\u6b63\u6570\u65f6\u4e0d\u9650\u5236
+     * @param sortedList \u5df2\u6392\u5e8f\u4e14\u7b49\u5f85\u9644\u52a0\u540d\u6b21\u7684\u8bb0\u5f55
+     * @return \u542b\u540d\u6b21\u548c\u539f\u8bb0\u5f55\u7684\u6392\u540d\u5217\u8868
+     */
     private static <T> List<RankModel<T>> doRankNatural(Integer top, List<T> sortedList) {
         List<RankModel<T>> result = new ArrayList<>();
         int rankNumber = 1;
@@ -112,26 +141,48 @@ public class RankKit {
          */
         private T data;
 
+        /** \u521b\u5efa\u7a7a\u6392\u5e8f\u9879\u3002 */
         public RankModel() {
         }
 
+        /**
+         * \u521b\u5efa\u5305\u542b\u6392\u5e8f\u503c\u548c\u6570\u636e\u7684\u6392\u5e8f\u9879\u3002
+         * @param rank \u6392\u5e8f\u503c
+         * @param data \u5173\u8054\u6570\u636e
+         */
         public RankModel(Integer rank, T data) {
             this.rank = rank;
             this.data = data;
         }
 
+        /**
+         * \u83b7\u53d6\u6392\u5e8f\u503c\u3002
+         * @return \u6392\u5e8f\u503c
+         */
         public Integer getRank() {
             return rank;
         }
 
+        /**
+         * \u8bbe\u7f6e\u6392\u5e8f\u503c\u3002
+         * @param rank \u6392\u5e8f\u503c
+         */
         public void setRank(Integer rank) {
             this.rank = rank;
         }
 
+        /**
+         * \u83b7\u53d6\u5173\u8054\u6570\u636e\u3002
+         * @return \u5173\u8054\u6570\u636e
+         */
         public T getData() {
             return data;
         }
 
+        /**
+         * \u8bbe\u7f6e\u5173\u8054\u6570\u636e\u3002
+         * @param data \u5173\u8054\u6570\u636e
+         */
         public void setData(T data) {
             this.data = data;
         }

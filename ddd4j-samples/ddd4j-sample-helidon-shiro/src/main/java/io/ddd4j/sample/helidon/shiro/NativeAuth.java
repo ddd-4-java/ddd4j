@@ -23,7 +23,9 @@ import java.util.Set;
  */
 @ApplicationScoped
 public class NativeAuth {
+    /** \u542f\u52a8\u793a\u4f8b\u524d\u6ce8\u518c\u7684 Shiro \u5b89\u5168\u7ba1\u7406\u5668\u3002 */
     private final SecurityManager previous = current();
+    /** \u5f53\u524d\u793a\u4f8b\u5b89\u88c5\u5e76\u8d1f\u8d23\u5173\u95ed\u7684 Shiro \u5b89\u5168\u7ba1\u7406\u5668\u3002 */
     private final DefaultSecurityManager owned = new DefaultSecurityManager(new SampleRealm());
 
     /**
@@ -35,21 +37,29 @@ public class NativeAuth {
         }
     }
 
+    /**
+     * \u76f4\u63a5\u8bfb\u53d6\u5f53\u524d Shiro \u5168\u5c40\u5b89\u5168\u7ba1\u7406\u5668\u7684\u6ce8\u518c\u69fd\u4f4d\u3002
+     * @return \u5df2\u6ce8\u518c\u7684\u5b89\u5168\u7ba1\u7406\u5668\uff0c\u672a\u6ce8\u518c\u65f6\u4e3a\u7a7a
+     */
     private static SecurityManager current() {
         return (SecurityManager) ReflectUtil.getStaticFieldValue(Objects.requireNonNull(ReflectUtil.getField(SecurityUtils.class, "securityManager")));
     }
 
     /**
-     * @return 本样例拥有的引擎
+     * 读取<code>owned</code> 的当前值。
+     *
+     * @return \u672c\u6837\u4f8b\u62e5\u6709\u7684\u5f15\u64ce
      */
     public SecurityManager manager() {
         return owned;
     }
 
     /**
-     * @param username 账号
-     * @param password 凭证
-     * @return 原生会话标识
+     * 执行 <code>login</code>，调用 <code>subject.ShiroSubjectProvider</code>、<code>AuthRequest.of</code>、<code>auth.AuthPrincipal</code>。
+     *
+     * @param username \u8d26\u53f7
+     * @param password \u51ed\u8bc1
+     * @return \u539f\u751f\u4f1a\u8bdd\u6807\u8bc6
      */
     public String login(String username, String password) {
         try {
@@ -73,7 +83,16 @@ public class NativeAuth {
         owned.destroy();
     }
 
+    /** \u6839\u636e\u793a\u4f8b\u7528\u6237\u53ca\u8ba2\u5355\u6743\u9650\u6267\u884c\u539f\u751f Shiro \u8ba4\u8bc1\u4e0e\u6388\u6743\u3002 */
     private static final class SampleRealm extends AuthorizingRealm {
+        /**
+         * 根据登录凭据查找供 Shiro 校验的身份信息。
+         *
+         * <p>此实现调用 <code>String.valueOf(token.getPrincipal())</code>。</p>
+         *
+         * @param token 待校验或用于定位会话的令牌
+         * @return 此操作产生的<code>AuthenticationInfo</code>结果
+         */
         @Override
         protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) {
             String user = String.valueOf(token.getPrincipal());
@@ -83,6 +102,14 @@ public class NativeAuth {
             return new SimpleAuthenticationInfo(user, "sample-password", getName());
         }
 
+        /**
+         * 加载 Shiro 用于权限和角色判定的信息。
+         *
+         * <p>此实现调用 <code>"alice".equals(principals.getPrimaryPrincipal())</code>。</p>
+         *
+         * @param principals 传给 <code>"alice".equals(principals.getPrimaryPrincipal())</code>
+         * @return 实际返回<code>result</code>
+         */
         @Override
         protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
             var result = new SimpleAuthorizationInfo();

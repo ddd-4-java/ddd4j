@@ -22,6 +22,7 @@ import java.util.Objects;
  */
 public final class LambdaKit {
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>LambdaKit</code> \u5b9e\u4f8b\u3002 */
     private LambdaKit() {
     }
 
@@ -75,7 +76,10 @@ public final class LambdaKit {
     }
 
     /**
-     * 提取 SerializedLambda。
+     * \u63d0\u53d6 SerializedLambda\u3002
+     *
+     * @param func \u53ef\u5e8f\u5217\u5316\u7684\u65b9\u6cd5\u5f15\u7528
+     * @return \u65b9\u6cd5\u5f15\u7528\u7684 SerializedLambda
      */
     public static SerializedLambda extractLambda(Serializable func) {
         try {

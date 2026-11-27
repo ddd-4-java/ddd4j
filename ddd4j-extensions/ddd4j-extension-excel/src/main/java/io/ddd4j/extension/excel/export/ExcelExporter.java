@@ -40,6 +40,7 @@ import java.util.Map;
  */
 public final class ExcelExporter {
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>ExcelExporter</code> \u5b9e\u4f8b\u3002 */
     private ExcelExporter() {
     }
 
@@ -151,6 +152,11 @@ public final class ExcelExporter {
 
     // ───────────────────── 内部装配 ─────────────────────
 
+    /**
+     * \u6ce8\u518c\u6837\u5f0f\u3001\u8868\u5934\u884c\u9ad8\u4e0e\u9009\u914d\u7684\u81ea\u52a8\u5217\u5bbd\u7b49\u5199\u5165\u5904\u7406\u5668\u3002
+     * @param builder \u5f85\u88c5\u914d\u7684 Excel \u5199\u5165\u5668\u6784\u5efa\u5668
+     * @param options \u5f53\u524d\u5de5\u4f5c\u7c3f\u7684\u5199\u5165\u9009\u9879
+     */
     private static void applyStyleHandlers(ExcelWriterBuilder builder, WriteOptions options) {
         // 样式（基于模板）
         builder.registerWriteHandler(new DefaultCellStyleStrategy(options.getStyleTemplate()));
@@ -174,12 +180,22 @@ public final class ExcelExporter {
         }
     }
 
+    /**
+     * \u5e94\u7528\u5bfc\u51fa\u914d\u7f6e\u5e76\u521b\u5efa\u5199\u5165\u5185\u5b58\u6d41\u7684 Excel \u5199\u5165\u5668\u3002
+     * @param out \u4fdd\u5b58\u5bfc\u51fa\u5de5\u4f5c\u7c3f\u7684\u8f93\u51fa\u6d41
+     * @param options \u5e94\u7528\u4e8e\u5de5\u4f5c\u7c3f\u7684\u5bfc\u51fa\u9009\u9879
+     * @return \u88c5\u914d\u5b8c\u6210\u7684 Excel \u5199\u5165\u5668
+     */
     private static ExcelWriter buildWriter(ByteArrayOutputStream out, WriteOptions options) {
         ExcelWriterBuilder builder = EasyExcel.write(out);
         applyStyleHandlers(builder, options);
         return builder.build();
     }
 
+    /**
+     * \u4e3a\u5bfc\u5165\u9519\u8bef\u9875\u6784\u9020\u4ee5\u767d\u5e95\u5de6\u5bf9\u9f50\u4e3a\u4e3b\u7684\u5355\u5143\u683c\u6837\u5f0f\u3002
+     * @return \u4f9b\u9519\u8bef\u9875\u5199\u5165\u5668\u6ce8\u518c\u7684\u5355\u5143\u683c\u6837\u5f0f\u7b56\u7565
+     */
     private static DefaultCellStyleStrategy buildErrorStyle() {
         // 错误页特殊样式：白底左对齐
         WriteCellStyle head = new WriteCellStyle();

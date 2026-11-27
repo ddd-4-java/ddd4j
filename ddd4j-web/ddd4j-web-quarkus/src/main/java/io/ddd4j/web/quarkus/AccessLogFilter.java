@@ -28,6 +28,11 @@ public class AccessLogFilter implements ContainerRequestFilter {
     @Context
     HttpServerRequest request;
 
+    /**
+     * \u8bb0\u5f55\u8bf7\u6c42\u5730\u5740\u3001\u65b9\u6cd5\u3001\u8def\u5f84\u548c\u79df\u6237\u6807\u8bc6\u3002
+     * @param requestContext JAX-RS \u8bf7\u6c42\u4e0a\u4e0b\u6587
+     * @throws IOException \u8bf7\u6c42\u8fc7\u6ee4\u5931\u8d25\u65f6\u629b\u51fa
+     */
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
         String method = requestContext.getMethod();

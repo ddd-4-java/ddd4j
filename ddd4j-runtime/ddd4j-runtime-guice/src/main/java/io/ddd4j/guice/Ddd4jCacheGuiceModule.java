@@ -86,6 +86,7 @@ public class Ddd4jCacheGuiceModule extends AbstractModule {
         return this;
     }
 
+    /** \u4e3a Guice \u5bb9\u5668\u914d\u7f6e DDD4J \u7f13\u5b58\u7ed1\u5b9a\u3002 */
     @Override
     protected void configure() {
         CacheKit.setDefaultType(defaultType);

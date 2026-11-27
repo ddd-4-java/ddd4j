@@ -36,7 +36,9 @@ import java.util.stream.Collectors;
  */
 public class EnumNameConverter<E extends Enum<E>> implements Converter<E> {
 
+    /** \u5355\u5143\u683c\u6587\u672c\u8f6c\u6362\u7684\u76ee\u6807\u679a\u4e3e\u7c7b\u578b\u3002 */
     private final Class<E> enumType;
+    /** \u6309\u5bfc\u5165\u6587\u672c\u7d22\u5f15\u76ee\u6807\u679a\u4e3e\u5e38\u91cf\u7684\u6620\u5c04\u3002 */
     private final Map<String, E> nameIndex;
 
     /**
@@ -53,16 +55,31 @@ public class EnumNameConverter<E extends Enum<E>> implements Converter<E> {
                 .collect(Collectors.toMap(Enum::name, Function.identity(), (a, b) -> a));
     }
 
+    /**
+     * \u8bfb\u53d6<code>enumType</code> \u5b57\u6bb5\u3002
+     * @return <code>enumType</code> \u5b57\u6bb5
+     */
     @Override
     public Class<?> supportJavaTypeKey() {
         return enumType;
     }
 
+    /**
+     * \u58f0\u660e\u8f6c\u6362\u5668\u5904\u7406\u7684 Excel \u5355\u5143\u683c\u7c7b\u578b\u3002
+     * @return \u5b57\u7b26\u4e32\u578b\u5355\u5143\u683c\u7c7b\u578b
+     */
     @Override
     public CellDataTypeEnum supportExcelTypeKey() {
         return CellDataTypeEnum.STRING;
     }
 
+    /**
+     * \u6309\u6807\u7b7e\u67e5\u627e\u679a\u4e3e\u5e38\u91cf\u3002
+     * @param cellData \u5f53\u524d\u8bfb\u53d6\u7684\u6587\u672c\u5355\u5143\u683c
+     * @param contentProperty \u5f53\u524d\u5b57\u6bb5\u7684 Excel \u5217\u5143\u6570\u636e
+     * @param globalConfiguration \u5de5\u4f5c\u7c3f\u7ea7\u8f6c\u6362\u914d\u7f6e
+     * @return \u5bf9\u5e94\u7684\u679a\u4e3e\u5e38\u91cf\uff0c\u7a7a\u5355\u5143\u683c\u8fd4\u56de\u7a7a
+     */
     @Override
     public E convertToJavaData(ReadCellData<?> cellData,
                                ExcelContentProperty contentProperty,
@@ -73,6 +90,13 @@ public class EnumNameConverter<E extends Enum<E>> implements Converter<E> {
         return convertFromLabel(cellData.getStringValue());
     }
 
+    /**
+     * \u5c06\u679a\u4e3e\u5e38\u91cf\u683c\u5f0f\u5316\u4e3a\u5bfc\u51fa\u6807\u7b7e\u3002
+     * @param value \u5f85\u5bfc\u51fa\u7684\u503c
+     * @param contentProperty \u5f53\u524d\u5b57\u6bb5\u7684 Excel \u5217\u5143\u6570\u636e
+     * @param globalConfiguration \u5de5\u4f5c\u7c3f\u7ea7\u8f6c\u6362\u914d\u7f6e
+     * @return \u5b57\u7b26\u4e32\u578b\u5199\u5165\u5355\u5143\u683c\uff0c\u7a7a\u5f15\u7528\u5199\u4e3a\u7a7a\u6587\u672c
+     */
     @Override
     public WriteCellData<?> convertToExcelData(E value,
                                                ExcelContentProperty contentProperty,

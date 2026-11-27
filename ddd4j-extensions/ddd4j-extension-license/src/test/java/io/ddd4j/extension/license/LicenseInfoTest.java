@@ -17,6 +17,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class LicenseInfoTest {
 
+    /**
+     * \u9a8c\u8bc1<code>roundtrip.getSubject()</code> \u7b49\u4e8e <code>"ioserver"</code>\uff0c<code>roundtrip.getConsumerAmount()</code> \u7b49\u4e8e <code>5</code>\uff0c<code>roundtrip.getExtra().getIp()</code> \u7b49\u4e8e <code>"10.0.0.1"</code>\u3002
+     * @throws Exception \u51c6\u5907\u6216\u8bfb\u53d6\u5939\u5177\u6587\u4ef6\u65f6\u5931\u8d25
+     */
     @Test
     void shouldBeSerializableForRemoteCache() throws Exception {
         LicenseExtraModel extra = new LicenseExtraModel();
@@ -48,6 +52,7 @@ class LicenseInfoTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>future.isValidNow()</code>\u4e3a\u5047\uff0c<code>expired.isValidNow()</code>\u4e3a\u5047\uff0c<code>boundary.isValidAt(now)</code>\u4e3a\u5047\u3002 */
     @Test
     void shouldEvaluateValidity() {
         Date now = new Date();
@@ -73,6 +78,7 @@ class LicenseInfoTest {
         assertThat(boundary.isValidAt(now)).isFalse();
     }
 
+    /** \u9a8c\u8bc1<code>empty.hasAnyConstraint()</code>\u4e3a\u5047\uff0c<code>withIp.hasAnyConstraint()</code>\u4e3a\u771f\u3002 */
     @Test
     void extraModelShouldDetectConstraints() {
         LicenseExtraModel empty = new LicenseExtraModel();

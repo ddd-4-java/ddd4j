@@ -41,7 +41,12 @@ import java.io.Serializable;
 public abstract class QuarkusAggregateController<M extends AggregateRoot<?>, Q extends Serializable, ID extends Serializable> extends TenantAwareResource {
 
     /**
-     * 分页查询
+     * \u5206\u9875\u67e5\u8be2
+     *
+     * @param pageNum \u9875\u7801
+     * @param pageSize \u6bcf\u9875\u8bb0\u5f55\u6570
+     * @param query \u67e5\u8be2\u6761\u4ef6
+     * @return \u5206\u9875\u67e5\u8be2\u7ed3\u679c
      */
     @GET
     public R<Page<M>> page(@QueryParam("pageNum") @DefaultValue("1") int pageNum,
@@ -51,7 +56,10 @@ public abstract class QuarkusAggregateController<M extends AggregateRoot<?>, Q e
     }
 
     /**
-     * 详情
+     * \u8be6\u60c5
+     *
+     * @param id \u805a\u5408\u6839\u4e3b\u952e
+     * @return \u805a\u5408\u6839\u8be6\u60c5
      */
     @GET
     @Path("/{id}")
@@ -60,7 +68,10 @@ public abstract class QuarkusAggregateController<M extends AggregateRoot<?>, Q e
     }
 
     /**
-     * 新增
+     * \u65b0\u589e
+     *
+     * @param model \u5f85\u4fdd\u5b58\u7684\u805a\u5408\u6839
+     * @return \u4fdd\u5b58\u540e\u7684\u805a\u5408\u6839
      */
     @POST
     public R<M> create(M model) {
@@ -68,7 +79,11 @@ public abstract class QuarkusAggregateController<M extends AggregateRoot<?>, Q e
     }
 
     /**
-     * 修改
+     * \u4fee\u6539
+     *
+     * @param id \u805a\u5408\u6839\u4e3b\u952e
+     * @param model \u4fee\u6539\u540e\u7684\u805a\u5408\u6839
+     * @return \u4fee\u6539\u540e\u7684\u805a\u5408\u6839
      */
     @PUT
     @Path("/{id}")
@@ -77,7 +92,10 @@ public abstract class QuarkusAggregateController<M extends AggregateRoot<?>, Q e
     }
 
     /**
-     * 删除
+     * \u5220\u9664
+     *
+     * @param id \u805a\u5408\u6839\u4e3b\u952e
+     * @return \u64cd\u4f5c\u7ed3\u679c
      */
     @DELETE
     @Path("/{id}")
@@ -87,7 +105,10 @@ public abstract class QuarkusAggregateController<M extends AggregateRoot<?>, Q e
     }
 
     /**
-     * 禁用（业务行为）
+     * \u7981\u7528\uff08\u4e1a\u52a1\u884c\u4e3a\uff09
+     *
+     * @param id \u805a\u5408\u6839\u4e3b\u952e
+     * @return \u64cd\u4f5c\u7ed3\u679c
      */
     @POST
     @Path("/{id}:disable")
@@ -97,7 +118,10 @@ public abstract class QuarkusAggregateController<M extends AggregateRoot<?>, Q e
     }
 
     /**
-     * 启用（业务行为）
+     * \u542f\u7528\uff08\u4e1a\u52a1\u884c\u4e3a\uff09
+     *
+     * @param id \u805a\u5408\u6839\u4e3b\u952e
+     * @return \u64cd\u4f5c\u7ed3\u679c
      */
     @POST
     @Path("/{id}:enable")
@@ -109,39 +133,60 @@ public abstract class QuarkusAggregateController<M extends AggregateRoot<?>, Q e
     // ========== 抽象方法：业务项目必须实现 ==========
 
     /**
-     * 分页查询（业务实现）
+     * \u5206\u9875\u67e5\u8be2\uff08\u4e1a\u52a1\u5b9e\u73b0\uff09
+     *
+     * @param pageNum \u9875\u7801
+     * @param pageSize \u6bcf\u9875\u8bb0\u5f55\u6570
+     * @param query \u67e5\u8be2\u6761\u4ef6
+     * @return \u5206\u9875\u67e5\u8be2\u7ed3\u679c
      */
     protected abstract Page<M> listPage(int pageNum, int pageSize, Q query);
 
     /**
-     * 详情查询（业务实现）
+     * \u8be6\u60c5\u67e5\u8be2\uff08\u4e1a\u52a1\u5b9e\u73b0\uff09
+     *
+     * @param id \u805a\u5408\u6839\u4e3b\u952e
+     * @return \u805a\u5408\u6839\u8be6\u60c5
      */
     protected abstract M detail(ID id);
 
     /**
-     * 新增（业务实现）
+     * \u65b0\u589e\uff08\u4e1a\u52a1\u5b9e\u73b0\uff09
+     *
+     * @param model \u5f85\u4fdd\u5b58\u7684\u805a\u5408\u6839
+     * @return \u4fdd\u5b58\u540e\u7684\u805a\u5408\u6839
      */
     protected abstract M save(M model);
 
     /**
-     * 修改（业务实现）
+     * \u4fee\u6539\uff08\u4e1a\u52a1\u5b9e\u73b0\uff09
+     *
+     * @param id \u805a\u5408\u6839\u4e3b\u952e
+     * @param model \u4fee\u6539\u540e\u7684\u805a\u5408\u6839
+     * @return \u4fee\u6539\u540e\u7684\u805a\u5408\u6839
      */
     protected abstract M modify(ID id, M model);
 
     /**
-     * 删除（业务实现）
+     * \u5220\u9664\uff08\u4e1a\u52a1\u5b9e\u73b0\uff09
+     *
+     * @param id \u805a\u5408\u6839\u4e3b\u952e
      */
     protected abstract void remove(ID id);
 
     /**
-     * 禁用（业务实现，默认空操作）
+     * \u7981\u7528\uff08\u4e1a\u52a1\u5b9e\u73b0\uff0c\u9ed8\u8ba4\u7a7a\u64cd\u4f5c\uff09
+     *
+     * @param id \u805a\u5408\u6839\u4e3b\u952e
      */
     protected void doDisable(ID id) {
         // 业务项目按需覆盖
     }
 
     /**
-     * 启用（业务实现，默认空操作）
+     * \u542f\u7528\uff08\u4e1a\u52a1\u5b9e\u73b0\uff0c\u9ed8\u8ba4\u7a7a\u64cd\u4f5c\uff09
+     *
+     * @param id \u805a\u5408\u6839\u4e3b\u952e
      */
     protected void doEnable(ID id) {
         // 业务项目按需覆盖

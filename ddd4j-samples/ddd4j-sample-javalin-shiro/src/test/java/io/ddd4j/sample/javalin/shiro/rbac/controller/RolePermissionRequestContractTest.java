@@ -5,8 +5,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/** \u901a\u8fc7 <code>create.setCode()</code>\u3001<code>create.setName()</code>\u3001<code>create.setPermissions()</code> \u9a8c\u8bc1 <code>RolePermissionRequestContract</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
 class RolePermissionRequestContractTest {
 
+    /** \u9a8c\u8bc1<code>create.getCode()</code> \u7b49\u4e8e <code>"admin"</code>\uff0c<code>create.code()</code> \u7b49\u4e8e <code>create.getCode()</code>\uff0c<code>update.permissions()</code> \u4e0e\u2026\u7684\u5143\u7d20\u9010\u9879\u76f8\u540c <code>update.getPermissions()</code>\u3002 */
     @Test
     void roleRequestsKeepBeanComponentAndArrayValueContracts() {
         AuthorizationController.CreateRoleRequest create =
@@ -34,6 +36,7 @@ class RolePermissionRequestContractTest {
                 new String[]{"report:read"}), update);
     }
 
+    /** \u9a8c\u8bc1<code>request.code()</code> \u7b49\u4e8e <code>request.getCode()</code>\uff0c<code>request.description()</code> \u7b49\u4e8e <code>request.getDescription()</code>\uff0c<code>request.hashCode()</code> \u7b49\u4e8e <code>same.hashCode()</code>\u3002 */
     @Test
     void permissionRequestKeepsBeanAndComponentContract() {
         AuthorizationController.CreatePermissionRequest request =

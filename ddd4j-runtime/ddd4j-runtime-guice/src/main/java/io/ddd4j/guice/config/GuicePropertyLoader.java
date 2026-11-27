@@ -63,6 +63,7 @@ public class GuicePropertyLoader extends AbstractModule {
         this.configFiles = configFiles;
     }
 
+    /** \u4e3a Guice \u5e94\u7528\u52a0\u8f7d\u5e76\u7ed1\u5b9a\u914d\u7f6e\u5c5e\u6027\u3002 */
     @Override
     protected void configure() {
         Properties merged = new Properties();
@@ -79,6 +80,11 @@ public class GuicePropertyLoader extends AbstractModule {
         }
     }
 
+    /**
+     * \u4ece\u914d\u7f6e\u8d44\u6e90\u52a0\u8f7d\u5f85\u6ce8\u5165\u7684\u5c5e\u6027\u3002
+     * @param resourcePath \u8981\u52a0\u8f7d\u7684\u7c7b\u8def\u5f84\u5c5e\u6027\u6587\u4ef6
+     * @return \u8d44\u6e90\u4e2d\u7684\u914d\u7f6e\u5c5e\u6027
+     */
     private Properties loadProperties(String resourcePath) {
         try (InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath)) {
             if (Objects.isNull(is)) {

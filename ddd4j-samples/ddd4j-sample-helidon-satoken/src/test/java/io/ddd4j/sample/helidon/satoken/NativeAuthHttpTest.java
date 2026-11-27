@@ -41,48 +41,95 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Testcontainers
 class NativeAuthHttpTest {
+    /** \u4e3a\u5f53\u524d\u96c6\u6210\u6d4b\u8bd5\u63d0\u4f9b\u72ec\u7acb MySQL \u670d\u52a1\u7684\u5bb9\u5668\u3002 */
     @Container
     static final MySQLContainer<?> MYSQL = new MySQLContainer<>("mysql:8.0.36");
+    /** \u7528\u4f8b\u67e5\u8be2\u6216\u5199\u5165\u6570\u636e\u65f6\u4f7f\u7528\u7684\u79df\u6237\u6807\u8bc6\u3002 */
     static final String TENANT = "helidon-auth";
+    /** \u7528\u4e8e\u533a\u5206\u8ba2\u5355\u8def\u7531\u3001\u6d88\u606f\u4e3b\u9898\u6216\u6295\u5f71\u4e8b\u4ef6\u6d41\u7684\u6d4b\u8bd5\u540d\u79f0\u3002 */
     static final String ORDERS = "/orders/catalog/orders/";
+    /** \u5f53\u524d\u5408\u540c\u6216\u4ed3\u50a8\u64cd\u4f5c\u6240\u4f7f\u7528\u7684\u8ba2\u5355\u6837\u672c\u3002 */
     static final Map<String, Object> ORDER = Map.of("shopId", 7, "items", java.util.List.of(Map.of("skuCode", "S1", "quantity", 2)));
+    /** \u8d1f\u8d23\u8f6c\u6362\u6d4b\u8bd5\u6216\u534f\u8bae\u6b63\u6587\u4e2d JSON \u6570\u636e\u7684 Jackson \u6620\u5c04\u5668\u3002 */
     static final ObjectMapper JSON = new ObjectMapper().findAndRegisterModules();
+    /** \u4fdd\u5b58\u5404\u8bf7\u6c42\u9000\u51fa\u540e\u4e0a\u4e0b\u6587\u6e05\u7406\u7ed3\u679c\u7684\u89c2\u6d4b\u961f\u5217\u3002 */
     static final ConcurrentLinkedQueue<Boolean> CLEAN = new ConcurrentLinkedQueue<>();
+    /** \u7528\u4e8e\u7b49\u5f85\u6216\u89c2\u5bdf\u6d4b\u8bd5\u5de5\u4f5c\u7ed3\u675f\u7684\u540c\u6b65\u72b6\u6001\u3002 */
     static final ConcurrentLinkedQueue<Boolean> FINISHED = new ConcurrentLinkedQueue<>();
+    /** \u6536\u96c6\u6267\u884c\u8bf7\u6c42\u6216\u56de\u8c03\u7684\u7ebf\u7a0b\u540d\u4ee5\u4fbf\u65ad\u8a00\u7ebf\u7a0b\u5207\u6362\u3002 */
     static final ConcurrentLinkedQueue<String> THREADS = new ConcurrentLinkedQueue<>();
+    /** \u4fdd\u5b58\u7b49\u5f85\u6d4b\u8bd5\u91ca\u653e\u7684\u8bf7\u6c42\u6216\u5176\u540c\u6b65\u4fe1\u53f7\u3002 */
     static final String HELD_REQUEST = "r14-disconnect-satoken";
+    /** \u7b49\u5f85\u88ab\u6302\u8d77\u8bf7\u6c42\u6700\u7ec8\u5b8c\u6210\u7684\u540c\u6b65\u4fe1\u53f7\u3002 */
     static final CompletableFuture<Boolean> HELD_FINISHED = new CompletableFuture<>();
+    /** \u534f\u8c03\u6d4b\u8bd5\u7ebf\u7a0b\u5728\u6307\u5b9a\u6267\u884c\u9636\u6bb5\u7b49\u5f85\u6216\u7ee7\u7eed\u7684\u95e8\u95e9\u3002 */
     static final CountDownLatch ENTERED = new CountDownLatch(1), RELEASE = new CountDownLatch(1);
 
+    /**
+     * \u8c03\u7528 <code>CatalogRuntime.start()</code>\u3001<code>MYSQL.getDriverClassName()</code>\u3001<code>MYSQL.getJdbcUrl()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @return \u63d0\u4f9b\u7ed9\u540e\u7eed\u5951\u7ea6\u65ad\u8a00\u7684 <code>CatalogEndpoints</code> \u7ed3\u679c
+     */
     static CatalogEndpoints catalog() {
         return CatalogRuntime.start(new UnpooledDataSource(MYSQL.getDriverClassName(),
                 MYSQL.getJdbcUrl(), MYSQL.getUsername(), MYSQL.getPassword()));
     }
 
+    /**
+     * \u901a\u8fc7 <code>cn.dev33.satoken.SaManager.getSaTokenContext()</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>cn.dev33.satoken.SaManager.getSaTokenContext().isValid()</code>
+     */
     static boolean present() {
         return cn.dev33.satoken.SaManager.getSaTokenContext().isValid();
     }
 
+    /**
+     * \u8c03\u7528 <code>cn.hutool.core.util.ReflectUtil.getStaticFieldValue()</code>\u3001<code>cn.hutool.core.util.ReflectUtil.getField()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @return \u63d0\u4f9b\u7ed9\u540e\u7eed\u5951\u7ea6\u65ad\u8a00\u7684 <code>Object</code> \u7ed3\u679c
+     */
     static Object nativeOwner() {
         return cn.hutool.core.util.ReflectUtil.getStaticFieldValue(cn.hutool.core.util.ReflectUtil.getField(cn.dev33.satoken.SaManager.class, "saTokenDao"));
     }
 
+    /**
+     * \u901a\u8fc7 <code>SampleHttpTransport.request()</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+     * @param url \u72ec\u7acb\u6d4b\u8bd5\u670d\u52a1\u63a5\u6536\u8bf7\u6c42\u7684 URL
+     * @param headers \u5f53\u524d\u6d4b\u8bd5\u8bf7\u6c42\u643a\u5e26\u7684\u5934\u5b57\u6bb5
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>SampleHttpTransport.request(url, "GET", headers, Map.of("X-Tenant-Id", TENANT), null)</code>
+     * @throws Exception \u53d1\u8d77\u6d4b\u8bd5\u8bf7\u6c42\u65f6\u5931\u8d25
+     */
     private static SampleHttpTransport.Response readOrder(String url, Map<String, String> headers)
             throws Exception {
         return SampleHttpTransport.request(url, "GET", headers, Map.of("X-Tenant-Id", TENANT), null);
     }
 
+    /**
+     * \u6838\u5bf9<code>response.statusCode()</code> \u7b49\u4e8e <code>200</code>\uff0c<code>JSON.readTree(response.body()).path("data").asText()</code> \u7b49\u4e8e <code>"reader"</code>\u3002
+     * @param response \u5f53\u524d\u8bf7\u6c42\u5df2\u6536\u5230\u7684\u54cd\u5e94
+     * @param scheme \u4f20\u7ed9 <code>assertEquals()</code> \u7684 <code>String</code> \u8f93\u5165
+     * @throws java.io.IOException \u8bfb\u53d6\u6216\u5199\u5165\u6d4b\u8bd5\u6570\u636e\u65f6\u53d1\u751f I/O \u9519\u8bef
+     */
     private static void assertReader(SampleHttpTransport.Response response, String scheme) throws java.io.IOException {
         assertEquals(200, response.statusCode(), scheme);
         assertEquals("reader", JSON.readTree(response.body()).path("data").asText(), scheme);
     }
 
+    /**
+     * \u6838\u5bf9<code>actual.statusCode()</code> \u7b49\u4e8e <code>200</code>\uff0c<code>JSON.readTree(actual.body())</code> \u7b49\u4e8e <code>JSON.readTree(canonical.body())</code>\u3002
+     * @param canonical \u4f20\u7ed9 <code>assertEquals()</code> \u7684 <code>SampleHttpTransport.Response</code> \u8f93\u5165
+     * @param actual \u53d7\u6d4b\u8c03\u7528\u6216\u6d4b\u8bd5\u73af\u5883\u5b9e\u9645\u4ea7\u751f\u7684\u503c
+     * @param scheme \u4f20\u7ed9 <code>assertEquals()</code> \u7684 <code>String</code> \u8f93\u5165
+     * @throws java.io.IOException \u8bfb\u53d6\u6216\u5199\u5165\u6d4b\u8bd5\u6570\u636e\u65f6\u53d1\u751f I/O \u9519\u8bef
+     */
     private static void assertSameOrder(SampleHttpTransport.Response canonical, SampleHttpTransport.Response actual,
                                         String scheme) throws java.io.IOException {
         assertEquals(200, actual.statusCode(), scheme);
         assertEquals(JSON.readTree(canonical.body()), JSON.readTree(actual.body()), scheme);
     }
 
+    /**
+     * \u9a8c\u8bc1<code>driver.send("GET", "/auth/me", null, null).statusCode()</code> \u7b49\u4e8e <code>401</code>\uff0c<code>driver.send("GET", ORDERS + "native-order", null, token).statusCode()</code> \u7b49\u4e8e <code>200</code>\uff0c<code>FINISHED.contains(false)</code>\u4e3a\u5047\u3002
+     * @throws Exception \u51c6\u5907\u6216\u8bfb\u53d6\u5939\u5177\u6587\u4ef6\u3001\u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u3001\u53d1\u8d77\u6d4b\u8bd5\u8bf7\u6c42\u65f6\u5931\u8d25
+     */
     @Test
     void actualNativeAuthenticationAndSharedOrder() throws Exception {
         var previousProvider = io.ddd4j.core.util.SubjectKit.subjectProvider;
@@ -131,6 +178,10 @@ class NativeAuthHttpTest {
         System.out.println("S05 FINISHED observations=" + FINISHED.size());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>driver.send("GET", order + "/no-route", null, null).statusCode()</code> \u7b49\u4e8e <code>404</code>\uff0c<code>driver.send("GET", order, null, null).statusCode()</code> \u7b49\u4e8e <code>401</code>\uff0c<code>allow</code>\u975e\u7a7a\u3002
+     * @throws Exception \u51c6\u5907\u6216\u8bfb\u53d6\u5939\u5177\u6587\u4ef6\u3001\u5904\u7406\u6d4b\u8bd5\u6570\u636e\u7684\u5e8f\u5217\u5316\u3001\u53d1\u8d77\u6d4b\u8bd5\u8bf7\u6c42\u65f6\u5931\u8d25
+     */
     @Test
     void unsupportedOrderMethodPreservesNativeAllowHeader() throws Exception {
         Server server = Server.builder().port(0).addApplication(new HelidonSaTokenApplication(catalog())).build().start();
@@ -160,6 +211,10 @@ class NativeAuthHttpTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>driver.authenticatedPrincipal(writerToken)</code> \u7b49\u4e8e <code>"alice"</code>\uff0c<code>driver.authenticatedPrincipal(token)</code> \u7b49\u4e8e <code>"reader"</code>\uff0c<code>readOrder(url, Map.of("Authorization", "BearerX " + token, tokenName, token)).statusCode()</code> \u7b49\u4e8e <code>401</code>\u3002
+     * @throws Exception \u5904\u7406\u6d4b\u8bd5\u6570\u636e\u7684\u5e8f\u5217\u5316\u65f6\u5931\u8d25
+     */
     @Test
     void bearerSchemeCaseDoesNotChangeOrderAuthorization() throws Exception {
         Server server = Server.builder().port(0).addApplication(new HelidonSaTokenApplication(catalog())).build().start();
@@ -209,15 +264,32 @@ class NativeAuthHttpTest {
         }
     }
 
+    /** \u628a\u5171\u4eab\u9274\u6743\u65ad\u8a00\u8f6c\u53d1\u5230\u793a\u4f8b\u5e94\u7528\u7684\u8c03\u7528\u9a71\u52a8\u3002 */
     static class Driver implements AuthSampleDriver {
+        /** \u672c\u5730\u6d4b\u8bd5\u670d\u52a1\u7684\u57fa\u7840\u5730\u5740\u3002 */
         final String base;
+        /** \u53d1\u9001\u4e0e\u63a5\u6536\u6d4b\u8bd5\u8bf7\u6c42\u7684\u5ba2\u6237\u7aef\u3002 */
         final HttpClient client = HttpClient.newHttpClient();
+        /** \u7528\u4e8e\u8986\u76d6\u7f3a\u5c11\u8ba2\u5355\u660e\u7ec6\u5206\u652f\u7684\u6d4b\u8bd5\u8ba2\u5355\u3002 */
         String emptyOrder;
 
+        /**
+         * \u6784\u9020\u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684 <code>Driver</code> \u5b9e\u4f8b\u3002
+         * @param port \u6d4b\u8bd5\u670d\u52a1\u76d1\u542c\u7684\u672c\u5730\u7aef\u53e3
+         */
         Driver(int port) {
             base = "http://127.0.0.1:" + port;
         }
 
+        /**
+         * \u8c03\u7528 <code>HttpRequest.newBuilder()</code>\u3001<code>URI.create()</code>\u3001<code>builder.header()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+         * @param method \u53d1\u7ed9\u88ab\u6d4b\u670d\u52a1\u7684 HTTP \u65b9\u6cd5
+         * @param path \u6d4b\u8bd5\u8bf7\u6c42\u7684\u8d44\u6e90\u8def\u5f84\u6216\u5f85\u8bbf\u95ee\u6587\u4ef6\u8def\u5f84
+         * @param body \u5f53\u524d\u8bf7\u6c42\u6216\u54cd\u5e94\u4e2d\u8981\u8bfb\u53d6\u7684\u6b63\u6587
+         * @param token \u4ece\u6d4b\u8bd5\u767b\u5f55\u83b7\u5f97\u7684\u4f1a\u8bdd\u51ed\u636e
+         * @return \u63d0\u4f9b\u7ed9\u540e\u7eed\u5951\u7ea6\u65ad\u8a00\u7684 <code>HttpResponse&lt;String&gt;</code> \u7ed3\u679c
+         * @throws Exception \u5904\u7406\u6d4b\u8bd5\u6570\u636e\u7684\u5e8f\u5217\u5316\u3001\u53d1\u8d77\u6d4b\u8bd5\u8bf7\u6c42\u65f6\u5931\u8d25
+         */
         HttpResponse<String> send(String method, String path, Object body, String token) throws Exception {
             var builder = HttpRequest.newBuilder(URI.create(base + path)).header("Content-Type", "application/json").header("X-Tenant-Id", TENANT);
             if (Objects.nonNull(token)) {
@@ -226,6 +298,14 @@ class NativeAuthHttpTest {
             return client.send(builder.method(method, Objects.isNull(body) ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(JSON.writeValueAsString(body))).build(), HttpResponse.BodyHandlers.ofString());
         }
 
+        /**
+         * \u901a\u8fc7 <code>JSON.readTree()</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+         * @param method \u53d1\u7ed9\u88ab\u6d4b\u670d\u52a1\u7684 HTTP \u65b9\u6cd5
+         * @param path \u6d4b\u8bd5\u8bf7\u6c42\u7684\u8d44\u6e90\u8def\u5f84\u6216\u5f85\u8bbf\u95ee\u6587\u4ef6\u8def\u5f84
+         * @param body \u5f53\u524d\u8bf7\u6c42\u6216\u54cd\u5e94\u4e2d\u8981\u8bfb\u53d6\u7684\u6b63\u6587
+         * @param token \u4ece\u6d4b\u8bd5\u767b\u5f55\u83b7\u5f97\u7684\u4f1a\u8bdd\u51ed\u636e
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>JSON.readTree(response.body()).path("data").asText()</code>
+         */
         String request(String method, String path, Object body, String token) {
             try {
                 var response = send(method, path, body, token);
@@ -243,6 +323,15 @@ class NativeAuthHttpTest {
             }
         }
 
+        /**
+         * 以传入的凭据启动认证会话。
+         *
+         * <p>测试夹具会调用 <code>Map.of("username", user, "password", password)</code>。</p>
+         *
+         * @param user 传给 <code>send("POST", "/auth/login", Map.of("username", user, "password", password), null).body()</code>
+         * @param password 已配置密码
+         * @return 实际登录响应中的令牌
+         */
         @Override
         public String login(String user, String password) {
             try {
@@ -252,50 +341,107 @@ class NativeAuthHttpTest {
             }
         }
 
+        /**
+         * 通过已认证请求探测服务端识别出的登录主体。
+         *
+         * @param token 令牌
+         * @return 实际返回<code>request("GET", "/auth/me", null, token)</code>
+         */
         @Override
         public String authenticatedPrincipal(String token) {
             return request("GET", "/auth/me", null, token);
         }
 
+        /**
+         * 访问当前鉴权契约中受权限约束的资源。
+         *
+         * <p>测试夹具会调用 <code>request("GET", "/auth/resource?permission=" + permission, null, token)</code>。</p>
+         *
+         * @param token 令牌
+         * @param permission 权限
+         * @return 实际返回<code>request("GET", "/auth/resource?permission=" + permission, null, token)</code>
+         */
         @Override
         public String authorizedResource(String token, String permission) {
             return request("GET", "/auth/resource?permission=" + permission, null, token);
         }
 
+        /**
+         * \u8c03\u7528 <code>send()</code>\u3001<code>response.statusCode()</code>\u3001<code>response.body()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+         * @param token \u4ece\u6d4b\u8bd5\u767b\u5f55\u83b7\u5f97\u7684\u4f1a\u8bdd\u51ed\u636e
+         * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+         */
         void seedGoods(String token) throws Exception {
             var response = send("POST", "/orders/catalog/goods/BOOK", Map.of(
                     "spuName", "Book", "skuCode", "S1", "skuName", "Paperback", "shopId", 7, "salePriceCent", 500), token);
             assertTrue(response.statusCode() == 201 || response.statusCode() == 409, response.body());
         }
 
+        /**
+         * \u8c03\u7528 <code>send()</code>\u3001<code>response.statusCode()</code>\u3001<code>response.body()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+         * @param id \u5f53\u524d\u8981\u67e5\u627e\u7684\u6d4b\u8bd5\u8bb0\u5f55\u6807\u8bc6
+         * @param token \u4ece\u6d4b\u8bd5\u767b\u5f55\u83b7\u5f97\u7684\u4f1a\u8bdd\u51ed\u636e
+         * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+         */
         void createOrder(String id, String token) throws Exception {
             var response = send("POST", ORDERS + id, ORDER, token);
             assertEquals(201, response.statusCode(), response.body());
         }
 
+        /**
+         * 访问测试中指定会失败的请求路径。
+         *
+         * <p>测试夹具会调用 <code>Map.of("paidAmountCent", 1)</code>。</p>
+         *
+         * @param token 令牌；调用已注入业务异常的受保护入口并保留 IllegalStateException
+         */
         @Override
         public void failingRequest(String token) {
             request("POST", ORDERS + emptyOrder + "/payment", Map.of("paidAmountCent", 1), token);
         }
 
+        /**
+         * 结束由当前调用指定的认证会话。
+         *
+         * <p>测试夹具会调用 <code>request("POST", "/auth/logout", null, token)</code>。</p>
+         *
+         * @param token 令牌；实际退出入口必须使该令牌失效
+         */
         @Override
         public void logout(String token) {
             request("POST", "/auth/logout", null, token);
         }
 
+        /**
+         * 探测当前请求上下文里可读取的登录主体。
+         *
+         * <p>测试夹具会调用 <code>CLEAN.contains(false)</code>、<code>Optional.of("leaked")</code>。</p>
+         *
+         * @return 实际返回<code>CLEAN.contains(false) ? Optional.of("leaked") : Optional.empty()</code>
+         */
         @Override
         public Optional<String> contextPrincipal() {
             return CLEAN.contains(false) ? Optional.of("leaked") : Optional.empty();
         }
     }
 
+    /** \u5b9e\u73b0 <code>ContainerRequestFilter</code>\u3001<code>ContainerResponseFilter</code>\u3001<code>ApplicationEventListener</code>\uff0c\u4f9b\u6d4b\u8bd5\u8c03\u7528 <code>onEvent()</code>\u3001<code>onRequest()</code>\u3001<code>filter()</code> \u5e76\u89c2\u5bdf\u7ed3\u679c\u3002 */
     @Provider
     @Priority(800)
     public static class Observer implements ContainerRequestFilter, ContainerResponseFilter, org.glassfish.jersey.server.monitoring.ApplicationEventListener {
+        /**
+         * \u4f5c\u4e3a\u7a7a\u5b9e\u73b0\u7684\u6d4b\u8bd5\u66ff\u8eab\uff0c\u8c03\u7528\u65f6\u4fdd\u6301\u5f53\u524d\u5939\u5177\u72b6\u6001\u3002
+         * @param event \u4ea4\u7ed9\u88ab\u6d4b\u5165\u53e3\u5904\u7406\u7684\u6d4b\u8bd5\u9886\u57df\u4e8b\u4ef6
+         */
         @Override
         public void onEvent(org.glassfish.jersey.server.monitoring.ApplicationEvent event) {
         }
 
+        /**
+         * \u8c03\u7528 <code>finished.getType()</code>\u3001<code>present()</code>\u3001<code>io.ddd4j.core.context.ThreadContext.getSubject()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+         * @param event \u4ea4\u7ed9\u88ab\u6d4b\u5165\u53e3\u5904\u7406\u7684\u6d4b\u8bd5\u9886\u57df\u4e8b\u4ef6
+         * @return \u63d0\u4f9b\u7ed9\u540e\u7eed\u5951\u7ea6\u65ad\u8a00\u7684 <code>org.glassfish.jersey.server.monitoring.RequestEventListener</code> \u7ed3\u679c
+         */
         @Override
         public org.glassfish.jersey.server.monitoring.RequestEventListener onRequest(org.glassfish.jersey.server.monitoring.RequestEvent event) {
             return finished -> {
@@ -309,12 +455,21 @@ class NativeAuthHttpTest {
             };
         }
 
+        /**
+         * \u8c03\u7528 <code>request.setProperty()</code>\u3001<code>Thread.currentThread()</code>\u3001<code>CLEAN.add()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+         * @param request \u5f85\u4ea4\u7ed9\u88ab\u6d4b\u670d\u52a1\u5904\u7406\u7684\u8bf7\u6c42
+         */
         @Override
         public void filter(ContainerRequestContext request) {
             request.setProperty("entry-thread", Thread.currentThread().getName());
             CLEAN.add(!present());
         }
 
+        /**
+         * \u8c03\u7528 <code>CLEAN.add()</code>\u3001<code>present()</code>\u3001<code>io.ddd4j.core.context.ThreadContext.getSubject()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+         * @param request \u5f85\u4ea4\u7ed9\u88ab\u6d4b\u670d\u52a1\u5904\u7406\u7684\u8bf7\u6c42
+         * @param response \u5f53\u524d\u8bf7\u6c42\u5df2\u6536\u5230\u7684\u54cd\u5e94
+         */
         @Override
         public void filter(ContainerRequestContext request, ContainerResponseContext response) {
             CLEAN.add(!present() && Objects.isNull(io.ddd4j.core.context.ThreadContext.getSubject()));
@@ -322,9 +477,14 @@ class NativeAuthHttpTest {
         }
     }
 
+    /** \u5b9e\u73b0 <code>ContainerRequestFilter</code>\uff0c\u4f9b\u6d4b\u8bd5\u8c03\u7528 <code>filter()</code> \u5e76\u89c2\u5bdf\u7ed3\u679c\u3002 */
     @Provider
     @Priority(1100)
     public static class Inner implements ContainerRequestFilter {
+        /**
+         * \u8c03\u7528 <code>present()</code>\u3001<code>request.getUriInfo()</code>\u3001<code>cn.dev33.satoken.stp.StpUtil.hasPermission()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+         * @param request \u5f85\u4ea4\u7ed9\u88ab\u6d4b\u670d\u52a1\u5904\u7406\u7684\u8bf7\u6c42
+         */
         @Override
         public void filter(ContainerRequestContext request) {
             assertTrue(present());

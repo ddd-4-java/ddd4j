@@ -48,8 +48,10 @@ public class BaseMonitorProperties {
      */
     public static final String PREFIX = "monitor";
 
+    /** \u76d1\u63a7\u6269\u5c55\u7684\u65e5\u5fd7\u76f8\u5173\u914d\u7f6e\u3002 */
     private Log log = new Log();
 
+    /** \u76d1\u63a7\u6a21\u5757\u65e5\u5fd7\u544a\u8b66\u914d\u7f6e\u3002 */
     @Data
     public static class Log {
         /**
@@ -80,6 +82,7 @@ public class BaseMonitorProperties {
         private App app = new App();
     }
 
+    /** \u5e94\u7528\u57fa\u672c\u4fe1\u606f\uff08\u9879\u76ee\u3001\u73af\u5883\u3001\u5e94\u7528\u540d\uff09\uff0c\u7528\u4e8e\u544a\u8b66\u5185\u5bb9\u4e0a\u4e0b\u6587\u3002 */
     @Data
     public static class App {
         /**

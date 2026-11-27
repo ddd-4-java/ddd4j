@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 /** 控制台观察器，用于展示本地交易事件的订阅。 */
 @Slf4j
 public final class TradeEventLog {
+    /** \u9650\u5236\u5de5\u5177\u7c7b\u5b9e\u4f8b\u5316\u3002 */
     private TradeEventLog() {
     }
 

@@ -9,9 +9,14 @@ package io.ddd4j.web.webflux.config;
 import cn.hutool.core.date.SystemClock;
 import lombok.Data;
 
+/**
+ * \u96ea\u82b1\u5e8f\u5217\u751f\u6210\u914d\u7f6e\u5c5e\u6027\u3002
+ * @since 2.0.x
+ */
 @Data
 public class SequenceProperties {
 
+    /** \u914d\u7f6e\u9879\u524d\u7f00\uff08{@code @ConfigurationProperties} \u7ed1\u5b9a\u4f7f\u7528\uff09\u3002 */
     public static final String PREFIX = "sequence";
 
     /**

@@ -22,13 +22,17 @@ package io.ddd4j.core.cache;
 public interface GetsResponse<V> {
 
     /**
-     * 缓存 key。
+     * \u7f13\u5b58 key\u3002
+     *
+     * @return \u7f13\u5b58\u952e
      */
     String key();
 
     /**
-     * 缓存当前值。
-     * <p>首次写入（key 不存在）时为 {@code null}。
+     * \u7f13\u5b58\u5f53\u524d\u503c\u3002
+     *  <p>\u9996\u6b21\u5199\u5165\uff08key \u4e0d\u5b58\u5728\uff09\u65f6\u4e3a {@code null}\u3002
+     *
+     * @return \u7f13\u5b58\u5f53\u524d\u503c\uff0c\u9996\u6b21\u5199\u5165\u65f6\u4e3a null
      */
     V value();
 

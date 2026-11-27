@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class WebOtelSupportTest {
 
+    /** 验证<code>WebOtelSupport.startServerSpan("GET", "/api", null)</code>非空。 */
     @Test
     void startServerSpanDelegatesToOtelIntegration() {
         // OTel SDK 未配置 → 返回 invalid PropagatedSpan（非 null，桥接成功）
@@ -23,6 +24,7 @@ class WebOtelSupportTest {
         assertNotNull(WebOtelSupport.startServerSpan("GET", "/api", null));
     }
 
+    /** 验证<code>scope</code>非空，<code>scopeWithSpan</code>非空。 */
     @Test
     void activateReturnsClosableScope() {
         AutoCloseable scope = WebOtelSupport.activate(null);
@@ -35,6 +37,7 @@ class WebOtelSupportTest {
         assertDoesNotThrow(() -> scopeWithSpan.close());
     }
 
+    /** 执行 <code>record Error Delegates Without Throwing</code>，调用 <code>WebOtelSupport.startServerSpan</code>、<code>WebOtelSupport.recordError</code>。 */
     @Test
     void recordErrorDelegatesWithoutThrowing() {
         Object span = WebOtelSupport.startServerSpan("GET", "/api", new HashMap<>());
@@ -42,6 +45,7 @@ class WebOtelSupportTest {
         assertDoesNotThrow(() -> WebOtelSupport.recordError(null, null));
     }
 
+    /** 执行 <code>end Server Span Delegates Without Throwing</code>，调用 <code>WebOtelSupport.startServerSpan</code>、<code>WebOtelSupport.endServerSpan</code>。 */
     @Test
     void endServerSpanDelegatesWithoutThrowing() {
         Object span = WebOtelSupport.startServerSpan("GET", "/api", new HashMap<>());
@@ -49,6 +53,7 @@ class WebOtelSupportTest {
         assertDoesNotThrow(() -> WebOtelSupport.endServerSpan(null, 500));
     }
 
+    /** 执行 <code>inject Response Context Delegates Without Throwing</code>，调用 <code>WebOtelSupport.injectResponseContext</code>。 */
     @Test
     void injectResponseContextDelegatesWithoutThrowing() {
         Map<String, String> headers = new HashMap<>();
@@ -56,6 +61,7 @@ class WebOtelSupportTest {
         assertDoesNotThrow(() -> WebOtelSupport.injectResponseContext(null));
     }
 
+    /** 验证<code>available == false || available == true</code>为真，<code>available</code>为假。 */
     @Test
     void isAvailableReflectsOtelSdkState() {
         // 无 OTel SDK 配置时 Ddd4jOtel.isAvailable() == false，桥接应如实透传

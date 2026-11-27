@@ -24,6 +24,7 @@ import java.util.Objects;
  */
 public class AlternatingRowStyleStrategy implements CellWriteHandler {
 
+    /** \u7f13\u5b58\u5e76\u590d\u7528\u7684\u4ea4\u66ff\u5e95\u8272\u5355\u5143\u683c\u6837\u5f0f\u3002 */
     private final WriteCellStyle zebraStyle;
 
     /**
@@ -45,6 +46,10 @@ public class AlternatingRowStyleStrategy implements CellWriteHandler {
         this.zebraStyle = style;
     }
 
+    /**
+     * \u5728\u975e\u8868\u5934\u7684\u5076\u6570\u76f8\u5bf9\u884c\u7ed9\u5185\u5bb9\u5355\u5143\u683c\u5e94\u7528\u4ea4\u66ff\u5e95\u8272\u3002
+     * @param context \u5f53\u524d\u5df2\u5199\u5165\u7684\u5355\u5143\u683c\u53ca\u5176\u4f4d\u7f6e
+     */
     @Override
     public void afterCellDispose(CellWriteHandlerContext context) {
         // 跳过表头

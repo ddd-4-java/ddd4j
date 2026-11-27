@@ -26,8 +26,14 @@ import java.util.ResourceBundle;
 public class I18nKit {
 
     // 国际化文件前缀
+    /** \u52a0\u8f7d\u56fd\u9645\u5316\u8d44\u6e90\u6587\u4ef6\u65f6\u4f7f\u7528\u7684\u7edf\u4e00\u540d\u79f0\u524d\u7f00\u3002 */
     private final String I18N_FILE_PREFIX = "i18n/messages";
 
+    /**
+     * \u83b7\u53d6\u5f53\u524d\u8bed\u8a00\u73af\u5883\u4e0b\u7684\u6d88\u606f\u3002
+     * @param source \u6d88\u606f\u952e\u6216\u539f\u6587
+     * @return \u672c\u5730\u5316\u6d88\u606f
+     */
     public String get(String source) {
         if (Objects.isNull(source) || !org.springframework.util.StringUtils.hasLength(source)) {
             return source;
@@ -48,14 +54,30 @@ public class I18nKit {
         return source;
     }
 
+    /**
+     * \u83b7\u53d6\u5e76\u683c\u5f0f\u5316\u5f53\u524d\u8bed\u8a00\u73af\u5883\u4e0b\u7684\u6d88\u606f\u3002
+     * @param source \u6d88\u606f\u952e\u6216\u539f\u6587
+     * @param args \u683c\u5f0f\u5316\u53c2\u6570
+     * @return \u683c\u5f0f\u5316\u540e\u7684\u672c\u5730\u5316\u6d88\u606f
+     */
     public String get(String source, Object... args) {
         return format(get(source), args);
     }
 
+    /**
+     * \u8bbe\u7f6e\u5f53\u524d\u7ebf\u7a0b\u7684\u8bed\u8a00\u73af\u5883\u3002
+     * @param locale \u8bed\u8a00\u73af\u5883
+     */
     public void setLocale(Locale locale) {
         ThreadContext.set(ContextConstants.LOCALE, locale);
     }
 
+    /**
+     * \u5c06\u53c2\u6570\u5e94\u7528\u5230\u672c\u5730\u5316\u6d88\u606f\u6a21\u677f\u3002
+     * @param template \u5e26\u5360\u4f4d\u7b26\u7684\u6d88\u606f\u6a21\u677f
+     * @param args \u4f9d\u5e8f\u4ee3\u5165\u6d88\u606f\u6a21\u677f\u7684\u53c2\u6570\u503c
+     * @return \u66ff\u6362\u5360\u4f4d\u7b26\u540e\u7684\u6d88\u606f\u6587\u672c
+     */
     private String format(String template, Object... args) {
         if (Objects.isNull(template) || !org.springframework.util.StringUtils.hasLength(template) || Objects.isNull(args) || args.length == 0) {
             return template;
@@ -227,14 +249,32 @@ public class I18nKit {
         return obj.toString();
     }
 
+    /**
+     * \u4ece Spring \u6d88\u606f\u6e90\u83b7\u53d6\u5f53\u524d\u8bed\u8a00\u73af\u5883\u4e0b\u7684\u6d88\u606f\u3002
+     * @param key \u6d88\u606f\u952e
+     * @return \u672c\u5730\u5316\u6d88\u606f
+     */
     public static String getMessage(String key) {
         return getMessage(key, null);
     }
 
+    /**
+     * \u4ece Spring \u6d88\u606f\u6e90\u83b7\u53d6\u683c\u5f0f\u5316\u6d88\u606f\u3002
+     * @param key \u6d88\u606f\u952e
+     * @param args \u683c\u5f0f\u5316\u53c2\u6570
+     * @return \u672c\u5730\u5316\u6d88\u606f
+     */
     public static String getMessage(String key, String[] args) {
         return SpringContextUtils.getContext().getApplicationContext().getBean(NestedMessageSource.class).getMessage(key, args, LocaleContextHolder.getLocale());
     }
 
+    /**
+     * \u4ece Spring \u6d88\u606f\u6e90\u83b7\u53d6\u6d88\u606f\uff0c\u672a\u547d\u4e2d\u65f6\u4f7f\u7528\u9ed8\u8ba4\u6587\u6848\u3002
+     * @param key \u6d88\u606f\u952e
+     * @param args \u683c\u5f0f\u5316\u53c2\u6570
+     * @param defaultMsg \u9ed8\u8ba4\u6587\u6848
+     * @return \u672c\u5730\u5316\u6d88\u606f
+     */
     public static String getMessage(String key, String[] args, String defaultMsg) {
         return SpringContextUtils.getContext().getApplicationContext().getBean(NestedMessageSource.class).getMessage(key, args, defaultMsg, LocaleContextHolder.getLocale());
     }

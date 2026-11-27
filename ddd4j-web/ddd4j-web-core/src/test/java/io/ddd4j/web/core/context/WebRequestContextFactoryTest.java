@@ -7,10 +7,13 @@ import java.util.Locale;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+/** \u8bf7\u6c42\u4e0a\u4e0b\u6587\u6784\u5efa\u4e0e\u8bf7\u6c42 ID \u89e3\u6790\u7684\u517c\u5bb9\u5951\u7ea6\u3002 */
 class WebRequestContextFactoryTest {
 
+    /** \u53ef\u91cd\u590d\u67e5\u627e\u540c\u4e00\u6d4b\u8bd5\u8bb0\u5f55\u7684\u56fa\u5b9a\u6807\u8bc6\u3002 */
     private static final RequestIdGenerator FIXED_ID = () -> "generated-request";
 
+    /** \u9a8c\u8bc1<code>context.requestId()</code> \u7b49\u4e8e <code>"provided-id"</code>\uff0c<code>context.clientIp()</code> \u7b49\u4e8e <code>"10.0.0.1"</code>\u3002 */
     @Test
     void createUsesRequestIdWhenProvided() {
         WebRequestContextFactory factory = new WebRequestContextFactory(FIXED_ID,
@@ -21,6 +24,7 @@ class WebRequestContextFactoryTest {
         assertEquals("10.0.0.1", context.clientIp());
     }
 
+    /** \u9a8c\u8bc1<code>context.requestId()</code> \u7b49\u4e8e <code>"generated-request"</code>\u3002 */
     @Test
     void createGeneratesRequestIdWhenBlank() {
         WebRequestContextFactory factory = new WebRequestContextFactory(FIXED_ID,
@@ -30,6 +34,7 @@ class WebRequestContextFactoryTest {
         assertEquals("generated-request", context.requestId());
     }
 
+    /** \u9a8c\u8bc1<code>factory.create(requestData(null))</code> \u629b\u51fa <code>IllegalStateException.class</code>\u3002 */
     @Test
     void createRejectsBlankGeneratedRequestId() {
         WebRequestContextFactory factory = new WebRequestContextFactory(() -> "  ",
@@ -37,12 +42,14 @@ class WebRequestContextFactoryTest {
         assertThrows(IllegalStateException.class, () -> factory.create(requestData(null)));
     }
 
+    /** \u9a8c\u8bc1<code>factory.create(null)</code> \u629b\u51fa <code>NullPointerException.class</code>\u3002 */
     @Test
     void createRejectsNullData() {
         WebRequestContextFactory factory = new WebRequestContextFactory(FIXED_ID, (f, r, a) -> null);
         assertThrows(NullPointerException.class, () -> factory.create(null));
     }
 
+    /** \u9a8c\u8bc1<code>context.requestId().trim().isEmpty()</code>\u4e3a\u5047\u3002 */
     @Test
     void defaultFactoryUsesDefaults() {
         WebRequestContextFactory factory = new WebRequestContextFactory();
@@ -50,6 +57,11 @@ class WebRequestContextFactoryTest {
         org.junit.jupiter.api.Assertions.assertFalse(context.requestId().isBlank());
     }
 
+    /**
+     * \u521b\u5efa <code>new WebRequestData</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+     * @param requestId \u7528\u4e8e\u68c0\u67e5\u8bf7\u6c42\u5934\u53ca\u54cd\u5e94\u5bf9\u5e94\u5173\u7cfb\u7684\u6807\u8bc6
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new WebRequestData(requestId, "t-1", "tenant-a", "Bearer x", Locale.CHINA, "1.2.3.4", null, "10.0.0.1", "GET", "/api")</code>
+     */
     private static WebRequestData requestData(String requestId) {
         return new WebRequestData(requestId, "t-1", "tenant-a", "Bearer x", Locale.CHINA,
                 "1.2.3.4", null, "10.0.0.1", "GET", "/api");

@@ -56,6 +56,7 @@ import java.util.stream.Collectors;
 @Slf4j(topic = "### DDD4J-MQ : redisStreamMQClient ###")
 public class RedisStreamMQClient implements MQClient {
 
+    /** 保存 <code>started</code> 对应的 <code>AtomicBoolean</code> 数据。 */
     private final AtomicBoolean started = new AtomicBoolean(false);
     /**
      * 双构造：构造方法 1 直接持有外部注入的 Jedis 客户端（UnifiedJedis 形态）。
@@ -65,24 +66,35 @@ public class RedisStreamMQClient implements MQClient {
      * 双构造：构造方法 2 持有 properties，第一次调用时 lazy 构造 Jedis。
      */
     private final RedisStreamMQProperties properties;
+    /** 保存 <code>SENDING MSGS</code> 对应的 <code>BlockingQueue&lt;MQEvent&gt;</code> 数据。 */
     BlockingQueue<MQEvent> SENDING_MSGS = new LinkedBlockingQueue<>();
     /**
      * lazy 构造的 Jedis（volatile 保证发布可见性）。
      */
     private volatile UnifiedJedis lazyJedis;
 
+    /**
+     * \u4f7f\u7528\u5df2\u6709 Jedis \u5ba2\u6237\u7aef\u521b\u5efa Stream \u6d88\u606f\u5ba2\u6237\u7aef\u3002
+     * @param jedis Jedis \u5ba2\u6237\u7aef
+     */
     public RedisStreamMQClient(UnifiedJedis jedis) {
         this.injectedJedis = jedis;
         this.properties = null;
     }
 
+    /**
+     * \u6839\u636e\u8fde\u63a5\u914d\u7f6e\u521b\u5efa Stream \u6d88\u606f\u5ba2\u6237\u7aef\u3002
+     * @param properties Redis Stream \u914d\u7f6e
+     */
     public RedisStreamMQClient(RedisStreamMQProperties properties) {
         this.injectedJedis = null;
         this.properties = properties;
     }
 
     /**
-     * 获取当前实例使用的 Jedis 客户端（注入优先，否则 lazy 构造）。
+     * \u83b7\u53d6\u5f53\u524d\u5b9e\u4f8b\u4f7f\u7528\u7684 Jedis \u5ba2\u6237\u7aef\uff08\u6ce8\u5165\u4f18\u5148\uff0c\u5426\u5219 lazy \u6784\u9020\uff09\u3002
+     *
+     * @return \u5f53\u524d\u9002\u914d\u5668\u4f7f\u7528\u7684 Jedis \u5ba2\u6237\u7aef
      */
     private UnifiedJedis jedis() {
         if (Objects.nonNull(injectedJedis)) {
@@ -101,13 +113,20 @@ public class RedisStreamMQClient implements MQClient {
         return j;
     }
 
+    /**
+     * 返回此消息适配器在 DDD4J 中登记的实现名。
+     *
+     * @return 实际返回<code>"redisStream"</code>，供调用方取得当前值
+     */
     @Override
     public String impl() {
         return "redisStream";
     }
 
     /**
-     * Redis Stream 默认拼接符 {@code :}（Redis 命名习惯）。
+     * Redis Stream \u9ed8\u8ba4\u62fc\u63a5\u7b26 {@code :}\uff08Redis \u547d\u540d\u4e60\u60ef\uff09\u3002
+     *
+     * @return \u9ed8\u8ba4\u7684\u6d41\u540d\u79f0\u8fde\u63a5\u5b57\u7b26\u4e32
      */
     @Override
     public String defaultConcat() {
@@ -116,6 +135,14 @@ public class RedisStreamMQClient implements MQClient {
 
     // ========================= 生产者 =========================
 
+    /**
+     * 准备消息生产者并返回可发布事件的入口。
+     *
+     * <p>此实现调用 <code>started.compareAndSet(false, true)</code>。</p>
+     *
+     * @param properties MQ 配置
+     * @return 接收待发布事件的函数
+     */
     @Override
     public Consumer<MQEvent> initProducer(MQProperties properties) {
         if (started.compareAndSet(false, true)) {
@@ -155,6 +182,16 @@ public class RedisStreamMQClient implements MQClient {
 
     // ========================= 消费者 =========================
 
+    /**
+     * 为监听器建立消息消费所需的订阅和客户端资源。
+     *
+     * <p>此实现调用 <code>resolveTopic(listener, properties)</code>。</p>
+     *
+     * @param listener 监听器定义
+     * @param properties MQ 配置
+     * @return 消费者完成注册时为真
+     * @throws Exception 当前框架、存储或底层客户端无法完成此操作时
+     */
     @Override
     public boolean initConsumer(MQListener listener, MQProperties properties) throws Exception {
         // 订阅 streamKey=namespace:topic[:tag]（应用层过滤全部正向 tag，故多 stream 各订阅一份）
@@ -264,6 +301,11 @@ public class RedisStreamMQClient implements MQClient {
         return true;
     }
 
+    /**
+     * \u4f18\u5148\u4ece\u539f\u751f\u6d88\u606f\u7684\u6807\u51c6\u5934\u8bfb\u53d6\u6d88\u606f\u6807\u8bc6\uff0c\u7f3a\u5c11\u65f6\u56de\u9000\u5230\u517c\u5bb9\u5934\u3002
+     * @param fields \u5f53\u524d Redis Stream \u6761\u76ee\u7684\u5b57\u6bb5\u6620\u5c04
+     * @return \u7528\u4e8e\u540e\u7eed\u6d88\u8d39\u786e\u8ba4\u7684\u4e1a\u52a1\u6d88\u606f\u6807\u8bc6\uff0c\u5934\u5747\u7f3a\u5931\u65f6\u4e3a\u7a7a
+     */
     static String messageId(Map<String, String> fields) {
         String messageId = fields.get(MessageHeaders.HEADER_MESSAGE_ID);
         return StrKit.isNotEmpty(messageId)

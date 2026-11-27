@@ -10,8 +10,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/** \u9a8c\u8bc1\u6295\u9012\u79df\u7ea6\u3001\u9000\u907f\u548c\u91cd\u8bd5\u8017\u5c3d\u7684\u516c\u5f00\u5951\u7ea6\u3002 */
 class MQDeliveryPolicyTest {
 
+    /** \u9a8c\u8bc1<code>policy.leaseDuration()</code> \u7b49\u4e8e <code>Duration.ofSeconds(60)</code>\uff0c<code>policy.maxAttempts()</code> \u7b49\u4e8e <code>12</code>\uff0c<code>policy.jitterFactor()</code> \u7b49\u4e8e <code>0.20D</code>\u3002 */
     @Test
     void productionDefault_shouldExposeTheDocumentedReliabilityDefaults() {
         MQDeliveryPolicy policy = MQDeliveryPolicy.productionDefault();
@@ -23,6 +25,7 @@ class MQDeliveryPolicyTest {
         assertEquals(0.20D, policy.jitterFactor());
     }
 
+    /** \u9a8c\u8bc1<code>policy.nextAvailableAt(1, failedAt, 0.50D)</code> \u7b49\u4e8e <code>failedAt.plusSeconds(1)</code>\uff0c<code>policy.nextAvailableAt(3, failedAt, 0.50D)</code> \u7b49\u4e8e <code>failedAt.plusSeconds(4)</code>\uff0c<code>policy.nextAvailableAt(1, failedAt, 1.0D)</code> \u7b49\u4e8e <code>failedAt.plusMillis(1200)</code>\u3002 */
     @Test
     void nextAvailableAt_shouldApplyCappedExponentialBackoffAndJitter() {
         MQDeliveryPolicy policy = MQDeliveryPolicy.productionDefault();
@@ -35,6 +38,7 @@ class MQDeliveryPolicyTest {
         assertEquals(failedAt.plusMillis(1200), policy.nextAvailableAt(1, failedAt, 1.0D));
     }
 
+    /** \u9a8c\u8bc1<code>policy.exhausted(11)</code>\u4e3a\u5047\uff0c<code>policy.exhausted(12)</code>\u4e3a\u771f\u3002 */
     @Test
     void exhausted_shouldStartAtConfiguredMaximum() {
         MQDeliveryPolicy policy = MQDeliveryPolicy.productionDefault();
@@ -43,6 +47,7 @@ class MQDeliveryPolicyTest {
         assertTrue(policy.exhausted(12));
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
     @Test
     void constructor_shouldRejectInvalidDeliverySettings() {
         assertThrows(IllegalArgumentException.class, () -> new MQDeliveryPolicy(

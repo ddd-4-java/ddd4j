@@ -15,15 +15,23 @@ import io.ddd4j.core.subject.SubjectProvider;
  */
 public class SaTokenSubjectProvider implements SubjectProvider {
 
+    /**
+     * 取得当前请求使用的认证主体接口。
+     *
+     * @return 本次调用使用的认证主体接口
+     */
     @Override
     public Subject getSubject() {
         return new SaTokenSubject();
     }
 
     /**
-     * 按账号体系获取 Subject（对齐 Sa-Token {@code SaManager.getStpLogic(loginType)}）。
+     * \u6309\u8d26\u53f7\u4f53\u7cfb\u83b7\u53d6 Subject\uff08\u5bf9\u9f50 Sa-Token {@code SaManager.getStpLogic(loginType)}\uff09\u3002
      *
-     * <p>本实现返回的 Subject 内部会按 realm 选择对应的 StpLogic。
+     *  <p>\u672c\u5b9e\u73b0\u8fd4\u56de\u7684 Subject \u5185\u90e8\u4f1a\u6309 realm \u9009\u62e9\u5bf9\u5e94\u7684 StpLogic\u3002
+     *
+     * @param realm \u8981\u53d6\u5f97\u4e3b\u4f53\u7684\u8ba4\u8bc1\u57df
+     * @return \u7ed1\u5b9a\u6307\u5b9a\u8ba4\u8bc1\u57df\u7684\u4e3b\u4f53
      */
     @Override
     public Subject getSubject(String realm) {

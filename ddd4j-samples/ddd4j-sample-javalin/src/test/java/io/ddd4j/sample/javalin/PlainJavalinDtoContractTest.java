@@ -9,8 +9,10 @@ import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/** \u901a\u8fc7 <code>create.setCode()</code>\u3001<code>create.setName()</code>\u3001<code>create.setPrice()</code> \u9a8c\u8bc1 <code>PlainJavalinDtoContract</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
 class PlainJavalinDtoContractTest {
 
+    /** \u9a8c\u8bc1<code>create.code()</code> \u7b49\u4e8e <code>create.getCode()</code>\uff0c<code>create.name()</code> \u7b49\u4e8e <code>create.getName()</code>\uff0c<code>update.toString().contains("UpdateGoodsRequest(")</code>\u4e3a\u771f\u3002 */
     @Test
     void goodsRequestsSupportBeanAndComponentAccess() {
         CreateGoodsRequest create = new CreateGoodsRequest();

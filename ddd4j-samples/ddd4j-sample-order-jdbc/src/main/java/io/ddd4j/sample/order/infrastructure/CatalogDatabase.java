@@ -24,6 +24,7 @@ import io.ddd4j.sample.order.domain.gateway.DuplicateTradeKey;
 
 /** 四表初始化和 MyBatis 事务工厂。 */
 public final class CatalogDatabase {
+    /** \u9650\u5236\u5de5\u5177\u7c7b\u5b9e\u4f8b\u5316\u3002 */
     private CatalogDatabase() {
     }
 
@@ -69,6 +70,11 @@ public final class CatalogDatabase {
         };
     }
 
+    /**
+     * \u6309\u811a\u672c\u4e2d\u7684\u5efa\u8868\u987a\u5e8f\u8865\u9f50\u7f3a\u5931\u7684\u5546\u54c1\u4ea4\u6613\u8868\u3002
+     * @param source \u5546\u54c1\u4ea4\u6613\u6570\u636e\u5e93\u7684\u6570\u636e\u6e90
+     * @throws IllegalStateException \u65e0\u6cd5\u8bfb\u53d6\u5efa\u8868\u811a\u672c\u6216\u83b7\u53d6\u6570\u636e\u5e93\u8fde\u63a5
+     */
     private static void initializeSchema(DataSource source) {
         try (var script = Resources.getResourceAsStream("db/catalog-trade/V1_0_0__catalog_trade.sql");
              var connection = source.getConnection()) {
@@ -86,6 +92,11 @@ public final class CatalogDatabase {
         }
     }
 
+    /**
+     * \u5c06 MySQL \u552f\u4e00\u952e\u51b2\u7a81\u8f6c\u6362\u6210\u4e1a\u52a1\u91cd\u590d\u5f02\u5e38\u3002
+     * @param failure MyBatis \u629b\u51fa\u7684\u6301\u4e45\u5316\u5f02\u5e38
+     * @return \u91cd\u590d\u4e1a\u52a1\u952e\u5f02\u5e38\uff0c\u6216\u672a\u5339\u914d\u65f6\u7684\u539f\u59cb\u5f02\u5e38
+     */
     private static RuntimeException translate(PersistenceException failure) {
         for (Throwable cause = failure; Objects.nonNull(cause); cause = cause.getCause()) {
             if (cause instanceof SQLException sql && sql.getErrorCode() == 1062) {

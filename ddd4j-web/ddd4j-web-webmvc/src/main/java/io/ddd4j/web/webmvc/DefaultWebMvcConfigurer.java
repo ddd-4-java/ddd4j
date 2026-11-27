@@ -68,7 +68,9 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
      */
     private static final String TIME_PATTERN = "HH:mm:ss";
 
+    /** \u7ea6\u5b9a\u9759\u6001 Web \u8d44\u6e90\u7684 classpath \u4f4d\u7f6e\u3002 */
     private final String META_INF_RESOURCES = "classpath:/META-INF/resources/";
+    /** WebJars \u9759\u6001\u8d44\u6e90\u7684 classpath \u4f4d\u7f6e\u3002 */
     private final String META_INF_WEBJAR_RESOURCES = META_INF_RESOURCES + "webjars/";
 
     /**
@@ -84,6 +86,12 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
      */
     private LocalResourceProperteis localResourceProperteis;
 
+    /**
+     * \u521b\u5efa DefaultWebMvcConfigurer \u5b9e\u4f8b\u3002
+     * @param localResourceProperteis \u672c\u5730\u8d44\u6e90\u914d\u7f6e
+     * @param localeChangeInterceptor \u8bed\u8a00\u73af\u5883\u62e6\u622a\u5668
+     * @param ddd4jWebMvcInterceptor DDD4J Web \u62e6\u622a\u5668
+     */
     public DefaultWebMvcConfigurer(LocalResourceProperteis localResourceProperteis,
                                    LocaleChangeInterceptor localeChangeInterceptor,
                                    Ddd4jWebMvcInterceptor ddd4jWebMvcInterceptor) {
@@ -93,6 +101,10 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
         this.ddd4jWebMvcInterceptor = ddd4jWebMvcInterceptor;
     }
 
+    /**
+     * \u4e3a Spring MVC \u914d\u7f6e\u9ed8\u8ba4 Servlet \u7684\u8bf7\u6c42\u5904\u7406\u65b9\u5f0f\u3002
+     * @param configurer \u63a7\u5236\u9ed8\u8ba4 Servlet \u5904\u7406\u65b9\u5f0f\u7684 Spring \u914d\u7f6e\u5bf9\u8c61
+     */
     @Override
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
         configurer.enable();
@@ -165,11 +177,22 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
         converters.add(new AllEncompassingFormHttpMessageConverter());
     }
 
+    /**
+     * \u4fdd\u7559\u6d88\u606f\u8f6c\u6362\u5668\u81ea\u5b9a\u4e49\u6269\u5c55\u5165\u53e3\u3002
+     * @param converters MVC \u5f53\u524d\u6ce8\u518c\u7684 HTTP \u6d88\u606f\u8f6c\u6362\u5668\u96c6\u5408
+     */
     @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
 
     }
 
+    /**
+     * \u6ce8\u518c\u62e6\u622a\u5668\u5e76\u786e\u5b9a\u6267\u884c\u987a\u5e8f\u3002
+     *  <p>\u4e3a API \u7248\u672c\u89e3\u6790\u62e6\u622a\u5668\uff08\u987a\u5e8f {@link org.springframework.core.Ordered#HIGHEST_PRECEDENCE}
+     *  \u5373 {@code Integer.MIN_VALUE}\uff0c\u7531 {@code ApiVersionWebMvcConfiguration} \u6ce8\u518c\uff09\u9884\u7559\u6700\u524d\u4f4d\u7f6e\uff0c
+     *  \u65e2\u6709\u4e0a\u4e0b\u6587\u62e6\u622a\u5668\u4e0e\u8bed\u8a00\u5207\u6362\u62e6\u622a\u5668\u6574\u4f53\u987a\u79fb\uff0c\u76f8\u5bf9\u987a\u5e8f\u4fdd\u6301\u4e0d\u53d8\u3002</p>
+     * @param registry \u62e6\u622a\u5668\u6ce8\u518c\u8868
+     */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(ddd4jWebMvcInterceptor).addPathPatterns("/**").order(Integer.MIN_VALUE);
@@ -177,8 +200,10 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
     }
 
     /**
-     * 配置静态资源映射。
-     * <p>支持本地文件资源映射、静态目录资源及 WebJars 资源。</p>
+     * \u914d\u7f6e\u9759\u6001\u8d44\u6e90\u6620\u5c04\u3002
+     *  <p>\u652f\u6301\u672c\u5730\u6587\u4ef6\u8d44\u6e90\u6620\u5c04\u3001\u9759\u6001\u76ee\u5f55\u8d44\u6e90\u53ca WebJars \u8d44\u6e90\u3002</p>
+     *
+     * @param registry MVC \u9759\u6001\u8d44\u6e90\u8def\u7531\u6ce8\u518c\u5668
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

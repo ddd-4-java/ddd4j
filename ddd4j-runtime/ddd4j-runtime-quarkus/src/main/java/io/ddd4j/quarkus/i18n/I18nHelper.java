@@ -27,10 +27,12 @@ public final class I18nHelper {
      * 国际化 ResourceBundle 缓存（key=语言标签）
      */
     private static final Map<String, ResourceBundle> CACHE = new ConcurrentHashMap<>();
+    /** \u8c03\u7528\u672a\u6307\u5b9a\u8bed\u8a00\u65f6\u4f7f\u7528\u7684\u9ed8\u8ba4\u8bed\u8a00\u6807\u8bb0\u3002 */
     @Getter
     /** 默认语言（zh） */
     private static volatile String defaultLang = "zh";
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>I18nHelper</code> \u5b9e\u4f8b\u3002 */
     private I18nHelper() {
     }
 
@@ -72,6 +74,12 @@ public final class I18nHelper {
         return result;
     }
 
+    /**
+     * \u8bfb\u53d6\u76ee\u6807\u8bed\u8a00\u7684\u6d88\u606f\u8d44\u6e90\u5e76\u6309\u6d88\u606f\u952e\u67e5\u627e\u6587\u672c\u3002
+     * @param lang \u6d88\u606f\u4f7f\u7528\u7684\u8bed\u8a00\u6807\u8bb0
+     * @param key \u5bb9\u5668\u7ed1\u5b9a\u952e\u6216\u5f85\u67e5\u627e\u7684\u6d88\u606f\u952e
+     * @return \u89e3\u6790\u5f97\u5230\u7684\u672c\u5730\u5316\u6d88\u606f
+     */
     private static String resolve(String lang, String key) {
         ResourceBundle bundle = CACHE.computeIfAbsent(lang, I18nHelper::loadBundle);
         if (Objects.nonNull(bundle) && bundle.containsKey(key)) {
@@ -87,6 +95,11 @@ public final class I18nHelper {
         return key;
     }
 
+    /**
+     * \u4e3a\u6307\u5b9a\u8bed\u8a00\u52a0\u8f7d\u914d\u7f6e\u7684\u56fd\u9645\u5316\u8d44\u6e90\u3002
+     * @param lang \u6d88\u606f\u4f7f\u7528\u7684\u8bed\u8a00\u6807\u8bb0
+     * @return \u8be5\u8bed\u8a00\u4f7f\u7528\u7684\u8d44\u6e90\u5305
+     */
     private static ResourceBundle loadBundle(String lang) {
         try {
             Locale locale = Locale.forLanguageTag(lang);

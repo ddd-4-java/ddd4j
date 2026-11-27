@@ -12,6 +12,11 @@ import jakarta.ws.rs.container.ContainerResponseFilter;
  */
 public final class Ddd4jDropwizardResponseFilter implements ContainerResponseFilter {
 
+    /**
+     * \u8fc7\u6ee4\u6570\u636e\u3002
+     * @param request \u8bf7\u6c42\u5bf9\u8c61\u3002
+     * @param response \u54cd\u5e94\u5bf9\u8c61\u3002
+     */
     @Override
     public void filter(ContainerRequestContext request, ContainerResponseContext response) {
         Object contextValue = request.getProperty(Ddd4jDropwizardRequestFilter.CONTEXT_PROPERTY);

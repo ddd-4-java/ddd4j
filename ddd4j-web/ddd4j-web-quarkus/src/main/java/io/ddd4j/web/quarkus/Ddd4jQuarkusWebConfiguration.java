@@ -22,23 +22,43 @@ import java.util.Objects;
 @Setter
 public class Ddd4jQuarkusWebConfiguration {
 
+    /** Quarkus Web \u8bbf\u95ee\u76f8\u5173\u914d\u7f6e\u524d\u7f00\u3002 */
     private static final String PREFIX = "ddd4j.web.";
+    /** \u517c\u5bb9\u65e7 Quarkus \u9274\u6743\u914d\u7f6e\u7684\u5c5e\u6027\u524d\u7f00\u3002 */
     private static final String LEGACY_PREFIX = "ddd4j.quarkus.web.";
 
+    /** \u8df3\u8fc7\u9ed8\u8ba4\u8ba4\u8bc1\u62e6\u622a\u7684\u516c\u5f00\u8def\u5f84\u914d\u7f6e\u3002 */
     private List<String> publicPaths = new ArrayList<>(List.of("/health", "/q/health/**"));
+    /** \u672a\u5355\u72ec\u914d\u7f6e\u8def\u5f84\u65f6\u91c7\u7528\u7684\u9ed8\u8ba4\u9274\u6743\u6a21\u5f0f\u3002 */
     private AuthenticationMode defaultAuthenticationMode = AuthenticationMode.REQUIRED;
+    /** \u662f\u5426\u5df2\u7ecf\u914d\u7f6e\u65b0\u7684\u7edf\u4e00 Web \u8bbf\u95ee\u7b56\u7565\u3002 */
     private boolean standardAccessConfigured;
+    /** \u517c\u5bb9\u914d\u7f6e\u662f\u5426\u8981\u6c42\u643a\u5e26 Bearer \u4ee4\u724c\u3002 */
     private boolean legacyBearerRequired;
+    /** \u65e7\u7248\u914d\u7f6e\u4e2d\u542f\u7528\u8ba4\u8bc1\u7684\u8def\u5f84\u524d\u7f00\u3002 */
     private String legacyProtectedPathPrefix = "/";
+    /** \u662f\u5426\u5141\u8bb8\u7528\u53cd\u5411\u4ee3\u7406\u8f6c\u53d1\u5934\u89e3\u6790\u5ba2\u6237\u7aef\u5730\u5740\u3002 */
     private boolean trustForwardedHeaders;
+    /** \u662f\u5426\u7ed9\u5339\u914d\u8def\u7531\u542f\u7528\u5e42\u7b49\u9632\u62a4\u3002 */
     private boolean idempotencyEnabled = true;
+    /** \u5e42\u7b49\u68c0\u67e5\u67e5\u627e\u7684\u672c\u5730\u7f13\u5b58\u6ce8\u518c\u540d\u3002 */
     private String idempotencyCacheName = "ddd4j-web-idempotency";
+    /** \u5e42\u7b49\u6761\u76ee\u5728\u7f13\u5b58\u4e2d\u7684\u5b58\u6d3b\u65f6\u95f4\u914d\u7f6e\u3002 */
     private Duration idempotencyTtl = Duration.ofMinutes(5);
 
+    /**
+     * \u4ece\u5f53\u524d MicroProfile \u914d\u7f6e\u52a0\u8f7d Web \u914d\u7f6e\u3002
+     * @return Web \u914d\u7f6e
+     */
     public static Ddd4jQuarkusWebConfiguration load() {
         return from(ConfigProvider.getConfig());
     }
 
+    /**
+     * \u4ece\u6307\u5b9a\u914d\u7f6e\u6e90\u8bfb\u53d6\u6807\u51c6\u5c5e\u6027\u4e0e\u517c\u5bb9\u5c5e\u6027\u3002
+     * @param config MicroProfile \u914d\u7f6e\u6e90
+     * @return Web \u914d\u7f6e
+     */
     public static Ddd4jQuarkusWebConfiguration from(Config config) {
         Config source = Objects.requireNonNull(config, "config must not be null");
         Ddd4jQuarkusWebConfiguration configuration = new Ddd4jQuarkusWebConfiguration();
@@ -67,6 +87,10 @@ public class Ddd4jQuarkusWebConfiguration {
         return configuration;
     }
 
+    /**
+     * \u6839\u636e\u6807\u51c6\u5c5e\u6027\u6216\u65e7\u7248 Bearer \u5c5e\u6027\u521b\u5efa\u8bbf\u95ee\u7b56\u7565\u3002
+     * @return \u5f53\u524d\u914d\u7f6e\u5bf9\u5e94\u7684\u8bbf\u95ee\u7b56\u7565
+     */
     public WebAccessPolicy accessPolicy() {
         if (standardAccessConfigured) {
             return new PathWebAccessPolicy(publicPaths, defaultAuthenticationMode);

@@ -31,7 +31,9 @@ import java.util.function.Consumer;
 @Slf4j(topic = "### DDD4J-MQ : MqttMQClient ###")
 public class MqttMQClient implements MQClient {
 
+    /** \u5f53\u524d\u6d88\u606f\u4ee3\u7406\u5ba2\u6237\u7aef\u4f7f\u7528\u7684\u8fde\u63a5\u548c\u8ba2\u9605\u914d\u7f6e\u3002 */
     private final MqttMQProperties properties;
+    /** \u6301\u6709\u5f53\u524d\u5df2\u521b\u5efa\u4e14\u53ef\u7528\u7684\u539f\u751f\u6d88\u606f\u5ba2\u6237\u7aef\u3002 */
     private final AtomicReference<org.eclipse.paho.client.mqttv3.MqttClient> clientRef = new AtomicReference<>();
 
     /**
@@ -55,18 +57,30 @@ public class MqttMQClient implements MQClient {
         this.properties = Objects.requireNonNull(properties, "properties");
     }
 
+    /**
+     * 返回此消息适配器在 DDD4J 中登记的实现名。
+     *
+     * @return 实际返回<code>"mqtt"</code>，供调用方取得当前值
+     */
     @Override
     public String impl() {
         return "mqtt";
     }
 
+    /**
+     * Broker 默认拼接符（各 broker 决定，建议子类覆写）。
+     *
+     * @return 实际返回<code>"/"</code>，供调用方取得当前值
+     */
     @Override
     public String defaultConcat() {
         return "/";
     }
 
     /**
-     * MQTT 无原生 broker-side tag selector，仅 topic 通配 → 强制应用层 {@link TagMatcher} 过滤。
+     * MQTT \u65e0\u539f\u751f broker-side tag selector\uff0c\u4ec5 topic \u901a\u914d \u2192 \u5f3a\u5236\u5e94\u7528\u5c42 {@link TagMatcher} \u8fc7\u6ee4\u3002
+     *
+     * @return \u5f53\u524d\u4ee3\u7406\u662f\u5426\u652f\u6301\u6309\u6807\u7b7e\u8fc7\u6ee4
      */
     @Override
     public boolean supportsBrokerTagFilter() {
@@ -75,6 +89,14 @@ public class MqttMQClient implements MQClient {
 
     // ========================= 生产者 =========================
 
+    /**
+     * 准备消息生产者并返回可发布事件的入口。
+     *
+     * <p>MQTT 实现调用 <code>connection()</code>。</p>
+     *
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 接收待发布事件的函数
+     */
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         org.eclipse.paho.client.mqttv3.MqttClient client = connection();
@@ -98,6 +120,16 @@ public class MqttMQClient implements MQClient {
 
     // ========================= 消费者 =========================
 
+    /**
+     * 为监听器建立消息消费所需的订阅和客户端资源。
+     *
+     * <p>MQTT 实现调用 <code>connection()</code>。</p>
+     *
+     * @param listener 监听器定义
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 此实现返回<code>true</code>
+     * @throws Exception 当前框架、存储或底层客户端无法完成此操作时
+     */
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         org.eclipse.paho.client.mqttv3.MqttClient client = connection();
@@ -143,7 +175,11 @@ public class MqttMQClient implements MQClient {
     }
 
     /**
-     * 从到达的物理 topic 末段解析 tag（保持与生产者 {@link #resolveTopic} 拼接规则一致）。
+     * \u4ece\u5230\u8fbe\u7684\u7269\u7406 topic \u672b\u6bb5\u89e3\u6790 tag\uff08\u4fdd\u6301\u4e0e\u751f\u4ea7\u8005 {@link #resolveTopic} \u62fc\u63a5\u89c4\u5219\u4e00\u81f4\uff09\u3002
+     *
+     * @param message \u6536\u5230\u7684\u539f\u751f MQTT \u6d88\u606f
+     * @param arrivedTopic \u6d88\u606f\u62b5\u8fbe\u65f6\u4f7f\u7528\u7684\u8ba2\u9605\u4e3b\u9898
+     * @return \u89e3\u6790\u5f97\u5230\u7684 MQTT \u6d88\u606f\u6807\u7b7e
      */
     private String readTag(MqttMessage message, String arrivedTopic) {
         int lastSlash = arrivedTopic.lastIndexOf('/');
@@ -156,12 +192,18 @@ public class MqttMQClient implements MQClient {
     // ========================= 连接管理 =========================
 
     /**
-     * QoS：注入原生客户端时取默认值 1，否则读 properties。
+     * QoS\uff1a\u6ce8\u5165\u539f\u751f\u5ba2\u6237\u7aef\u65f6\u53d6\u9ed8\u8ba4\u503c 1\uff0c\u5426\u5219\u8bfb properties\u3002
+     *
+     * @return MQTT \u53d1\u5e03\u6216\u8ba2\u9605\u4f7f\u7528\u7684\u670d\u52a1\u8d28\u91cf\u7ea7\u522b
      */
     private int qos() {
         return properties.getQos();
     }
 
+    /**
+     * \u53d6\u5f97\u5f53\u524d\u9002\u914d\u5668\u4f7f\u7528\u7684\u539f\u751f\u8fde\u63a5\u6216\u5ba2\u6237\u7aef\uff0c\u7f3a\u5c11\u5b9e\u4f8b\u65f6\u5efa\u7acb\u8fde\u63a5\u3002
+     * @return \u4f9b\u53d1\u5e03\u6216\u6d88\u8d39\u64cd\u4f5c\u4f7f\u7528\u7684\u539f\u751f\u8fde\u63a5\u6216\u5ba2\u6237\u7aef
+     */
     private synchronized org.eclipse.paho.client.mqttv3.MqttClient connection() {
         org.eclipse.paho.client.mqttv3.MqttClient c = clientRef.get();
         if (Objects.nonNull(c)) {

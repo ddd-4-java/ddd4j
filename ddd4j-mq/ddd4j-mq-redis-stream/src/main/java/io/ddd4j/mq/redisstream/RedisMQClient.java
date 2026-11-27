@@ -51,6 +51,7 @@ import java.util.function.Consumer;
 @Slf4j(topic = "### DDD4J-MQ : redisMQClient ###")
 public class RedisMQClient implements MQClient {
 
+    /** \u5f53\u524d\u9002\u914d\u5668\u662f\u5426\u5df2\u5f00\u59cb\u5de5\u4f5c\u3002 */
     private final AtomicBoolean started = new AtomicBoolean(false);
     /**
      * 双构造：构造方法 1 直接持有外部注入的 Jedis 客户端（UnifiedJedis 形态）。
@@ -60,24 +61,35 @@ public class RedisMQClient implements MQClient {
      * 双构造：构造方法 2 持有 properties，第一次调用时 lazy 构造 Jedis。
      */
     private final RedisStreamMQProperties properties;
+    /** \u4fdd\u7559\u5f85\u5339\u914d\u56de\u73af\u901a\u77e5\u7684\u6b63\u5728\u53d1\u9001\u6d88\u606f\u72b6\u6001\u3002 */
     BlockingQueue<MQEvent> SENDING_MSGS = new LinkedBlockingQueue<>();
     /**
      * lazy 构造的 Jedis（volatile 保证发布可见性）。
      */
     private volatile UnifiedJedis lazyJedis;
 
+    /**
+     * \u4f7f\u7528\u5df2\u6709 Jedis \u5ba2\u6237\u7aef\u521b\u5efa Redis \u6d88\u606f\u5ba2\u6237\u7aef\u3002
+     * @param jedis Jedis \u5ba2\u6237\u7aef
+     */
     public RedisMQClient(UnifiedJedis jedis) {
         this.injectedJedis = jedis;
         this.properties = null;
     }
 
+    /**
+     * \u6839\u636e\u8fde\u63a5\u914d\u7f6e\u521b\u5efa Redis \u6d88\u606f\u5ba2\u6237\u7aef\u3002
+     * @param properties Redis Stream \u914d\u7f6e
+     */
     public RedisMQClient(RedisStreamMQProperties properties) {
         this.injectedJedis = null;
         this.properties = properties;
     }
 
     /**
-     * 获取当前实例使用的 Jedis 客户端（注入优先，否则 lazy 构造）。
+     * \u83b7\u53d6\u5f53\u524d\u5b9e\u4f8b\u4f7f\u7528\u7684 Jedis \u5ba2\u6237\u7aef\uff08\u6ce8\u5165\u4f18\u5148\uff0c\u5426\u5219 lazy \u6784\u9020\uff09\u3002
+     *
+     * @return \u5f53\u524d\u9002\u914d\u5668\u4f7f\u7528\u7684 Jedis \u5ba2\u6237\u7aef
      */
     private UnifiedJedis jedis() {
         if (Objects.nonNull(injectedJedis)) {
@@ -96,13 +108,20 @@ public class RedisMQClient implements MQClient {
         return j;
     }
 
+    /**
+     * 返回此消息适配器在 DDD4J 中登记的实现名。
+     *
+     * @return 实际返回<code>"redis"</code>，供调用方取得当前值
+     */
     @Override
     public String impl() {
         return "redis";
     }
 
     /**
-     * Redis Pubsub 默认拼接符 {@code :}（Redis 命名习惯）。
+     * Redis Pubsub \u9ed8\u8ba4\u62fc\u63a5\u7b26 {@code :}\uff08Redis \u547d\u540d\u4e60\u60ef\uff09\u3002
+     *
+     * @return \u9ed8\u8ba4\u7684\u9891\u9053\u540d\u8fde\u63a5\u5b57\u7b26\u4e32
      */
     @Override
     public String defaultConcat() {
@@ -111,6 +130,14 @@ public class RedisMQClient implements MQClient {
 
     // ========================= 生产者 =========================
 
+    /**
+     * 准备消息生产者并返回可发布事件的入口。
+     *
+     * <p>此实现调用 <code>started.compareAndSet(false, true)</code>。</p>
+     *
+     * @param properties MQ 配置
+     * @return 接收待发布事件的函数
+     */
     @Override
     public Consumer<MQEvent> initProducer(MQProperties properties) {
         if (started.compareAndSet(false, true)) {
@@ -141,6 +168,16 @@ public class RedisMQClient implements MQClient {
 
     // ========================= 消费者 =========================
 
+    /**
+     * 为监听器建立消息消费所需的订阅和客户端资源。
+     *
+     * <p>此实现调用 <code>resolveTopic(listener, properties)</code>。</p>
+     *
+     * @param listener 监听器定义
+     * @param properties MQ 配置
+     * @return 此实现返回<code>true</code>
+     * @throws Exception 当前框架、存储或底层客户端无法完成此操作时
+     */
     @Override
     public boolean initConsumer(MQListener listener, MQProperties properties) throws Exception {
         // channel=namespace:topic[:tag]；多正向 tag 各订阅一份

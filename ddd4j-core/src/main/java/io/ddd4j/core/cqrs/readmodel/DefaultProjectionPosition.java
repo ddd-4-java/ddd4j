@@ -21,12 +21,20 @@ import java.util.Objects;
 @EqualsAndHashCode
 public final class DefaultProjectionPosition implements ProjectionPosition {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 1L;
 
+    /** \u6295\u5f71\u6d41\u6807\u8bc6\u3002 */
     private final String streamId;
 
+    /** \u4e0b\u4e00\u4e2a\u5f85\u5904\u7406\u4e8b\u4ef6\u53f7\u3002 */
     private final long nextEventNumber;
 
+    /**
+     * \u521b\u5efa\u6295\u5f71\u4f4d\u7f6e\uff0c\u5e76\u6821\u9a8c\u6d41\u6807\u8bc6\u4e0e\u4e8b\u4ef6\u53f7\u3002
+     * @param streamId \u6295\u5f71\u6d41\u6807\u8bc6
+     * @param nextEventNumber \u4e0b\u4e00\u4e2a\u5f85\u5904\u7406\u4e8b\u4ef6\u53f7\uff0c\u4e0d\u53ef\u4e3a\u8d1f\u6570
+     */
     public DefaultProjectionPosition(String streamId, long nextEventNumber) {
         if (StrKit.isBlank(streamId)) {
             throw new IllegalArgumentException("streamId must not be blank");
@@ -38,10 +46,21 @@ public final class DefaultProjectionPosition implements ProjectionPosition {
         this.nextEventNumber = nextEventNumber;
     }
 
+    /**
+     * \u521b\u5efa\u4ece\u4e8b\u4ef6\u53f7 0 \u5f00\u59cb\u7684\u6295\u5f71\u4f4d\u7f6e\u3002
+     * @param streamId \u6295\u5f71\u6d41\u6807\u8bc6
+     * @return \u521d\u59cb\u6295\u5f71\u4f4d\u7f6e
+     */
     public static DefaultProjectionPosition zero(String streamId) {
         return new DefaultProjectionPosition(streamId, 0);
     }
 
+    /**
+     * 以新事件位置构造同一流的投影检查点。
+     *
+     * @param nextEventNumber 新的下一个事件号
+     * @return 实际返回<code>this</code>，供调用方取得当前值
+     */
     @Override
     public ProjectionPosition withNextEventNumber(long nextEventNumber) {
         if (nextEventNumber == this.nextEventNumber) {
@@ -50,6 +69,11 @@ public final class DefaultProjectionPosition implements ProjectionPosition {
         return new DefaultProjectionPosition(streamId, nextEventNumber);
     }
 
+    /**
+     * \u5224\u65ad\u53e6\u4e00\u4e2a\u6295\u5f71\u4f4d\u7f6e\u662f\u5426\u5c5e\u4e8e\u540c\u4e00\u6d41\u3002
+     * @param position \u5f85\u6bd4\u8f83\u4f4d\u7f6e
+     * @return \u6d41\u6807\u8bc6\u76f8\u540c\u65f6\u4e3a true
+     */
     public boolean isSameStream(ProjectionPosition position) {
         return Objects.nonNull(position) && Objects.equals(streamId, position.getStreamId());
     }

@@ -37,6 +37,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class LicenseKeyStoreGenerator {
 
+    /** \u7b49\u5f85 keytool \u8fdb\u7a0b\u7ed3\u675f\u7684\u6700\u957f\u79d2\u6570\u3002 */
     private static final long KEYTOOL_TIMEOUT_SECONDS = 60L;
 
     /**
@@ -85,7 +86,10 @@ public class LicenseKeyStoreGenerator {
     }
 
     /**
-     * 构造 keytool -genkeypair 命令（生成私钥 + 自签证书）。
+     * \u6784\u9020 keytool -genkeypair \u547d\u4ee4\uff08\u751f\u6210\u79c1\u94a5 + \u81ea\u7b7e\u8bc1\u4e66\uff09\u3002
+     *
+     * @param param \u5bc6\u94a5\u5e93\u751f\u6210\u914d\u7f6e
+     * @return \u751f\u6210\u5bc6\u94a5\u5bf9\u7684 keytool \u53c2\u6570\u5217\u8868
      */
     private List<String> keytoolGenkeyCommand(LicenseKeyStoreParam param) {
         List<String> cmd = new ArrayList<>();
@@ -115,7 +119,11 @@ public class LicenseKeyStoreGenerator {
     }
 
     /**
-     * 构造 keytool -exportcert 命令（导出证书）。
+     * \u6784\u9020 keytool -exportcert \u547d\u4ee4\uff08\u5bfc\u51fa\u8bc1\u4e66\uff09\u3002
+     *
+     * @param param \u5bc6\u94a5\u5e93\u751f\u6210\u914d\u7f6e
+     * @param certPath \u5bfc\u5165\u6216\u5bfc\u51fa\u7684\u8bc1\u4e66\u6587\u4ef6\u8def\u5f84
+     * @return \u5bfc\u51fa\u8bc1\u4e66\u7684 keytool \u53c2\u6570\u5217\u8868
      */
     private List<String> keytoolExportCommand(LicenseKeyStoreParam param, String certPath) {
         List<String> cmd = new ArrayList<>();
@@ -134,7 +142,11 @@ public class LicenseKeyStoreGenerator {
     }
 
     /**
-     * 构造 keytool -importcert 命令（导入证书到公钥库）。
+     * \u6784\u9020 keytool -importcert \u547d\u4ee4\uff08\u5bfc\u5165\u8bc1\u4e66\u5230\u516c\u94a5\u5e93\uff09\u3002
+     *
+     * @param param \u5bc6\u94a5\u5e93\u751f\u6210\u914d\u7f6e
+     * @param certPath \u5bfc\u5165\u6216\u5bfc\u51fa\u7684\u8bc1\u4e66\u6587\u4ef6\u8def\u5f84
+     * @return \u5bfc\u5165\u8bc1\u4e66\u7684 keytool \u53c2\u6570\u5217\u8868
      */
     private List<String> keytoolImportCommand(LicenseKeyStoreParam param, String certPath) {
         List<String> cmd = new ArrayList<>();
@@ -153,7 +165,10 @@ public class LicenseKeyStoreGenerator {
     }
 
     /**
-     * 执行 keytool 命令，失败时抛出异常并附带 stderr。
+     * \u6267\u884c keytool \u547d\u4ee4\uff0c\u5931\u8d25\u65f6\u629b\u51fa\u5f02\u5e38\u5e76\u9644\u5e26 stderr\u3002
+     *
+     * @param command \u8981\u6267\u884c\u7684\u547d\u4ee4\u548c\u53c2\u6570
+     * @throws Exception \u65e0\u6cd5\u542f\u52a8 keytool\u3001\u7b49\u5f85\u4e2d\u65ad\u6216\u547d\u4ee4\u975e\u96f6\u9000\u51fa
      */
     private void run(List<String> command) throws Exception {
         ProcessBuilder pb = new ProcessBuilder(command);
@@ -171,6 +186,10 @@ public class LicenseKeyStoreGenerator {
         }
     }
 
+    /**
+     * \u5728\u542f\u52a8 keytool \u524d\u6821\u9a8c\u53e3\u4ee4\u3001\u6761\u76ee\u540d\u79f0\u53ca\u5bc6\u94a5\u5e93\u8def\u5f84\u3002
+     * @param param \u751f\u6210\u7b7e\u53d1\u548c\u9a8c\u8bc1\u5bc6\u94a5\u5e93\u7684\u914d\u7f6e
+     */
     private void validateParam(LicenseKeyStoreParam param) {
         Objects.requireNonNull(param, "LicenseKeyStoreParam 不能为空");
         requireText(param.getPrivateAlias(), "privateAlias");
@@ -196,12 +215,23 @@ public class LicenseKeyStoreGenerator {
         }
     }
 
+    /**
+     * \u68c0\u67e5\u8bb8\u53ef\u8bc1\u914d\u7f6e\u4e2d\u7684\u5fc5\u586b\u6587\u672c\u3002
+     * @param value \u5f85\u68c0\u67e5\u7684\u914d\u7f6e\u503c
+     * @param field \u7528\u4e8e\u8bca\u65ad\u7684\u914d\u7f6e\u5b57\u6bb5\u540d\u79f0
+     * @throws IllegalArgumentException \u914d\u7f6e\u672a\u63d0\u4f9b\u6709\u6548\u6587\u672c
+     */
     private void requireText(String value, String field) {
         if (Objects.isNull(value) || StrKit.isEmpty(value.trim())) {
             throw new IllegalArgumentException(field + " 不能为空");
         }
     }
 
+    /**
+     * \u590d\u5236\u5e76\u683c\u5f0f\u5316 keytool \u53c2\u6570\uff0c\u5728\u65e5\u5fd7\u6587\u672c\u4e2d\u9690\u53bb\u5bc6\u94a5\u5e93\u548c\u5bc6\u94a5\u53e3\u4ee4\u3002
+     * @param command \u5373\u5c06\u8fd0\u884c\u6216\u8bca\u65ad\u7684 keytool \u53c2\u6570\u5217\u8868
+     * @return \u53ef\u4ee5\u5199\u5165\u8bca\u65ad\u7684\u8131\u654f\u547d\u4ee4\u6587\u672c
+     */
     private String redactedCommand(List<String> command) {
         List<String> redacted = new ArrayList<>(command);
         for (int index = 0; index < redacted.size() - 1; index++) {
@@ -214,7 +244,9 @@ public class LicenseKeyStoreGenerator {
     }
 
     /**
-     * 解析 keytool 可执行文件路径（JAVA_HOME/bin/keytool 或 PATH 中的 keytool）。
+     * \u89e3\u6790 keytool \u53ef\u6267\u884c\u6587\u4ef6\u8def\u5f84\uff08JAVA_HOME/bin/keytool \u6216 PATH \u4e2d\u7684 keytool\uff09\u3002
+     *
+     * @return \u5f53\u524d Java \u73af\u5883\u53ef\u7528\u7684 keytool \u6267\u884c\u8def\u5f84
      */
     private String keytoolBinary() {
         String javaHome = System.getProperty("java.home");
@@ -226,7 +258,10 @@ public class LicenseKeyStoreGenerator {
     }
 
     /**
-     * 根据密钥算法选择签名算法。
+     * \u6839\u636e\u5bc6\u94a5\u7b97\u6cd5\u9009\u62e9\u7b7e\u540d\u7b97\u6cd5\u3002
+     *
+     * @param keyAlgorithm \u5bc6\u94a5\u7b97\u6cd5
+     * @return \u6307\u5b9a\u5bc6\u94a5\u7b97\u6cd5\u5bf9\u5e94\u7684\u7b7e\u540d\u7b97\u6cd5
      */
     private String sigAlgOf(String keyAlgorithm) {
         if ("DSA".equalsIgnoreCase(keyAlgorithm)) {
@@ -236,7 +271,9 @@ public class LicenseKeyStoreGenerator {
     }
 
     /**
-     * 确保目标文件的父目录存在。
+     * \u786e\u4fdd\u76ee\u6807\u6587\u4ef6\u7684\u7236\u76ee\u5f55\u5b58\u5728\u3002
+     *
+     * @param path \u5f85\u751f\u6210\u7684\u6587\u4ef6\u8def\u5f84
      */
     private void ensureParentDir(String path) {
         File f = new File(path);

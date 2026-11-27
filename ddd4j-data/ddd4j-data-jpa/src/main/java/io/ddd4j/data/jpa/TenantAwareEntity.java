@@ -21,14 +21,17 @@ import java.util.Objects;
 @IdClass(TenantAwareId.class)
 public abstract class TenantAwareEntity extends TenantAwareEntityBase {
 
+    /** \u5b9e\u4f53\u4e3b\u952e\u3002 */
     @Id
     @Column(name = "id")
     protected Long id;
 
+    /** \u79df\u6237\u6807\u8bc6\u3002 */
     @Id
     @Column(name = "tenant_id")
     protected String tenantId;
 
+    /** \u9996\u6b21\u6301\u4e45\u5316\u524d\u5206\u914d\u96ea\u82b1\u4e3b\u952e\u3002 */
     @PrePersist
     protected void assignIdentity() {
         if (Objects.isNull(id)) {
@@ -36,14 +39,27 @@ public abstract class TenantAwareEntity extends TenantAwareEntityBase {
         }
     }
 
+    /**
+     * \u8fd4\u56de\u5b9e\u4f53\u4e3b\u952e\u3002
+     * @return \u5b9e\u4f53\u4e3b\u952e
+     */
     public Long getId() {
         return id;
     }
 
+    /**
+     * \u8fd4\u56de\u79df\u6237\u6807\u8bc6\u3002
+     * @return \u79df\u6237\u6807\u8bc6
+     */
     public String getTenantId() {
         return tenantId;
     }
 
+    /**
+     * 生成用于调试和日志的对象描述。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return String.format("%s<%s:%s>", this.getClass().getSimpleName(), tenantId, id);

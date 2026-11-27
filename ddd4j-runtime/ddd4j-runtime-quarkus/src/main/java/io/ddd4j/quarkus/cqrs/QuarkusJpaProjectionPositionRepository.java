@@ -21,15 +21,31 @@ import java.util.Optional;
 @ApplicationScoped
 public class QuarkusJpaProjectionPositionRepository implements ProjectionPositionRepository {
 
+    /** \u7528\u4e8e\u4ece CDI \u83b7\u53d6\u5f53\u524d JPA EntityManager \u7684\u67e5\u8be2\u5165\u53e3\u3002 */
     @Inject
     Instance<EntityManager> entityManagers;
 
+    /**
+     * 查询指定事件流的投影检查点。
+     *
+     * <p>JPA 实现调用 <code>Optional.ofNullable(manager().find(QuarkusJpaProjectionPosition.class, streamId))</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     * @return 与给定流标识对应的投影检查点
+     */
     @Override
     public Optional<ProjectionPosition> findByStreamId(String streamId) {
         return Optional.ofNullable(manager().find(QuarkusJpaProjectionPosition.class, streamId))
                 .map(position -> (ProjectionPosition) position);
     }
 
+    /**
+     * 查询存储中符合条件的记录。
+     *
+     * <p>JPA 实现调用 <code>manager().createQuery("select p from QuarkusJpaProjectionPosition p", QuarkusJpaProjectionPosition.class)</code>。</p>
+     *
+     * @return 满足条件的结果列表
+     */
     @Override
     public List<ProjectionPosition> findAll() {
         return manager().createQuery("select p from QuarkusJpaProjectionPosition p",
@@ -39,6 +55,14 @@ public class QuarkusJpaProjectionPositionRepository implements ProjectionPositio
                 .toList();
     }
 
+    /**
+     * 在持久化存储中写入指定事件流的投影检查点。
+     *
+     * <p>JPA 实现调用 <code>manager().find(QuarkusJpaProjectionPosition.class, entity.streamId)</code>。</p>
+     *
+     * @param position 投影位置
+     * @return 根据执行路径返回<code>entity</code>、<code>manager().merge(entity)</code>
+     */
     @Override
     @Transactional
     public ProjectionPosition save(ProjectionPosition position) {
@@ -51,6 +75,13 @@ public class QuarkusJpaProjectionPositionRepository implements ProjectionPositio
         return manager().merge(entity);
     }
 
+    /**
+     * 删除指定事件流的投影检查点。
+     *
+     * <p>JPA 实现调用 <code>manager().find(QuarkusJpaProjectionPosition.class, streamId)</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     */
     @Override
     @Transactional
     public void deleteByStreamId(String streamId) {
@@ -60,6 +91,13 @@ public class QuarkusJpaProjectionPositionRepository implements ProjectionPositio
         }
     }
 
+    /**
+     * 将指定流的投影检查点重置为零。
+     *
+     * <p>JPA 实现调用 <code>manager()</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     */
     @Override
     @Transactional
     public void resetToZero(String streamId) {
@@ -69,6 +107,10 @@ public class QuarkusJpaProjectionPositionRepository implements ProjectionPositio
                 .executeUpdate();
     }
 
+    /**
+     * \u89e3\u6790\u5f53\u524d\u8c03\u7528\u5bf9\u5e94\u7684 JPA \u5b9e\u4f53\u7ba1\u7406\u5668\u3002
+     * @return \u7528\u4e8e\u6295\u5f71\u4f4d\u70b9\u8bfb\u5199\u7684\u5b9e\u4f53\u7ba1\u7406\u5668
+     */
     private EntityManager manager() {
         if (entityManagers.isUnsatisfied() || entityManagers.isAmbiguous()) {
             throw new IllegalStateException("No unique EntityManager is available. Add a Quarkus ORM extension "

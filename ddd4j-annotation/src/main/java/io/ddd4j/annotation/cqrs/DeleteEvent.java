@@ -34,7 +34,9 @@ import java.lang.annotation.Target;
 public @interface DeleteEvent {
 
     /**
-     * 要处理的事件类型。
+     * \u8981\u5904\u7406\u7684\u4e8b\u4ef6\u7c7b\u578b\u3002
+     *
+     * @return \u8981\u5904\u7406\u7684\u4e8b\u4ef6\u7c7b\u578b
      */
     Class<?> value();
 }

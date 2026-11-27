@@ -32,6 +32,7 @@ import java.util.Objects;
  */
 public class GoodsId implements Serializable {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -39,6 +40,10 @@ public class GoodsId implements Serializable {
      */
     private final Long value;
 
+    /**
+     * \u7528\u6301\u4e45\u5316\u4e3b\u952e\u521b\u5efa\u5546\u54c1\u6807\u8bc6\u3002
+     * @param value \u6784\u9020\u6807\u8bc6\u6216\u914d\u7f6e\u5bf9\u8c61\u7684\u539f\u503c
+     */
     private GoodsId(Long value) {
         if (Objects.isNull(value) || value <= 0) {
             throw new IllegalArgumentException("goodsId must be positive");
@@ -65,6 +70,12 @@ public class GoodsId implements Serializable {
         return value;
     }
 
+    /**
+     * 根据<code>value</code>比较对象的值是否相等。
+     *
+     * @param o 用来比较的另一个对象，允许为空
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -77,11 +88,21 @@ public class GoodsId implements Serializable {
         return Objects.equals(value, that.value);
     }
 
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         return Objects.hashCode(value);
     }
 
+    /**
+     * 生成用于调试和日志的对象描述。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "GoodsId{" + value + '}';

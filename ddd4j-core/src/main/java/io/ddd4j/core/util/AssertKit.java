@@ -50,198 +50,453 @@ public class AssertKit {
         }
     }
 
+    /**
+     * \u8981\u6c42\u6761\u4ef6\u4e3a\u771f\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param expect \u5f85\u65ad\u8a00\u6761\u4ef6
+     * @param code \u65ad\u8a00\u5931\u8d25\u65f6\u7684\u4e1a\u52a1\u9519\u8bef\u7801
+     * @param falseThrow \u65ad\u8a00\u5931\u8d25\u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void isTrue(Boolean expect, Integer code, String falseThrow, Object... params) {
         if (!expect) {
             throw new BizRuntimeException(code, falseThrow, params);
         }
     }
 
+    /**
+     * \u8981\u6c42\u6761\u4ef6\u4e3a\u771f\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param expect \u5f85\u65ad\u8a00\u6761\u4ef6
+     * @param ifFalse \u65ad\u8a00\u5931\u8d25\u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void isTrue(Boolean expect, String ifFalse, Object... params) {
         if (!expect) {
             throw new BizRuntimeException(ifFalse, params);
         }
     }
 
+    /**
+     * \u8981\u6c42\u4e24\u4e2a\u5bf9\u8c61\u76f8\u7b49\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param a \u7b2c\u4e00\u4e2a\u6bd4\u8f83\u503c
+     * @param b \u7b2c\u4e8c\u4e2a\u6bd4\u8f83\u503c
+     * @param code \u65ad\u8a00\u5931\u8d25\u65f6\u7684\u4e1a\u52a1\u9519\u8bef\u7801
+     * @param ifNotEquals \u4e0d\u76f8\u7b49\u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void equals(Object a, Object b, Integer code, String ifNotEquals, Object... params) {
         if (!Objects.equals(a, b)) {
             throw new BizRuntimeException(code, ifNotEquals, params);
         }
     }
 
+    /**
+     * \u8981\u6c42\u4e24\u4e2a\u5bf9\u8c61\u76f8\u7b49\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param a \u7b2c\u4e00\u4e2a\u6bd4\u8f83\u503c
+     * @param b \u7b2c\u4e8c\u4e2a\u6bd4\u8f83\u503c
+     * @param ifNotEquals \u4e0d\u76f8\u7b49\u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void equals(Object a, Object b, String ifNotEquals, Object... params) {
         if (!Objects.equals(a, b)) {
             throw new BizRuntimeException(ifNotEquals, params);
         }
     }
 
+    /**
+     * \u8981\u6c42\u4e24\u4e2a\u5bf9\u8c61\u76f8\u7b49\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param a \u7b2c\u4e00\u4e2a\u6bd4\u8f83\u503c
+     * @param b \u7b2c\u4e8c\u4e2a\u6bd4\u8f83\u503c
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void equals(Object a, Object b) {
         if (!Objects.equals(a, b)) {
             throw new BizRuntimeException("a must equals with b");
         }
     }
 
+    /**
+     * \u8981\u6c42\u4e24\u4e2a\u5bf9\u8c61\u4e0d\u76f8\u7b49\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param a \u7b2c\u4e00\u4e2a\u6bd4\u8f83\u503c
+     * @param b \u7b2c\u4e8c\u4e2a\u6bd4\u8f83\u503c
+     * @param code \u65ad\u8a00\u5931\u8d25\u65f6\u7684\u4e1a\u52a1\u9519\u8bef\u7801
+     * @param ifEquals \u76f8\u7b49\u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void notEquals(Object a, Object b, Integer code, String ifEquals, Object... params) {
         if (Objects.equals(a, b)) {
             throw new BizRuntimeException(code, ifEquals, params);
         }
     }
 
+    /**
+     * \u8981\u6c42\u4e24\u4e2a\u5bf9\u8c61\u4e0d\u76f8\u7b49\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param a \u7b2c\u4e00\u4e2a\u6bd4\u8f83\u503c
+     * @param b \u7b2c\u4e8c\u4e2a\u6bd4\u8f83\u503c
+     * @param ifEquals \u76f8\u7b49\u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void notEquals(Object a, Object b, String ifEquals, Object... params) {
         if (Objects.equals(a, b)) {
             throw new BizRuntimeException(ifEquals, params);
         }
     }
 
+    /**
+     * \u8981\u6c42\u4e24\u4e2a\u5bf9\u8c61\u4e0d\u76f8\u7b49\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param a \u7b2c\u4e00\u4e2a\u6bd4\u8f83\u503c
+     * @param b \u7b2c\u4e8c\u4e2a\u6bd4\u8f83\u503c
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void notEquals(Object a, Object b) {
         if (Objects.equals(a, b)) {
             throw new BizRuntimeException("a must not equals with b");
         }
     }
 
+    /**
+     * \u8981\u6c42\u96c6\u5408\u975e\u7a7a\u4e14\u5305\u542b\u6307\u5b9a\u5143\u7d20\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param collection \u5f85\u68c0\u67e5\u96c6\u5408
+     * @param element \u5f85\u68c0\u67e5\u5143\u7d20
+     * @param code \u65ad\u8a00\u5931\u8d25\u65f6\u7684\u4e1a\u52a1\u9519\u8bef\u7801
+     * @param ifNotContains \u4e0d\u5305\u542b\u5143\u7d20\u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void contains(Collection collection, Object element, Integer code, String ifNotContains, Object... params) {
         if (Objects.isNull(collection) || !collection.contains(element)) {
             throw new BizRuntimeException(code, ifNotContains, params);
         }
     }
 
+    /**
+     * \u8981\u6c42\u96c6\u5408\u975e\u7a7a\u4e14\u5305\u542b\u6307\u5b9a\u5143\u7d20\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param collection \u5f85\u68c0\u67e5\u96c6\u5408
+     * @param element \u5f85\u68c0\u67e5\u5143\u7d20
+     * @param ifNotContains \u4e0d\u5305\u542b\u5143\u7d20\u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void contains(Collection collection, Object element, String ifNotContains, Object... params) {
         if (Objects.isNull(collection) || !collection.contains(element)) {
             throw new BizRuntimeException(ifNotContains, params);
         }
     }
 
+    /**
+     * \u8981\u6c42\u96c6\u5408\u975e\u7a7a\u4e14\u5305\u542b\u6307\u5b9a\u5143\u7d20\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param collection \u5f85\u68c0\u67e5\u96c6\u5408
+     * @param element \u5f85\u68c0\u67e5\u5143\u7d20
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void contains(Collection collection, Object element) {
         if (Objects.isNull(collection) || !collection.contains(element)) {
             throw new BizRuntimeException("collection must contains the element");
         }
     }
 
+    /**
+     * \u8981\u6c42\u96c6\u5408\u4e3a\u7a7a\u6216\u4e0d\u5305\u542b\u6307\u5b9a\u5143\u7d20\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param collection \u5f85\u68c0\u67e5\u96c6\u5408
+     * @param element \u5f85\u68c0\u67e5\u5143\u7d20
+     * @param code \u65ad\u8a00\u5931\u8d25\u65f6\u7684\u4e1a\u52a1\u9519\u8bef\u7801
+     * @param ifContains \u5305\u542b\u5143\u7d20\u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void notContains(Collection collection, Object element, Integer code, String ifContains, Object... params) {
         if (Objects.nonNull(collection) && collection.contains(element)) {
             throw new BizRuntimeException(code, ifContains, params);
         }
     }
 
+    /**
+     * \u8981\u6c42\u96c6\u5408\u4e3a\u7a7a\u6216\u4e0d\u5305\u542b\u6307\u5b9a\u5143\u7d20\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param collection \u5f85\u68c0\u67e5\u96c6\u5408
+     * @param element \u5f85\u68c0\u67e5\u5143\u7d20
+     * @param ifContains \u5305\u542b\u5143\u7d20\u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void notContains(Collection collection, Object element, String ifContains, Object... params) {
         if (Objects.nonNull(collection) && collection.contains(element)) {
             throw new BizRuntimeException(ifContains, params);
         }
     }
 
+    /**
+     * \u8981\u6c42\u96c6\u5408\u4e3a\u7a7a\u6216\u4e0d\u5305\u542b\u6307\u5b9a\u5143\u7d20\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param collection \u5f85\u68c0\u67e5\u96c6\u5408
+     * @param element \u5f85\u68c0\u67e5\u5143\u7d20
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void notContains(Collection collection, Object element) {
         if (Objects.nonNull(collection) && collection.contains(element)) {
             throw new BizRuntimeException("collection must contains the element");
         }
     }
 
+    /**
+     * \u8981\u6c42\u7b2c\u4e00\u4e2a\u65f6\u95f4\u975e\u7a7a\u4e14\u665a\u4e8e\u7b2c\u4e8c\u4e2a\u65f6\u95f4\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param a \u7b2c\u4e00\u4e2a\u6bd4\u8f83\u503c
+     * @param b \u7b2c\u4e8c\u4e2a\u6bd4\u8f83\u503c
+     * @param code \u65ad\u8a00\u5931\u8d25\u65f6\u7684\u4e1a\u52a1\u9519\u8bef\u7801
+     * @param ifBefore \u65f6\u95f4\u987a\u5e8f\u4e0d\u6ee1\u8db3\u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void after(LocalDateTime a, LocalDateTime b, Integer code, String ifBefore, Object... params) {
         if (Objects.isNull(a) || Objects.isNull(b) || !a.isAfter(b)) {
             throw new BizRuntimeException(code, ifBefore, params);
         }
     }
 
+    /**
+     * \u8981\u6c42\u7b2c\u4e00\u4e2a\u65f6\u95f4\u975e\u7a7a\u4e14\u665a\u4e8e\u7b2c\u4e8c\u4e2a\u65f6\u95f4\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param a \u7b2c\u4e00\u4e2a\u6bd4\u8f83\u503c
+     * @param b \u7b2c\u4e8c\u4e2a\u6bd4\u8f83\u503c
+     * @param ifBefore \u65f6\u95f4\u987a\u5e8f\u4e0d\u6ee1\u8db3\u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void after(LocalDateTime a, LocalDateTime b, String ifBefore, Object... params) {
         if (Objects.isNull(a) || Objects.isNull(b) || !a.isAfter(b)) {
             throw new BizRuntimeException(ifBefore, params);
         }
     }
 
+    /**
+     * \u8981\u6c42\u7b2c\u4e00\u4e2a\u65f6\u95f4\u975e\u7a7a\u4e14\u665a\u4e8e\u7b2c\u4e8c\u4e2a\u65f6\u95f4\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param a \u7b2c\u4e00\u4e2a\u6bd4\u8f83\u503c
+     * @param b \u7b2c\u4e8c\u4e2a\u6bd4\u8f83\u503c
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void after(LocalDateTime a, LocalDateTime b) {
         if (Objects.isNull(a) || Objects.isNull(b) || !a.isAfter(b)) {
             throw new BizRuntimeException("a must after b");
         }
     }
 
+    /**
+     * \u8981\u6c42\u7b2c\u4e00\u4e2a\u65f6\u95f4\u975e\u7a7a\u4e14\u665a\u4e8e\u7b2c\u4e8c\u4e2a\u65f6\u95f4\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param a \u7b2c\u4e00\u4e2a\u6bd4\u8f83\u503c
+     * @param b \u7b2c\u4e8c\u4e2a\u6bd4\u8f83\u503c
+     * @param code \u65ad\u8a00\u5931\u8d25\u65f6\u7684\u4e1a\u52a1\u9519\u8bef\u7801
+     * @param ifBefore \u65f6\u95f4\u987a\u5e8f\u4e0d\u6ee1\u8db3\u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void after(LocalDate a, LocalDate b, Integer code, String ifBefore, Object... params) {
         if (Objects.isNull(a) || Objects.isNull(b) || !a.isAfter(b)) {
             throw new BizRuntimeException(code, ifBefore, params);
         }
     }
 
+    /**
+     * \u8981\u6c42\u7b2c\u4e00\u4e2a\u65f6\u95f4\u975e\u7a7a\u4e14\u665a\u4e8e\u7b2c\u4e8c\u4e2a\u65f6\u95f4\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param a \u7b2c\u4e00\u4e2a\u6bd4\u8f83\u503c
+     * @param b \u7b2c\u4e8c\u4e2a\u6bd4\u8f83\u503c
+     * @param ifBefore \u65f6\u95f4\u987a\u5e8f\u4e0d\u6ee1\u8db3\u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void after(LocalDate a, LocalDate b, String ifBefore, Object... params) {
         if (Objects.isNull(a) || Objects.isNull(b) || !a.isAfter(b)) {
             throw new BizRuntimeException(ifBefore, params);
         }
     }
 
+    /**
+     * \u8981\u6c42\u7b2c\u4e00\u4e2a\u65f6\u95f4\u975e\u7a7a\u4e14\u665a\u4e8e\u7b2c\u4e8c\u4e2a\u65f6\u95f4\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param a \u7b2c\u4e00\u4e2a\u6bd4\u8f83\u503c
+     * @param b \u7b2c\u4e8c\u4e2a\u6bd4\u8f83\u503c
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void after(LocalDate a, LocalDate b) {
         if (Objects.isNull(a) || Objects.isNull(b) || !a.isAfter(b)) {
             throw new BizRuntimeException("a must after b");
         }
     }
 
+    /**
+     * \u8981\u6c42\u7b2c\u4e00\u4e2a\u6570\u975e\u7a7a\u4e14\u5927\u4e8e\u7b2c\u4e8c\u4e2a\u6570\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param a \u7b2c\u4e00\u4e2a\u6bd4\u8f83\u503c
+     * @param b \u7b2c\u4e8c\u4e2a\u6bd4\u8f83\u503c
+     * @param code \u65ad\u8a00\u5931\u8d25\u65f6\u7684\u4e1a\u52a1\u9519\u8bef\u7801
+     * @param ifLessEquals \u4e0d\u6ee1\u8db3\u5927\u4e8e\u5173\u7cfb\u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void gt(Integer a, Integer b, Integer code, String ifLessEquals, Object... params) {
         if (Objects.isNull(a) || Objects.isNull(b) || a <= b) {
             throw new BizRuntimeException(code, ifLessEquals, params);
         }
     }
 
+    /**
+     * \u8981\u6c42\u7b2c\u4e00\u4e2a\u6570\u975e\u7a7a\u4e14\u5927\u4e8e\u7b2c\u4e8c\u4e2a\u6570\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param a \u7b2c\u4e00\u4e2a\u6bd4\u8f83\u503c
+     * @param b \u7b2c\u4e8c\u4e2a\u6bd4\u8f83\u503c
+     * @param ifLessEquals \u4e0d\u6ee1\u8db3\u5927\u4e8e\u5173\u7cfb\u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void gt(Integer a, Integer b, String ifLessEquals, Object... params) {
         if (Objects.isNull(a) || Objects.isNull(b) || a <= b) {
             throw new BizRuntimeException(ifLessEquals, params);
         }
     }
 
+    /**
+     * \u8981\u6c42\u7b2c\u4e00\u4e2a\u6570\u975e\u7a7a\u4e14\u5927\u4e8e\u7b2c\u4e8c\u4e2a\u6570\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param a \u7b2c\u4e00\u4e2a\u6bd4\u8f83\u503c
+     * @param b \u7b2c\u4e8c\u4e2a\u6bd4\u8f83\u503c
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void gt(Integer a, Integer b) {
         if (Objects.isNull(a) || Objects.isNull(b) || a <= b) {
             throw new BizRuntimeException("a must > b");
         }
     }
 
+    /**
+     * \u8981\u6c42\u7b2c\u4e00\u4e2a\u6570\u975e\u7a7a\u4e14\u5927\u4e8e\u6216\u7b49\u4e8e\u7b2c\u4e8c\u4e2a\u6570\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param a \u7b2c\u4e00\u4e2a\u6bd4\u8f83\u503c
+     * @param b \u7b2c\u4e8c\u4e2a\u6bd4\u8f83\u503c
+     * @param code \u65ad\u8a00\u5931\u8d25\u65f6\u7684\u4e1a\u52a1\u9519\u8bef\u7801
+     * @param ifLess \u4e0d\u6ee1\u8db3\u5927\u4e8e\u6216\u7b49\u4e8e\u5173\u7cfb\u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void ge(Integer a, Integer b, Integer code, String ifLess, Object... params) {
         if (Objects.isNull(a) || Objects.isNull(b) || a < b) {
             throw new BizRuntimeException(code, ifLess, params);
         }
     }
 
+    /**
+     * \u8981\u6c42\u7b2c\u4e00\u4e2a\u6570\u975e\u7a7a\u4e14\u5927\u4e8e\u6216\u7b49\u4e8e\u7b2c\u4e8c\u4e2a\u6570\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param a \u7b2c\u4e00\u4e2a\u6bd4\u8f83\u503c
+     * @param b \u7b2c\u4e8c\u4e2a\u6bd4\u8f83\u503c
+     * @param ifLess \u4e0d\u6ee1\u8db3\u5927\u4e8e\u6216\u7b49\u4e8e\u5173\u7cfb\u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void ge(Integer a, Integer b, String ifLess, Object... params) {
         if (Objects.isNull(a) || Objects.isNull(b) || a < b) {
             throw new BizRuntimeException(ifLess, params);
         }
     }
 
+    /**
+     * \u8981\u6c42\u7b2c\u4e00\u4e2a\u6570\u975e\u7a7a\u4e14\u5927\u4e8e\u6216\u7b49\u4e8e\u7b2c\u4e8c\u4e2a\u6570\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param a \u7b2c\u4e00\u4e2a\u6bd4\u8f83\u503c
+     * @param b \u7b2c\u4e8c\u4e2a\u6bd4\u8f83\u503c
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void ge(Integer a, Integer b) {
         if (Objects.isNull(a) || Objects.isNull(b) || a < b) {
             throw new BizRuntimeException("a must >= b");
         }
     }
 
+    /**
+     * \u8981\u6c42\u7b2c\u4e00\u4e2a\u6570\u975e\u7a7a\u4e14\u5927\u4e8e\u6216\u7b49\u4e8e\u7b2c\u4e8c\u4e2a\u6570\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param a \u7b2c\u4e00\u4e2a\u6bd4\u8f83\u503c
+     * @param b \u7b2c\u4e8c\u4e2a\u6bd4\u8f83\u503c
+     * @param code \u65ad\u8a00\u5931\u8d25\u65f6\u7684\u4e1a\u52a1\u9519\u8bef\u7801
+     * @param ifLess \u4e0d\u6ee1\u8db3\u5927\u4e8e\u6216\u7b49\u4e8e\u5173\u7cfb\u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void ge(BigDecimal a, BigDecimal b, Integer code, String ifLess, Object... params) {
         if (Objects.isNull(a) || Objects.isNull(b) || a.compareTo(b) < 0) {
             throw new BizRuntimeException(code, ifLess, params);
         }
     }
 
+    /**
+     * \u8981\u6c42\u7b2c\u4e00\u4e2a\u6570\u975e\u7a7a\u4e14\u5927\u4e8e\u6216\u7b49\u4e8e\u7b2c\u4e8c\u4e2a\u6570\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param a \u7b2c\u4e00\u4e2a\u6bd4\u8f83\u503c
+     * @param b \u7b2c\u4e8c\u4e2a\u6bd4\u8f83\u503c
+     * @param ifLess \u4e0d\u6ee1\u8db3\u5927\u4e8e\u6216\u7b49\u4e8e\u5173\u7cfb\u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void ge(BigDecimal a, BigDecimal b, String ifLess, Object... params) {
         if (Objects.isNull(a) || Objects.isNull(b) || a.compareTo(b) < 0) {
             throw new BizRuntimeException(ifLess, params);
         }
     }
 
+    /**
+     * \u8981\u6c42\u7b2c\u4e00\u4e2a\u6570\u975e\u7a7a\u4e14\u5927\u4e8e\u6216\u7b49\u4e8e\u7b2c\u4e8c\u4e2a\u6570\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param a \u7b2c\u4e00\u4e2a\u6bd4\u8f83\u503c
+     * @param b \u7b2c\u4e8c\u4e2a\u6bd4\u8f83\u503c
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void ge(BigDecimal a, BigDecimal b) {
         if (Objects.isNull(a) || Objects.isNull(b) || a.compareTo(b) < 0) {
             throw new BizRuntimeException("a must >= b");
         }
     }
 
+    /**
+     * \u8981\u6c42\u7b2c\u4e00\u4e2a\u6570\u975e\u7a7a\u4e14\u5927\u4e8e\u7b2c\u4e8c\u4e2a\u6570\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param a \u7b2c\u4e00\u4e2a\u6bd4\u8f83\u503c
+     * @param b \u7b2c\u4e8c\u4e2a\u6bd4\u8f83\u503c
+     * @param code \u65ad\u8a00\u5931\u8d25\u65f6\u7684\u4e1a\u52a1\u9519\u8bef\u7801
+     * @param ifLess \u4e0d\u6ee1\u8db3\u5927\u4e8e\u6216\u7b49\u4e8e\u5173\u7cfb\u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void gt(BigDecimal a, BigDecimal b, Integer code, String ifLess, Object... params) {
         if (Objects.isNull(a) || Objects.isNull(b) || a.compareTo(b) <= 0) {
             throw new BizRuntimeException(code, ifLess, params);
         }
     }
 
+    /**
+     * \u8981\u6c42\u7b2c\u4e00\u4e2a\u6570\u975e\u7a7a\u4e14\u5927\u4e8e\u7b2c\u4e8c\u4e2a\u6570\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param a \u7b2c\u4e00\u4e2a\u6bd4\u8f83\u503c
+     * @param b \u7b2c\u4e8c\u4e2a\u6bd4\u8f83\u503c
+     * @param ifLess \u4e0d\u6ee1\u8db3\u5927\u4e8e\u6216\u7b49\u4e8e\u5173\u7cfb\u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void gt(BigDecimal a, BigDecimal b, String ifLess, Object... params) {
         if (Objects.isNull(a) || Objects.isNull(b) || a.compareTo(b) <= 0) {
             throw new BizRuntimeException(ifLess, params);
         }
     }
 
+    /**
+     * \u8981\u6c42\u7b2c\u4e00\u4e2a\u6570\u975e\u7a7a\u4e14\u5927\u4e8e\u7b2c\u4e8c\u4e2a\u6570\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param a \u7b2c\u4e00\u4e2a\u6bd4\u8f83\u503c
+     * @param b \u7b2c\u4e8c\u4e2a\u6bd4\u8f83\u503c
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void gt(BigDecimal a, BigDecimal b) {
         if (Objects.isNull(a) || Objects.isNull(b) || a.compareTo(b) <= 0) {
             throw new BizRuntimeException("a must > b");
         }
     }
 
+    /**
+     * \u8981\u6c42\u5bf9\u8c61\u975e\u7a7a\uff0c\u5e76\u8fd4\u56de\u539f\u5bf9\u8c61\u3002
+     * @param <T> \u54cd\u5e94\u6570\u636e\u6216\u539f\u5bf9\u8c61\u7684\u7c7b\u578b
+     * @param dontNull \u5f85\u68c0\u67e5\u5bf9\u8c61
+     * @param code \u65ad\u8a00\u5931\u8d25\u65f6\u7684\u4e1a\u52a1\u9519\u8bef\u7801
+     * @param ifNull \u5bf9\u8c61\u4e3a null \u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @return \u7ecf\u975e\u7a7a\u6821\u9a8c\u7684\u539f\u5bf9\u8c61
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public <T> T notNull(T dontNull, Integer code, String ifNull, Object... params) {
         if (Objects.isNull(dontNull)) {
             throw new BizRuntimeException(code, ifNull, params);
@@ -249,6 +504,15 @@ public class AssertKit {
         return dontNull;
     }
 
+    /**
+     * \u8981\u6c42\u5bf9\u8c61\u975e\u7a7a\uff0c\u5e76\u8fd4\u56de\u539f\u5bf9\u8c61\u3002
+     * @param <T> \u54cd\u5e94\u6570\u636e\u6216\u539f\u5bf9\u8c61\u7684\u7c7b\u578b
+     * @param dontNull \u5f85\u68c0\u67e5\u5bf9\u8c61
+     * @param ifNull \u5bf9\u8c61\u4e3a null \u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @return \u7ecf\u975e\u7a7a\u6821\u9a8c\u7684\u539f\u5bf9\u8c61
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public <T> T notNull(T dontNull, String ifNull, Object... params) {
         if (Objects.isNull(dontNull)) {
             throw new BizRuntimeException(ifNull, params);
@@ -256,6 +520,13 @@ public class AssertKit {
         return dontNull;
     }
 
+    /**
+     * \u8981\u6c42\u5bf9\u8c61\u975e\u7a7a\uff0c\u5e76\u8fd4\u56de\u539f\u5bf9\u8c61\u3002
+     * @param <T> \u54cd\u5e94\u6570\u636e\u6216\u539f\u5bf9\u8c61\u7684\u7c7b\u578b
+     * @param dontNull \u5f85\u68c0\u67e5\u5bf9\u8c61
+     * @return \u7ecf\u975e\u7a7a\u6821\u9a8c\u7684\u539f\u5bf9\u8c61
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public <T> T notNull(T dontNull) {
         if (Objects.isNull(dontNull)) {
             throw new BizRuntimeException("object must not be null");
@@ -263,52 +534,122 @@ public class AssertKit {
         return dontNull;
     }
 
+    /**
+     * \u8981\u6c42\u5bf9\u8c61\u4e3a null\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param nullVal \u5f85\u68c0\u67e5\u5bf9\u8c61
+     * @param code \u65ad\u8a00\u5931\u8d25\u65f6\u7684\u4e1a\u52a1\u9519\u8bef\u7801
+     * @param ifNotNull \u5bf9\u8c61\u975e\u7a7a\u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void isNull(Object nullVal, Integer code, String ifNotNull, Object... params) {
         if (Objects.nonNull(nullVal)) {
             throw new BizRuntimeException(code, ifNotNull, params);
         }
     }
 
+    /**
+     * \u8981\u6c42\u5bf9\u8c61\u4e3a null\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param nullVal \u5f85\u68c0\u67e5\u5bf9\u8c61
+     * @param ifNotNull \u5bf9\u8c61\u975e\u7a7a\u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void isNull(Object nullVal, String ifNotNull, Object... params) {
         if (Objects.nonNull(nullVal)) {
             throw new BizRuntimeException(ifNotNull, params);
         }
     }
 
+    /**
+     * \u8981\u6c42\u5bf9\u8c61\u4e3a null\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param nullVal \u5f85\u68c0\u67e5\u5bf9\u8c61
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void isNull(Object nullVal) {
         if (Objects.nonNull(nullVal)) {
             throw new BizRuntimeException("object must be null");
         }
     }
 
+    /**
+     * \u8981\u6c42\u5bf9\u8c61\u6709\u503c\uff1bnull \u6216\u7a7a\u5185\u5bb9\u89e6\u53d1\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param object \u5f85\u68c0\u67e5\u5bf9\u8c61
+     * @param code \u65ad\u8a00\u5931\u8d25\u65f6\u7684\u4e1a\u52a1\u9519\u8bef\u7801
+     * @param missingValue \u5bf9\u8c61\u65e0\u503c\u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void hasValue(Object object, Integer code, String missingValue, Object... params) {
         if (Objects.isNull(object) || isEmpty(object)) {
             throw new BizRuntimeException(code, missingValue, params);
         }
     }
 
+    /**
+     * \u8981\u6c42\u5bf9\u8c61\u6709\u503c\uff1bnull \u6216\u7a7a\u5185\u5bb9\u89e6\u53d1\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param object \u5f85\u68c0\u67e5\u5bf9\u8c61
+     * @param ifEmpty \u5bf9\u8c61\u65e0\u503c\u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void hasValue(Object object, String ifEmpty, Object... params) {
         hasValue(object, ResultCode.FAIL.getCode(), ifEmpty, params);
     }
 
+    /**
+     * \u8981\u6c42\u5bf9\u8c61\u6709\u503c\uff1bnull \u6216\u7a7a\u5185\u5bb9\u89e6\u53d1\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param dontEmpty \u5f85\u68c0\u67e5\u5bf9\u8c61
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void hasValue(Object dontEmpty) {
         hasValue(dontEmpty, ResultCode.FAIL.getCode(), "this object missing value");
     }
 
+    /**
+     * \u8981\u6c42\u5bf9\u8c61\u4e3a null \u6216\u7a7a\u5185\u5bb9\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param object \u5f85\u68c0\u67e5\u5bf9\u8c61
+     * @param code \u65ad\u8a00\u5931\u8d25\u65f6\u7684\u4e1a\u52a1\u9519\u8bef\u7801
+     * @param hasValue \u5bf9\u8c61\u6709\u503c\u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void mustEmpty(Object object, Integer code, String hasValue, Object... params) {
         if (Objects.nonNull(object) && !isEmpty(object)) {
             throw new BizRuntimeException(code, hasValue, params);
         }
     }
 
+    /**
+     * \u8981\u6c42\u5bf9\u8c61\u4e3a null \u6216\u7a7a\u5185\u5bb9\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param object \u5f85\u68c0\u67e5\u5bf9\u8c61
+     * @param hasValue \u5bf9\u8c61\u6709\u503c\u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void mustEmpty(Object object, String hasValue, Object... params) {
         mustEmpty(object, ResultCode.FAIL.getCode(), hasValue, params);
     }
 
+    /**
+     * \u8981\u6c42\u5bf9\u8c61\u4e3a null \u6216\u7a7a\u5185\u5bb9\uff1b\u5426\u5219\u629b\u51fa\u4e1a\u52a1\u5f02\u5e38\u3002
+     * @param object \u5f85\u68c0\u67e5\u5bf9\u8c61
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public void mustEmpty(Object object) {
         mustEmpty(object, ResultCode.FAIL.getCode(), "this object has value");
     }
 
+    /**
+     * \u8981\u6c42\u54cd\u5e94\u975e\u7a7a\u4e14\u6210\u529f\uff0c\u5e76\u8fd4\u56de\u54cd\u5e94\u6570\u636e\u3002
+     * @param <T> \u54cd\u5e94\u6570\u636e\u6216\u539f\u5bf9\u8c61\u7684\u7c7b\u578b
+     * @param r \u5f85\u68c0\u67e5\u54cd\u5e94
+     * @param code \u65ad\u8a00\u5931\u8d25\u65f6\u7684\u4e1a\u52a1\u9519\u8bef\u7801
+     * @param ifNotOk \u54cd\u5e94\u4e0d\u6210\u529f\u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @return \u6210\u529f\u54cd\u5e94\u4e2d\u7684\u6570\u636e
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public <T> T isOk(IR r, Integer code, String ifNotOk, Object... params) {
         if (Objects.isNull(r) || !r.isOk()) {
             throw new BizRuntimeException(code, ifNotOk, params);
@@ -316,14 +657,38 @@ public class AssertKit {
         return r.getData();
     }
 
+    /**
+     * \u8981\u6c42\u54cd\u5e94\u975e\u7a7a\u4e14\u6210\u529f\uff0c\u5e76\u8fd4\u56de\u54cd\u5e94\u6570\u636e\u3002
+     * @param <T> \u54cd\u5e94\u6570\u636e\u6216\u539f\u5bf9\u8c61\u7684\u7c7b\u578b
+     * @param r \u5f85\u68c0\u67e5\u54cd\u5e94
+     * @param ifNotOk \u54cd\u5e94\u4e0d\u6210\u529f\u65f6\u7684\u9519\u8bef\u6d88\u606f
+     * @param params \u7528\u4e8e\u683c\u5f0f\u5316\u9519\u8bef\u6d88\u606f\u7684\u53c2\u6570
+     * @return \u6210\u529f\u54cd\u5e94\u4e2d\u7684\u6570\u636e
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public <T> T isOk(IR r, String ifNotOk, Object... params) {
         return isOk(r, ResultCode.FAIL.getCode(), ifNotOk, params);
     }
 
+    /**
+     * \u8981\u6c42\u54cd\u5e94\u975e\u7a7a\u4e14\u6210\u529f\uff0c\u5e76\u8fd4\u56de\u54cd\u5e94\u6570\u636e\u3002
+     * @param <T> \u54cd\u5e94\u6570\u636e\u6216\u539f\u5bf9\u8c61\u7684\u7c7b\u578b
+     * @param r \u5f85\u68c0\u67e5\u54cd\u5e94
+     * @return \u6210\u529f\u54cd\u5e94\u4e2d\u7684\u6570\u636e
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public <T> T isOk(IR r) {
         return isOk(r, ResultCode.FAIL.getCode(), Objects.isNull(r) ? "this result missing value" : r.getMsg());
     }
 
+    /**
+     * \u8981\u6c42\u54cd\u5e94\u975e\u7a7a\u4e14\u6210\u529f\uff0c\u5e76\u8fd4\u56de\u54cd\u5e94\u6570\u636e\u3002
+     * @param <T> \u54cd\u5e94\u6570\u636e\u6216\u539f\u5bf9\u8c61\u7684\u7c7b\u578b
+     * @param r \u5f85\u68c0\u67e5\u54cd\u5e94
+     * @param notOk \u54cd\u5e94\u4e0d\u6210\u529f\u65f6\u751f\u6210\u9519\u8bef\u6d88\u606f\u7684\u56de\u8c03
+     * @return \u6210\u529f\u54cd\u5e94\u4e2d\u7684\u6570\u636e
+     * @throws BizRuntimeException \u65ad\u8a00\u4e0d\u6210\u7acb\u65f6
+     */
     public <T> T isOk(IR r, Supplier<String> notOk) {
         if (Objects.isNull(r) || !r.isOk()) {
             throw new BizRuntimeException(notOk.get());

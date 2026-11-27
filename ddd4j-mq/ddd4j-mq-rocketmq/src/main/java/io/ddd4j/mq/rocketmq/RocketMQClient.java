@@ -72,7 +72,9 @@ public class RocketMQClient implements MQClient {
     private SendCallback callback;
 
     /**
-     * 构造方法 1：注入原生 producer（runtime 自动装配用）。
+     * \u6784\u9020\u65b9\u6cd5 1\uff1a\u6ce8\u5165\u539f\u751f producer\uff08runtime \u81ea\u52a8\u88c5\u914d\u7528\uff09\u3002
+     *
+     * @param producer \u5df2\u521d\u59cb\u5316\u7684\u539f\u751f\u751f\u4ea7\u8005\uff0c\u4e0d\u53ef\u4e3a\u7a7a
      */
     public RocketMQClient(DefaultMQProducer producer) {
         this.producer = Objects.requireNonNull(producer, "RocketMQ Producer is required");
@@ -80,7 +82,10 @@ public class RocketMQClient implements MQClient {
     }
 
     /**
-     * 构造方法 1'：注入原生 producer + 异步发送回调。
+     * \u6784\u9020\u65b9\u6cd5 1'\uff1a\u6ce8\u5165\u539f\u751f producer + \u5f02\u6b65\u53d1\u9001\u56de\u8c03\u3002
+     *
+     * @param producer \u5df2\u521d\u59cb\u5316\u7684\u539f\u751f\u751f\u4ea7\u8005\uff0c\u4e0d\u53ef\u4e3a\u7a7a
+     * @param callback \u5f02\u6b65\u53d1\u9001\u56de\u8c03\uff0c\u53ef\u4e3a\u7a7a\uff08\u4e3a\u7a7a\u65f6\u4ec5\u8bb0\u5f55\u53d1\u9001\u7ed3\u679c\u65e5\u5fd7\uff09
      */
     public RocketMQClient(DefaultMQProducer producer, SendCallback callback) {
         this.producer = Objects.requireNonNull(producer, "RocketMQ Producer is required");
@@ -89,7 +94,9 @@ public class RocketMQClient implements MQClient {
     }
 
     /**
-     * 构造方法 2：自行根据 properties 构造 producer（lazy）。
+     * \u6784\u9020\u65b9\u6cd5 2\uff1a\u81ea\u884c\u6839\u636e properties \u6784\u9020 producer\uff08lazy\uff09\u3002
+     *
+     * @param properties \u9a71\u52a8\u61d2\u6784\u9020\u7684\u914d\u7f6e\uff0c\u4e0d\u53ef\u4e3a\u7a7a
      */
     public RocketMQClient(RocketMQProperties properties) {
         this.producer = null;
@@ -97,7 +104,10 @@ public class RocketMQClient implements MQClient {
     }
 
     /**
-     * 构造方法 2'：自行根据 properties 构造 producer + 异步发送回调（lazy）。
+     * \u6784\u9020\u65b9\u6cd5 2'\uff1a\u81ea\u884c\u6839\u636e properties \u6784\u9020 producer + \u5f02\u6b65\u53d1\u9001\u56de\u8c03\uff08lazy\uff09\u3002
+     *
+     * @param properties \u9a71\u52a8\u61d2\u6784\u9020\u7684\u914d\u7f6e\uff0c\u4e0d\u53ef\u4e3a\u7a7a
+     * @param callback \u5f02\u6b65\u53d1\u9001\u56de\u8c03\uff0c\u53ef\u4e3a\u7a7a\uff08\u4e3a\u7a7a\u65f6\u4ec5\u8bb0\u5f55\u53d1\u9001\u7ed3\u679c\u65e5\u5fd7\uff09
      */
     public RocketMQClient(RocketMQProperties properties, SendCallback callback) {
         this.producer = null;
@@ -107,11 +117,24 @@ public class RocketMQClient implements MQClient {
 
     // ========================= 生产者 =========================
 
+    /**
+     * 返回此消息适配器在 DDD4J 中登记的实现名。
+     *
+     * @return 实际返回<code>"rocket"</code>，供调用方取得当前值
+     */
     @Override
     public String impl() {
         return "rocket";
     }
 
+    /**
+     * 准备消息生产者并返回可发布事件的入口。
+     *
+     * <p>RocketMQ 实现调用 <code>this.properties.getUsername()</code>。</p>
+     *
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 此实现返回<code>null</code>
+     */
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         try {
@@ -169,10 +192,13 @@ public class RocketMQClient implements MQClient {
     }
 
     /**
-     * 根据 {@link PartitionKeyStrategy} 枚举计算 partition key（仿 KafkaMQClient）。
-     * <p>RocketMQ 借 {@link MessageQueueSelector} 保证同 key 进同 MessageQueue → 同 tag / 同租户消息严格顺序。
-     * <p>TAG_TENANT/TAG/TENANT 三种复用父类默认行为；NONE 返回 null；
-     * CUSTOM 时应由子类覆写 {@link #partitionKey(MQEvent)} 自定义。
+     * \u6839\u636e {@link PartitionKeyStrategy} \u679a\u4e3e\u8ba1\u7b97 partition key\uff08\u4eff KafkaMQClient\uff09\u3002
+     *  <p>RocketMQ \u501f {@link MessageQueueSelector} \u4fdd\u8bc1\u540c key \u8fdb\u540c MessageQueue \u2192 \u540c tag / \u540c\u79df\u6237\u6d88\u606f\u4e25\u683c\u987a\u5e8f\u3002
+     *  <p>TAG_TENANT/TAG/TENANT \u4e09\u79cd\u590d\u7528\u7236\u7c7b\u9ed8\u8ba4\u884c\u4e3a\uff1bNONE \u8fd4\u56de null\uff1b
+     *  CUSTOM \u65f6\u5e94\u7531\u5b50\u7c7b\u8986\u5199 {@link #partitionKey(MQEvent)} \u81ea\u5b9a\u4e49\u3002
+     *
+     * @param event \u51b3\u5b9a\u6d88\u606f\u8def\u7531\u7684\u53d1\u5e03\u4e8b\u4ef6
+     * @return \u53d1\u9001\u6d88\u606f\u65f6\u4f7f\u7528\u7684\u8def\u7531\u952e
      */
     @Override
     public String partitionKey(MQEvent event) {
@@ -188,6 +214,16 @@ public class RocketMQClient implements MQClient {
         };
     }
 
+    /**
+     * 为监听器建立消息消费所需的订阅和客户端资源。
+     *
+     * <p>RocketMQ 实现调用 <code>this.properties.newConsumer(listener.getGroup())</code>。</p>
+     *
+     * @param listener 监听器定义
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 此实现返回<code>true</code>
+     * @throws Exception 当前框架、存储或底层客户端无法完成此操作时
+     */
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         DefaultMQPushConsumer consumer;
@@ -265,14 +301,25 @@ public class RocketMQClient implements MQClient {
      */
     public static final class SendLogCallback implements SendCallback {
 
+        /** \u6d88\u606f\u6295\u9012\u6216\u8ba2\u9605\u7684\u4e3b\u9898\u3002 */
         private final String topic;
+        /** \u6d88\u606f\u8f6c\u79fb\u6216\u53d1\u9001\u65f6\u4f7f\u7528\u7684\u5e8f\u5217\u5316\u8d1f\u8f7d\u3002 */
         private final String payload;
 
+        /**
+         * \u7528\u7ed9\u5b9a\u503c\u521d\u59cb\u5316 <code>SendLogCallback</code> \u5b9e\u4f8b\u3002
+         * @param topic \u6d88\u606f\u6295\u9012\u6216\u8ba2\u9605\u7684\u4e3b\u9898
+         * @param payload <code>payload</code> \u5b57\u6bb5
+         */
         SendLogCallback(String topic, String payload) {
             this.topic = topic;
             this.payload = payload;
         }
 
+        /**
+         * \u8bb0\u5f55 RocketMQ \u539f\u751f\u53d1\u5e03\u7ed3\u679c\u7528\u4e8e\u8ddf\u8e2a\u53d1\u9001\u3002
+         * @param sendResult RocketMQ \u8fd4\u56de\u7684\u539f\u751f\u53d1\u5e03\u7ed3\u679c
+         */
         @Override
         public void onSuccess(org.apache.rocketmq.client.producer.SendResult sendResult) {
             if (log.isDebugEnabled()) {
@@ -280,12 +327,21 @@ public class RocketMQClient implements MQClient {
             }
         }
 
+        /**
+         * \u8bb0\u5f55 RocketMQ \u53d1\u5e03\u5931\u8d25\u53ca\u76f8\u5173\u8bca\u65ad\u4fe1\u606f\u3002
+         * @param e \u53d1\u9001\u5931\u8d25\u65f6\u4ee3\u7406\u56de\u8c03\u9644\u5e26\u7684\u5f02\u5e38
+         */
         @Override
         public void onException(Throwable e) {
             log.error("RocketMQ send failed: topic={}, payload={}", topic, payload, e);
         }
     }
 
+    /**
+     * \u4f18\u5148\u4ece\u539f\u751f\u6d88\u606f\u7684\u6807\u51c6\u5934\u8bfb\u53d6\u6d88\u606f\u6807\u8bc6\uff0c\u7f3a\u5c11\u65f6\u56de\u9000\u5230\u517c\u5bb9\u5934\u3002
+     * @param message \u5f53\u524d\u63a5\u6536\u7684\u539f\u751f\u4ee3\u7406\u6d88\u606f
+     * @return \u7528\u4e8e\u540e\u7eed\u6d88\u8d39\u786e\u8ba4\u7684\u4e1a\u52a1\u6d88\u606f\u6807\u8bc6\uff0c\u5934\u5747\u7f3a\u5931\u65f6\u4e3a\u7a7a
+     */
     static String messageId(MessageExt message) {
         String messageId = message.getUserProperty(MessageHeaders.HEADER_MESSAGE_ID);
         return StrKit.isNotEmpty(messageId)

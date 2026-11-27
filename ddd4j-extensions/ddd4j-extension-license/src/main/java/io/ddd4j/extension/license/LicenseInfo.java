@@ -23,6 +23,7 @@ import java.util.Objects;
 @AllArgsConstructor
 public class LicenseInfo implements Serializable {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 1L;
 
     /**

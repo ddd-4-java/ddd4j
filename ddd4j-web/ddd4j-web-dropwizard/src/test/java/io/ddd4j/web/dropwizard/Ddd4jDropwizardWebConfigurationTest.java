@@ -10,8 +10,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/** \u6821\u9a8c Dropwizard Web \u914d\u7f6e\u7684\u9ed8\u8ba4\u503c\u548c\u53ef\u914d\u7f6e\u9879\u3002 */
 class Ddd4jDropwizardWebConfigurationTest {
 
+    /** \u9a8c\u8bc1<code>cfg.getDefaultAuthenticationMode()</code> \u7b49\u4e8e <code>AuthenticationMode.REQUIRED</code>\uff0c<code>cfg.isIdempotencyEnabled()</code>\u4e3a\u771f\uff0c<code>cfg.isTrustForwardedHeaders()</code>\u4e3a\u5047\u3002 */
     @Test
     void defaults() {
         Ddd4jDropwizardWebConfiguration cfg = new Ddd4jDropwizardWebConfiguration();
@@ -23,6 +25,7 @@ class Ddd4jDropwizardWebConfigurationTest {
         assertFalse(cfg.isTrustForwardedHeaders());
     }
 
+    /** \u9a8c\u8bc1<code>cfg.getPublicPaths()</code> \u7b49\u4e8e <code>Collections.singletonList("/api")</code>\uff0c<code>cfg.getDefaultAuthenticationMode()</code> \u7b49\u4e8e <code>AuthenticationMode.OPTIONAL</code>\uff0c<code>cfg.isIdempotencyEnabled()</code>\u4e3a\u5047\u3002 */
     @Test
     void setters() {
         Ddd4jDropwizardWebConfiguration cfg = new Ddd4jDropwizardWebConfiguration();

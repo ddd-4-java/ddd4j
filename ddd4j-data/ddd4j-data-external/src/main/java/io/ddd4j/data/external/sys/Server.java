@@ -26,6 +26,7 @@ import java.util.Properties;
 @Slf4j
 public class Server {
 
+    /** \u91c7\u96c6 CPU \u4f7f\u7528\u7387\u65f6\u4e24\u6b21\u6837\u672c\u4e4b\u95f4\u7684\u7b49\u5f85\u79d2\u6570\u3002 */
     private static final int OSHI_WAIT_SECOND = 1000;
 
     /**
@@ -53,12 +54,17 @@ public class Server {
      */
     private List<SysFile> sysFiles = new LinkedList<>();
 
+    /**
+     * \u6f14\u793a\u670d\u52a1\u5668\u8fd0\u884c\u72b6\u6001\u91c7\u96c6\u3002
+     * @param args \u547d\u4ee4\u884c\u53c2\u6570
+     */
     public static void main(String[] args) {
         Server server = new Server();
         server.setValueTo();
         log.info("{}", server);
     }
 
+    /** \u91c7\u96c6 CPU\u3001\u5185\u5b58\u3001JVM\u3001\u7cfb\u7edf\u548c\u78c1\u76d8\u4fe1\u606f\u3002 */
     public void setValueTo() {
         SystemInfo systemInfo = new SystemInfo();
         HardwareAbstractionLayer hal = systemInfo.getHardware();
@@ -75,7 +81,9 @@ public class Server {
     }
 
     /**
-     * 设置CPU信息
+     * \u8bbe\u7f6eCPU\u4fe1\u606f
+     *
+     * @param processor \u63d0\u4f9b\u5904\u7406\u5668\u4fe1\u606f\u7684\u7cfb\u7edf\u63a2\u9488
      */
     private void setCpuInfo(CentralProcessor processor) {
         // CPU信息
@@ -100,7 +108,9 @@ public class Server {
     }
 
     /**
-     * 设置内存信息
+     * \u8bbe\u7f6e\u5185\u5b58\u4fe1\u606f
+     *
+     * @param memory \u63d0\u4f9b\u5185\u5b58\u4fe1\u606f\u7684\u7cfb\u7edf\u63a2\u9488
      */
     private void setMemInfo(GlobalMemory memory) {
         mem.setTotal(memory.getTotal());
@@ -133,7 +143,9 @@ public class Server {
     }
 
     /**
-     * 设置磁盘信息
+     * \u8bbe\u7f6e\u78c1\u76d8\u4fe1\u606f
+     *
+     * @param os \u63d0\u4f9b\u6587\u4ef6\u7cfb\u7edf\u4fe1\u606f\u7684\u64cd\u4f5c\u7cfb\u7edf\u63a2\u9488
      */
     private void setSysFiles(OperatingSystem os) {
         FileSystem fileSystem = os.getFileSystem();

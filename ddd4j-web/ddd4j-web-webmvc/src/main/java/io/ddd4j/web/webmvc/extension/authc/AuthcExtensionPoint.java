@@ -17,12 +17,37 @@ import java.util.Map;
  */
 public interface AuthcExtensionPoint extends ExtensionPoint {
 
+    /**
+     * \u4ece\u8bf7\u6c42\u4e2d\u83b7\u53d6\u8ba4\u8bc1\u4ee4\u724c\u3002
+     * @param request HTTP \u8bf7\u6c42
+     * @param params \u8bf7\u6c42\u53c2\u6570
+     * @return \u8ba4\u8bc1\u4ee4\u724c
+     * @throws PluginRuntimeException \u63d2\u4ef6\u5904\u7406\u5931\u8d25\u65f6\u629b\u51fa
+     */
     String getToken(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException;
 
+    /**
+     * \u5904\u7406\u8ba4\u8bc1\u8bf7\u6c42\u5934\u3002
+     * @param request HTTP \u8bf7\u6c42
+     * @param params \u8bf7\u6c42\u53c2\u6570
+     * @throws PluginRuntimeException \u63d2\u4ef6\u5904\u7406\u5931\u8d25\u65f6\u629b\u51fa
+     */
     void handleHeader(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException;
 
+    /**
+     * \u5904\u7406\u8ba4\u8bc1\u8bf7\u6c42\u3002
+     * @param request HTTP \u8bf7\u6c42
+     * @param params \u8bf7\u6c42\u53c2\u6570
+     * @throws PluginRuntimeException \u63d2\u4ef6\u5904\u7406\u5931\u8d25\u65f6\u629b\u51fa
+     */
     void handleRequest(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException;
 
+    /**
+     * \u5904\u7406\u8ba4\u8bc1\u7ed3\u679c\u3002
+     * @param res \u5904\u7406\u7ed3\u679c
+     * @return \u5904\u7406\u540e\u7684\u7ed3\u679c
+     * @throws PluginRuntimeException \u63d2\u4ef6\u5904\u7406\u5931\u8d25\u65f6\u629b\u51fa
+     */
     Object handleResult(Object res) throws PluginRuntimeException;
 
 }

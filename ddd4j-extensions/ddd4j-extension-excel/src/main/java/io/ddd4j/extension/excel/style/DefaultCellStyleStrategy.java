@@ -52,6 +52,11 @@ public class DefaultCellStyleStrategy extends HorizontalCellStyleStrategy {
         super(headCellStyle, contentCellStyle);
     }
 
+    /**
+     * \u6309\u6a21\u677f\u989c\u8272\u6784\u5efa\u5e26\u8fb9\u6846\u3001\u5c45\u4e2d\u5b57\u4f53\u548c\u586b\u5145\u8272\u7684\u8868\u5934\u6837\u5f0f\u3002
+     * @param t \u63d0\u4f9b\u8868\u5934\u989c\u8272\u7684\u6837\u5f0f\u6a21\u677f
+     * @return \u8868\u5934\u53ef\u590d\u7528\u7684\u5355\u5143\u683c\u6837\u5f0f
+     */
     private static WriteCellStyle buildHeadStyle(ExcelStyleTemplate t) {
         WriteCellStyle style = new WriteCellStyle();
         style.setFillForegroundColor(t.headerColor());
@@ -67,6 +72,11 @@ public class DefaultCellStyleStrategy extends HorizontalCellStyleStrategy {
         return style;
     }
 
+    /**
+     * \u6309\u6a21\u677f\u5185\u5bb9\u5bf9\u9f50\u65b9\u5f0f\u6784\u5efa\u5e26\u8fb9\u6846\u7684\u6b63\u6587\u6837\u5f0f\u3002
+     * @param t \u63d0\u4f9b\u6b63\u6587\u5bf9\u9f50\u65b9\u5f0f\u7684\u6837\u5f0f\u6a21\u677f
+     * @return \u6b63\u6587\u53ef\u590d\u7528\u7684\u5355\u5143\u683c\u6837\u5f0f
+     */
     private static WriteCellStyle buildContentStyle(ExcelStyleTemplate t) {
         WriteCellStyle style = new WriteCellStyle();
         style.setHorizontalAlignment(t.contentAlign());
@@ -79,6 +89,10 @@ public class DefaultCellStyleStrategy extends HorizontalCellStyleStrategy {
         return style;
     }
 
+    /**
+     * \u7ed9\u5355\u5143\u683c\u56db\u8fb9\u8bbe\u7f6e\u7ec6\u7ebf\u8fb9\u6846\u3002
+     * @param style \u5f85\u66f4\u65b0\u7684\u5355\u5143\u683c\u6837\u5f0f
+     */
     private static void applyBorder(WriteCellStyle style) {
         style.setBorderTop(BorderStyle.THIN);
         style.setBorderBottom(BorderStyle.THIN);

@@ -17,12 +17,14 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class Ddd4jDropwizardOtelIntegrationTest {
 
+    /** \u9a8c\u8bc1<code>span</code>\u975e\u7a7a\u3002 */
     @Test
     void dropwizardModuleCanUseWebOtelIntegration() {
         Object span = WebOtelIntegration.startServerSpan("GET", "/api/test", new HashMap<>());
         assertThat(span).isNotNull();
     }
 
+    /** \u9a8c\u8bc1<code>span</code>\u975e\u7a7a\u3002 */
     @Test
     void dropwizardModuleCanUseWebOtelIntegration_withTraceparent() {
         Map<String, String> headers = new HashMap<>();
@@ -31,16 +33,19 @@ class Ddd4jDropwizardOtelIntegrationTest {
         assertThat(span).isNotNull();
     }
 
+    /** \u9a8c\u8bc1<code>HttpSpan.ATTR_HTTP_METHOD.getKey()</code> \u7b49\u4e8e <code>"http.request.method"</code>\u3002 */
     @Test
     void dropwizardModuleCanUseHttpSpanDirectly() {
         assertThat(HttpSpan.ATTR_HTTP_METHOD.getKey()).isEqualTo("http.request.method");
     }
 
+    /** \u9a8c\u8bc1<code>Ddd4jOtel.TRACER_NAME</code> \u7b49\u4e8e <code>"io.ddd4j"</code>\u3002 */
     @Test
     void dropwizardModuleCanUseDdd4jOtel() {
         assertThat(Ddd4jOtel.TRACER_NAME).isEqualTo("io.ddd4j");
     }
 
+    /** \u9a8c\u8bc1<code>span</code>\u975e\u7a7a\u3002 */
     @Test
     void dropwizardModuleCanHandleAllHttpMethods() {
         for (String method : new String[]{"GET", "POST", "PUT", "DELETE", "PATCH"}) {

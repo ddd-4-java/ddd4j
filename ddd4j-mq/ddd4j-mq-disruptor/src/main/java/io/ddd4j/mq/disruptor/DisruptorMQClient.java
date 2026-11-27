@@ -45,6 +45,7 @@ import java.util.function.Consumer;
 @Slf4j(topic = "### DDD4J-MQ : DisruptorMQClient ###")
 public class DisruptorMQClient implements MQClient {
 
+    /** \u5f53\u524d\u6d88\u606f\u4ee3\u7406\u5ba2\u6237\u7aef\u4f7f\u7528\u7684\u8fde\u63a5\u548c\u8ba2\u9605\u914d\u7f6e\u3002 */
     private final DisruptorMQProperties properties;
 
     /**
@@ -52,13 +53,17 @@ public class DisruptorMQClient implements MQClient {
      */
     private final List<MQListener> listeners = new CopyOnWriteArrayList<>();
 
+    /** \u6267\u884c\u4ee3\u7406\u5185\u90e8\u4e8b\u4ef6\u5206\u53d1\u7684 Disruptor\u3002 */
     private Disruptor<DisruptorEvent> disruptor;
 
+    /** \u5411 Disruptor \u5de5\u4f5c\u7ebf\u7a0b\u8f6c\u4ea4\u6d88\u606f\u7684\u73af\u5f62\u7f13\u51b2\u533a\u3002 */
     @Getter
     private RingBuffer<DisruptorEvent> ringBuffer;
 
     /**
-     * 双构造 1：传入配置，自建 RingBuffer 与 Disruptor（构造即启动，consumer 立即可用）。
+     * \u53cc\u6784\u9020 1\uff1a\u4f20\u5165\u914d\u7f6e\uff0c\u81ea\u5efa RingBuffer \u4e0e Disruptor\uff08\u6784\u9020\u5373\u542f\u52a8\uff0cconsumer \u7acb\u5373\u53ef\u7528\uff09\u3002
+     *
+     * @param properties Disruptor \u6d88\u606f\u914d\u7f6e
      */
     public DisruptorMQClient(DisruptorMQProperties properties) {
         this.properties = Objects.requireNonNull(properties, "DisruptorMQ properties is required");
@@ -66,14 +71,21 @@ public class DisruptorMQClient implements MQClient {
     }
 
     /**
-     * 双构造 2：传入已初始化的 RingBuffer（runtime 集成复用同一 RingBuffer，事件类型必须为 DisruptorEvent）。
-     * 不启动 Disruptor —— RingBuffer 已就绪，调用方负责管理其生命周期。
+     * \u53cc\u6784\u9020 2\uff1a\u4f20\u5165\u5df2\u521d\u59cb\u5316\u7684 RingBuffer\uff08runtime \u96c6\u6210\u590d\u7528\u540c\u4e00 RingBuffer\uff0c\u4e8b\u4ef6\u7c7b\u578b\u5fc5\u987b\u4e3a DisruptorEvent\uff09\u3002
+     *  \u4e0d\u542f\u52a8 Disruptor \u2014\u2014 RingBuffer \u5df2\u5c31\u7eea\uff0c\u8c03\u7528\u65b9\u8d1f\u8d23\u7ba1\u7406\u5176\u751f\u547d\u5468\u671f\u3002
+     *
+     * @param ringBuffer \u5df2\u521d\u59cb\u5316\u7684\u4e8b\u4ef6\u7f13\u51b2\u533a
      */
     public DisruptorMQClient(RingBuffer<DisruptorEvent> ringBuffer) {
         this.properties = new DisruptorMQProperties();
         this.ringBuffer = Objects.requireNonNull(ringBuffer, "DisruptorMQ ringBuffer is required");
     }
 
+    /**
+     * \u5411\u4e0a\u5bfb\u627e\u4e8c\u7684\u5e42\u6b21\u7f13\u51b2\u533a\u5927\u5c0f\uff0c\u9650\u5236\u5728\u5b9e\u73b0\u652f\u6301\u7684\u4e0a\u9650\u3002
+     * @param requested \u914d\u7f6e\u4e2d\u8bf7\u6c42\u7684\u7f13\u51b2\u533a\u5927\u5c0f
+     * @return \u7528\u4e8e\u521b\u5efa Disruptor \u7684\u7f13\u51b2\u533a\u5927\u5c0f
+     */
     private static int normalizeBufferSize(int requested) {
         int size = 1;
         while (size < requested && size < (1 << 20)) {
@@ -84,6 +96,11 @@ public class DisruptorMQClient implements MQClient {
 
     // ========================= 生产者 =========================
 
+    /**
+     * 返回此消息适配器在 DDD4J 中登记的实现名。
+     *
+     * @return 实际返回<code>"disruptor"</code>，供调用方取得当前值
+     */
     @Override
     public String impl() {
         return "disruptor";
@@ -91,6 +108,12 @@ public class DisruptorMQClient implements MQClient {
 
     // ========================= 消费者 =========================
 
+    /**
+     * 准备消息生产者并返回可发布事件的入口。
+     *
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 接收待发布事件的函数
+     */
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         return event -> {
@@ -112,6 +135,15 @@ public class DisruptorMQClient implements MQClient {
         };
     }
 
+    /**
+     * 为监听器建立消息消费所需的订阅和客户端资源。
+     *
+     * <p>此实现调用 <code>listeners.add(listener)</code>。</p>
+     *
+     * @param listener 监听器定义
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 此实现返回<code>true</code>
+     */
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) {
         Objects.requireNonNull(listener, "listener");
@@ -123,15 +155,19 @@ public class DisruptorMQClient implements MQClient {
     }
 
     /**
-     * RingBuffer 事件回调入口（{@link #start()} 注册到 Disruptor）。
+     * RingBuffer \u4e8b\u4ef6\u56de\u8c03\u5165\u53e3\uff08{@link #start()} \u6ce8\u518c\u5230 Disruptor\uff09\u3002
      *
-     * <p>匹配流程（统一遵循 {@code namespace.topic[.tag]} 路由模型）：
-     * <ol>
-     *   <li>route key 精确匹配：event 的 routeExpression vs listener 的 routeExpression</li>
-     *   <li>{@link TagMatcher} 二次过滤（应对 listener.tags 表达式如 {@code "paid || shipped"}）</li>
-     *   <li>反序列化 + 反射调用（{@link MQClient#consume} 默认方法）</li>
-     * </ol>
-     * 不匹配的 listener 跳过，避免跨 namespace/topic/tag 的误派发。
+     *  <p>\u5339\u914d\u6d41\u7a0b\uff08\u7edf\u4e00\u9075\u5faa {@code namespace.topic[.tag]} \u8def\u7531\u6a21\u578b\uff09\uff1a
+     *  <ol>
+     *    <li>route key \u7cbe\u786e\u5339\u914d\uff1aevent \u7684 routeExpression vs listener \u7684 routeExpression</li>
+     *    <li>{@link TagMatcher} \u4e8c\u6b21\u8fc7\u6ee4\uff08\u5e94\u5bf9 listener.tags \u8868\u8fbe\u5f0f\u5982 {@code "paid || shipped"}\uff09</li>
+     *    <li>\u53cd\u5e8f\u5217\u5316 + \u53cd\u5c04\u8c03\u7528\uff08{@link MQClient#consume} \u9ed8\u8ba4\u65b9\u6cd5\uff09</li>
+     *  </ol>
+     *  \u4e0d\u5339\u914d\u7684 listener \u8df3\u8fc7\uff0c\u907f\u514d\u8de8 namespace/topic/tag \u7684\u8bef\u6d3e\u53d1\u3002
+     *
+     * @param event \u73af\u5f62\u961f\u5217\u4e2d\u5206\u914d\u7ed9\u6d88\u8d39\u8005\u7684\u4e8b\u4ef6
+     * @param sequence Disruptor \u73af\u5f62\u961f\u5217\u4e2d\u7684\u4e8b\u4ef6\u5e8f\u53f7
+     * @param endOfBatch \u662f\u5426\u4e3a\u5f53\u524d\u6279\u6b21\u7684\u6700\u540e\u4e00\u4e2a\u4e8b\u4ef6
      */
     private void onEvent(DisruptorEvent event, long sequence, boolean endOfBatch) {
         String eventRouteKey = event.getRouteExpression();   // namespace.topic[.tag]
@@ -164,6 +200,7 @@ public class DisruptorMQClient implements MQClient {
         }
     }
 
+    /** 提供生命周期启动回调，当前实现的客户端在初始化阶段启动，此处无额外操作。 */
     @Override
     public void start() {
         // Disruptor 在双构造 1 立即启动（双构造 2 RingBuffer 已就绪），

@@ -15,6 +15,7 @@ import java.util.Objects;
  */
 public final class EntityIdPath implements Serializable {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -23,6 +24,7 @@ public final class EntityIdPath implements Serializable {
      */
     public static final String PATH_SEPARATOR = "/";
 
+    /** \u4ece\u805a\u5408\u6839\u5230\u5b9e\u4f53\u7684\u6807\u8bc6\u8def\u5f84\u3002 */
     private final List<EntityId> entityIds;
 
     /**
@@ -117,6 +119,12 @@ public final class EntityIdPath implements Serializable {
         return entityIds.stream().map(EntityId::asTypedString).collect(java.util.stream.Collectors.joining(PATH_SEPARATOR));
     }
 
+    /**
+     * \u6309\u7d22\u5f15\u533a\u95f4\u622a\u53d6\u8fde\u7eed\u5b9e\u4f53\u6807\u8bc6\u3002
+     * @param fromIndex \u8d77\u59cb\u7d22\u5f15\uff0c\u5305\u542b\u8be5\u4f4d\u7f6e
+     * @param toIndex \u7ed3\u675f\u7d22\u5f15\uff0c\u4e0d\u542b\u8be5\u4f4d\u7f6e
+     * @return \u6807\u8bc6\u5b50\u8def\u5f84\uff0c\u533a\u95f4\u4e3a\u7a7a\u65f6\u8fd4\u56de\u7a7a
+     */
     private EntityIdPath subPath(int fromIndex, int toIndex) {
         if (toIndex - fromIndex <= 0) {
             return null;
@@ -124,6 +132,12 @@ public final class EntityIdPath implements Serializable {
         return new EntityIdPath(entityIds.subList(fromIndex, toIndex));
     }
 
+    /**
+     * 根据<code>entityIds</code>比较对象的值是否相等。
+     *
+     * @param object 用于此操作的 <code>object</code>（<code>Object</code>）
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object object) {
         if (this == object) {
@@ -135,11 +149,21 @@ public final class EntityIdPath implements Serializable {
         return Objects.equals(entityIds, that.entityIds);
     }
 
+    /**
+     * 用<code>entityIds</code>计算哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         return Objects.hash(entityIds);
     }
 
+    /**
+     * 生成用于调试和日志的对象描述。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return asString();

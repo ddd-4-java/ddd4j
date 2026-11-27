@@ -30,7 +30,9 @@ import java.util.Objects;
 public class DefaultMessageSourceConfiguration {
 
     /**
-     * 属性源后置处理器。
+     * \u5c5e\u6027\u6e90\u540e\u7f6e\u5904\u7406\u5668\u3002
+     *
+     * @return \u914d\u7f6e\u6216\u5904\u7406\u540e\u7684\u7ec4\u4ef6
      */
     @Bean
     public BasePropertySourcePostProcessor bladePropertySourcePostProcessor() {
@@ -38,7 +40,9 @@ public class DefaultMessageSourceConfiguration {
     }
 
     /**
-     * 国际化配置属性 Bean。
+     * \u56fd\u9645\u5316\u914d\u7f6e\u5c5e\u6027 Bean\u3002
+     *
+     * @return \u914d\u7f6e\u6216\u5904\u7406\u540e\u7684\u7ec4\u4ef6
      */
     @Bean
     @Primary
@@ -47,7 +51,9 @@ public class DefaultMessageSourceConfiguration {
     }
 
     /**
-     * 资源 bundle 基名解析器。
+     * \u8d44\u6e90 bundle \u57fa\u540d\u89e3\u6790\u5668\u3002
+     *
+     * @return \u914d\u7f6e\u6216\u5904\u7406\u540e\u7684\u7ec4\u4ef6
      */
     @Bean
     public ResourceBasenameHandler resourceBasenameHandler() {
@@ -55,7 +61,11 @@ public class DefaultMessageSourceConfiguration {
     }
 
     /**
-     * 主 MessageSource：支持多 bundle 与 basename 动态解析。
+     * \u4e3b MessageSource\uff1a\u652f\u6301\u591a bundle \u4e0e basename \u52a8\u6001\u89e3\u6790\u3002
+     *
+     * @return \u914d\u7f6e\u6216\u5904\u7406\u540e\u7684\u7ec4\u4ef6
+     * @param resourceBasenameHandler \u8d44\u6e90\u6587\u4ef6\u540d\u5904\u7406\u5668
+     * @param properties \u914d\u7f6e\u5c5e\u6027
      */
     @Bean
     @Primary
@@ -81,7 +91,10 @@ public class DefaultMessageSourceConfiguration {
     }
 
     /**
-     * 嵌套 MessageSource，聚合容器内全部 MessageSource 实现。
+     * \u5d4c\u5957 MessageSource\uff0c\u805a\u5408\u5bb9\u5668\u5185\u5168\u90e8 MessageSource \u5b9e\u73b0\u3002
+     *
+     * @return \u914d\u7f6e\u6216\u5904\u7406\u540e\u7684\u7ec4\u4ef6
+     * @param messageSourceProvider \u6d88\u606f\u6e90\u63d0\u4f9b\u8005
      */
     @Bean
     public NestedMessageSource nestedMessageSource(ObjectProvider<MessageSource> messageSourceProvider) {

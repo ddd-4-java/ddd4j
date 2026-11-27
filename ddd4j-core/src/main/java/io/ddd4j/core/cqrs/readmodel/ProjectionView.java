@@ -12,31 +12,41 @@ import java.util.Collection;
 public interface ProjectionView<E> {
 
     /**
-     * 视图名称。
+     * \u89c6\u56fe\u540d\u79f0\u3002
+     *
+     * @return \u89c6\u56fe\u540d\u79f0
      */
     String getName();
 
     /**
-     * 投影流 ID。默认使用视图名称。
+     * \u6295\u5f71\u6d41 ID\u3002\u9ed8\u8ba4\u4f7f\u7528\u89c6\u56fe\u540d\u79f0\u3002
+     *
+     * @return \u6295\u5f71\u6d41\u6807\u8bc6
      */
     default String getStreamId() {
         return getName();
     }
 
     /**
-     * 定时调度 CRON 表达式。
+     * \u5b9a\u65f6\u8c03\u5ea6 CRON \u8868\u8fbe\u5f0f\u3002
+     *
+     * @return \u5b9a\u65f6\u8c03\u5ea6\u8868\u8fbe\u5f0f
      */
     String getCron();
 
     /**
-     * 单次读取事件数量。
+     * \u5355\u6b21\u8bfb\u53d6\u4e8b\u4ef6\u6570\u91cf\u3002
+     *
+     * @return \u5355\u6b21\u8bfb\u53d6\u7684\u4e8b\u4ef6\u6570\u91cf
      */
     default int getChunkSize() {
         return 100;
     }
 
     /**
-     * 本视图关注的事件类型。
+     * \u672c\u89c6\u56fe\u5173\u6ce8\u7684\u4e8b\u4ef6\u7c7b\u578b\u3002
+     *
+     * @return \u89c6\u56fe\u5173\u6ce8\u7684\u4e8b\u4ef6\u7c7b\u578b\u96c6\u5408
      */
     Collection<String> getEventTypes();
 

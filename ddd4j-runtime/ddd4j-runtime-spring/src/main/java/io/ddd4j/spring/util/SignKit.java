@@ -26,14 +26,12 @@ import java.util.TreeMap;
 public class SignKit {
 
     /**
-     * 1、获取密钥
-     *
-     * @param appId       客户端id
-     * @param appVersion  版本号
-     * @param appChannel  渠道
-     * @param fixedSecret 固定密钥
-     * @return 密钥
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * 1\u3001\u83b7\u53d6\u5bc6\u94a5
+     * @param appId \u5ba2\u6237\u7aefid
+     * @param appVersion \u7248\u672c\u53f7
+     * @param appChannel \u6e20\u9053
+     * @param fixedSecret \u56fa\u5b9a\u5bc6\u94a5
+     * @return \u5bc6\u94a5
      */
     public static String salt(String appId, String appVersion, String appChannel, String fixedSecret) {
         String originStr = appId + appVersion + appChannel + fixedSecret;
@@ -89,6 +87,15 @@ public class SignKit {
         return DigestUtils.md5DigestAsHex(signOrigin.getBytes());
     }
 
+    /**
+     * \u5bf9\u591a\u503c\u8868\u5355\u8bf7\u6c42\u8ba1\u7b97\u7b7e\u540d\u3002
+     * @param token \u8bf7\u6c42\u4ee4\u724c
+     * @param formData \u8868\u5355\u53c2\u6570
+     * @param body \u8bf7\u6c42\u4f53
+     * @param salt \u7b7e\u540d\u76d0\u503c
+     * @return \u8bf7\u6c42\u7b7e\u540d
+     * @throws UnsupportedEncodingException \u8bf7\u6c42\u53c2\u6570\u7f16\u7801\u5931\u8d25\u65f6\u629b\u51fa
+     */
     public static String sign(String token, MultiValueMap<String, String> formData, String body, String salt) throws UnsupportedEncodingException {
 
         String originSign = signOrigin(token, formData, body, salt);
@@ -107,6 +114,19 @@ public class SignKit {
 
     }
 
+    /**
+     * \u6821\u9a8c\u591a\u503c\u8868\u5355\u8bf7\u6c42\u7684\u5ba2\u6237\u7aef\u7b7e\u540d\u3002
+     * @param token \u8bf7\u6c42\u4ee4\u724c
+     * @param appId \u5e94\u7528\u6807\u8bc6
+     * @param appVersion \u5e94\u7528\u7248\u672c
+     * @param appChannel \u5e94\u7528\u6e20\u9053
+     * @param fixedSecret \u56fa\u5b9a\u5bc6\u94a5
+     * @param clientSign \u5ba2\u6237\u7aef\u7b7e\u540d
+     * @param params \u8868\u5355\u53c2\u6570
+     * @param body \u8bf7\u6c42\u4f53
+     * @return \u7b7e\u540d\u662f\u5426\u5339\u914d
+     * @throws UnsupportedEncodingException \u8bf7\u6c42\u53c2\u6570\u7f16\u7801\u5931\u8d25\u65f6\u629b\u51fa
+     */
     public static boolean verify(String token, String appId, String appVersion, String appChannel,
                                  String fixedSecret, String clientSign, MultiValueMap<String, String> params, String body)
             throws UnsupportedEncodingException {
@@ -165,6 +185,15 @@ public class SignKit {
         return DigestUtils.md5DigestAsHex(signOrigin.getBytes());
     }
 
+    /**
+     * \u5bf9\u6570\u7ec4\u503c\u8868\u5355\u8bf7\u6c42\u8ba1\u7b97\u7b7e\u540d\u3002
+     * @param token \u8bf7\u6c42\u4ee4\u724c
+     * @param formData \u8868\u5355\u53c2\u6570
+     * @param body \u8bf7\u6c42\u4f53
+     * @param salt \u7b7e\u540d\u76d0\u503c
+     * @return \u8bf7\u6c42\u7b7e\u540d
+     * @throws UnsupportedEncodingException \u8bf7\u6c42\u53c2\u6570\u7f16\u7801\u5931\u8d25\u65f6\u629b\u51fa
+     */
     public static String sign(String token, Map<String, String[]> formData, String body, String salt) throws UnsupportedEncodingException {
 
         String originSign = signOrigin(token, formData, body, salt);
@@ -183,6 +212,19 @@ public class SignKit {
 
     }
 
+    /**
+     * \u6821\u9a8c\u6570\u7ec4\u503c\u8868\u5355\u8bf7\u6c42\u7684\u5ba2\u6237\u7aef\u7b7e\u540d\u3002
+     * @param token \u8bf7\u6c42\u4ee4\u724c
+     * @param appId \u5e94\u7528\u6807\u8bc6
+     * @param appVersion \u5e94\u7528\u7248\u672c
+     * @param appChannel \u5e94\u7528\u6e20\u9053
+     * @param fixedSecret \u56fa\u5b9a\u5bc6\u94a5
+     * @param clientSign \u5ba2\u6237\u7aef\u7b7e\u540d
+     * @param formData \u8868\u5355\u53c2\u6570
+     * @param body \u8bf7\u6c42\u4f53
+     * @return \u7b7e\u540d\u662f\u5426\u5339\u914d
+     * @throws UnsupportedEncodingException \u8bf7\u6c42\u53c2\u6570\u7f16\u7801\u5931\u8d25\u65f6\u629b\u51fa
+     */
     public static boolean verify(String token, String appId, String appVersion, String appChannel,
                                  String fixedSecret, String clientSign, Map<String, String[]> formData, String body)
             throws UnsupportedEncodingException {
@@ -194,6 +236,11 @@ public class SignKit {
         return sign.equals(clientSign);
     }
 
+    /**
+     * \u8f93\u51fa\u7b7e\u540d\u4e0e\u6821\u9a8c\u793a\u4f8b\u3002
+     * @param args \u547d\u4ee4\u884c\u53c2\u6570
+     * @throws Exception \u793a\u4f8b\u6267\u884c\u5931\u8d25\u65f6\u629b\u51fa
+     */
     public static void main(String[] args) throws Exception {
 
         String appId = "1", appVersion = "20000", appChannel = "ASO000", fixedSecret = "z2023";

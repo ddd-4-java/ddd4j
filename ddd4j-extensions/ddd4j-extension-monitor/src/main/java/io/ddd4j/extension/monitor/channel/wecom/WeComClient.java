@@ -43,30 +43,31 @@ public class WeComClient {
     private final String baseUrl;
 
     /**
-     * 默认构造函数，使用 {@link #BASE_URL}。
+     * \u9ed8\u8ba4\u6784\u9020\u51fd\u6570\uff0c\u4f7f\u7528 {@link #BASE_URL}\u3002
+     *
+     * @param key \u4f01\u4e1a\u5fae\u4fe1\u673a\u5668\u4eba Webhook key
      */
     public WeComClient(String key) {
         this(key, BASE_URL);
     }
 
     /**
-     * 可注入 baseUrl 的构造函数（用于测试或企业内代理场景）。
+     * \u53ef\u6ce8\u5165 baseUrl \u7684\u6784\u9020\u51fd\u6570\uff08\u7528\u4e8e\u6d4b\u8bd5\u6216\u4f01\u4e1a\u5185\u4ee3\u7406\u573a\u666f\uff09\u3002
+     *
+     * @param key \u4f01\u4e1a\u5fae\u4fe1\u673a\u5668\u4eba Webhook key
+     * @param baseUrl webhook \u57fa\u7840\u5730\u5740
      */
     public WeComClient(String key, String baseUrl) {
         this.key = key;
         this.baseUrl = baseUrl;
     }
 
-    /**
-     * @return 配置的企业微信 webhook key
-     */
+    /** @return \u914d\u7f6e\u7684\u4f01\u4e1a\u5fae\u4fe1 webhook key */
     public String key() {
         return key;
     }
 
-    /**
-     * @return 当前生效的 webhook 基础地址（含 {@code ?key=}）
-     */
+    /** @return \u5f53\u524d\u751f\u6548\u7684 webhook \u57fa\u7840\u5730\u5740\uff08\u542b {@code ?key=}\uff09 */
     public String baseUrl() {
         return baseUrl;
     }

@@ -26,6 +26,7 @@ import java.util.Objects;
  */
 public final class SqlSpan {
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>SqlSpan</code> \u5b9e\u4f8b\u3002 */
     private SqlSpan() {
     }
 
@@ -64,7 +65,13 @@ public final class SqlSpan {
     }
 
     /**
-     * 包装带返回值的 SQL 执行。
+     * \u5305\u88c5\u5e26\u8fd4\u56de\u503c\u7684 SQL \u6267\u884c\u3002
+     *
+     * @param <T> \u8fd4\u56de\u503c\u7c7b\u578b
+     * @param dbSystem \u6570\u636e\u5e93\u7cfb\u7edf
+     * @param statement SQL \u8bed\u53e5
+     * @param supplier \u5f85\u8ffd\u8e2a\u64cd\u4f5c
+     * @return \u64cd\u4f5c\u7ed3\u679c
      */
     public static <T> T execute(String dbSystem, String statement, java.util.function.Supplier<T> supplier) {
         if (!Ddd4jOtel.isAvailable()) {

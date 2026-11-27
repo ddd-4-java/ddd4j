@@ -34,7 +34,9 @@ import java.util.Objects;
 @Slf4j
 public class LicenseKit {
 
+    /** \u8bfb\u53d6\u8bb8\u53ef\u8bc1\u7b7e\u53d1\u548c\u9a8c\u8bc1\u884c\u4e3a\u7684\u6269\u5c55\u914d\u7f6e\u3002 */
     private final LicenseProperties properties;
+    /** \u5f53\u524d\u8bb8\u53ef\u8bc1\u7684\u5b89\u88c5\u72b6\u6001\u53ca\u9a8c\u8bc1\u5165\u53e3\u3002 */
     private final LicenseVerify verify;
 
     /**
@@ -192,26 +194,28 @@ public class LicenseKit {
         LicenseCache.invalidateAll();
     }
 
-    /**
-     * @return 证书是否安装成功
-     */
+    /** @return \u8bc1\u4e66\u662f\u5426\u5b89\u88c5\u6210\u529f */
     public boolean isInstalled() {
         return verify.isInstallSuccess();
     }
 
+    /**
+     * \u5224\u65ad\u8bb8\u53ef\u8bc1\u662f\u5426\u5df2\u7f13\u5b58\u3002
+     * @return \u5df2\u7f13\u5b58\u65f6\u4e3a true
+     */
     public boolean isCached() {
         return verify.isCached();
     }
 
-    /**
-     * @return License 配置（只读视图）
-     */
+    /** @return License \u914d\u7f6e\uff08\u53ea\u8bfb\u89c6\u56fe\uff09 */
     public LicenseProperties getProperties() {
         return properties;
     }
 
     /**
-     * 默认失效时间：当前时间 + 1 年。
+     * \u9ed8\u8ba4\u5931\u6548\u65f6\u95f4\uff1a\u5f53\u524d\u65f6\u95f4 + 1 \u5e74\u3002
+     *
+     * @return \u9ed8\u8ba4\u8bb8\u53ef\u8bc1\u5230\u671f\u65f6\u95f4
      */
     private Date defaultExpiry() {
         Calendar c = Calendar.getInstance();

@@ -55,10 +55,18 @@ public class MicaMqttProperties extends MQProperties {
      */
     private int maxInflight = 100;
 
+    /**
+     * \u4e3a\u65b0\u8fde\u63a5\u751f\u6210\u552f\u4e00\u5ba2\u6237\u7aef\u6807\u8bc6\u3002
+     * @return \u65b0\u5ba2\u6237\u7aef\u6807\u8bc6
+     */
     public String newClientId() {
         return (Objects.isNull(clientIdPrefix) ? "ddd4j-mica-" : clientIdPrefix) + UUID.randomUUID();
     }
 
+    /**
+     * \u6839\u636e\u5f53\u524d\u914d\u7f6e\u5efa\u7acb mica-mqtt \u5ba2\u6237\u7aef\u8fde\u63a5\u3002
+     * @return \u5df2\u8fde\u63a5\u7684 MQTT \u5ba2\u6237\u7aef
+     */
     public MqttClient client() {
         MqttClientCreator creator = MqttClient.create()
                 .ip(serverIp)
@@ -74,6 +82,10 @@ public class MicaMqttProperties extends MQProperties {
         return creator.connectSync();
     }
 
+    /**
+     * \u5c06\u6570\u5b57\u670d\u52a1\u8d28\u91cf\u7ea7\u522b\u8f6c\u6362\u4e3a mica-mqtt \u679a\u4e3e\u3002
+     * @return MQTT \u670d\u52a1\u8d28\u91cf\u7ea7\u522b
+     */
     public MqttQoS mqttQoS() {
         return switch (qos) {
             case 0 -> MqttQoS.QOS0;

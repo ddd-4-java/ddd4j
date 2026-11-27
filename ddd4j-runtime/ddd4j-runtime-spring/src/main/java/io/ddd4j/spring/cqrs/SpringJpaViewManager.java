@@ -38,10 +38,19 @@ public class SpringJpaViewManager implements ViewManager {
      */
     private final ConcurrentMap<String, ViewScheduler.ViewScheduleHandle> handles = new ConcurrentHashMap<>();
 
+    /**
+     * \u6784\u9020\u89c6\u56fe\u7ba1\u7406\u5668\uff08\u65e0\u4f4d\u7f6e\u4ed3\u50a8\uff0cgetProjectionStatus \u8fd4\u56de\u57fa\u7ebf\u72b6\u6001\uff09\u3002
+     * @param scheduler \u89c6\u56fe\u8c03\u5ea6\u5668
+     */
     public SpringJpaViewManager(ViewScheduler scheduler) {
         this.scheduler = scheduler;
     }
 
+    /**
+     * 启动当前组件并准备其运行资源。
+     *
+     * <p>JPA 实现调用 <code>running.compareAndSet(false, true)</code>。</p>
+     */
     @Override
     public void start() {
         if (running.compareAndSet(false, true)) {
@@ -49,6 +58,11 @@ public class SpringJpaViewManager implements ViewManager {
         }
     }
 
+    /**
+     * 停止当前组件并清理已登记的运行资源。
+     *
+     * <p>JPA 实现调用 <code>running.compareAndSet(true, false)</code>。</p>
+     */
     @Override
     public void stop() {
         if (running.compareAndSet(true, false)) {
@@ -58,11 +72,23 @@ public class SpringJpaViewManager implements ViewManager {
         }
     }
 
+    /**
+     * 检查当前组件是否仍处于运行状态。
+     *
+     * <p>JPA 实现调用 <code>running.get()</code>。</p>
+     *
+     * @return 实际返回<code>running.get()</code>
+     */
     @Override
     public boolean isRunning() {
         return running.get();
     }
 
+    /**
+     * 请求立即执行指定投影视图的一轮更新。
+     *
+     * <p>JPA 实现调用 <code>log.info("triggerOnce() - \u4e1a\u52a1\u65b9\u5e94\u5728\u5b50\u7c7b override")</code>。</p>
+     */
     @Override
     public void triggerOnce() {
         // 业务方可在测试或运维场景调用，由具体 View 实现增量拉取
@@ -70,12 +96,17 @@ public class SpringJpaViewManager implements ViewManager {
     }
 
     /**
-     * 注册一个 CRON 调度的视图拉取任务。
+     * \u6ce8\u518c\u4e00\u4e2a CRON \u8c03\u5ea6\u7684\u89c6\u56fe\u62c9\u53d6\u4efb\u52a1\u3002
      *
-     * <p>供 {@code SpringEventHandlerRegistry} 在发现 View Bean 时调用：
-     * <pre>{@code
-     * springJpaViewManager.schedule("order-list-view", "0/5 * * * * ?", () -> view.update());
-     * }</pre>
+     *  <p>\u4f9b {@code SpringEventHandlerRegistry} \u5728\u53d1\u73b0 View Bean \u65f6\u8c03\u7528\uff1a
+     *  <pre>{@code
+     *  springJpaViewManager.schedule("order-list-view", "0/5 * * * * ?", () -> view.update());
+     *  }</pre>
+     *
+     * @param viewName \u89c6\u56fe\u540d\u79f0
+     * @param cron \u8c03\u5ea6\u8868\u8fbe\u5f0f
+     * @param task \u66f4\u65b0\u89c6\u56fe\u7684\u4efb\u52a1
+     * @return \u53ef\u53d6\u6d88\u7684\u8c03\u5ea6\u53e5\u67c4
      */
     public ViewScheduler.ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
         ViewScheduler.ViewScheduleHandle handle = scheduler.schedule(viewName, cron, task);

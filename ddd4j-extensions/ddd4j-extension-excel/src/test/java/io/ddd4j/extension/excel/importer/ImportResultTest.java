@@ -14,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class ImportResultTest {
 
+    /** \u9a8c\u8bc1<code>result.getData()</code> \u7684\u5927\u5c0f\u4e3a <code>2</code>\u3002 */
     @Test
     void of_should_return_immutable_view() {
         ImportResult<String> result = ImportResult.of(
@@ -26,6 +27,7 @@ class ImportResultTest {
         assertThat(result.getData()).hasSize(2);
     }
 
+    /** \u9a8c\u8bc1<code>r.hasErrors()</code>\u4e3a\u5047\uff0c<code>r.getTotalCount()</code>\u4e3a\u96f6\uff0c<code>r.successRate()</code> \u7b49\u4e8e <code>0.0</code>\u3002 */
     @Test
     void hasErrors_empty_should_be_false() {
         ImportResult<String> r = ImportResult.empty();
@@ -34,6 +36,7 @@ class ImportResultTest {
         assertThat(r.successRate()).isEqualTo(0.0);
     }
 
+    /** \u9a8c\u8bc1<code>r.getTotalCount()</code> \u7b49\u4e8e <code>3</code>\u3002 */
     @Test
     void successRate_with_errors_should_be_ratio() {
         ImportResult<String> r = ImportResult.of(
@@ -43,6 +46,7 @@ class ImportResultTest {
         assertThat(r.successRate()).isCloseTo(2.0 / 3.0, org.assertj.core.data.Offset.offset(0.001));
     }
 
+    /** \u9a8c\u8bc1<code>e.getRowIndex()</code> \u7b49\u4e8e <code>5</code>\uff0c<code>e.getMessage()</code> \u7b49\u4e8e <code>"\u90ae\u7bb1\u683c\u5f0f\u9519\u8bef"</code>\uff0c<code>e.getErrorType()</code> \u7b49\u4e8e <code>"ValidationFailed"</code>\u3002 */
     @Test
     void importError_of_validation_should_record_message() {
         ImportError e = ImportError.ofValidation(5, "邮箱格式错误");
@@ -51,6 +55,7 @@ class ImportResultTest {
         assertThat(e.getErrorType()).isEqualTo("ValidationFailed");
     }
 
+    /** \u9a8c\u8bc1<code>e.getRowIndex()</code> \u7b49\u4e8e <code>10</code>\uff0c<code>e.getErrorType()</code> \u7b49\u4e8e <code>"NullPointerException"</code>\u3002 */
     @Test
     void importError_of_runtime_exception_should_capture_message() {
         ImportError e = ImportError.of(10, new NullPointerException("null cell"));
@@ -58,6 +63,7 @@ class ImportResultTest {
         assertThat(e.getErrorType()).isEqualTo("NullPointerException");
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
     @Test
     void batchReadListener_should_throw_for_invalid_batch_size() {
         assertThatThrownBy(() -> new BatchReadListener<>(0, list -> {
@@ -65,6 +71,7 @@ class ImportResultTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    /** \u9a8c\u8bc1<code>flushed</code> \u7684\u5927\u5c0f\u4e3a <code>1</code>\uff0c<code>flushed.get(0)</code> \u6309\u987a\u5e8f\u4ec5\u5305\u542b <code>1</code>\u3001<code>2</code>\u3001<code>3</code>\u3002 */
     @Test
     void batchReadListener_should_flush_at_batch_boundary() {
         // given
@@ -87,6 +94,7 @@ class ImportResultTest {
         assertThat(flushed.get(0)).containsExactly(1, 2, 3);
     }
 
+    /** \u9a8c\u8bc1<code>flushed</code>\u4e3a\u7a7a\u3002 */
     @Test
     void batchReadListener_doAfterAllAnalysed_should_flush_remaining() {
         // given：写 2 个（未达到批 3），剩余应在 doAfterAllAnalysed 时 flush

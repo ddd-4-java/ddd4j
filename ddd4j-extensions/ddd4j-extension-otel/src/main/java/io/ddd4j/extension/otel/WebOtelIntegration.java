@@ -45,6 +45,7 @@ import java.util.Objects;
  */
 public final class WebOtelIntegration {
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>WebOtelIntegration</code> \u5b9e\u4f8b\u3002 */
     private WebOtelIntegration() {
     }
 
@@ -65,35 +66,49 @@ public final class WebOtelIntegration {
     }
 
     /**
-     * 激活 Span 为当前 Context，返回 Scope（try-with-resources）。
+     * \u6fc0\u6d3b Span \u4e3a\u5f53\u524d Context\uff0c\u8fd4\u56de Scope\uff08try-with-resources\uff09\u3002
+     *
+     * @param span \u8ffd\u8e2a\u7247\u6bb5
+     * @return \u6fc0\u6d3b\u7684\u8ffd\u8e2a\u4f5c\u7528\u57df
      */
     public static Scope activate(Span span) {
         return HttpSpan.makeCurrent(span);
     }
 
     /**
-     * 记录异常。
+     * \u8bb0\u5f55\u5f02\u5e38\u3002
+     *
+     * @param span \u8ffd\u8e2a\u7247\u6bb5
+     * @param t \u5f02\u5e38
      */
     public static void recordError(Span span, Throwable t) {
         HttpSpan.recordError(span, t);
     }
 
     /**
-     * 结束 span 并记录 HTTP 状态码。
+     * \u7ed3\u675f span \u5e76\u8bb0\u5f55 HTTP \u72b6\u6001\u7801\u3002
+     *
+     * @param span \u8ffd\u8e2a\u7247\u6bb5
+     * @param status HTTP \u72b6\u6001\u7801
      */
     public static void endServerSpan(Span span, int status) {
         HttpSpan.endServerSpan(span, status);
     }
 
     /**
-     * 注入 traceparent 到响应头。
+     * \u6ce8\u5165 traceparent \u5230\u54cd\u5e94\u5934\u3002
+     *
+     * @param responseHeaders \u54cd\u5e94\u5934
      */
     public static void injectResponseContext(Map<String, String> responseHeaders) {
         HttpSpan.injectContext(responseHeaders);
     }
 
     /**
-     * 通用 helper：从 HttpHeaders 风格（Map）提取。
+     * \u901a\u7528 helper\uff1a\u4ece HttpHeaders \u98ce\u683c\uff08Map\uff09\u63d0\u53d6\u3002
+     *
+     * @param headers \u6d88\u606f\u5934
+     * @return \u6d88\u606f\u5934\u6620\u5c04
      */
     public static Map<String, String> asHeaders(Map<String, String> headers) {
         return Objects.isNull(headers) ? new HashMap<>() : new HashMap<>(headers);

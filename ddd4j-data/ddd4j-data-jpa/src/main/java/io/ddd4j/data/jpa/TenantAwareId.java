@@ -11,21 +11,43 @@ import java.util.Objects;
  */
 public class TenantAwareId implements Serializable {
 
+    /** \u5b9e\u4f53\u4e3b\u952e\u3002 */
     private Long id;
+    /** \u79df\u6237\u6807\u8bc6\u3002 */
     private String tenantId;
 
+    /** \u521b\u5efa\u7a7a\u7684\u590d\u5408\u4e3b\u952e\uff0c\u4f9b JPA \u4f7f\u7528\u3002 */
     public TenantAwareId() {
     }
 
+    /**
+     * \u521b\u5efa\u79df\u6237\u590d\u5408\u4e3b\u952e\u3002
+     * @param id \u5b9e\u4f53\u4e3b\u952e
+     * @param tenantId \u79df\u6237\u6807\u8bc6
+     */
     public TenantAwareId(Long id, String tenantId) {
         this.id = id;
         this.tenantId = tenantId;
     }
 
+    /**
+     * \u521b\u5efa\u79df\u6237\u590d\u5408\u4e3b\u952e\u3002
+     * @param id \u5b9e\u4f53\u4e3b\u952e
+     * @param tenantId \u79df\u6237\u6807\u8bc6
+     * @return \u79df\u6237\u590d\u5408\u4e3b\u952e
+     */
     public static TenantAwareId of(Long id, String tenantId) {
         return new TenantAwareId(id, tenantId);
     }
 
+    /**
+     * 根据<code>id</code>、<code>tenantId</code>比较对象的值是否相等。
+     *
+     * <p>只比较运行时类型相同的对象。</p>
+     *
+     * @param o 用来比较的另一个对象，允许为空
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -38,6 +60,11 @@ public class TenantAwareId implements Serializable {
         return Objects.equals(id, that.id) && Objects.equals(tenantId, that.tenantId);
     }
 
+    /**
+     * 用<code>id</code>、<code>tenantId</code>计算哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         return Objects.hash(id, tenantId);

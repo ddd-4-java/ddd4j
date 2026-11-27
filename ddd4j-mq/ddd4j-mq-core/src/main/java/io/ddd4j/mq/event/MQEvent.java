@@ -62,6 +62,7 @@ public class MQEvent implements Serializable {
      * 用于获取 defaultTopic / namespace / broker 默认值。
      */
     public static final String MQ_PROPERTIES = "MQProperties";
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     @Serial
     private static final long serialVersionUID = 1L;
     /**
@@ -96,14 +97,19 @@ public class MQEvent implements Serializable {
     private String namespace;
 
     /**
-     * 策略匹配：supports 参数来源于 {@code @MQEventListener.supports}。
+     * \u7b56\u7565\u5339\u914d\uff1asupports \u53c2\u6570\u6765\u6e90\u4e8e {@code @MQEventListener.supports}\u3002
+     *
+     * @param supports \u662f\u5426\u652f\u6301\u7684\u5f00\u5173
+     * @return \u6ee1\u8db3\u6761\u4ef6\u65f6\u8fd4\u56de true\uff0c\u5426\u5219\u8fd4\u56de false
      */
     public boolean supports(List<String> supports) {
         return supports.contains(match());
     }
 
     /**
-     * 策略匹配项，默认 {@code "*"}（匹配所有监听器），子类可覆写。
+     * \u7b56\u7565\u5339\u914d\u9879\uff0c\u9ed8\u8ba4 {@code "*"}\uff08\u5339\u914d\u6240\u6709\u76d1\u542c\u5668\uff09\uff0c\u5b50\u7c7b\u53ef\u8986\u5199\u3002
+     *
+     * @return \u5339\u914d\u7684\u5b57\u7b26\u4e32\u5185\u5bb9
      */
     public String match() {
         return "*";
@@ -111,29 +117,43 @@ public class MQEvent implements Serializable {
 
     // ========================= 发布 =========================
 
+    /** \u6309\u4e8b\u4ef6\u81ea\u8eab\u7684\u4e3b\u9898\u3001\u6807\u7b7e\u548c\u79df\u6237\u53d1\u5e03\u3002 */
     public void publish() {
         publish(getTopic(), getTag(), getTenantId());
     }
 
+    /**
+     * \u53d1\u5e03\u5230\u6307\u5b9a\u4e3b\u9898\u3002
+     * @param topic \u53d1\u5e03\u4e3b\u9898
+     */
     public void publish(String topic) {
         publish(topic, getTag(), getTenantId());
     }
 
+    /**
+     * \u53d1\u5e03\u5230\u6307\u5b9a\u4e3b\u9898\u548c\u6807\u7b7e\u3002
+     * @param topic \u53d1\u5e03\u4e3b\u9898
+     * @param tag \u6d88\u606f\u6807\u7b7e
+     */
     public void publish(String topic, String tag) {
         publish(topic, tag, getTenantId());
     }
 
     /**
-     * 发布 MQ 事件。
+     * \u53d1\u5e03 MQ \u4e8b\u4ef6\u3002
      *
-     * <p>从 {@link BaseContext} 查找 {@code Map<String, Consumer<MQEvent>>}（由各 {@link MQClient} 注册），
-     * 按以下优先级匹配目标 broker 生产者：
-     * <ol>
-     *   <li>{@link #broker} 字段非空 → 用此值作 key 查找</li>
-     *   <li>{@link MQProperties#getBroker()} 全局配置非空且非 {@code "none"} → 用此值作 key 查找</li>
-     *   <li>仅注册了一个 broker → 直接用（便捷场景）</li>
-     *   <li>都找不到 → warn 日志，事件不发布</li>
-     * </ol>
+     *  <p>\u4ece {@link BaseContext} \u67e5\u627e {@code Map<String, Consumer<MQEvent>>}\uff08\u7531\u5404 {@link MQClient} \u6ce8\u518c\uff09\uff0c
+     *  \u6309\u4ee5\u4e0b\u4f18\u5148\u7ea7\u5339\u914d\u76ee\u6807 broker \u751f\u4ea7\u8005\uff1a
+     *  <ol>
+     *    <li>{@link #broker} \u5b57\u6bb5\u975e\u7a7a \u2192 \u7528\u6b64\u503c\u4f5c key \u67e5\u627e</li>
+     *    <li>{@link MQProperties#getBroker()} \u5168\u5c40\u914d\u7f6e\u975e\u7a7a\u4e14\u975e {@code "none"} \u2192 \u7528\u6b64\u503c\u4f5c key \u67e5\u627e</li>
+     *    <li>\u4ec5\u6ce8\u518c\u4e86\u4e00\u4e2a broker \u2192 \u76f4\u63a5\u7528\uff08\u4fbf\u6377\u573a\u666f\uff09</li>
+     *    <li>\u90fd\u627e\u4e0d\u5230 \u2192 warn \u65e5\u5fd7\uff0c\u4e8b\u4ef6\u4e0d\u53d1\u5e03</li>
+     *  </ol>
+     *
+     * @param topic \u6d88\u606f\u4e3b\u9898
+     * @param tag \u6807\u7b7e
+     * @param tenantId \u79df\u6237\u6807\u8bc6
      */
     public void publish(String topic, String tag, String tenantId) {
         setTopic(topic);
@@ -173,7 +193,11 @@ public class MQEvent implements Serializable {
     }
 
     /**
-     * 链式设置租户 ID。
+     * \u94fe\u5f0f\u8bbe\u7f6e\u79df\u6237 ID\u3002
+     *
+     * @param <T> \u6570\u636e\u5143\u7d20\u7c7b\u578b
+     * @param tenantId \u79df\u6237\u6807\u8bc6
+     * @return \u8fd4\u56de\u7684 T \u7ed3\u679c
      */
     public <T extends MQEvent> T tenantId(String tenantId) {
         this.tenantId = tenantId;
@@ -181,10 +205,11 @@ public class MQEvent implements Serializable {
     }
 
     /**
-     * 链式设置目标 broker。
-     *
-     * @param broker broker 标识（如 {@code "kafka"} / {@code "rocket"} / {@code "redisStream"}）
+     * \u94fe\u5f0f\u8bbe\u7f6e\u76ee\u6807 broker\u3002
+     * @param broker broker \u6807\u8bc6\uff08\u5982 {@code "kafka"} / {@code "rocket"} / {@code "redisStream"}\uff09
      * @return this
+     *
+     * @param <T> \u6570\u636e\u5143\u7d20\u7c7b\u578b
      */
     public <T extends MQEvent> T broker(String broker) {
         this.broker = broker;

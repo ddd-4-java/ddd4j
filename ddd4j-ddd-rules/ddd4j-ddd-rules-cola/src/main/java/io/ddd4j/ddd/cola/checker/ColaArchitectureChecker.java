@@ -106,14 +106,22 @@ public class ColaArchitectureChecker {
     private final Class<? extends java.lang.annotation.Annotation> domainRepositoryAnnotation;
 
     /**
-     * 构造器（向后兼容）：仅做目录结构检查，不应用注解驱动规则。
+     * \u6784\u9020\u5668\uff08\u5411\u540e\u517c\u5bb9\uff09\uff1a\u4ec5\u505a\u76ee\u5f55\u7ed3\u6784\u68c0\u67e5\uff0c\u4e0d\u5e94\u7528\u6ce8\u89e3\u9a71\u52a8\u89c4\u5219\u3002
+     *
+     * @param basePackage \u4e1a\u52a1\u4ee3\u7801\u7684\u6839\u5305\u540d
      */
     public ColaArchitectureChecker(String basePackage) {
         this(basePackage, null, null, null, null);
     }
 
     /**
-     * 构造器（带注解驱动规则）。
+     * \u6784\u9020\u5668\uff08\u5e26\u6ce8\u89e3\u9a71\u52a8\u89c4\u5219\uff09\u3002
+     *
+     * @param basePackage \u4e1a\u52a1\u4ee3\u7801\u7684\u6839\u5305\u540d
+     * @param domainEntityAnnotation \u9886\u57df\u5b9e\u4f53\u6ce8\u89e3\u7c7b\u578b
+     * @param domainServiceAnnotation \u9886\u57df\u670d\u52a1\u6ce8\u89e3\u7c7b\u578b
+     * @param applicationServiceAnnotation \u5e94\u7528\u670d\u52a1\u6ce8\u89e3\u7c7b\u578b
+     * @param domainRepositoryAnnotation \u4ed3\u50a8\u5b9e\u73b0\u6ce8\u89e3\u7c7b\u578b
      */
     public ColaArchitectureChecker(String basePackage,
                                    Class<? extends java.lang.annotation.Annotation> domainEntityAnnotation,
@@ -157,7 +165,9 @@ public class ColaArchitectureChecker {
     }
 
     /**
-     * 使用 ArchUnit 做类级别的依赖检查。
+     * \u4f7f\u7528 ArchUnit \u505a\u7c7b\u7ea7\u522b\u7684\u4f9d\u8d56\u68c0\u67e5\u3002
+     *
+     * @param sourceRoot \u5f85\u5bfc\u5165\u5e76\u68c0\u67e5\u7684\u6e90\u7801\u6216\u7c7b\u76ee\u5f55\u6839\u8def\u5f84
      */
     private void checkArchUnitRules(String sourceRoot) {
         JavaClasses classes = importClasses(sourceRoot);
@@ -266,7 +276,9 @@ public class ColaArchitectureChecker {
     }
 
     /**
-     * 获取 COLA 规范要求的目录结构描述。
+     * \u83b7\u53d6 COLA \u89c4\u8303\u8981\u6c42\u7684\u76ee\u5f55\u7ed3\u6784\u63cf\u8ff0\u3002
+     *
+     * @return \u76ee\u5f55\u7ed3\u6784\u63cf\u8ff0
      */
     public String getExpectedStructure() {
         return """

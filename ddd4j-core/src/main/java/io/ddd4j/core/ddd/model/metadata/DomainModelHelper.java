@@ -49,8 +49,10 @@ import java.util.function.Function;
 @SuppressWarnings("unchecked")
 public final class DomainModelHelper {
 
+    /** \u6309\u9886\u57df\u548c\u6301\u4e45\u5316\u6a21\u578b\u7c7b\u578b\u7f13\u5b58\u7684\u6620\u5c04\u5143\u6570\u636e\u3002 */
     private static final Map<ModelMappingKey, DomainModelInfo<?>> MODEL_INFO_CACHE = new ConcurrentHashMap<>();
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>DomainModelHelper</code> \u5b9e\u4f8b\u3002 */
     private DomainModelHelper() {
     }
 
@@ -106,14 +108,20 @@ public final class DomainModelHelper {
     }
 
     /**
-     * 仅用 Domain Model 构建（PO provider 不传，列名全部走 fallback）。
+     * \u4ec5\u7528 Domain Model \u6784\u5efa\uff08PO provider \u4e0d\u4f20\uff0c\u5217\u540d\u5168\u90e8\u8d70 fallback\uff09\u3002
+     *
+     * @param <M> \u9886\u57df\u6a21\u578b\u7c7b\u578b
+     * @param modelClass \u9886\u57df\u6a21\u578b\u7c7b\u578b
+     * @return \u9886\u57df\u6a21\u578b\u5143\u6570\u636e
      */
     public static <M> DomainModelInfo<M> getModelInfo(Class<M> modelClass) {
         return getModelInfo(modelClass, null);
     }
 
     /**
-     * 移除 Domain Model 缓存（用于测试或热加载）。
+     * \u79fb\u9664 Domain Model \u7f13\u5b58\uff08\u7528\u4e8e\u6d4b\u8bd5\u6216\u70ed\u52a0\u8f7d\uff09\u3002
+     *
+     * @param modelClass \u9886\u57df\u6a21\u578b\u7c7b\u578b
      */
     public static void remove(Class<?> modelClass) {
         MODEL_INFO_CACHE.keySet().removeIf(key -> Objects.equals(key.modelType(), modelClass));
@@ -126,30 +134,55 @@ public final class DomainModelHelper {
         MODEL_INFO_CACHE.clear();
     }
 
+    /** \u6309\u9886\u57df\u6a21\u578b\u7c7b\u578b\u4e0e\u6301\u4e45\u5316\u6620\u5c04\u7c7b\u578b\u9694\u79bb\u7684\u7f13\u5b58\u952e\u3002 */
     private final static class ModelMappingKey {
 
+        /** Java 序列化版本标识。 */
         private static final long serialVersionUID = 0L;
 
+        /** \u9886\u57df\u6a21\u578b\u7684 Java \u7c7b\u578b\u3002 */
         private final Class<?> modelType;
 
+        /** \u8981\u4e0e\u9886\u57df\u6a21\u578b\u7ec4\u5408\u6620\u5c04\u7684\u6301\u4e45\u5316\u7c7b\u578b\u3002 */
         private final Class<?> persistenceType;
 
+        /**
+         * \u7528\u9886\u57df\u548c\u6301\u4e45\u5316\u7c7b\u578b\u6784\u9020\u5143\u6570\u636e\u7f13\u5b58\u952e\u3002
+         * @param modelType \u9886\u57df\u6a21\u578b\u7c7b\u578b
+         * @param persistenceType \u5bf9\u5e94\u7684\u6301\u4e45\u5316\u7c7b\u578b
+         */
         @JsonCreator()
         private ModelMappingKey(@JsonProperty("modelType") Class<?> modelType, @JsonProperty("persistenceType") Class<?> persistenceType) {
             this.modelType = modelType;
             this.persistenceType = persistenceType;
         }
 
+        /**
+         * 读取<code>modelType</code> 的当前值。
+         *
+         * @return 返回表达式 <code>modelType</code>
+         */
         @JsonProperty("modelType")
         public Class<?> modelType() {
             return modelType;
         }
 
+        /**
+         * 读取<code>persistenceType</code> 的当前值。
+         *
+         * @return 返回表达式 <code>persistenceType</code>
+         */
         @JsonProperty("persistenceType")
         public Class<?> persistenceType() {
             return persistenceType;
         }
 
+        /**
+         * 执行 <code>equals</code>，调用 <code>obj.getClass</code>。
+         *
+         * @param obj 传入此操作的 <code>Object</code> 类型 <code>obj</code>
+         * @return 按条件返回 <code>true</code>、<code>false</code>
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -162,6 +195,11 @@ public final class DomainModelHelper {
             return Objects.equals(this.modelType, other.modelType) && Objects.equals(this.persistenceType, other.persistenceType);
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 0;
@@ -170,6 +208,11 @@ public final class DomainModelHelper {
             return result;
         }
 
+        /**
+         * 按 <code>to String</code> 的契约计算并返回结果。
+         *
+         * @return 当前操作得到的 <code>String</code> 结果
+         */
         @Override
         public String toString() {
             return "ModelMappingKey[modelType=" + modelType + ", persistenceType=" + persistenceType + "]";

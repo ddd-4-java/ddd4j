@@ -15,6 +15,7 @@ import java.time.format.DateTimeFormatter;
  */
 @Data
 public class Jvm {
+    /** \u683c\u5f0f\u5316 JVM \u542f\u52a8\u65f6\u95f4\u7684\u65e5\u671f\u65f6\u95f4\u683c\u5f0f\u5668\u3002 */
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     /**
@@ -42,35 +43,59 @@ public class Jvm {
      */
     private String home;
 
+    /**
+     * \u8fd4\u56deJVM \u603b\u5185\u5b58\uff08MB\uff09\u3002
+     * @return JVM \u603b\u5185\u5b58\uff08MB\uff09
+     */
     public double getTotal() {
         return ArithKit.div(total, (1024 * 1024), 2);
     }
 
+    /**
+     * \u8fd4\u56deJVM \u6700\u5927\u5185\u5b58\uff08MB\uff09\u3002
+     * @return JVM \u6700\u5927\u5185\u5b58\uff08MB\uff09
+     */
     public double getMax() {
         return ArithKit.div(max, (1024 * 1024), 2);
     }
 
+    /**
+     * \u8fd4\u56deJVM \u7a7a\u95f2\u5185\u5b58\uff08MB\uff09\u3002
+     * @return JVM \u7a7a\u95f2\u5185\u5b58\uff08MB\uff09
+     */
     public double getFree() {
         return ArithKit.div(free, (1024 * 1024), 2);
     }
 
+    /**
+     * \u8fd4\u56deJVM \u5df2\u7528\u5185\u5b58\uff08MB\uff09\u3002
+     * @return JVM \u5df2\u7528\u5185\u5b58\uff08MB\uff09
+     */
     public double getUsed() {
         return ArithKit.div(total - free, (1024 * 1024), 2);
     }
 
+    /**
+     * \u8fd4\u56deJVM \u5185\u5b58\u4f7f\u7528\u7387\uff08\u767e\u5206\u6bd4\uff09\u3002
+     * @return JVM \u5185\u5b58\u4f7f\u7528\u7387\uff08\u767e\u5206\u6bd4\uff09
+     */
     public double getUsage() {
         return ArithKit.mul(ArithKit.div(total - free, total, 4), 100);
     }
 
     /**
-     * 获取JDK名称
+     * \u83b7\u53d6JDK\u540d\u79f0
+     *
+     * @return JVM \u540d\u79f0
      */
     public String getName() {
         return ManagementFactory.getRuntimeMXBean().getVmName();
     }
 
     /**
-     * JDK启动时间
+     * JDK\u542f\u52a8\u65f6\u95f4
+     *
+     * @return JVM \u542f\u52a8\u65f6\u95f4
      */
     public String getStartTime() {
         long time = ManagementFactory.getRuntimeMXBean().getStartTime();
@@ -79,7 +104,9 @@ public class Jvm {
     }
 
     /**
-     * JDK运行时间
+     * JDK\u8fd0\u884c\u65f6\u95f4
+     *
+     * @return JVM \u8fd0\u884c\u65f6\u95f4
      */
     public String getRunTime() {
         long time = ManagementFactory.getRuntimeMXBean().getStartTime();
@@ -88,7 +115,9 @@ public class Jvm {
     }
 
     /**
-     * 运行参数
+     * \u8fd0\u884c\u53c2\u6570
+     *
+     * @return JVM \u542f\u52a8\u53c2\u6570
      */
     public String getInputArgs() {
         return ManagementFactory.getRuntimeMXBean().getInputArguments().toString();

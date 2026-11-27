@@ -54,7 +54,9 @@ import java.util.Collection;
 public interface View {
 
     /**
-     * 视图名称。
+     * \u89c6\u56fe\u540d\u79f0\u3002
+     *
+     * @return \u89c6\u56fe\u540d\u79f0
      */
     String getName();
 

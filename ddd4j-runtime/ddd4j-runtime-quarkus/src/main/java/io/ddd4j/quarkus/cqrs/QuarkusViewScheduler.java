@@ -39,6 +39,16 @@ public class QuarkusViewScheduler implements ViewScheduler {
     @Inject
     Instance<Scheduler> schedulers;
 
+    /**
+     * 按给定时间规则安排任务。
+     *
+     * <p>Quarkus 实现调用 <code>scheduler()</code>。</p>
+     *
+     * @param viewName 视图名称（用于日志 / 调试）
+     * @param cron CRON 表达式
+     * @param task 要执行的任务
+     * @return 任务句柄，可用于取消
+     */
     @Override
     public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
         Scheduler scheduler = scheduler();
@@ -64,6 +74,11 @@ public class QuarkusViewScheduler implements ViewScheduler {
         }
     }
 
+    /**
+     * 执行 <code>scheduler</code>，调用 <code>schedulers.isUnsatisfied</code>、<code>schedulers.isAmbiguous</code>、<code>schedulers.get</code>。
+     *
+     * @return 返回表达式 <code>schedulers.get()</code>
+     */
     private Scheduler scheduler() {
         if (schedulers.isUnsatisfied()) {
             throw new IllegalStateException("Quartz Scheduler is unavailable; add the quarkus-quartz extension");

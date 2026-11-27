@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class InMemoryRepositoryListContractTest {
 
+    /** \u9a8c\u8bc1<code>repository.findAll().size()</code> \u7b49\u4e8e <code>1</code>\u3002 */
     @Test
     void roleQueriesReturnDetachedMutableLists() {
         InMemoryRoleRepository repository = new InMemoryRoleRepository();
@@ -30,6 +31,7 @@ class InMemoryRepositoryListContractTest {
         assertEquals(1, repository.findAll().size());
     }
 
+    /** \u9a8c\u8bc1<code>repository.findAll().size()</code> \u7b49\u4e8e <code>1</code>\uff0c<code>repository.findByStatus(User.Status.ENABLED).size()</code> \u7b49\u4e8e <code>1</code>\u3002 */
     @Test
     void userQueriesReturnDetachedMutableLists() {
         InMemoryUserRepository repository = new InMemoryUserRepository();
@@ -44,6 +46,7 @@ class InMemoryRepositoryListContractTest {
         assertEquals(1, repository.findByStatus(User.Status.ENABLED).size());
     }
 
+    /** \u9a8c\u8bc1<code>repository.findAll().size()</code> \u7b49\u4e8e <code>1</code>\uff0c<code>repository.findByModule("order").size()</code> \u7b49\u4e8e <code>1</code>\u3002 */
     @Test
     void permissionQueriesReturnDetachedMutableLists() {
         InMemoryPermissionRepository repository = new InMemoryPermissionRepository();

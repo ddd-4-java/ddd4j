@@ -76,6 +76,12 @@ public class Permission {
         return description;
     }
 
+    /**
+     * 根据<code>code</code>比较对象的值是否相等。
+     *
+     * @param o 用来比较的另一个对象，允许为空
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -88,11 +94,21 @@ public class Permission {
         return Objects.equals(code, that.code);
     }
 
+    /**
+     * 用<code>code</code>计算哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         return Objects.hash(code);
     }
 
+    /**
+     * 生成用于调试和日志的对象描述。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "Permission{" + code + "}";

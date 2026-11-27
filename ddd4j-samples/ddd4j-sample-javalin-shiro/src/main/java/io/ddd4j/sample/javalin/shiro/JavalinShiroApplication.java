@@ -93,8 +93,10 @@ public class JavalinShiroApplication {
     }
 
     /**
-     * @param port HTTP 端口
-     * @return 可关闭的真实应用
+     * 执行 <code>start</code>，调用 <code>CatalogRuntime.start</code>。
+     *
+     * @param port HTTP \u7aef\u53e3
+     * @return \u53ef\u5173\u95ed\u7684\u771f\u5b9e\u5e94\u7528
      */
     public static Application start(int port) {
         return start(port, ignored -> {
@@ -102,6 +104,14 @@ public class JavalinShiroApplication {
         }, CatalogRuntime.start());
     }
 
+    /**
+     * \u7ec4\u88c5\u539f\u751f\u8ba4\u8bc1\u8fc7\u6ee4\u5668\u548c\u5546\u54c1\u4ea4\u6613\u8def\u7531\uff0c\u7136\u540e\u542f\u52a8 Javalin\u3002
+     * @param port \u5f53\u524d HTTP \u793a\u4f8b\u8981\u76d1\u542c\u7684\u7aef\u53e3
+     * @param observer \u89c2\u5bdf\u8bf7\u6c42\u7ed3\u675f\u540e\u539f\u751f\u8ba4\u8bc1\u4e0a\u4e0b\u6587\u7684\u56de\u8c03
+     * @param configure \u8c03\u6574 Javalin \u542f\u52a8\u914d\u7f6e\u7684\u56de\u8c03
+     * @param catalog \u5f53\u524d\u5546\u54c1\u4ea4\u6613\u5165\u53e3
+     * @return \u5df2\u542f\u52a8\u7684 Javalin \u8ba4\u8bc1\u793a\u4f8b
+     */
     static Application start(int port, Consumer<Optional<String>> observer,
                              Consumer<io.javalin.config.JavalinConfig> configure, CatalogEndpoints catalog) {
         // ==================== 1. 初始化 RBAC + Shiro SecurityManager ====================
@@ -241,19 +251,27 @@ public class JavalinShiroApplication {
      * 可关闭的实际 Javalin/Guice 应用句柄。
      */
     public static final class Application implements AutoCloseable {
+        /** \u5f53\u524d\u793a\u4f8b\u62e5\u6709\u548c\u5173\u95ed\u539f\u751f\u8ba4\u8bc1\u8d44\u6e90\u7684\u751f\u547d\u5468\u671f\u7ec4\u4ef6\u3002 */
         private final NativeAuthLifecycle lifecycle;
 
+        /**
+         * \u628a\u8ba4\u8bc1\u751f\u547d\u5468\u671f\u5173\u8054\u5230\u53ef\u505c\u6b62\u7684 Javalin \u5e94\u7528\u5305\u88c5\u5668\u3002
+         * @param lifecycle \u7531\u5f53\u524d\u5e94\u7528\u6301\u6709\u5e76\u5728\u5173\u95ed\u65f6\u56de\u6536\u7684\u8ba4\u8bc1\u751f\u547d\u5468\u671f
+         */
         private Application(NativeAuthLifecycle lifecycle) {
             this.lifecycle = lifecycle;
         }
 
-        /**
-         * @return 实际 HTTP 应用
-         */
+        /** @return \u5b9e\u9645 HTTP \u5e94\u7528 */
         public Javalin app() {
             return lifecycle.app();
         }
 
+        /**
+         * 结束当前组件持有的资源。
+         *
+         * <p>此实现调用 <code>lifecycle.close()</code>。</p>
+         */
         @Override
         public void close() {
             lifecycle.close();

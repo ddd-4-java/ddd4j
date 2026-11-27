@@ -48,6 +48,7 @@ import static io.javalin.apibuilder.ApiBuilder.*;
  */
 public class AuthorizationController {
 
+    /** \u6267\u884c\u57fa\u4e8e\u89d2\u8272\u7684\u6388\u6743\u4e0e\u5206\u914d\u64cd\u4f5c\u7684\u5e94\u7528\u670d\u52a1\u3002 */
     private final RbacService rbacService;
 
     /**
@@ -197,15 +198,20 @@ public class AuthorizationController {
     @NoArgsConstructor
     public static class CreateUserRequest {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u8d26\u53f7\u8eab\u4efd\u6216\u7528\u6237\u8bb0\u5f55\u7684\u4e3b\u952e\u3002 */
         private String userId;
 
+        /** \u5f53\u524d\u8eab\u4efd\u51ed\u636e\u4f7f\u7528\u7684\u7528\u6237\u540d\u3002 */
         private String username;
 
+        /** \u5f53\u524d\u767b\u5f55\u6216\u8d26\u53f7\u521b\u5efa\u8bf7\u6c42\u63d0\u4f9b\u7684\u53e3\u4ee4\u3002 */
         @ToString.Exclude
         private String password;
 
+        /** \u8d26\u53f7\u8d44\u6599\u4e2d\u7684\u771f\u5b9e\u59d3\u540d\u3002 */
         private String realName;
 
         /**
@@ -273,13 +279,17 @@ public class AuthorizationController {
     @NoArgsConstructor
     public static class UpdateUserRequest {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u8d26\u53f7\u8d44\u6599\u4e2d\u7684\u771f\u5b9e\u59d3\u540d\u3002 */
         private String realName;
 
+        /** \u5f53\u524d\u767b\u5f55\u6216\u8d26\u53f7\u521b\u5efa\u8bf7\u6c42\u63d0\u4f9b\u7684\u53e3\u4ee4\u3002 */
         @ToString.Exclude
         private String password;
 
+        /** \u5f53\u524d\u5546\u54c1\u3001\u8d26\u53f7\u6216\u6743\u9650\u8bb0\u5f55\u7684\u4e1a\u52a1\u72b6\u6001\u3002 */
         private User.Status status;
 
         /**
@@ -335,8 +345,10 @@ public class AuthorizationController {
     @NoArgsConstructor
     public static class AssignRolesRequest {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u8981\u5173\u8054\u5230\u8d26\u53f7\u7684\u89d2\u8272\u6807\u8bc6\u5217\u8868\u3002 */
         private List<String> roleIds;
 
         /**
@@ -368,14 +380,19 @@ public class AuthorizationController {
     @NoArgsConstructor
     public static class CreateRoleRequest {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u89d2\u8272\u8bb0\u5f55\u7684\u4e3b\u952e\u3002 */
         private String roleId;
 
+        /** \u5728\u4e3b\u4f53\u6743\u9650\u68c0\u67e5\u4e2d\u4f7f\u7528\u7684\u89d2\u8272\u4e1a\u52a1\u7f16\u7801\u3002 */
         private String roleCode;
 
+        /** \u89d2\u8272\u5c55\u793a\u540d\u79f0\u3002 */
         private String roleName;
 
+        /** \u5f53\u524d\u89d2\u8272\u6216\u6743\u9650\u5b9a\u4e49\u7684\u8bf4\u660e\u3002 */
         private String description;
 
         /**
@@ -443,12 +460,16 @@ public class AuthorizationController {
     @NoArgsConstructor
     public static class UpdateRoleRequest {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u89d2\u8272\u5c55\u793a\u540d\u79f0\u3002 */
         private String roleName;
 
+        /** \u5f53\u524d\u89d2\u8272\u6216\u6743\u9650\u5b9a\u4e49\u7684\u8bf4\u660e\u3002 */
         private String description;
 
+        /** \u5f53\u524d\u5546\u54c1\u3001\u8d26\u53f7\u6216\u6743\u9650\u8bb0\u5f55\u7684\u4e1a\u52a1\u72b6\u6001\u3002 */
         private Role.Status status;
 
         /**
@@ -504,8 +525,10 @@ public class AuthorizationController {
     @NoArgsConstructor
     public static class AssignPermissionsRequest {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u5f53\u524d\u89d2\u8272\u5173\u8054\u7684\u6743\u9650\u6807\u8bc6\u5217\u8868\u3002 */
         private List<String> permissionIds;
 
         /**
@@ -537,14 +560,19 @@ public class AuthorizationController {
     @NoArgsConstructor
     public static class CreatePermissionRequest {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u6743\u9650\u8bb0\u5f55\u7684\u4e3b\u952e\u3002 */
         private String permissionId;
 
+        /** \u6743\u9650\u68c0\u67e5\u548c\u5173\u8054\u4f7f\u7528\u7684\u4e1a\u52a1\u7f16\u7801\u3002 */
         private String permissionCode;
 
+        /** \u6743\u9650\u5c55\u793a\u540d\u79f0\u3002 */
         private String permissionName;
 
+        /** \u5f53\u524d\u6743\u9650\u6240\u5c5e\u7684\u4e1a\u52a1\u6a21\u5757\u3002 */
         private String module;
 
         /**
@@ -612,12 +640,16 @@ public class AuthorizationController {
     @NoArgsConstructor
     public static class UpdatePermissionRequest {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u6743\u9650\u5c55\u793a\u540d\u79f0\u3002 */
         private String permissionName;
 
+        /** \u5f53\u524d\u6743\u9650\u6240\u5c5e\u7684\u4e1a\u52a1\u6a21\u5757\u3002 */
         private String module;
 
+        /** \u5f53\u524d\u5546\u54c1\u3001\u8d26\u53f7\u6216\u6743\u9650\u8bb0\u5f55\u7684\u4e1a\u52a1\u72b6\u6001\u3002 */
         private Permission.Status status;
 
         /**

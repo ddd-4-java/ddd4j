@@ -12,9 +12,11 @@ import java.util.Objects;
  */
 public final class EventType implements Serializable {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /** \u4e8b\u4ef6\u7c7b\u578b\u503c\u3002 */
     private final String value;
 
     /**
@@ -39,6 +41,12 @@ public final class EventType implements Serializable {
         return value;
     }
 
+    /**
+     * 根据<code>value</code>比较对象的值是否相等。
+     *
+     * @param object 用于此操作的 <code>object</code>（<code>Object</code>）
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object object) {
         if (this == object) {
@@ -50,11 +58,21 @@ public final class EventType implements Serializable {
         return Objects.equals(value, that.value);
     }
 
+    /**
+     * 用<code>value</code>计算哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         return Objects.hash(value);
     }
 
+    /**
+     * 生成用于调试和日志的对象描述。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return value;

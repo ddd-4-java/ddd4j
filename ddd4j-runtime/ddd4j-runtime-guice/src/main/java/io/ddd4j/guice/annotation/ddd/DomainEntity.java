@@ -20,7 +20,9 @@ import java.lang.annotation.*;
 public @interface DomainEntity {
 
     /**
-     * 是否是聚合根
+     * \u662f\u5426\u662f\u805a\u5408\u6839
+     *
+     * @return \u662f\u805a\u5408\u6839\u65f6\u4e3a true
      */
     boolean aggregateRoot() default false;
 }

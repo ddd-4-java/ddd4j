@@ -16,12 +16,18 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public final class RuntimeReadinessRegistry {
 
+    /** \u53c2\u4e0e\u8fd0\u884c\u65f6\u5c31\u7eea\u72b6\u6001\u68c0\u67e5\u7684\u7ec4\u4ef6\u3002 */
     private final List<ReadinessContributor> contributors = new CopyOnWriteArrayList<>();
 
+    /** \u521b\u5efa\u8fd0\u884c\u65f6\u5c31\u7eea\u68c0\u67e5\u6ce8\u518c\u8868\u3002 */
     public RuntimeReadinessRegistry() {
         this(List.of());
     }
 
+    /**
+     * \u4f7f\u7528\u73b0\u6709\u8d21\u732e\u8005\u521b\u5efa\u8fd0\u884c\u65f6\u5c31\u7eea\u68c0\u67e5\u6ce8\u518c\u8868\u3002
+     * @param contributors \u521d\u59cb\u5c31\u7eea\u68c0\u67e5\u8d21\u732e\u8005
+     */
     public RuntimeReadinessRegistry(Collection<? extends ReadinessContributor> contributors) {
         registerAll(contributors);
     }

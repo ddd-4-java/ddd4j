@@ -55,6 +55,7 @@ public final class RepositoryRegistry {
      */
     private static final String PREFIX = "ddd4j.repository.";
 
+    /** \u6309\u6ce8\u518c\u952e\u67e5\u627e\u5f53\u524d\u4ed3\u50a8\u5b9e\u4f8b\u7684\u6620\u5c04\u3002 */
     private static final Map<Class<?>, Repository> INSTANCES = new ConcurrentHashMap<>();
 
     /**
@@ -62,6 +63,7 @@ public final class RepositoryRegistry {
      */
     private static final Map<Class<?>, Repository> QUERY_INSTANCES = new ConcurrentHashMap<>();
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>RepositoryRegistry</code> \u5b9e\u4f8b\u3002 */
     private RepositoryRegistry() {
     }
 
@@ -108,18 +110,19 @@ public final class RepositoryRegistry {
     }
 
     /**
-     * 查找聚合根类型的仓储实例。
-     * <p>
-     * 查找顺序：
-     * <ol>
-     *   <li>{@link ThreadContext}（线程级，请求级覆盖）</li>
-     *   <li>{@link BaseContext}（JVM 级全局默认）</li>
-     *   <li>静态 {@link #INSTANCES}（向后兼容）</li>
-     * </ol>
+     * \u67e5\u627e\u805a\u5408\u6839\u7c7b\u578b\u7684\u4ed3\u50a8\u5b9e\u4f8b\u3002
+     *  <p>
+     *  \u67e5\u627e\u987a\u5e8f\uff1a
+     *  <ol>
+     *    <li>{@link ThreadContext}\uff08\u7ebf\u7a0b\u7ea7\uff0c\u8bf7\u6c42\u7ea7\u8986\u76d6\uff09</li>
+     *    <li>{@link BaseContext}\uff08JVM \u7ea7\u5168\u5c40\u9ed8\u8ba4\uff09</li>
+     *    <li>\u9759\u6001 {@link #INSTANCES}\uff08\u5411\u540e\u517c\u5bb9\uff09</li>
+     *  </ol>
+     * @param modelClass \u805a\u5408\u6839\u7c7b\u578b
+     * @return \u4ed3\u50a8\u5b9e\u4f8b
+     * @throws BizRuntimeException \u672a\u627e\u5230\u5339\u914d\u7684\u4ed3\u50a8
      *
-     * @param modelClass 聚合根类型
-     * @return 仓储实例
-     * @throws BizRuntimeException 未找到匹配的仓储
+     * @param <M> \u805a\u5408\u6839\u7c7b\u578b
      */
     public static <M extends AggregateRoot<?>> Repository repository(Class<M> modelClass) {
         String spiKey = key(modelClass);

@@ -16,8 +16,13 @@ import java.util.Objects;
 @RestController
 public final class Ddd4jWebFluxReadinessController {
 
+    /** \u63d0\u4f9b\u4f9d\u8d56\u5c31\u7eea\u72b6\u6001\u7684 Web \u7aef\u70b9\u3002 */
     private final ReadinessEndpoint readinessEndpoint;
 
+    /**
+     * \u4f7f\u7528\u8fd0\u884c\u65f6\u5c31\u7eea\u6ce8\u518c\u8868\u521b\u5efa HTTP \u7aef\u70b9\u3002
+     * @param readinessRegistry \u5c31\u7eea\u6ce8\u518c\u8868
+     */
     public Ddd4jWebFluxReadinessController(RuntimeReadinessRegistry readinessRegistry) {
         RuntimeReadinessRegistry registry = Objects.requireNonNull(readinessRegistry,
                 "readinessRegistry must not be null");

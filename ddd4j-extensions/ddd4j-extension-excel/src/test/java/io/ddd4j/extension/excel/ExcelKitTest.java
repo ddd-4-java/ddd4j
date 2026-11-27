@@ -30,6 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class ExcelKitTest {
 
+    /** \u9a8c\u8bc1<code>bytes</code>\u975e\u7a7a\uff0c<code>read</code> \u7684\u5927\u5c0f\u4e3a <code>5</code>\uff0c<code>read.get(4).getId()</code> \u7b49\u4e8e <code>5L</code>\u3002 */
     @Test
     void export_then_read_should_return_same_data() {
         // given
@@ -53,6 +54,7 @@ class ExcelKitTest {
         assertThat(read.get(4).getId()).isEqualTo(5L);
     }
 
+    /** \u9a8c\u8bc1<code>bytes</code>\u975e\u7a7a\uff0c<code>read</code> \u7684\u5927\u5c0f\u4e3a <code>10</code>\u3002 */
     @Test
     void export_with_options_should_apply_freeze_and_zebra() {
         // given
@@ -74,6 +76,7 @@ class ExcelKitTest {
         assertThat(read).hasSize(10);
     }
 
+    /** \u9a8c\u8bc1<code>result.getData()</code> \u7684\u5927\u5c0f\u4e3a <code>3</code>\uff0c<code>result.hasErrors()</code>\u4e3a\u5047\u3002 */
     @Test
     void importExcel_should_collect_data_and_errors() {
         // given：写一份正常数据
@@ -92,6 +95,7 @@ class ExcelKitTest {
         assertThat(result.hasErrors()).isFalse();
     }
 
+    /** \u9a8c\u8bc1<code>bytes</code>\u975e\u7a7a\u3002 */
     @Test
     void exportError_should_return_non_empty_bytes() {
         // given
@@ -104,6 +108,7 @@ class ExcelKitTest {
         assertThat(bytes).isNotEmpty();
     }
 
+    /** \u9a8c\u8bc1<code>read</code>\u4e3a\u7a7a\u3002 */
     @Test
     void exportEmptyTemplate_should_have_only_header() {
         // when
@@ -115,6 +120,7 @@ class ExcelKitTest {
         assertThat(read).isEmpty();
     }
 
+    /** \u9a8c\u8bc1<code>result</code>\u975e\u7a7a\u3002 */
     @Test
     void errorCollectingListener_should_not_throw_on_parse_error() {
         // given：构造一个故意混入错误数据的 Excel。
@@ -130,23 +136,41 @@ class ExcelKitTest {
         EasyExcel.write(out).head(head).sheet("S").doWrite(content);
 
         // 准备一个 Date 字段的 VO 读取
+        /** 集中保存 <code>d</code>，供当前模块使用。 */
         final class DateVO {
 
+            /** Java 序列化版本标识。 */
             private static final long serialVersionUID = 0L;
 
+            /** \u4fdd\u5b58\u4f9b Excel \u65e5\u671f\u5217\u5f80\u8fd4\u8f6c\u6362\u7684\u65e5\u671f\u503c\u3002 */
             @com.alibaba.excel.annotation.ExcelProperty("日期")
             private final java.util.Date d;
 
+            /**
+             * \u8bbe\u7f6e <code>d</code>\uff0c\u7528\u4e8e\u6784\u9020 <code>DateVO</code> \u6d4b\u8bd5\u5b9e\u4f8b\u3002
+             * @param d \u7528\u4e8e\u521d\u59cb\u5316 <code>DateVO</code> \u7684 <code>java.util.Date</code> \u503c
+             */
             @JsonCreator()
             DateVO(@JsonProperty("d") java.util.Date d) {
                 this.d = d;
             }
 
+            /**
+             * 读取<code>d</code> 的当前值。
+             *
+             * @return 返回表达式 <code>d</code>
+             */
             @JsonProperty("d")
             public java.util.Date d() {
                 return d;
             }
 
+            /**
+             * 执行 <code>equals</code>，调用 <code>obj.getClass</code>。
+             *
+             * @param obj 传入此操作的 <code>Object</code> 类型 <code>obj</code>
+             * @return 按条件返回 <code>true</code>、<code>false</code>、<code>Objects.equals(this.d, other.d)</code>
+             */
             @Override
             public boolean equals(Object obj) {
                 if (this == obj) {
@@ -159,6 +183,11 @@ class ExcelKitTest {
                 return Objects.equals(this.d, other.d);
             }
 
+            /**
+             * 读取<code>result</code> 的当前值。
+             *
+             * @return 返回表达式 <code>result</code>
+             */
             @Override
             public int hashCode() {
                 int result = 0;
@@ -166,6 +195,11 @@ class ExcelKitTest {
                 return result;
             }
 
+            /**
+             * 按 <code>to String</code> 的契约计算并返回结果。
+             *
+             * @return 返回表达式 <code>"DateVO[d=" + d + "]"</code>
+             */
             @Override
             public String toString() {
                 return "DateVO[d=" + d + "]";

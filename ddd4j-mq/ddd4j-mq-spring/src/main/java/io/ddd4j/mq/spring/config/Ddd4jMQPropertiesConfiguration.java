@@ -30,6 +30,7 @@ import org.springframework.core.env.Environment;
 @Configuration(proxyBeanMethods = false)
 public class Ddd4jMQPropertiesConfiguration {
 
+    /** Spring Boot \u7ed1\u5b9a\u6d88\u606f\u961f\u5217\u914d\u7f6e\u4f7f\u7528\u7684\u5c5e\u6027\u524d\u7f00\u3002 */
     private static final String PREFIX = "ddd4j.mq.";
 
     /**

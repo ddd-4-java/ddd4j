@@ -25,6 +25,13 @@ public class GuiceSubjectProvider implements SubjectProvider {
     @Inject
     private Injector injector;
 
+    /**
+     * 取得当前请求使用的认证主体接口。
+     *
+     * <p>此实现调用 <code>Optional.ofNullable(injector)</code>。</p>
+     *
+     * @return 本次调用使用的认证主体接口
+     */
     @Override
     public Subject getSubject() {
         Optional<Subject> subject = Optional.ofNullable(injector).map(inj -> {

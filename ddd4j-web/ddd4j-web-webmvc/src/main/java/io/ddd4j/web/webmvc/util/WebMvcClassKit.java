@@ -13,6 +13,13 @@ import java.util.Objects;
 @UtilityClass
 public class WebMvcClassKit {
 
+    /**
+     * \u67e5\u8be2\u5904\u7406\u65b9\u6cd5\u4e0a\u7684\u6ce8\u89e3\u3002
+     * @param <A> \u6ce8\u89e3\u7c7b\u578b
+     * @param handlerMethod \u5904\u7406\u5668\u65b9\u6cd5
+     * @param annotationType \u6ce8\u89e3\u7c7b\u578b
+     * @return \u5339\u914d\u7684\u6ce8\u89e3
+     */
     public <A extends Annotation> A getAnnotation(HandlerMethod handlerMethod, Class<A> annotationType) {
         Objects.requireNonNull(handlerMethod, "handlerMethod must not be null");
         Objects.requireNonNull(annotationType, "annotationType must not be null");

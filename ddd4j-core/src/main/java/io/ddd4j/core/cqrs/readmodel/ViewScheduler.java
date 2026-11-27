@@ -37,7 +37,9 @@ public interface ViewScheduler {
         void cancel();
 
         /**
-         * 判断任务是否仍处于活跃状态。
+         * \u5224\u65ad\u4efb\u52a1\u662f\u5426\u4ecd\u5904\u4e8e\u6d3b\u8dc3\u72b6\u6001\u3002
+         *
+         * @return \u8c03\u5ea6\u5668\u6b63\u5728\u8fd0\u884c\u65f6\u4e3a true
          */
         boolean isActive();
     }

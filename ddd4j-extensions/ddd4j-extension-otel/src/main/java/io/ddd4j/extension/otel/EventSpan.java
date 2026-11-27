@@ -16,11 +16,17 @@ import io.opentelemetry.context.Scope;
  */
 public final class EventSpan {
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>EventSpan</code> \u5b9e\u4f8b\u3002 */
     private EventSpan() {
     }
 
     /**
-     * 包装领域事件发布。
+     * \u5305\u88c5\u9886\u57df\u4e8b\u4ef6\u53d1\u5e03\u3002
+     *
+     * @param eventType \u4e8b\u4ef6\u7c7b\u578b
+     * @param aggregateType \u805a\u5408\u7c7b\u578b
+     * @param aggregateId \u805a\u5408\u6807\u8bc6
+     * @param runnable \u5f85\u8ffd\u8e2a\u64cd\u4f5c
      */
     public static void publish(String eventType, String aggregateType, String aggregateId, Runnable runnable) {
         if (!Ddd4jOtel.isAvailable()) {
@@ -47,7 +53,12 @@ public final class EventSpan {
     }
 
     /**
-     * 包装 CQRS 查询执行。
+     * \u5305\u88c5 CQRS \u67e5\u8be2\u6267\u884c\u3002
+     *
+     * @param <T> \u8fd4\u56de\u503c\u7c7b\u578b
+     * @param queryType \u67e5\u8be2\u7c7b\u578b
+     * @param supplier \u5f85\u8ffd\u8e2a\u64cd\u4f5c
+     * @return \u67e5\u8be2\u7ed3\u679c
      */
     public static <T> T query(String queryType, java.util.function.Supplier<T> supplier) {
         if (!Ddd4jOtel.isAvailable()) {
@@ -71,7 +82,12 @@ public final class EventSpan {
     }
 
     /**
-     * 包装投影执行。
+     * \u5305\u88c5\u6295\u5f71\u6267\u884c\u3002
+     *
+     * @param <T> \u8fd4\u56de\u503c\u7c7b\u578b
+     * @param projectionName \u6295\u5f71\u540d\u79f0
+     * @param supplier \u5f85\u8ffd\u8e2a\u64cd\u4f5c
+     * @return \u6295\u5f71\u7ed3\u679c
      */
     public static <T> T projection(String projectionName, java.util.function.Supplier<T> supplier) {
         if (!Ddd4jOtel.isAvailable()) {

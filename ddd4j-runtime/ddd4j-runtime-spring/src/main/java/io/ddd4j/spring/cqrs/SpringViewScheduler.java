@@ -23,10 +23,24 @@ public class SpringViewScheduler implements ViewScheduler {
      */
     private final TaskScheduler taskScheduler;
 
+    /**
+     * \u521b\u5efa Spring \u4efb\u52a1\u8c03\u5ea6\u9002\u914d\u5668\u3002
+     * @param taskScheduler Spring \u4efb\u52a1\u8c03\u5ea6\u5668
+     */
     public SpringViewScheduler(TaskScheduler taskScheduler) {
         this.taskScheduler = taskScheduler;
     }
 
+    /**
+     * 按给定时间规则安排任务。
+     *
+     * <p>Spring 实现调用 <code>taskScheduler.schedule(task, new CronTrigger(cron))</code>。</p>
+     *
+     * @param viewName 视图名称（用于日志 / 调试）
+     * @param cron CRON 表达式
+     * @param task 要执行的任务
+     * @return 任务句柄，可用于取消
+     */
     @Override
     public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
         ScheduledFuture<?> future = taskScheduler.schedule(task, new CronTrigger(cron));
@@ -38,17 +52,34 @@ public class SpringViewScheduler implements ViewScheduler {
      * Spring {@link ScheduledFuture} 适配为 ddd4j {@link ViewScheduleHandle}。
      */
     private static class SpringViewScheduleHandle implements ViewScheduleHandle {
+        /** \u7528\u4e8e\u8ddf\u8e2a\u548c\u53d6\u6d88\u540e\u53f0\u8c03\u5ea6\u4efb\u52a1\u7684\u53e5\u67c4\u3002 */
         private final ScheduledFuture<?> future;
 
+        /**
+         * \u7528\u7ed9\u5b9a\u503c\u521d\u59cb\u5316 <code>SpringViewScheduleHandle</code> \u5b9e\u4f8b\u3002
+         * @param future \u7528\u4e8e\u8ddf\u8e2a\u548c\u53d6\u6d88\u540e\u53f0\u8c03\u5ea6\u4efb\u52a1\u7684\u53e5\u67c4
+         */
         SpringViewScheduleHandle(ScheduledFuture<?> future) {
             this.future = future;
         }
 
+        /**
+         * 撤销当前任务句柄允许撤销的操作。
+         *
+         * <p>Spring 实现调用 <code>future.cancel(false)</code>。</p>
+         */
         @Override
         public void cancel() {
             future.cancel(false);
         }
 
+        /**
+         * 检查当前句柄是否仍处于有效状态。
+         *
+         * <p>Spring 实现调用 <code>future.isCancelled()</code>。</p>
+         *
+         * @return 实际返回<code>!future.isCancelled() &amp;&amp; !future.isDone()</code>
+         */
         @Override
         public boolean isActive() {
             return !future.isCancelled() && !future.isDone();

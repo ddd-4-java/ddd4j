@@ -17,7 +17,9 @@ import java.util.UUID;
 public class AppKit {
 
     //生成 app_secret 密钥
+    /** \u8ba1\u7b97\u9ed8\u8ba4\u5e94\u7528\u5bc6\u94a5\u65f6\u4f7f\u7528\u7684\u670d\u52a1\u6807\u8bc6\u3002 */
     private final String SERVER_NAME = "ddd4j_2021";
+    /** \u751f\u6210\u5e94\u7528\u6807\u8bc6\u6216\u968f\u673a\u4e32\u65f6\u4f7f\u7528\u7684\u5b57\u7b26\u6c60\u3002 */
     private final String[] chars = new String[]{"a", "b", "c", "d", "e", "f",
             "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s",
             "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5",

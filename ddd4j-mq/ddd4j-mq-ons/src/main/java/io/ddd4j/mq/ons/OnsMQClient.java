@@ -32,9 +32,13 @@ import java.util.function.Consumer;
 @Slf4j(topic = "### DDD4J-MQ : OnsMQClient ###")
 public class OnsMQClient implements MQClient {
 
+    /** \u5f53\u524d\u6d88\u606f\u4ee3\u7406\u5ba2\u6237\u7aef\u4f7f\u7528\u7684\u8fde\u63a5\u548c\u8ba2\u9605\u914d\u7f6e\u3002 */
     private final OnsProperties properties;
+    /** \u5f53\u524d\u9002\u914d\u5668\u5df2\u5efa\u7acb\u7684\u539f\u751f\u6d88\u8d39\u8005\u3002 */
     private final List<com.aliyun.openservices.ons.api.Consumer> consumers = new CopyOnWriteArrayList<>();
+    /** 保存 <code>producer</code> 对应的 <code>Producer</code> 数据。 */
     private volatile Producer producer;
+    /** 保存 <code>producer Started</code> 对应的 <code>boolean</code> 数据。 */
     private volatile boolean producerStarted;
 
     /**
@@ -59,6 +63,11 @@ public class OnsMQClient implements MQClient {
         this.producer = producer;
     }
 
+    /**
+     * 返回此消息适配器在 DDD4J 中登记的实现名。
+     *
+     * @return 实际返回<code>"ons"</code>，供调用方取得当前值
+     */
     @Override
     public String impl() {
         return "ons";
@@ -66,6 +75,14 @@ public class OnsMQClient implements MQClient {
 
     // ========================= 生产者 =========================
 
+    /**
+     * 准备消息生产者并返回可发布事件的入口。
+     *
+     * <p>此实现调用 <code>ONSFactory.createProducer(properties.sessionProperties(properties.getProducerId()))</code>。</p>
+     *
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 接收待发布事件的函数
+     */
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         try {
@@ -100,6 +117,16 @@ public class OnsMQClient implements MQClient {
 
     // ========================= 消费者 =========================
 
+    /**
+     * 为监听器建立消息消费所需的订阅和客户端资源。
+     *
+     * <p>此实现调用 <code>StrKit.hasText(listener.getGroup())</code>。</p>
+     *
+     * @param listener 监听器定义
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 此实现返回<code>true</code>
+     * @throws Exception 当前框架、存储或底层客户端无法完成此操作时
+     */
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         String group = StrKit.hasText(listener.getGroup()) ? listener.getGroup() : properties.getConsumerId();
@@ -155,6 +182,7 @@ public class OnsMQClient implements MQClient {
         return true;
     }
 
+    /** 提供生命周期启动回调，当前实现的客户端在初始化阶段启动，此处无额外操作。 */
     @Override
     public void start() {
         // ONS producer/consumer 在各自创建时已启动；此方法留作 future 扩展。
@@ -162,6 +190,7 @@ public class OnsMQClient implements MQClient {
 
     // ========================= 关闭 =========================
 
+    /** \u91ca\u653e\u6d88\u606f\u5ba2\u6237\u7aef\u62e5\u6709\u7684\u8fd0\u884c\u8d44\u6e90\uff0c\u5e76\u5728\u9000\u51fa\u65f6\u767b\u8bb0\u7ec4\u4ef6\u5df2\u505c\u6b62\u3002 */
     @Override
     public void close() {
         for (com.aliyun.openservices.ons.api.Consumer c : new ArrayList<>(consumers)) {
@@ -182,6 +211,11 @@ public class OnsMQClient implements MQClient {
         }
     }
 
+    /**
+     * \u4f18\u5148\u4ece\u539f\u751f\u6d88\u606f\u7684\u6807\u51c6\u5934\u8bfb\u53d6\u6d88\u606f\u6807\u8bc6\uff0c\u7f3a\u5c11\u65f6\u56de\u9000\u5230\u517c\u5bb9\u5934\u3002
+     * @param message \u5f53\u524d\u63a5\u6536\u7684\u539f\u751f\u4ee3\u7406\u6d88\u606f
+     * @return \u7528\u4e8e\u540e\u7eed\u6d88\u8d39\u786e\u8ba4\u7684\u4e1a\u52a1\u6d88\u606f\u6807\u8bc6\uff0c\u5934\u5747\u7f3a\u5931\u65f6\u4e3a\u7a7a
+     */
     static String messageId(Message message) {
         String messageId = message.getUserProperties(MessageHeaders.HEADER_MESSAGE_ID);
         return StrKit.isNotEmpty(messageId)

@@ -9,7 +9,9 @@ package io.ddd4j.core.cqrs.readmodel;
 public interface TypedEvent {
 
     /**
-     * 事件类型名称。
+     * \u4e8b\u4ef6\u7c7b\u578b\u540d\u79f0\u3002
+     *
+     * @return \u4e8b\u4ef6\u7c7b\u578b\u540d\u79f0
      */
     String getEventType();
 }

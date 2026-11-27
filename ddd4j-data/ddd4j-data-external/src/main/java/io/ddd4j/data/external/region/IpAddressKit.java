@@ -10,9 +10,11 @@ import java.util.regex.Pattern;
  */
 public final class IpAddressKit {
 
+    /** \u6821\u9a8c IPv4 \u6587\u672c\u683c\u5f0f\u7684\u6b63\u5219\u3002 */
     private static final Pattern IPV4 = Pattern.compile(
             "^((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)\\.){3}(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)$");
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>IpAddressKit</code> \u5b9e\u4f8b\u3002 */
     private IpAddressKit() {
     }
 

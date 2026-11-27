@@ -21,7 +21,9 @@ import com.alibaba.excel.write.handler.context.SheetWriteHandlerContext;
  */
 public class FreezePaneStyleStrategy implements SheetWriteHandler {
 
+    /** \u51bb\u7ed3\u7a97\u683c\u6240\u4fdd\u7559\u7684\u5de6\u4fa7\u5217\u6570\u3002 */
     private final int colSplit;
+    /** \u51bb\u7ed3\u7a97\u683c\u6240\u4fdd\u7559\u7684\u9876\u90e8\u884c\u6570\u3002 */
     private final int rowSplit;
 
     /**
@@ -42,6 +44,10 @@ public class FreezePaneStyleStrategy implements SheetWriteHandler {
         this.rowSplit = rowSplit;
     }
 
+    /**
+     * \u521b\u5efa\u5de5\u4f5c\u8868\u4e4b\u540e\u6309\u914d\u7f6e\u51bb\u7ed3\u5de6\u4fa7\u5217\u548c\u9876\u90e8\u884c\u3002
+     * @param context \u5305\u542b\u65b0\u5efa\u5de5\u4f5c\u8868\u7684\u5199\u5165\u4e0a\u4e0b\u6587
+     */
     @Override
     public void afterSheetCreate(SheetWriteHandlerContext context) {
         context.getWriteSheetHolder().getSheet().createFreezePane(colSplit, rowSplit);

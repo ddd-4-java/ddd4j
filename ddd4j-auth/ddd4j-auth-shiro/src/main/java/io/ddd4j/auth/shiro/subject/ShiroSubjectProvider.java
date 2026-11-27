@@ -14,11 +14,22 @@ import io.ddd4j.core.subject.SubjectProvider;
  */
 public class ShiroSubjectProvider implements SubjectProvider {
 
+    /**
+     * 取得当前请求使用的认证主体接口。
+     *
+     * @return 本次调用使用的认证主体接口
+     */
     @Override
     public Subject getSubject() {
         return new ShiroSubject();
     }
 
+    /**
+     * 取得当前请求使用的认证主体接口。
+     *
+     * @param realm 账号体系标识（如 sa-token 的 "admin"/"user"）
+     * @return 本次调用使用的认证主体接口
+     */
     @Override
     public Subject getSubject(String realm) {
         // Shiro 多 Realm 场景由 SecurityManager 配置，此处返回默认 Subject

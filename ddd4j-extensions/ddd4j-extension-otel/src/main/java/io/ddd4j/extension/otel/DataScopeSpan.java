@@ -18,9 +18,12 @@ import io.opentelemetry.context.Scope;
  */
 public final class DataScopeSpan {
 
+    /** Span \u5c5e\u6027\u952e {@code ddd4j.datascope.type}\u3002 */
     public static final AttributeKey<String> ATTR_DATA_SCOPE_TYPE = AttributeKey.stringKey("ddd4j.datascope.type");
+    /** Span \u5c5e\u6027\u952e {@code ddd4j.datascope.decision}\u3002 */
     public static final AttributeKey<String> ATTR_DATA_SCOPE_DECISION = AttributeKey.stringKey("ddd4j.datascope.decision");
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>DataScopeSpan</code> \u5b9e\u4f8b\u3002 */
     private DataScopeSpan() {
     }
 

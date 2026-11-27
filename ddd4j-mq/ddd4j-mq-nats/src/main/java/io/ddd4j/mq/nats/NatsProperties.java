@@ -37,7 +37,9 @@ public class NatsProperties extends MQProperties {
     private long connectTimeoutMillis = 2000L;
 
     /**
-     * 创建并打开 NATS {@link Connection}。
+     * \u521b\u5efa\u5e76\u6253\u5f00 NATS {@link Connection}\u3002
+     *
+     * @return \u5df2\u5efa\u7acb\u7684 NATS \u8fde\u63a5
      */
     public Connection connect() {
         try {

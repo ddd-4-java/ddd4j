@@ -15,6 +15,7 @@ import lombok.Data;
 @Data
 public class LicenseProperties {
 
+    /** \u914d\u7f6e\u9879\u524d\u7f00\uff08{@code @ConfigurationProperties} \u7ed1\u5b9a\u4f7f\u7528\uff09\u3002 */
     public static final String PREFIX = "license";
 
     /**

@@ -59,12 +59,17 @@ import java.util.*;
 @SuppressWarnings({"unchecked", "rawtypes"})
 public abstract class AggregateRoot<ID extends Serializable> implements Entity<ID> {
 
+    /** \u805a\u5408\u5f53\u524d\u5c1a\u672a\u6e05\u7406\u7684\u9886\u57df\u4e8b\u4ef6\u3002 */
     private transient List<DomainEvent<?>> domainEvents = new ArrayList<>();
 
     // ========================= 充血持久化（实例方法） =========================
 
     /**
-     * 批量保存。
+     * \u6279\u91cf\u4fdd\u5b58\u3002
+     *
+     * @param <M> \u805a\u5408\u6839\u7c7b\u578b
+     * @param models \u805a\u5408\u6839\u5217\u8868
+     * @return \u4fdd\u5b58\u7ed3\u679c\uff1b\u6279\u91cf\u8c03\u7528\u5728\u5217\u8868\u975e\u7a7a\u65f6\u8fd4\u56de true
      */
     public static <M extends AggregateRoot<?>> boolean save(List<M> models) {
         if (Objects.isNull(models) || models.isEmpty()) {
@@ -78,7 +83,11 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     }
 
     /**
-     * 批量更新（仅更新，不插入；逐条委托 {@link Repository#updateById(Object)}）。
+     * \u6279\u91cf\u66f4\u65b0\uff08\u4ec5\u66f4\u65b0\uff0c\u4e0d\u63d2\u5165\uff1b\u9010\u6761\u59d4\u6258 {@link Repository#updateById(Object)}\uff09\u3002
+     *
+     * @param <M> \u805a\u5408\u6839\u7c7b\u578b
+     * @param models \u805a\u5408\u6839\u5217\u8868
+     * @return \u66f4\u65b0\u7ed3\u679c
      */
     public static <M extends AggregateRoot<?>> boolean update(List<M> models) {
         if (Objects.isNull(models) || models.isEmpty()) {
@@ -92,7 +101,11 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     }
 
     /**
-     * 按查询条件删除。
+     * \u6309\u67e5\u8be2\u6761\u4ef6\u5220\u9664\u3002
+     *
+     * @param <Q> \u67e5\u8be2\u6761\u4ef6\u7c7b\u578b
+     * @param query \u67e5\u8be2\u6761\u4ef6
+     * @return \u81f3\u5c11\u5220\u9664\u4e00\u6761\u8bb0\u5f55\u65f6\u4e3a true
      */
     public static <Q extends Query> boolean delete(Q query) {
         query.with();
@@ -101,7 +114,13 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     }
 
     /**
-     * 按 ID 查找。
+     * \u6309 ID \u67e5\u627e\u3002
+     *
+     * @param <M> \u805a\u5408\u6839\u7c7b\u578b
+     * @param <ID> \u805a\u5408\u6839\u6807\u8bc6\u7c7b\u578b
+     * @param modelClass \u805a\u5408\u6839\u7c7b\u578b
+     * @param id \u805a\u5408\u6839\u6807\u8bc6
+     * @return \u6307\u5b9a\u6807\u8bc6\u7684\u805a\u5408\u6839
      */
     public static <M extends AggregateRoot<?>, ID extends Serializable>
     Optional<M> get(Class<M> modelClass, ID id) {
@@ -110,7 +129,11 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     }
 
     /**
-     * 查找第一个。
+     * \u67e5\u627e\u7b2c\u4e00\u4e2a\u3002
+     *
+     * @param <M> \u805a\u5408\u6839\u7c7b\u578b
+     * @param modelClass \u805a\u5408\u6839\u7c7b\u578b
+     * @return \u7b2c\u4e00\u6761\u805a\u5408\u6839
      */
     public static <M extends AggregateRoot<?>> Optional<M> one(Class<M> modelClass) {
         Repository repo = RepositoryRegistry.repository(modelClass);
@@ -118,7 +141,11 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     }
 
     /**
-     * 列出全部。
+     * \u5217\u51fa\u5168\u90e8\u3002
+     *
+     * @param <M> \u805a\u5408\u6839\u7c7b\u578b
+     * @param modelClass \u805a\u5408\u6839\u7c7b\u578b
+     * @return \u5168\u90e8\u805a\u5408\u6839
      */
     public static <M extends AggregateRoot<?>> List<M> list(Class<M> modelClass) {
         Repository repo = RepositoryRegistry.repository(modelClass);
@@ -128,7 +155,13 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     // ========================= 充血持久化（静态批量） =========================
 
     /**
-     * 分页查询。
+     * \u5206\u9875\u67e5\u8be2\u3002
+     *
+     * @param <M> \u805a\u5408\u6839\u7c7b\u578b
+     * @param <Q> \u67e5\u8be2\u6761\u4ef6\u7c7b\u578b
+     * @param modelClass \u805a\u5408\u6839\u7c7b\u578b
+     * @param query \u67e5\u8be2\u6761\u4ef6
+     * @return \u5206\u9875\u67e5\u8be2\u7ed3\u679c
      */
     public static <M extends AggregateRoot<?>, Q extends Query>
     Page<M> page(Class<M> modelClass, Q query) {
@@ -138,7 +171,12 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     }
 
     /**
-     * 计数。
+     * \u8ba1\u6570\u3002
+     *
+     * @param <Q> \u67e5\u8be2\u6761\u4ef6\u7c7b\u578b
+     * @param modelClass \u805a\u5408\u6839\u7c7b\u578b
+     * @param query \u67e5\u8be2\u6761\u4ef6
+     * @return \u5339\u914d\u8bb0\u5f55\u6570
      */
     public static <Q extends Query> int count(Class<? extends AggregateRoot<?>> modelClass, Q query) {
         query.with();
@@ -147,7 +185,12 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     }
 
     /**
-     * 是否存在。
+     * \u662f\u5426\u5b58\u5728\u3002
+     *
+     * @param <Q> \u67e5\u8be2\u6761\u4ef6\u7c7b\u578b
+     * @param modelClass \u805a\u5408\u6839\u7c7b\u578b
+     * @param query \u67e5\u8be2\u6761\u4ef6
+     * @return \u5b58\u5728\u5339\u914d\u8bb0\u5f55\u65f6\u4e3a true
      */
     public static <Q extends Query> boolean exist(Class<? extends AggregateRoot<?>> modelClass, Q query) {
         return count(modelClass, query) > 0;
@@ -156,21 +199,30 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     // ========================= 充血查询（静态） =========================
 
     /**
-     * 充血保存。
+     * \u5145\u8840\u4fdd\u5b58\u3002
+     *
+     * @param <M> \u805a\u5408\u6839\u7c7b\u578b
+     * @return \u4fdd\u5b58\u540e\u7684\u805a\u5408\u6839
      */
     public <M extends AggregateRoot<ID>> M save() {
         return (M) repository().save(this);
     }
 
     /**
-     * 充血更新（仅按主键更新，不插入；委托 {@link Repository#updateById(Object)}）。
+     * \u5145\u8840\u66f4\u65b0\uff08\u4ec5\u6309\u4e3b\u952e\u66f4\u65b0\uff0c\u4e0d\u63d2\u5165\uff1b\u59d4\u6258 {@link Repository#updateById(Object)}\uff09\u3002
+     *
+     * @param <M> \u805a\u5408\u6839\u7c7b\u578b
+     * @return \u66f4\u65b0\u540e\u7684\u805a\u5408\u6839
      */
     public <M extends AggregateRoot<ID>> M update() {
         return (M) repository().updateById(this);
     }
 
     /**
-     * 充血保存或更新（主键存在则更新，否则插入；委托 {@link Repository#insertOrUpdate(Object)}）。
+     * \u5145\u8840\u4fdd\u5b58\u6216\u66f4\u65b0\uff08\u4e3b\u952e\u5b58\u5728\u5219\u66f4\u65b0\uff0c\u5426\u5219\u63d2\u5165\uff1b\u59d4\u6258 {@link Repository#insertOrUpdate(Object)}\uff09\u3002
+     *
+     * @param <M> \u805a\u5408\u6839\u7c7b\u578b
+     * @return \u4fdd\u5b58\u6216\u66f4\u65b0\u540e\u7684\u805a\u5408\u6839
      */
     public <M extends AggregateRoot<ID>> M saveOrUpdate() {
         return (M) repository().insertOrUpdate(this);
@@ -184,7 +236,11 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     }
 
     /**
-     * 充血条件更新（按查询条件更新）。
+     * \u5145\u8840\u6761\u4ef6\u66f4\u65b0\uff08\u6309\u67e5\u8be2\u6761\u4ef6\u66f4\u65b0\uff09\u3002
+     *
+     * @param <Q> \u67e5\u8be2\u6761\u4ef6\u7c7b\u578b
+     * @param query \u67e5\u8be2\u6761\u4ef6
+     * @return \u81f3\u5c11\u66f4\u65b0\u4e00\u6761\u8bb0\u5f55\u65f6\u4e3a true
      */
     public <Q extends Query> boolean update(Q query) {
         query.with();
@@ -196,7 +252,10 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     }
 
     /**
-     * 充血聚合填充（从其他聚合补充数据）。
+     * \u5145\u8840\u805a\u5408\u586b\u5145\uff08\u4ece\u5176\u4ed6\u805a\u5408\u8865\u5145\u6570\u636e\uff09\u3002
+     *
+     * @param <Q> \u67e5\u8be2\u6761\u4ef6\u7c7b\u578b
+     * @param query \u67e5\u8be2\u6761\u4ef6
      */
     public <Q extends Query> void fill(Q query) {
         Repository repo = repository();
@@ -208,7 +267,9 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     // ========================= 事件管理 =========================
 
     /**
-     * 注册领域事件。
+     * \u6ce8\u518c\u9886\u57df\u4e8b\u4ef6\u3002
+     *
+     * @param event \u9886\u57df\u4e8b\u4ef6
      */
     protected void registerEvent(DomainEvent<?> event) {
         Objects.requireNonNull(event, "event must not be null");
@@ -216,14 +277,18 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     }
 
     /**
-     * 返回未提交的领域事件（不可变视图）。
+     * \u8fd4\u56de\u672a\u63d0\u4ea4\u7684\u9886\u57df\u4e8b\u4ef6\uff08\u4e0d\u53ef\u53d8\u89c6\u56fe\uff09\u3002
+     *
+     * @return \u672a\u63d0\u4ea4\u9886\u57df\u4e8b\u4ef6\u7684\u4e0d\u53ef\u53d8\u89c6\u56fe
      */
     public List<DomainEvent<?>> domainEvents() {
         return Collections.unmodifiableList(mutableDomainEvents());
     }
 
     /**
-     * 返回并清空未提交的领域事件。
+     * \u8fd4\u56de\u5e76\u6e05\u7a7a\u672a\u63d0\u4ea4\u7684\u9886\u57df\u4e8b\u4ef6\u3002
+     *
+     * @return \u53d6\u51fa\u7684\u672a\u63d0\u4ea4\u9886\u57df\u4e8b\u4ef6
      */
     public List<DomainEvent<?>> pullDomainEvents() {
         List<DomainEvent<?>> events = List.copyOf(mutableDomainEvents());
@@ -239,12 +304,18 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     }
 
     /**
-     * 是否存在未提交的领域事件。
+     * \u662f\u5426\u5b58\u5728\u672a\u63d0\u4ea4\u7684\u9886\u57df\u4e8b\u4ef6\u3002
+     *
+     * @return \u5b58\u5728\u672a\u63d0\u4ea4\u9886\u57df\u4e8b\u4ef6\u65f6\u4e3a true
      */
     public boolean hasDomainEvents() {
         return !mutableDomainEvents().isEmpty();
     }
 
+    /**
+     * \u5728\u7b2c\u4e00\u6b21\u5199\u5165\u524d\u521d\u59cb\u5316\u9886\u57df\u4e8b\u4ef6\u5217\u8868\u3002
+     * @return \u5f53\u524d\u805a\u5408\u53ef\u5199\u5165\u7684\u9886\u57df\u4e8b\u4ef6\u5217\u8868
+     */
     private List<DomainEvent<?>> mutableDomainEvents() {
         if (Objects.isNull(domainEvents)) {
             domainEvents = new ArrayList<>();
@@ -255,7 +326,9 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     // ========================= 仓储查找 =========================
 
     /**
-     * 通过 {@link RepositoryRegistry} 查找当前聚合根类型的仓储实例。
+     * \u901a\u8fc7 {@link RepositoryRegistry} \u67e5\u627e\u5f53\u524d\u805a\u5408\u6839\u7c7b\u578b\u7684\u4ed3\u50a8\u5b9e\u4f8b\u3002
+     *
+     * @return \u5f53\u524d\u805a\u5408\u6839\u7c7b\u578b\u7684\u4ed3\u50a8
      */
     @SuppressWarnings("rawtypes")
     protected Repository repository() {

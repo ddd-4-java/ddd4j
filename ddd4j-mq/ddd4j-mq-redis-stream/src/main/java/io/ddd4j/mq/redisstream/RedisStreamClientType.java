@@ -7,7 +7,10 @@ package io.ddd4j.mq.redisstream;
  */
 public enum RedisStreamClientType {
 
+    /** Jedis \u5ba2\u6237\u7aef\u3002 */
     JEDIS,
+    /** Redisson \u5ba2\u6237\u7aef\u3002 */
     REDISSON,
+    /** Lettuce \u5ba2\u6237\u7aef\u3002 */
     LETTUCE
 }

@@ -33,7 +33,9 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class GoodsApplicationService {
 
+    /** \u751f\u6210\u793a\u4f8b\u5546\u54c1\u4e3b\u952e\u4f7f\u7528\u7684\u8fdb\u7a0b\u5185\u5e8f\u5217\u3002 */
     private static final AtomicLong ID_GENERATOR = new AtomicLong(1000L);
+    /** \u7528\u4e8e\u6301\u4e45\u5316\u53ca\u8bfb\u53d6\u793a\u4f8b\u5546\u54c1\u6a21\u578b\u7684\u4ed3\u50a8\u3002 */
     private final GoodsRepository repository;
 
     /**
@@ -191,24 +193,40 @@ public class GoodsApplicationService {
         return query.count();
     }
 
+    /**
+     * \u68c0\u67e5\u5546\u54c1\u7f16\u7801\u662f\u5426\u6ee1\u8db3\u521b\u5efa\u6216\u67e5\u8be2\u89c4\u5219\u3002
+     * @param code \u5f85\u68c0\u67e5\u7684\u5546\u54c1\u5c5e\u6027
+     */
     private void validateCode(String code) {
         if (Objects.isNull(code) || StrKit.isBlank(code)) {
             throw new BizRuntimeException("goods.code.invalid", "code must not be blank");
         }
     }
 
+    /**
+     * \u68c0\u67e5\u5546\u54c1\u540d\u79f0\u662f\u5426\u6ee1\u8db3\u5199\u5165\u89c4\u5219\u3002
+     * @param name \u5f85\u68c0\u67e5\u7684\u5546\u54c1\u5c5e\u6027
+     */
     private void validateName(String name) {
         if (Objects.isNull(name) || StrKit.isBlank(name)) {
             throw new BizRuntimeException("goods.name.invalid", "name must not be blank");
         }
     }
 
+    /**
+     * \u68c0\u67e5\u5546\u54c1\u4ef7\u683c\u662f\u5426\u6ee1\u8db3\u5199\u5165\u89c4\u5219\u3002
+     * @param price \u5f85\u68c0\u67e5\u7684\u5546\u54c1\u5c5e\u6027
+     */
     private void validatePrice(BigDecimal price) {
         if (Objects.isNull(price) || price.signum() < 0) {
             throw new BizRuntimeException("goods.price.invalid", "price must be >= 0");
         }
     }
 
+    /**
+     * \u9012\u589e\u5f53\u524d\u793a\u4f8b\u8fdb\u7a0b\u7684\u5546\u54c1\u4e3b\u952e\u5e8f\u5217\u3002
+     * @return \u65b0\u751f\u6210\u7684\u5546\u54c1\u4e3b\u952e
+     */
     private Long nextId() {
         return ID_GENERATOR.incrementAndGet();
     }

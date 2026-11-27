@@ -11,9 +11,14 @@ import lombok.Getter;
 @Builder
 public final class QrCodeBatchItemResult {
 
+    /** \u5173\u8054\u6279\u91cf\u8bf7\u6c42\u9879\u548c\u5bf9\u5e94\u751f\u6210\u7ed3\u679c\u7684\u8c03\u7528\u65b9\u6807\u8bc6\u3002 */
     private final String itemId;
+    /** \u5f53\u524d\u6279\u91cf\u9879\u76ee\u662f\u5426\u6210\u529f\u751f\u6210\u4e8c\u7ef4\u7801\u3002 */
     private final boolean success;
+    /** \u6210\u529f\u751f\u6210\u7684\u4e8c\u7ef4\u7801\u5236\u54c1\u53ca\u5176\u6a21\u677f\u4fe1\u606f\u3002 */
     private final QrCodeArtifact artifact;
+    /** \u5f53\u524d\u9879\u76ee\u5931\u8d25\u65f6\u8fd4\u56de\u7684\u9519\u8bef\u7c7b\u522b\u3002 */
     private final String errorCode;
+    /** \u5f53\u524d\u9879\u76ee\u5931\u8d25\u65f6\u8fd4\u56de\u7684\u9519\u8bef\u8bf4\u660e\u3002 */
     private final String errorMessage;
 }

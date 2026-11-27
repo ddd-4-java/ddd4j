@@ -33,6 +33,7 @@ import java.math.BigDecimal;
 @EqualsAndHashCode(callSuper = true)
 public class GoodsQuery extends Query<Goods> {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -84,6 +85,12 @@ public class GoodsQuery extends Query<Goods> {
         return this;
     }
 
+    /**
+     * 执行 <code>apply Order</code> 对应的处理。
+     *
+     * @param desc 传入此操作的 <code>boolean</code> 类型 <code>desc</code>
+     * @param property 传入此操作的 <code>io.ddd4j.core.util.SFunction&lt;Goods, ?&gt;</code> 类型 <code>property</code>
+     */
     private void applyOrder(boolean desc, io.ddd4j.core.util.SFunction<Goods, ?> property) {
         if (desc) {
             orderByDesc(property);
@@ -92,6 +99,13 @@ public class GoodsQuery extends Query<Goods> {
         orderByAsc(property);
     }
 
+    /**
+     * 返回当前用例依赖的仓储。
+     *
+     * <p>此实现调用 <code>RepositoryRegistry.repository(Goods.class)</code>。</p>
+     *
+     * @return 实际返回<code>RepositoryRegistry.repository(Goods.class)</code>
+     */
     @Override
     public Repository<Goods, Long> repository() {
         return RepositoryRegistry.repository(Goods.class);

@@ -17,11 +17,21 @@ import java.util.function.Consumer;
 @Slf4j
 public final class MQOutboxDispatcher {
 
+    /** \u8d1f\u8d23\u8ba4\u9886\u3001\u786e\u8ba4\u548c\u91cd\u65b0\u5b89\u6392\u5f85\u53d1\u4e8b\u4ef6\u7684\u53d1\u4ef6\u7bb1\u5b58\u50a8\u3002 */
     private final MQOutboxStore store;
+    /** \u6267\u884c\u5bf9\u6d88\u606f\u4ee3\u7406\u5b9e\u9645\u53d1\u9001\u7684\u7ec4\u4ef6\u3002 */
     private final MQOutboxSender sender;
+    /** \u8ba1\u7b97\u8ba4\u9886\u79df\u7ea6\u53ca\u5931\u8d25\u91cd\u8bd5\u6761\u4ef6\u7684\u7b56\u7565\u3002 */
     private final MQDeliveryPolicy policy;
+    /** \u63a5\u6536\u6d88\u606f\u6295\u9012\u6216\u8fd0\u884c\u72b6\u6001\u53d8\u5316\u7684\u56de\u8c03\u3002 */
     private final MQDeliveryObserver observer;
 
+    /**
+     * \u521b\u5efa\u53ef\u9760\u6d88\u606f\u8c03\u5ea6\u5668\u3002
+     * @param store Outbox \u6301\u4e45\u5316\u7aef\u53e3
+     * @param sender \u6d88\u606f\u53d1\u9001\u7aef\u53e3
+     * @param policy \u6295\u9012\u7b56\u7565
+     */
     public MQOutboxDispatcher(MQOutboxStore store, MQOutboxSender sender, MQDeliveryPolicy policy) {
         this(store, sender, policy, NoopMQDeliveryObserver.INSTANCE);
     }
@@ -98,6 +108,10 @@ public final class MQOutboxDispatcher {
         return new MQOutboxDispatchResult(claimed.size(), published, rescheduled, dead, confirmationLost);
     }
 
+    /**
+     * \u901a\u77e5\u6295\u9012\u89c2\u5bdf\u5668\u5e76\u8bb0\u5f55\u5176\u8fd0\u884c\u65f6\u5f02\u5e38\uff0c\u907f\u514d\u5f71\u54cd\u5b9e\u9645\u6295\u9012\u8def\u5f84\u3002
+     * @param action \u8981\u5728\u5f53\u524d\u89c2\u5bdf\u5668\u4e0a\u8c03\u7528\u7684\u901a\u77e5\u52a8\u4f5c
+     */
     private void notifyObserver(Consumer<MQDeliveryObserver> action) {
         try {
             action.accept(observer);

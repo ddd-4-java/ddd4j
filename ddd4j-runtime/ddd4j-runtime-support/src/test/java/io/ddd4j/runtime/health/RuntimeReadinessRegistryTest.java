@@ -11,8 +11,10 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+/** \u901a\u8fc7 <code>ReadinessResult.ready()</code>\u3001<code>ReadinessResult.unavailable()</code>\u3001<code>Collections.singletonList()</code> \u9a8c\u8bc1 <code>RuntimeReadinessRegistry</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
 class RuntimeReadinessRegistryTest {
 
+    /** \u9a8c\u8bc1<code>registry.readiness().ready()</code>\u4e3a\u771f\uff0c<code>registry.readiness().ready()</code>\u4e3a\u5047\uff0c<code>registry.unregister(cache)</code>\u4e3a\u771f\u3002 */
     @Test
     void shouldAggregateContributorsAndAllowRuntimeRegistrationChanges() {
         ReadinessContributor database = () -> ReadinessResult.ready("database");
@@ -30,6 +32,7 @@ class RuntimeReadinessRegistryTest {
         assertThat(registry.readiness().ready()).isTrue();
     }
 
+    /** \u9a8c\u8bc1<code>registry.registerAll(null)</code> \u6307\u5411\u540c\u4e00\u5b9e\u4f8b <code>registry</code>\uff0c<code>registry.registerAll(withNull)</code> \u6307\u5411\u540c\u4e00\u5b9e\u4f8b <code>registry</code>\uff0c<code>registry.contributors()</code> \u7684\u5927\u5c0f\u4e3a <code>1</code>\u3002 */
     @Test
     void shouldFilterNullCollectionAndElementsInRegisterAll() {
         RuntimeReadinessRegistry registry = new RuntimeReadinessRegistry();
@@ -42,6 +45,7 @@ class RuntimeReadinessRegistryTest {
         assertThat(registry.contributors()).hasSize(1);
     }
 
+    /** \u9a8c\u8bc1<code>registry.register(null)</code> \u629b\u51fa <code>NullPointerException.class</code>\u3002 */
     @Test
     void shouldRejectNullContributorOnRegister() {
         RuntimeReadinessRegistry registry = new RuntimeReadinessRegistry();
@@ -49,6 +53,7 @@ class RuntimeReadinessRegistryTest {
                 .isInstanceOf(NullPointerException.class);
     }
 
+    /** \u9a8c\u8bc1<code>snapshot</code> \u7684\u5927\u5c0f\u4e3a <code>1</code>\uff0c\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>UnsupportedOperationException.class</code>\u3002 */
     @Test
     void shouldReturnImmutableSnapshotOfContributors() {
         RuntimeReadinessRegistry registry = new RuntimeReadinessRegistry(
@@ -62,6 +67,7 @@ class RuntimeReadinessRegistryTest {
                 .isInstanceOf(UnsupportedOperationException.class);
     }
 
+    /** \u9a8c\u8bc1<code>registry.readiness().ready()</code>\u4e3a\u5047\uff0c<code>registry.readiness().results()</code> \u7684\u5927\u5c0f\u4e3a <code>1</code>\u3002 */
     @Test
     void shouldAggregateUnavailableContributorAsUnready() {
         RuntimeReadinessRegistry registry = new RuntimeReadinessRegistry(

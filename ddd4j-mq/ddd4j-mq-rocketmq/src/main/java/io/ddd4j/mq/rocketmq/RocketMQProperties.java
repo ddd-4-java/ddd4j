@@ -37,7 +37,9 @@ public class RocketMQProperties extends MQProperties {
     private boolean autoStartConsumers = true;
 
     /**
-     * 基于本配置创建原生生产者（含 nameServer）。
+     * \u57fa\u4e8e\u672c\u914d\u7f6e\u521b\u5efa\u539f\u751f\u751f\u4ea7\u8005\uff08\u542b nameServer\uff09\u3002
+     *
+     * @return \u5df2\u5e94\u7528 nameServer / \u53d1\u9001\u8d85\u65f6 / API \u8d85\u65f6\u7684\u539f\u751f\u751f\u4ea7\u8005\uff08\u672a start\uff09
      */
     public DefaultMQProducer newProducer() {
         DefaultMQProducer producer = new DefaultMQProducer(getProducerGroup());
@@ -48,7 +50,10 @@ public class RocketMQProperties extends MQProperties {
     }
 
     /**
-     * 基于本配置创建原生消费者（含 nameServer）。
+     * \u57fa\u4e8e\u672c\u914d\u7f6e\u521b\u5efa\u539f\u751f\u6d88\u8d39\u8005\uff08\u542b nameServer\uff09\u3002
+     *
+     * @param group \u6d88\u8d39\u8005\u7ec4\u540d
+     * @return \u5df2\u5e94\u7528 nameServer / API \u8d85\u65f6\u7684\u539f\u751f\u6d88\u8d39\u8005\uff08\u672a start\uff09
      */
     public DefaultMQPushConsumer newConsumer(String group) {
         DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(group);

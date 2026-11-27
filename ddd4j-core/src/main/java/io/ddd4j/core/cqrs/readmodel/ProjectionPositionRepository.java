@@ -29,7 +29,9 @@ public interface ProjectionPositionRepository {
     Optional<ProjectionPosition> findByStreamId(String streamId);
 
     /**
-     * 列出全部投影位置。
+     * \u5217\u51fa\u5168\u90e8\u6295\u5f71\u4f4d\u7f6e\u3002
+     *
+     * @return \u5168\u90e8\u6295\u5f71\u4f4d\u7f6e
      */
     List<ProjectionPosition> findAll();
 

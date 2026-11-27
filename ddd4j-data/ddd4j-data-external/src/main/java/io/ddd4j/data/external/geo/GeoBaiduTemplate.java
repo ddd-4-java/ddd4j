@@ -60,6 +60,11 @@ public class GeoBaiduTemplate {
         this.ak = ak;
     }
 
+    /**
+     * \u6f14\u793a\u5730\u5740\u4e0e IP \u5730\u7406\u4f4d\u7f6e\u67e5\u8be2\u3002
+     * @param args \u547d\u4ee4\u884c\u53c2\u6570
+     * @throws IOException \u767e\u5ea6\u5730\u56fe\u8bf7\u6c42\u5931\u8d25\u65f6\u629b\u51fa
+     */
     public static void main(String[] args) throws IOException {
 
         GeoBaiduTemplate template = new GeoBaiduTemplate(HttpClient.newHttpClient(), "");
@@ -76,9 +81,9 @@ public class GeoBaiduTemplate {
     /**
      * 调用百度API
      *
-     * @param addr
-     * @return
-     * @throws IOException
+     * @param addr 待查询的地址
+     * @return 经纬度键值对
+     * @throws IOException 百度地图请求失败时抛出
      */
     public Map<String, BigDecimal> getLatAndLngByAddress(String addr) throws IOException {
 
@@ -96,9 +101,9 @@ public class GeoBaiduTemplate {
     /**
      * 调用百度API
      *
-     * @param addr
-     * @return
-     * @throws IOException
+     * @param addr 待查询的地址
+     * @return 百度地图返回的位置数据；无结果时为空
+     * @throws IOException 百度地图请求失败时抛出
      */
     public Optional<JSONObject> getLocationByAddress(String addr) throws IOException {
         String address = java.net.URLEncoder.encode(addr, StandardCharsets.UTF_8);
@@ -158,8 +163,8 @@ public class GeoBaiduTemplate {
      * status: 0    #结果状态返回码
      * }
      *
-     * @param ip
-     * @return
+     * @param ip 待查询的 IP 地址
+     * @return 百度地图返回的位置数据；无结果时为空
      */
     public Optional<JSONObject> getLocationByIp(String ip) {
         if (Objects.isNull(ip)) {

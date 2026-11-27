@@ -41,6 +41,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 public abstract class BaseAdminAggregateController<V, Q> {
 
+    /**
+     * \u5206\u9875\u67e5\u8be2\u805a\u5408\u6839\u3002
+     * @param pageNum \u9875\u7801
+     * @param pageSize \u6bcf\u9875\u6570\u91cf
+     * @param query \u67e5\u8be2\u6761\u4ef6
+     * @return \u805a\u5408\u6839\u5206\u9875\u7ed3\u679c
+     */
     @GetMapping
     @ResponseBody
     public R<Page<V>> page(@RequestParam(defaultValue = "1") int pageNum, @RequestParam(defaultValue = "20") int pageSize, Q query) {
@@ -49,6 +56,13 @@ public abstract class BaseAdminAggregateController<V, Q> {
 
     // ------- 业务项目实现以下方法 -------
 
+    /**
+     * \u5206\u9875\u67e5\u8be2\u7ba1\u7406\u89c6\u56fe\u3002
+     * @param pageNum \u9875\u7801
+     * @param pageSize \u6bcf\u9875\u6570\u91cf
+     * @param query \u67e5\u8be2\u6761\u4ef6
+     * @return \u7ba1\u7406\u89c6\u56fe\u5206\u9875\u7ed3\u679c
+     */
     protected abstract Page<V> adminListPage(int pageNum, int pageSize, Q query);
 
 }

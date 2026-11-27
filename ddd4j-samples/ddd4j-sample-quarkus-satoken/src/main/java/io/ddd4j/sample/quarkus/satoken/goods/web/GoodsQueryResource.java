@@ -46,6 +46,7 @@ import java.util.Objects;
 @io.quarkus.arc.properties.IfBuildProperty(name = "sample.goods.standalone", stringValue = "true")
 public class GoodsQueryResource {
 
+    /** \u5904\u7406\u5546\u54c1\u521b\u5efa\u3001\u7ef4\u62a4\u548c\u67e5\u8be2\u64cd\u4f5c\u7684\u5e94\u7528\u670d\u52a1\u3002 */
     private final GoodsApplicationService applicationService;
 
     /**
@@ -129,6 +130,18 @@ public class GoodsQueryResource {
         return R.ok(applicationService.countQuery(buildQuery(1L, 0L, code, nameLike, status, priceMin, priceMax, null)));
     }
 
+    /**
+     * \u5c06\u5206\u9875\u548c\u7b5b\u9009\u8bf7\u6c42\u5c5e\u6027\u7ed1\u5b9a\u5230\u9886\u57df\u5546\u54c1\u67e5\u8be2\u3002
+     * @param current \u8bf7\u6c42\u9875\u7801
+     * @param size \u6bcf\u9875\u6700\u591a\u8fd4\u56de\u7684\u5546\u54c1\u8bb0\u5f55\u6570
+     * @param code \u8bf7\u6c42\u4f20\u5165\u7684\u5546\u54c1\u7f16\u7801
+     * @param nameLike \u5546\u54c1\u540d\u79f0\u6a21\u7cca\u5339\u914d\u6761\u4ef6
+     * @param status \u5546\u54c1\u72b6\u6001\u6761\u4ef6\u6587\u672c
+     * @param priceMin \u8bf7\u6c42\u4ef7\u683c\u533a\u95f4\u7684\u6700\u5c0f\u503c
+     * @param priceMax \u8bf7\u6c42\u4ef7\u683c\u533a\u95f4\u7684\u6700\u5927\u503c
+     * @param orderBys \u8bf7\u6c42\u7ed9\u51fa\u7684\u6392\u5e8f\u8868\u8fbe\u5f0f
+     * @return \u53ef\u7531\u4ed3\u50a8\u6267\u884c\u7684\u5546\u54c1\u67e5\u8be2
+     */
     private GoodsQuery buildQuery(Long current, Long size, String code, String nameLike, String status,
                                   BigDecimal priceMin, BigDecimal priceMax, String orderBys) {
         GoodsQuery query = new GoodsQuery();
@@ -147,6 +160,11 @@ public class GoodsQueryResource {
         return query;
     }
 
+    /**
+     * \u628a\u63d0\u4f9b\u7684\u67e5\u8be2\u72b6\u6001\u8f6c\u6362\u4e3a\u5546\u54c1\u72b6\u6001\u679a\u4e3e\uff0c\u7a7a\u767d\u503c\u4e0d\u9650\u5236\u72b6\u6001\u3002
+     * @param status \u5546\u54c1\u72b6\u6001\u6761\u4ef6\u6587\u672c
+     * @return \u89e3\u6790\u5230\u7684\u5546\u54c1\u72b6\u6001\uff0c\u6ca1\u6709\u503c\u65f6\u4e3a\u7a7a
+     */
     private io.ddd4j.sample.quarkus.satoken.goods.domain.GoodsStatus parseStatus(String status) {
         if (StrKit.isBlank(status)) {
             return null;

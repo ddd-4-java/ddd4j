@@ -51,47 +51,64 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
     // ========================= 单条 CRUD =========================
 
     /**
-     * 按标识查找聚合根（对应 {@code selectById}）。
+     * \u6309\u6807\u8bc6\u67e5\u627e\u805a\u5408\u6839\uff08\u5bf9\u5e94 {@code selectById}\uff09\u3002
+     *
+     * @param id \u805a\u5408\u6839\u6807\u8bc6
+     * @return \u6307\u5b9a\u6807\u8bc6\u7684\u805a\u5408\u6839
      */
     Optional<M> findById(ID id);
 
     /**
-     * 保存聚合根（新建或更新，对应 {@code insert} + {@code updateById}）。
+     * \u4fdd\u5b58\u805a\u5408\u6839\uff08\u65b0\u5efa\u6216\u66f4\u65b0\uff0c\u5bf9\u5e94 {@code insert} + {@code updateById}\uff09\u3002
+     * @return \u4fdd\u5b58\u540e\u7684\u805a\u5408\u6839\uff08\u5305\u542b\u81ea\u589e\u5b57\u6bb5\uff09
      *
-     * @return 保存后的聚合根（包含自增字段）
+     * @param aggregate \u5f85\u5904\u7406\u805a\u5408\u6839
      */
     M save(M aggregate);
 
     /**
-     * 按主键更新（对应 {@code updateById}）。
+     * \u6309\u4e3b\u952e\u66f4\u65b0\uff08\u5bf9\u5e94 {@code updateById}\uff09\u3002
+     *
+     * @param aggregate \u5f85\u5904\u7406\u805a\u5408\u6839
+     * @return \u66f4\u65b0\u540e\u7684\u805a\u5408\u6839
      */
     default M updateById(M aggregate) {
         return save(aggregate);
     }
 
     /**
-     * 主键存在更新，否插入（对应 {@code insertOrUpdate}）。
+     * \u4e3b\u952e\u5b58\u5728\u66f4\u65b0\uff0c\u5426\u63d2\u5165\uff08\u5bf9\u5e94 {@code insertOrUpdate}\uff09\u3002
+     *
+     * @param aggregate \u5f85\u5904\u7406\u805a\u5408\u6839
+     * @return \u4fdd\u5b58\u6216\u66f4\u65b0\u540e\u7684\u805a\u5408\u6839
      */
     default M insertOrUpdate(M aggregate) {
         return save(aggregate);
     }
 
     /**
-     * 检查标识是否存在。
+     * \u68c0\u67e5\u6807\u8bc6\u662f\u5426\u5b58\u5728\u3002
+     *
+     * @param id \u805a\u5408\u6839\u6807\u8bc6
+     * @return \u6807\u8bc6\u5b58\u5728\u65f6\u4e3a true
      */
     default boolean existsById(ID id) {
         return findById(id).isPresent();
     }
 
     /**
-     * 按标识删除聚合根（对应 {@code deleteById}）。
+     * \u6309\u6807\u8bc6\u5220\u9664\u805a\u5408\u6839\uff08\u5bf9\u5e94 {@code deleteById}\uff09\u3002
+     *
+     * @param id \u805a\u5408\u6839\u6807\u8bc6
      */
     default void deleteById(ID id) {
         throw new UnsupportedOperationException("deleteById is not supported by this repository");
     }
 
     /**
-     * 删除聚合根（对应 {@code deleteById(T)}）。
+     * \u5220\u9664\u805a\u5408\u6839\uff08\u5bf9\u5e94 {@code deleteById(T)}\uff09\u3002
+     *
+     * @param aggregate \u5f85\u5904\u7406\u805a\u5408\u6839
      */
     default void delete(M aggregate) {
         if (Objects.nonNull(aggregate)) {
@@ -102,35 +119,50 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
     // ========================= 批量操作 =========================
 
     /**
-     * 按主键批量删除（对应 {@code deleteByIds}）。
+     * \u6309\u4e3b\u952e\u6279\u91cf\u5220\u9664\uff08\u5bf9\u5e94 {@code deleteByIds}\uff09\u3002
+     *
+     * @param ids \u805a\u5408\u6839\u6807\u8bc6\u96c6\u5408
+     * @return \u5220\u9664\u7684\u8bb0\u5f55\u6570
      */
     default int deleteByIds(Collection<ID> ids) {
         throw new UnsupportedOperationException("deleteByIds is not supported by this repository");
     }
 
     /**
-     * 按主键批量查询（对应 {@code selectByIds}）。
+     * \u6309\u4e3b\u952e\u6279\u91cf\u67e5\u8be2\uff08\u5bf9\u5e94 {@code selectByIds}\uff09\u3002
+     *
+     * @param ids \u805a\u5408\u6839\u6807\u8bc6\u96c6\u5408
+     * @return \u5339\u914d\u7684\u805a\u5408\u6839\u5217\u8868
      */
     default List<M> findByIds(Collection<ID> ids) {
         throw new UnsupportedOperationException("findByIds is not supported by this repository");
     }
 
     /**
-     * 批量保存（对应 {@code insert(Collection)}）。
+     * \u6279\u91cf\u4fdd\u5b58\uff08\u5bf9\u5e94 {@code insert(Collection)}\uff09\u3002
+     *
+     * @param aggregates \u5f85\u5904\u7406\u805a\u5408\u6839\u96c6\u5408
+     * @return \u4fdd\u5b58\u540e\u7684\u805a\u5408\u6839\u5217\u8868
      */
     default List<M> saveBatch(Collection<M> aggregates) {
         throw new UnsupportedOperationException("saveBatch is not supported by this repository");
     }
 
     /**
-     * 批量更新（对应 {@code updateById(Collection)}）。
+     * \u6279\u91cf\u66f4\u65b0\uff08\u5bf9\u5e94 {@code updateById(Collection)}\uff09\u3002
+     *
+     * @param aggregates \u5f85\u5904\u7406\u805a\u5408\u6839\u96c6\u5408
+     * @return \u66f4\u65b0\u7684\u8bb0\u5f55\u6570
      */
     default int updateBatchById(Collection<M> aggregates) {
         throw new UnsupportedOperationException("updateBatchById is not supported by this repository");
     }
 
     /**
-     * 批量保存或更新（对应 {@code insertOrUpdate(Collection)}）。
+     * \u6279\u91cf\u4fdd\u5b58\u6216\u66f4\u65b0\uff08\u5bf9\u5e94 {@code insertOrUpdate(Collection)}\uff09\u3002
+     *
+     * @param aggregates \u5f85\u5904\u7406\u805a\u5408\u6839\u96c6\u5408
+     * @return \u4fdd\u5b58\u6216\u66f4\u65b0\u7684\u8bb0\u5f55\u6570
      */
     default int insertOrUpdateBatch(Collection<M> aggregates) {
         throw new UnsupportedOperationException("insertOrUpdateBatch is not supported by this repository");
@@ -139,7 +171,9 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
     // ========================= 无条件查询 =========================
 
     /**
-     * 查找第一个聚合根。
+     * \u67e5\u627e\u7b2c\u4e00\u4e2a\u805a\u5408\u6839\u3002
+     *
+     * @return \u7b2c\u4e00\u6761\u805a\u5408\u6839
      */
     default Optional<M> findFirst() {
         List<M> all = findAll();
@@ -147,21 +181,27 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
     }
 
     /**
-     * 查找全部聚合根。
+     * \u67e5\u627e\u5168\u90e8\u805a\u5408\u6839\u3002
+     *
+     * @return \u5168\u90e8\u805a\u5408\u6839
      */
     default List<M> findAll() {
         throw new UnsupportedOperationException("findAll is not supported by this repository");
     }
 
     /**
-     * 统计总数。
+     * \u7edf\u8ba1\u603b\u6570\u3002
+     *
+     * @return \u8bb0\u5f55\u6570
      */
     default long count() {
         return findAll().size();
     }
 
     /**
-     * 是否存在记录。
+     * \u662f\u5426\u5b58\u5728\u8bb0\u5f55\u3002
+     *
+     * @return \u5b58\u5728\u8bb0\u5f55\u65f6\u4e3a true
      */
     default boolean exists() {
         return count() > 0;
@@ -232,14 +272,21 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
     // ========================= 条件更新 / 删除 =========================
 
     /**
-     * 按条件更新（对应 {@code update(T, Wrapper)}）。
+     * \u6309\u6761\u4ef6\u66f4\u65b0\uff08\u5bf9\u5e94 {@code update(T, Wrapper)}\uff09\u3002
+     *
+     * @param aggregate \u5f85\u5904\u7406\u805a\u5408\u6839
+     * @param query \u67e5\u8be2\u6761\u4ef6
+     * @return \u81f3\u5c11\u66f4\u65b0\u4e00\u6761\u8bb0\u5f55\u65f6\u4e3a true
      */
     default boolean update(AggregateRoot<?> aggregate, Query<M> query) {
         throw new UnsupportedOperationException("update(aggregate, query) is not supported by this repository");
     }
 
     /**
-     * 按条件删除（对应 {@code delete(Wrapper)}）。
+     * \u6309\u6761\u4ef6\u5220\u9664\uff08\u5bf9\u5e94 {@code delete(Wrapper)}\uff09\u3002
+     *
+     * @param query \u67e5\u8be2\u6761\u4ef6
+     * @return \u81f3\u5c11\u5220\u9664\u4e00\u6761\u8bb0\u5f55\u65f6\u4e3a true
      */
     default boolean deleteByQuery(Query<M> query) {
         throw new UnsupportedOperationException("deleteByQuery(query) is not supported by this repository");
@@ -248,14 +295,20 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
     // ========================= 聚合填充 =========================
 
     /**
-     * 数据聚合填充（从其他聚合补充数据到当前聚合根）。
+     * \u6570\u636e\u805a\u5408\u586b\u5145\uff08\u4ece\u5176\u4ed6\u805a\u5408\u8865\u5145\u6570\u636e\u5230\u5f53\u524d\u805a\u5408\u6839\uff09\u3002
+     *
+     * @param query \u67e5\u8be2\u6761\u4ef6
+     * @param model \u5f85\u586b\u5145\u805a\u5408\u6839
      */
     default void fill(Query<M> query, AggregateRoot<?> model) {
         // 默认空实现，业务方按需覆盖
     }
 
     /**
-     * 数据批量聚合填充。
+     * \u6570\u636e\u6279\u91cf\u805a\u5408\u586b\u5145\u3002
+     *
+     * @param query \u67e5\u8be2\u6761\u4ef6
+     * @param models \u805a\u5408\u6839\u5217\u8868
      */
     default void fill(Query<M> query, List<M> models) {
         for (M model : models) {

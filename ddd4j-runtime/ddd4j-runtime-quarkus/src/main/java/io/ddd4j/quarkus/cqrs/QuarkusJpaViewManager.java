@@ -30,14 +30,27 @@ public class QuarkusJpaViewManager implements ViewManager {
      */
     private final AtomicBoolean running = new AtomicBoolean(false);
 
+    /**
+     * \u5728 Quarkus \u542f\u52a8\u540e\u9009\u62e9\u5e76\u542f\u52a8\u6295\u5f71\u8fd0\u884c\u6a21\u5f0f\u3002
+     * @param event \u5f53\u524d\u6846\u67b6\u751f\u547d\u5468\u671f\u6216\u5bb9\u5668\u542f\u52a8\u4e8b\u4ef6
+     */
     void onStart(@Observes Startup event) {
         start();
     }
 
+    /**
+     * \u5728\u505c\u6b62\u4e8b\u4ef6\u4e2d\u6e05\u7406\u5f53\u524d\u7ba1\u7406\u5668\u542f\u52a8\u7684\u6295\u5f71\u4efb\u52a1\u3002
+     * @param event \u5f53\u524d\u6846\u67b6\u751f\u547d\u5468\u671f\u6216\u5bb9\u5668\u542f\u52a8\u4e8b\u4ef6
+     */
     void onStop(@Observes Shutdown event) {
         stop();
     }
 
+    /**
+     * 启动当前组件并准备其运行资源。
+     *
+     * <p>JPA 实现调用 <code>running.compareAndSet(false, true)</code>。</p>
+     */
     @Override
     public void start() {
         if (running.compareAndSet(false, true)) {
@@ -45,6 +58,11 @@ public class QuarkusJpaViewManager implements ViewManager {
         }
     }
 
+    /**
+     * 停止当前组件并清理已登记的运行资源。
+     *
+     * <p>JPA 实现调用 <code>running.compareAndSet(true, false)</code>。</p>
+     */
     @Override
     public void stop() {
         if (running.compareAndSet(true, false)) {
@@ -52,11 +70,23 @@ public class QuarkusJpaViewManager implements ViewManager {
         }
     }
 
+    /**
+     * 检查当前组件是否仍处于运行状态。
+     *
+     * <p>JPA 实现调用 <code>running.get()</code>。</p>
+     *
+     * @return 实际返回<code>running.get()</code>
+     */
     @Override
     public boolean isRunning() {
         return running.get();
     }
 
+    /**
+     * 请求立即执行指定投影视图的一轮更新。
+     *
+     * <p>JPA 实现调用 <code>log.info("triggerOnce() - \u4e1a\u52a1\u65b9\u5e94\u5728 QuarkusJpaProjectionService override")</code>。</p>
+     */
     @Override
     public void triggerOnce() {
         log.info("triggerOnce() - 业务方应在 QuarkusJpaProjectionService override");

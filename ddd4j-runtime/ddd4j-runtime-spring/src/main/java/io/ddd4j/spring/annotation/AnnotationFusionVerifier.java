@@ -18,9 +18,14 @@ import java.util.Objects;
 @Slf4j
 public final class AnnotationFusionVerifier {
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>AnnotationFusionVerifier</code> \u5b9e\u4f8b\u3002 */
     private AnnotationFusionVerifier() {
     }
 
+    /**
+     * \u9a8c\u8bc1\u9886\u57df\u6ce8\u89e3\u4e0e Spring \u7ec4\u4ef6\u6ce8\u89e3\u7684\u878d\u5408\u5173\u7cfb\u3002
+     * @param args \u547d\u4ee4\u884c\u53c2\u6570
+     */
     public static void main(String[] args) {
         int passed = 0;
         int failed = 0;
@@ -60,6 +65,13 @@ public final class AnnotationFusionVerifier {
         log.info("全部验证通过，ddd4j-runtime-spring 注解收敛完成");
     }
 
+    /**
+     * \u9a8c\u8bc1 DDD \u6ce8\u89e3\u53ca\u5f53\u524d\u6846\u67b6\u9700\u8981\u7684\u5143\u6ce8\u89e3\u3002
+     * @param name \u7528\u4e8e\u8bca\u65ad\u7684\u6ce8\u89e3\u540d\u79f0
+     * @param annotationType \u5f85\u9a8c\u8bc1\u7684\u6ce8\u89e3\u7c7b\u578b
+     * @param springAnnotationType \u7ec4\u4ef6\u8981\u6c42\u5305\u542b\u7684 Spring \u5143\u6ce8\u89e3
+     * @return \u6821\u9a8c\u901a\u8fc7\u8fd4\u56de 1\uff0c\u5931\u8d25\u8fd4\u56de 0
+     */
     private static int verify(String name,
                               Class<? extends Annotation> annotationType,
                               Class<? extends Annotation> springAnnotationType) {

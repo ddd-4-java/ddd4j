@@ -41,10 +41,9 @@ public abstract class SpringDomainEvent<T> extends ApplicationEvent {
     }
 
     /**
-     * 领域事件构造器
-     *
-     * @param source   事件内容
-     * @param supports 支持执行的条件，配合supports方法使用
+     * \u9886\u57df\u4e8b\u4ef6\u6784\u9020\u5668
+     * @param source \u4e8b\u4ef6\u5185\u5bb9
+     * @param supportKeys \u652f\u6301\u6267\u884c\u7684\u6761\u4ef6\uff0c\u914d\u5408 supports \u65b9\u6cd5\u4f7f\u7528
      */
     public SpringDomainEvent(T source, Collection<?> supportKeys) {
         super(source);
@@ -55,10 +54,9 @@ public abstract class SpringDomainEvent<T> extends ApplicationEvent {
     }
 
     /**
-     * 领域事件构造器
-     *
-     * @param source  事件内容
-     * @param support 支持执行的条件，配合supports方法使用
+     * \u9886\u57df\u4e8b\u4ef6\u6784\u9020\u5668
+     * @param source \u4e8b\u4ef6\u5185\u5bb9
+     * @param supportKey \u652f\u6301\u6267\u884c\u7684\u6761\u4ef6\uff0c\u914d\u5408 supports \u65b9\u6cd5\u4f7f\u7528
      */
     public SpringDomainEvent(T source, Object supportKey) {
         super(source);
@@ -66,9 +64,10 @@ public abstract class SpringDomainEvent<T> extends ApplicationEvent {
     }
 
     /**
-     * 获取事件源
+     * \u83b7\u53d6\u4e8b\u4ef6\u6e90
+     * @return \u4e8b\u4ef6\u5185\u5bb9
      *
-     * @return 事件内容
+     * @param <S> \u4e8b\u4ef6\u5185\u5bb9\u7c7b\u578b
      */
     @Deprecated
     @SuppressWarnings("unchecked")
@@ -86,13 +85,21 @@ public abstract class SpringDomainEvent<T> extends ApplicationEvent {
         return (T) super.getSource();
     }
 
+    /**
+     * \u83b7\u53d6\u4e8b\u4ef6\u5904\u7406\u7ed3\u679c\u3002
+     * @param <R> \u7ed3\u679c\u7c7b\u578b
+     * @return \u5df2\u8bb0\u5f55\u7684\u5904\u7406\u7ed3\u679c
+     */
     @SuppressWarnings("unchecked")
     public <R> R result() {
         return (R) this.result;
     }
 
     /**
-     * 立即发布事件
+     * \u7acb\u5373\u53d1\u5e03\u4e8b\u4ef6
+     *
+     * @param <R> \u7ed3\u679c\u7c7b\u578b
+     * @return \u53d1\u5e03\u540e\u7684\u5904\u7406\u7ed3\u679c
      */
     @SuppressWarnings("unchecked")
     public <R> R publish() {

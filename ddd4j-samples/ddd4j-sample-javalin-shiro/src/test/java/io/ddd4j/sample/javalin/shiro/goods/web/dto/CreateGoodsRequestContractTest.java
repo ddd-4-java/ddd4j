@@ -8,8 +8,10 @@ import java.math.BigDecimal;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+/** \u9a8c\u8bc1 <code>CreateGoodsRequest</code> \u5728<code>supportsBeanAndComponentAccessors</code>\u3001<code>remainsSubclassable</code>\u7b49\u64cd\u4f5c\u4e2d\u7684\u884c\u4e3a\u5951\u7ea6\u3002 */
 class CreateGoodsRequestContractTest {
 
+    /** \u9a8c\u8bc1<code>request.code()</code> \u7b49\u4e8e <code>"SKU-1"</code>\uff0c<code>request.code()</code> \u7b49\u4e8e <code>request.getCode()</code>\uff0c<code>request.toString()</code> \u7b49\u4e8e <code>"CreateGoodsRequest[code=SKU-1, name=Coffee, price=12.50, stock=3]"</code>\u3002 */
     @Test
     void supportsBeanAndComponentAccessorsWithStableValueBehavior() {
         CreateGoodsRequest request = new CreateGoodsRequest();
@@ -33,6 +35,7 @@ class CreateGoodsRequestContractTest {
         assertEquals("CreateGoodsRequest[code=SKU-1, name=Coffee, price=12.50, stock=3]", request.toString());
     }
 
+    /** \u9a8c\u8bc1<code>subclass</code> \u7b49\u4e8e <code>base</code>\uff0c<code>base</code> \u7b49\u4e8e <code>subclass</code>\uff0c<code>subclass.hashCode()</code> \u7b49\u4e8e <code>base.hashCode()</code>\u3002 */
     @Test
     void remainsSubclassableWithSymmetricValueEquality() {
         CreateGoodsRequest base = new CreateGoodsRequest("SKU-1", "Coffee", new BigDecimal("12.50"), 3);
@@ -44,6 +47,7 @@ class CreateGoodsRequestContractTest {
         assertEquals(base.hashCode(), subclass.hashCode());
     }
 
+    /** \u9a8c\u8bc1<code>JsonKit.toObject(json, CreateGoodsRequest.class)</code> \u7b49\u4e8e <code>original</code>\u3002 */
     @Test
     void roundTripsCurrentLineJsonMapper() {
         CreateGoodsRequest original = new CreateGoodsRequest("SKU-1", "Coffee", new BigDecimal("12.50"), 3);
@@ -51,6 +55,7 @@ class CreateGoodsRequestContractTest {
         assertEquals(original, JsonKit.toObject(json, CreateGoodsRequest.class));
     }
 
+    /** \u9a8c\u8bc1<code>subclass</code> \u4e0d\u7b49\u4e8e <code>base</code>\uff0c<code>base</code> \u4e0d\u7b49\u4e8e <code>subclass</code>\uff0c<code>subclass.hashCode()</code> \u4e0d\u7b49\u4e8e <code>base.hashCode()</code>\u3002 */
     @Test
     void usesOverriddenBeanAccessorForValueComparison() {
         CreateGoodsRequest base = new CreateGoodsRequest("SKU-1", "Coffee", new BigDecimal("12.50"), 3);

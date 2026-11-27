@@ -48,9 +48,11 @@ import java.util.Set;
 @SuppressWarnings("unchecked")
 public abstract class DomainEvent<ID extends EntityId> implements Event, Serializable {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /** \u7528\u4e8e\u6309\u7c7b\u578b\u67e5\u627e\u9886\u57df\u4e8b\u4ef6\u7684\u6ce8\u518c\u8868\u3002 */
     private static final ClassValue<EventType> EVENT_TYPES = new ClassValue<>() {
         @Override
         protected EventType computeValue(Class<?> type) {
@@ -82,21 +84,27 @@ public abstract class DomainEvent<ID extends EntityId> implements Event, Seriali
     @Setter
     private Object result;
 
+    /** \u4e8b\u4ef6\u552f\u4e00\u6807\u8bc6\u3002 */
     @JsonProperty("event-id")
     private EventId eventId;
 
+    /** \u4e8b\u4ef6\u53d1\u751f\u65f6\u95f4\u3002 */
     @JsonProperty("event-timestamp")
     private ZonedDateTime eventTimestamp;
 
+    /** \u5173\u8054\u4e8b\u4ef6\u6807\u8bc6\u3002 */
     @JsonProperty("correlation-id")
     private EventId correlationId;
 
+    /** \u56e0\u679c\u6765\u6e90\u4e8b\u4ef6\u6807\u8bc6\u3002 */
     @JsonProperty("causation-id")
     private EventId causationId;
 
+    /** \u5b9e\u4f53\u6807\u8bc6\u8def\u5f84\u3002 */
     @JsonProperty("entity-id-path")
     private EntityIdPath entityIdPath;
 
+    /** \u805a\u5408\u7248\u672c\u3002 */
     @JsonProperty("aggregate-version")
     private AggregateVersion aggregateVersion;
 

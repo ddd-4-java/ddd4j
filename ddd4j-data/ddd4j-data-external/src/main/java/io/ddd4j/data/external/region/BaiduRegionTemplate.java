@@ -72,6 +72,11 @@ public class BaiduRegionTemplate {
         this.regionCache = Objects.isNull(regionCache) ? RegionCache.none() : regionCache;
     }
 
+    /**
+     * \u672c\u5730\u8c03\u8bd5\u5165\u53e3\uff1a\u67e5\u8be2\u6307\u5b9a IP \u7684\u7ecf\u7eac\u5ea6\u5e76\u6253\u5370\u7ed3\u679c\u3002
+     * @param args \u547d\u4ee4\u884c\u53c2\u6570\uff08\u672a\u4f7f\u7528\uff09
+     * @throws IOException HTTP \u8bf7\u6c42\u6216 JSON \u89e3\u6790\u5f02\u5e38
+     */
     public static void main(String[] args) throws IOException {
 
         BaiduRegionTemplate template = new BaiduRegionTemplate("CGxeqGuAGgP7n475kMPTi58y2EqjAPTh", HttpClient.newHttpClient());
@@ -80,6 +85,10 @@ public class BaiduRegionTemplate {
         log.debug(mapLL2.get().toJSONString());
     }
 
+    /**
+     * \u8ba1\u7b97\u672c\u5730\u65f6\u533a\u5f53\u524d\u65f6\u523b\u5230\u6b21\u65e5\u96f6\u70b9\u7684\u95f4\u9694\u3002
+     * @return \u5230\u6b21\u65e5\u96f6\u70b9\u5269\u4f59\u7684\u79d2\u6570
+     */
     private static long secondsUntilNextDay() {
         LocalDateTime tomorrowStart = LocalDate.now().plusDays(1).atStartOfDay();
         return Duration.between(LocalDateTime.now(), tomorrowStart).getSeconds();
@@ -161,6 +170,11 @@ public class BaiduRegionTemplate {
         return Optional.empty();
     }
 
+    /**
+     * \u89e3\u6790\u6307\u5b9a IP \u5bf9\u5e94\u7684\u884c\u653f\u533a\u5212\u5730\u5740\uff08\u7701\u4efd/\u57ce\u5e02/\u8fd0\u8425\u5546\u7b49\uff09\u3002
+     * @param ip ipv4 \u5730\u5740
+     * @return \u884c\u653f\u533a\u5212\u5730\u5740\uff1b\u89e3\u6790\u5931\u8d25\u8fd4\u56de\u672a\u5339\u914d\u7684\u5360\u4f4d\u5730\u5740
+     */
     public RegionAddress getRegionAddress(String ip) {
         try {
             Optional<JSONObject> optional = this.getLocationByIp(ip);
@@ -191,6 +205,11 @@ public class BaiduRegionTemplate {
         }
     }
 
+    /**
+     * \u89e3\u6790\u6307\u5b9a IP \u5bf9\u5e94\u7684\u56fd\u5bb6\u533a\u57df\u679a\u4e3e\u3002
+     * @param ip ipv4 \u5730\u5740
+     * @return \u56fd\u5bb6\u533a\u57df\u679a\u4e3e\uff1b\u89e3\u6790\u5931\u8d25\u8fd4\u56de {@link RegionEnum#UK}
+     */
     public RegionEnum getRegionByIp(String ip) {
         try {
             Optional<JSONObject> optional = this.getLocationByIp(ip);
@@ -218,6 +237,11 @@ public class BaiduRegionTemplate {
         }
     }
 
+    /**
+     * \u89e3\u6790\u6307\u5b9a IP \u5bf9\u5e94\u7684\u57ce\u5e02\u4e2d\u5fc3\u70b9\u7ecf\u7eac\u5ea6\u3002
+     * @param ip ipv4 \u5730\u5740
+     * @return \u7ecf\u7eac\u5ea6\u4f4d\u7f6e\uff1b\u89e3\u6790\u5931\u8d25\u8fd4\u56de {@code null}
+     */
     public Location getLocation(String ip) {
         try {
             Optional<JSONObject> optional = this.getLocationByIp(ip);
@@ -244,6 +268,11 @@ public class BaiduRegionTemplate {
         return null;
     }
 
+    /**
+     * \u5224\u65ad\u6307\u5b9a IP \u662f\u5426\u5c5e\u4e8e\u4e2d\u56fd\u5927\u9646\uff08\u5f53\u524d\u5b9e\u73b0\u67e5\u8be2\u5931\u8d25\u65f6\u6309\u5927\u9646\u5904\u7406\uff09\u3002
+     * @param ip ipv4 \u5730\u5740
+     * @return {@code true} \u8868\u793a\u6309\u5927\u9646 IP \u5904\u7406
+     */
     public boolean isMainlandIp(String ip) {
         try {
             Optional<JSONObject> optional = this.getLocationByIp(ip);
@@ -260,6 +289,7 @@ public class BaiduRegionTemplate {
         return true;
     }
 
+    /** \u57ce\u5e02\u4e2d\u5fc3\u70b9\u7ecf\u7eac\u5ea6\u3002 */
     @Data
     @AllArgsConstructor
     public class Location {

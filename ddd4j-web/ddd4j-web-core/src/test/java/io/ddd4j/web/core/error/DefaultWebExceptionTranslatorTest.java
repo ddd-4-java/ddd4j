@@ -12,10 +12,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+/** \u9a8c\u8bc1 <code>DefaultWebExceptionTranslator</code> \u5728<code>translateBizRuntime</code>\u3001<code>translate</code>\u7b49\u64cd\u4f5c\u4e2d\u7684\u884c\u4e3a\u5951\u7ea6\u3002 */
 class DefaultWebExceptionTranslatorTest {
 
+    /** \u5f53\u6846\u67b6\u629b\u51fa\u5f02\u5e38\u65f6\u751f\u6210 HTTP \u9519\u8bef\u7684\u8f6c\u6362\u5668\u3002 */
     private final DefaultWebExceptionTranslator translator = new DefaultWebExceptionTranslator();
 
+    /** \u9a8c\u8bc1<code>error.status()</code> \u7b49\u4e8e <code>401</code>\uff0c<code>error.message()</code> \u7b49\u4e8e <code>"unauthorized"</code>\u3002 */
     @Test
     void translateWebStatusException() {
         WebStatusException exception = new WebStatusException(401, "UNAUTHORIZED", "unauthorized",
@@ -25,12 +28,14 @@ class DefaultWebExceptionTranslatorTest {
         assertEquals("unauthorized", error.message());
     }
 
+    /** \u9a8c\u8bc1<code>error.status()</code> \u7b49\u4e8e <code>409</code>\u3002 */
     @Test
     void translateIdempotentExceptionAsConflict() {
         WebError error = translator.translate(new IdempotentException("duplicate"));
         assertEquals(409, error.status());
     }
 
+    /** \u9a8c\u8bc1<code>translator.translate(new ParamException("bad param")).status()</code> \u7b49\u4e8e <code>400</code>\uff0c<code>translator.translate(new ValidateException("invalid")).status()</code> \u7b49\u4e8e <code>400</code>\uff0c<code>translator.translate(new IllegalArgumentException("bad")).status()</code> \u7b49\u4e8e <code>400</code>\u3002 */
     @Test
     void translateParamAndValidationErrorsAsBadRequest() {
         assertEquals(400, translator.translate(new ParamException("bad param")).status());
@@ -38,33 +43,39 @@ class DefaultWebExceptionTranslatorTest {
         assertEquals(400, translator.translate(new IllegalArgumentException("bad")).status());
     }
 
+    /** \u9a8c\u8bc1<code>translator.translate(new IllegalStateException("state")).status()</code> \u7b49\u4e8e <code>409</code>\u3002 */
     @Test
     void translateIllegalStateAsConflict() {
         assertEquals(409, translator.translate(new IllegalStateException("state")).status());
     }
 
+    /** \u9a8c\u8bc1<code>translator.translate(new NoSuchElementException("missing")).status()</code> \u7b49\u4e8e <code>404</code>\u3002 */
     @Test
     void translateNoSuchElementAsNotFound() {
         assertEquals(404, translator.translate(new NoSuchElementException("missing")).status());
     }
 
+    /** \u9a8c\u8bc1<code>translator.translate(new SecurityException("denied")).status()</code> \u7b49\u4e8e <code>403</code>\u3002 */
     @Test
     void translateSecurityAsForbidden() {
         assertEquals(403, translator.translate(new SecurityException("denied")).status());
     }
 
+    /** \u9a8c\u8bc1<code>error.status()</code> \u7b49\u4e8e <code>422</code>\u3002 */
     @Test
     void translateBizRuntimeWithStatusCode() {
         WebError error = translator.translate(new BizRuntimeException(422, "VALIDATION", "invalid"));
         assertEquals(422, error.status());
     }
 
+    /** \u9a8c\u8bc1<code>error.status()</code> \u7b49\u4e8e <code>500</code>\u3002 */
     @Test
     void translateBizRuntimeNormalizesOutOfRangeCode() {
         WebError error = translator.translate(new BizRuntimeException(99, "X", "msg"));
         assertEquals(500, error.status());
     }
 
+    /** \u9a8c\u8bc1<code>error.status()</code> \u7b49\u4e8e <code>500</code>\uff0c<code>error.message()</code> \u7b49\u4e8e <code>"boom"</code>\u3002 */
     @Test
     void translateGenericExceptionAsInternalError() {
         WebError error = translator.translate(new RuntimeException("boom"));
@@ -72,6 +83,7 @@ class DefaultWebExceptionTranslatorTest {
         assertEquals("boom", error.message());
     }
 
+    /** \u9a8c\u8bc1<code>error.status()</code> \u7b49\u4e8e <code>500</code>\uff0c<code>error.message()</code> \u7b49\u4e8e <code>"Internal Server Error"</code>\uff0c<code>error.data()</code>\u4e3a\u7a7a\u3002 */
     @Test
     void translateBlankMessageUsesFallback() {
         WebError error = translator.translate(new RuntimeException());
@@ -80,6 +92,7 @@ class DefaultWebExceptionTranslatorTest {
         assertNull(error.data());
     }
 
+    /** \u9a8c\u8bc1<code>translator.translate(null)</code> \u629b\u51fa <code>NullPointerException.class</code>\u3002 */
     @Test
     void translateRejectsNull() {
         assertThrows(NullPointerException.class, () -> translator.translate(null));

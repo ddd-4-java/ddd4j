@@ -25,11 +25,23 @@ public class GuiceDomainEventPublisher implements DomainEventPublisher {
      */
     private final EventBus eventBus;
 
+    /**
+     * \u4f7f\u7528 Guava EventBus \u521b\u5efa\u9886\u57df\u4e8b\u4ef6\u53d1\u5e03\u5668\u3002
+     * @param eventBus Guava \u4e8b\u4ef6\u603b\u7ebf
+     */
     @Inject
     public GuiceDomainEventPublisher(EventBus eventBus) {
         this.eventBus = eventBus;
     }
 
+    /**
+     * 将传入的事件交给当前发布通道。
+     *
+     * <p>此实现调用 <code>log.warn("Attempted to publish null domain event")</code>。</p>
+     *
+     * @param <ID> 实体标识类型
+     * @param event 领域事件
+     */
     @Override
     public <ID extends EntityId> void publish(DomainEvent<ID> event) {
         if (Objects.isNull(event)) {

@@ -54,6 +54,7 @@ public class GoodsApplicationService {
      * 内存模式下的 ID 生成器（实际生产应使用雪花算法等）
      */
     private static final AtomicLong ID_GENERATOR = new AtomicLong(1000L);
+    /** \u7528\u4e8e\u6301\u4e45\u5316\u53ca\u8bfb\u53d6\u793a\u4f8b\u5546\u54c1\u6a21\u578b\u7684\u4ed3\u50a8\u3002 */
     private final GoodsRepository repository;
 
     /**
@@ -214,18 +215,30 @@ public class GoodsApplicationService {
         return query.count();
     }
 
+    /**
+     * \u68c0\u67e5\u5546\u54c1\u7f16\u7801\u662f\u5426\u6ee1\u8db3\u521b\u5efa\u6216\u67e5\u8be2\u89c4\u5219\u3002
+     * @param code \u5f85\u68c0\u67e5\u7684\u5546\u54c1\u5c5e\u6027
+     */
     private void validateCode(String code) {
         if (StrKit.isBlank(code)) {
             throw new BizRuntimeException("product.code.invalid", "code must not be blank");
         }
     }
 
+    /**
+     * \u68c0\u67e5\u5546\u54c1\u540d\u79f0\u662f\u5426\u6ee1\u8db3\u5199\u5165\u89c4\u5219\u3002
+     * @param name \u5f85\u68c0\u67e5\u7684\u5546\u54c1\u5c5e\u6027
+     */
     private void validateName(String name) {
         if (StrKit.isBlank(name)) {
             throw new BizRuntimeException("product.name.invalid", "name must not be blank");
         }
     }
 
+    /**
+     * \u68c0\u67e5\u5546\u54c1\u4ef7\u683c\u662f\u5426\u6ee1\u8db3\u5199\u5165\u89c4\u5219\u3002
+     * @param price \u5f85\u68c0\u67e5\u7684\u5546\u54c1\u5c5e\u6027
+     */
     private void validatePrice(BigDecimal price) {
         if (Objects.isNull(price) || price.signum() < 0) {
             throw new BizRuntimeException("product.price.invalid", "price must be >= 0");
@@ -233,7 +246,9 @@ public class GoodsApplicationService {
     }
 
     /**
-     * 生成下一个主键 ID（演示用，生产环境应使用分布式 ID）。
+     * \u751f\u6210\u4e0b\u4e00\u4e2a\u4e3b\u952e ID\uff08\u6f14\u793a\u7528\uff0c\u751f\u4ea7\u73af\u5883\u5e94\u4f7f\u7528\u5206\u5e03\u5f0f ID\uff09\u3002
+     *
+     * @return \u9012\u589e\u540e\u7684\u793a\u4f8b\u5546\u54c1\u4e3b\u952e
      */
     private Long nextId() {
         return ID_GENERATOR.incrementAndGet();

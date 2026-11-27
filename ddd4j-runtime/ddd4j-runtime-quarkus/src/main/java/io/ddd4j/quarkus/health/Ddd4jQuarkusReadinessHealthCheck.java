@@ -18,14 +18,23 @@ import java.util.Objects;
 @ApplicationScoped
 public class Ddd4jQuarkusReadinessHealthCheck implements HealthCheck {
 
+    /** \u6c47\u603b\u5f53\u524d\u7ec4\u4ef6\u5c31\u7eea\u72b6\u6001\u7684\u6ce8\u518c\u8868\u3002 */
     private final RuntimeReadinessRegistry readinessRegistry;
 
+    /**
+     * \u521b\u5efa Quarkus \u5c31\u7eea\u5065\u5eb7\u68c0\u67e5\u3002
+     * @param readinessRegistry \u8fd0\u884c\u65f6\u5c31\u7eea\u6ce8\u518c\u8868
+     */
     @Inject
     public Ddd4jQuarkusReadinessHealthCheck(RuntimeReadinessRegistry readinessRegistry) {
         this.readinessRegistry = Objects.requireNonNull(readinessRegistry,
                 "readinessRegistry must not be null");
     }
 
+    /**
+     * \u5c06 DDD4J \u5c31\u7eea\u62a5\u544a\u8f6c\u6362\u4e3a MicroProfile \u5065\u5eb7\u68c0\u67e5\u7ed3\u679c\u3002
+     * @return Quarkus \u5c31\u7eea\u7aef\u70b9\u8fd4\u56de\u7684\u7ed3\u679c
+     */
     @Override
     public HealthCheckResponse call() {
         ReadinessReport report = readinessRegistry.readiness();

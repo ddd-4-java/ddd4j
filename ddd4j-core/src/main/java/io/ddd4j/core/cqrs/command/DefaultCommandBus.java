@@ -11,12 +11,26 @@ import java.util.concurrent.ConcurrentHashMap;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class DefaultCommandBus implements CommandBus {
 
+    /** \u6309\u547d\u4ee4\u8fd0\u884c\u65f6\u7c7b\u578b\u9009\u62e9\u6267\u884c\u5668\u7684\u7d22\u5f15\u3002 */
     private final Map<Class<? extends Command>, CommandExecutor<?>> executors = new ConcurrentHashMap<>();
 
+    /**
+     * \u5efa\u7acb\u547d\u4ee4\u7c7b\u578b\u5230\u6267\u884c\u5668\u7684\u7d22\u5f15\uff1b\u91cd\u590d\u6ce8\u518c\u540c\u4e00\u547d\u4ee4\u7c7b\u578b\u4f1a\u5931\u8d25\u3002
+     * @param commandExecutors \u547d\u4ee4\u6267\u884c\u5668\u96c6\u5408
+     */
     public DefaultCommandBus(Collection<? extends CommandExecutor<?>> commandExecutors) {
         Objects.requireNonNull(commandExecutors, "commandExecutors must not be null").forEach(this::register);
     }
 
+    /**
+     * 用当前处理器执行传入命令或操作。
+     *
+     * <p>此实现调用 <code>executors.get(actual.getClass())</code>。</p>
+     *
+     * @param <R> 此操作处理的值或结果的 Java 类型
+     * @param command 交由命令总线或执行器处理的命令
+     * @return 实际返回<code>(Result&lt;R&gt;)executor.execute(actual)</code>
+     */
     @Override
     public <R> Result<R> execute(Command command) {
         Command actual = Objects.requireNonNull(command, "command must not be null");
@@ -27,6 +41,10 @@ public class DefaultCommandBus implements CommandBus {
         return (Result<R>) executor.execute(actual);
     }
 
+    /**
+     * \u7ed1\u5b9a\u6267\u884c\u5668\u58f0\u660e\u652f\u6301\u7684\u6bcf\u4e00\u79cd\u547d\u4ee4\u7c7b\u578b\u3002
+     * @param executor \u58f0\u660e\u652f\u6301\u547d\u4ee4\u7c7b\u578b\u7684\u6267\u884c\u5668
+     */
     private void register(CommandExecutor<?> executor) {
         CommandExecutor<?> actual = Objects.requireNonNull(executor, "executor must not be null");
         for (Class<? extends Command> commandType : actual.supportedCommands()) {

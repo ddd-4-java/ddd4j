@@ -15,9 +15,7 @@ import java.util.List;
 /** 原生 Sa-Token 权限数据及 MVC 入口拦截；演示只读和可写账号。 */
 @Configuration(proxyBeanMethods = false)
 public class SaTokenConfiguration implements WebMvcConfigurer {
-    /**
-     * @return 当前演示账号的原生权限提供器
-     */
+    /** @return \u5f53\u524d\u6f14\u793a\u8d26\u53f7\u7684\u539f\u751f\u6743\u9650\u63d0\u4f9b\u5668 */
     @Bean
     public StpInterface orderPermissions() {
         return new StpInterface() {
@@ -33,6 +31,10 @@ public class SaTokenConfiguration implements WebMvcConfigurer {
         };
     }
 
+    /**
+     * \u5411 Spring MVC \u6ce8\u518c\u5f53\u524d\u793a\u4f8b\u4f7f\u7528\u7684\u539f\u751f\u8ba4\u8bc1\u62e6\u622a\u5668\u3002
+     * @param registry Spring MVC \u7684\u62e6\u622a\u5668\u6ce8\u518c\u5668
+     */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new HandlerInterceptor() {

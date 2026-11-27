@@ -15,6 +15,7 @@ public enum ApiCode implements CustomApiCode {
 
     // --- 2xx Client Error ---
 
+    /** 保存 <code>SC SUCCESS</code> 对应的 <code>ApiCode</code> 数据。 */
     SC_SUCCESS(ApiCodeValue.SC_SUCCESS, Constants.RT_SUCCESS, "请求成功"),
 
     // --- 4xx Client Error ---
@@ -168,10 +169,13 @@ public enum ApiCode implements CustomApiCode {
      */
     SC_METHOD_ARGUMENT_NOT_VALID(HttpStatus.SC_BAD_REQUEST, Constants.RT_FAIL, "错误请求参数"),
 
+    /** 保存 <code>SC ACCESS DENIED</code> 对应的 <code>ApiCode</code> 数据。 */
     SC_ACCESS_DENIED(HttpStatus.SC_UNAUTHORIZED, Constants.RT_FAIL, "不允许访问（功能未授权）"),
 
+    /** 保存 <code>SC FAIL</code> 对应的 <code>ApiCode</code> 数据。 */
     SC_FAIL(ApiCodeValue.SC_FAIL, Constants.RT_FAIL, "失败"),
 
+    /** 保存 <code>SC EMPTY</code> 对应的 <code>ApiCode</code> 数据。 */
     SC_EMPTY(ApiCodeValue.SC_FAIL, Constants.RT_FAIL, "数据为空"),
 
     /**
@@ -247,48 +251,106 @@ public enum ApiCode implements CustomApiCode {
      */
     SC_NETWORK_AUTHENTICATION_REQUIRED(HttpStatus.SC_NETWORK_AUTHENTICATION_REQUIRED, Constants.RT_FAIL, "要求网络认证");
 
+    /** 调用方收到的业务状态编码。 */
     private final int code;
+    /** HTTP 适配层或领域对象使用的状态值。 */
     private final String status;
+    /** \u4e0e\u72b6\u6001\u7801\u5173\u8054\u7684\u8bf4\u660e\u3002 */
     private final String reason;
 
+    /**
+     * 初始化 <code>ApiCode</code> 使用的 <code>code</code>、<code>status</code>、<code>reason</code>。
+     *
+     * @param code 随响应返回的业务状态编码
+     * @param status 为兼容既有调用保留的状态参数
+     * @param reason \u72b6\u6001\u7684\u8bf4\u660e
+     */
     ApiCode(int code, String status, String reason) {
         this.code = code;
         this.status = status;
         this.reason = reason;
     }
 
+    /**
+     * 按 <code>to String</code> 的契约计算并返回结果。
+     *
+     * @return 返回表达式 <code>String.valueOf(code)</code>
+     */
     @Override
     public String toString() {
         return String.valueOf(code);
     }
 
+    /**
+     * 读取调用方收到的业务状态编码。
+     *
+     * @return 返回表达式 <code>code</code>
+     */
     @Override
     public int getCode() {
         return code;
     }
 
+    /**
+     * 读取HTTP 适配层或领域对象使用的状态值。
+     *
+     * @return 返回表达式 <code>status</code>
+     */
     @Override
     public String getStatus() {
         return status;
     }
 
+    /**
+     * 读取状态编码对应的缺省说明。
+     *
+     * @return 返回表达式 <code>reason</code>
+     */
     @Override
     public String getReason() {
         return reason;
     }
 
+    /**
+     * 执行 <code>to Response</code>，调用 <code>ApiRestResponse.of</code>。
+     *
+     * @param <T> 当前操作使用的泛型类型
+     * @return 返回表达式 <code>ApiRestResponse.of(this)</code>
+     */
     public <T> ApiRestResponse<T> toResponse() {
         return ApiRestResponse.of(this);
     }
 
+    /**
+     * 执行 <code>to Response</code>，调用 <code>ApiRestResponse.of</code>。
+     *
+     * @param <T> 当前操作使用的泛型类型
+     * @param message 随响应返回的业务说明
+     * @return 返回表达式 <code>ApiRestResponse.of(this, message, null)</code>
+     */
     public <T> ApiRestResponse<T> toResponse(String message) {
         return ApiRestResponse.of(this, message, null);
     }
 
+    /**
+     * 执行 <code>to Response</code>，调用 <code>ApiRestResponse.of</code>。
+     *
+     * @param <T> 当前操作使用的泛型类型
+     * @param data 随响应携带的业务数据
+     * @return 返回表达式 <code>ApiRestResponse.of(this, data)</code>
+     */
     public <T> ApiRestResponse<T> toResponse(T data) {
         return ApiRestResponse.of(this, data);
     }
 
+    /**
+     * 执行 <code>to Response</code>，调用 <code>ApiRestResponse.of</code>。
+     *
+     * @param <T> 当前操作使用的泛型类型
+     * @param message 随响应返回的业务说明
+     * @param data 随响应携带的业务数据
+     * @return 返回表达式 <code>ApiRestResponse.of(this, message, data)</code>
+     */
     public <T> ApiRestResponse<T> toResponse(String message, T data) {
         return ApiRestResponse.of(this, message, data);
     }

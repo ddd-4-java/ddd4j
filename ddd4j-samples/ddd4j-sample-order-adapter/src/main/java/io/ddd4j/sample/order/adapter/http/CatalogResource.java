@@ -14,6 +14,7 @@ import jakarta.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public abstract class CatalogResource {
+    /** \u8d1f\u8d23\u6267\u884c\u5546\u54c1\u4ea4\u6613\u7528\u4f8b\u7684 HTTP \u7aef\u53e3\u3002 */
     private final CatalogEndpoints api;
 
     /**

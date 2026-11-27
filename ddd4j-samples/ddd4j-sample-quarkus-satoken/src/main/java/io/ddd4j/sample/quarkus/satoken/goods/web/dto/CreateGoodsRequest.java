@@ -27,14 +27,19 @@ import java.util.Objects;
  */
 public final class CreateGoodsRequest {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 0L;
 
+    /** \u5f53\u524d\u8bf7\u6c42\u6216\u7ed3\u679c\u4f7f\u7528\u7684\u4e1a\u52a1\u7f16\u7801\u3002 */
     private final String code;
 
+    /** \u5f53\u524d\u8bf7\u6c42\u6216\u7ed3\u679c\u4f7f\u7528\u7684\u663e\u793a\u540d\u79f0\u3002 */
     private final String name;
 
+    /** \u5546\u54c1\u793a\u4f8b\u4f7f\u7528\u7684\u9500\u552e\u4ef7\u683c\u3002 */
     private final BigDecimal price;
 
+    /** \u793a\u4f8b\u5546\u54c1\u53ef\u7528\u7684\u5e93\u5b58\u6570\u91cf\u3002 */
     private final Integer stock;
 
     /**
@@ -93,6 +98,14 @@ public final class CreateGoodsRequest {
         return stock;
     }
 
+    /**
+     * 根据<code>code</code>、<code>name</code>、<code>price</code>、<code>stock</code>比较对象的值是否相等。
+     *
+     * <p>只比较运行时类型相同的对象。</p>
+     *
+     * @param obj 用来比较或转换的输入对象
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -105,6 +118,11 @@ public final class CreateGoodsRequest {
         return Objects.equals(this.code, other.code) && Objects.equals(this.name, other.name) && Objects.equals(this.price, other.price) && Objects.equals(this.stock, other.stock);
     }
 
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         int result = 0;
@@ -115,6 +133,11 @@ public final class CreateGoodsRequest {
         return result;
     }
 
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>code</code>、<code>name</code>、<code>price</code>、<code>stock</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "CreateGoodsRequest[code=" + code + ", name=" + name + ", price=" + price + ", stock=" + stock + "]";

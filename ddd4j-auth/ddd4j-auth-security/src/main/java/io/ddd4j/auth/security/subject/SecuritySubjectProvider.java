@@ -14,6 +14,11 @@ import io.ddd4j.core.subject.SubjectProvider;
  */
 public class SecuritySubjectProvider implements SubjectProvider {
 
+    /**
+     * 取得当前请求使用的认证主体接口。
+     *
+     * @return 本次调用使用的认证主体接口
+     */
     @Override
     public Subject getSubject() {
         return new SecuritySubject();

@@ -11,6 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class CacheKitLocalCacheTypeTest {
 
+    /** \u9a8c\u8bc1<code>types</code> \u4ec5\u5305\u542b <code>CacheKit.LocalCacheType.CAFFEINE</code>\u3001<code>CacheKit.LocalCacheType.GUAVA</code>\u3001<code>CacheKit.LocalCacheType.HUTOOL</code>\u3002 */
     @Test
     void values_shouldContainCaffeineGuavaHutool() {
         CacheKit.LocalCacheType[] types = CacheKit.LocalCacheType.values();
@@ -21,6 +22,7 @@ class CacheKitLocalCacheTypeTest {
                 CacheKit.LocalCacheType.HUTOOL);
     }
 
+    /** \u9a8c\u8bc1<code>CacheKit.LocalCacheType.valueOf("CAFFEINE")</code> \u7b49\u4e8e <code>CacheKit.LocalCacheType.CAFFEINE</code>\uff0c<code>CacheKit.LocalCacheType.valueOf("GUAVA")</code> \u7b49\u4e8e <code>CacheKit.LocalCacheType.GUAVA</code>\uff0c<code>CacheKit.LocalCacheType.valueOf("HUTOOL")</code> \u7b49\u4e8e <code>CacheKit.LocalCacheType.HUTOOL</code>\u3002 */
     @Test
     void valueOf_shouldResolveByName() {
         assertThat(CacheKit.LocalCacheType.valueOf("CAFFEINE"))
@@ -31,6 +33,7 @@ class CacheKitLocalCacheTypeTest {
                 .isEqualTo(CacheKit.LocalCacheType.HUTOOL);
     }
 
+    /** \u9a8c\u8bc1<code>CacheKit.getDefaultType()</code> \u7b49\u4e8e <code>CacheKit.LocalCacheType.CAFFEINE</code>\u3002 */
     @Test
     void getDefaultType_shouldBeCaffeineByDefault() {
         CacheKit.setDefaultType(CacheKit.LocalCacheType.CAFFEINE);

@@ -18,28 +18,33 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class WebOtelIntegrationTest {
 
+    /** \u6d4b\u8bd5\u6267\u884c\u524d\u6267\u884c <code>OpenTelemetrySdkSetter.set()</code>\u3001<code>OpenTelemetry.noop()</code> \u5b8c\u6210\u8d44\u6e90\u51c6\u5907\u3002 */
     @BeforeEach
     void setUp() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
     }
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>OpenTelemetrySdkSetter.set()</code>\u3001<code>OpenTelemetry.noop()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterEach
     void tearDown() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
     }
 
+    /** \u9a8c\u8bc1<code>span</code>\u975e\u7a7a\u3002 */
     @Test
     void startServerSpan_shouldReturnSpan() {
         Span span = WebOtelIntegration.startServerSpan("GET", "/api/users", new HashMap<>());
         assertThat(span).isNotNull();
     }
 
+    /** \u9a8c\u8bc1<code>span</code>\u975e\u7a7a\u3002 */
     @Test
     void startServerSpan_withNullHeaders_shouldReturnSpan() {
         Span span = WebOtelIntegration.startServerSpan("POST", "/api/orders", null);
         assertThat(span).isNotNull();
     }
 
+    /** \u9a8c\u8bc1<code>span</code>\u975e\u7a7a\u3002 */
     @Test
     void startServerSpan_withTraceparent_shouldNotThrow() {
         Map<String, String> headers = new HashMap<>();
@@ -49,6 +54,7 @@ class WebOtelIntegrationTest {
         assertThat(span).isNotNull();
     }
 
+    /** \u9a8c\u8bc1<code>scope</code>\u975e\u7a7a\u3002 */
     @Test
     void activate_shouldReturnNonNullScope() {
         Span span = WebOtelIntegration.startServerSpan("GET", "/api", new HashMap<>());
@@ -60,24 +66,28 @@ class WebOtelIntegrationTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>true</code>\u4e3a\u771f\u3002 */
     @Test
     void recordError_withNull_shouldNotThrow() {
         WebOtelIntegration.recordError(null, null);
         assertThat(true).isTrue();
     }
 
+    /** \u9a8c\u8bc1<code>true</code>\u4e3a\u771f\u3002 */
     @Test
     void endServerSpan_shouldNotThrowWithNull() {
         WebOtelIntegration.endServerSpan(null, 500);
         assertThat(true).isTrue();
     }
 
+    /** \u9a8c\u8bc1<code>true</code>\u4e3a\u771f\u3002 */
     @Test
     void injectResponseContext_shouldNotThrowWithNull() {
         WebOtelIntegration.injectResponseContext(null);
         assertThat(true).isTrue();
     }
 
+    /** \u9a8c\u8bc1<code>headers</code>\u975e\u7a7a\u3002 */
     @Test
     void injectResponseContext_withEmptyHeaders_shouldNotThrow() {
         Map<String, String> headers = new HashMap<>();
@@ -85,12 +95,14 @@ class WebOtelIntegrationTest {
         assertThat(headers).isNotNull();
     }
 
+    /** \u9a8c\u8bc1<code>result</code>\u4e3a\u7a7a\u3002 */
     @Test
     void asHeaders_withNull_shouldReturnEmptyMap() {
         Map<String, String> result = WebOtelIntegration.asHeaders(null);
         assertThat(result).isEmpty();
     }
 
+    /** \u9a8c\u8bc1<code>result</code> \u542b\u5bf9\u5e94\u6761\u76ee <code>"X-Foo"</code>\u3001<code>"bar"</code>\u3002 */
     @Test
     void asHeaders_withMap_shouldReturnCopy() {
         Map<String, String> source = new HashMap<>();
@@ -99,6 +111,7 @@ class WebOtelIntegrationTest {
         assertThat(result).containsEntry("X-Foo", "bar");
     }
 
+    /** \u9a8c\u8bc1<code>true</code>\u4e3a\u771f\u3002 */
     @Test
     void fullLifecycle_shouldWorkWithoutException() {
         Map<String, String> reqHeaders = new HashMap<>();
@@ -119,6 +132,7 @@ class WebOtelIntegrationTest {
         assertThat(true).isTrue();
     }
 
+    /** \u9a8c\u8bc1<code>true</code>\u4e3a\u771f\u3002 */
     @Test
     void fullLifecycle_withError_shouldNotThrow() {
         Span span = WebOtelIntegration.startServerSpan("POST", "/api/orders", new HashMap<>());
@@ -132,6 +146,7 @@ class WebOtelIntegrationTest {
         assertThat(true).isTrue();
     }
 
+    /** \u9a8c\u8bc1<code>span</code>\u975e\u7a7a\u3002 */
     @Test
     void supportsAllHttpMethods() {
         for (String method : new String[]{"GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"}) {

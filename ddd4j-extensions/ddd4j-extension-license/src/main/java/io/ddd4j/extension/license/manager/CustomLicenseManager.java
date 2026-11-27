@@ -19,6 +19,7 @@ import java.util.function.Function;
  */
 public class CustomLicenseManager {
 
+    /** \u8bfb\u53d6\u672c\u673a\u7f51\u7edc\u5730\u5740\u53ca\u786c\u4ef6\u6807\u8bc6\u7684\u63d0\u4f9b\u5668\u3002 */
     private final LicenseMachineInfoProvider machineInfoProvider;
 
     /**
@@ -68,6 +69,13 @@ public class CustomLicenseManager {
         }
     }
 
+    /**
+     * \u6309\u914d\u7f6e\u7684\u5206\u9694\u7b26\u63d0\u53d6\u671f\u671b\u503c\uff0c\u89c4\u8303\u5316\u540e\u68c0\u67e5\u662f\u5426\u547d\u4e2d\u5b9e\u9645\u4fe1\u606f\u3002
+     * @param expectedValues \u8bb8\u53ef\u8bc1\u4e2d\u5141\u8bb8\u7684\u914d\u7f6e\u503c
+     * @param actualValues \u4ece\u5f53\u524d\u673a\u5668\u53d6\u5f97\u7684\u5b9e\u9645\u503c\u96c6\u5408
+     * @param normalizer \u5f52\u4e00\u5316\u6807\u8bc6\u7684\u51fd\u6570
+     * @return \u672a\u914d\u7f6e\u9650\u5236\u6216\u81f3\u5c11\u6709\u4e00\u9879\u5339\u914d\u65f6\u8fd4\u56de true
+     */
     private boolean matchesAny(String expectedValues, Set<String> actualValues, Function<String, String> normalizer) {
         if (Objects.isNull(expectedValues)) {
             return true;
@@ -89,6 +97,11 @@ public class CustomLicenseManager {
         return false;
     }
 
+    /**
+     * \u5c06\u975e\u7a7a\u6807\u8bc6\u53bb\u6389\u9996\u5c3e\u7a7a\u683c\u5e76\u6309\u56fa\u5b9a\u533a\u57df\u8f6c\u4e3a\u5c0f\u5199\u3002
+     * @param value \u5f85\u5f52\u4e00\u5316\u7684\u73af\u5883\u6807\u8bc6
+     * @return \u5f52\u4e00\u5316\u7ed3\u679c\uff0c\u7a7a\u5f15\u7528\u539f\u6837\u8fd4\u56de
+     */
     private String normalizeText(String value) {
         if (Objects.isNull(value)) {
             return null;
@@ -96,6 +109,11 @@ public class CustomLicenseManager {
         return value.trim().toLowerCase(Locale.ROOT);
     }
 
+    /**
+     * \u89c4\u8303\u5316 MAC \u5730\u5740\u5927\u5c0f\u5199\u5e76\u53bb\u9664\u5192\u53f7\u548c\u8fde\u5b57\u7b26\u3002
+     * @param value \u5f85\u6bd4\u8f83\u7684 MAC \u5730\u5740
+     * @return \u65e0\u5206\u9694\u7b26\u7684\u5c0f\u5199\u5730\u5740\uff0c\u7a7a\u5f15\u7528\u539f\u6837\u8fd4\u56de
+     */
     private String normalizeMac(String value) {
         String normalized = normalizeText(value);
         if (Objects.isNull(normalized)) {

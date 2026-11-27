@@ -14,7 +14,9 @@ package io.ddd4j.web.webmvc.ws;
 public abstract class BaseWebSocketServer {
 
     /**
-     * WebSocket 路径（默认 {@code "/ws"}）。
+     * WebSocket \u8def\u5f84\uff08\u9ed8\u8ba4 {@code "/ws"}\uff09\u3002
+     *
+     * @return WebSocket \u7aef\u70b9\u8def\u5f84
      */
     public String getPath() {
         return "/ws";

@@ -50,7 +50,10 @@ public class DingTalkClient {
     private final String baseUrl;
 
     /**
-     * 默认构造函数，使用 {@link #BASE_URL}。
+     * \u9ed8\u8ba4\u6784\u9020\u51fd\u6570\uff0c\u4f7f\u7528 {@link #BASE_URL}\u3002
+     *
+     * @param accessToken \u9489\u9489\u673a\u5668\u4eba access_token
+     * @param secret \u9489\u9489\u673a\u5668\u4eba\u52a0\u7b7e\u5bc6\u94a5
      */
     public DingTalkClient(String accessToken, String secret) {
         this(accessToken, secret, BASE_URL);
@@ -69,23 +72,17 @@ public class DingTalkClient {
         this.baseUrl = baseUrl;
     }
 
-    /**
-     * @return 配置的 access_token
-     */
+    /** @return \u914d\u7f6e\u7684 access_token */
     public String accessToken() {
         return accessToken;
     }
 
-    /**
-     * @return 配置的加签密钥
-     */
+    /** @return \u914d\u7f6e\u7684\u52a0\u7b7e\u5bc6\u94a5 */
     public String secret() {
         return secret;
     }
 
-    /**
-     * @return 当前生效的 webhook 基础地址（含 {@code ?access_token=}）
-     */
+    /** @return \u5f53\u524d\u751f\u6548\u7684 webhook \u57fa\u7840\u5730\u5740\uff08\u542b {@code ?access_token=}\uff09 */
     public String baseUrl() {
         return baseUrl;
     }
@@ -115,7 +112,12 @@ public class DingTalkClient {
     }
 
     /**
-     * 计算钉钉机器人加签。
+     * \u8ba1\u7b97\u9489\u9489\u673a\u5668\u4eba\u52a0\u7b7e\u3002
+     *
+     * @param timestamp \u7b7e\u540d\u4f7f\u7528\u7684\u65f6\u95f4\u6233
+     * @param secret \u7528\u4e8e\u8ba1\u7b97\u7b7e\u540d\u7684\u5bc6\u94a5
+     * @return \u7f16\u7801\u540e\u5199\u5165\u8bf7\u6c42 URL \u7684\u7b7e\u540d
+     * @throws Exception \u7b7e\u540d\u7b97\u6cd5\u521d\u59cb\u5316\u6216\u7f16\u7801\u5931\u8d25
      */
     private static String getSign(long timestamp, String secret) throws Exception {
         String stringToSign = timestamp + "\n" + secret;

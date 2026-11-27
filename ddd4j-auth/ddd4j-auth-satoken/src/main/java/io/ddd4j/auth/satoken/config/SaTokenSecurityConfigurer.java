@@ -18,11 +18,15 @@ import java.util.Objects;
  */
 public final class SaTokenSecurityConfigurer {
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>SaTokenSecurityConfigurer</code> \u5b9e\u4f8b\u3002 */
     private SaTokenSecurityConfigurer() {
     }
 
     /**
-     * 校验并安装安全配置，返回当前默认账号体系的 StpLogic。
+     * \u6821\u9a8c\u5e76\u5b89\u88c5\u5b89\u5168\u914d\u7f6e\uff0c\u8fd4\u56de\u5f53\u524d\u9ed8\u8ba4\u8d26\u53f7\u4f53\u7cfb\u7684 StpLogic\u3002
+     *
+     * @param properties Sa-Token \u5b89\u5168\u914d\u7f6e
+     * @return \u5f53\u524d\u9ed8\u8ba4\u8d26\u53f7\u4f53\u7cfb\u7684 StpLogic
      */
     public static StpLogic configure(SaTokenSecurityProperties properties) {
         Objects.requireNonNull(properties, "properties must not be null");

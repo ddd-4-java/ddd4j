@@ -14,8 +14,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+/** \u901a\u8fc7 <code>mock()</code>\u3001<code>BaseContext.inject()</code>\u3001<code>event.setTopic()</code> \u9a8c\u8bc1 <code>SqsAdapterContract</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
 class SqsAdapterContractTest {
 
+    /** \u9a8c\u8bc1<code>SqsMQClient.messageId(message)</code> \u7b49\u4e8e <code>"stable-id"</code>\uff0c<code>acknowledgment.messageId()</code> \u7b49\u4e8e <code>"stable-id"</code>\uff0c<code>acknowledgment.isAcknowledged()</code>\u4e3a\u771f\u3002 */
     @Test
     void shouldPreferStableMessageIdAndResetVisibilityForRedelivery() {
         Message message = Message.builder()

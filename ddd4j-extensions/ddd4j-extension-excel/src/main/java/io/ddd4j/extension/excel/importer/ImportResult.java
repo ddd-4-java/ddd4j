@@ -20,9 +20,16 @@ import java.util.List;
 @Getter
 public final class ImportResult<T> {
 
+    /** \u6210\u529f\u8bfb\u53d6\u5e76\u901a\u8fc7\u6821\u9a8c\u7684\u5bfc\u5165\u6570\u636e\u3002 */
     private final List<T> data;
+    /** \u5bfc\u5165\u65f6\u53d1\u751f\u7684\u9010\u884c\u8bfb\u53d6\u6216\u6821\u9a8c\u9519\u8bef\u3002 */
     private final List<ImportError> errors;
 
+    /**
+     * \u4fdd\u5b58\u672c\u6b21\u5bfc\u5165\u6210\u529f\u7684\u6570\u636e\u53ca\u76f8\u5e94\u9519\u8bef\u3002
+     * @param data \u6210\u529f\u6570\u636e\u96c6\u5408
+     * @param errors \u5bfc\u5165\u9519\u8bef\u96c6\u5408
+     */
     private ImportResult(List<T> data, List<ImportError> errors) {
         this.data = List.copyOf(data);
         this.errors = List.copyOf(errors);
@@ -41,7 +48,10 @@ public final class ImportResult<T> {
     }
 
     /**
-     * 空结果。
+     * \u7a7a\u7ed3\u679c\u3002
+     *
+     * @param <T> \u6570\u636e\u7c7b\u578b
+     * @return \u4e0d\u542b\u6210\u529f\u6570\u636e\u6216\u9519\u8bef\u7684\u5bfc\u5165\u7ed3\u679c
      */
     public static <T> ImportResult<T> empty() {
         return new ImportResult<>(Collections.emptyList(), Collections.emptyList());

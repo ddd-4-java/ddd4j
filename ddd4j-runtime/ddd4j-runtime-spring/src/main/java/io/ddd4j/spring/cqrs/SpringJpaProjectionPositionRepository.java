@@ -28,30 +28,68 @@ public class SpringJpaProjectionPositionRepository
      */
     private final JpaRepository<SpringJpaProjectionPosition, String> jpaRepository;
 
+    /**
+     * \u521b\u5efa\u57fa\u4e8e Spring Data JPA \u7684\u6295\u5f71\u4f4d\u7f6e\u4ed3\u5e93\u3002
+     * @param jpaRepository Spring Data JPA \u4ed3\u5e93
+     */
     public SpringJpaProjectionPositionRepository(JpaRepository<SpringJpaProjectionPosition, String> jpaRepository) {
         this.jpaRepository = jpaRepository;
     }
 
+    /**
+     * 查询指定事件流的投影检查点。
+     *
+     * <p>JPA 实现调用 <code>jpaRepository.findById(streamId)</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     * @return 与给定流标识对应的投影检查点
+     */
     @Override
     public Optional<ProjectionPosition> findByStreamId(String streamId) {
         return jpaRepository.findById(streamId).map(p -> (ProjectionPosition) p);
     }
 
+    /**
+     * 查询存储中符合条件的记录。
+     *
+     * <p>JPA 实现调用 <code>jpaRepository.findAll().stream()</code>。</p>
+     *
+     * @return 满足条件的结果列表
+     */
     @Override
     public List<ProjectionPosition> findAll() {
         return jpaRepository.findAll().stream().map(p -> (ProjectionPosition) p).toList();
     }
 
+    /**
+     * 在持久化存储中写入指定事件流的投影检查点。
+     *
+     * <p>JPA 实现调用 <code>jpaRepository.save((SpringJpaProjectionPosition)position)</code>。</p>
+     *
+     * @param position 投影位置
+     * @return 实际返回<code>jpaRepository.save((SpringJpaProjectionPosition)position)</code>
+     */
     @Override
     public ProjectionPosition save(ProjectionPosition position) {
         return jpaRepository.save((SpringJpaProjectionPosition) position);
     }
 
+    /**
+     * 删除指定事件流的投影检查点。
+     *
+     * <p>JPA 实现调用 <code>jpaRepository.deleteById(streamId)</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     */
     @Override
     public void deleteByStreamId(String streamId) {
         jpaRepository.deleteById(streamId);
     }
 
+    /**
+     * \u5728\u4e8b\u52a1\u4e2d\u91cd\u7f6e\u5df2\u6709\u4f4d\u7f6e\uff1b\u6d41\u5c1a\u4e0d\u5b58\u5728\u65f6\u521b\u5efa\u96f6\u4f4d\u7f6e\u3002
+     * @param streamId \u6295\u5f71\u6d41 ID
+     */
     @Override
     @Modifying
     @Query("UPDATE SpringJpaProjectionPosition p SET p.nextEventNumber = 0 WHERE p.streamId = :streamId")

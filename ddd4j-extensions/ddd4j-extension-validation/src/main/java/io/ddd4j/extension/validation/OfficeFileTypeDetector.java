@@ -17,13 +17,23 @@ import java.util.zip.ZipInputStream;
  */
 public final class OfficeFileTypeDetector implements FileTypeDetector {
 
+    /** 保存 <code>{'%', 'P', 'D', 'F', '-'}</code>，供 <code>OfficeFileTypeDetector</code> 的处理流程复用。 */
     private static final byte[] PDF_SIGNATURE = {'%', 'P', 'D', 'F', '-'};
+    /** 保存 <code>{ (byte) 0xD0, (byte) 0xCF, 0x11, (byte) 0xE0, (byte) 0xA1, (byte) 0xB1, 0x1A, (byte) 0xE1 }</code>，供 <code>OfficeFileTypeDetector</code> 的处理流程复用。 */
     private static final byte[] OLE_SIGNATURE = {
             (byte) 0xD0, (byte) 0xCF, 0x11, (byte) 0xE0,
             (byte) 0xA1, (byte) 0xB1, 0x1A, (byte) 0xE1
     };
+    /** 保存 <code>512</code>，供 <code>OfficeFileTypeDetector</code> 的处理流程复用。 */
     private static final int MAX_ZIP_ENTRIES_TO_INSPECT = 512;
 
+    /**
+     * 执行 <code>detect</code>，调用 <code>Optional.of</code>、<code>Optional.empty</code>。
+     *
+     * @param file 传入此操作的 <code>ValidatableFile</code> 类型 <code>file</code>
+     * @return 按条件返回 <code>Optional.of(new DetectedFileType("pdf", "application/pdf"))</code>、<code>detectOoxml(file)</code>、<code>detectOle(file)</code>
+     * @throws IOException 读取或写入测试数据时发生 I/O 错误
+     */
     @Override
     public Optional<DetectedFileType> detect(ValidatableFile file) throws IOException {
         Objects.requireNonNull(file, "file must not be null");
@@ -40,12 +50,27 @@ public final class OfficeFileTypeDetector implements FileTypeDetector {
         return Optional.empty();
     }
 
+    /**
+     * 执行 <code>read Signature</code>，调用 <code>file.openStream</code>、<code>inputStream.readNBytes</code>。
+     *
+     * @param file 传入此操作的 <code>ValidatableFile</code> 类型 <code>file</code>
+     * @param size 传入此操作的 <code>int</code> 类型 <code>size</code>
+     * @return 返回表达式 <code>inputStream.readNBytes(size)</code>
+     * @throws IOException 读取或写入测试数据时发生 I/O 错误
+     */
     private byte[] readSignature(ValidatableFile file, int size) throws IOException {
         try (InputStream inputStream = new BufferedInputStream(file.openStream())) {
             return inputStream.readNBytes(size);
         }
     }
 
+    /**
+     * 执行 <code>detect Ooxml</code>，调用 <code>file.openStream</code>、<code>zipInputStream.getNextEntry</code>、<code>entry.getName</code>。
+     *
+     * @param file 传入此操作的 <code>ValidatableFile</code> 类型 <code>file</code>
+     * @return 返回表达式 <code>Optional.empty()</code>
+     * @throws IOException 读取或写入测试数据时发生 I/O 错误
+     */
     private Optional<DetectedFileType> detectOoxml(ValidatableFile file) throws IOException {
         boolean hasContentTypes = false;
         boolean hasWordDocument = false;
@@ -74,6 +99,13 @@ public final class OfficeFileTypeDetector implements FileTypeDetector {
         return Optional.empty();
     }
 
+    /**
+     * 执行 <code>detect Ole</code>，调用 <code>file.openStream</code>、<code>fileSystem.getRoot</code>、<code>root.hasEntry</code>。
+     *
+     * @param file 传入此操作的 <code>ValidatableFile</code> 类型 <code>file</code>
+     * @return 按条件返回 <code>Optional.of(new DetectedFileType("doc", "application/msword"))</code>、<code>Optional.of(new DetectedFileType("xls", "application/vnd.ms-excel"))</code>、<code>Optional.empty()</code>
+     * @throws IOException 读取或写入测试数据时发生 I/O 错误
+     */
     private Optional<DetectedFileType> detectOle(ValidatableFile file) throws IOException {
         try (InputStream inputStream = new BufferedInputStream(file.openStream());
              POIFSFileSystem fileSystem = new POIFSFileSystem(inputStream)) {
@@ -88,6 +120,13 @@ public final class OfficeFileTypeDetector implements FileTypeDetector {
         }
     }
 
+    /**
+     * 按 <code>starts With</code> 的契约计算并返回结果。
+     *
+     * @param source 传入此操作的 <code>byte[]</code> 类型 <code>source</code>
+     * @param prefix 传入此操作的 <code>byte[]</code> 类型 <code>prefix</code>
+     * @return 按条件返回 <code>false</code>、<code>false</code>、<code>true</code>
+     */
     private boolean startsWith(byte[] source, byte[] prefix) {
         if (source.length < prefix.length) {
             return false;
@@ -100,6 +139,12 @@ public final class OfficeFileTypeDetector implements FileTypeDetector {
         return true;
     }
 
+    /**
+     * 执行 <code>is Zip</code> 对应的处理。
+     *
+     * @param signature 传入此操作的 <code>byte[]</code> 类型 <code>signature</code>
+     * @return 该判断是否成立
+     */
     private boolean isZip(byte[] signature) {
         return signature.length >= 4
                 && signature[0] == 'P'

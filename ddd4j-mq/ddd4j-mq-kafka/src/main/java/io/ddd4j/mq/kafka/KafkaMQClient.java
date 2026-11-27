@@ -50,10 +50,14 @@ public class KafkaMQClient implements MQClient {
      * 已注入或懒构造的 Kafka producer
      */
     private Producer<String, String> producer;
+    /** \u7528\u4e8e\u63a5\u6536 Kafka \u53d1\u5e03\u5b8c\u6210\u901a\u77e5\u7684\u56de\u8c03\u3002 */
     private Callback callback;
 
     /**
-     * 构造方法 1：注入原生 producer（runtime 自动装配用）。
+     * \u6784\u9020\u65b9\u6cd5 1\uff1a\u6ce8\u5165\u539f\u751f producer\uff08runtime \u81ea\u52a8\u88c5\u914d\u7528\uff09\u3002
+     *
+     * @param producer \u539f\u751f Kafka producer
+     * @param callback \u53d1\u5e03\u56de\u8c03\uff0c\u53ef\u4e3a null
      */
     public KafkaMQClient(Producer<String, String> producer, Callback callback) {
         this.properties = null;
@@ -62,7 +66,10 @@ public class KafkaMQClient implements MQClient {
     }
 
     /**
-     * 构造方法 2：自行根据 properties 构造 producer（lazy）。
+     * \u6784\u9020\u65b9\u6cd5 2\uff1a\u81ea\u884c\u6839\u636e properties \u6784\u9020 producer\uff08lazy\uff09\u3002
+     *
+     * @param properties Kafka \u5ba2\u6237\u7aef\u914d\u7f6e
+     * @param callback \u53d1\u5e03\u56de\u8c03\uff0c\u53ef\u4e3a null
      */
     public KafkaMQClient(KafkaMQProperties properties, Callback callback) {
         this.properties = Objects.requireNonNull(properties, "KafkaMQ Properties is required");
@@ -70,13 +77,20 @@ public class KafkaMQClient implements MQClient {
         this.callback = callback;
     }
 
+    /**
+     * 返回此消息适配器在 DDD4J 中登记的实现名。
+     *
+     * @return 实际返回<code>"kafka"</code>，供调用方取得当前值
+     */
     @Override
     public String impl() {
         return "kafka";
     }
 
     /**
-     * Kafka topic 用 {@code "_"} 拼接 namespace（与 ActiveMQ 的 {@code "."} 区分）。
+     * Kafka topic \u7528 {@code "_"} \u62fc\u63a5 namespace\uff08\u4e0e ActiveMQ \u7684 {@code "."} \u533a\u5206\uff09\u3002
+     *
+     * @return \u9ed8\u8ba4\u7684\u4e3b\u9898\u540d\u8fde\u63a5\u5b57\u7b26\u4e32
      */
     @Override
     public String defaultConcat() {
@@ -85,6 +99,14 @@ public class KafkaMQClient implements MQClient {
 
     // ========================= 生产者 =========================
 
+    /**
+     * 准备消息生产者并返回可发布事件的入口。
+     *
+     * <p>Kafka 实现调用 <code>properties.producerProperties()</code>。</p>
+     *
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 接收待发布事件的函数
+     */
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         if (Objects.isNull(producer) && Objects.nonNull(this.properties)) {
@@ -111,10 +133,13 @@ public class KafkaMQClient implements MQClient {
     }
 
     /**
-     * 根据 {@link PartitionKeyStrategy} 枚举计算 partition key。
-     * <p>Kafka 保证同 key 进同 partition → 同 tag / 同 tenantId 消息严格顺序。
-     * <p>TAG_TENANT/TAG/TENANT 三种复用父类 {@link #partitionKey(MQEvent)} 默认行为；NONE 返回 null；
-     * CUSTOM 时应由子类覆写 {@link #partitionKey(MQEvent)} 自定义。
+     * \u6839\u636e {@link PartitionKeyStrategy} \u679a\u4e3e\u8ba1\u7b97 partition key\u3002
+     *  <p>Kafka \u4fdd\u8bc1\u540c key \u8fdb\u540c partition \u2192 \u540c tag / \u540c tenantId \u6d88\u606f\u4e25\u683c\u987a\u5e8f\u3002
+     *  <p>TAG_TENANT/TAG/TENANT \u4e09\u79cd\u590d\u7528\u7236\u7c7b {@link #partitionKey(MQEvent)} \u9ed8\u8ba4\u884c\u4e3a\uff1bNONE \u8fd4\u56de null\uff1b
+     *  CUSTOM \u65f6\u5e94\u7531\u5b50\u7c7b\u8986\u5199 {@link #partitionKey(MQEvent)} \u81ea\u5b9a\u4e49\u3002
+     *
+     * @param event \u51b3\u5b9a\u6d88\u606f\u5206\u533a\u7684\u53d1\u5e03\u4e8b\u4ef6
+     * @return \u7528\u4e8e\u9009\u62e9 Kafka \u5206\u533a\u7684\u6d88\u606f\u952e
      */
     @Override
     public String partitionKey(MQEvent event) {
@@ -131,7 +156,10 @@ public class KafkaMQClient implements MQClient {
     }
 
     /**
-     * 借鉴 4：通过 AdminClient 自动创建 topic（如不存在）。
+     * \u501f\u9274 4\uff1a\u901a\u8fc7 AdminClient \u81ea\u52a8\u521b\u5efa topic\uff08\u5982\u4e0d\u5b58\u5728\uff09\u3002
+     *
+     * @param namespace \u6d88\u606f\u4e3b\u9898\u4f7f\u7528\u7684\u547d\u540d\u7a7a\u95f4
+     * @param defaultTopic \u9ed8\u8ba4\u4e3b\u9898\u540d
      */
     private void ensureTopic(String namespace, String defaultTopic) {
         if (Objects.isNull(this.properties)) {
@@ -154,6 +182,16 @@ public class KafkaMQClient implements MQClient {
         }
     }
 
+    /**
+     * 为监听器建立消息消费所需的订阅和客户端资源。
+     *
+     * <p>Kafka 实现调用 <code>properties.consumerProperties(buildGroupId(mqListener))</code>。</p>
+     *
+     * @param mqListener 传给 <code>properties.consumerProperties(buildGroupId(mqListener))</code>
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 消费者完成注册时为真
+     * @throws Exception 当前框架、存储或底层客户端无法完成此操作时
+     */
     @Override
     public boolean initConsumer(MQListener mqListener, MQProperties mqProperties) throws Exception {
         if (Objects.isNull(properties)) {
@@ -202,7 +240,10 @@ public class KafkaMQClient implements MQClient {
     // ========================= 消费者 =========================
 
     /**
-     * 构造 consumer group.id（兜底）。
+     * \u6784\u9020 consumer group.id\uff08\u515c\u5e95\uff09\u3002
+     *
+     * @param listener \u63a5\u6536\u6d88\u606f\u7684\u76d1\u542c\u5668\u5b9a\u4e49
+     * @return Kafka \u6d88\u8d39\u7ec4\u6807\u8bc6
      */
     private String buildGroupId(MQListener listener) {
         return StrKit.isNotEmpty(listener.getGroup())
@@ -215,14 +256,26 @@ public class KafkaMQClient implements MQClient {
      */
     public static final class SendCallback implements Callback {
 
+        /** \u6d88\u606f\u6295\u9012\u6216\u8ba2\u9605\u7684\u4e3b\u9898\u3002 */
         private final String topic;
+        /** \u6d88\u606f\u8f6c\u79fb\u6216\u53d1\u9001\u65f6\u4f7f\u7528\u7684\u5e8f\u5217\u5316\u8d1f\u8f7d\u3002 */
         private final String payload;
 
+        /**
+         * \u7528\u7ed9\u5b9a\u503c\u521d\u59cb\u5316 <code>SendCallback</code> \u5b9e\u4f8b\u3002
+         * @param topic \u6d88\u606f\u6295\u9012\u6216\u8ba2\u9605\u7684\u4e3b\u9898
+         * @param payload <code>payload</code> \u5b57\u6bb5
+         */
         SendCallback(String topic, String payload) {
             this.topic = topic;
             this.payload = payload;
         }
 
+        /**
+         * \u8bb0\u5f55 Kafka \u53d1\u5e03\u5931\u8d25\u539f\u56e0\uff0c\u6210\u529f\u65f6\u8bb0\u5f55\u4e3b\u9898\u3001\u5206\u533a\u53ca\u504f\u79fb\u3002
+         * @param metadata \u4ee3\u7406\u8fd4\u56de\u7684\u53d1\u5e03\u5143\u6570\u636e
+         * @param exception \u53d1\u5e03\u5931\u8d25\u65f6\u8fd4\u56de\u7684\u5f02\u5e38
+         */
         @Override
         public void onCompletion(RecordMetadata metadata, Exception exception) {
             if (Objects.nonNull(exception)) {

@@ -16,6 +16,10 @@ import jakarta.inject.Singleton;
 @ApplicationScoped
 public class QuarkusCqrsProducer {
 
+    /**
+     * \u521b\u5efa\u9ed8\u8ba4\u7684\u5185\u5b58\u6295\u5f71\u4f4d\u7f6e\u4ed3\u5e93\u3002
+     * @return \u6295\u5f71\u4f4d\u7f6e\u4ed3\u5e93
+     */
     @Produces
     @DefaultBean
     @Singleton
@@ -23,6 +27,11 @@ public class QuarkusCqrsProducer {
         return new InMemoryProjectionPositionRepository();
     }
 
+    /**
+     * \u521b\u5efa\u6295\u5f71\u670d\u52a1\u3002
+     * @param repository \u6295\u5f71\u4f4d\u7f6e\u4ed3\u5e93
+     * @return \u6295\u5f71\u670d\u52a1
+     */
     @Produces
     @DefaultBean
     @Singleton
@@ -30,6 +39,12 @@ public class QuarkusCqrsProducer {
         return new DefaultProjectionService(repository);
     }
 
+    /**
+     * \u521b\u5efa\u6295\u5f71\u6267\u884c\u5668\u3002
+     * @param projectionService \u6295\u5f71\u670d\u52a1
+     * @param chunkReaders \u4e8b\u4ef6\u5757\u8bfb\u53d6\u5668
+     * @return \u6295\u5f71\u6267\u884c\u5668
+     */
     @Produces
     @DefaultBean
     @Singleton

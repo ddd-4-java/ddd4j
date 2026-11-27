@@ -17,12 +17,16 @@ import java.lang.annotation.*;
 public @interface ApiModule {
 
     /**
-     * 操作模块
+     * \u64cd\u4f5c\u6a21\u5757
+     *
+     * @return \u64cd\u4f5c\u6a21\u5757
      */
     String module() default "";
 
     /**
-     * 业务名称
+     * \u4e1a\u52a1\u540d\u79f0
+     *
+     * @return \u4e1a\u52a1\u540d\u79f0
      */
     String business() default "";
 

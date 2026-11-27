@@ -18,16 +18,19 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class DataScopeSpanTest {
 
+    /** \u6d4b\u8bd5\u6267\u884c\u524d\u6267\u884c <code>OpenTelemetrySdkSetter.set()</code>\u3001<code>OpenTelemetry.noop()</code> \u5b8c\u6210\u8d44\u6e90\u51c6\u5907\u3002 */
     @BeforeEach
     void setUp() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
     }
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>OpenTelemetrySdkSetter.set()</code>\u3001<code>OpenTelemetry.noop()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterEach
     void tearDown() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
     }
 
+    /** \u9a8c\u8bc1<code>result</code>\u4e3a\u771f\u3002 */
     @Test
     void evaluate_shouldReturnProviderResult() {
         DataScopeProvider provider = (dataType, data) -> true;
@@ -35,6 +38,7 @@ class DataScopeSpanTest {
         assertThat(result).isTrue();
     }
 
+    /** \u9a8c\u8bc1<code>result</code>\u4e3a\u5047\u3002 */
     @Test
     void evaluate_denyCase_shouldReturnFalse() {
         DataScopeProvider provider = (dataType, data) -> false;
@@ -42,6 +46,7 @@ class DataScopeSpanTest {
         assertThat(result).isFalse();
     }
 
+    /** 验证<code>result</code>为真，<code>nullResult</code>为假。 */
     @Test
     void evaluate_nonNullAllowedProvider_shouldCheckNullability() {
         boolean result = DataScopeSpan.evaluate("Test", "valid-data", DataScopeProvider.nonNullAllowed());
@@ -51,6 +56,7 @@ class DataScopeSpanTest {
         assertThat(nullResult).isFalse();
     }
 
+    /** \u9a8c\u8bc1<code>called</code>\u4e3a\u771f\u3002 */
     @Test
     void evaluate_shouldCallProvider() {
         AtomicBoolean called = new AtomicBoolean(false);
@@ -63,6 +69,7 @@ class DataScopeSpanTest {
         assertThat(called).isTrue();
     }
 
+    /** \u9a8c\u8bc1<code>result</code>\u4e3a\u771f\uff0c<code>called</code>\u4e3a\u771f\u3002 */
     @Test
     void evaluate_whenOtelNotAvailable_shouldStillCallProvider() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -77,6 +84,7 @@ class DataScopeSpanTest {
         assertThat(called).isTrue();
     }
 
+    /** \u9a8c\u8bc1<code>DataScopeSpan.evaluate("Type", "value", throwing)</code> \u629b\u51fa <code>IllegalStateException.class</code>\u3002 */
     @Test
     void evaluate_propagateException() {
         DataScopeProvider throwing = (dataType, data) -> {
@@ -88,6 +96,7 @@ class DataScopeSpanTest {
                 .hasMessage("scope evaluation failed");
     }
 
+    /** \u9a8c\u8bc1<code>DataScopeSpan.ATTR_DATA_SCOPE_TYPE.getKey()</code> \u7b49\u4e8e <code>"ddd4j.datascope.type"</code>\uff0c<code>DataScopeSpan.ATTR_DATA_SCOPE_DECISION.getKey()</code> \u7b49\u4e8e <code>"ddd4j.datascope.decision"</code>\u3002 */
     @Test
     void evaluate_attributeKeys_shouldHaveCorrectNames() {
         assertThat(DataScopeSpan.ATTR_DATA_SCOPE_TYPE.getKey()).isEqualTo("ddd4j.datascope.type");

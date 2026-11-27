@@ -18,7 +18,9 @@ import java.util.*;
  */
 @UtilityClass
 public class BeanKit {
+    /** \u53cd\u5c04\u521b\u5efa\u5bf9\u8c61\u5931\u8d25\u65f6\u4f7f\u7528\u7684\u8bca\u65ad\u6a21\u677f\u3002 */
     private final String REFLECT_ERROR = "反射获取转换对象异常";
+    /** \u5206\u9694\u5f85\u5ffd\u7565\u7684 Bean \u5c5e\u6027\u540d\u6240\u7528\u7684\u9017\u53f7\u3002 */
     private final String COMMA = ",";
 
     /**
@@ -36,6 +38,11 @@ public class BeanKit {
         }
     }
 
+    /**
+     * \u5c06\u4e0b\u5212\u7ebf\u5217\u540d\u8f6c\u6362\u4e3a\u9a7c\u5cf0\u5b57\u6bb5\u540d\u3002
+     * @param columnName \u6570\u636e\u5e93\u5217\u540d
+     * @return \u9a7c\u5cf0\u5b57\u6bb5\u540d\uff1b\u8f93\u5165\u6ca1\u6709\u53ef\u7528\u7247\u6bb5\u65f6\u8fd4\u56de {@code null}
+     */
     public String changeColumnToFieldName(String columnName) {
         String[] array = columnName.split("_");
         StringBuilder sb = null;
@@ -55,14 +62,31 @@ public class BeanKit {
         return Objects.nonNull(sb) ? sb.toString() : null;
     }
 
+    /**
+     * \u5c06\u5bf9\u8c61\u5c5e\u6027\u8f6c\u6362\u4e3a\u5305\u542b\u7a7a\u503c\u7684 Map\u3002
+     * @param obj \u5f85\u8f6c\u6362\u6216\u68c0\u67e5\u7684\u5bf9\u8c61
+     * @return \u8f6c\u6362\u540e\u7684\u5c5e\u6027 Map\uff1b\u6e90\u5bf9\u8c61\u4e3a\u7a7a\u65f6\u8fd4\u56de {@code null}
+     */
     public Map<String, Object> toMap(Object obj) {
         return toMap(obj, true, new String[0]);
     }
 
+    /**
+     * \u5c06\u5bf9\u8c61\u975e\u7a7a\u5c5e\u6027\u8f6c\u6362\u4e3a Map\u3002
+     * @param obj \u5f85\u8f6c\u6362\u6216\u68c0\u67e5\u7684\u5bf9\u8c61
+     * @return \u8f6c\u6362\u540e\u7684\u5c5e\u6027 Map\uff1b\u6e90\u5bf9\u8c61\u4e3a\u7a7a\u65f6\u8fd4\u56de {@code null}
+     */
     public Map<String, Object> toMapClean(Object obj) {
         return toMap(obj, false, new String[0]);
     }
 
+    /**
+     * \u6309\u7a7a\u503c\u548c\u5ffd\u7565\u5b57\u6bb5\u8bbe\u7f6e\u5c06\u5bf9\u8c61\u8f6c\u6362\u4e3a Map\u3002
+     * @param obj \u5f85\u8f6c\u6362\u6216\u68c0\u67e5\u7684\u5bf9\u8c61
+     * @param withNull \u662f\u5426\u5305\u542b\u7a7a\u503c
+     * @param ignoreFields \u8981\u5ffd\u7565\u7684\u5b57\u6bb5\u540d
+     * @return \u8f6c\u6362\u540e\u7684\u5c5e\u6027 Map\uff1b\u6e90\u5bf9\u8c61\u4e3a\u7a7a\u65f6\u8fd4\u56de {@code null}
+     */
     public Map<String, Object> toMap(Object obj, boolean withNull, String... ignoreFields) {
         if (Objects.isNull(obj)) {
             return null;
@@ -77,6 +101,12 @@ public class BeanKit {
         }
     }
 
+    /**
+     * \u5c06\u5c5e\u6027 Map \u5217\u8868\u8f6c\u6362\u5e76\u8ffd\u52a0\u5230\u76ee\u6807\u5bf9\u8c61\u5217\u8868\u3002
+     * @param mapList \u5c5e\u6027 Map \u5217\u8868
+     * @param objectList \u63a5\u6536\u8f6c\u6362\u7ed3\u679c\u7684\u5217\u8868
+     * @param clazz \u5f85\u5b9e\u4f8b\u5316\u7684\u7c7b\u578b
+     */
     public void mapsToObjects(List<Map<String, Object>> mapList, List objectList, Class clazz) {
         if (Objects.nonNull(mapList) && !mapList.isEmpty() && Objects.nonNull(objectList)) {
             Iterator var3 = mapList.iterator();
@@ -91,6 +121,12 @@ public class BeanKit {
 
     }
 
+    /**
+     * \u5c06\u6e90\u5bf9\u8c61\u5217\u8868\u590d\u5236\u5e76\u8ffd\u52a0\u5230\u76ee\u6807\u5bf9\u8c61\u5217\u8868\u3002
+     * @param sourceList \u6e90\u5bf9\u8c61\u96c6\u5408
+     * @param targetList \u63a5\u6536\u590d\u5236\u7ed3\u679c\u7684\u5217\u8868
+     * @param targetClass \u76ee\u6807\u7c7b\u578b
+     */
     public void objectsToObjects(List sourceList, List targetList, Class targetClass) {
         if (Objects.nonNull(sourceList) && !sourceList.isEmpty() && Objects.nonNull(targetList)) {
             Iterator var3 = sourceList.iterator();
@@ -105,14 +141,32 @@ public class BeanKit {
 
     }
 
+    /**
+     * \u4f7f\u7528\u9017\u53f7\u8fde\u63a5\u5b57\u7b26\u4e32\u5217\u8868\u3002
+     * @param list \u5f85\u8fde\u63a5\u7684\u5b57\u7b26\u4e32\u5217\u8868
+     * @return \u8f6c\u6362\u540e\u7684\u5b57\u7b26\u4e32
+     */
     public String listToString(List<String> list) {
         return listToString(list, COMMA);
     }
 
+    /**
+     * \u4f7f\u7528\u6307\u5b9a\u5206\u9694\u7b26\u8fde\u63a5\u5b57\u7b26\u4e32\u5217\u8868\u3002
+     * @param list \u5f85\u8fde\u63a5\u7684\u5b57\u7b26\u4e32\u5217\u8868
+     * @param separator \u5143\u7d20\u5206\u9694\u7b26
+     * @return \u8f6c\u6362\u540e\u7684\u5b57\u7b26\u4e32
+     */
     public String listToString(List<String> list, String separator) {
         return listToString(list, separator, null);
     }
 
+    /**
+     * \u4f7f\u7528\u5206\u9694\u7b26\u548c\u5305\u56f4\u5b57\u7b26\u8fde\u63a5\u5b57\u7b26\u4e32\u5217\u8868\u3002
+     * @param list \u5f85\u8fde\u63a5\u7684\u5b57\u7b26\u4e32\u5217\u8868
+     * @param separator \u5143\u7d20\u5206\u9694\u7b26
+     * @param surround \u6bcf\u4e2a\u5143\u7d20\u7684\u5305\u56f4\u5b57\u7b26\u4e32
+     * @return \u8f6c\u6362\u540e\u7684\u5b57\u7b26\u4e32
+     */
     public String listToString(List<String> list, String separator, String surround) {
         StringBuilder builder = new StringBuilder();
         if (Objects.nonNull(list) && !list.isEmpty()) {
@@ -136,11 +190,21 @@ public class BeanKit {
         return builder.toString();
     }
 
+    /**
+     * \u901a\u8fc7\u65e0\u53c2\u6784\u9020\u5668\u521b\u5efa\u6307\u5b9a\u7c7b\u578b\u7684\u5b9e\u4f8b\u3002
+     * @param clazz \u5f85\u5b9e\u4f8b\u5316\u7684\u7c7b\u578b
+     * @return \u65b0\u521b\u5efa\u7684\u5b9e\u4f8b
+     */
     public Object gainInstanceByReflect(Class clazz) {
         String className = clazz.getName();
         return gainInstanceByReflect(className);
     }
 
+    /**
+     * \u6839\u636e\u7c7b\u540d\u52a0\u8f7d\u7c7b\u578b\u5e76\u8c03\u7528\u6784\u9020\u5668\u5efa\u7acb\u5bf9\u8c61\u3002
+     * @param className \u5f53\u524d\u51c6\u5907\u52a0\u8f7d\u6216\u521b\u5efa\u7684\u7c7b\u540d
+     * @return \u901a\u8fc7\u53cd\u5c04\u521b\u5efa\u7684\u5b9e\u4f8b
+     */
     private Object gainInstanceByReflect(String className) {
         Object target = null;
 
@@ -153,14 +217,33 @@ public class BeanKit {
         return target;
     }
 
+    /**
+     * \u5c06\u6e90\u5bf9\u8c61\u5c5e\u6027\u590d\u5236\u5230\u76ee\u6807\u5bf9\u8c61\u3002
+     * @param source \u6e90\u5bf9\u8c61
+     * @param target \u76ee\u6807\u5bf9\u8c61\u6216\u76ee\u6807\u7c7b\u578b
+     */
     public void objectToObject(Object source, Object target) {
         objectToObject(source, target, false, true, true);
     }
 
+    /**
+     * \u6309\u7a7a\u503c\u7b56\u7565\u590d\u5236\u5bf9\u8c61\u5c5e\u6027\u3002
+     * @param source \u6e90\u5bf9\u8c61
+     * @param target \u76ee\u6807\u5bf9\u8c61\u6216\u76ee\u6807\u7c7b\u578b
+     * @param ignoreNull \u662f\u5426\u8df3\u8fc7\u6e90\u5bf9\u8c61\u7684\u7a7a\u5c5e\u6027
+     */
     public void objectToObject(Object source, Object target, boolean ignoreNull) {
         objectToObject(source, target, ignoreNull, false, false);
     }
 
+    /**
+     * \u6309\u7a7a\u503c\u53ca\u5ba1\u8ba1\u5b57\u6bb5\u7b56\u7565\u590d\u5236\u5bf9\u8c61\u5c5e\u6027\u3002
+     * @param source \u6e90\u5bf9\u8c61
+     * @param target \u76ee\u6807\u5bf9\u8c61\u6216\u76ee\u6807\u7c7b\u578b
+     * @param ignoreNull \u662f\u5426\u8df3\u8fc7\u6e90\u5bf9\u8c61\u7684\u7a7a\u5c5e\u6027
+     * @param withCreateInfo \u662f\u5426\u590d\u5236\u521b\u5efa\u5ba1\u8ba1\u5b57\u6bb5
+     * @param withUpdateInfo \u662f\u5426\u590d\u5236\u66f4\u65b0\u5ba1\u8ba1\u5b57\u6bb5
+     */
     public void objectToObject(Object source, Object target, boolean ignoreNull, boolean withCreateInfo, boolean withUpdateInfo) {
         if (Objects.nonNull(source) && Objects.nonNull(target)) {
             List<String> ignorePropertiesList = new ArrayList();
@@ -185,6 +268,11 @@ public class BeanKit {
         }
     }
 
+    /**
+     * \u6536\u96c6\u6e90 Bean \u4e2d\u7f3a\u5c11\u503c\u6216\u914d\u7f6e\u5ffd\u7565\u7684\u5c5e\u6027\u540d\u3002
+     * @param source \u9700\u8981\u8bfb\u53d6\u5c5e\u6027\u7684\u6e90 Bean
+     * @param ignorePropertiesList \u8c03\u7528\u65b9\u6307\u5b9a\u7684\u4e0d\u53c2\u4e0e\u6620\u5c04\u7684\u5c5e\u6027\u540d
+     */
     private void ignoreNull(Object source, List<String> ignorePropertiesList) {
         Field[] fields = source.getClass().getDeclaredFields();
 
@@ -205,6 +293,13 @@ public class BeanKit {
 
     }
 
+    /**
+     * \u6309\u66f4\u65b0\u6a21\u5f0f\u548c\u7a7a\u503c\u7b56\u7565\u590d\u5236\u5bf9\u8c61\u5c5e\u6027\u3002
+     * @param source \u6e90\u5bf9\u8c61
+     * @param target \u76ee\u6807\u5bf9\u8c61\u6216\u76ee\u6807\u7c7b\u578b
+     * @param ignoreNull \u662f\u5426\u8df3\u8fc7\u6e90\u5bf9\u8c61\u7684\u7a7a\u5c5e\u6027
+     * @param isUpdate \u662f\u5426\u6309\u66f4\u65b0\u6a21\u5f0f\u590d\u5236
+     */
     public void objectToObject(Object source, Object target, boolean ignoreNull, boolean isUpdate) {
         objectToObject(source, target, ignoreNull, !isUpdate, true);
     }
@@ -238,6 +333,14 @@ public class BeanKit {
 
     }
 
+    /**
+     * \u5c06\u5bf9\u8c61\u8f6c\u6362\u4e3a\u6307\u5b9a\u7c7b\u578b\uff0c\u5ffd\u7565\u6e90\u5bf9\u8c61\u7684\u7a7a\u5c5e\u6027\u3002
+     * @param <T> \u7c7b\u578b\u53c2\u6570
+     * @param <Q> \u7c7b\u578b\u53c2\u6570
+     * @param q \u5f85\u8f6c\u6362\u7684\u6e90\u5bf9\u8c61
+     * @param targetClass \u76ee\u6807\u7c7b\u578b
+     * @return \u8f6c\u6362\u6216\u590d\u5236\u540e\u7684\u76ee\u6807\u5bf9\u8c61\uff1b\u6e90\u5bf9\u8c61\u4e3a\u7a7a\u65f6\u8fd4\u56de {@code null}
+     */
     public <T, Q> T of(Q q, Class<T> targetClass) {
         if (Objects.isNull(q)) {
             return null;
@@ -266,6 +369,14 @@ public class BeanKit {
         }
     }
 
+    /**
+     * \u5c06\u6e90\u5bf9\u8c61\u5217\u8868\u8f6c\u6362\u4e3a\u76ee\u6807\u7c7b\u578b\u5217\u8868\u3002
+     * @param <T> \u7c7b\u578b\u53c2\u6570
+     * @param <Q> \u7c7b\u578b\u53c2\u6570
+     * @param sources \u5f85\u8f6c\u6362\u7684\u6e90\u5217\u8868
+     * @param targetClass \u76ee\u6807\u7c7b\u578b
+     * @return \u8f6c\u6362\u6216\u590d\u5236\u540e\u7684\u76ee\u6807\u5bf9\u8c61\u5217\u8868\uff1b\u6e90\u96c6\u5408\u4e3a\u7a7a\u65f6\u9075\u5faa\u5bf9\u5e94\u65b9\u6cd5\u7684\u8fd4\u56de\u7ea6\u5b9a
+     */
     public <T, Q> List<T> ofList(List<Q> sources, Class<T> targetClass) {
         if (Objects.isNull(sources) || sources.isEmpty()) {
             return new ArrayList();
@@ -276,6 +387,13 @@ public class BeanKit {
         }
     }
 
+    /**
+     * \u5c06\u5c5e\u6027 Map \u5217\u8868\u8f6c\u6362\u4e3a\u76ee\u6807\u7c7b\u578b\u5217\u8868\u3002
+     * @param <T> \u7c7b\u578b\u53c2\u6570
+     * @param sources \u5f85\u8f6c\u6362\u7684\u6e90\u5217\u8868
+     * @param targetClass \u76ee\u6807\u7c7b\u578b
+     * @return \u8f6c\u6362\u6216\u590d\u5236\u540e\u7684\u76ee\u6807\u5bf9\u8c61\u5217\u8868\uff1b\u6e90\u96c6\u5408\u4e3a\u7a7a\u65f6\u9075\u5faa\u5bf9\u5e94\u65b9\u6cd5\u7684\u8fd4\u56de\u7ea6\u5b9a
+     */
     public <T> List<T> ofMapList(List<Map<String, Object>> sources, Class<T> targetClass) {
         if (Objects.isNull(sources) || sources.isEmpty()) {
             return new ArrayList();
@@ -286,6 +404,11 @@ public class BeanKit {
         }
     }
 
+    /**
+     * \u83b7\u53d6\u6e90\u5bf9\u8c61\u4e2d\u503c\u4e3a null \u7684\u5c5e\u6027\u540d\u3002
+     * @param source \u6e90\u5bf9\u8c61
+     * @return \u503c\u4e3a\u7a7a\u7684\u5c5e\u6027\u540d\u6570\u7ec4
+     */
     public String[] getNullPropertyNames(Object source) {
         BeanWrapper src = new BeanWrapperImpl(source);
         PropertyDescriptor[] pds = src.getPropertyDescriptors();
@@ -305,6 +428,11 @@ public class BeanKit {
         return emptyNames.toArray(result);
     }
 
+    /**
+     * \u590d\u5236\u5bf9\u8c61\u6216\u96c6\u5408\u4e2d\u7684\u975e\u7a7a\u5c5e\u6027\u3002
+     * @param source \u6e90\u5bf9\u8c61
+     * @param target \u76ee\u6807\u5bf9\u8c61\u6216\u76ee\u6807\u7c7b\u578b
+     */
     public void copy(Object source, Object target) {
         if (!isEmpty(source) && !isEmpty(target)) {
             if (source instanceof Collection && target instanceof Collection) {
@@ -322,10 +450,25 @@ public class BeanKit {
         }
     }
 
+    /**
+     * \u590d\u5236\u6e90\u5bf9\u8c61\u5e76\u521b\u5efa\u76ee\u6807\u7c7b\u578b\u5b9e\u4f8b\u3002
+     * @param <T> \u7c7b\u578b\u53c2\u6570
+     * @param source \u6e90\u5bf9\u8c61
+     * @param target \u76ee\u6807\u5bf9\u8c61\u6216\u76ee\u6807\u7c7b\u578b
+     * @return \u8f6c\u6362\u6216\u590d\u5236\u540e\u7684\u76ee\u6807\u5bf9\u8c61\uff1b\u6e90\u5bf9\u8c61\u4e3a\u7a7a\u65f6\u8fd4\u56de {@code null}
+     */
     public <T> T copy(Object source, Class<T> target) {
         return copy(source, target, (Class) null);
     }
 
+    /**
+     * \u590d\u5236\u6e90\u5bf9\u8c61\u5e76\u5728\u6307\u5b9a\u7236\u7c7b\u578b\u8fb9\u754c\u505c\u6b62\u5c5e\u6027\u590d\u5236\u3002
+     * @param <T> \u7c7b\u578b\u53c2\u6570
+     * @param source \u6e90\u5bf9\u8c61
+     * @param target \u76ee\u6807\u5bf9\u8c61\u6216\u76ee\u6807\u7c7b\u578b
+     * @param targetSuper \u5c5e\u6027\u590d\u5236\u505c\u6b62\u7684\u7236\u7c7b\u578b
+     * @return \u8f6c\u6362\u6216\u590d\u5236\u540e\u7684\u76ee\u6807\u5bf9\u8c61\uff1b\u6e90\u5bf9\u8c61\u4e3a\u7a7a\u65f6\u8fd4\u56de {@code null}
+     */
     public <T> T copy(Object source, Class<T> target, Class<?> targetSuper) {
         if (Objects.isNull(source)) {
             return null;
@@ -343,6 +486,13 @@ public class BeanKit {
         }
     }
 
+    /**
+     * \u9010\u9879\u590d\u5236\u96c6\u5408\u5e76\u521b\u5efa\u76ee\u6807\u7c7b\u578b\u5b9e\u4f8b\u3002
+     * @param <T> \u7c7b\u578b\u53c2\u6570
+     * @param sourceList \u6e90\u5bf9\u8c61\u96c6\u5408
+     * @param target \u76ee\u6807\u5bf9\u8c61\u6216\u76ee\u6807\u7c7b\u578b
+     * @return \u8f6c\u6362\u6216\u590d\u5236\u540e\u7684\u76ee\u6807\u5bf9\u8c61\u5217\u8868\uff1b\u6e90\u96c6\u5408\u4e3a\u7a7a\u65f6\u9075\u5faa\u5bf9\u5e94\u65b9\u6cd5\u7684\u8fd4\u56de\u7ea6\u5b9a
+     */
     public <T> List<T> copy(Collection<?> sourceList, Class<T> target) {
         if (Objects.isNull(sourceList)) {
             return null;
@@ -366,6 +516,14 @@ public class BeanKit {
         }
     }
 
+    /**
+     * \u590d\u5236\u6e90\u5bf9\u8c61\u5e76\u5ffd\u7565\u6307\u5b9a\u5c5e\u6027\u3002
+     * @param <T> \u7c7b\u578b\u53c2\u6570
+     * @param source \u6e90\u5bf9\u8c61
+     * @param target \u76ee\u6807\u5bf9\u8c61\u6216\u76ee\u6807\u7c7b\u578b
+     * @param ignoreProperties \u8981\u5ffd\u7565\u7684\u5c5e\u6027\u540d
+     * @return \u8f6c\u6362\u6216\u590d\u5236\u540e\u7684\u76ee\u6807\u5bf9\u8c61\uff1b\u6e90\u5bf9\u8c61\u4e3a\u7a7a\u65f6\u8fd4\u56de {@code null}
+     */
     public <T> T copy(Object source, Class<T> target, String... ignoreProperties) {
         if (Objects.isNull(source)) {
             return null;
@@ -383,6 +541,14 @@ public class BeanKit {
         }
     }
 
+    /**
+     * \u9010\u9879\u590d\u5236\u96c6\u5408\u5e76\u5ffd\u7565\u6307\u5b9a\u5c5e\u6027\u3002
+     * @param <T> \u7c7b\u578b\u53c2\u6570
+     * @param sourceList \u6e90\u5bf9\u8c61\u96c6\u5408
+     * @param target \u76ee\u6807\u5bf9\u8c61\u6216\u76ee\u6807\u7c7b\u578b
+     * @param ignoreProperties \u8981\u5ffd\u7565\u7684\u5c5e\u6027\u540d
+     * @return \u8f6c\u6362\u6216\u590d\u5236\u540e\u7684\u76ee\u6807\u5bf9\u8c61\u5217\u8868\uff1b\u6e90\u96c6\u5408\u4e3a\u7a7a\u65f6\u9075\u5faa\u5bf9\u5e94\u65b9\u6cd5\u7684\u8fd4\u56de\u7ea6\u5b9a
+     */
     public <T> List<T> copy(Collection<?> sourceList, Class<T> target, String... ignoreProperties) {
         if (Objects.isNull(sourceList)) {
             return null;
@@ -404,6 +570,13 @@ public class BeanKit {
         }
     }
 
+    /**
+     * \u5c06\u6e90\u5bf9\u8c61\u5c5e\u6027\u5199\u5165\u76ee\u6807 Map\u3002
+     * @param source \u6e90\u5bf9\u8c61
+     * @param target \u76ee\u6807\u5bf9\u8c61\u6216\u76ee\u6807\u7c7b\u578b
+     * @param withNull \u662f\u5426\u5305\u542b\u7a7a\u503c
+     * @param ignoredFieldCol \u8981\u5ffd\u7565\u7684\u5b57\u6bb5\u540d
+     */
     public void toMap(Object source, Map target, boolean withNull, String... ignoredFieldCol) {
         if (Objects.isNull(source)) {
             throw new BizRuntimeException("source cannot be null");
@@ -454,6 +627,11 @@ public class BeanKit {
 
     }
 
+    /**
+     * \u5224\u65ad\u5bf9\u8c61\u3001\u5bb9\u5668\u6216\u6587\u672c\u662f\u5426\u4e3a\u7a7a\u3002
+     * @param obj \u5f85\u8f6c\u6362\u6216\u68c0\u67e5\u7684\u5bf9\u8c61
+     * @return \u5bf9\u8c61\u662f\u5426\u4e3a\u7a7a
+     */
     protected boolean isEmpty(Object obj) {
         if (Objects.isNull(obj)) {
             return true;

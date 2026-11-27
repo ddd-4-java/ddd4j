@@ -16,16 +16,24 @@ import java.util.Objects;
 @UtilityClass
 public class StrKit extends StrUtil {
 
+    /** \u65e0\u6cd5\u5339\u914d\u9996\u5b57\u6bcd\u65f6\u4f7f\u7528\u7684\u5360\u4f4d\u5b57\u7b26\u3002 */
     public static final char unknowChar = '*';
+    /** \u8def\u5f84\u89c4\u8303\u5316\u91c7\u7528\u7684\u659c\u6760\u5206\u9694\u7b26\u3002 */
     private static final String FOLDER_SEPARATOR = "/";
+    /** Windows \u8def\u5f84\u4e2d\u7684\u53cd\u659c\u6760\u5206\u9694\u7b26\u3002 */
     private static final String WINDOWS_FOLDER_SEPARATOR = "\\";
+    /** \u8868\u793a\u8def\u5f84\u56de\u5230\u7236\u76ee\u5f55\u7684\u6807\u8bb0\u3002 */
     private static final String TOP_PATH = "..";
+    /** \u8868\u793a\u8def\u5f84\u7559\u5728\u5f53\u524d\u76ee\u5f55\u7684\u6807\u8bb0\u3002 */
     private static final String CURRENT_PATH = ".";
+    /** \u6587\u4ef6\u540d\u548c\u6269\u5c55\u540d\u4e4b\u95f4\u7684\u70b9\u53f7\u5206\u9694\u7b26\u3002 */
     private static final char EXTENSION_SEPARATOR = '.';
+    /** GB2312 \u6c49\u5b57\u533a\u6bb5\u53ca\u5176\u9996\u5b57\u6bcd\u5bf9\u5e94\u5173\u7cfb\u7684\u8fb9\u754c\u3002 */
     private static final int[] allChineseScope = {1601, 1637, 1833, 2078,
             2274, 2302, 2433, 2594, 2787, 3106, 3212, 3472, 3635, 3722, 3730,
             3858, 4027, 4086, 4390, 4558, 4684, 4925, 5249, 5600,
             Integer.MAX_VALUE};
+    /** \u6309\u6c49\u5b57\u533a\u6bb5\u6620\u5c04\u4f7f\u7528\u7684\u82f1\u6587\u5b57\u6bcd\u548c\u672a\u77e5\u5b57\u7b26\u6807\u8bb0\u3002 */
     private static final char[] allEnglishLetter = {'A', 'B', 'C', 'D', 'E',
             'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
             'T', 'W', 'X', 'Y', 'Z', unknowChar};
@@ -33,6 +41,7 @@ public class StrKit extends StrUtil {
      * Any number of these characters are considered delimiters between
      * multiple context config paths in a single String value.
      */
+    /** \u914d\u7f6e\u4f4d\u7f6e\u5217\u8868\u4f7f\u7528\u7684\u5206\u9694\u7b26\u96c6\u5408\u3002 */
     public static String CONFIG_LOCATION_DELIMITERS = ",; \t\n";
 
     /*
@@ -40,6 +49,11 @@ public class StrKit extends StrUtil {
      *
      * @param str
      * @return
+     */
+    /**
+     * \u5224\u65ad\u8f93\u5165\u662f\u5426\u4e3a\u7a7a\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @return \u6ee1\u8db3\u6761\u4ef6\u65f6\u8fd4\u56de true
      */
     public static boolean isEmpty(String str) {
         if (Objects.isNull(str)) {
@@ -55,6 +69,11 @@ public class StrKit extends StrUtil {
     /*
      * 该方法不能被删除；可能引起调用者代码报错
      */
+    /**
+     * \u5224\u65ad\u8f93\u5165\u662f\u5426\u975e\u7a7a\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @return \u6ee1\u8db3\u6761\u4ef6\u65f6\u8fd4\u56de true
+     */
     public static boolean isNotEmpty(String str) {
         return !isEmpty(str);
     }
@@ -65,6 +84,11 @@ public class StrKit extends StrUtil {
      *
      * @param str
      * @return
+     */
+    /**
+     * \u5224\u65ad\u5b57\u7b26\u4e32\u662f\u5426\u4e3a\u7a7a\u6216\u4ec5\u542b\u7a7a\u767d\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @return \u6ee1\u8db3\u6761\u4ef6\u65f6\u8fd4\u56de true
      */
     public static boolean isNull(String str) {
         return Objects.isNull(str) || str.trim().length() == 0;
@@ -85,6 +109,11 @@ public class StrKit extends StrUtil {
      * @param str the candidate String
      * @since 3.2.1
      */
+    /**
+     * \u5224\u65ad\u8f93\u5165\u662f\u5426\u4e3a\u7a7a\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @return \u6ee1\u8db3\u6761\u4ef6\u65f6\u8fd4\u56de true
+     */
     public static boolean isEmpty(Object str) {
         return (Objects.isNull(str) || "".equals(str));
     }
@@ -102,6 +131,11 @@ public class StrKit extends StrUtil {
      * @return {@code true} if the CharSequence is not null and has length
      * @see #hasText(String)
      */
+    /**
+     * \u5224\u65ad\u8f93\u5165\u662f\u5426\u6709\u5b57\u7b26\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @return \u6ee1\u8db3\u6761\u4ef6\u65f6\u8fd4\u56de true
+     */
     public static boolean hasLength(CharSequence str) {
         return (Objects.nonNull(str) && str.length() > 0);
     }
@@ -112,6 +146,11 @@ public class StrKit extends StrUtil {
      * @param str the String to check (may be {@code null})
      * @return {@code true} if the String is not null and has length
      * @see #hasLength(CharSequence)
+     */
+    /**
+     * \u5224\u65ad\u8f93\u5165\u662f\u5426\u6709\u5b57\u7b26\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @return \u6ee1\u8db3\u6761\u4ef6\u65f6\u8fd4\u56de true
      */
     public static boolean hasLength(String str) {
         return hasLength((CharSequence) str);
@@ -132,6 +171,11 @@ public class StrKit extends StrUtil {
      * @return {@code true} if the CharSequence is not {@code null},
      * its length is greater than 0, and it does not contain whitespace only
      * @see Character#isWhitespace
+     */
+    /**
+     * \u5224\u65ad\u8f93\u5165\u662f\u5426\u6709\u975e\u7a7a\u767d\u5b57\u7b26\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @return \u6ee1\u8db3\u6761\u4ef6\u65f6\u8fd4\u56de true
      */
     public static boolean hasText(CharSequence str) {
         if (!hasLength(str)) {
@@ -155,6 +199,11 @@ public class StrKit extends StrUtil {
      * greater than 0, and it does not contain whitespace only
      * @see #hasText(CharSequence)
      */
+    /**
+     * \u5224\u65ad\u8f93\u5165\u662f\u5426\u6709\u975e\u7a7a\u767d\u5b57\u7b26\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @return \u6ee1\u8db3\u6761\u4ef6\u65f6\u8fd4\u56de true
+     */
     public static boolean hasText(String str) {
         return hasText((CharSequence) str);
     }
@@ -165,6 +214,11 @@ public class StrKit extends StrUtil {
      * @return {@code true} if the CharSequence is not empty and
      * contains at least 1 whitespace character
      * @see Character#isWhitespace
+     */
+    /**
+     * \u5224\u65ad\u8f93\u5165\u662f\u5426\u5305\u542b\u7a7a\u767d\u5b57\u7b26\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @return \u6ee1\u8db3\u6761\u4ef6\u65f6\u8fd4\u56de true
      */
     public static boolean containsWhitespace(CharSequence str) {
         if (!hasLength(str)) {
@@ -186,6 +240,11 @@ public class StrKit extends StrUtil {
      * contains at least 1 whitespace character
      * @see #containsWhitespace(CharSequence)
      */
+    /**
+     * \u5224\u65ad\u8f93\u5165\u662f\u5426\u5305\u542b\u7a7a\u767d\u5b57\u7b26\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @return \u6ee1\u8db3\u6761\u4ef6\u65f6\u8fd4\u56de true
+     */
     public static boolean containsWhitespace(String str) {
         return containsWhitespace((CharSequence) str);
     }
@@ -195,6 +254,11 @@ public class StrKit extends StrUtil {
      * @param str the String to check
      * @return the trimmed String
      * @see java.lang.Character#isWhitespace
+     */
+    /**
+     * \u6267\u884c trim whitespace \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
      */
     public static String trimWhitespace(String str) {
         if (!hasLength(str)) {
@@ -217,6 +281,11 @@ public class StrKit extends StrUtil {
      * @return the trimmed String
      * @see java.lang.Character#isWhitespace
      */
+    /**
+     * \u6267\u884c trim all whitespace \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
+     */
     public static String trimAllWhitespace(String str) {
         if (!hasLength(str)) {
             return str;
@@ -238,6 +307,11 @@ public class StrKit extends StrUtil {
      * @return the trimmed String
      * @see java.lang.Character#isWhitespace
      */
+    /**
+     * \u6267\u884c trim leading whitespace \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
+     */
     public static String trimLeadingWhitespace(String str) {
         if (!hasLength(str)) {
             return str;
@@ -254,6 +328,11 @@ public class StrKit extends StrUtil {
      * @param str the String to check
      * @return the trimmed String
      * @see java.lang.Character#isWhitespace
+     */
+    /**
+     * \u6267\u884c trim trailing whitespace \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
      */
     public static String trimTrailingWhitespace(String str) {
         if (!hasLength(str)) {
@@ -272,6 +351,12 @@ public class StrKit extends StrUtil {
      * @param leadingCharacter the leading character to be trimmed
      * @return the trimmed String
      */
+    /**
+     * \u6267\u884c trim leading character \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @param leadingCharacter \u524d\u5bfc\u5b57\u7b26
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
+     */
     public static String trimLeadingCharacter(String str, char leadingCharacter) {
         if (!hasLength(str)) {
             return str;
@@ -288,6 +373,12 @@ public class StrKit extends StrUtil {
      * @param str the String to check
      * @param trailingCharacter the trailing character to be trimmed
      * @return the trimmed String
+     */
+    /**
+     * \u6267\u884c trim trailing character \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @param trailingCharacter \u5c3e\u968f\u5b57\u7b26
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
      */
     public static String trimTrailingCharacter(String str, char trailingCharacter) {
         if (!hasLength(str)) {
@@ -307,6 +398,12 @@ public class StrKit extends StrUtil {
      * @param str the String to check
      * @param prefix the prefix to look for
      * @see java.lang.String#startsWith
+     */
+    /**
+     * \u6267\u884c starts with ignore case \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @param prefix \u524d\u7f00
+     * @return \u6ee1\u8db3\u6761\u4ef6\u65f6\u8fd4\u56de true
      */
     public static boolean startsWithIgnoreCase(String str, String prefix) {
         if (Objects.isNull(str) || Objects.isNull(prefix)) {
@@ -329,6 +426,12 @@ public class StrKit extends StrUtil {
      * @param str the String to check
      * @param suffix the suffix to look for
      * @see java.lang.String#endsWith
+     */
+    /**
+     * \u6267\u884c ends with ignore case \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @param suffix \u540e\u7f00
+     * @return \u6ee1\u8db3\u6761\u4ef6\u65f6\u8fd4\u56de true
      */
     public static boolean endsWithIgnoreCase(String str, String suffix) {
         if (Objects.isNull(str) || Objects.isNull(suffix)) {
@@ -353,6 +456,13 @@ public class StrKit extends StrUtil {
      * @param index the index in the original string to start matching against
      * @param substring the substring to match at the given index
      */
+    /**
+     * \u6267\u884c substring match \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @param index \u8d77\u59cb\u4f4d\u7f6e
+     * @param substring \u5f85\u5339\u914d\u5b50\u4e32
+     * @return \u6ee1\u8db3\u6761\u4ef6\u65f6\u8fd4\u56de true
+     */
     public static boolean substringMatch(CharSequence str, int index, CharSequence substring) {
         for (int j = 0; j < substring.length(); j++) {
             int i = index + j;
@@ -367,6 +477,12 @@ public class StrKit extends StrUtil {
      * Count the occurrences of the substring in string s.
      * @param str string to search in. Return 0 if this is null.
      * @param sub string to search for. Return 0 if this is null.
+     */
+    /**
+     * \u6267\u884c count occurrences of \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @param sub \u5f85\u5339\u914d\u5b50\u4e32
+     * @return \u8ba1\u7b97\u7ed3\u679c
      */
     public static int countOccurrencesOf(String str, String sub) {
         if (Objects.isNull(str) || Objects.isNull(sub) || str.length() == 0 || sub.length() == 0) {
@@ -389,6 +505,13 @@ public class StrKit extends StrUtil {
      * @param oldPattern String to replace
      * @param newPattern String to insert
      * @return a String with the replacements
+     */
+    /**
+     * \u6267\u884c replace \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param inString \u6e90\u5b57\u7b26\u4e32
+     * @param oldPattern \u5f85\u66ff\u6362\u6a21\u5f0f
+     * @param newPattern \u66ff\u6362\u6587\u672c
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
      */
     public static String replace(String inString, String oldPattern, String newPattern) {
         if (!hasLength(inString) || !hasLength(oldPattern) || Objects.isNull(newPattern)) {
@@ -416,6 +539,12 @@ public class StrKit extends StrUtil {
      * @param pattern the pattern to delete all occurrences of
      * @return the resulting String
      */
+    /**
+     * \u6267\u884c delete \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param inString \u6e90\u5b57\u7b26\u4e32
+     * @param pattern \u5339\u914d\u6a21\u5f0f
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
+     */
     public static String delete(String inString, String pattern) {
         return replace(inString, pattern, "");
     }
@@ -426,6 +555,12 @@ public class StrKit extends StrUtil {
      * @param charsToDelete a set of characters to delete.
      * E.g. "az\n" will delete 'a's, 'z's and new lines.
      * @return the resulting String
+     */
+    /**
+     * \u6267\u884c delete any \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param inString \u6e90\u5b57\u7b26\u4e32
+     * @param charsToDelete \u5f85\u5220\u9664\u5b57\u7b26
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
      */
     public static String deleteAny(String inString, String charsToDelete) {
         if (!hasLength(inString) || !hasLength(charsToDelete)) {
@@ -452,6 +587,11 @@ public class StrKit extends StrUtil {
      * "this.name.is.qualified", returns "qualified".
      * @param qualifiedName the qualified name
      */
+    /**
+     * \u6267\u884c unqualify \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param qualifiedName \u9650\u5b9a\u540d\u79f0
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
+     */
     public static String unqualify(String qualifiedName) {
         return unqualify(qualifiedName, '.');
     }
@@ -461,6 +601,12 @@ public class StrKit extends StrUtil {
      * "this:name:is:qualified" returns "qualified" if using a ':' separator.
      * @param qualifiedName the qualified name
      * @param separator the separator
+     */
+    /**
+     * \u6267\u884c unqualify \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param qualifiedName \u9650\u5b9a\u540d\u79f0
+     * @param separator \u5206\u9694\u7b26
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
      */
     public static String unqualify(String qualifiedName, char separator) {
         return qualifiedName.substring(qualifiedName.lastIndexOf(separator) + 1);
@@ -473,6 +619,11 @@ public class StrKit extends StrUtil {
      * @param str the String to capitalize, may be {@code null}
      * @return the capitalized String, {@code null} if null
      */
+    /**
+     * \u6267\u884c capitalize \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
+     */
     public static String capitalize(String str) {
         return changeFirstCharacterCase(str, true);
     }
@@ -484,10 +635,21 @@ public class StrKit extends StrUtil {
      * @param str the String to uncapitalize, may be {@code null}
      * @return the uncapitalized String, {@code null} if null
      */
+    /**
+     * \u6267\u884c uncapitalize \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
+     */
     public static String uncapitalize(String str) {
         return changeFirstCharacterCase(str, false);
     }
 
+    /**
+     * \u8f6c\u6362\u5b57\u7b26\u4e32\u9996\u5b57\u7b26\u7684\u5927\u5c0f\u5199\uff0c\u5176\u4f59\u5b57\u7b26\u4fdd\u6301\u539f\u6837\u3002
+     * @param str \u8981\u8f6c\u6362\u7684\u5b57\u7b26\u4e32
+     * @param capitalize \u662f\u5426\u628a\u9996\u5b57\u7b26\u8f6c\u6210\u5927\u5199
+     * @return \u8f6c\u6362\u7ed3\u679c\uff0c\u7a7a\u5b57\u7b26\u4e32\u6216\u7a7a\u5f15\u7528\u539f\u6837\u8fd4\u56de
+     */
     private static String changeFirstCharacterCase(String str, boolean capitalize) {
         if (Objects.isNull(str) || str.length() == 0) {
             return str;
@@ -508,6 +670,11 @@ public class StrKit extends StrUtil {
      * @param path the file path (may be {@code null})
      * @return the extracted filename, or {@code null} if none
      */
+    /**
+     * \u6267\u884c get filename \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param path \u8def\u5f84
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
+     */
     public static String getFilename(String path) {
         if (Objects.isNull(path)) {
             return null;
@@ -521,6 +688,11 @@ public class StrKit extends StrUtil {
      * e.g. "mypath/myfile.txt" -> "txt".
      * @param path the file path (may be {@code null})
      * @return the extracted filename extension, or {@code null} if none
+     */
+    /**
+     * \u6267\u884c get filename extension \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param path \u8def\u5f84
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
      */
     public static String getFilenameExtension(String path) {
         if (Objects.isNull(path)) {
@@ -543,6 +715,11 @@ public class StrKit extends StrUtil {
      * @param path the file path (may be {@code null})
      * @return the path with stripped filename extension,
      * or {@code null} if none
+     */
+    /**
+     * \u6267\u884c strip filename extension \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param path \u8def\u5f84
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
      */
     public static String stripFilenameExtension(String path) {
         if (Objects.isNull(path)) {
@@ -567,6 +744,12 @@ public class StrKit extends StrUtil {
      * (relative to the full file path above)
      * @return the full file path that results from applying the relative path
      */
+    /**
+     * \u6267\u884c apply relative path \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param path \u8def\u5f84
+     * @param relativePath \u76f8\u5bf9\u8def\u5f84
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
+     */
     public static String applyRelativePath(String path, String relativePath) {
         int separatorIndex = path.lastIndexOf(FOLDER_SEPARATOR);
         if (separatorIndex != -1) {
@@ -587,6 +770,11 @@ public class StrKit extends StrUtil {
      * notice that Windows separators ("\") are replaced by simple slashes.
      * @param path the original path
      * @return the normalized path
+     */
+    /**
+     * \u6267\u884c clean path \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param path \u8def\u5f84
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
      */
     public static String cleanPath(String path) {
         if (Objects.isNull(path)) {
@@ -649,6 +837,12 @@ public class StrKit extends StrUtil {
      * @param path2 second path for comparison
      * @return whether the two paths are equivalent after normalization
      */
+    /**
+     * \u6267\u884c path equals \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param path1 \u7b2c\u4e00\u4e2a\u8def\u5f84
+     * @param path2 \u7b2c\u4e8c\u4e2a\u8def\u5f84
+     * @return \u6ee1\u8db3\u6761\u4ef6\u65f6\u8fd4\u56de true
+     */
     public static boolean pathEquals(String path1, String path2) {
         return cleanPath(path1).equals(cleanPath(path2));
     }
@@ -661,6 +855,11 @@ public class StrKit extends StrUtil {
      * also accepts spaces as separators, as an alternative to underscores
      * @return a corresponding {@code Locale} instance
      * @throws IllegalArgumentException in case of an invalid locale specification
+     */
+    /**
+     * \u6267\u884c parse locale string \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param localeString \u8bed\u8a00\u533a\u57df\u6587\u672c
+     * @return \u89e3\u6790\u540e\u7684\u8bed\u8a00\u533a\u57df
      */
     public static Locale parseLocaleString(String localeString) {
         String[] parts = tokenizeToStringArray(localeString, "_ ", false, false);
@@ -682,6 +881,11 @@ public class StrKit extends StrUtil {
         return (language.length() > 0 ? new Locale(language, country, variant) : null);
     }
 
+    /**
+     * \u8981\u6c42\u533a\u57df\u4ee3\u7801\u7247\u6bb5\u4ec5\u542b\u5b57\u6bcd\u3001\u6570\u5b57\u3001\u4e0b\u5212\u7ebf\u6216\u7a7a\u683c\u3002
+     * @param localePart \u5f85\u68c0\u67e5\u7684\u533a\u57df\u4ee3\u7801\u7247\u6bb5
+     * @throws IllegalArgumentException \u7247\u6bb5\u542b\u6709\u4e0d\u652f\u6301\u7684\u5b57\u7b26
+     */
     private static void validateLocalePart(String localePart) {
         for (int i = 0; i < localePart.length(); i++) {
             char ch = localePart.charAt(i);
@@ -698,6 +902,11 @@ public class StrKit extends StrUtil {
      * @param locale the Locale to transform to a language tag
      * @return the RFC 3066 compliant language tag as String
      */
+    /**
+     * \u6267\u884c to language tag \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param locale \u8bed\u8a00\u533a\u57df
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
+     */
     public static String toLanguageTag(Locale locale) {
         return locale.getLanguage() + (hasText(locale.getCountry()) ? "-" + locale.getCountry() : "");
     }
@@ -708,6 +917,11 @@ public class StrKit extends StrUtil {
      * but throwing {@link IllegalArgumentException} in case of an invalid time zone specification
      * @return a corresponding {@link TimeZone} instance
      * @throws IllegalArgumentException in case of an invalid time zone specification
+     */
+    /**
+     * \u6267\u884c parse time zone string \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param timeZoneString \u65f6\u533a\u6587\u672c
+     * @return \u89e3\u6790\u540e\u7684\u65f6\u533a
      */
     public static TimeZone parseTimeZoneString(String timeZoneString) {
         TimeZone timeZone = TimeZone.getTimeZone(timeZoneString);
@@ -730,6 +944,12 @@ public class StrKit extends StrUtil {
      * @param str the String to append
      * @return the new array (never {@code null})
      */
+    /**
+     * \u6267\u884c add string to array \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param array \u6e90\u6570\u7ec4
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32\u6570\u7ec4
+     */
     public static String[] addStringToArray(String[] array, String str) {
         if (ObjectUtils.isEmpty(array)) {
             return new String[]{str};
@@ -747,6 +967,12 @@ public class StrKit extends StrUtil {
      * @param array1 the first array (can be {@code null})
      * @param array2 the second array (can be {@code null})
      * @return the new array ({@code null} if both given arrays were {@code null})
+     */
+    /**
+     * \u6267\u884c concatenate string arrays \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param array1 \u7b2c\u4e00\u4e2a\u6570\u7ec4
+     * @param array2 \u7b2c\u4e8c\u4e2a\u6570\u7ec4
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32\u6570\u7ec4
      */
     public static String[] concatenateStringArrays(String[] array1, String[] array2) {
         if (ObjectUtils.isEmpty(array1)) {
@@ -771,6 +997,12 @@ public class StrKit extends StrUtil {
      * @param array2 the second array (can be {@code null})
      * @return the new array ({@code null} if both given arrays were {@code null})
      */
+    /**
+     * \u6267\u884c merge string arrays \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param array1 \u7b2c\u4e00\u4e2a\u6570\u7ec4
+     * @param array2 \u7b2c\u4e8c\u4e2a\u6570\u7ec4
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32\u6570\u7ec4
+     */
     public static String[] mergeStringArrays(String[] array1, String[] array2) {
         if (ObjectUtils.isEmpty(array1)) {
             return array2;
@@ -793,6 +1025,11 @@ public class StrKit extends StrUtil {
      * @param array the source array
      * @return the sorted array (never {@code null})
      */
+    /**
+     * \u6267\u884c sort string array \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param array \u6e90\u6570\u7ec4
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32\u6570\u7ec4
+     */
     public static String[] sortStringArray(String[] array) {
         if (ObjectUtils.isEmpty(array)) {
             return new String[0];
@@ -808,6 +1045,11 @@ public class StrKit extends StrUtil {
      * @return the String array ({@code null} if the passed-in
      * Collection was {@code null})
      */
+    /**
+     * \u6267\u884c to string array \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param collection \u6e90\u96c6\u5408
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32\u6570\u7ec4
+     */
     public static String[] toStringArray(Collection<String> collection) {
         if (Objects.isNull(collection)) {
             return null;
@@ -822,6 +1064,11 @@ public class StrKit extends StrUtil {
      * @return the String array ({@code null} if the passed-in
      * Enumeration was {@code null})
      */
+    /**
+     * \u6267\u884c to string array \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param enumeration \u6e90\u679a\u4e3e
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32\u6570\u7ec4
+     */
     public static String[] toStringArray(Enumeration<String> enumeration) {
         if (Objects.isNull(enumeration)) {
             return null;
@@ -835,6 +1082,11 @@ public class StrKit extends StrUtil {
      * calling {@code String.trim()} on each of them.
      * @param array the original String array
      * @return the resulting array (of the same size) with trimmed elements
+     */
+    /**
+     * \u6267\u884c trim array elements \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param array \u6e90\u6570\u7ec4
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32\u6570\u7ec4
      */
     public static String[] trimArrayElements(String[] array) {
         if (ObjectUtils.isEmpty(array)) {
@@ -853,6 +1105,11 @@ public class StrKit extends StrUtil {
      * Also sorts the array, as it uses a TreeSet.
      * @param array the String array
      * @return an array without duplicates, in natural sort order
+     */
+    /**
+     * \u6267\u884c remove duplicate strings \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param array \u6e90\u6570\u7ec4
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32\u6570\u7ec4
      */
     public static String[] removeDuplicateStrings(String[] array) {
         if (ObjectUtils.isEmpty(array)) {
@@ -876,6 +1133,12 @@ public class StrKit extends StrUtil {
      * @return a {@code Properties} instance representing the array contents,
      * or {@code null} if the array to process was null or empty
      */
+    /**
+     * \u6267\u884c split array elements into properties \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param array \u6e90\u6570\u7ec4
+     * @param delimiter \u5206\u9694\u7b26
+     * @return \u62c6\u5206\u540e\u7684\u5c5e\u6027\u96c6\u5408
+     */
     public static Properties splitArrayElementsIntoProperties(String[] array, String delimiter) {
         return splitArrayElementsIntoProperties(array, delimiter, null);
     }
@@ -893,6 +1156,13 @@ public class StrKit extends StrUtil {
      * symbol), or {@code null} if no removal should occur
      * @return a {@code Properties} instance representing the array contents,
      * or {@code null} if the array to process was {@code null} or empty
+     */
+    /**
+     * \u6267\u884c split array elements into properties \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param array \u6e90\u6570\u7ec4
+     * @param delimiter \u5206\u9694\u7b26
+     * @param charsToDelete \u5f85\u5220\u9664\u5b57\u7b26
+     * @return \u62c6\u5206\u540e\u7684\u5c5e\u6027\u96c6\u5408
      */
     public static Properties splitArrayElementsIntoProperties(
             String[] array, String delimiter, String charsToDelete) {
@@ -922,6 +1192,11 @@ public class StrKit extends StrUtil {
      * @param str
      * @return
      */
+    /**
+     * \u6267\u884c tokenize to string array \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32\u6570\u7ec4
+     */
     public static String[] tokenizeToStringArray(String str) {
         return tokenizeToStringArray(str, CONFIG_LOCATION_DELIMITERS, true, true);
     }
@@ -940,6 +1215,12 @@ public class StrKit extends StrUtil {
      * @see java.util.StringTokenizer
      * @see String#trim()
      * @see #delimitedListToStringArray
+     */
+    /**
+     * \u6267\u884c tokenize to string array \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @param delimiters \u5206\u9694\u7b26\u96c6\u5408
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32\u6570\u7ec4
      */
     public static String[] tokenizeToStringArray(String str, String delimiters) {
         return tokenizeToStringArray(str, delimiters, true, true);
@@ -963,6 +1244,14 @@ public class StrKit extends StrUtil {
      * @see java.util.StringTokenizer
      * @see String#trim()
      * @see #delimitedListToStringArray
+     */
+    /**
+     * \u6267\u884c tokenize to string array \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @param delimiters \u5206\u9694\u7b26\u96c6\u5408
+     * @param trimTokens \u65b9\u6cd5\u53c2\u6570
+     * @param ignoreEmptyTokens \u65b9\u6cd5\u53c2\u6570
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32\u6570\u7ec4
      */
     public static String[] tokenizeToStringArray(
             String str, String delimiters, boolean trimTokens, boolean ignoreEmptyTokens) {
@@ -995,6 +1284,12 @@ public class StrKit extends StrUtil {
      * @return an array of the tokens in the list
      * @see #tokenizeToStringArray
      */
+    /**
+     * \u6267\u884c delimited list to string array \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @param delimiter \u5206\u9694\u7b26
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32\u6570\u7ec4
+     */
     public static String[] delimitedListToStringArray(String str, String delimiter) {
         return delimitedListToStringArray(str, delimiter, null);
     }
@@ -1011,6 +1306,13 @@ public class StrKit extends StrUtil {
      * line breaks: e.g. "\r\n\f" will delete all new lines and line feeds in a String.
      * @return an array of the tokens in the list
      * @see #tokenizeToStringArray
+     */
+    /**
+     * \u6267\u884c delimited list to string array \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @param delimiter \u5206\u9694\u7b26
+     * @param charsToDelete \u5f85\u5220\u9664\u5b57\u7b26
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32\u6570\u7ec4
      */
     public static String[] delimitedListToStringArray(String str, String delimiter, String charsToDelete) {
         if (Objects.isNull(str)) {
@@ -1044,6 +1346,11 @@ public class StrKit extends StrUtil {
      * @param str the input String
      * @return an array of Strings, or the empty array in case of empty input
      */
+    /**
+     * \u6267\u884c comma delimited list to string array \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32\u6570\u7ec4
+     */
     public static String[] commaDelimitedListToStringArray(String str) {
         return delimitedListToStringArray(str, ",");
     }
@@ -1053,6 +1360,11 @@ public class StrKit extends StrUtil {
      * Note that this will suppress duplicates.
      * @param str the input String
      * @return a Set of String entries in the list
+     */
+    /**
+     * \u6267\u884c comma delimited list to set \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @return \u8f6c\u6362\u540e\u7684\u5b57\u7b26\u4e32\u96c6\u5408
      */
     public static Set<String> commaDelimitedListToSet(String str) {
         Set<String> set = new TreeSet<String>();
@@ -1071,6 +1383,14 @@ public class StrKit extends StrUtil {
      * @param prefix the String to start each element with
      * @param suffix the String to end each element with
      * @return the delimited String
+     */
+    /**
+     * \u6267\u884c collection to delimited string \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param coll \u6e90\u96c6\u5408
+     * @param delim \u5206\u9694\u7b26
+     * @param prefix \u524d\u7f00
+     * @param suffix \u540e\u7f00
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
      */
     public static String collectionToDelimitedString(Collection<?> coll, String delim, String prefix, String suffix) {
         if (CollKit.isEmpty(coll)) {
@@ -1094,6 +1414,12 @@ public class StrKit extends StrUtil {
      * @param delim the delimiter to use (probably a ",")
      * @return the delimited String
      */
+    /**
+     * \u6267\u884c collection to delimited string \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param coll \u6e90\u96c6\u5408
+     * @param delim \u5206\u9694\u7b26
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
+     */
     public static String collectionToDelimitedString(Collection<?> coll, String delim) {
         return collectionToDelimitedString(coll, delim, "", "");
     }
@@ -1103,6 +1429,11 @@ public class StrKit extends StrUtil {
      * E.g. useful for {@code toString()} implementations.
      * @param coll the Collection to display
      * @return the delimited String
+     */
+    /**
+     * \u6267\u884c collection to comma delimited string \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param coll \u6e90\u96c6\u5408
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
      */
     public static String collectionToCommaDelimitedString(Collection<?> coll) {
         return collectionToDelimitedString(coll, ",");
@@ -1114,6 +1445,12 @@ public class StrKit extends StrUtil {
      * @param arr the array to display
      * @param delim the delimiter to use (probably a ",")
      * @return the delimited String
+     */
+    /**
+     * \u6267\u884c array to delimited string \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param arr \u6e90\u6570\u7ec4
+     * @param delim \u5206\u9694\u7b26
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
      */
     public static String arrayToDelimitedString(Object[] arr, String delim) {
         if (ObjectUtils.isEmpty(arr)) {
@@ -1138,6 +1475,11 @@ public class StrKit extends StrUtil {
      * @param arr the array to display
      * @return the delimited String
      */
+    /**
+     * \u6267\u884c array to comma delimited string \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param arr \u6e90\u6570\u7ec4
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
+     */
     public static String arrayToCommaDelimitedString(Object[] arr) {
         return arrayToDelimitedString(arr, ",");
     }
@@ -1147,6 +1489,11 @@ public class StrKit extends StrUtil {
      *
      * @param str
      * @return
+     */
+    /**
+     * \u6267\u884c get map from query param string \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @return \u89e3\u6790\u540e\u7684\u952e\u503c\u6620\u5c04
      */
     public static Map<String, String> getMapFromQueryParamString(String str) {
         Map<String, String> param = new HashMap<String, String>();
@@ -1167,6 +1514,13 @@ public class StrKit extends StrUtil {
      * @param str
      *            主字串
      * @return
+     */
+    /**
+     * \u6267\u884c replace all \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param src \u6e90\u5b57\u7b26\u4e32
+     * @param tar \u76ee\u6807\u6587\u672c
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
      */
     public static String replaceAll(String src, String tar, String str) {
         StringBuilder sb = new StringBuilder();
@@ -1195,6 +1549,15 @@ public class StrKit extends StrUtil {
      * @param bytesTar
      * @return
      */
+    /**
+     * 按 <code>is Start With</code> 的契约计算并返回结果。
+     *
+     * @param bytesSrc 传入此操作的 <code>byte[]</code> 类型 <code>bytesSrc</code>
+     * @param startSrc 传入此操作的 <code>int</code> 类型 <code>startSrc</code>
+     * @param bytesTar 传入此操作的 <code>byte[]</code> 类型 <code>bytesTar</code>
+     * @param startTar 传入此操作的 <code>int</code> 类型 <code>startTar</code>
+     * @return 按条件返回 <code>false</code>、<code>true</code>
+     */
     private static boolean isStartWith(byte bytesSrc[], int startSrc,
                                        byte bytesTar[], int startTar) {
         for (int j = startTar; j < bytesTar.length; j++) {
@@ -1210,6 +1573,11 @@ public class StrKit extends StrUtil {
      *
      * @param str
      * @return
+     */
+    /**
+     * \u53d6\u5f97\u4e2d\u6587\u8bcd\u8bed\u7684\u62fc\u97f3\u9996\u5b57\u6bcd\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @return \u63d0\u53d6\u7684\u5b57\u7b26
      */
     public static char getFirstLetterFromChinessWord(String str) {
         char result = '*';
@@ -1247,6 +1615,12 @@ public class StrKit extends StrUtil {
      * @param letter
      * @return
      */
+    /**
+     * \u6267\u884c split \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param src \u6e90\u5b57\u7b26\u4e32
+     * @param letter \u5206\u9694\u5b57\u7b26
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32\u6570\u7ec4
+     */
     public static String[] split(String src, char letter) {
         if (Objects.isNull(src)) {
             return new String[0];
@@ -1281,6 +1655,12 @@ public class StrKit extends StrUtil {
      * index 1 being after the delimiter (neither element includes the delimiter);
      * or {@code null} if the delimiter wasn't found in the given input String
      */
+    /**
+     * \u6267\u884c split \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param toSplit \u5f85\u62c6\u5206\u5b57\u7b26\u4e32
+     * @param delimiter \u5206\u9694\u7b26
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32\u6570\u7ec4
+     */
     public static String[] split(String toSplit, String delimiter) {
         if (!hasLength(toSplit) || !hasLength(delimiter)) {
             return null;
@@ -1294,6 +1674,12 @@ public class StrKit extends StrUtil {
         return new String[]{beforeDelimiter, afterDelimiter};
     }
 
+    /**
+     * \u6267\u884c splits \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param toSplit \u5f85\u62c6\u5206\u5b57\u7b26\u4e32
+     * @param regex \u6b63\u5219\u8868\u8fbe\u5f0f
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32\u6570\u7ec4
+     */
     public static String[] splits(String toSplit, String regex) {
         if (!hasLength(toSplit) || !hasLength(regex)) {
             return new String[]{};
@@ -1306,6 +1692,11 @@ public class StrKit extends StrUtil {
      *
      * @param str
      * @return
+     */
+    /**
+     * \u6267\u884c remove last \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
      */
     public static String removeLast(String str) {
         if (isNull(str)) {
@@ -1320,6 +1711,11 @@ public class StrKit extends StrUtil {
      *
      * @param str
      * @return
+     */
+    /**
+     * \u6267\u884c add quotation \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
      */
     public static String addQuotation(String str) {
         if (Objects.isNull(str)) {
@@ -1343,6 +1739,11 @@ public class StrKit extends StrUtil {
      * @param list
      * @return String[]
      */
+    /**
+     * \u6267\u884c list to array \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param list \u6e90\u5217\u8868
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32\u6570\u7ec4
+     */
     public static String[] listToArray(List<String> list) {
         String[] strs = new String[list.size()];
         return list.toArray(strs);
@@ -1355,6 +1756,12 @@ public class StrKit extends StrUtil {
      * @param separator
      * @return String
      */
+    /**
+     * \u6267\u884c list to string \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param list \u6e90\u5217\u8868
+     * @param separator \u5206\u9694\u7b26
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
+     */
     public static String listToString(List<String> list, String separator) {
         return StringUtils.join(listToArray(list), separator);
     }
@@ -1366,6 +1773,11 @@ public class StrKit extends StrUtil {
      * @param pwd_len
      *            生成的密码的总长度
      * @return 密码的字符串
+     */
+    /**
+     * \u751f\u6210\u6307\u5b9a\u957f\u5ea6\u7684\u968f\u673a\u5b57\u7b26\u4e32\u3002
+     * @param pwd_len \u76ee\u6807\u957f\u5ea6
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
      */
     public static String genRandomNum(int pwd_len) {
         // 36是因为数组是从0开始的，26个字母+10个数字 + 下划线
@@ -1395,6 +1807,11 @@ public class StrKit extends StrUtil {
      * @param str
      * @return 传入NULL,返回空"".
      */
+    /**
+     * \u6267\u884c kill null \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
+     */
     public static String killNull(String str) {
         if (Objects.isNull(str)) {
             return "";
@@ -1411,6 +1828,11 @@ public class StrKit extends StrUtil {
      * @param source
      * @return
      */
+    /**
+     * \u6267\u884c parentheses \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param source \u6e90\u5b57\u7b26\u4e32
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
+     */
     public static String parentheses(String source) {
         return (Objects.nonNull(source) ? "(" + source + ")" : null);
     }
@@ -1424,10 +1846,20 @@ public class StrKit extends StrUtil {
      * @param source
      * @return
      */
+    /**
+     * \u6267\u884c brackets \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param source \u6e90\u5b57\u7b26\u4e32
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
+     */
     public static String brackets(String source) {
         return (Objects.nonNull(source) ? "[" + source + "]" : null);
     }
 
+    /**
+     * \u6267\u884c ditto \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param source \u6e90\u5b57\u7b26\u4e32
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
+     */
     public static String ditto(String source) {
         return (Objects.nonNull(source) ? "\"" + source + "\"" : null);
     }
@@ -1439,6 +1871,11 @@ public class StrKit extends StrUtil {
      *            the input String (e.g. "myString")
      * @return the quoted String (e.g. "'myString'"), or
      *         <code>null<code> if the input was <code>null</code>
+     */
+    /**
+     * \u6267\u884c quote \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
      */
     public static String quote(String str) {
         return (Objects.nonNull(str) ? "'" + str + "'" : null);
@@ -1453,6 +1890,12 @@ public class StrKit extends StrUtil {
      * @param list
      * @param separator
      * @return
+     */
+    /**
+     * \u6267\u884c quote \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param array \u6e90\u6570\u7ec4
+     * @param separator \u5206\u9694\u7b26
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
      */
     public static String quote(String[] array, String separator) {
         if (Objects.nonNull(array) && array.length != 0) {
@@ -1476,6 +1919,11 @@ public class StrKit extends StrUtil {
      * @return the quoted String (e.g. "'myString'"), or the input object as-is
      *         if not a String
      */
+    /**
+     * \u6267\u884c quote if string \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param obj \u5f85\u5904\u7406\u5bf9\u8c61
+     * @return \u5904\u7406\u540e\u7684\u5bf9\u8c61
+     */
     public static Object quoteIfString(Object obj) {
         return (obj instanceof String ? quote((String) obj) : obj);
     }
@@ -1489,6 +1937,11 @@ public class StrKit extends StrUtil {
      * @method: trimToAlphaString
      * @author: hiwepy
      * @version: 2010-12-15 下午09:06:02
+     */
+    /**
+     * \u6267\u884c trim to alpha string \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param string \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
      */
     public static String trimToAlphaString(String string) {
         if (Objects.isNull(string) || string.length() == 0) {
@@ -1509,6 +1962,11 @@ public class StrKit extends StrUtil {
      * @author: hiwepy
      * @version: 2010-12-15 下午09:06:31
      */
+    /**
+     * \u6267\u884c trim to alpha strings \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param string \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32\u6570\u7ec4
+     */
     public static String[] trimToAlphaStrings(String string) {
         if (Objects.isNull(string) || string.length() == 0) {
             return new String[0];
@@ -1521,6 +1979,11 @@ public class StrKit extends StrUtil {
         return strs;
     }
 
+    /**
+     * \u6267\u884c trim to string \u5b57\u7b26\u4e32\u5904\u7406\u3002
+     * @param str \u5f85\u5904\u7406\u5b57\u7b26\u4e32
+     * @return \u5904\u7406\u540e\u7684\u5b57\u7b26\u4e32
+     */
     public static String trimToString(String str) {
         if (Objects.isNull(str) || str.trim().length() == 0) {
             return null;

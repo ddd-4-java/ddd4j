@@ -26,17 +26,19 @@ import java.util.function.Supplier;
  */
 public final class CacheSpan {
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>CacheSpan</code> \u5b9e\u4f8b\u3002 */
     private CacheSpan() {
     }
 
     /**
-     * 包装缓存读操作。
+     * \u5305\u88c5\u7f13\u5b58\u8bfb\u64cd\u4f5c\u3002
+     * @param biz \u4e1a\u52a1\u6807\u8bc6\uff08\u5982 "userCache"\uff09
+     * @param backend \u540e\u7aef\u6807\u8bc6\uff08\u5982 "redis"\u3001"caffeine"\uff09
+     * @param supplier \u7f13\u5b58\u8bfb\u64cd\u4f5c
+     * @param missCheck \u672a\u547d\u4e2d\u68c0\u67e5\uff08true \u8868\u793a cache miss\uff09
+     * @return supplier \u7684\u8fd4\u56de\u503c
      *
-     * @param biz       业务标识（如 "userCache"）
-     * @param backend   后端标识（如 "redis"、"caffeine"）
-     * @param supplier  缓存读操作
-     * @param missCheck 未命中检查（true 表示 cache miss）
-     * @return supplier 的返回值
+     * @param <T> \u8fd4\u56de\u503c\u7c7b\u578b
      */
     public static <T> T instrument(String biz, String backend, Supplier<T> supplier, Supplier<Boolean> missCheck) {
         if (!Ddd4jOtel.isAvailable()) {

@@ -61,7 +61,10 @@ public interface Sender {
     }
 
     /**
-     * 将 {@link Message} 序列化为通道通用的 JSON 字符串。
+     * \u5c06 {@link Message} \u5e8f\u5217\u5316\u4e3a\u901a\u9053\u901a\u7528\u7684 JSON \u5b57\u7b26\u4e32\u3002
+     *
+     * @param message \u5f85\u5e8f\u5217\u5316\u6d88\u606f
+     * @return JSON \u5b57\u7b26\u4e32
      */
     static String renderMessage(Message message) {
         return JsonKit.toJson(message);
