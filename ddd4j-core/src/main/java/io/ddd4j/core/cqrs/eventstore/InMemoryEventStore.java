@@ -21,7 +21,6 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * 内存事件存储默认实现（CQRS 写侧）。
@@ -48,7 +47,7 @@ public class InMemoryEventStore implements EventStore {
     private final NavigableMap<Long, StoredEvent> positionIndex = new java.util.concurrent.ConcurrentSkipListMap<>();
 
     /** 下一个持久化领域事件所使用的全局位置计数器。 */
-    private final AtomicLong globalPosition = new AtomicLong(0);
+    private long globalPosition;
 
     /**
      * 向指定聚合的事件流追加这一批领域事件。
@@ -64,27 +63,41 @@ public class InMemoryEventStore implements EventStore {
     public synchronized void append(String aggregateType, AggregateRootId aggregateId,
                                     List<? extends DomainEvent<?>> events, long expectedVersion) {
         String streamKey = streamKey(aggregateType, aggregateId);
-        List<StoredEvent> existing = store.computeIfAbsent(streamKey, k -> new CopyOnWriteArrayList<>());
-        long actualVersion = existing.size();
-        if (actualVersion != expectedVersion) {
-            throw new AggregateVersionConflictException(aggregateType, aggregateId.asString(), expectedVersion, actualVersion);
-        }
+        verifyVersion(streamKey, aggregateType, aggregateId, expectedVersion);
+        // 先构造完整批次，确保事件无效时不会写入半批或消耗全局位置。
+        long initialPosition = globalPosition;
+        List<StoredEvent> batch = new ArrayList<>(events.size());
         long version = expectedVersion;
+        long position = initialPosition;
         for (DomainEvent<?> event : events) {
-            long position = globalPosition.incrementAndGet();
-            StoredEvent storedEvent = new StoredEvent(
+            batch.add(new StoredEvent(
                     event.getEventId(),
                     aggregateType,
                     aggregateId,
                     ++version,
-                    position,
+                    ++position,
                     ZonedDateTime.now(),
                     event,
                     event.getCorrelationId(),
-                    event.getCausationId());
-            existing.add(storedEvent);
-            positionIndex.put(position, storedEvent);
+                    event.getCausationId()));
         }
+
+        // 元数据读取可能重入追加。提交前复核流版本，并避开嵌套提交已经使用的位置。
+        verifyVersion(streamKey, aggregateType, aggregateId, expectedVersion);
+        if (globalPosition != initialPosition) {
+            position = globalPosition;
+            for (int i = 0; i < batch.size(); i++) {
+                StoredEvent event = batch.get(i);
+                batch.set(i, new StoredEvent(event.eventId(), aggregateType, aggregateId, event.version(),
+                        ++position, event.timestamp(), event.payload(), event.correlationId(), event.causationId()));
+            }
+        }
+
+        store.computeIfAbsent(streamKey, k -> new CopyOnWriteArrayList<>()).addAll(batch);
+        for (StoredEvent storedEvent : batch) {
+            positionIndex.put(storedEvent.position(), storedEvent);
+        }
+        globalPosition = position;
     }
 
     /**
@@ -146,6 +159,22 @@ public class InMemoryEventStore implements EventStore {
             count++;
         }
         return result;
+    }
+
+    /**
+     * 将已存事件数与预期版本比较，避免并发写入覆盖事件流。
+     *
+     * @param streamKey       当前聚合事件流的内部键
+     * @param aggregateType   聚合类型名称
+     * @param aggregateId     聚合根标识
+     * @param expectedVersion 本次追加期望匹配的聚合当前版本
+     */
+    private void verifyVersion(String streamKey, String aggregateType, AggregateRootId aggregateId,
+                               long expectedVersion) {
+        long actualVersion = store.getOrDefault(streamKey, Collections.emptyList()).size();
+        if (actualVersion != expectedVersion) {
+            throw new AggregateVersionConflictException(aggregateType, aggregateId.asString(), expectedVersion, actualVersion);
+        }
     }
 
     /**
