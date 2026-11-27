@@ -1,21 +1,22 @@
 package io.ddd4j.sample.spring.cqrs;
 
+import io.ddd4j.core.api.R;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.Result;
 import io.ddd4j.sample.order.adapter.http.CatalogApi;
 import io.ddd4j.sample.order.adapter.http.CatalogCqrs;
 import io.ddd4j.sample.order.start.CatalogRuntime;
 import io.ddd4j.spring.event.SpringDomainEventPublisher;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
 /**
  * 将共用商品交易命令处理器注册到示例运行框架的命令总线。
  */
-@org.springframework.stereotype.Component
+@Component
 public class CatalogCommandExecutor implements CommandExecutor<Command> {
     /**
      * 与具体框架无关的商品交易 HTTP 操作。
@@ -68,7 +69,7 @@ public class CatalogCommandExecutor implements CommandExecutor<Command> {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public Result<?> execute(Command command) {
+    public R<?> execute(Command command) {
         return delegate.execute(command);
     }
 }

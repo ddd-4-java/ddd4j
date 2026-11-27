@@ -36,10 +36,10 @@ public void export(HttpServletResponse response) {
 
 ```java
 @PostMapping("/orders/import")
-public Result<ImportResult<OrderVO>> importOrders(@RequestParam MultipartFile file) {
+public R<ImportResult<OrderVO>> importOrders(@RequestParam MultipartFile file) {
     try (InputStream in = file.getInputStream()) {
         ImportResult<OrderVO> result = ExcelKit.importExcel(in, OrderVO.class);
-        return Result.ok(result);
+        return R.ok(result);
     }
 }
 ```

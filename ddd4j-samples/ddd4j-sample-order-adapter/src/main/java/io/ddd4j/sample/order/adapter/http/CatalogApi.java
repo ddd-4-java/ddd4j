@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * 商品交易应用服务的 HTTP 适配入口。
@@ -74,7 +75,7 @@ public class CatalogApi implements CatalogEndpoints {
         }
         command.setTenantId(tenant);
         command.setSpuCode(code);
-        return bus.execute(command).data().orElseThrow();
+        return Optional.ofNullable(bus.execute(command).getData()).orElseThrow();
     }
 
     /**
@@ -93,7 +94,7 @@ public class CatalogApi implements CatalogEndpoints {
         }
         command.setTenantId(tenant);
         command.setOrderNo(code);
-        return bus.execute(command).data().orElseThrow();
+        return Optional.ofNullable(bus.execute(command).getData()).orElseThrow();
     }
 
     /**
@@ -207,7 +208,7 @@ public class CatalogApi implements CatalogEndpoints {
             if (!field.isIntegralNumber() || !field.canConvertToLong()) {
                 throw new IllegalArgumentException("支付金额须为分值整数");
             }
-            return bus.execute(new ConfirmTradePaymentCmd(tenant, orderNo, field.longValue())).data().orElseThrow();
+            return Optional.ofNullable(bus.execute(new ConfirmTradePaymentCmd(tenant, orderNo, field.longValue())).getData()).orElseThrow();
         });
     }
 
@@ -233,7 +234,7 @@ public class CatalogApi implements CatalogEndpoints {
      * @return HTTP 状态码及响应正文
      */
     Reply confirmPayment(CommandBus bus, String tenant, String orderNo, Long amountCent) {
-        return invoke(200, () -> bus.execute(new ConfirmTradePaymentCmd(tenant, orderNo, amountCent)).data().orElseThrow());
+        return invoke(200, () -> Optional.ofNullable(bus.execute(new ConfirmTradePaymentCmd(tenant, orderNo, amountCent)).getData()).orElseThrow());
     }
 
     /**
@@ -268,7 +269,7 @@ public class CatalogApi implements CatalogEndpoints {
      * @return HTTP 状态码及响应正文
      */
     Reply changeOrder(CommandBus bus, String tenant, String orderNo, ChangeTradeOrderCmd.Action action) {
-        return invoke(200, () -> bus.execute(new ChangeTradeOrderCmd(tenant, orderNo, action)).data().orElseThrow());
+        return invoke(200, () -> Optional.ofNullable(bus.execute(new ChangeTradeOrderCmd(tenant, orderNo, action)).getData()).orElseThrow());
     }
 
     /**

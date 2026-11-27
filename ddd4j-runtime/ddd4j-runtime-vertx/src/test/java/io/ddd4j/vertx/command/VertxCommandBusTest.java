@@ -14,9 +14,9 @@
  */
 package io.ddd4j.vertx.command;
 
+import io.ddd4j.core.api.R;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.Result;
 import io.vertx.core.Vertx;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +43,7 @@ import static org.assertj.core.api.Assertions.catchThrowableOfType;
  * {@code CommandRegistryTest} 及 {@code SpringCommandBusTest}／
  * {@code HelidonCommandBusTest} 对齐：
  * <ol>
- *   <li>execute 在 Vert.x 上下文线程同步返回 Result.success（真实路由到业务
+ *   <li>execute 在 Vert.x 上下文线程同步返回 R.success（真实路由到业务
  *       Handler——证明 DefaultCommandBus 的同步分发不依赖 Vert.x 异步回路）</li>
  *   <li>多类型执行器之一冲突 → 整批拒绝的 ISE 自工厂传播（同 4.4 注册语义）</li>
  *   <li>未注册命令走 ISE（与 ddd4j-core DefaultCommandBus 一致）</li>
@@ -114,14 +114,14 @@ class VertxCommandBusTest {
     }
 
     /**
-     * 验证<code>Vertx.currentContext().isEventLoopContext()</code>为真，<code>result.isSuccess()</code>为真，<code>result.data()</code> 包含 <code>SampleCommandHandler.HANDLED</code>。
+     * 验证<code>Vertx.currentContext().isEventLoopContext()</code>为真，<code>result.isOk()</code>为真，<code>result.getData()</code> 包含 <code>SampleCommandHandler.HANDLED</code>。
      *
      * @throws Exception 等待并发操作时失败
      */
     @Test
     void execute_已在Vertx上下文线程同步执行_应路由到真实Handler并返回成功() throws Exception {
         VertxCommandBus bus = assemble();
-        CompletableFuture<Result<String>> completion = new CompletableFuture<>();
+        CompletableFuture<R<String>> completion = new CompletableFuture<>();
         vertx.runOnContext(ignored -> {
             try {
                 assertThat(Vertx.currentContext().isEventLoopContext()).isTrue();
@@ -131,9 +131,9 @@ class VertxCommandBusTest {
             }
         });
 
-        Result<String> result = completion.get(5, TimeUnit.SECONDS);
-        assertThat(result.isSuccess()).isTrue();
-        assertThat(result.data()).contains(SampleCommandHandler.HANDLED);
+        R<String> result = completion.get(5, TimeUnit.SECONDS);
+        assertThat(result.isOk()).isTrue();
+        assertThat(result.getData()).isEqualTo(SampleCommandHandler.HANDLED);
     }
 
     /**
@@ -171,14 +171,14 @@ class VertxCommandBusTest {
     }
 
     /**
-     * 验证<code>bus.execute(new SampleCommand()).isSuccess()</code>为真。
+     * 验证<code>bus.execute(new SampleCommand()).isOk()</code>为真。
      */
     @Test
     void factoryCapturesSnapshotAndRejectsRepeatedSameExecutor() {
         List<CommandExecutor<?>> candidates = new ArrayList<>(discover());
         VertxCommandBus bus = VertxCommandBus.create(vertx, candidates);
         candidates.clear();
-        assertThat(bus.execute(new SampleCommand()).isSuccess()).isTrue();
+        assertThat(bus.execute(new SampleCommand()).isOk()).isTrue();
         CommandExecutor<?> same = discover().get(0);
         assertThat(catchThrowableOfType(IllegalStateException.class,
                 () -> VertxCommandBus.create(vertx, Arrays.asList(same, same))))
@@ -186,7 +186,7 @@ class VertxCommandBusTest {
     }
 
     /**
-     * 验证<code>first</code> 等于 <code>second</code>，<code>bus.&lt;String&gt;execute(new SampleCommand()).data()</code> 包含 <code>"sample"</code>，<code>bus.&lt;String&gt;execute(new CompanionCommand()).data()</code> 包含 <code>"companion"</code>。
+     * 验证<code>first</code> 等于 <code>second</code>，<code>bus.&lt;String&gt;execute(new SampleCommand()).getData()</code> 包含 <code>"sample"</code>，<code>bus.&lt;String&gt;execute(new CompanionCommand()).getData()</code> 包含 <code>"companion"</code>。
      */
     @Test
     void routesDistinctCommandTypesEvenWhenExecutorsCompareEqual() {
@@ -196,8 +196,8 @@ class VertxCommandBusTest {
 
         VertxCommandBus bus = VertxCommandBus.create(vertx, Arrays.asList(first, second));
 
-        assertThat(bus.<String>execute(new SampleCommand()).data()).contains("sample");
-        assertThat(bus.<String>execute(new CompanionCommand()).data()).contains("companion");
+        assertThat(bus.<String>execute(new SampleCommand()).getData()).isEqualTo("sample");
+        assertThat(bus.<String>execute(new CompanionCommand()).getData()).isEqualTo("companion");
     }
 
     /**
@@ -239,14 +239,14 @@ class VertxCommandBusTest {
         /**
          * 用当前处理器执行传入命令或操作。
          *
-         * <p>测试夹具会调用 <code>Result.ok(result)</code>。</p>
+         * <p>测试夹具会调用 <code>R.ok(result)</code>。</p>
          *
          * @param command 命令对象
-         * @return 实际返回<code>Result.ok(result)</code>
+         * @return 实际返回<code>R.ok(result)</code>
          */
         @Override
-        public Result<String> execute(Command command) {
-            return Result.ok(result);
+        public R<String> execute(Command command) {
+            return R.ok(result);
         }
 
         /**
@@ -310,8 +310,8 @@ class VertxCommandBusTest {
          * @return 成功结果
          */
         @Override
-        public Result execute(Command command) {
-            return Result.ok();
+        public R<?> execute(Command command) {
+            return R.ok();
         }
     }
 }

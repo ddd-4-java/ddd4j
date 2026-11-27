@@ -3,10 +3,10 @@ package io.ddd4j.guice;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import io.ddd4j.core.api.R;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.Result;
 import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
 import io.ddd4j.guice.cqrs.GuiceJdbcProjectionPositionRepository;
 import io.javalin.Javalin;
@@ -19,6 +19,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.sql.Connection;
 import java.sql.Statement;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,7 +49,7 @@ class GuiceJavalinIntegrationTest {
         CommandBus bus = injector.getInstance(CommandBus.class);
         Javalin app = Javalin.create(config -> {
             config.startup.showJavalinBanner = false;
-            config.routes.get("/command", context -> context.result(bus.execute(new TxCommand("ok")).data().orElseThrow().toString()));
+            config.routes.get("/command", context -> context.result(Optional.ofNullable(bus.<String>execute(new TxCommand("ok")).getData()).orElseThrow()));
             config.events.serverStopping(() -> injector.getInstance(Ddd4jGuiceRuntime.class).close());
         }).start(0);
         try {
@@ -87,7 +88,7 @@ class GuiceJavalinIntegrationTest {
     }
 
     /**
-     * 模拟应用既有事务拥有者，失败 Result 和异常均由执行器回滚。
+     * 模拟应用既有事务拥有者，失败 R 和异常均由执行器回滚。
      */
     static final class TxExecutor implements CommandExecutor<TxCommand> {
         /**
@@ -97,7 +98,7 @@ class GuiceJavalinIntegrationTest {
         /**
          * 记录受测调用最终是否失败。
          */
-        private final Result<String> failed = Result.fail("rejected");
+        private final R<String> failed = R.fail("rejected");
         /**
          * 当前失败路径所用或观察到的原始异常。
          */
@@ -130,10 +131,10 @@ class GuiceJavalinIntegrationTest {
          * <p>测试夹具会调用 <code>source.getConnection()</code>、<code>connection.setAutoCommit(false)</code>。</p>
          *
          * @param command 命令对象
-         * @return 根据执行路径返回<code>failed</code>、<code>Result.ok("committed")</code>
+         * @return 根据执行路径返回<code>failed</code>、<code>R.ok("committed")</code>
          */
         @Override
-        public Result<String> execute(TxCommand command) {
+        public R<String> execute(TxCommand command) {
             try (Connection connection = source.getConnection()) {
                 connection.setAutoCommit(false);
                 try (Statement statement = connection.createStatement()) {
@@ -146,7 +147,7 @@ class GuiceJavalinIntegrationTest {
                         return failed;
                     }
                     connection.commit();
-                    return Result.ok("committed");
+                    return R.ok("committed");
                 } catch (RuntimeException failure) {
                     connection.rollback();
                     throw failure;

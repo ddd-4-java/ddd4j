@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * 统一接口响应，标准的响应数据结构
+ * 命令执行和接口响应共用的数据结构。
  *
  * @param <T> 响应数据类型
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>

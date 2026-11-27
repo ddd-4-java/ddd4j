@@ -14,10 +14,10 @@
  */
 package io.ddd4j.data.cqrs.sample;
 
+import io.ddd4j.core.api.R;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.CommandHandler;
-import io.ddd4j.core.cqrs.command.Result;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
@@ -66,8 +66,8 @@ public class TxProbeCommandHandler implements CommandExecutor<TxProbeCommand> {
      * @return 方法执行结果。
      */
     @Override
-    public Result execute(TxProbeCommand command) {
+    public R<?> execute(TxProbeCommand command) {
         DISPATCHED_IN_ACTIVE_TX.set(TransactionSynchronizationManager.isActualTransactionActive());
-        return Result.ok();
+        return R.ok();
     }
 }

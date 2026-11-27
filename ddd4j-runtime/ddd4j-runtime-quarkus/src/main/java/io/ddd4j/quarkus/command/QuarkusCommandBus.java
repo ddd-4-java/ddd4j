@@ -14,6 +14,7 @@
  */
 package io.ddd4j.quarkus.command;
 
+import io.ddd4j.core.api.R;
 import io.ddd4j.core.cqrs.command.*;
 import io.quarkus.arc.DefaultBean;
 import io.quarkus.runtime.StartupEvent;
@@ -96,7 +97,7 @@ public class QuarkusCommandBus implements CommandBus {
      * @return 执行结果
      */
     @ActivateRequestContext
-    public Result<?> executeVoid(Command command) {
+    public R<?> executeVoid(Command command) {
         return execute(command);
     }
 
@@ -104,12 +105,12 @@ public class QuarkusCommandBus implements CommandBus {
      * 在 CDI 请求上下文中执行命令并返回结果。
      *
      * @param command 命令对象
-     * @param <R>     结果类型
+     * @param <T>     结果类型
      * @return 执行结果
      */
     @Override
     @ActivateRequestContext
-    public <R> Result<R> execute(Command command) {
+    public <T> R<T> execute(Command command) {
         if (Objects.isNull(command)) {
             throw new IllegalArgumentException("Command cannot be null");
         }

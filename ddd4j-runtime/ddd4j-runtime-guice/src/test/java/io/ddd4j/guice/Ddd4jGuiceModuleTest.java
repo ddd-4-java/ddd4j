@@ -18,6 +18,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
+import io.ddd4j.core.api.R;
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.cqrs.readmodel.ViewManager;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
@@ -480,14 +481,14 @@ class Ddd4jGuiceModuleTest {
         /**
          * 用当前处理器执行传入命令或操作。
          *
-         * <p>测试夹具会调用 <code>io.ddd4j.core.cqrs.command.Result.ok()</code>。</p>
+         * <p>测试夹具会调用 <code>R.ok()</code>。</p>
          *
          * @param command 命令对象
-         * @return 实际返回<code>io.ddd4j.core.cqrs.command.Result.ok()</code>
+         * @return 实际返回<code>R.ok()</code>
          */
         @Override
-        public io.ddd4j.core.cqrs.command.Result execute(io.ddd4j.core.cqrs.command.Command command) {
-            return io.ddd4j.core.cqrs.command.Result.ok();
+        public R<?> execute(io.ddd4j.core.cqrs.command.Command command) {
+            return R.ok();
         }
     }
 

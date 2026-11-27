@@ -14,9 +14,9 @@
  */
 package io.ddd4j.quarkus.command;
 
+import io.ddd4j.core.api.R;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandBus;
-import io.ddd4j.core.cqrs.command.Result;
 import io.quarkus.arc.properties.IfBuildProperty;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * 通过 <code>commandBuses.isResolvable()</code>、<code>commandBuses.get()</code>、<code>result.getMessage()</code> 验证 <code>QuarkusCommandBusOverride</code> 的运行行为。
+ * 通过 <code>commandBuses.isResolvable()</code>、<code>commandBuses.get()</code>、<code>result.getMsg()</code> 验证 <code>QuarkusCommandBusOverride</code> 的运行行为。
  */
 @QuarkusTest
 @TestProfile(QuarkusCommandBusOverrideTest.BusinessProfile.class)
@@ -46,13 +46,13 @@ class QuarkusCommandBusOverrideTest {
     Instance<CommandBus> commandBuses;
 
     /**
-     * 验证<code>commandBuses.isResolvable()</code>为真，<code>result.getMessage()</code> 等于 <code>"Business command bus"</code>。
+     * 验证<code>commandBuses.isResolvable()</code>为真，<code>result.getMsg()</code> 等于 <code>"Business command bus"</code>。
      */
     @Test
     void businessCommandBusOverridesRuntimeDefault() {
         assertTrue(commandBuses.isResolvable());
-        Result<Void> result = commandBuses.get().execute(new SampleCommand());
-        assertEquals("Business command bus", result.getMessage());
+        R<Void> result = commandBuses.get().execute(new SampleCommand());
+        assertEquals("Business command bus", result.getMsg());
     }
 
     /**
@@ -79,15 +79,15 @@ class QuarkusCommandBusOverrideTest {
         /**
          * 用当前处理器执行传入命令或操作。
          *
-         * <p>测试夹具会调用 <code>Result.fail("Business command bus")</code>。</p>
+         * <p>测试夹具会调用 <code>R.fail("Business command bus")</code>。</p>
          *
-         * @param <R>     命令结果数据类型
+         * @param <T>     命令结果数据类型
          * @param command 待执行命令
-         * @return 实际返回<code>Result.fail("Business command bus")</code>
+         * @return 实际返回<code>R.fail("Business command bus")</code>
          */
         @Override
-        public <R> Result<R> execute(Command command) {
-            return Result.fail("Business command bus");
+        public <T> R<T> execute(Command command) {
+            return R.fail("Business command bus");
         }
     }
 }

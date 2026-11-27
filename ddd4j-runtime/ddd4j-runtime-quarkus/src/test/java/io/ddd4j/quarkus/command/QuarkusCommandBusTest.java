@@ -16,9 +16,9 @@ package io.ddd4j.quarkus.command;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.ddd4j.core.api.R;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.Result;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -75,7 +75,7 @@ class QuarkusCommandBusTest {
     @Test
     void discoversLateCdiExecutorAndCachesItsRoute() {
         discovered.add(new FailCommandExecutor());
-        Result<?> first = commandBus.execute(new FailCommand());
+        R<?> first = commandBus.execute(new FailCommand());
         discovered.clear();
         assertThat(commandBus.execute(new FailCommand()).getMessage()).isEqualTo(first.getMessage());
     }
@@ -88,7 +88,7 @@ class QuarkusCommandBusTest {
         IllegalStateException failure = new IllegalStateException("application failure");
         discovered.add(new FailCommandExecutor() {
             @Override
-            public Result<String> execute(FailCommand command) {
+            public R<String> execute(FailCommand command) {
                 throw failure;
             }
         });
@@ -96,14 +96,14 @@ class QuarkusCommandBusTest {
     }
 
     /**
-     * 验证<code>result</code>非空，<code>result.isSuccess()</code>为真，<code>result.getData()</code> 等于 <code>"executed: hello"</code>。
+     * 验证<code>result</code>非空，<code>result.isOk()</code>为真，<code>result.getData()</code> 等于 <code>"executed: hello"</code>。
      */
     @Test
     void executeShouldRouteToRegisteredExecutor() {
-        Result<String> result = commandBus.execute(new TestCommand("hello"));
+        R<String> result = commandBus.execute(new TestCommand("hello"));
 
         assertThat(result).isNotNull();
-        assertThat(result.isSuccess()).isTrue();
+        assertThat(result.isOk()).isTrue();
         assertThat(result.getData()).isEqualTo("executed: hello");
     }
 
@@ -128,29 +128,29 @@ class QuarkusCommandBusTest {
     }
 
     /**
-     * 验证<code>result</code>非空，<code>result.isSuccess()</code>为真，<code>result.getData()</code> 等于 <code>"executed: test"</code>。
+     * 验证<code>result</code>非空，<code>result.isOk()</code>为真，<code>result.getData()</code> 等于 <code>"executed: test"</code>。
      */
     @Test
     void executeVoidShouldDelegateToExecute() {
-        Result<?> result = commandBus.executeVoid(new TestCommand("test"));
+        R<?> result = commandBus.executeVoid(new TestCommand("test"));
 
         assertThat(result).isNotNull();
-        assertThat(result.isSuccess()).isTrue();
+        assertThat(result.isOk()).isTrue();
         assertThat(result.getData()).isEqualTo("executed: test");
     }
 
     /**
-     * 验证<code>result</code>非空，<code>result.isSuccess()</code>为假，<code>result.getMessage()</code> 等于 <code>"intentional failure"</code>。
+     * 验证<code>result</code>非空，<code>result.isOk()</code>为假，<code>result.getMsg()</code> 等于 <code>"intentional failure"</code>。
      */
     @Test
     void executeShouldReturnFailureResultWhenExecutorReturnsFail() {
         discovered.add(new FailCommandExecutor());
 
-        Result<String> result = commandBus.execute(new FailCommand());
+        R<String> result = commandBus.execute(new FailCommand());
 
         assertThat(result).isNotNull();
-        assertThat(result.isSuccess()).isFalse();
-        assertThat(result.getMessage()).isEqualTo("intentional failure");
+        assertThat(result.isOk()).isFalse();
+        assertThat(result.getMsg()).isEqualTo("intentional failure");
     }
 
     // --- 测试用命令和执行器 ---
@@ -359,14 +359,14 @@ class QuarkusCommandBusTest {
         /**
          * 用当前处理器执行传入命令或操作。
          *
-         * <p>测试夹具会调用 <code>Result.ok("executed: " + command.payload())</code>、<code>command.payload()</code>。</p>
+         * <p>测试夹具会调用 <code>R.ok("executed: " + command.payload())</code>、<code>command.payload()</code>。</p>
          *
          * @param command 命令对象
-         * @return 实际返回<code>Result.ok("executed: " + command.payload())</code>
+         * @return 实际返回<code>R.ok("executed: " + command.payload())</code>
          */
         @Override
-        public Result<String> execute(TestCommand command) {
-            return Result.ok("executed: " + command.payload());
+        public R<String> execute(TestCommand command) {
+            return R.ok("executed: " + command.payload());
         }
 
         /**
@@ -390,14 +390,14 @@ class QuarkusCommandBusTest {
         /**
          * 用当前处理器执行传入命令或操作。
          *
-         * <p>测试夹具会调用 <code>Result.fail("intentional failure")</code>。</p>
+         * <p>测试夹具会调用 <code>R.fail("intentional failure")</code>。</p>
          *
          * @param command 命令对象
-         * @return 实际返回<code>Result.fail("intentional failure")</code>
+         * @return 实际返回<code>R.fail("intentional failure")</code>
          */
         @Override
-        public Result<String> execute(FailCommand command) {
-            return Result.fail("intentional failure");
+        public R<String> execute(FailCommand command) {
+            return R.fail("intentional failure");
         }
 
         /**

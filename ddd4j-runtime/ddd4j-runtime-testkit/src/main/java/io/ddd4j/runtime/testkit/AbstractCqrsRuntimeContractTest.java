@@ -14,9 +14,9 @@
  */
 package io.ddd4j.runtime.testkit;
 
+import io.ddd4j.core.api.R;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.Result;
 import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
 import org.junit.jupiter.api.AfterEach;
@@ -72,9 +72,9 @@ public abstract class AbstractCqrsRuntimeContractTest {
     void shouldRouteCommandAToExecutorA() {
         CqrsRuntimeContract contract = createContract();
         try {
-            Result<?> result = contract.commandBus().execute(new CmdA("payload-a"));
+            R<?> result = contract.commandBus().execute(new CmdA("payload-a"));
             assertThat(result).isNotNull();
-            assertThat(result.isSuccess()).isTrue();
+            assertThat(result.isOk()).isTrue();
         } finally {
             contract.close();
         }
@@ -87,9 +87,9 @@ public abstract class AbstractCqrsRuntimeContractTest {
     void shouldRouteCommandBToExecutorB() {
         CqrsRuntimeContract contract = createContract();
         try {
-            Result<?> result = contract.commandBus().execute(new CmdB(42));
+            R<?> result = contract.commandBus().execute(new CmdB(42));
             assertThat(result).isNotNull();
-            assertThat(result.isSuccess()).isTrue();
+            assertThat(result.isOk()).isTrue();
         } finally {
             contract.close();
         }
@@ -291,13 +291,13 @@ public abstract class AbstractCqrsRuntimeContractTest {
          * <p>此实现调用 <code>invoked.set(true)</code>。</p>
          *
          * @param command 命令对象
-         * @return 实际返回<code>Result.ok("executor-a:" + command.getPayload())</code>
+         * @return 实际返回<code>R.ok("executor-a:" + command.getPayload())</code>
          */
         @Override
         @SuppressWarnings("unchecked")
-        public Result execute(CmdA command) {
+        public R<?> execute(CmdA command) {
             invoked.set(true);
-            return Result.ok("executor-a:" + command.getPayload());
+            return R.ok("executor-a:" + command.getPayload());
         }
 
         /**
@@ -336,13 +336,13 @@ public abstract class AbstractCqrsRuntimeContractTest {
          * <p>此实现调用 <code>invoked.set(true)</code>。</p>
          *
          * @param command 命令对象
-         * @return 实际返回<code>Result.ok("executor-b:" + command.getValue())</code>
+         * @return 实际返回<code>R.ok("executor-b:" + command.getValue())</code>
          */
         @Override
         @SuppressWarnings("unchecked")
-        public Result execute(CmdB command) {
+        public R<?> execute(CmdB command) {
             invoked.set(true);
-            return Result.ok("executor-b:" + command.getValue());
+            return R.ok("executor-b:" + command.getValue());
         }
 
         /**

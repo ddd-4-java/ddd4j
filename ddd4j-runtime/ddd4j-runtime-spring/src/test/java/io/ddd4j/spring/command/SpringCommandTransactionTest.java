@@ -1,5 +1,6 @@
 package io.ddd4j.spring.command;
 
+import io.ddd4j.core.api.R;
 import io.ddd4j.core.cqrs.command.*;
 import org.h2.jdbcx.JdbcDataSource;
 import org.junit.jupiter.api.Test;
@@ -64,7 +65,7 @@ class SpringCommandTransactionTest {
                     return Collections.singleton(WriteCommand.class);
                 }
 
-                public Result execute(WriteCommand command) {
+                public R<?> execute(WriteCommand command) {
                     assertTrue(TransactionSynchronizationManager.isActualTransactionActive());
                     Connection connection = DataSourceUtils.getConnection(source);
                     try {
@@ -77,7 +78,7 @@ class SpringCommandTransactionTest {
                     if (command.id == 3) {
                         throw new IllegalArgumentException("rollback");
                     }
-                    return command.id == 2 ? Result.fail(409, "expected business failure") : Result.ok();
+                    return command.id == 2 ? R.of(409, "expected business failure") : R.ok();
                 }
             });
             if (legacy) {
@@ -88,8 +89,8 @@ class SpringCommandTransactionTest {
             }
             context.refresh();
             CommandBus bus = context.getBean(CommandBus.class);
-            assertTrue(bus.execute(new WriteCommand(1)).isSuccess());
-            assertFalse(bus.execute(new WriteCommand(2)).isSuccess());
+            assertTrue(bus.execute(new WriteCommand(1)).isOk());
+            assertFalse(bus.execute(new WriteCommand(2)).isOk());
             assertThrows(IllegalArgumentException.class, () -> bus.execute(new WriteCommand(3)));
             try (Connection connection = source.getConnection();
                  ResultSet rows = connection.createStatement().executeQuery("select id from tx_probe order by id")) {

@@ -41,7 +41,7 @@ Accepted（2026-08-24）
   raw 泛型（DefaultCommandBus.java:14-38）；
 - 执行器契约为单参泛型 `<C extends Command>`：
     - `supportedCommands()` 返回 `Set<Class<? extends Command>>`；
-    - `execute(C)` 无受检异常，失败统一 `Result.fail(code, message)`，`data()` 返回 `Optional<T>`（06 篇改写 (d)）；
+    - `execute(C)` 返回 `io.ddd4j.core.api.R<?>`，总线的 `execute(Command)` 返回 `R<T>`。成功使用 `R.ok(data)`，通用失败使用 `R.fail(msg)`，明确业务码使用 `R.of(code, msg)`。调用方通过 `isOk()` 判定成功，通过 `getData()` 读取可空数据；
     - 上下文不经显式 ctx 参数，经 `ThreadContext`（TTL 透传）＋`Contexts`（线程优先→全局兜底）解析，命令签名保持纯净（06 篇改写
       (e)）；
 - **不引入 MultiCommandExecutor 层级**：组合路由能力内置在总线里，业务方不感知「单执行器／组合执行器」差别；
@@ -50,14 +50,14 @@ Accepted（2026-08-24）
     - Quarkus：CDI `Instance<CommandExecutor>` 收集；
     - Micronaut／Helidon：容器事件装配；
     - Javalin／Vert.x／Dropwizard：无容器场景手动注册；
-- 错误模型：错误码进 `Result.fail` 编码体系，聚合并发冲突按 05 篇决策以 RuntimeException 落地（不用 throws）。
+- 错误模型：错误码通过 `R.of(code, msg)` 返回，聚合并发冲突按 05 篇决策以 RuntimeException 落地（不用 throws）。
 
 ## Consequences
 
 - 正面：命令入口唯一、路由 Class 键编译期可查，杜绝「类与类型串不一致」的静默错配（06 篇改写 (b)）；
-- 正面：无受检异常＋`Optional` 返回，调用方单一错误模型，无双轨判错；
+- 正面：命令和接口响应共用 `R`，命令总线直接返回执行器给出的对象；
 - 正面：7 个运行时适配器共享基类路由实现，新增运行时只写装配差异——与 ADR-0003「投影循环单一实现」同构；
-- 正面：保留 fuin 两点先例的价值——注册期冲突检测与聚合异常类型化（经 `Result.fail` 编码体系延续）；
+- 正面：保留 fuin 两点先例的价值——注册期冲突检测与聚合异常类型化（业务失败可使用 `R.of(code, msg)` 返回）；
 - 负面：`ThreadContext` 隐式上下文使执行链路依赖线程语义，跨响应式运行时（WebFlux／Vert.x）需依赖 TTL 透传的正确配置；
 - 负面：总线不内置中间件管道（校验、日志、重试须在执行器内或适配层实现，见备选方案 B）；
 - 义务：阶段 6 Task 6.2 的 `@CommandHandler`＋`CommandRegistry` 复用总线落地；7 个运行时适配器（Task 6.4 起）逐个继承
@@ -68,7 +68,7 @@ Accepted（2026-08-24）
 - 方案 A：fuin 式三参执行器＋MultiCommandExecutor 组合层级—— **已否决**：三参泛型签名噪音大、组合层裸类型丢失泛型信息，且
   fuin 全生态 0 实现已证明该契约缺乏生态拉力（06 篇「缺点」节）；ddd4j 总线内置路由可达成同一组合能力而无层级税。
 - 方案 B：MediatR 风格管道总线（命令处理器＋有序行为管道：校验→日志→事务→重试）—— **已否决（本阶段）**
-  ：管道抽象会引入行为顺序、短路语义与作用域约定，超出当前「命令→执行器→Result」的领域需求；中间件诉求先在运行时适配层（Spring／Quarkus
+  ：管道抽象会引入行为顺序、短路语义与作用域约定，超出当前「命令→执行器→R」的领域需求；中间件诉求先在运行时适配层（Spring／Quarkus
   拦截器）实现，待真实用例积累后再以新 ADR 评估。
 - 方案 C：不设总线，控制器直调聚合仓储（fuin 官方示例路线）—— **已否决**：写侧失去统一入口与重复注册检测，聚合异常直接泄漏到接口层；06
   篇已指出该示例「完全绕过 CommandExecutor」恰是其生态缺失的表征而非可效仿的设计。

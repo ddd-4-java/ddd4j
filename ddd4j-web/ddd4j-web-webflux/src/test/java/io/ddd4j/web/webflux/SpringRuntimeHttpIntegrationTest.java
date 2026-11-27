@@ -1,9 +1,9 @@
 package io.ddd4j.web.webflux;
 
+import io.ddd4j.core.api.R;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.Result;
 import io.ddd4j.core.cqrs.readmodel.*;
 import io.ddd4j.spring.config.SpringCommandConfig;
 import io.ddd4j.spring.config.SpringCoreConfig;
@@ -112,8 +112,8 @@ class SpringRuntimeHttpIntegrationTest {
                     return Collections.singleton(Ping.class);
                 }
 
-                public Result execute(Ping command) {
-                    return Result.ok("accepted");
+                public R<?> execute(Ping command) {
+                    return R.ok("accepted");
                 }
             };
         }

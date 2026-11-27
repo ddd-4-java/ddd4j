@@ -1,8 +1,8 @@
 package io.ddd4j.dropwizard.cqrs;
 
+import io.ddd4j.core.api.R;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.Result;
 import io.ddd4j.core.cqrs.readmodel.*;
 import io.ddd4j.dropwizard.command.DropwizardCommandBus;
 import io.ddd4j.runtime.testkit.AbstractCqrsRuntimeContractTest;
@@ -112,7 +112,7 @@ class DropwizardCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest 
                 return Set.of(CmdA.class);
             }
 
-            public Result execute(CmdA command) {
+            public R<?> execute(CmdA command) {
                 throw failure;
             }
         };

@@ -23,6 +23,7 @@ import java.util.function.Function;
  */
 @Slf4j
 public final class VertxCqrsApplication {
+
     /**
      * 限制调用方直接创建 <code>VertxCqrsApplication</code> 实例。
      */

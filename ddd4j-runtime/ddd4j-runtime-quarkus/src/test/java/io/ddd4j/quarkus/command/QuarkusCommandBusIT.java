@@ -14,9 +14,9 @@
  */
 package io.ddd4j.quarkus.command;
 
+import io.ddd4j.core.api.R;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandBus;
-import io.ddd4j.core.cqrs.command.Result;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.ManagedContext;
 import io.quarkus.test.junit.QuarkusTest;
@@ -52,7 +52,7 @@ class QuarkusCommandBusIT {
     }
 
     /**
-     * 验证<code>requestContext.isActive()</code>为假，<code>bus.execute(new SampleCommand()).isSuccess()</code>为真，<code>((QuarkusCommandBus) bus).executeVoid(new SampleCommand()).isSuccess()</code>为真。
+     * 验证<code>requestContext.isActive()</code>为假，<code>bus.execute(new SampleCommand()).isOk()</code>为真，<code>((QuarkusCommandBus) bus).executeVoid(new SampleCommand()).isOk()</code>为真。
      *
      * @throws Exception 等待并发操作时失败
      */
@@ -64,9 +64,9 @@ class QuarkusCommandBusIT {
                 ManagedContext requestContext = Arc.container().requestContext();
                 assertFalse(requestContext.isActive());
                 CommandBus bus = commandBuses.get();
-                assertTrue(bus.execute(new SampleCommand()).isSuccess());
+                assertTrue(bus.execute(new SampleCommand()).isOk());
                 assertFalse(requestContext.isActive());
-                assertTrue(((QuarkusCommandBus) bus).executeVoid(new SampleCommand()).isSuccess());
+                assertTrue(((QuarkusCommandBus) bus).executeVoid(new SampleCommand()).isOk());
                 assertFalse(requestContext.isActive());
             }).get(10, TimeUnit.SECONDS);
         } finally {
@@ -75,13 +75,13 @@ class QuarkusCommandBusIT {
     }
 
     /**
-     * 验证<code>result.isSuccess()</code>为真，<code>result.getData()</code> 等于 <code>SampleCommandHandler.HANDLED</code>。
+     * 验证<code>result.isOk()</code>为真，<code>result.getData()</code> 等于 <code>SampleCommandHandler.HANDLED</code>。
      */
     @Test
     void routesDiscoveredCommandExecutor() {
-        Result<String> result = commandBuses.get().execute(new SampleCommand());
+        R<String> result = commandBuses.get().execute(new SampleCommand());
 
-        assertTrue(result.isSuccess());
+        assertTrue(result.isOk());
         assertEquals(SampleCommandHandler.HANDLED, result.getData());
     }
 

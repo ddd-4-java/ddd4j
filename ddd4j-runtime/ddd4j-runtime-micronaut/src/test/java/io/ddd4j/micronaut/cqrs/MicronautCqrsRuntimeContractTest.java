@@ -16,6 +16,7 @@ package io.ddd4j.micronaut.cqrs;
 
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.BaseContext;
+import io.ddd4j.core.api.R;
 import io.ddd4j.core.cqrs.command.*;
 import io.ddd4j.core.cqrs.readmodel.*;
 import io.ddd4j.micronaut.command.MicronautCommandBus;
@@ -106,14 +107,14 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
     }
 
     /**
-     * 验证<code>context.getBeansOfType(CommandBus.class).size()</code> 等于 <code>1</code>，<code>bus.execute(new NativeCommand()).data().orElseThrow()</code> 等于 <code>"native"</code>，<code>bus.execute(new NativeCommand())</code> 抛出 <code>IllegalArgumentException.class</code>。
+     * 验证<code>context.getBeansOfType(CommandBus.class).size()</code> 等于 <code>1</code>，<code>bus.execute(new NativeCommand()).getData()</code> 等于 <code>"native"</code>，<code>bus.execute(new NativeCommand())</code> 抛出 <code>IllegalArgumentException.class</code>。
      */
     @Test
     void generatedHandlerDiscoveryPreservesSnapshotAndFailureIdentity() {
         try (ApplicationContext context = ApplicationContext.run(Map.of("r09.command", true))) {
             CommandBus bus = context.getBean(CommandBus.class);
             assertEquals(1, context.getBeansOfType(CommandBus.class).size());
-            assertEquals("native", bus.execute(new NativeCommand()).data().orElseThrow());
+            assertEquals("native", bus.execute(new NativeCommand()).getData());
             CommandRegistry registry = context.getBean(CommandRegistry.class);
             registry.register(new CommandExecutor<LateCommand>() {
                 @Override
@@ -122,8 +123,8 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
                 }
 
                 @Override
-                public Result execute(LateCommand command) {
-                    return Result.ok();
+                public R<?> execute(LateCommand command) {
+                    return R.ok();
                 }
             });
             assertThrows(IllegalStateException.class, () -> bus.execute(new LateCommand()));
@@ -150,8 +151,8 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
                 }
 
                 @Override
-                public Result execute(Command command) {
-                    return Result.ok();
+                public R<?> execute(Command command) {
+                    return R.ok();
                 }
             });
 
@@ -485,17 +486,17 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         /**
          * 用当前处理器执行传入命令或操作。
          *
-         * <p>测试夹具会调用 <code>Result.ok("native")</code>。</p>
+         * <p>测试夹具会调用 <code>R.ok("native")</code>。</p>
          *
          * @param command 命令对象
-         * @return 实际返回<code>Result.ok("native")</code>
+         * @return 实际返回<code>R.ok("native")</code>
          */
         @Override
-        public Result execute(NativeCommand command) {
+        public R<?> execute(NativeCommand command) {
             if (fail) {
                 throw failure;
             }
-            return Result.ok("native");
+            return R.ok("native");
         }
     }
 }

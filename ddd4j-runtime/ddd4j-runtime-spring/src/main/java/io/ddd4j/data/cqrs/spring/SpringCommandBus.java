@@ -14,6 +14,7 @@
  */
 package io.ddd4j.data.cqrs.spring;
 
+import io.ddd4j.core.api.R;
 import io.ddd4j.core.cqrs.command.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -120,12 +121,12 @@ public class SpringCommandBus extends DefaultCommandBus {
      * （见类 javadoc「事务与代理」）。
      *
      * @param command 命令，非空
-     * @param <R>     结果载荷类型
+     * @param <T>     结果载荷类型
      * @return 执行结果
      */
     @Override
     @Transactional
-    public <R> Result<R> execute(Command command) {
+    public <T> R<T> execute(Command command) {
         return super.execute(command);
     }
 }

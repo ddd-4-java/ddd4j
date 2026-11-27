@@ -14,6 +14,8 @@
  */
 package io.ddd4j.core.cqrs.command;
 
+import io.ddd4j.core.api.R;
+
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -37,7 +39,7 @@ class DefaultCommandBusCompatibilityTest {
         }
         AtomicInteger lookups = new AtomicInteger();
         IllegalStateException discoveryFailure = new IllegalStateException("discovery-failed");
-        Result<String> expected = Result.ok("late");
+        R<String> expected = R.ok("late");
         FixtureExecutor executor = new FixtureExecutor(expected, LateCommand.class);
         DefaultCommandBus bus = new DefaultCommandBus(Collections.emptyList()) {
             @Override
@@ -67,34 +69,36 @@ class DefaultCommandBusCompatibilityTest {
      */
     @Test
     void successResultAndOriginalCommandArePassedThroughExactlyOnce() {
-        Result<String> expected = Result.ok("order-42");
+        R<String> expected = R.ok("order-42");
         FixtureExecutor executor = new FixtureExecutor(expected, CreateOrderCommand.class);
         CommandBus bus = new DefaultCommandBus(Collections.singletonList(executor));
         CreateOrderCommand command = new CreateOrderCommand();
 
-        Result<String> actual = bus.execute(command);
+        R<String> actual = bus.execute(command);
 
         assertSame(expected, actual);
+        assertThat(actual.isOk()).isTrue();
+        assertThat(actual.getCode()).isEqualTo(0);
         assertThat(actual.getData()).isEqualTo("order-42");
         assertThat(executor.executed).containsExactly(command);
     }
 
     /**
-     * 验证<code>actual</code> 与…为同一实例 <code>expected</code>，<code>actual.isSuccess()</code>为假，<code>executor.executed</code> 按顺序仅包含 <code>command</code>。
+     * 验证<code>actual</code> 与…为同一实例 <code>expected</code>，<code>actual.isOk()</code>为假，<code>executor.executed</code> 按顺序仅包含 <code>command</code>。
      */
     @Test
     void existingBusinessFailureIsReturnedWithoutThrowingOrRewriting() {
-        Result<String> expected = Result.fail(409, "order already cancelled");
+        R<String> expected = R.of(409, "order already cancelled");
         FixtureExecutor executor = new FixtureExecutor(expected, CancelOrderCommand.class);
         CommandBus bus = new DefaultCommandBus(Collections.singletonList(executor));
         CancelOrderCommand command = new CancelOrderCommand();
 
-        Result<String> actual = bus.execute(command);
+        R<String> actual = bus.execute(command);
 
         assertSame(expected, actual);
-        assertThat(actual.isSuccess()).isFalse();
+        assertThat(actual.isOk()).isFalse();
         assertThat(actual.getCode()).isEqualTo(409);
-        assertThat(actual.getMessage()).isEqualTo("order already cancelled");
+        assertThat(actual.getMsg()).isEqualTo("order already cancelled");
         assertThat(executor.executed).containsExactly(command);
     }
 
@@ -112,7 +116,7 @@ class DefaultCommandBusCompatibilityTest {
             }
 
             @Override
-            public Result<?> execute(CreateOrderCommand command) {
+            public R<?> execute(CreateOrderCommand command) {
                 executed.add(command);
                 throw expected;
             }
@@ -129,8 +133,8 @@ class DefaultCommandBusCompatibilityTest {
      */
     @Test
     void duplicateCommandRegistrationFailsDuringConstruction() {
-        FixtureExecutor first = new FixtureExecutor(Result.ok(), CreateOrderCommand.class);
-        FixtureExecutor second = new FixtureExecutor(Result.ok(), CreateOrderCommand.class);
+        FixtureExecutor first = new FixtureExecutor(R.ok(), CreateOrderCommand.class);
+        FixtureExecutor second = new FixtureExecutor(R.ok(), CreateOrderCommand.class);
 
         IllegalStateException failure = assertThrows(IllegalStateException.class,
                 () -> new DefaultCommandBus(Arrays.asList(first, second)));
@@ -145,7 +149,7 @@ class DefaultCommandBusCompatibilityTest {
      */
     @Test
     void missingCommandFailsWithoutInvokingAnUnrelatedExecutor() {
-        FixtureExecutor executor = new FixtureExecutor(Result.ok(), CreateOrderCommand.class);
+        FixtureExecutor executor = new FixtureExecutor(R.ok(), CreateOrderCommand.class);
         CommandBus bus = new DefaultCommandBus(Collections.singletonList(executor));
 
         IllegalStateException failure = assertThrows(IllegalStateException.class,
@@ -160,7 +164,7 @@ class DefaultCommandBusCompatibilityTest {
      */
     @Test
     void commandSubclassDoesNotFallBackToItsParentExecutor() {
-        FixtureExecutor executor = new FixtureExecutor(Result.ok(), CreateOrderCommand.class);
+        FixtureExecutor executor = new FixtureExecutor(R.ok(), CreateOrderCommand.class);
         CommandBus bus = new DefaultCommandBus(Collections.singletonList(executor));
 
         IllegalStateException failure = assertThrows(IllegalStateException.class,
@@ -175,8 +179,8 @@ class DefaultCommandBusCompatibilityTest {
      */
     @Test
     void registryAssemblyRoutesEverySupportedTypeToTheCorrectExecutor() {
-        Result<String> lifecycleResult = Result.ok("lifecycle");
-        Result<String> shippingResult = Result.ok("shipping");
+        R<String> lifecycleResult = R.ok("lifecycle");
+        R<String> shippingResult = R.ok("shipping");
         FixtureExecutor lifecycle = new FixtureExecutor(lifecycleResult,
                 CreateOrderCommand.class, CancelOrderCommand.class);
         FixtureExecutor shipping = new FixtureExecutor(shippingResult, ShipOrderCommand.class);
@@ -200,14 +204,14 @@ class DefaultCommandBusCompatibilityTest {
      */
     @Test
     void constructionSnapshotsTheSuppliedExecutorCollection() {
-        FixtureExecutor original = new FixtureExecutor(Result.ok("original"), CreateOrderCommand.class);
+        FixtureExecutor original = new FixtureExecutor(R.ok("original"), CreateOrderCommand.class);
         List<CommandExecutor<?>> executors = new ArrayList<>();
         executors.add(original);
         CommandBus bus = new DefaultCommandBus(executors);
-        FixtureExecutor replacement = new FixtureExecutor(Result.ok("replacement"), CreateOrderCommand.class);
+        FixtureExecutor replacement = new FixtureExecutor(R.ok("replacement"), CreateOrderCommand.class);
         executors.clear();
         executors.add(replacement);
-        executors.add(new FixtureExecutor(Result.ok(), CancelOrderCommand.class));
+        executors.add(new FixtureExecutor(R.ok(), CancelOrderCommand.class));
         CreateOrderCommand command = new CreateOrderCommand();
 
         assertThat(bus.<String>execute(command).getData()).isEqualTo("original");
@@ -221,7 +225,7 @@ class DefaultCommandBusCompatibilityTest {
      */
     @Test
     void supportedCommandChangesDoNotAlterAnAlreadyConstructedBus() {
-        FixtureExecutor executor = new FixtureExecutor(Result.ok("original"), CreateOrderCommand.class);
+        FixtureExecutor executor = new FixtureExecutor(R.ok("original"), CreateOrderCommand.class);
         CommandBus bus = new DefaultCommandBus(Collections.singletonList(executor));
         executor.commandTypes.clear();
         executor.commandTypes.add(CancelOrderCommand.class);
@@ -238,9 +242,9 @@ class DefaultCommandBusCompatibilityTest {
     @Test
     void laterRegistryRegistrationOnlyAppearsInANewBus() {
         CommandRegistry registry = new CommandRegistry();
-        registry.register(new FixtureExecutor(Result.ok(), CreateOrderCommand.class));
+        registry.register(new FixtureExecutor(R.ok(), CreateOrderCommand.class));
         CommandBus originalBus = new DefaultCommandBus(registry.executors());
-        FixtureExecutor later = new FixtureExecutor(Result.ok("later"), CancelOrderCommand.class);
+        FixtureExecutor later = new FixtureExecutor(R.ok("later"), CancelOrderCommand.class);
         registry.register(later);
 
         assertThrows(IllegalStateException.class, () -> originalBus.execute(new CancelOrderCommand()));
@@ -256,7 +260,7 @@ class DefaultCommandBusCompatibilityTest {
      */
     @Test
     void nullCommandKeepsTheExistingCoreNullPointerContract() {
-        FixtureExecutor executor = new FixtureExecutor(Result.ok(), CreateOrderCommand.class);
+        FixtureExecutor executor = new FixtureExecutor(R.ok(), CreateOrderCommand.class);
         CommandBus bus = new DefaultCommandBus(Collections.singletonList(executor));
 
         assertThrows(NullPointerException.class, () -> bus.execute(null));
@@ -315,7 +319,7 @@ class DefaultCommandBusCompatibilityTest {
         /**
          * 执行被测操作后保存的结果。
          */
-        private final Result<?> result;
+        private final R<?> result;
         /**
          * 标记测试回调或业务操作已经实际执行。
          */
@@ -328,7 +332,7 @@ class DefaultCommandBusCompatibilityTest {
          * @param commandTypes 用于初始化 <code>FixtureExecutor</code> 的 <code>Class&lt;? extends Command&gt;[]</code> 值
          */
         @SafeVarargs
-        private FixtureExecutor(Result<?> result, Class<? extends Command>... commandTypes) {
+        private FixtureExecutor(R<?> result, Class<? extends Command>... commandTypes) {
             this.result = result;
             this.commandTypes = new LinkedHashSet<>(Arrays.asList(commandTypes));
         }
@@ -352,7 +356,7 @@ class DefaultCommandBusCompatibilityTest {
          * @return 实际返回<code>result</code>
          */
         @Override
-        public Result<?> execute(Command command) {
+        public R<?> execute(Command command) {
             executed.add(command);
             return result;
         }

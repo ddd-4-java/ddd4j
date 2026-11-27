@@ -14,10 +14,10 @@
  */
 package io.ddd4j.quarkus.command;
 
+import io.ddd4j.core.api.R;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.CommandHandler;
-import io.ddd4j.core.cqrs.command.Result;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.Set;
@@ -59,10 +59,10 @@ class SampleCommandHandler implements CommandExecutor<SampleCommand> {
      * @return 方法执行结果。
      */
     @Override
-    public Result execute(SampleCommand command) {
+    public R<?> execute(SampleCommand command) {
         if (!io.quarkus.arc.Arc.container().requestContext().isActive()) {
             throw new IllegalStateException("request context is not active");
         }
-        return Result.ok(HANDLED);
+        return R.ok(HANDLED);
     }
 }

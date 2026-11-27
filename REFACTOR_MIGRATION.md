@@ -106,7 +106,7 @@ M01—M14。其他已认可模块仅承接必要改动；R01回归现有用法�
 ([源码](ddd4j-data/ddd4j-data-cqrs-spring/src/main/java/io/ddd4j/data/cqrs/spring/SpringCommandBus.java))：
 
 - `public SpringCommandBus(ApplicationContext context, CommandRegistry registry)`
-- `public <R> Result<R> execute(Command command)`
+- `public <T> R<T> execute(Command command)`
 
 ### M02 / ddd4j-data-projection-spring
 
@@ -482,7 +482,7 @@ R05 的规定三模块 `-am verify` 在 JDK17 上通过 1,274 个测试，0 失�
   GAV 共存不自动选择业务语义。
 - 旧命令构造期发现、NullPointerException/缺路由原消息保留；runtime 命令在单例完成后发现、IllegalArgumentException/null
   和原扩展诊断保留，使用共享 DefaultCommandBus 执行。重复发现失败不会发布半张新路由表。
-- Spring 原有事务语义保持：成功与 `Result.fail` 正常返回提交，符合回滚规则的异常回滚；失败结果不是自动回滚策略。
+- Spring 原有事务语义保持：成功与 `R.fail` 正常返回提交，符合回滚规则的异常回滚；失败结果不是自动回滚策略。
 - 旧投影管理器仅适配 Spring 生命周期，执行/句柄管理委托共享 DefaultViewManager/ProjectionRunner。原生 CronTrigger
   的命名月份、特殊日期、默认时区语义保留。SpringJpaViewManager 的三个公开构造器、手动 schedule 和子类 triggerOnce
   保留，容器关闭会取消任务。

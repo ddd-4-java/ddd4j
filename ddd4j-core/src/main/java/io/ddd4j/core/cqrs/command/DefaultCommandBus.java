@@ -14,6 +14,7 @@
  */
 package io.ddd4j.core.cqrs.command;
 
+import io.ddd4j.core.api.R;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -61,12 +62,12 @@ public class DefaultCommandBus implements CommandBus {
      *
      * <p>此实现调用 <code>executors.get(actual.getClass())</code>。</p>
      *
-     * @param <R>     此操作处理的值或结果的 Java 类型
+     * @param <T>     此操作处理的值或结果的 Java 类型
      * @param command 交由命令总线或执行器处理的命令
-     * @return 实际返回<code>(Result&lt;R&gt;)executor.execute(actual)</code>
+     * @return 实际返回<code>(R&lt;T&gt;)executor.execute(actual)</code>
      */
     @Override
-    public <R> Result<R> execute(Command command) {
+    public <T> R<T> execute(Command command) {
         Command actual = Objects.requireNonNull(command, "command must not be null");
         CommandExecutor executor = executors.get(actual.getClass());
         if (Objects.isNull(executor)) {
@@ -79,7 +80,7 @@ public class DefaultCommandBus implements CommandBus {
         if (Objects.isNull(executor)) {
             throw new IllegalStateException("No executor found for command: " + actual.getClass().getName());
         }
-        return (Result<R>) executor.execute(actual);
+        return (R<T>) executor.execute(actual);
     }
 
     /**

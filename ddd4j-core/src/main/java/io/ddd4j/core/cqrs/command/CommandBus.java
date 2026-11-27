@@ -14,6 +14,8 @@
  */
 package io.ddd4j.core.cqrs.command;
 
+import io.ddd4j.core.api.R;
+
 /**
  * 框架无关的 CQRS 命令总线。
  */
@@ -22,9 +24,9 @@ public interface CommandBus {
     /**
      * 将命令交给匹配的执行器处理。
      *
-     * @param <R>     命令结果数据类型
+     * @param <T>     命令结果数据类型
      * @param command 待执行命令
      * @return 命令执行结果
      */
-    <R> Result<R> execute(Command command);
+    <T> R<T> execute(Command command);
 }

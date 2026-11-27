@@ -2,6 +2,8 @@ package io.ddd4j.sample.vertx.satoken;
 
 import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.config.SaTokenConfig;
+import cn.dev33.satoken.context.SaTokenContext;
+import cn.dev33.satoken.context.SaTokenContextForThreadLocal;
 import cn.dev33.satoken.dao.SaTokenDao;
 import cn.dev33.satoken.dao.SaTokenDaoDefaultImpl;
 import cn.dev33.satoken.stp.StpInterface;
@@ -27,11 +29,11 @@ public class NativeAuth implements AutoCloseable {
     /**
      * 安装示例组件前保存的 Sa-Token 上下文。
      */
-    private final cn.dev33.satoken.context.SaTokenContext previousContext = currentContext();
+    private final SaTokenContext previousContext = currentContext();
     /**
      * 本示例安装的线程本地 Sa-Token 上下文。
      */
-    private final cn.dev33.satoken.context.SaTokenContext context = new cn.dev33.satoken.context.SaTokenContextForThreadLocal();
+    private final SaTokenContext context = new SaTokenContextForThreadLocal();
     /**
      * 安装示例组件前保存的 Sa-Token 权限提供器。
      */
@@ -148,7 +150,7 @@ public class NativeAuth implements AutoCloseable {
         if (failure instanceof RuntimeException) {
             throw (RuntimeException) failure;
         }
-        if (failure instanceof Error) {
+        if (failure != null) {
             throw (Error) failure;
         }
     }

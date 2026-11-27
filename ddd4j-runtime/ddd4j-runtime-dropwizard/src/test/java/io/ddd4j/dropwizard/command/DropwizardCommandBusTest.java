@@ -14,9 +14,9 @@
  */
 package io.ddd4j.dropwizard.command;
 
+import io.ddd4j.core.api.R;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.Result;
 import io.ddd4j.dropwizard.Ddd4jLogbackAccessRequestLogFactory;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
@@ -48,7 +48,7 @@ import static org.assertj.core.api.Assertions.catchThrowableOfType;
  * {@code CommandRegistryTest} 及 {@code SpringCommandBusTest}／
  * {@code HelidonCommandBusTest}／{@code JavalinCommandBusTest} 对齐：
  * <ol>
- *   <li>run 装配的总线 execute 返回 Result.success（真实路由到业务 Handler，
+ *   <li>run 装配的总线 execute 返回 R.success（真实路由到业务 Handler，
  *       另以 local port &gt; 0 佐证真实 Jetty 已监听）</li>
  *   <li>多类型执行器之一冲突 → 整批拒绝的 ISE 自工厂传播（同 4.4 注册语义）</li>
  *   <li>未注册命令走 ISE（与 ddd4j-core DefaultCommandBus 一致）</li>
@@ -144,7 +144,7 @@ class DropwizardCommandBusTest {
     }
 
     /**
-     * 验证<code>result.isSuccess()</code>为真，<code>result.data()</code> 包含 <code>SampleCommandHandler.HANDLED</code>，<code>support.getLocalPort()</code>为正。
+     * 验证<code>result.isOk()</code>为真，<code>result.getData()</code> 包含 <code>SampleCommandHandler.HANDLED</code>，<code>support.getLocalPort()</code>为正。
      */
     @Test
     void execute_已注册命令_应路由到真实Handler并返回成功() {
@@ -154,10 +154,10 @@ class DropwizardCommandBusTest {
         TestApplication application = support.getApplication();
         DropwizardCommandBus bus = application.busFromRun();
 
-        Result<String> result = bus.execute(new SampleCommand());
+        R<String> result = bus.execute(new SampleCommand());
 
-        assertThat(result.isSuccess()).isTrue();
-        assertThat(result.data()).contains(SampleCommandHandler.HANDLED);
+        assertThat(result.isOk()).isTrue();
+        assertThat(result.getData()).isEqualTo(SampleCommandHandler.HANDLED);
         // 佐证真实容器在监听（DropwizardTestSupport 驱动的是真实 Jetty，
         // local port 经 port 0 由内核分配，非 -1 占位）。
         assertThat(support.getLocalPort()).isPositive();
@@ -233,14 +233,14 @@ class DropwizardCommandBusTest {
         /**
          * 用当前处理器执行传入命令或操作。
          *
-         * <p>测试夹具会调用 <code>Result.ok()</code>。</p>
+         * <p>测试夹具会调用 <code>R.ok()</code>。</p>
          *
          * @param command 命令对象
-         * @return 实际返回<code>Result.ok()</code>
+         * @return 实际返回<code>R.ok()</code>
          */
         @Override
-        public Result execute(Command command) {
-            return Result.ok();
+        public R<?> execute(Command command) {
+            return R.ok();
         }
     }
 

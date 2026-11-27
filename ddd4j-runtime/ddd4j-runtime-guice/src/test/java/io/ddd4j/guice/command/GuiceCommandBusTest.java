@@ -17,10 +17,10 @@ package io.ddd4j.guice.command;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import io.ddd4j.core.api.R;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.Result;
 import io.ddd4j.guice.Ddd4jCommandGuiceModule;
 import org.junit.jupiter.api.Test;
 
@@ -57,7 +57,7 @@ class GuiceCommandBusTest {
         assertNotNull(commandBus);
 
         TestCommand command = new TestCommand();
-        Result<?> result = commandBus.execute(command);
+        R<?> result = commandBus.execute(command);
 
         assertNotNull(result);
         assertTrue(executed.get());
@@ -136,13 +136,13 @@ class GuiceCommandBusTest {
     void dynamicDiscoveryCachesRoutesAndPreservesResultIdentity() {
         Set<Class<? extends Command>> types = new java.util.LinkedHashSet<>();
         types.add(TestCommand.class);
-        Result<?> expected = Result.ok("dynamic");
+        R<?> expected = R.ok("dynamic");
         CommandExecutor<Command> executor = new CommandExecutor<>() {
             public Set<Class<? extends Command>> supportedCommands() {
                 return types;
             }
 
-            public Result execute(Command command) {
+            public R<?> execute(Command command) {
                 return expected;
             }
         };
@@ -173,7 +173,7 @@ class GuiceCommandBusTest {
                 return empty;
             }
 
-            public Result execute(Command command) {
+            public R<?> execute(Command command) {
                 throw new AssertionError("must stay undiscovered");
             }
         };
@@ -186,7 +186,7 @@ class GuiceCommandBusTest {
                 return Set.of(TestCommand.class);
             }
 
-            public Result execute(TestCommand command) {
+            public R<?> execute(TestCommand command) {
                 throw failure;
             }
         };
@@ -195,7 +195,7 @@ class GuiceCommandBusTest {
     }
 
     /**
-     * 验证<code>calls.get()</code> 等于 <code>1</code>，<code>bus.execute(new AnotherCommand()).isSuccess()</code>为真，<code>bus.execute(new TestCommand()).isSuccess()</code>为真。
+     * 验证<code>calls.get()</code> 等于 <code>1</code>，<code>bus.execute(new AnotherCommand()).isOk()</code>为真，<code>bus.execute(new TestCommand()).isOk()</code>为真。
      */
     @Test
     void initialSupportedCommandsIsReadOnlyOnceBeforeDynamicMiss() {
@@ -205,15 +205,15 @@ class GuiceCommandBusTest {
                 return calls.incrementAndGet() == 1 ? Set.of(TestCommand.class) : Set.of(AnotherCommand.class);
             }
 
-            public Result execute(Command command) {
-                return Result.ok();
+            public R<?> execute(Command command) {
+                return R.ok();
             }
         };
         GuiceCommandBus bus = new GuiceCommandBus(java.util.List.of(executor));
         assertEquals(1, calls.get());
-        assertTrue(bus.execute(new AnotherCommand()).isSuccess());
+        assertTrue(bus.execute(new AnotherCommand()).isOk());
         assertEquals(2, calls.get());
-        assertTrue(bus.execute(new TestCommand()).isSuccess());
+        assertTrue(bus.execute(new TestCommand()).isOk());
         assertEquals(2, calls.get());
     }
 
@@ -273,15 +273,15 @@ class GuiceCommandBusTest {
         /**
          * 用当前处理器执行传入命令或操作。
          *
-         * <p>测试夹具会调用 <code>executed.set(true)</code>、<code>Result.ok()</code>。</p>
+         * <p>测试夹具会调用 <code>executed.set(true)</code>、<code>R.ok()</code>。</p>
          *
          * @param command 命令对象
-         * @return 实际返回<code>Result.ok()</code>
+         * @return 实际返回<code>R.ok()</code>
          */
         @Override
-        public Result execute(TestCommand command) {
+        public R<?> execute(TestCommand command) {
             executed.set(true);
-            return Result.ok();
+            return R.ok();
         }
     }
 
@@ -319,15 +319,15 @@ class GuiceCommandBusTest {
         /**
          * 用当前处理器执行传入命令或操作。
          *
-         * <p>测试夹具会调用 <code>executed.set(true)</code>、<code>Result.ok()</code>。</p>
+         * <p>测试夹具会调用 <code>executed.set(true)</code>、<code>R.ok()</code>。</p>
          *
          * @param command 命令对象
-         * @return 实际返回<code>Result.ok()</code>
+         * @return 实际返回<code>R.ok()</code>
          */
         @Override
-        public Result execute(AnotherCommand command) {
+        public R<?> execute(AnotherCommand command) {
             executed.set(true);
-            return Result.ok();
+            return R.ok();
         }
     }
 }

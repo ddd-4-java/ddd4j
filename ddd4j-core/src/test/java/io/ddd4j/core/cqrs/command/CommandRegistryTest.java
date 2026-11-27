@@ -16,6 +16,7 @@ package io.ddd4j.core.cqrs.command;
 
 import org.junit.jupiter.api.Test;
 
+import io.ddd4j.core.api.R;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -221,14 +222,14 @@ class CommandRegistryTest {
         /**
          * 用当前处理器执行传入命令或操作。
          *
-         * <p>测试夹具会调用 <code>Result.ok()</code>。</p>
+         * <p>测试夹具会调用 <code>R.ok()</code>。</p>
          *
          * @param command 命令对象
-         * @return 实际返回<code>Result.ok()</code>
+         * @return 实际返回<code>R.ok()</code>
          */
         @Override
-        public Result execute(CreateOrderCommand command) {
-            return Result.ok();
+        public R<?> execute(CreateOrderCommand command) {
+            return R.ok();
         }
     }
 
@@ -252,14 +253,14 @@ class CommandRegistryTest {
         /**
          * 用当前处理器执行传入命令或操作。
          *
-         * <p>测试夹具会调用 <code>Result.fail("cancelled")</code>。</p>
+         * <p>测试夹具会调用 <code>R.fail("cancelled")</code>。</p>
          *
          * @param command 命令对象
-         * @return 实际返回<code>Result.fail("cancelled")</code>
+         * @return 实际返回<code>R.fail("cancelled")</code>
          */
         @Override
-        public Result execute(CancelOrderCommand command) {
-            return Result.fail("cancelled");
+        public R<?> execute(CancelOrderCommand command) {
+            return R.fail("cancelled");
         }
     }
 
@@ -285,14 +286,14 @@ class CommandRegistryTest {
         /**
          * 用当前处理器执行传入命令或操作。
          *
-         * <p>测试夹具会调用 <code>Result.ok()</code>。</p>
+         * <p>测试夹具会调用 <code>R.ok()</code>。</p>
          *
          * @param command 命令对象
-         * @return 实际返回<code>Result.ok()</code>
+         * @return 实际返回<code>R.ok()</code>
          */
         @Override
-        public Result execute(Command command) {
-            return Result.ok();
+        public R<?> execute(Command command) {
+            return R.ok();
         }
     }
 
@@ -318,14 +319,14 @@ class CommandRegistryTest {
         /**
          * 用当前处理器执行传入命令或操作。
          *
-         * <p>测试夹具会调用 <code>Result.ok()</code>。</p>
+         * <p>测试夹具会调用 <code>R.ok()</code>。</p>
          *
          * @param command 命令对象
-         * @return 实际返回<code>Result.ok()</code>
+         * @return 实际返回<code>R.ok()</code>
          */
         @Override
-        public Result execute(Command command) {
-            return Result.ok();
+        public R<?> execute(Command command) {
+            return R.ok();
         }
     }
 }

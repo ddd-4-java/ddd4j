@@ -14,10 +14,10 @@
  */
 package io.ddd4j.helidon.command;
 
+import io.ddd4j.core.api.R;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.CommandRegistry;
-import io.ddd4j.core.cqrs.command.Result;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +38,7 @@ import static org.assertj.core.api.Assertions.catchThrowableOfType;
  * 三用例与 SPI 侧 {@code CommandRegistryTest} 及 {@code SpringCommandBusTest}／
  * {@code QuarkusCommandBusTest}／{@code MicronautCommandBusTest} 对齐：
  * <ol>
- *   <li>execute 返回 Result.success（真实路由到业务 Handler）</li>
+ *   <li>execute 返回 R.success（真实路由到业务 Handler）</li>
  *   <li>多类型执行器之一冲突 → 整批拒绝的 ISE 自构造器传播（同 4.4 注册语义）</li>
  *   <li>未注册命令走 ISE（与 ddd4j-core DefaultCommandBus 一致）</li>
  * </ol>
@@ -66,16 +66,16 @@ class HelidonCommandBusTest {
     }
 
     /**
-     * 验证<code>result.isSuccess()</code>为真，<code>result.data()</code> 包含 <code>SampleCommandHandler.HANDLED</code>。
+     * 验证<code>result.isOk()</code>为真，<code>result.getData()</code> 包含 <code>SampleCommandHandler.HANDLED</code>。
      */
     @Test
     void execute_已注册命令_应路由到真实Handler并返回成功() {
         HelidonCommandBus bus = assemble();
 
-        Result<String> result = bus.execute(new SampleCommand());
+        R<String> result = bus.execute(new SampleCommand());
 
-        assertThat(result.isSuccess()).isTrue();
-        assertThat(result.data()).contains(SampleCommandHandler.HANDLED);
+        assertThat(result.isOk()).isTrue();
+        assertThat(result.getData()).isEqualTo(SampleCommandHandler.HANDLED);
     }
 
     /**
@@ -151,8 +151,8 @@ class HelidonCommandBusTest {
          * @return 成功结果
          */
         @Override
-        public Result execute(Command command) {
-            return Result.ok();
+        public R<?> execute(Command command) {
+            return R.ok();
         }
     }
 }

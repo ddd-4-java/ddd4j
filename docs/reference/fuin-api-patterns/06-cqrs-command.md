@@ -82,7 +82,7 @@ ConstraintViolationException（:78-81）；`execute` 按 `cmd.getEventType()` �
     - Command 概念：ddd4j 纯 marker＋四条设计原则 javadoc（Command.java:8-14、:46）↔ fuin Command.java:25（fuin 侧非纯
       marker，差异归入改写 (a)）；
     - CommandExecutor 概念：「声明支持集＋单一 execute」骨架（CommandExecutor.java:48-63 ↔ fuin CommandExecutor.java:37-62）；
-    - Result 概念：code／message／data＋成功判定（Result.java:21-77 ↔ fuin Result.java:31-63）。
+    - 结果概念：DDD4J 使用 io.ddd4j.core.api.R 的 code、msg、data 与 isOk()，对应 fuin 的 Result 接口。
 - **改写／超出（逐条核实）**：
     - (a) 泛型收窄：`<C extends Command>`（CommandExecutor.java:48）vs fuin 三参 `<CONTEXT, RESULT, CMD>`（fuin
       CommandExecutor.java:33-37）；Command 收窄为纯 marker（Command.java:46）vs fuin `Command extends Event`
@@ -91,10 +91,8 @@ ConstraintViolationException（:78-81）；`execute` 按 `cmd.getEventType()` �
       fuin `Set<EventType>` 字符串值对象（fuin CommandExecutor.java:44-45）；
     - (c) 总线内置：`CommandBus`（CommandBus.java:6-9）＋`DefaultCommandBus`（DefaultCommandBus.java:14-38，
       `ConcurrentHashMap`＋`putIfAbsent` 重复执行器检测 :33-36）——fuin core 无总线，适配层与官方示例亦未接线（控制器直调聚合）；
-    - (d) 错误模型：`execute(C)` 无受检异常、失败统一 `Result.fail(code, message)`（CommandExecutor.java:63、Result.java:
-      60-69），`data()` 返回 `Optional<T>`（Result.java:75-77）——vs fuin 抛 5 个聚合受检异常＋CommandExecutionFailedException（fuin
-      CommandExecutor.java:61-62）、`getData()` 裸 `@Nullable`（fuin Result.java:62-63）；聚合并发冲突的类型化异常按计划 Task
-      3.2 以 RuntimeException 落地（05 篇决策，不用 throws）；
+    - (d) 错误模型：DDD4J 的 execute(C) 返回统一响应 R，业务失败可用 R.fail(msg) 或 R.of(code, msg)，通过 getData() 读取可空数据。
+      fuin 在 CommandExecutor 接口声明聚合异常及 CommandExecutionFailedException，DDD4J 的聚合并发冲突按计划沿用运行时异常。
     - (e) 上下文：fuin 显式 `CONTEXT ctx` 参数注入（fuin CommandExecutor.java:61）；ddd4j execute 无 ctx，经 `ThreadContext`
       （TransmittableThreadLocal，线程池可透传，ThreadContext.java:23-37）＋`Contexts`（线程优先→全局兜底，Contexts.java:
       46-52）解析，命令签名保持纯净。
@@ -109,5 +107,5 @@ ConstraintViolationException（:78-81）；`execute` 按 `cmd.getEventType()` �
   ，不另起 fuin 式三参契约。
 - [ ] 阶段 6：spring／quarkus／micronaut／helidon／javalin／vertx／dropwizard 7 个运行时适配器统一继承 `DefaultCommandBus`（如
   SpringCommandBus 叠加 `@Transactional`＋自动扫描）。
-- [ ] 阶段 3（Task 3.2）：聚合并发冲突走 RuntimeException（不做受检 throws），错误码进 `Result.fail` 编码体系。
+- [ ] 阶段 3（Task 3.2）：聚合并发冲突走 RuntimeException（不做受检 throws），业务错误码通过 `R.of(code, msg)` 返回。
 - [ ] Task 1.10：ADR-0004（0004-command-bus-design）引用本文档「总线内置＋Class 路由＋无受检异常」三项超出结论。

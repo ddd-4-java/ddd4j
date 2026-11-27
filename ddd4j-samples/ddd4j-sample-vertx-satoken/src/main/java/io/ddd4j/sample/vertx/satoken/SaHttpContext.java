@@ -14,6 +14,7 @@ import java.util.Objects;
  * 当前 Vert.x 请求的原生 Sa-Token HTTP 适配；不使用 mock request 或 Subject。
  */
 final class SaHttpContext implements SaRequest {
+
     /**
      * 当前框架请求的原生对象，用于适配 Sa-Token 请求行为。
      */

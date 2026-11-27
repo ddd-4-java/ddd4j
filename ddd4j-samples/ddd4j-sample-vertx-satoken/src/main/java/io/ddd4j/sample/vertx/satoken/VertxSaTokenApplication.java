@@ -1,7 +1,9 @@
 package io.ddd4j.sample.vertx.satoken;
 
+import io.ddd4j.auth.satoken.subject.SaTokenSubjectProvider;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.subject.Subject;
+import io.ddd4j.core.util.SubjectKitRegistrationScope;
 import io.ddd4j.sample.order.adapter.http.CatalogEndpoints;
 import io.ddd4j.sample.order.adapter.http.Reply;
 import io.ddd4j.sample.order.start.CatalogRuntime;
@@ -37,6 +39,7 @@ import java.util.function.BiConsumer;
  */
 @Slf4j
 public final class VertxSaTokenApplication {
+
     /**
      * 为当前示例提供 HTTP 服务及工作线程的 Vert.x 实例。
      */
@@ -48,8 +51,7 @@ public final class VertxSaTokenApplication {
     /**
      * 解析请求认证主体的提供器或管理其注册生命周期的作用域。
      */
-    private final io.ddd4j.core.util.SubjectKitRegistrationScope subjects = new io.ddd4j.core.util.SubjectKitRegistrationScope(
-            new io.ddd4j.auth.satoken.subject.SaTokenSubjectProvider());
+    private final SubjectKitRegistrationScope subjects = new SubjectKitRegistrationScope(new SaTokenSubjectProvider());
     /**
      * 当前 HTTP 示例使用的共用商品交易入口。
      */

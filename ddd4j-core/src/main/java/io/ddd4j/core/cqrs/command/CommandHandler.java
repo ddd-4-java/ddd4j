@@ -37,9 +37,9 @@ import java.lang.annotation.*;
  *     }
  *
  *     &#64;Override
- *     public Result execute(CreateOrderCommand cmd) {
+ *     public R<?> execute(CreateOrderCommand cmd) {
  *         // ...
- *         return Result.ok();
+ *         return R.ok();
  *     }
  * }
  * }</pre>

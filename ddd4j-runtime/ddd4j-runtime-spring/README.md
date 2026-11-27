@@ -83,7 +83,7 @@ Spring 的命令侧装配由本模块提供。需要投影时，从 `SpringProje
 Spring Framework 版本由当前发行线的 BOM 管理。Java 8 使用 Spring 5 和 `javax.persistence`，其 runtime 保留
 Spring Data JPA 和 Persistence API 的传递依赖。Java 17 和 21 分别使用 Spring 6、Spring 7，使用
 `SpringJpaProjectionPositionRepository` 等 JPA 适配器时需显式引入对应的 Spring Data JPA 和 `jakarta.persistence` 技术栈。
-旧 JPA 适配器的构造器、实体表与字段映射保持兼容。配置 Spring 事务管理后，命令正常返回时提交，包括返回 `Result.fail` 的情况。
+旧 JPA 适配器的构造器、实体表与字段映射保持兼容。配置 Spring 事务管理后，命令正常返回时提交，包括返回 `R.fail` 的情况。
 符合 Spring 回滚规则的异常触发回滚。
 
 ---
@@ -198,20 +198,22 @@ public Ddd4JacksonModule ddd4JacksonModule(EntityIdFactory factory) {
 
 ### 4.3 CQRS 命令总线
 
-```java
-@Bean
-public MultiCommandExecutor dddCommandBus(List<CommandExecutor> executors) {
-    return new MultiCommandExecutor(executors);
-}
-```
-
-业务方实现 `CommandExecutor` Bean 即可被自动加入命令总线：
+Spring 装配 `CommandBus` 并注册容器中的 `CommandExecutor` Bean。执行器通过
+`supportedCommands()` 声明路由，返回 `io.ddd4j.core.api.R`：
 
 ```java
 @Component
-public class CreateOrderCommandExecutor implements CommandExecutor<OrderContext, Result, CreateOrderCommand> {
-    public Set<EventType> getCommandTypes() { return Set.of(CreateOrderCommand.TYPE); }
-    public Result execute(OrderContext ctx, CreateOrderCommand cmd) { ... }
+public class CreateOrderCommandExecutor implements CommandExecutor<CreateOrderCommand> {
+    @Override
+    public Set<Class<? extends Command>> supportedCommands() {
+        return Set.of(CreateOrderCommand.class);
+    }
+
+    @Override
+    public R<Void> execute(CreateOrderCommand command) {
+        // 执行订单创建用例
+        return R.ok();
+    }
 }
 ```
 

@@ -1,9 +1,9 @@
 package io.ddd4j.data.projection.panache;
 
+import io.ddd4j.core.api.R;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.Result;
 import io.ddd4j.core.cqrs.readmodel.*;
 import io.quarkus.arc.properties.IfBuildProperty;
 import io.quarkus.test.junit.QuarkusTest;
@@ -104,16 +104,16 @@ class QuarkusDurableProjectionIT {
     }
 
     /**
-     * 验证<code>positions.findByStreamId("r08-command")</code>为空，<code>result.isSuccess()</code>为假，<code>positions.findByStreamId("r08-command").orElseThrow().getNextEventNumber()</code> 等于 <code>19L</code>。
+     * 验证<code>positions.findByStreamId("r08-command")</code>为空，<code>result.isOk()</code>为假，<code>positions.findByStreamId("r08-command").orElseThrow().getNextEventNumber()</code> 等于 <code>19L</code>。
      */
     @Test
     void commandKeepsExecutorOwnedJtaBoundaryAndFailureResult() {
         positions.deleteByStreamId("r08-command");
         assertThatThrownBy(() -> commands.execute(new TxCommand(true))).hasMessageContaining("command failed");
         assertThat(positions.findByStreamId("r08-command")).isEmpty();
-        Result<?> result = commands.execute(new TxCommand(false));
-        assertThat(result.isSuccess()).isFalse();
-        // 旧 Quarkus 总线没有 Result.fail 自动回滚规则；事务归执行器所有。
+        R<?> result = commands.execute(new TxCommand(false));
+        assertThat(result.isOk()).isFalse();
+        // 旧 Quarkus 总线没有 R.fail 自动回滚规则；事务归执行器所有。
         assertThat(positions.findByStreamId("r08-command").orElseThrow().getNextEventNumber()).isEqualTo(19L);
     }
 
@@ -178,19 +178,19 @@ class QuarkusDurableProjectionIT {
         /**
          * 用当前处理器执行传入命令或操作。
          *
-         * <p>测试夹具会调用 <code>positions.save(new DefaultProjectionPosition("r08-command", 19L))</code>、<code>Result.fail("business failure")</code>。</p>
+         * <p>测试夹具会调用 <code>positions.save(new DefaultProjectionPosition("r08-command", 19L))</code>、<code>R.fail("business failure")</code>。</p>
          *
          * @param command 命令对象
-         * @return 实际返回<code>Result.fail("business failure")</code>
+         * @return 实际返回<code>R.fail("business failure")</code>
          */
         @Override
         @Transactional
-        public Result<?> execute(TxCommand command) {
+        public R<?> execute(TxCommand command) {
             positions.save(new DefaultProjectionPosition("r08-command", 19L));
             if (command.throwsException) {
                 throw new IllegalStateException("command failed");
             }
-            return Result.fail("business failure");
+            return R.fail("business failure");
         }
     }
 

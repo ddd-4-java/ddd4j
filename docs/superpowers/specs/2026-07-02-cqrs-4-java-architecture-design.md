@@ -19,7 +19,7 @@
 
 ```
 cqrs-4-java/
-├── core/              ← CQRS 核心契约（Command/Executor/View/Result）
+├── core/              ← CQRS 核心契约（Command/Executor/View，结果复用 io.ddd4j.core.api.R）
 ├── esc/               ← EventStore CQRS 集成
 ├── jackson/           ← Jackson 序列化
 ├── jaxb/              ← JAXB 序列化

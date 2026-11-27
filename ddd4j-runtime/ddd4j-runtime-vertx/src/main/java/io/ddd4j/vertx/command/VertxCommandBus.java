@@ -49,7 +49,7 @@ import java.util.Objects;
  * <p><b>同步 execute 刻意不暴露 Vert.x 异步回路</b></p>
  * <p>
  * {@code execute} 继承 {@link DefaultCommandBus} 的<b>同步</b>签名（返回
- * {@code Result}，不包 {@code Future}）：总线内部对执行器的调用是同步分发，
+ * {@code R}，不包 {@code Future}）：总线内部对执行器的调用是同步分发，
  * 调用发生在调用者线程；事件循环上不得执行阻塞处理器。集成方需要异步语义时把 {@code execute}
  * 委托给 worker 线程（{@code vertx.executeBlocking(...)} 或 Verticle 的
  * worker 部署）自行包装即可，总线不为包装再立抽象（ADR-0004：零新框架抽象）。

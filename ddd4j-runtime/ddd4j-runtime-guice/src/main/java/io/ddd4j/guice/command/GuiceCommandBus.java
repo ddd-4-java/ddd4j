@@ -14,10 +14,10 @@
  */
 package io.ddd4j.guice.command;
 
+import io.ddd4j.core.api.R;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.DefaultCommandBus;
-import io.ddd4j.core.cqrs.command.Result;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -39,12 +39,12 @@ public class GuiceCommandBus extends DefaultCommandBus {
     /**
      * 把命令交给已经完成 Guice 装配的共享执行器。
      *
-     * @param <R>     当前容器处理的组件或事件类型
+     * @param <T>     当前容器处理的组件或事件类型
      * @param command 要交给共享核心路由的命令
      * @return 当前命令的处理结果
      */
     @Override
-    public <R> Result<R> execute(Command command) {
+    public <T> R<T> execute(Command command) {
         if (Objects.isNull(command)) {
             throw new IllegalArgumentException("Command cannot be null");
         }
