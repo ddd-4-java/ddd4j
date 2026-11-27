@@ -32,13 +32,7 @@ import java.util.*;
  */
 @UtilityClass
 public class BeanKit {
-    /**
-     * 反射创建对象失败时使用的诊断模板。
-     */
     private final String REFLECT_ERROR = "反射获取转换对象异常";
-    /**
-     * 分隔待忽略的 Bean 属性名所用的逗号。
-     */
     private final String COMMA = ",";
 
     /**
@@ -228,12 +222,6 @@ public class BeanKit {
         return gainInstanceByReflect(className);
     }
 
-    /**
-     * 根据类名加载类型并调用构造器建立对象。
-     *
-     * @param className 当前准备加载或创建的类名
-     * @return 通过反射创建的实例
-     */
     private Object gainInstanceByReflect(String className) {
         Object target = null;
 
@@ -300,12 +288,6 @@ public class BeanKit {
         }
     }
 
-    /**
-     * 收集源 Bean 中缺少值或配置忽略的属性名。
-     *
-     * @param source               需要读取属性的源 Bean
-     * @param ignorePropertiesList 调用方指定的不参与映射的属性名
-     */
     private void ignoreNull(Object source, List<String> ignorePropertiesList) {
         Field[] fields = source.getClass().getDeclaredFields();
 

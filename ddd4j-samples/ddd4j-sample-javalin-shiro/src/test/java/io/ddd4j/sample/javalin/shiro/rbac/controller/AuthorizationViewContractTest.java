@@ -7,14 +7,8 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * 通过 <code>Collections.singleton()</code>、<code>user.loginId()</code>、<code>user.getLoginId()</code> 验证 <code>AuthorizationViewContract</code> 的运行行为。
- */
 class AuthorizationViewContractTest {
 
-    /**
-     * 验证<code>user.getLoginId()</code> 等于 <code>user.loginId()</code>，<code>user.getDisplayName()</code> 等于 <code>user.displayName()</code>，<code>permission.getDescription()</code> 等于 <code>permission.description()</code>。
-     */
     @Test
     void viewsExposeMatchingBeanAndComponentAccessors() {
         Set<String> roles = Collections.singleton("admin");
@@ -38,9 +32,6 @@ class AuthorizationViewContractTest {
         assertEquals(permission.description(), permission.getDescription());
     }
 
-    /**
-     * 验证<code>user.hashCode()</code> 等于 <code>userHash</code>，<code>role.hashCode()</code> 等于 <code>roleHash</code>，<code>permission.hashCode()</code> 等于 <code>permissionHash</code>。
-     */
     @Test
     void viewsRetainThreeLineValueHashes() {
         Set<String> roles = Collections.singleton("admin");

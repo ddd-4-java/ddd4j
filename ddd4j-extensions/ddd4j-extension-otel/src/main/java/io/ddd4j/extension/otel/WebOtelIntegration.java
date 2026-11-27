@@ -59,9 +59,6 @@ import java.util.Objects;
  */
 public final class WebOtelIntegration {
 
-    /**
-     * 限制调用方直接创建 <code>WebOtelIntegration</code> 实例。
-     */
     private WebOtelIntegration() {
     }
 

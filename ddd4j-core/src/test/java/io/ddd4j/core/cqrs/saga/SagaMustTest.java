@@ -20,9 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class SagaMustTest {
 
-    /**
-     * 验证<code>state</code> 等于 <code>SagaState.COMPLETED</code>，<code>trace</code> 按顺序仅包含 <code>"reserve"</code>、<code>"charge"</code>、<code>"create"</code>，<code>saga.failure()</code>为空。
-     */
     @Test
     void allStepsSucceedMustCompleteInRegistrationOrderWithoutCompensation() {
         List<String> trace = new ArrayList<>();
@@ -38,9 +35,6 @@ class SagaMustTest {
         assertThat(saga.failure()).isNull();
     }
 
-    /**
-     * 验证<code>state</code> 等于 <code>SagaState.COMPENSATED</code>，<code>saga.executedCompensations()</code> 按顺序仅包含 <code>"s2"</code>、<code>"s1"</code>，<code>saga.failure()</code> 的类型为 <code>IllegalStateException.class</code>。
-     */
     @Test
     void laterStepFailureMustCompensateExecutedStepsInReverseRegistrationOrder() {
         List<String> trace = new ArrayList<>();
@@ -63,9 +57,6 @@ class SagaMustTest {
                 .hasMessage("payment gateway down");
     }
 
-    /**
-     * 验证<code>state</code> 等于 <code>SagaState.FAILED</code>，<code>saga.executedCompensations()</code> 按顺序仅包含 <code>"s2"</code>、<code>"s1"</code>。
-     */
     @Test
     void compensationFailureMustNotBlockRemainingCompensationsAndConvergeToTerminalState() {
         List<String> trace = new ArrayList<>();
@@ -87,9 +78,6 @@ class SagaMustTest {
         assertThat(saga.executedCompensations()).containsExactly("s2", "s1");
     }
 
-    /**
-     * 验证<code>first.execute()</code> 等于 <code>SagaState.COMPENSATED</code>，<code>second.state()</code> 等于 <code>SagaState.RUNNING</code>，<code>second.execute()</code> 等于 <code>SagaState.COMPLETED</code>。
-     */
     @Test
     void freshInstanceMustStartFromCleanState() {
         List<String> trace = new ArrayList<>();

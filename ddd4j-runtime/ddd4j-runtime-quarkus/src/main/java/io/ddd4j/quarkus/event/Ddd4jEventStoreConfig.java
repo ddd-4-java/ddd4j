@@ -40,11 +40,6 @@ public class Ddd4jEventStoreConfig {
     @ConfigProperty(name = "ddd4j.ddd.event-store.type", defaultValue = "mem")
     String eventStoreType;
 
-    /**
-     * 在 Quarkus 启动期间验证并初始化选定的事件存储。
-     *
-     * @param event 当前框架生命周期或容器启动事件
-     */
     void onStart(@Observes StartupEvent event) {
         log.info("ddd4j event-store mode is '{}'; applications must register an explicit event-store adapter", eventStoreType);
     }

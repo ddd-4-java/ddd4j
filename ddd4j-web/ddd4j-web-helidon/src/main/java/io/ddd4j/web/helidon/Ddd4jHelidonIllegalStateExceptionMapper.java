@@ -27,17 +27,8 @@ import jakarta.ws.rs.ext.Provider;
 @Priority(Priorities.USER)
 public final class Ddd4jHelidonIllegalStateExceptionMapper implements ExceptionMapper<IllegalStateException> {
 
-    /**
-     * 执行实际异常转换的框架映射器。
-     */
     private final Ddd4jHelidonExceptionMapper delegate = new Ddd4jHelidonExceptionMapper();
 
-    /**
-     * 把异常交给共用框架映射器生成 HTTP 错误响应。
-     *
-     * @param exception 待映射的请求异常
-     * @return 由共用映射器返回的 HTTP 响应
-     */
     @Override
     public Response toResponse(IllegalStateException exception) {
         return delegate.toResponse(exception);

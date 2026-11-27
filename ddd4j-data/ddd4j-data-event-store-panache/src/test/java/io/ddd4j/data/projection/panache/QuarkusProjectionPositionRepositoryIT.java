@@ -54,40 +54,22 @@ class QuarkusProjectionPositionRepositoryIT {
      */
     private static final String ORDER_SUMMARY = "order-summary";
 
-    /**
-     * 供库存事件或状态恢复用例使用的快照样本。
-     */
     private static final String INVENTORY_SNAPSHOT = "inventory-snapshot";
 
-    /**
-     * 测试使用或记录的多条投影位点。
-     */
     @Inject
     QuarkusProjectionPositionRepository positions;
 
-    /**
-     * 为集成测试应用启动提供的框架配置。
-     */
     @Inject
     ProjectionPanacheItCdiConfig itConfig;
 
-    /**
-     * 执行 JPA 查询和持久化操作的实体管理器。
-     */
     @PersistenceContext
     EntityManager entityManager;
 
-    /**
-     * 测试执行前执行 <code>itConfig.clearPositions()</code> 完成资源准备。
-     */
     @BeforeEach
     void cleanPositions() {
         itConfig.clearPositions();
     }
 
-    /**
-     * 验证<code>snapshot</code>为空，<code>positions.findAll()</code> 的大小为 <code>1</code>。
-     */
     @Test
     void findAll_返回可修改的独立结果快照() {
         positions.save(new DefaultProjectionPosition(ORDER_SUMMARY, 7L));
@@ -99,9 +81,6 @@ class QuarkusProjectionPositionRepositoryIT {
         assertThat(positions.findAll()).hasSize(1);
     }
 
-    /**
-     * 验证<code>position.getNextEventNumber()</code>为零，<code>position.getStreamId()</code> 等于 <code>ORDER_SUMMARY</code>，<code>position.getNextEventNumber()</code> 等于 <code>5L</code>。
-     */
     @Test
     void saveAdvanceReload_完整循环_应跨持久化上下文读回最终位置() {
         // 先落零位行（dispatcher 冷启动路径）
@@ -126,9 +105,6 @@ class QuarkusProjectionPositionRepositoryIT {
                 });
     }
 
-    /**
-     * 验证<code>position.getNextEventNumber()</code> 等于 <code>5L</code>，<code>position.getNextEventNumber()</code>为零。
-     */
     @Test
     void resetToZero_推进后重置_应回退到0() {
         positions.save(new DefaultProjectionPosition(ORDER_SUMMARY, 5L));
@@ -142,9 +118,6 @@ class QuarkusProjectionPositionRepositoryIT {
                 .hasValueSatisfying(position -> assertThat(position.getNextEventNumber()).isZero());
     }
 
-    /**
-     * 验证<code>positions.findByStreamId(ORDER_SUMMARY)</code>为空，<code>position.getNextEventNumber()</code>为零。
-     */
     @Test
     void resetToZero_流不存在_应插入零位行() {
         // 与 core InMemoryProjectionPositionRepository 同款语义：缺行 reset 后可读到 0
@@ -157,9 +130,6 @@ class QuarkusProjectionPositionRepositoryIT {
                 .hasValueSatisfying(position -> assertThat(position.getNextEventNumber()).isZero());
     }
 
-    /**
-     * 验证<code>positions.findByStreamId(ORDER_SUMMARY)</code>为空，<code>saved.getStreamId()</code> 等于 <code>ORDER_SUMMARY</code>，<code>positions.findAll()</code> 的大小为 <code>2</code>。
-     */
     @Test
     void save不存在则插入存在则更新_delete后不可见_且命名空间隔离() {
         // save（缺行）→ 插入（dispatcher 首次推进路径依赖的 upsert 语义）

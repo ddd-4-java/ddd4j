@@ -211,9 +211,6 @@ public class MQListener {
      * 以固定 {@code required} 默认值为 {@code true}）。
      */
     public static class MQListenerBuilder {
-        /**
-         * 启动消息组件失败时是否阻止应用就绪。
-         */
         private boolean required = true;
     }
 

@@ -31,11 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  */
 class CdiDomainEventPublisherContractTest {
 
-    /**
-     * 验证<code>fired.size()</code> 等于 <code>2</code>，<code>fired.get(0)</code> 与…为同一实例 <code>domainEvent</code>，<code>fired.get(1)</code> 等于 <code>"plain"</code>。
-     *
-     * @throws Exception 反射访问被测成员时失败
-     */
     @Test
     void domainAndPlainObjectsFireOnceWhileNullIsIgnored() throws Exception {
         CdiDomainEventPublisher publisher = new CdiDomainEventPublisher();

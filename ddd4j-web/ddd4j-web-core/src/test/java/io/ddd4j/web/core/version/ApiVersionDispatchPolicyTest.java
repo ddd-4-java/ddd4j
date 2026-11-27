@@ -29,19 +29,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class ApiVersionDispatchPolicyTest {
 
-    /**
-     * 用于覆盖回退路径的 Web 访问策略。
-     */
     private final ApiVersionDispatchPolicy fallbackPolicy = new ApiVersionDispatchPolicy(ApiVersionMode.FALLBACK);
 
-    /**
-     * 要求严格匹配访问规则的策略实例。
-     */
     private final ApiVersionDispatchPolicy strictPolicy = new ApiVersionDispatchPolicy(ApiVersionMode.STRICT);
 
-    /**
-     * 验证<code>result.matched()</code>为真，<code>result.matchedVersion()</code> 等于 <code>ApiVersion.parse("2.0.0")</code>，<code>result.requireMatch()</code> 等于 <code>"handler-v2"</code>。
-     */
     @Test
     void majorVersionSplitsDispatch() {
         //规格 Scenario：主版本分流（请求 v2 不会落到 v1 处理器）。
@@ -60,9 +51,6 @@ class ApiVersionDispatchPolicyTest {
         assertEquals("handler-v2", result.requireMatch());
     }
 
-    /**
-     * 验证<code>belowHighest.matched()</code>为真，<code>belowHighest.matchedVersion()</code> 等于 <code>ApiVersion.parse("2.1.0")</code>，<code>lowest.degraded()</code>为假。
-     */
     @Test
     void picksHighestVersionNotAboveRequested() {
         //规格 Scenario：次版本向后兼容（2.0、2.1、2.3 注册，请求 2.2 → 命中 2.1）。
@@ -88,9 +76,6 @@ class ApiVersionDispatchPolicyTest {
         assertFalse(lowest.degraded());
     }
 
-    /**
-     * 验证<code>result.matched()</code>为真，<code>result.matchedVersion()</code> 等于 <code>ApiVersion.parse("2.5.0")</code>，<code>result.message().contains("2.5.0")</code>为真。
-     */
     @Test
     void gracefulFallbackToLowestWithUpgradeHint() {
         //规格 Scenario：同主版本仅注册 2.5、2.6，请求 2.1 → 优雅回落 2.5 并带升级提示（默认模式）。
@@ -109,9 +94,6 @@ class ApiVersionDispatchPolicyTest {
         assertTrue(result.message().contains("2.5.0"));
     }
 
-    /**
-     * 验证<code>result.matched()</code>为假，<code>result.matchedVersion()</code>为空，<code>exception.getMessage().contains("2.5.0")</code>为真。
-     */
     @Test
     void strictModeRejectsBelowLowestAvailableVersion() {
         //规格 Scenario：严格模式下请求 2.1 且最低可用为 2.5 → 4xx 拒绝。
@@ -132,9 +114,6 @@ class ApiVersionDispatchPolicyTest {
         assertTrue(exception.getMessage().contains("2.5.0"));
     }
 
-    /**
-     * 验证<code>result.matched()</code>为假，<code>result.matchedVersion()</code>为空，<code>exception.getMessage().contains("major version 3")</code>为真。
-     */
     @Test
     void majorVersionWithoutRegistrationReturns404() {
         //规格 Scenario：主版本无注册（请求 3.0，仅注册 v1/v2）→ 404 语义。
@@ -154,9 +133,6 @@ class ApiVersionDispatchPolicyTest {
         assertTrue(exception.getMessage().contains("major version 3"));
     }
 
-    /**
-     * 验证<code>registry.isEmpty()</code>为假，<code>registry.size()</code> 等于 <code>3</code>，<code>registry.register("bad-version", "handler")</code> 抛出 <code>IllegalArgumentException.class</code>。
-     */
     @Test
     void registryExposesSortedSnapshotsAndDetectsDuplicates() {
         ApiVersionRegistry<String> registry = new ApiVersionRegistry<String>()
@@ -178,9 +154,6 @@ class ApiVersionDispatchPolicyTest {
         assertThrows(IllegalArgumentException.class, () -> registry.register("bad-version", "handler"));
     }
 
-    /**
-     * 验证<code>result.status()</code> 等于 <code>404</code>，<code>result.matched()</code>为假，被测调用 抛出 <code>NullPointerException.class</code>。
-     */
     @Test
     void emptyRegistryReportsNotFoundAndExposesMode() {
         ApiVersionRegistry<String> empty = new ApiVersionRegistry<String>();

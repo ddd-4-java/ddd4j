@@ -27,9 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class Ddd4jHelidonWebConfigurationContractTest {
 
-    /**
-     * 验证<code>configuration.getPublicPaths()</code> 等于 <code>Arrays.asList("/public", "/health")</code>。
-     */
     @Test
     void publicPathsTrimWhitespaceAroundEntries() {
         String key = "ddd4j.web.public-paths";

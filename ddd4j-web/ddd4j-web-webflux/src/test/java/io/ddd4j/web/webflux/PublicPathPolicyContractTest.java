@@ -28,24 +28,12 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-/**
- * 通过 <code>mock()</code>、<code>environment.getProperty()</code>、<code>eq()</code> 验证 <code>PublicPathPolicyContract</code> 的运行行为。
- */
 class PublicPathPolicyContractTest {
 
-    /**
-     * 创建 <code>new WebRequestContext</code> 供当前测试路径调用。
-     *
-     * @param path 测试请求的资源路径或待访问文件路径
-     * @return 当前测试使用的结果，取自 <code>new WebRequestContext("request", "trace", null, null, Locale.ROOT, null, "GET", path)</code>
-     */
     private static WebRequestContext request(String path) {
         return new WebRequestContext("request", "trace", null, null, Locale.ROOT, null, "GET", path);
     }
 
-    /**
-     * 验证<code>policy.authenticationMode(request("/health"))</code> 等于 <code>AuthenticationMode.DISABLED</code>，<code>policy.authenticationMode(request("/assets/file.js"))</code> 等于 <code>AuthenticationMode.DISABLED</code>，<code>policy.authenticationMode(request("/private"))</code> 等于 <code>AuthenticationMode.REQUIRED</code>。
-     */
     @Test
     void nullAndBlankConfiguredPathsAreFilteredBeforeMatching() {
         Environment environment = mock(Environment.class);

@@ -29,9 +29,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  */
 class CustomLicenseManagerContractTest {
 
-    /**
-     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，<code>error.getMessage()</code> 等于 <code>"SN 校验失败: 当前机器序列号不在授权范围内"</code>。
-     */
     @Test
     void missingMachineSerialNumberReportsLicenseMismatch() {
         LicenseMachineInfoProvider provider = new LicenseMachineInfoProvider() {

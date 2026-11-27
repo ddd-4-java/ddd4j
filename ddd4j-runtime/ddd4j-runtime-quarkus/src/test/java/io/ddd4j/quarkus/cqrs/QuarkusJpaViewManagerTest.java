@@ -42,24 +42,14 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class QuarkusJpaViewManagerTest {
 
-    /**
-     * 用于隔离 <code>Instance&lt;ProjectionPositionRepository&gt;</code> 调用并记录交互的测试替身。
-     */
     @Mock
     private Instance<ProjectionPositionRepository> positionRepositories;
 
-    /**
-     * 用于隔离 <code>ProjectionPositionRepository</code> 调用并记录交互的测试替身。
-     */
     @Mock
     private ProjectionPositionRepository positionRepository;
 
     /**
      * 通过反射设置 CDI Instance 字段。
-     *
-     * @param repos 测试使用的投影位点仓储集合
-     * @return 使用测试仓储创建的 Quarkus 视图管理器
-     * @throws Exception 无法反射注入仓储
      */
     private QuarkusJpaViewManager createManager(Instance<ProjectionPositionRepository> repos) throws Exception {
         QuarkusJpaViewManager manager = new QuarkusJpaViewManager();
@@ -76,11 +66,6 @@ class QuarkusJpaViewManagerTest {
     @DisplayName("getProjectionStatus")
     class GetProjectionStatusTests {
 
-        /**
-         * 验证<code>status.streamId()</code> 等于 <code>"orders"</code>，<code>status.lastError()</code>为空。
-         *
-         * @throws Exception 准备或释放被测运行资源时失败
-         */
         @Test
         @DisplayName("CDI 仓储不可用时应返回基线状态")
         void whenUnsatisfied_shouldReturnBaseline() throws Exception {
@@ -98,11 +83,6 @@ class QuarkusJpaViewManagerTest {
             assertThat(status.lastError()).isNull();
         }
 
-        /**
-         * 验证<code>status.streamId()</code> 等于 <code>"orders"</code>，<code>status.running()</code>为真。
-         *
-         * @throws Exception 准备或释放被测运行资源时失败
-         */
         @Test
         @DisplayName("CDI 仓储可用且位置存在时应返回真实位置")
         void whenAvailableAndPositionExists_shouldReturnRealPosition() throws Exception {
@@ -121,11 +101,6 @@ class QuarkusJpaViewManagerTest {
             assertThat(status.running()).isTrue();
         }
 
-        /**
-         * 验证<code>status.streamId()</code> 等于 <code>"unknown"</code>，<code>status.nextEventNumber()</code> 等于 <code>0L</code>。
-         *
-         * @throws Exception 准备或释放被测运行资源时失败
-         */
         @Test
         @DisplayName("CDI 仓储可用但位置不存在时应返回 nextEventNumber=0")
         void whenAvailableButNoPosition_shouldReturnZeroPosition() throws Exception {
@@ -143,11 +118,6 @@ class QuarkusJpaViewManagerTest {
             assertThat(status.nextEventNumber()).isEqualTo(0L);
         }
 
-        /**
-         * 验证<code>status.running()</code>为假。
-         *
-         * @throws Exception 当前用例准备资源或调用测试入口失败
-         */
         @Test
         @DisplayName("管理器停止时 running 应为 false")
         void whenStopped_runningShouldBeFalse() throws Exception {

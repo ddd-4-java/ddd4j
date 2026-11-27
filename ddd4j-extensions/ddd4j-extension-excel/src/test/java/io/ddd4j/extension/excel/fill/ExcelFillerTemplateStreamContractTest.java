@@ -30,13 +30,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class ExcelFillerTemplateStreamContractTest {
 
-    /**
-     * 通过 <code>output.toByteArray()</code> 取得当前测试需要的结果。
-     *
-     * @param stream 传给 <code>stream.read()</code> 的 <code>InputStream</code> 输入
-     * @return 当前测试使用的结果，取自 <code>output.toByteArray()</code>
-     * @throws Exception 准备或读取夹具文件时失败
-     */
     private static byte[] read(InputStream stream) throws Exception {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         byte[] chunk = new byte[4];
@@ -47,11 +40,6 @@ class ExcelFillerTemplateStreamContractTest {
         return output.toByteArray();
     }
 
-    /**
-     * 验证<code>convert.invoke(null, direct)</code> 与…为同一实例 <code>direct</code>，<code>buffered</code> 与…为不同的实例 <code>source</code>，<code>read(buffered)</code> 与…的元素逐项相同 <code>template</code>。
-     *
-     * @throws Exception 准备或读取夹具文件、反射访问被测成员时失败
-     */
     @Test
     void byteArrayStreamIsReusedAndOtherStreamsAreBufferedWithoutClosingSource() throws Exception {
         Method convert = ExcelFiller.class.getDeclaredMethod("toNonClosingStream", InputStream.class);

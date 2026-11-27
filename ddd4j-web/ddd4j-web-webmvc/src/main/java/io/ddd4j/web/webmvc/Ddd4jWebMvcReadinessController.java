@@ -29,9 +29,6 @@ import java.util.Objects;
 @RestController
 public final class Ddd4jWebMvcReadinessController {
 
-    /**
-     * 提供依赖就绪状态的 Web 端点。
-     */
     private final ReadinessEndpoint readinessEndpoint;
 
     /**

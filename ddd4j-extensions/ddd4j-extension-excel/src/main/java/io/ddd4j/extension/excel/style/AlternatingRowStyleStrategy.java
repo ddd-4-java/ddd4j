@@ -38,9 +38,6 @@ import java.util.Objects;
  */
 public class AlternatingRowStyleStrategy implements CellWriteHandler {
 
-    /**
-     * 缓存并复用的交替底色单元格样式。
-     */
     private final WriteCellStyle zebraStyle;
 
     /**
@@ -62,11 +59,6 @@ public class AlternatingRowStyleStrategy implements CellWriteHandler {
         this.zebraStyle = style;
     }
 
-    /**
-     * 在非表头的偶数相对行给内容单元格应用交替底色。
-     *
-     * @param context 当前已写入的单元格及其位置
-     */
     @Override
     public void afterCellDispose(CellWriteHandlerContext context) {
         // 跳过表头

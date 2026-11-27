@@ -20,9 +20,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class UnitOfWorkMustTest {
 
-    /**
-     * 验证<code>applied.get()</code> 等于 <code>1</code>，<code>uow.state()</code> 等于 <code>UnitOfWork.State.COMMITTED</code>，<code>trace</code> 按顺序仅包含 <code>"flush-work"</code>。
-     */
     @Test
     void commitMustExecuteRegisteredCommitCallbacksAndReachCommittedState() {
         AtomicInteger applied = new AtomicInteger();
@@ -41,9 +38,6 @@ class UnitOfWorkMustTest {
         assertThat(trace).containsExactly("flush-work");
     }
 
-    /**
-     * 验证<code>trace</code> 按顺序仅包含 <code>"begin-work"</code>、<code>"undo-work"</code>，<code>uow.state()</code> 等于 <code>UnitOfWork.State.ROLLED_BACK</code>。
-     */
     @Test
     void failureInsideBoundaryMustRollBackAndPropagateOriginalException() {
         List<String> trace = new ArrayList<>();
@@ -62,9 +56,6 @@ class UnitOfWorkMustTest {
         assertThat(uow.state()).isEqualTo(UnitOfWork.State.ROLLED_BACK);
     }
 
-    /**
-     * 验证<code>uow.state()</code> 等于 <code>UnitOfWork.State.ROLLED_BACK</code>，<code>cleanupCalls.get()</code> 等于 <code>1</code>。
-     */
     @Test
     void rollbackCallbackErrorMustNotReplaceOriginalWorkFailure() {
         UnitOfWork uow = UnitOfWork.begin();
@@ -82,9 +73,6 @@ class UnitOfWorkMustTest {
         assertThat(cleanupCalls.get()).isEqualTo(1);
     }
 
-    /**
-     * 验证<code>outer.state()</code> 等于 <code>UnitOfWork.State.ACTIVE</code>，<code>result</code> 等于 <code>"outer-result"</code>，<code>trace</code> 按顺序仅包含 <code>"inner-rollback"</code>、<code>"outer-commit"</code>。
-     */
     @Test
     void nestedBoundariesKeepTheirOwnCallbacksAndTerminalStates() {
         List<String> trace = new ArrayList<>();
@@ -110,9 +98,6 @@ class UnitOfWorkMustTest {
         assertThat(trace).containsExactly("inner-rollback", "outer-commit");
     }
 
-    /**
-     * 验证<code>result</code> 等于 <code>"computed"</code>，<code>trace</code> 按顺序仅包含 <code>"flush-work"</code>，<code>uow.state()</code> 等于 <code>UnitOfWork.State.COMMITTED</code>。
-     */
     @Test
     void executeSuccessPathMustCommitAndReturnValue() {
         UnitOfWork uow = UnitOfWork.begin();
@@ -126,9 +111,6 @@ class UnitOfWorkMustTest {
         assertThat(uow.state()).isEqualTo(UnitOfWork.State.COMMITTED);
     }
 
-    /**
-     * 验证<code>uow.state()</code> 等于 <code>UnitOfWork.State.ROLLED_BACK</code>，<code>rollbacks.get()</code> 等于 <code>1</code>，被测调用 抛出 <code>IllegalStateException.class</code>。
-     */
     @Test
     void terminalStateMustRejectRepeatedTerminationWithoutReplayingCallbacks() {
         AtomicInteger rollbacks = new AtomicInteger();

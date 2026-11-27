@@ -23,16 +23,7 @@ import lombok.Data;
  */
 @Data
 public class BaseCoreProperties {
-    /**
-     * 默认日期输入输出格式。
-     */
     private String datePattern = "yyyy-MM-dd";
-    /**
-     * 默认日期时间输入输出格式。
-     */
     private String dateTimePattern = "yyyy-MM-dd HH:mm:ss";
-    /**
-     * 默认时刻输入输出格式。
-     */
     private String timePattern = "HH:mm:ss";
 }

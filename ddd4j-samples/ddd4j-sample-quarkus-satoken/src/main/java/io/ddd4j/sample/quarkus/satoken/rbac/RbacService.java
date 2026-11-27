@@ -35,21 +35,12 @@ import java.util.*;
 @ApplicationScoped
 public class RbacService {
 
-    /**
-     * 读取和保存用户的仓储。
-     */
     @Inject
     InMemoryUserRepository userRepository;
 
-    /**
-     * 读取和保存角色的仓储。
-     */
     @Inject
     InMemoryRoleRepository roleRepository;
 
-    /**
-     * 查询和维护权限定义的仓储。
-     */
     @Inject
     InMemoryPermissionRepository permissionRepository;
 
@@ -406,12 +397,6 @@ public class RbacService {
 
     // ============ 工具方法 ============
 
-    /**
-     * 根据角色编码查找角色并构造认证主体所需的角色信息。
-     *
-     * @param roleCodes 当前账号拥有的角色编码集合
-     * @return 用于权限计算的角色信息列表
-     */
     private List<AuthPrincipal.RolePair> buildRolePairs(Set<String> roleCodes) {
         if (CollKit.isEmpty(roleCodes)) {
             return java.util.Collections.emptyList();
@@ -428,12 +413,6 @@ public class RbacService {
         return pairs;
     }
 
-    /**
-     * 查找已有角色并合并角色关联的权限编码。
-     *
-     * @param roleCodes 当前账号拥有的角色编码集合
-     * @return 去重后的权限编码集合
-     */
     private Set<String> aggregatePermissions(Set<String> roleCodes) {
         if (CollKit.isEmpty(roleCodes)) {
             return java.util.Collections.emptySet();

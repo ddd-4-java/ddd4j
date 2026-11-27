@@ -38,51 +38,19 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class LicenseKitTest {
 
-    /**
-     * 用于关联测试许可证或测试账号的主题标识。
-     */
     private static final String SUBJECT = "ioserver-test";
-    /**
-     * 打开测试密钥库的口令。
-     */
     private static final String STORE_PASS = "a123456";
-    /**
-     * 构造本组测试输入时复用的固定标识或名称。
-     */
     private static final String KEY_PASS = "a123456";
-    /**
-     * 测试签发密钥在 JKS 中的别名。
-     */
     private static final String PRIVATE_ALIAS = "privateKey";
-    /**
-     * 测试验签证书在 JKS 中的别名。
-     */
     private static final String PUBLIC_ALIAS = "publicCert";
 
-    /**
-     * JUnit 为本次测试分配的临时目录。
-     */
     @TempDir
     Path tempDir;
 
-    /**
-     * 测试使用的私钥库文件路径。
-     */
     private String privateKeysStorePath;
-    /**
-     * 测试使用的公钥库文件路径。
-     */
     private String publicKeysStorePath;
-    /**
-     * 测试生成、安装或读取的许可证文件路径。
-     */
     private String licensePath;
 
-    /**
-     * 测试执行前执行 <code>tempDir.resolve()</code>、<code>CacheKit.unregister()</code>、<code>LicenseKeyStoreParam.builder()</code>、<code>result.getPrivateKeysStorePath()</code> 完成资源准备。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @BeforeEach
     void setUp() throws Exception {
         privateKeysStorePath = tempDir.resolve("privateKeys.keystore").toString();
@@ -107,17 +75,11 @@ class LicenseKitTest {
         assertThat(result.getPublicKeysStorePath()).isEqualTo(publicKeysStorePath);
     }
 
-    /**
-     * 测试后依次注销<code>CacheKit</code>。
-     */
     @AfterEach
     void tearDown() {
         CacheKit.unregister(LicenseCache.BIZ_LICENSE);
     }
 
-    /**
-     * 验证<code>generated</code>为真，<code>installed</code>为真，<code>LicenseCache.exists(SUBJECT)</code>为假。
-     */
     @Test
     void shouldGenerateInstallVerifyAndCacheLicenseEndToEnd() {
         // 2. 签发证书
@@ -166,9 +128,6 @@ class LicenseKitTest {
         assertThat(LicenseCache.exists(SUBJECT)).isFalse();
     }
 
-    /**
-     * 验证<code>verifier.verify()</code>为假，<code>verifier.verifyResult().getStatus()</code> 等于 <code>LicenseVerificationResult.Status.NOT_INSTALLED</code>，<code>verifier.isInstalled()</code>为假。
-     */
     @Test
     void shouldReturnFalseWhenNotInstalled() {
         LicenseKit verifier = LicenseKit.of(SUBJECT, PUBLIC_ALIAS, STORE_PASS, licensePath, publicKeysStorePath);
@@ -179,9 +138,6 @@ class LicenseKitTest {
         assertThat(verifier.isInstalled()).isFalse();
     }
 
-    /**
-     * 验证<code>manager.verify()</code>为真。
-     */
     @Test
     void shouldBypassVerifyWhenDisabled() {
         LicenseProperties props = new LicenseProperties();
@@ -197,9 +153,6 @@ class LicenseKitTest {
         assertThat(manager.verify()).isTrue();
     }
 
-    /**
-     * 验证<code>LicenseCache.exists(SUBJECT)</code>为真，<code>LicenseCache.exists(SUBJECT)</code>为假。
-     */
     @Test
     void shouldEvictCache() {
         // 预填一个缓存项

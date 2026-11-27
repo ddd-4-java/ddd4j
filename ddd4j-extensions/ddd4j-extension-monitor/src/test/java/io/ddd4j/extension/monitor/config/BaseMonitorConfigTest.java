@@ -44,9 +44,6 @@ class BaseMonitorConfigTest {
 
     // ---------- 1. 默认值断言 ----------
 
-    /**
-     * 验证<code>properties.getLog().isEnable()</code>为真，<code>properties.getLog().getRateLimiterPermitsPerSecond()</code>为空，<code>properties.getLog().getApp().getName()</code>为空。
-     */
     @Test
     void defaultPropertiesShouldKeepMonitorDefaults() {
         BaseMonitorProperties properties = new BaseMonitorProperties();
@@ -75,9 +72,6 @@ class BaseMonitorConfigTest {
         assertThat(properties.getLog().getApp().getName()).isEmpty();
     }
 
-    /**
-     * 验证<code>properties</code>非空。
-     */
     @Test
     void baseMonitorConfigShouldCreateBaseMonitorPropertiesBean() {
         BaseMonitorConfig config = new BaseMonitorConfig();
@@ -87,9 +81,6 @@ class BaseMonitorConfigTest {
 
     // ---------- 2. 工厂方法 instance-of 断言 ----------
 
-    /**
-     * 验证<code>config.dingTalkRobotSender(properties)</code> 的类型为 <code>DingTalkRobotSender.class</code>，<code>config.wecomRobotSender(properties)</code> 的类型为 <code>WeComRobotSender.class</code>，<code>config.feishuRobotSender(properties)</code> 的类型为 <code>FeishuRobotSender.class</code>。
-     */
     @Test
     void baseMonitorConfigShouldCreateAllSenderBeans() {
         BaseMonitorConfig config = new BaseMonitorConfig();
@@ -102,9 +93,6 @@ class BaseMonitorConfigTest {
 
     // ---------- 3. 工厂链 "properties → 实例字段" 的端到端覆盖 ----------
 
-    /**
-     * 验证<code>client.accessToken()</code> 等于 <code>"token-abc"</code>，<code>client.secret()</code> 等于 <code>"secret-def"</code>。
-     */
     @Test
     void dingTalkRobotSenderShouldPropagatePropertiesToUnderlyingClient() {
         BaseMonitorProperties p = new BaseMonitorProperties();
@@ -120,9 +108,6 @@ class BaseMonitorConfigTest {
         assertThat(client.secret()).isEqualTo("secret-def");
     }
 
-    /**
-     * 验证<code>client.key()</code> 等于 <code>"wechat-key-xyz"</code>。
-     */
     @Test
     void wecomRobotSenderShouldPropagateKeyToUnderlyingClient() {
         BaseMonitorProperties p = new BaseMonitorProperties();
@@ -134,9 +119,6 @@ class BaseMonitorConfigTest {
         assertThat(client.key()).isEqualTo("wechat-key-xyz");
     }
 
-    /**
-     * 验证<code>client.webhookUrl()</code> 等于 <code>"https://open.feishu.cn/open-apis/bot/v2/hook/abcdef"</code>，<code>client.secret()</code>为空。
-     */
     @Test
     void feishuRobotSenderShouldPropagateWebhookUrlAndSecretToUnderlyingClient() {
         BaseMonitorProperties p = new BaseMonitorProperties();
@@ -150,9 +132,6 @@ class BaseMonitorConfigTest {
         assertThat(client.secret()).isEmpty();
     }
 
-    /**
-     * 验证<code>reporter</code>非空，<code>reporter.appName()</code> 等于 <code>"from-properties"</code>。
-     */
     @Test
     void applicationStartReporterShouldWireAppNameFromProperties() {
         BaseMonitorProperties p = new BaseMonitorProperties();
@@ -169,9 +148,6 @@ class BaseMonitorConfigTest {
 
     // ---------- 4. Monitor 门面 ----------
 
-    /**
-     * 验证<code>sender</code>非空，<code>sender.getClient().accessToken()</code> 等于 <code>"token"</code>，<code>sender.getClient().secret()</code> 等于 <code>"secret"</code>。
-     */
     @Test
     void monitorFacadeOfDingTalkShouldReturnSenderImpl() {
         DingTalkRobotSender sender = Monitor.ofDingTalk("token", "secret");
@@ -180,9 +156,6 @@ class BaseMonitorConfigTest {
         assertThat(sender.getClient().secret()).isEqualTo("secret");
     }
 
-    /**
-     * 验证<code>sender</code>非空，<code>sender.getClient().key()</code> 等于 <code>"key"</code>。
-     */
     @Test
     void monitorFacadeOfWeComShouldReturnSenderImpl() {
         WeComRobotSender sender = Monitor.ofWeCom("key");
@@ -190,9 +163,6 @@ class BaseMonitorConfigTest {
         assertThat(sender.getClient().key()).isEqualTo("key");
     }
 
-    /**
-     * 验证<code>sender</code>非空，<code>sender.getClient().webhookUrl()</code> 等于 <code>"https://open.feishu.cn/open-apis/bot/v2/hook/xxx"</code>，<code>sender.getClient().secret()</code> 等于 <code>"secret"</code>。
-     */
     @Test
     void monitorFacadeOfFeishuShouldReturnSenderImpl() {
         FeishuRobotSender sender = Monitor.ofFeishu(
@@ -202,9 +172,6 @@ class BaseMonitorConfigTest {
         assertThat(sender.getClient().secret()).isEqualTo("secret");
     }
 
-    /**
-     * 验证<code>reporter</code>非空，<code>reporter.appName()</code> 等于 <code>"my-app"</code>。
-     */
     @Test
     void monitorFacadeStartupReporterShouldBuildApplicationStartReporter() {
         DingTalkRobotSender sender = Monitor.ofDingTalk("token", "secret");

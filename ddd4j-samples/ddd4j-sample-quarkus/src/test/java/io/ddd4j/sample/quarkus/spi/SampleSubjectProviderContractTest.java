@@ -27,9 +27,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class SampleSubjectProviderContractTest {
 
-    /**
-     * 验证<code>principal</code>非空，<code>principal.getPerms().contains("order:refund")</code>为真。
-     */
     @Test
     void createsMutablePrincipalPermissions() {
         SampleSubjectProvider provider = new SampleSubjectProvider();

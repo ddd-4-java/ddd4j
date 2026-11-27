@@ -44,14 +44,6 @@ public class CdiDomainEventPublisher implements DomainEventPublisher {
     @Inject
     Event<Object> event;
 
-    /**
-     * 将传入的事件交给当前发布通道。
-     *
-     * <p>此实现调用 <code>log.warn("Attempted to publish null domain event")</code>。</p>
-     *
-     * @param <ID>        实体标识类型
-     * @param domainEvent 传给 <code>log.debug("Publishing domain event: {}", domainEvent.getClass().getSimpleName())</code>
-     */
     @Override
     public <ID extends EntityId> void publish(DomainEvent<ID> domainEvent) {
         if (Objects.isNull(domainEvent)) {

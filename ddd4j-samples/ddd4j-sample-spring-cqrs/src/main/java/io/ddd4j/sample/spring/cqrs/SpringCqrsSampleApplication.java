@@ -19,12 +19,6 @@ public class SpringCqrsSampleApplication {
         SpringApplication.run(SpringCqrsSampleApplication.class, args);
     }
 
-    /**
-     * 注册从 Spring 容器加载命令执行器的商品交易命令总线。
-     *
-     * @param context 提供命令执行器的 Spring 应用上下文
-     * @return 当前应用使用的命令总线
-     */
     @Bean
     public SpringCommandBus springCommandBus(ApplicationContext context) {
         return new SpringCommandBus(context);

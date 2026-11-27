@@ -43,29 +43,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Testcontainers(disabledWithoutDocker = true)
 class LettuceCacheRedisTest {
 
-    /**
-     * 为当前集成测试提供独立 Redis 服务的容器。
-     */
     @Container
     private static final RedisContainer REDIS = new RedisContainer(
             DockerImageName.parse("redis:7.2-alpine"));
 
-    /**
-     * 指向测试 Redis 容器的 Lettuce 客户端。
-     */
     private static RedisClient redisClient;
-    /**
-     * 供测试命令复用的 Redis 连接。
-     */
     private static StatefulRedisConnection<String, String> connection;
-    /**
-     * 测试驱动发送或记录的写入命令。
-     */
     private static RedisCommands<String, String> commands;
 
-    /**
-     * 连接测试容器并获取用于验证缓存值和过期时间的同步命令接口。
-     */
     @BeforeAll
     static void setUp() {
         redisClient = RedisClient.create(REDIS.getRedisURI());
@@ -73,9 +58,6 @@ class LettuceCacheRedisTest {
         commands = connection.sync();
     }
 
-    /**
-     * 先关闭测试 Redis 连接，再关闭 Lettuce 客户端。
-     */
     @AfterAll
     static void tearDown() {
         if (Objects.nonNull(connection)) {
@@ -86,20 +68,11 @@ class LettuceCacheRedisTest {
         }
     }
 
-    /**
-     * 连接当前测试 Redis 并建立有效期为 300 秒的缓存。
-     *
-     * @param name 缓存命名空间
-     * @return 可序列化用户测试对象的 Lettuce 缓存
-     */
     private LettuceCache<User> newCache(String name) {
         CacheConfig config = CacheConfig.builder(name).expireAfterWriteSeconds(300).build();
         return new LettuceCache<>(commands, config, User.class);
     }
 
-    /**
-     * put/getIfPresent 往返：值经 JSON 序列化后可完整读回。
-     */
     @Test
     @DisplayName("put/getIfPresent 往返：值经 JSON 序列化后可完整读回")
     void putAndGetRoundTrip() {
@@ -114,9 +87,6 @@ class LettuceCacheRedisTest {
         assertThat(cached.name).isEqualTo("wander");
     }
 
-    /**
-     * 写入后带 TTL：键具备过期时间。
-     */
     @Test
     @DisplayName("写入后带 TTL：键具备过期时间")
     void putAppliesTtl() {
@@ -127,9 +97,6 @@ class LettuceCacheRedisTest {
         assertThat(ttl).isNotNull().isGreaterThan(0L).isLessThanOrEqualTo(300L);
     }
 
-    /**
-     * invalidate：删除后读取返回 null。
-     */
     @Test
     @DisplayName("invalidate：删除后读取返回 null")
     void invalidateRemovesValue() {
@@ -142,9 +109,6 @@ class LettuceCacheRedisTest {
         assertThat(cache.getIfPresent("k2")).isNull();
     }
 
-    /**
-     * 键命名空间：不同缓存名互不干扰。
-     */
     @Test
     @DisplayName("键命名空间：不同缓存名互不干扰")
     void keyPrefixIsolatesCaches() {
@@ -161,27 +125,12 @@ class LettuceCacheRedisTest {
      * 测试值对象（Jackson 需要公共字段或 getter/setter）。
      */
     public static class User {
-        /**
-         * 用于校验 JSON 往返的用户标识。
-         */
         public Long id;
-        /**
-         * 用于校验 JSON 往返的用户名称。
-         */
         public String name;
 
-        /**
-         * 创建字段使用默认初始值的 <code>User</code> 测试对象。
-         */
         public User() {
         }
 
-        /**
-         * 构造序列化往返所用的用户样本。
-         *
-         * @param id   样本用户标识
-         * @param name 样本用户名称
-         */
         public User(Long id, String name) {
             this.id = id;
             this.name = name;

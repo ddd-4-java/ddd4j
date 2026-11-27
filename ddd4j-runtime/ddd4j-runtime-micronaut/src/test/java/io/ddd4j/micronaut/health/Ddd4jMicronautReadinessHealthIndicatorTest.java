@@ -29,14 +29,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-/**
- * 验证 <code>Ddd4jMicronautReadinessHealthIndicator</code> 在<code>shouldMapReadyAndUnavailableReports</code>等操作中的行为契约。
- */
 class Ddd4jMicronautReadinessHealthIndicatorTest {
 
-    /**
-     * 验证<code>ready.getStatus()</code> 等于 <code>HealthStatus.UP</code>，<code>((Map&lt;?, ?&gt;) ready.getDetails()).get("checks")</code> 等于 <code>1</code>，<code>unavailable.getDetails()</code> 等于 <code>Collections.singletonMap("checks", 2)</code>。
-     */
     @Test
     void shouldMapReadyAndUnavailableReportsWithoutExposingFailureDetails() {
         RuntimeReadinessRegistry registry = new RuntimeReadinessRegistry()
@@ -57,12 +51,6 @@ class Ddd4jMicronautReadinessHealthIndicatorTest {
         assertEquals(Collections.singletonMap("checks", 2), unavailable.getDetails());
     }
 
-    /**
-     * 通过 <code>result.get()</code> 取得当前测试需要的结果。
-     *
-     * @param healthIndicator 传给 <code>healthIndicator.getResult()</code> 的 <code>Ddd4jMicronautReadinessHealthIndicator</code> 输入
-     * @return 当前测试使用的结果，取自 <code>result.get()</code>
-     */
     private HealthResult result(Ddd4jMicronautReadinessHealthIndicator healthIndicator) {
         AtomicReference<HealthResult> result = new AtomicReference<>();
         AtomicReference<Throwable> error = new AtomicReference<>();

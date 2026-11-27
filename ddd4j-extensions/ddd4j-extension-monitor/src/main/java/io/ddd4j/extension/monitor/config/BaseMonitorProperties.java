@@ -62,9 +62,6 @@ public class BaseMonitorProperties {
      */
     public static final String PREFIX = "monitor";
 
-    /**
-     * 监控扩展的日志相关配置。
-     */
     private Log log = new Log();
 
     /**

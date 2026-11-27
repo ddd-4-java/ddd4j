@@ -32,9 +32,6 @@ import static org.mockito.Mockito.*;
  */
 class MicaMqttMessageHeaderTest {
 
-    /**
-     * 验证<code>MicaMqttMQClient.messageId(stableMessage)</code> 等于 <code>"stable-id"</code>，<code>MicaMqttMQClient.messageId(legacyMessage)</code> 等于 <code>"legacy-id"</code>。
-     */
     @Test
     void shouldPreferStableUserPropertyAndReadLegacyProperty() {
         MqttPublishMessage stableMessage = MqttPublishMessage.builder()
@@ -63,9 +60,6 @@ class MicaMqttMessageHeaderTest {
         assertEquals("legacy-id", MicaMqttMQClient.messageId(legacyMessage));
     }
 
-    /**
-     * 在测试框架中执行 <code>mock()</code>、<code>adapter.close()</code>、<code>never()</code>，验证该场景。
-     */
     @Test
     void shouldNotStopInjectedClient() {
         MqttClient client = mock(MqttClient.class);

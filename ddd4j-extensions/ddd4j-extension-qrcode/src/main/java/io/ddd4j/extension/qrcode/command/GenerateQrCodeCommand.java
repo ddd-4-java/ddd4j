@@ -25,16 +25,7 @@ import lombok.Getter;
 @Builder
 public final class GenerateQrCodeCommand {
 
-    /**
-     * 用于关联同一次操作产生的事件或消息的标识。
-     */
     private final String correlationId;
-    /**
-     * 选择二维码生成模板使用的标识。
-     */
     private final String templateId;
-    /**
-     * 当前命令携带的二维码输入数据。
-     */
     private final QrCodeRequest request;
 }

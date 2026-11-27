@@ -25,11 +25,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class MicaMqttConnectionReadinessTest {
 
-    /**
-     * 在测试框架中执行 <code>MicaMqttMQClient.awaitConnected()</code>、<code>readinessChecks.incrementAndGet()</code>，验证该场景。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void waitsForNativeClientConnectionBeforeSubscription() throws Exception {
         AtomicInteger readinessChecks = new AtomicInteger();

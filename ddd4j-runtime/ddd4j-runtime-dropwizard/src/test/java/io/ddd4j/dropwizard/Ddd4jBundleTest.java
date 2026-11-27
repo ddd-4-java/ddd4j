@@ -33,33 +33,18 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-/**
- * 验证 <code>Ddd4jBundle</code> 在<code>constructor</code>、<code>run</code>等操作中的行为契约。
- */
 @ExtendWith(MockitoExtension.class)
 class Ddd4jBundleTest {
 
-    /**
-     * 用于隔离 <code>Environment</code> 调用并记录交互的测试替身。
-     */
     @Mock
     private Environment environment;
 
-    /**
-     * 用于隔离 <code>HealthCheckRegistry</code> 调用并记录交互的测试替身。
-     */
     @Mock
     private HealthCheckRegistry healthChecks;
 
-    /**
-     * 用于隔离 <code>LifecycleEnvironment</code> 调用并记录交互的测试替身。
-     */
     @Mock
     private LifecycleEnvironment lifecycle;
 
-    /**
-     * 验证<code>bundle</code>非空，<code>bundle.initialize(null)</code> 抛出 <code>NullPointerException.class</code>。
-     */
     @Test
     void defaultConstructorBuildsBundle() {
         Ddd4jBundle<TestConfiguration> bundle = new Ddd4jBundle<>();
@@ -67,9 +52,6 @@ class Ddd4jBundleTest {
         assertThrows(NullPointerException.class, () -> bundle.initialize(null));
     }
 
-    /**
-     * 验证被测调用 抛出 <code>NullPointerException.class</code>。
-     */
     @Test
     void constructorRejectsNullArguments() {
         assertThrows(NullPointerException.class, () -> new Ddd4jBundle<>(null,
@@ -80,9 +62,6 @@ class Ddd4jBundleTest {
                 Collections.emptyList(), null, null));
     }
 
-    /**
-     * 在测试框架中执行 <code>environment.healthChecks()</code>、<code>environment.lifecycle()</code>、<code>bundle.run()</code>，验证该场景。
-     */
     @Test
     void runRegistersHealthCheckAndRuntime() {
         when(environment.healthChecks()).thenReturn(healthChecks);
@@ -95,9 +74,6 @@ class Ddd4jBundleTest {
         verify(lifecycle).manage(any(Managed.class));
     }
 
-    /**
-     * 验证<code>bundle.run(null, environment)</code> 抛出 <code>NullPointerException.class</code>，<code>bundle.run(new TestConfiguration(), null)</code> 抛出 <code>NullPointerException.class</code>。
-     */
     @Test
     void runRejectsNullConfigurationAndEnvironment() {
         Ddd4jBundle<TestConfiguration> bundle = new Ddd4jBundle<>();
@@ -105,9 +81,6 @@ class Ddd4jBundleTest {
         assertThrows(NullPointerException.class, () -> bundle.run(new TestConfiguration(), null));
     }
 
-    /**
-     * 提供运行 HTTP 合同测试所需的配置。
-     */
     private static final class TestConfiguration extends Configuration {
     }
 }

@@ -29,25 +29,14 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
-/**
- * 验证 <code>Ddd4jMicronautContext</code> 在<code>constructor</code>、<code>openingScope</code>等操作中的行为契约。
- */
 class Ddd4jMicronautContextTest {
 
-    /**
-     * 创建 <code>new WebRequestContext</code> 供当前测试路径调用。
-     *
-     * @return 当前测试使用的结果，取自 <code>new WebRequestContext("req-1", "trace-1", "tenant-1", null, Locale.getDefault(), "127.0.0.1", "GET", "/test")</code>
-     */
     private WebRequestContext createContext() {
         return new WebRequestContext(
                 "req-1", "trace-1", "tenant-1", null, Locale.getDefault(),
                 "127.0.0.1", "GET", "/test");
     }
 
-    /**
-     * 测试结束后执行 <code>ThreadContext.clear()</code>、<code>BaseContext.clear()</code>、<code>PropagatedContext.getOrEmpty()</code> 完成资源回收或状态恢复。
-     */
     @AfterEach
     void clear() {
         ThreadContext.clear();
@@ -55,18 +44,12 @@ class Ddd4jMicronautContextTest {
         PropagatedContext.getOrEmpty();
     }
 
-    /**
-     * 验证<code>new Ddd4jMicronautContext(null, Optional.empty())</code> 抛出 <code>NullPointerException</code>。
-     */
     @Test
     void constructorRejectsNullRequestContext() {
         assertThatNullPointerException()
                 .isThrownBy(() -> new Ddd4jMicronautContext(null, Optional.empty()));
     }
 
-    /**
-     * 验证<code>new Ddd4jMicronautContext(ctx, null)</code> 抛出 <code>NullPointerException</code>。
-     */
     @Test
     void constructorRejectsNullSubject() {
         WebRequestContext ctx = createContext();
@@ -74,9 +57,6 @@ class Ddd4jMicronautContextTest {
                 .isThrownBy(() -> new Ddd4jMicronautContext(ctx, null));
     }
 
-    /**
-     * 验证<code>propagated.getRequestContext()</code> 指向同一实例 <code>propagated.requestContext()</code>，<code>propagated.getSubject()</code> 指向同一实例 <code>propagated.subject()</code>。
-     */
     @Test
     void beanAccessorsExposeTheSameRequestContextAndSubject() {
         WebRequestContext ctx = createContext();
@@ -87,9 +67,6 @@ class Ddd4jMicronautContextTest {
         assertThat(propagated.getSubject()).isSameAs(propagated.subject());
     }
 
-    /**
-     * 验证<code>requestId</code> 等于 <code>"req-1"</code>，<code>scope</code>非空。
-     */
     @Test
     void openingScopeWithSubjectBindsRequest() {
         WebRequestContext ctx = createContext();
@@ -108,9 +85,6 @@ class Ddd4jMicronautContextTest {
         }
     }
 
-    /**
-     * 验证<code>requestId</code> 等于 <code>"req-1"</code>。
-     */
     @Test
     void openingScopeWithoutSubjectBindsRequest() {
         WebRequestContext ctx = createContext();
@@ -127,9 +101,6 @@ class Ddd4jMicronautContextTest {
         }
     }
 
-    /**
-     * 验证<code>ThreadContext.getResources()</code>非空，<code>ThreadContext.getResources()</code>为空。
-     */
     @Test
     void closingScopeRestoresThreadContext() {
         WebRequestContext ctx = createContext();
@@ -144,17 +115,11 @@ class Ddd4jMicronautContextTest {
         assertThat(ThreadContext.getResources()).isEmpty();
     }
 
-    /**
-     * 验证<code>Ddd4jMicronautContext.current()</code>为空。
-     */
     @Test
     void currentIsEmptyBeforeBinding() {
         assertThat(Ddd4jMicronautContext.current()).isEmpty();
     }
 
-    /**
-     * 验证<code>found</code>存在值，<code>found.get().requestContext()</code> 等于 <code>ctx</code>。
-     */
     @Test
     void currentResolvesBoundContext() {
         WebRequestContext ctx = createContext();
@@ -169,9 +134,6 @@ class Ddd4jMicronautContextTest {
         }
     }
 
-    /**
-     * 验证<code>first</code> 等于 <code>equivalent</code>，<code>first</code> 不等于 <code>other</code>，<code>first.toString()</code> 以…开头 <code>"Ddd4jMicronautContext["</code>。
-     */
     @Test
     void contextIdentityIncludesRequestAndSubject() {
         WebRequestContext request = createContext();

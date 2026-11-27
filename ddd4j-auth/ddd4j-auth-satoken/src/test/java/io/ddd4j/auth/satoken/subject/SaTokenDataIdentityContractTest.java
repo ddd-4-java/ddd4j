@@ -42,40 +42,16 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * 验证 <code>SaTokenDataIdentity</code> 在<code>clearsBinding</code>、<code>identityFields</code>、<code>jwtAudienceRotation</code>、<code>optionalProvider</code>等操作中的行为契约。
- */
 class SaTokenDataIdentityContractTest {
 
-    /**
-     * 测试会话中保存认证主体上下文的属性键。
-     */
     private static final String TOKEN_CONTEXT = "io.ddd4j.boot.auth.satoken.SaTokenDataSubjectProvider.context";
 
-    /**
-     * 当前用例使用的认证主体。
-     */
     private final Subject subject = new SaTokenDataSubjectProvider().getSubject();
-    /**
-     * 进入测试场景前注册的配置。
-     */
     private SaTokenConfig originalConfig;
-    /**
-     * 进入测试场景前注册的会话存储。
-     */
     private SaTokenDao originalDao;
-    /**
-     * 进入测试场景前注册的认证逻辑。
-     */
     private StpLogic originalLogic;
-    /**
-     * 当前用例安装或用来校验令牌的原生登录逻辑。
-     */
     private TestStpLogic logic;
 
-    /**
-     * 测试前依次恢复或安装配置<code>SaManager</code>、恢复或安装原生存储<code>SaManager</code>、恢复或安装登录逻辑<code>StpUtil</code>。
-     */
     @BeforeEach
     void setUp() {
         originalConfig = SaManager.getConfig();
@@ -88,9 +64,6 @@ class SaTokenDataIdentityContractTest {
         SaTokenContextMockUtil.setMockContext();
     }
 
-    /**
-     * 测试后依次清除上下文<code>SaTokenContextMockUtil</code>、恢复或安装登录逻辑<code>StpUtil</code>、恢复或安装原生存储<code>SaManager</code>、恢复或安装配置<code>SaManager</code>。
-     */
     @AfterEach
     void tearDown() {
         SaTokenContextMockUtil.clearContext();
@@ -99,9 +72,6 @@ class SaTokenDataIdentityContractTest {
         SaManager.setConfig(originalConfig);
     }
 
-    /**
-     * 验证<code>secondToken</code> 不等于 <code>firstToken</code>，<code>subject.verify(firstToken)</code> 与…为同一实例 <code>first</code>，<code>SaTokenDataIdentity.permits("application", "admin")</code>为真。
-     */
     @Test
     void isolatesTwoTokensOfTheSameAccount() {
         AuthPrincipal first = principal("tenant-one", "shop");
@@ -130,9 +100,6 @@ class SaTokenDataIdentityContractTest {
         assertTrue(SaTokenDataIdentity.permits("application", "admin"));
     }
 
-    /**
-     * 验证被测调用 抛出 <code>AuthorizationException.class</code>。
-     */
     @Test
     void validatesRequestTargetsAgainstTokenSession() {
         login(principal("tenant-one", "shop"));
@@ -158,9 +125,6 @@ class SaTokenDataIdentityContractTest {
                 () -> identity.requireMatchingTargets(name -> headers.getOrDefault(name, Collections.emptyList())));
     }
 
-    /**
-     * 验证<code>SaTokenDataIdentity.current()</code>为空，<code>SaTokenDataIdentity.permits("tenant", "tenant-one")</code>为假，<code>SaTokenDataIdentity.bindCurrentRequest().getTenantId()</code> 等于 <code>"tenant-two"</code>。
-     */
     @Test
     void clearsBindingWhenTheRequestTokenChanges() {
         String firstToken = login(principal("tenant-one", "shop"));
@@ -174,9 +138,6 @@ class SaTokenDataIdentityContractTest {
         assertEquals("tenant-two", SaTokenDataIdentity.bindCurrentRequest().getTenantId());
     }
 
-    /**
-     * 验证<code>SaTokenDataIdentity.current()</code>为空，<code>subject.verify(token)</code>为空，<code>subject.verify(otherToken)</code> 与…为同一实例 <code>other</code>。
-     */
     @Test
     void clearsBindingWhenTheTokenIsRevoked() {
         String token = login(principal("tenant-one", "shop"));
@@ -196,9 +157,6 @@ class SaTokenDataIdentityContractTest {
         assertSame(other, subject.verify(otherToken));
     }
 
-    /**
-     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，<code>SaTokenDataIdentity.current()</code>为空。
-     */
     @Test
     void aFailedRebindDoesNotLeaveThePreviousRequestIdentity() {
         login(principal("tenant-one", "shop"));
@@ -211,9 +169,6 @@ class SaTokenDataIdentityContractTest {
         assertNull(SaTokenDataIdentity.current());
     }
 
-    /**
-     * 验证<code>SaTokenDataIdentity.bindCurrentRequest().getTenantId()</code> 等于 <code>"tenant-one"</code>，<code>subject.verify(token)</code> 与…为同一实例 <code>principal</code>，<code>subject.verify(token)</code>为空。
-     */
     @Test
     void verifiesAndReadsTheExistingBootTokenSessionFormat() {
         AuthPrincipal principal = principal("tenant-one", "shop");
@@ -235,9 +190,6 @@ class SaTokenDataIdentityContractTest {
         assertSame(principal, new SaTokenSubject().verify(token));
     }
 
-    /**
-     * 验证<code>subject.getPrincipal()</code> 与…为同一实例 <code>first</code>，<code>subject.getPrincipalByLoginId("shared-account")</code> 与…为同一实例 <code>first</code>，<code>subject.verify(secondToken)</code> 与…为同一实例 <code>second</code>。
-     */
     @Test
     void missingTokenContextCannotInheritAnotherTokensPrincipal() {
         AuthPrincipal first = principal("tenant-one", "shop");
@@ -258,9 +210,6 @@ class SaTokenDataIdentityContractTest {
                 () -> assertSame(second, subject.verify(secondToken)));
     }
 
-    /**
-     * 验证<code>SaTokenDataIdentity.current()</code>为空，<code>SaTokenDataIdentity.bindCurrentRequest()</code>为空，<code>subject.getPrincipalByLoginId("shared-account")</code>为空。
-     */
     @Test
     void identityFieldsWithoutATokenSessionPrincipalGrantNoAuthority() {
         String token = login(principal("tenant-one", "shop"));
@@ -280,9 +229,6 @@ class SaTokenDataIdentityContractTest {
                 () -> assertNull(subject.getPrincipalByLoginId("shared-account")));
     }
 
-    /**
-     * 验证<code>subject.getPrincipal()</code>为空，<code>subject.isAuthenticated()</code>为假，<code>subject.isAuthenticated("status-only-account")</code>为假。
-     */
     @Test
     void explicitOtherAccountLookupSupportsNoCredentialOrAValidScopedCredential() {
         AuthPrincipal otherAccount = principal("tenant-two", "admin").setLoginId("other-account");
@@ -306,9 +252,6 @@ class SaTokenDataIdentityContractTest {
         assertFalse(subject.isAuthenticated("status-only-account"));
     }
 
-    /**
-     * 验证<code>subject.getPrincipalByLoginId("other-account")</code> 与…为同一实例 <code>other</code>，<code>subject.isAuthenticated("other-account")</code>为真，<code>subject.isAuthenticated("other-account")</code>为假。
-     */
     @Test
     void malformedAuthorizationHeaderCannotBeTreatedAsNoCredential() {
         AuthPrincipal other = principal("tenant-two", "admin").setLoginId("other-account");
@@ -334,9 +277,6 @@ class SaTokenDataIdentityContractTest {
                 () -> assertFalse(subject.isAuthenticated("other-account")));
     }
 
-    /**
-     * 验证<code>subject.verify(token)</code> 与…为同一实例 <code>principal</code>，<code>subject.isPermitted("orders:read")</code>为真，<code>SaTokenDataIdentity.bindCurrentRequest()</code>为空。
-     */
     @Test
     void jwtAudienceRotationRejectsCurrentPrincipalAndPermissionsEvenWithAnActiveMapping() {
         SubjectDataProvider previous = SubjectKit.dataProvider;
@@ -376,9 +316,6 @@ class SaTokenDataIdentityContractTest {
         }
     }
 
-    /**
-     * 验证<code>subject.verify(token)</code> 与…为同一实例 <code>unscoped</code>，<code>SaTokenDataIdentity.bindCurrentRequest()</code>为空，<code>SaTokenDataIdentity.permits("tenant", "other-tenant")</code>为假。
-     */
     @Test
     void accountSessionCannotSupplyMissingTokenIdentity() {
         AuthPrincipal unscoped = principal(null, "shop");
@@ -391,9 +328,6 @@ class SaTokenDataIdentityContractTest {
         assertFalse(SaTokenDataIdentity.permits("tenant", "other-tenant"));
     }
 
-    /**
-     * 验证<code>subject.login(request)</code> 抛出 <code>IllegalArgumentException.class</code>，<code>config.isShare()</code>为真，<code>SaTokenDataIdentity.bindCurrentRequest().getTenantId()</code> 等于 <code>"tenant-one"</code>。
-     */
     @Test
     void optionalProviderRejectsPresetTokensAndKeepsCallerConfiguration() {
         AuthPrincipal principal = principal("tenant-one", "shop");
@@ -411,9 +345,6 @@ class SaTokenDataIdentityContractTest {
         assertEquals("tenant-one", SaTokenDataIdentity.bindCurrentRequest().getTenantId());
     }
 
-    /**
-     * 验证<code>SaTokenDataIdentity.current()</code>为空，<code>audit.getIdentity()</code> 与…为同一实例 <code>identity</code>，<code>audit.getStatus()</code> 等于 <code>403</code>。
-     */
     @Test
     void auditProjectsTheValidatedIdentityAfterRequestCompletion() {
         login(principal("tenant-one", "shop"));
@@ -436,23 +367,10 @@ class SaTokenDataIdentityContractTest {
         });
     }
 
-    /**
-     * 通过 <code>subject.login()</code> 取得当前测试需要的结果。
-     *
-     * @param principal 传给 <code>subject.login()</code> 的 <code>AuthPrincipal</code> 输入
-     * @return 当前测试使用的结果，取自 <code>subject.login(AuthRequest.of(principal.getLoginId()).setPrincipal(principal))</code>
-     */
     private String login(AuthPrincipal principal) {
         return subject.login(AuthRequest.of(principal.getLoginId()).setPrincipal(principal));
     }
 
-    /**
-     * 读取 <code>principal</code> 供当前测试使用。
-     *
-     * @param tenant 当前请求的数据租户
-     * @param app    传给 <code>new AuthPrincipal</code> 的 <code>String</code> 输入
-     * @return 当前测试使用的结果，取自 <code>principal</code>
-     */
     private AuthPrincipal principal(String tenant, String app) {
         AuthPrincipal principal = new AuthPrincipal().setLoginId("shared-account").setUserId(42).setAppId(app);
         if (Objects.nonNull(tenant)) {
@@ -461,12 +379,6 @@ class SaTokenDataIdentityContractTest {
         return principal;
     }
 
-    /**
-     * 读取 <code>jwt</code> 供当前测试使用。
-     *
-     * @param audience 传给 <code>properties.setJwtAudience()</code> 的 <code>String</code> 输入
-     * @return 当前测试使用的结果，取自 <code>jwt</code>
-     */
     private StpLogic useJwtAudience(String audience) {
         SaTokenSecurityProperties properties = new SaTokenSecurityProperties();
         properties.setLoginType(StpUtil.TYPE);
@@ -478,38 +390,19 @@ class SaTokenDataIdentityContractTest {
         return jwt;
     }
 
-    /**
-     * 调用 <code>SaTokenContextMockUtil.setMockContext()</code>、<code>logic.setTokenValueToStorage()</code> 执行当前夹具操作。
-     *
-     * @param token 从测试登录获得的会话凭据
-     */
     private void openRequest(String token) {
         SaTokenContextMockUtil.setMockContext();
         logic.setTokenValueToStorage(token);
     }
 
-    /**
-     * 提供可替换的原生登录逻辑，便于验证认证行为。
-     */
     private static final class TestStpLogic extends StpLogic {
 
-        /**
-         * 控制令牌查找替身是否报告故障。
-         */
         private boolean failTokenLookup;
 
-        /**
-         * 使用 <code>super()</code> 初始化 <code>TestStpLogic</code> 测试夹具。
-         */
         private TestStpLogic() {
             super(StpUtil.TYPE);
         }
 
-        /**
-         * 通过 <code>super.getTokenValue()</code> 取得当前测试需要的结果。
-         *
-         * @return 当前测试使用的结果，取自 <code>super.getTokenValue()</code>
-         */
         @Override
         public String getTokenValue() {
             if (failTokenLookup) {

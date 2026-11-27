@@ -23,9 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class AuthenticationValueContractTest {
 
-    /**
-     * 验证<code>second</code> 等于 <code>first</code>，<code>second.hashCode()</code> 等于 <code>first.hashCode()</code>，<code>first.getSubject()</code>为空。
-     */
     @Test
     void equalResultsHaveEqualHashAndReadableToken() {
         BearerSubjectAuthenticator.Authentication first =

@@ -30,27 +30,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @io.quarkus.test.junit.TestProfile(io.ddd4j.sample.quarkus.shiro.GoodsStandaloneProfile.class)
 class GoodsQueryResourceContractTest {
 
-    /**
-     * 验证<code>Arc.container().instance(GoodsResource.class) .getBean().getScope().getSimpleName()</code> 等于 <code>"ApplicationScoped"</code>。
-     */
     @Test
     void goodsResourceUsesApplicationScope() {
         assertEquals("ApplicationScoped", Arc.container().instance(GoodsResource.class)
                 .getBean().getScope().getSimpleName());
     }
 
-    /**
-     * 请求 <code>GET /api/goods/count</code>，确认 HTTP 响应状态为 200，响应中的 <code>data</code> 等于 <code>0</code>。
-     */
     @Test
     void emptyCatalogHasZeroCount() {
         given().when().get("/api/goods/count")
                 .then().statusCode(200).body("data", equalTo(0));
     }
 
-    /**
-     * 请求 <code>GET /api/goods/list</code>，确认 HTTP 响应状态为 200。
-     */
     @Test
     void emptyCatalogHasEmptyList() {
         given().when().get("/api/goods/list")

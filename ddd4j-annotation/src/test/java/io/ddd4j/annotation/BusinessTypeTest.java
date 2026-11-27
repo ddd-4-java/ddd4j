@@ -28,9 +28,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class BusinessTypeTest {
 
-    /**
-     * 验证业务操作枚举含登录、退出、增删改、导入导出、强制退出、生成和清理等预期项目。
-     */
     @Test
     void values_shouldContainExpectedEntries() {
         assertThat(BusinessType.values())
@@ -38,27 +35,18 @@ class BusinessTypeTest {
                         BusinessType.DELETE, BusinessType.UPDATE, BusinessType.SELECT);
     }
 
-    /**
-     * 验证<code>BusinessType.LOGIN.getKey()</code> 等于 <code>"login"</code>，<code>BusinessType.INSERT.getKey()</code> 等于 <code>"insert"</code>。
-     */
     @Test
     void getKey_shouldReturnIdentifier() {
         assertThat(BusinessType.LOGIN.getKey()).isEqualTo("login");
         assertThat(BusinessType.INSERT.getKey()).isEqualTo("insert");
     }
 
-    /**
-     * 验证<code>BusinessType.LOGIN.getDesc()</code> 等于 <code>"用户登录"</code>，<code>BusinessType.UPLOAD.getDesc()</code> 等于 <code>"文件上传"</code>。
-     */
     @Test
     void getDesc_shouldReturnDescription() {
         assertThat(BusinessType.LOGIN.getDesc()).isEqualTo("用户登录");
         assertThat(BusinessType.UPLOAD.getDesc()).isEqualTo("文件上传");
     }
 
-    /**
-     * 验证<code>map</code> 含对应条目 <code>"key"</code>、<code>"login"</code>，<code>map</code> 含对应条目 <code>"desc"</code>、<code>"用户登录"</code>。
-     */
     @Test
     void toMap_shouldContainKeyAndDesc() {
         Map<String, String> map = BusinessType.LOGIN.toMap();
@@ -67,9 +55,6 @@ class BusinessTypeTest {
         assertThat(map).containsEntry("desc", "用户登录");
     }
 
-    /**
-     * 验证<code>list</code> 的大小为 <code>BusinessType.values().length</code>。
-     */
     @Test
     void toList_shouldContainAllEntries() {
         List<Map<String, String>> list = BusinessType.toList();
@@ -79,18 +64,12 @@ class BusinessTypeTest {
         assertThat(list.get(0)).containsKey("desc");
     }
 
-    /**
-     * 验证<code>BusinessType.LOGIN.equals(BusinessType.LOGIN)</code>为真，<code>BusinessType.LOGIN.equals(BusinessType.LOGOUT)</code>为假。
-     */
     @Test
     void equals_shouldReturnTrueForSameType() {
         assertThat(BusinessType.LOGIN.equals(BusinessType.LOGIN)).isTrue();
         assertThat(BusinessType.LOGIN.equals(BusinessType.LOGOUT)).isFalse();
     }
 
-    /**
-     * 验证<code>type.getKey()</code> 等于 <code>"custom-key"</code>，<code>type.getDesc()</code> 等于 <code>"custom-desc"</code>。
-     */
     @Test
     void setKeyAndSetDesc_shouldRoundTrip() {
         BusinessType type = BusinessType.LOGIN;

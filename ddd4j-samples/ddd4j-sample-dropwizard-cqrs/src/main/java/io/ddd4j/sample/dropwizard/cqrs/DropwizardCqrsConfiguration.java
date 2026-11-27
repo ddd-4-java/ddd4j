@@ -22,16 +22,7 @@ import io.dropwizard.core.Configuration;
 @lombok.Getter
 @lombok.Setter
 public class DropwizardCqrsConfiguration extends Configuration {
-    /**
-     * 商品交易示例的 JDBC 连接地址。
-     */
     private String catalogJdbcUrl;
-    /**
-     * 商品交易示例数据库账号。
-     */
     private String catalogDbUser;
-    /**
-     * 连接商品交易示例数据库所用的口令。
-     */
     private String catalogDbPassword;
 }

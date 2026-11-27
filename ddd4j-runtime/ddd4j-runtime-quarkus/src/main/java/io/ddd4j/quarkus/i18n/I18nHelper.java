@@ -41,16 +41,10 @@ public final class I18nHelper {
      * 国际化 ResourceBundle 缓存（key=语言标签）
      */
     private static final Map<String, ResourceBundle> CACHE = new ConcurrentHashMap<>();
-    /**
-     * 调用未指定语言时使用的默认语言标记。
-     */
     @Getter
     /** 默认语言（zh） */
     private static volatile String defaultLang = "zh";
 
-    /**
-     * 限制调用方直接创建 <code>I18nHelper</code> 实例。
-     */
     private I18nHelper() {
     }
 
@@ -92,13 +86,6 @@ public final class I18nHelper {
         return result;
     }
 
-    /**
-     * 读取目标语言的消息资源并按消息键查找文本。
-     *
-     * @param lang 消息使用的语言标记
-     * @param key  容器绑定键或待查找的消息键
-     * @return 解析得到的本地化消息
-     */
     private static String resolve(String lang, String key) {
         ResourceBundle bundle = CACHE.computeIfAbsent(lang, I18nHelper::loadBundle);
         if (Objects.nonNull(bundle) && bundle.containsKey(key)) {
@@ -114,12 +101,6 @@ public final class I18nHelper {
         return key;
     }
 
-    /**
-     * 为指定语言加载配置的国际化资源。
-     *
-     * @param lang 消息使用的语言标记
-     * @return 该语言使用的资源包
-     */
     private static ResourceBundle loadBundle(String lang) {
         try {
             Locale locale = Locale.forLanguageTag(lang);

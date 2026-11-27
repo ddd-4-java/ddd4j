@@ -30,9 +30,6 @@ import java.util.Objects;
 @Slf4j
 public final class AnnotationFusionVerifier {
 
-    /**
-     * 限制调用方直接创建 <code>AnnotationFusionVerifier</code> 实例。
-     */
     private AnnotationFusionVerifier() {
     }
 
@@ -80,13 +77,6 @@ public final class AnnotationFusionVerifier {
         log.info("全部验证通过，ddd4j-runtime-quarkus 注解收敛完成");
     }
 
-    /**
-     * 验证组件注解声明 DDD、CDI 应用作用域和构件类型元注解。
-     *
-     * @param name           用于诊断的注解名称
-     * @param annotationType 待验证的注解类型
-     * @return 校验通过返回 1，失败返回 0
-     */
     private static int verifyStereotype(String name,
                                         Class<? extends java.lang.annotation.Annotation> annotationType) {
         DDDAnnotation dddAnnotation = annotationType.getAnnotation(DDDAnnotation.class);
@@ -109,13 +99,6 @@ public final class AnnotationFusionVerifier {
         return 1;
     }
 
-    /**
-     * 验证领域模型注解具有 DDD 语义且没有声明 CDI 应用作用域。
-     *
-     * @param name           用于诊断的注解名称
-     * @param annotationType 待验证的注解类型
-     * @return 校验通过返回 1，失败返回 0
-     */
     private static int verifyModel(String name,
                                    Class<? extends java.lang.annotation.Annotation> annotationType) {
         if (Objects.isNull(annotationType.getAnnotation(DDDAnnotation.class))) {

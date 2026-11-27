@@ -35,13 +35,7 @@ import com.alibaba.excel.write.handler.context.SheetWriteHandlerContext;
  */
 public class FreezePaneStyleStrategy implements SheetWriteHandler {
 
-    /**
-     * 冻结窗格所保留的左侧列数。
-     */
     private final int colSplit;
-    /**
-     * 冻结窗格所保留的顶部行数。
-     */
     private final int rowSplit;
 
     /**
@@ -62,11 +56,6 @@ public class FreezePaneStyleStrategy implements SheetWriteHandler {
         this.rowSplit = rowSplit;
     }
 
-    /**
-     * 创建工作表之后按配置冻结左侧列和顶部行。
-     *
-     * @param context 包含新建工作表的写入上下文
-     */
     @Override
     public void afterSheetCreate(SheetWriteHandlerContext context) {
         context.getWriteSheetHolder().getSheet().createFreezePane(colSplit, rowSplit);

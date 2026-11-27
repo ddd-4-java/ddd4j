@@ -7,14 +7,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * 通过 <code>request.setCookies()</code>、<code>WebKit.getCookieVal()</code>、<code>WebKit.getCookie()</code> 验证 <code>WebKitCookieContract</code> 的运行行为。
- */
 class WebKitCookieContractTest {
 
-    /**
-     * 验证<code>WebKit.getCookieVal(request, "session")</code> 等于 <code>"token"</code>，<code>WebKit.getCookie(request, "session").getValue()</code> 等于 <code>"token"</code>，<code>removed.getMaxAge()</code> 等于 <code>0</code>。
-     */
     @Test
     void readsWritesAndRemovesCookieAcrossServletNamespace() {
         MockHttpServletRequest request = new MockHttpServletRequest();

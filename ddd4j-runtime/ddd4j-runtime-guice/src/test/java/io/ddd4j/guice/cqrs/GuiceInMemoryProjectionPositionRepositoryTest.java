@@ -23,20 +23,11 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * 验证 <code>GuiceInMemoryProjectionPositionRepository</code> 在<code>findAll</code>等操作中的行为契约。
- */
 class GuiceInMemoryProjectionPositionRepositoryTest {
 
-    /**
-     * 用于当前读取或写入断言的测试仓储。
-     */
     private final GuiceInMemoryProjectionPositionRepository repository =
             new GuiceInMemoryProjectionPositionRepository();
 
-    /**
-     * 验证<code>saved</code> 与…为同一实例 <code>position</code>，<code>found.isPresent()</code>为真，<code>repository.findByStreamId("missing").isPresent()</code>为假。
-     */
     @Test
     void saveAndFindByStreamId() {
         GuiceProjectionPosition position = new GuiceProjectionPosition("stream-1", 5L);
@@ -50,9 +41,6 @@ class GuiceInMemoryProjectionPositionRepositoryTest {
         assertFalse(repository.findByStreamId("missing").isPresent());
     }
 
-    /**
-     * 验证<code>all.size()</code> 等于 <code>2</code>，<code>repository.size()</code> 等于 <code>2</code>，<code>all.add(new GuiceProjectionPosition("stream-3", 3L))</code> 抛出 <code>UnsupportedOperationException.class</code>。
-     */
     @Test
     void findAllReturnsSnapshotOfStore() {
         repository.save(new GuiceProjectionPosition("stream-1", 1L));
@@ -68,9 +56,6 @@ class GuiceInMemoryProjectionPositionRepositoryTest {
                 () -> all.add(new GuiceProjectionPosition("stream-3", 3L)));
     }
 
-    /**
-     * 验证<code>repository.findByStreamId("stream-1").isPresent()</code>为假，<code>repository.size()</code> 等于 <code>0</code>。
-     */
     @Test
     void deleteByStreamIdRemovesPosition() {
         repository.save(new GuiceProjectionPosition("stream-1", 1L));
@@ -81,9 +66,6 @@ class GuiceInMemoryProjectionPositionRepositoryTest {
         assertEquals(0, repository.size());
     }
 
-    /**
-     * 验证<code>repository.findByStreamId("stream-1").get().getNextEventNumber()</code> 等于 <code>0L</code>，<code>repository.size()</code> 等于 <code>1</code>。
-     */
     @Test
     void resetToZeroResetsExistingPositionOnly() {
         repository.save(new GuiceProjectionPosition("stream-1", 9L));
@@ -95,9 +77,6 @@ class GuiceInMemoryProjectionPositionRepositoryTest {
         assertEquals(1, repository.size());
     }
 
-    /**
-     * 验证<code>snapshot.size()</code> 等于 <code>1</code>，<code>repository.size()</code> 等于 <code>0</code>，<code>snapshot.put("stream-2", new GuiceProjectionPosition("stream-2", 2L))</code> 抛出 <code>UnsupportedOperationException.class</code>。
-     */
     @Test
     void clearAndSnapshot() {
         repository.save(new GuiceProjectionPosition("stream-1", 1L));

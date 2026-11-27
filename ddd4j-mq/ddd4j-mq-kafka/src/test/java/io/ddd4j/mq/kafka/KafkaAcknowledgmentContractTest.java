@@ -30,14 +30,8 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-/**
- * 通过 <code>mock()</code>、<code>org.mockito.Mockito.doThrow()</code>、<code>anyMap()</code> 验证 <code>KafkaAcknowledgmentContract</code> 的运行行为。
- */
 class KafkaAcknowledgmentContractTest {
 
-    /**
-     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，<code>acknowledgment.isAcknowledged()</code>为假，<code>acknowledgment.isAcknowledged()</code>为真。
-     */
     @Test
     void failedCommitMustLeaveAcknowledgmentOpenForRetry() {
         Consumer<?, ?> consumer = mock(Consumer.class);
@@ -53,9 +47,6 @@ class KafkaAcknowledgmentContractTest {
         org.mockito.Mockito.verify(consumer, org.mockito.Mockito.times(2)).commitSync(anyMap());
     }
 
-    /**
-     * 验证<code>acknowledgment.messageId()</code> 等于 <code>"stable-id"</code>，<code>acknowledgment.isAcknowledged()</code>为真。
-     */
     @Test
     void shouldReadStableMessageIdAndCommitOffsetOnAck() {
         ConsumerRecord<String, String> record = new ConsumerRecord<>("orders", 1, 8L, "key", "body");

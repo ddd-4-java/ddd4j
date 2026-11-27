@@ -46,9 +46,6 @@ import java.util.*;
  */
 public final class ExcelExporter {
 
-    /**
-     * 限制调用方直接创建 <code>ExcelExporter</code> 实例。
-     */
     private ExcelExporter() {
     }
 
@@ -160,12 +157,6 @@ public final class ExcelExporter {
 
     // ───────────────────── 内部装配 ─────────────────────
 
-    /**
-     * 注册样式、表头行高与选配的自动列宽等写入处理器。
-     *
-     * @param builder 待装配的 Excel 写入器构建器
-     * @param options 当前工作簿的写入选项
-     */
     private static void applyStyleHandlers(ExcelWriterBuilder builder, WriteOptions options) {
         // 样式（基于模板）
         builder.registerWriteHandler(new DefaultCellStyleStrategy(options.getStyleTemplate()));
@@ -189,24 +180,12 @@ public final class ExcelExporter {
         }
     }
 
-    /**
-     * 应用导出配置并创建写入内存流的 Excel 写入器。
-     *
-     * @param out     保存导出工作簿的输出流
-     * @param options 应用于工作簿的导出选项
-     * @return 装配完成的 Excel 写入器
-     */
     private static ExcelWriter buildWriter(ByteArrayOutputStream out, WriteOptions options) {
         ExcelWriterBuilder builder = EasyExcel.write(out);
         applyStyleHandlers(builder, options);
         return builder.build();
     }
 
-    /**
-     * 为导入错误页构造以白底左对齐为主的单元格样式。
-     *
-     * @return 供错误页写入器注册的单元格样式策略
-     */
     private static DefaultCellStyleStrategy buildErrorStyle() {
         // 错误页特殊样式：白底左对齐
         WriteCellStyle head = new WriteCellStyle();

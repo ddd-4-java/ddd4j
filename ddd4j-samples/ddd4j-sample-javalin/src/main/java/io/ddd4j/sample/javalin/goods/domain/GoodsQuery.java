@@ -65,9 +65,6 @@ import java.math.BigDecimal;
 @EqualsAndHashCode(callSuper = true)
 public class GoodsQuery extends Query<Goods> {
 
-    /**
-     * Java 序列化版本标识。
-     */
     private static final long serialVersionUID = 1L;
 
     /**

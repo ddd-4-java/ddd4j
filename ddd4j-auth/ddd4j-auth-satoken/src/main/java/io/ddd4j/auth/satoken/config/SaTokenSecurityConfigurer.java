@@ -32,9 +32,6 @@ import java.util.Objects;
  */
 public final class SaTokenSecurityConfigurer {
 
-    /**
-     * 限制调用方直接创建 <code>SaTokenSecurityConfigurer</code> 实例。
-     */
     private SaTokenSecurityConfigurer() {
     }
 
@@ -50,12 +47,6 @@ public final class SaTokenSecurityConfigurer {
         return logic;
     }
 
-    /**
-     * 校验配置并创建当前模式对应的原生登录逻辑。
-     *
-     * @param properties 选择登录模式并配置 JWT 的安全属性
-     * @return 带有效安全配置的原生登录逻辑
-     */
     static StpLogic createConfiguredLogic(SaTokenSecurityProperties properties) {
         Objects.requireNonNull(properties, "properties must not be null");
         properties.validate();

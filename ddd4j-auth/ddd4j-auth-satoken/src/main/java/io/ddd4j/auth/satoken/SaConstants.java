@@ -82,9 +82,6 @@ public final class SaConstants {
      */
     public static final String PAYLOAD_PARENT_INFO_ID = "p_info_id";
 
-    /**
-     * 限制调用方直接创建 <code>SaConstants</code> 实例。
-     */
     private SaConstants() {
     }
 }

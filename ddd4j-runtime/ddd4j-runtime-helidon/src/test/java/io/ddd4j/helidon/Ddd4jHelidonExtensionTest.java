@@ -37,39 +37,21 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-/**
- * 验证 <code>Ddd4jHelidonExtension</code> 在<code>startInitializesRuntime</code>、<code>stopClosesRuntime</code>、<code>stopIsSafe</code>等操作中的行为契约。
- */
 @ExtendWith(MockitoExtension.class)
 class Ddd4jHelidonExtensionTest {
 
-    /**
-     * 用于隔离 <code>BeanManager</code> 调用并记录交互的测试替身。
-     */
     @Mock
     private BeanManager beanManager;
 
-    /**
-     * 用于隔离 <code>AfterBeanDiscovery</code> 调用并记录交互的测试替身。
-     */
     @Mock
     private AfterBeanDiscovery afterBeanDiscovery;
 
-    /**
-     * 用于隔离 <code>AfterDeploymentValidation</code> 调用并记录交互的测试替身。
-     */
     @Mock
     private AfterDeploymentValidation afterDeploymentValidation;
 
-    /**
-     * 用于隔离 <code>BeforeShutdown</code> 调用并记录交互的测试替身。
-     */
     @Mock
     private BeforeShutdown beforeShutdown;
 
-    /**
-     * 验证<code>extension.start(afterDeploymentValidation, beanManager)</code> 抛出 <code>LinkageError.class</code>，<code>SubjectKit.subjectProvider</code> 与…为同一实例 <code>previousSubject</code>，<code>BaseContext.get(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class)</code> 等于 <code>previousSpi</code>。
-     */
     @Test
     void rollsBackRuntimeAndReferencesOnExplicitProjectionStartupError() {
         String key = "ddd4j.cqrs.projection.enabled";
@@ -98,9 +80,6 @@ class Ddd4jHelidonExtensionTest {
         }
     }
 
-    /**
-     * 验证<code>extension.stop(beforeShutdown)</code> 抛出 <code>LinkageError.class</code>，<code>thrown</code> 与…为同一实例 <code>firstFailure</code>。
-     */
     @Test
     void releasesRemainingReferencesAndKeepsFirstShutdownFailure() {
         CreationalContext<SubjectProvider> first = bind(SubjectProvider.class, mock(SubjectProvider.class));
@@ -125,14 +104,6 @@ class Ddd4jHelidonExtensionTest {
         }
     }
 
-    /**
-     * 读取 <code>context</code> 供当前测试使用。
-     *
-     * @param <T>      当前契约测试所使用的 Java 类型
-     * @param type     用来解析、检查或构造测试对象的 Java 类型
-     * @param instance 传给 <code>when()</code> 的 <code>T</code> 输入
-     * @return 当前测试使用的结果，取自 <code>context</code>
-     */
     @SuppressWarnings("unchecked")
     private <T> CreationalContext<T> bind(Class<T> type, T instance) {
         Bean<T> bean = mock(Bean.class);
@@ -146,9 +117,6 @@ class Ddd4jHelidonExtensionTest {
         return context;
     }
 
-    /**
-     * 在测试框架中执行 <code>mock()</code>、<code>afterBeanDiscovery.addBean()</code>、<code>configurator.addType()</code>，验证该场景。
-     */
     @Test
     void registerReadinessRegistryAddsBean() {
         BeanConfigurator<Object> configurator = mock(BeanConfigurator.class);
@@ -164,9 +132,6 @@ class Ddd4jHelidonExtensionTest {
         verify(configurator).addType(io.ddd4j.core.health.RuntimeReadinessRegistry.class);
     }
 
-    /**
-     * 验证<code>extension.start(afterDeploymentValidation, beanManager)</code> 正常返回。
-     */
     @Test
     void startInitializesRuntimeWithDefaults() {
         when(beanManager.getBeans(any(Class.class))).thenReturn(Collections.emptySet());
@@ -175,9 +140,6 @@ class Ddd4jHelidonExtensionTest {
         assertDoesNotThrow(() -> extension.start(afterDeploymentValidation, beanManager));
     }
 
-    /**
-     * 验证<code>extension.stop(beforeShutdown)</code> 正常返回。
-     */
     @Test
     void stopClosesRuntimeWhenStarted() {
         when(beanManager.getBeans(any(Class.class))).thenReturn(Collections.emptySet());
@@ -187,9 +149,6 @@ class Ddd4jHelidonExtensionTest {
         assertDoesNotThrow(() -> extension.stop(beforeShutdown));
     }
 
-    /**
-     * 验证<code>extension.stop(beforeShutdown)</code> 正常返回。
-     */
     @Test
     void stopIsSafeWithoutStart() {
         Ddd4jHelidonExtension extension = new Ddd4jHelidonExtension();
@@ -197,14 +156,8 @@ class Ddd4jHelidonExtensionTest {
     }
 }
 
-/**
- * 覆盖 Helidon 扩展发现 Bean、获取引用和清理资源的分支。
- */
 class Ddd4jHelidonExtensionBeanBranchTest {
 
-    /**
-     * 按 <code>(type == io.ddd4j.core.subject.SubjectProvider.class)</code> 等实际条件选择当前用例返回的结果。
-     */
     @org.junit.jupiter.api.Test
     @org.junit.jupiter.api.extension.ExtendWith(org.mockito.junit.jupiter.MockitoExtension.class)
     void startUsesExistingBeans() {

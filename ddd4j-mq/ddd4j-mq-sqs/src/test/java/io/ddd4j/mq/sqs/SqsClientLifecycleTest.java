@@ -29,16 +29,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-/**
- * 验证 <code>SqsClientLifecycle</code> 在 <code>consumer</code>、<code>requiredListenerRollbackAllowsSameAdapterToRestart</code>、<code>closedAdapter</code>、<code>invalidPollInterval</code> 等场景中的行为。
- */
 class SqsClientLifecycleTest {
 
-    /**
-     * 验证<code>adapter.initConsumer(listener, properties)</code>为真，<code>polled.await(5, TimeUnit.SECONDS)</code>为真。
-     *
-     * @throws Exception 等待并发操作时失败
-     */
     @Test
     void consumerWithoutProducerCreatesAndClosesOwnedClient() throws Exception {
         SqsClient nativeClient = mock(SqsClient.class);
@@ -69,11 +61,6 @@ class SqsClientLifecycleTest {
         verify(nativeClient, times(1)).close();
     }
 
-    /**
-     * 验证<code>adapter.init(Collections.singletonList(listener), properties, serialization, null)</code> 抛出 <code>MQInitializationException.class</code>，<code>adapter.startupStatus().snapshot().state()</code> 等于 <code>MQStartupState.FAILED</code>，<code>polled.await(5, TimeUnit.SECONDS)</code>为真。
-     *
-     * @throws Exception 等待并发操作时失败
-     */
     @Test
     void requiredListenerRollbackAllowsSameAdapterToRestartWithNewOwnedClient() throws Exception {
         SqsClient firstClient = mock(SqsClient.class);
@@ -122,11 +109,6 @@ class SqsClientLifecycleTest {
         }
     }
 
-    /**
-     * 验证<code>adapter.init(Collections.singletonList(listener), properties, serialization, null)</code> 抛出 <code>MQInitializationException.class</code>，<code>adapter.initConsumer(listener, properties)</code>为真，<code>adapter.lifecycle().checkpoint()</code> 等于 <code>2</code>。
-     *
-     * @throws Exception 等待并发操作时失败
-     */
     @Test
     void requiredListenerRollbackLeavesBorrowedClientOpenForRetry() throws Exception {
         SqsClient borrowedClient = mock(SqsClient.class);
@@ -158,11 +140,6 @@ class SqsClientLifecycleTest {
         verify(borrowedClient, never()).close();
     }
 
-    /**
-     * 验证<code>adapter.initConsumer(listener, properties)</code>为真，<code>callbackStarted.await(5, TimeUnit.SECONDS)</code>为真，<code>visibilityClient.get()</code> 与…为同一实例 <code>originalClient</code>。
-     *
-     * @throws Exception 等待并发操作时失败
-     */
     @Test
     void lateFailedCallbackResetsVisibilityOnTheReceivingClientAfterRollback() throws Exception {
         SqsClient originalClient = mock(SqsClient.class);
@@ -241,11 +218,6 @@ class SqsClientLifecycleTest {
         }
     }
 
-    /**
-     * 验证<code>releaseSend.await(5, TimeUnit.SECONDS)</code>为真，<code>failListener.await(5, TimeUnit.SECONDS)</code>为真，<code>failure.getCause() instanceof MQInitializationException</code>为真。
-     *
-     * @throws Exception 等待并发操作时失败
-     */
     @Test
     void requiredListenerRollbackWaitsForAnInFlightSendBeforeClosingOwnedClient() throws Exception {
         SqsClient nativeClient = mock(SqsClient.class);
@@ -317,9 +289,6 @@ class SqsClientLifecycleTest {
         }
     }
 
-    /**
-     * 验证<code>adapter.initConsumer(listener, properties)</code> 抛出 <code>IllegalStateException.class</code>，<code>creations.get()</code> 等于 <code>0</code>。
-     */
     @Test
     void closedAdapterRejectsNewConsumerWithoutCreatingClient() {
         SqsClient nativeClient = mock(SqsClient.class);
@@ -341,9 +310,6 @@ class SqsClientLifecycleTest {
         verify(nativeClient, never()).close();
     }
 
-    /**
-     * 验证<code>adapter.initConsumer(listener, properties)</code> 抛出 <code>IllegalArgumentException.class</code>，<code>creations.get()</code> 等于 <code>0</code>。
-     */
     @Test
     void invalidPollIntervalRejectsConsumerBeforeCreatingClient() {
         AtomicInteger creations = new AtomicInteger();
@@ -368,9 +334,6 @@ class SqsClientLifecycleTest {
         }
     }
 
-    /**
-     * 验证<code>publisher.accept(new MQEvent())</code> 抛出 <code>IllegalStateException.class</code>，<code>failure.getMessage()</code> 等于 <code>"SQS client is closed"</code>。
-     */
     @Test
     void producerHandleRejectsPublishAfterClose() {
         SqsClient nativeClient = mock(SqsClient.class);
@@ -383,11 +346,6 @@ class SqsClientLifecycleTest {
         assertEquals("SQS client is closed", failure.getMessage());
     }
 
-    /**
-     * 验证<code>releaseSend.await(5, TimeUnit.SECONDS)</code>为真，<code>closing.await(5, TimeUnit.SECONDS)</code>为真，<code>close.get(150, TimeUnit.MILLISECONDS)</code> 抛出 <code>TimeoutException.class</code>。
-     *
-     * @throws Exception 等待并发操作时失败
-     */
     @Test
     void closeWaitsForAnInFlightSendBeforeClosingOwnedClient() throws Exception {
         SqsClient nativeClient = mock(SqsClient.class);
@@ -454,11 +412,6 @@ class SqsClientLifecycleTest {
         }
     }
 
-    /**
-     * 验证<code>adapter.initConsumer(listener, properties)</code>为真，<code>receiving.await(5, TimeUnit.SECONDS)</code>为真，<code>close.get(150, TimeUnit.MILLISECONDS)</code> 抛出 <code>TimeoutException.class</code>。
-     *
-     * @throws Exception 等待并发操作时失败
-     */
     @Test
     void closeWaitsForAnInFlightReceiveBeforeClosingOwnedClient() throws Exception {
         SqsClient nativeClient = mock(SqsClient.class);

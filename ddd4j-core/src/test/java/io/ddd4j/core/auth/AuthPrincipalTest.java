@@ -29,9 +29,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class AuthPrincipalTest {
 
-    /**
-     * 验证<code>result</code> 指向同一实例 <code>principal</code>。
-     */
     @Test
     void chainedSetters_shouldReturnSameInstance() {
         AuthPrincipal principal = new AuthPrincipal();
@@ -41,9 +38,6 @@ class AuthPrincipalTest {
         assertThat(result).isSameAs(principal);
     }
 
-    /**
-     * 验证<code>principal.getLoginId()</code> 等于 <code>"u1"</code>。
-     */
     @Test
     void setLoginId_shouldRoundTrip() {
         AuthPrincipal principal = new AuthPrincipal().setLoginId("u1");
@@ -51,9 +45,6 @@ class AuthPrincipalTest {
         assertThat(principal.getLoginId()).isEqualTo("u1");
     }
 
-    /**
-     * 验证<code>principal.getUserId()</code> 等于 <code>100L</code>。
-     */
     @Test
     void setUserId_shouldRoundTrip() {
         AuthPrincipal principal = new AuthPrincipal().setUserId(100L);
@@ -61,9 +52,6 @@ class AuthPrincipalTest {
         assertThat(principal.getUserId()).isEqualTo(100L);
     }
 
-    /**
-     * 验证<code>principal.getRoles()</code> 的大小为 <code>1</code>，<code>principal.getRoles().get(0).getRoleCode()</code> 等于 <code>"admin"</code>。
-     */
     @Test
     void setRoles_shouldCarryRolePairs() {
         AuthPrincipal.RolePair role = new AuthPrincipal.RolePair()
@@ -75,9 +63,6 @@ class AuthPrincipalTest {
         assertThat(principal.getRoles().get(0).getRoleCode()).isEqualTo("admin");
     }
 
-    /**
-     * 验证<code>principal.getPerms()</code> 仅包含 <code>"user:add"</code>、<code>"user:del"</code>。
-     */
     @Test
     void setPerms_shouldCarryPermissionSet() {
         AuthPrincipal principal = new AuthPrincipal().setPerms(Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList("user:add", "user:del"))));
@@ -85,9 +70,6 @@ class AuthPrincipalTest {
         assertThat(principal.getPerms()).containsExactlyInAnyOrder("user:add", "user:del");
     }
 
-    /**
-     * 验证<code>principal.getProfile()</code> 含对应条目 <code>"dept"</code>、<code>"engineering"</code>。
-     */
     @Test
     void setProfile_shouldCarryProfileMap() {
         AuthPrincipal principal = new AuthPrincipal()
@@ -96,9 +78,6 @@ class AuthPrincipalTest {
         assertThat(principal.getProfile()).containsEntry("dept", "engineering");
     }
 
-    /**
-     * 验证<code>principal.isBound()</code>为假，<code>principal.isInitial()</code>为假，<code>principal.isVerify()</code>为假。
-     */
     @Test
     void defaults_shouldBeSet() {
         AuthPrincipal principal = new AuthPrincipal();
@@ -108,9 +87,6 @@ class AuthPrincipalTest {
         assertThat(principal.isVerify()).isFalse();
     }
 
-    /**
-     * 验证<code>principal.getAppId()</code> 等于 <code>"app-1"</code>，<code>principal.getAppChannel()</code> 等于 <code>"web"</code>，<code>principal.getUserAgent()</code> 等于 <code>"ua"</code>。
-     */
     @Test
     void requestSourceFields_shouldRoundTrip() {
         AuthPrincipal principal = new AuthPrincipal()
@@ -127,9 +103,6 @@ class AuthPrincipalTest {
         assertThat(principal.getUserAgent()).isEqualTo("ua");
     }
 
-    /**
-     * 验证<code>role.getRoleId()</code> 等于 <code>"r1"</code>，<code>role.getRoleCode()</code> 等于 <code>"rc"</code>，<code>role.isVerify()</code>为真。
-     */
     @Test
     void rolePair_chainedSetters_shouldRoundTrip() {
         AuthPrincipal.RolePair role = new AuthPrincipal.RolePair()
@@ -141,9 +114,6 @@ class AuthPrincipalTest {
         assertThat(role.isVerify()).isTrue();
     }
 
-    /**
-     * 验证<code>principal.getOrgId()</code> 等于 <code>"org-1"</code>，<code>principal.getUserType()</code> 等于 <code>"internal"</code>。
-     */
     @Test
     void orgIdAndUserType_shouldRoundTrip() {
         AuthPrincipal principal = new AuthPrincipal().setOrgId("org-1").setUserType("internal");

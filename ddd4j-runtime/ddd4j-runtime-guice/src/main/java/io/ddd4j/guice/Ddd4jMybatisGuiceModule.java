@@ -58,9 +58,6 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
      * Repository 实现类到 Mapper 接口的映射
      */
     private final Map<Class<?>, Class<?>> repositoryToMapper = new LinkedHashMap<>();
-    /**
-     * 配置 MyBatis 容器和数据访问能力的适配入口。
-     */
     private Ddd4jMybatisConfigurer configurer = new Ddd4jMybatisConfigurer();
 
     /**
@@ -107,9 +104,6 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
         return this;
     }
 
-    /**
-     * 按配置注册 MyBatis 会话和 ORM 服务绑定。
-     */
     @Override
     protected void configure() {
         for (Class<?> repositoryImpl : repositoryToMapper.keySet()) {

@@ -44,13 +44,7 @@ public class FeignHeaderInterceptor implements RequestInterceptor, Ordered {
      * 系统 ID 请求头名称列表
      */
     public static final String[] HEADER_SYSTEM_IDS = new String[]{"system_id", "system-id", "systemId"};
-    /**
-     * 是否将当前 Web 请求头复制到 Feign 调用。
-     */
     private static final String[] USE_WEB_HEADERS = new String[]{"tenant-id", "system-id", "third-session", "enterprise-id", "shop-id", "app-id", "switch-tenant-id", "Authorization", "client-type", "own-language"};
-    /**
-     * 应禁止转发 Authorization 的目标集合。
-     */
     private static final String[] REMOVE_AUTHORIZATION_HEADER_TARGETS = new String[]{"cloud-mall-api", "cloud-pay-api", "subscribe-service"};
 
     /**
@@ -134,11 +128,6 @@ public class FeignHeaderInterceptor implements RequestInterceptor, Ordered {
         }
     }
 
-    /**
-     * 返回 HTTP 请求头转发拦截器执行优先级。
-     *
-     * @return 当前拦截器的 Spring 排序值
-     */
     @Override
     public int getOrder() {
         return -100;

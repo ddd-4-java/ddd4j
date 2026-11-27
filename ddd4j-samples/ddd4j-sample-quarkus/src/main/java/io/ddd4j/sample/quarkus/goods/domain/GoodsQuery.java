@@ -63,9 +63,6 @@ import java.math.BigDecimal;
  */
 public class GoodsQuery extends Query<Goods> {
 
-    /**
-     * Java 序列化版本标识。
-     */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -105,11 +102,6 @@ public class GoodsQuery extends Query<Goods> {
         return this;
     }
 
-    /**
-     * 将排序表达式解析为商品查询支持的字段及方向。
-     *
-     * @param orderBy 请求中传入的排序表达式
-     */
     private void applyOrderBy(String orderBy) {
         String[] tokens = orderBy.trim().split("_");
         if (tokens.length != 2) {
@@ -134,12 +126,6 @@ public class GoodsQuery extends Query<Goods> {
         }
     }
 
-    /**
-     * 按方向为商品查询追加领域属性排序条件。
-     *
-     * @param descending 是否按降序排列
-     * @param property   商品排序所使用的领域属性引用
-     */
     private void applyOrder(boolean descending, SFunction<Goods, ?> property) {
         if (descending) {
             orderByDesc(property);

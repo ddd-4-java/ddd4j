@@ -23,14 +23,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * 通过 <code>cfg.getPublicPaths()</code>、<code>cfg.getDefaultAuthenticationMode()</code>、<code>cfg.isIdempotencyEnabled()</code> 验证 <code>Ddd4jMicronautWebConfiguration</code> 的运行行为。
- */
 class Ddd4jMicronautWebConfigurationTest {
 
-    /**
-     * 验证<code>cfg.getDefaultAuthenticationMode()</code> 等于 <code>AuthenticationMode.REQUIRED</code>，<code>cfg.isIdempotencyEnabled()</code>为真，<code>cfg.isTrustForwardedHeaders()</code>为假。
-     */
     @Test
     void defaults() {
         Ddd4jMicronautWebConfiguration cfg = new Ddd4jMicronautWebConfiguration();
@@ -42,9 +36,6 @@ class Ddd4jMicronautWebConfigurationTest {
         assertFalse(cfg.isTrustForwardedHeaders());
     }
 
-    /**
-     * 验证<code>cfg.getPublicPaths()</code> 等于 <code>List.of("/api")</code>，<code>cfg.getPublicPaths()</code> 与…为不同的实例 <code>paths</code>，<code>cfg.isIdempotencyEnabled()</code>为假。
-     */
     @Test
     void setters() {
         Ddd4jMicronautWebConfiguration cfg = new Ddd4jMicronautWebConfiguration();
@@ -72,9 +63,6 @@ class Ddd4jMicronautWebConfigurationTest {
         assertFalse(cfg.isIdempotencyEnabled());
     }
 
-    /**
-     * 验证<code>cfg.setPublicPaths(null)</code> 抛出 <code>NullPointerException.class</code>，<code>cfg.setDefaultAuthenticationMode(null)</code> 抛出 <code>NullPointerException.class</code>，<code>cfg.setIdempotencyTtl(null)</code> 抛出 <code>NullPointerException.class</code>。
-     */
     @Test
     void nullRejected() {
         Ddd4jMicronautWebConfiguration cfg = new Ddd4jMicronautWebConfiguration();

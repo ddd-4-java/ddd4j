@@ -193,9 +193,6 @@ public final class AuthConstants {
      */
     public static final String FIELD_STATUS = "status";
 
-    /**
-     * 限制调用方直接创建 <code>AuthConstants</code> 实例。
-     */
     private AuthConstants() {
     }
 }

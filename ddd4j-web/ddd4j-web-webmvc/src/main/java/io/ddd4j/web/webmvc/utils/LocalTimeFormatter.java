@@ -41,25 +41,11 @@ public class LocalTimeFormatter implements Formatter<LocalTime> {
         FORMATTER = DateTimeFormatter.ofPattern(pattern, Locale.CHINESE);
     }
 
-    /**
-     * 按当前 Spring 配置解析时刻文本。
-     *
-     * @param text   待解析的日期或时间文本
-     * @param locale 当前格式化请求的 Locale
-     * @return 解析后的本地时刻
-     */
     @Override
     public LocalTime parse(String text, Locale locale) {
         return LocalTime.parse(text, FORMATTER);
     }
 
-    /**
-     * 按当前 Spring 配置格式化时刻。
-     *
-     * @param object 待写入或格式化的 Java 对象
-     * @param locale 当前格式化请求的 Locale
-     * @return 格式化后的时刻字符串
-     */
     @Override
     public String print(LocalTime object, Locale locale) {
         return FORMATTER.format(object);

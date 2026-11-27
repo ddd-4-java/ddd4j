@@ -30,9 +30,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @UtilityClass
 public class HMACKit {
 
-    /**
-     * 按盐值查找和复用 HMAC 运算对象。
-     */
     private final Map<String, HMac> hMacMap = new ConcurrentHashMap<>();
 
     /**

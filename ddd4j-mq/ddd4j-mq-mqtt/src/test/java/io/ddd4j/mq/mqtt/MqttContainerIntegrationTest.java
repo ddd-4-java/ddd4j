@@ -45,9 +45,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Testcontainers(disabledWithoutDocker = true)
 class MqttContainerIntegrationTest {
 
-    /**
-     * 为集成测试提供隔离 <code>Generic</code> 服务的容器。
-     */
     @Container
     static final GenericContainer<?> MOSQUITTO = new GenericContainer<>(
             DockerImageName.parse("eclipse-mosquitto:2.0.22"))
@@ -58,11 +55,6 @@ class MqttContainerIntegrationTest {
             .waitingFor(Wait.forListeningPort())
             .withStartupTimeout(Duration.ofMinutes(2));
 
-    /**
-     * 验证<code>client.initConsumer(listener, properties)</code>为真，<code>bean.received.await(10, TimeUnit.SECONDS)</code>为真，<code>nativeClient.isConnected()</code>为真。
-     *
-     * @throws Exception 等待并发操作时失败
-     */
     @Test
     void publishesAndConsumesPayloadIdWithoutTakingOwnershipOfInjectedClient() throws Exception {
         String suffix = UUID.randomUUID().toString().replace("-", "");
@@ -126,11 +118,6 @@ class MqttContainerIntegrationTest {
         }
     }
 
-    /**
-     * 验证<code>client.initConsumer(listener, properties)</code>为真，<code>bean.firstAttempt.await(10, TimeUnit.SECONDS)</code>为真，<code>bean.attempts.get()</code> 等于 <code>2</code>。
-     *
-     * @throws Exception 等待并发操作时失败
-     */
     @Test
     void failedQosOneHandlerIsRedeliveredAfterPersistentSessionReconnect() throws Exception {
         String suffix = UUID.randomUUID().toString().replace("-", "");
@@ -180,52 +167,21 @@ class MqttContainerIntegrationTest {
         }
     }
 
-    /**
-     * 保存监听回调结果，供断言检查事件传递行为。
-     */
     public static final class RecordingListener {
-        /**
-         * 等待数据到达的同步门闩。
-         */
         private final CountDownLatch received = new CountDownLatch(1);
-        /**
-         * 消息标识。
-         */
         private volatile String messageId;
 
-        /**
-         * 根据本次调用更新 <code>messageId = event.getMsgId()</code>，用于后续测试步骤。
-         *
-         * @param event 交给被测入口处理的测试领域事件
-         */
         public void handle(MQEvent event) {
             messageId = event.getMsgId();
             received.countDown();
         }
     }
 
-    /**
-     * 将 <code>firstAttempt</code>、<code>secondAttempt</code>、<code>attempts</code> 等状态一起传入当前测试，供调用或结果断言使用。
-     */
     public static final class FailsOnceListener {
-        /**
-         * 协调测试线程在指定执行阶段等待或继续的门闩。
-         */
         private final CountDownLatch firstAttempt = new CountDownLatch(1);
-        /**
-         * 协调测试线程在指定执行阶段等待或继续的门闩。
-         */
         private final CountDownLatch secondAttempt = new CountDownLatch(1);
-        /**
-         * 跟踪测试操作的调用或重试次数。
-         */
         private final AtomicInteger attempts = new AtomicInteger();
 
-        /**
-         * 调用 <code>attempts.incrementAndGet()</code>、<code>firstAttempt.countDown()</code>、<code>secondAttempt.countDown()</code> 执行当前夹具操作。
-         *
-         * @param event 交给被测入口处理的测试领域事件
-         */
         public void handle(MQEvent event) {
             if (attempts.incrementAndGet() == 1) {
                 firstAttempt.countDown();

@@ -27,11 +27,6 @@ import static org.mockito.Mockito.*;
  */
 class ActivemqKitContractTest {
 
-    /**
-     * 验证<code>ActivemqKit.createDestination(session, "queue:work")</code> 与…为同一实例 <code>queue</code>，<code>ActivemqKit.createDestination(session, "topic:news")</code> 与…为同一实例 <code>topic</code>。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void resolvesPhysicalDestinationAndJmsKind() throws Exception {
         assertEquals("ddd4j.default.topic", ActivemqKit.resolvePhysical("", "", ""));
@@ -47,11 +42,6 @@ class ActivemqKitContractTest {
         assertSame(topic, ActivemqKit.createDestination(session, "news"));
     }
 
-    /**
-     * 验证<code>ActivemqKit.extractPayload(text)</code> 等于 <code>"订单"</code>，<code>ActivemqKit.extractPayload(bytes)</code> 等于 <code>"订单"</code>。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void extractsTextAndBytesPayload() throws Exception {
         TextMessage text = mock(TextMessage.class);
@@ -71,11 +61,6 @@ class ActivemqKitContractTest {
         assertEquals("", ActivemqKit.extractPayload(mock(Message.class)));
     }
 
-    /**
-     * 验证<code>ActivemqKit.stringProperty(message, "key")</code> 等于 <code>"value"</code>，<code>ActivemqKit.messageIdOf(message)</code> 等于 <code>"message-1"</code>。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void safelyReadsHeadersAndReturnsDefaultsOnJmsErrors() throws Exception {
         Message message = mock(Message.class);

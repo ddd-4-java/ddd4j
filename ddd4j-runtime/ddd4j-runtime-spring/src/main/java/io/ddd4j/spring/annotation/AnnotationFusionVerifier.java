@@ -32,9 +32,6 @@ import java.util.Objects;
 @Slf4j
 public final class AnnotationFusionVerifier {
 
-    /**
-     * 限制调用方直接创建 <code>AnnotationFusionVerifier</code> 实例。
-     */
     private AnnotationFusionVerifier() {
     }
 
@@ -82,14 +79,6 @@ public final class AnnotationFusionVerifier {
         log.info("全部验证通过，ddd4j-runtime-spring 注解收敛完成");
     }
 
-    /**
-     * 验证 DDD 注解及当前框架需要的元注解。
-     *
-     * @param name                 用于诊断的注解名称
-     * @param annotationType       待验证的注解类型
-     * @param springAnnotationType 组件要求包含的 Spring 元注解
-     * @return 校验通过返回 1，失败返回 0
-     */
     private static int verify(String name,
                               Class<? extends Annotation> annotationType,
                               Class<? extends Annotation> springAnnotationType) {

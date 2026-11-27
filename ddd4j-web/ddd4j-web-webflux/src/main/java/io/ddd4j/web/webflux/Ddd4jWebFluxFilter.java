@@ -43,26 +43,11 @@ import java.util.function.Predicate;
  */
 public final class Ddd4jWebFluxFilter implements WebFilter {
 
-    /**
-     * 保存框架请求服务端 Span 的键。
-     */
     private static final String OTEL_SPAN_KEY = Ddd4jWebFluxFilter.class.getName() + ".otelSpan";
 
-    /**
-     * 根据框架请求元数据装配共用 Web 请求上下文。
-     */
     private final WebRequestContextFactory contextFactory;
-    /**
-     * 开启和关闭当前 Web 请求上下文的组件。
-     */
     private final WebRequestLifecycle requestLifecycle;
-    /**
-     * 在请求处理阶段获取及释放幂等保护的组件。
-     */
     private final Optional<WebIdempotencyLifecycle> idempotencyLifecycle;
-    /**
-     * 将阻塞式幂等缓存访问移出响应式事件线程的调度器。
-     */
     private final Scheduler blockingScheduler;
 
     /**
@@ -113,12 +98,6 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
         this.blockingScheduler = Objects.requireNonNull(blockingScheduler, "blockingScheduler must not be null");
     }
 
-    /**
-     * 提取请求头，每个有值的请求头保留第一个值。
-     *
-     * @param exchange 当前框架 HTTP 请求或交换上下文
-     * @return 供请求上下文读取的请求头映射
-     */
     private static Map<String, String> extractHeaders(ServerWebExchange exchange) {
         Map<String, String> headers = new HashMap<>();
         exchange.getRequest().getHeaders().forEach((k, v) -> {
@@ -129,11 +108,6 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
         return headers;
     }
 
-    /**
-     * 尝试关闭请求作用域，清理故障不打断响应处理。
-     *
-     * @param scope 需要在当前请求结束后关闭的作用域
-     */
     private static void closeScope(AutoCloseable scope) {
         try {
             scope.close();
@@ -141,13 +115,6 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
         }
     }
 
-    /**
-     * 在订阅时解析 WebFlux 请求并设置认证、幂等和跟踪上下文。
-     *
-     * @param exchange 当前 WebFlux 请求及响应交换对象
-     * @param chain    待继续执行的 WebFlux 过滤器链
-     * @return 在整个下游过滤器链结束时完成的响应式信号
-     */
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         return Mono.defer(() -> {
@@ -180,17 +147,6 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
         });
     }
 
-    /**
-     * 在传播跟踪和认证上下文的同时执行 WebFlux 过滤器链。
-     *
-     * @param exchange         当前 WebFlux 请求及响应交换对象
-     * @param chain            待继续执行的 WebFlux 过滤器链
-     * @param requestContext   当前 HTTP 请求已经解析的 DDD4J 上下文
-     * @param authentication   当前请求已取得的认证结果
-     * @param idempotencyScope 当前请求获取的可选幂等作用域
-     * @param span             当前请求的跟踪 Span
-     * @return 表示下游请求执行与清理的响应式信号
-     */
     private Mono<Void> invoke(ServerWebExchange exchange, WebFilterChain chain, WebRequestContext requestContext,
                               Optional<Authentication> authentication,
                               Optional<WebIdempotencyLifecycle.Scope> idempotencyScope, Object span) {
@@ -217,26 +173,12 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
                 ignored -> release(scope));
     }
 
-    /**
-     * 从 WebFlux 请求头读取幂等键并尝试取得租约。
-     *
-     * @param context  当前框架调用所携带的请求上下文
-     * @param exchange 当前 WebFlux 请求及响应交换对象
-     * @return 已开启的幂等作用域，无需保护时为空
-     */
     private Optional<WebIdempotencyLifecycle.Scope> openIdempotency(WebRequestContext context,
                                                                     ServerWebExchange exchange) {
         return idempotencyLifecycle.flatMap(lifecycle -> lifecycle.open(context,
                 exchange.getRequest().getHeaders().getFirst(WebHeaders.IDEMPOTENCY_KEY)));
     }
 
-    /**
-     * 在适合阻塞调用的调度器上获取幂等租约，并处理请求取消。
-     *
-     * @param context  当前框架调用所携带的请求上下文
-     * @param exchange 当前 WebFlux 请求及响应交换对象
-     * @return 发送可选幂等租约的响应式结果
-     */
     private Mono<Optional<WebIdempotencyLifecycle.Scope>> acquireIdempotency(WebRequestContext context,
                                                                              ServerWebExchange exchange) {
         return Mono.defer(() -> {
@@ -262,12 +204,6 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
         });
     }
 
-    /**
-     * 将当前请求的幂等租约标记为成功完成。
-     *
-     * @param scope 可完成或释放的幂等作用域
-     * @return 幂等确认完成时结束的响应式信号
-     */
     private Mono<Void> complete(WebIdempotencyLifecycle.Scope scope) {
         return Mono.fromRunnable(() -> {
             scope.complete();
@@ -275,22 +211,10 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
         }).subscribeOn(blockingScheduler).then();
     }
 
-    /**
-     * 在请求未完成时释放当前取得的幂等租约。
-     *
-     * @param scope 可完成或释放的幂等作用域
-     * @return 租约释放完成时结束的响应式信号
-     */
     private Mono<Void> release(WebIdempotencyLifecycle.Scope scope) {
         return Mono.fromRunnable(scope::close).subscribeOn(blockingScheduler).then();
     }
 
-    /**
-     * 从框架请求提取租户、跟踪标识、认证和路由信息，组装共用上下文。
-     *
-     * @param exchange 当前框架 HTTP 请求
-     * @return 供上下文和认证处理链使用的请求上下文
-     */
     private WebRequestContext createContext(ServerWebExchange exchange) {
         HttpHeaders headers = exchange.getRequest().getHeaders();
         return contextFactory.create(new WebRequestData(
@@ -306,34 +230,16 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
                 exchange.getRequest().getPath().value()), resolveApiVersion(exchange));
     }
 
-    /**
-     * 根据当前 Web 请求解析需要传递的 API 版本。
-     *
-     * @param exchange 当前 WebFlux 请求及响应交换对象
-     * @return 解析到的 API 版本，缺少时保留缺省行为
-     */
     private ApiVersion resolveApiVersion(ServerWebExchange exchange) {
         Object attribute = exchange.getAttributes().get(ApiVersionWebFilter.API_VERSION_ATTRIBUTE);
         return attribute instanceof ApiVersion ? (ApiVersion) attribute : null;
     }
 
-    /**
-     * 使用请求语言偏好列表中的第一项，未提供偏好时用 JVM 默认区域。
-     *
-     * @param headers 提供语言偏好的请求或请求头
-     * @return 本次请求使用的区域
-     */
     private Locale resolveLocale(HttpHeaders headers) {
         List<Locale> locales = headers.getAcceptLanguageAsLocales();
         return CollectionUtils.isEmpty(locales) ? Locale.getDefault() : locales.get(0);
     }
 
-    /**
-     * 从底层 HTTP 连接读取对端地址，未取得连接信息时返回空。
-     *
-     * @param exchange 当前框架 HTTP 请求
-     * @return 框架报告的对端地址
-     */
     private String remoteAddress(ServerWebExchange exchange) {
         InetSocketAddress remoteAddress = exchange.getRequest().getRemoteAddress();
         if (Objects.isNull(remoteAddress)) {

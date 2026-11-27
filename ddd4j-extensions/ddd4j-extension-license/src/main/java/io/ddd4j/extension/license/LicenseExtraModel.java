@@ -35,9 +35,6 @@ import java.util.Objects;
 @Data
 public class LicenseExtraModel implements Serializable {
 
-    /**
-     * Java 序列化版本标识。
-     */
     private static final long serialVersionUID = 1L;
 
     /**

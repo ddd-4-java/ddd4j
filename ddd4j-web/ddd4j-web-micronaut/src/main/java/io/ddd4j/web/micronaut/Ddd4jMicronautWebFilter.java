@@ -44,17 +44,8 @@ import java.util.*;
 @ServerFilter(ServerFilter.MATCH_ALL_PATTERN)
 public final class Ddd4jMicronautWebFilter {
 
-    /**
-     * 根据框架请求元数据装配共用 Web 请求上下文。
-     */
     private final WebRequestContextFactory contextFactory;
-    /**
-     * 开启和关闭当前 Web 请求上下文的组件。
-     */
     private final WebRequestLifecycle requestLifecycle;
-    /**
-     * 在请求处理阶段获取及释放幂等保护的组件。
-     */
     private final Optional<WebIdempotencyLifecycle> idempotencyLifecycle;
 
     /**
@@ -91,11 +82,6 @@ public final class Ddd4jMicronautWebFilter {
         this.idempotencyLifecycle = Optional.ofNullable(idempotencyLifecycle);
     }
 
-    /**
-     * 尝试关闭请求作用域，清理故障不打断响应处理。
-     *
-     * @param scope 需要在当前请求结束后关闭的作用域
-     */
     private static void closeScope(AutoCloseable scope) {
         try {
             scope.close();
@@ -103,12 +89,6 @@ public final class Ddd4jMicronautWebFilter {
         }
     }
 
-    /**
-     * 提取请求头，每个有值的请求头保留第一个值。
-     *
-     * @param request 当前框架 HTTP 请求或交换上下文
-     * @return 供请求上下文读取的请求头映射
-     */
     private static Map<String, String> extractRequestHeaders(HttpRequest<?> request) {
         Map<String, String> headers = new HashMap<>();
         request.getHeaders().forEach((k, v) -> {
@@ -182,12 +162,6 @@ public final class Ddd4jMicronautWebFilter {
                 });
     }
 
-    /**
-     * 从框架请求提取租户、跟踪标识、认证和路由信息，组装共用上下文。
-     *
-     * @param request 当前框架 HTTP 请求
-     * @return 供上下文和认证处理链使用的请求上下文
-     */
     private WebRequestContext createContext(HttpRequest<?> request) {
         InetSocketAddress remoteAddress = request.getRemoteAddress();
         String remoteHost = Objects.nonNull(remoteAddress) && Objects.nonNull(remoteAddress.getAddress())
@@ -205,23 +179,11 @@ public final class Ddd4jMicronautWebFilter {
                 request.getPath()));
     }
 
-    /**
-     * 把请求标识和跟踪标识写回 Micronaut 响应。
-     *
-     * @param response 当前准备写出的 HTTP 响应
-     * @param context  当前框架调用所携带的请求上下文
-     */
     private void addResponseHeaders(MutableHttpResponse<?> response, WebRequestContext context) {
         response.header(WebHeaders.REQUEST_ID, context.requestId());
         response.header(WebHeaders.TRACE_ID, context.traceId());
     }
 
-    /**
-     * 请求结束后按成功状态完成或释放已取得的幂等作用域。
-     *
-     * @param scope      可完成或释放的幂等作用域
-     * @param successful 请求是否按正常业务结果完成
-     */
     private void closeIdempotency(Optional<WebIdempotencyLifecycle.Scope> scope, boolean successful) {
         scope.ifPresent(idempotencyScope -> {
             if (successful) {

@@ -29,9 +29,6 @@ import java.lang.reflect.Proxy;
  */
 public class JdkProxy implements InvocationHandler {
 
-    /**
-     * 转发接口代理方法调用的目标实例。
-     */
     private Object target;//需要代理的目标对象
 
     /**

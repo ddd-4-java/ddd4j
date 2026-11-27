@@ -34,9 +34,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @UtilityClass
 public class SM4Kit {
 
-    /**
-     * 复用由指定密钥及初始化向量创建的 SM4 运算对象。
-     */
     private final Map<String, SM4> sm4Map = new ConcurrentHashMap<>();
 
     /**

@@ -30,13 +30,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class QuarkusJpaProjectionPositionTest {
 
-    /**
-     * 按 <code>(typeName.equals(annotation.annotationType().getName()))</code> 等实际条件选择当前用例返回的结果。
-     *
-     * @param element  传给 <code>element.getAnnotations()</code> 的 <code>java.lang.reflect.AnnotatedElement</code> 输入
-     * @param typeName 传给 <code>typeName.equals()</code> 的 <code>String</code> 输入
-     * @return 根据测试条件返回的可能值，包括 <code>annotation</code>、<code>null</code>
-     */
     private static Annotation annotation(java.lang.reflect.AnnotatedElement element, String typeName) {
         for (Annotation annotation : element.getAnnotations()) {
             if (typeName.equals(annotation.annotationType().getName())) {
@@ -46,11 +39,6 @@ class QuarkusJpaProjectionPositionTest {
         return null;
     }
 
-    /**
-     * 验证<code>annotation(QuarkusJpaProjectionPosition.class, namespace + "Entity")</code>非空，<code>table</code>非空，<code>nextEventColumn.annotationType().getMethod("name").invoke(nextEventColumn)</code> 等于 <code>ProjectionConstants.COLUMN_NEXT_EVENT_NUMBER</code>。
-     *
-     * @throws Exception 反射访问被测成员时失败
-     */
     @Test
     void usesTheJpaNamespaceAndColumnsSupportedByThisJdk() throws Exception {
         String namespace = "1.8".equals(System.getProperty("java.specification.version"))
@@ -72,9 +60,6 @@ class QuarkusJpaProjectionPositionTest {
                 .isEqualTo(ProjectionConstants.COLUMN_NEXT_EVENT_NUMBER);
     }
 
-    /**
-     * 验证<code>advanced</code> 指向不同实例 <code>original</code>，<code>advanced</code> 的类型为 <code>QuarkusJpaProjectionPosition.class</code>。
-     */
     @Test
     void withNextEventNumberShouldReturnNewInstance() {
         QuarkusJpaProjectionPosition original = new QuarkusJpaProjectionPosition("stream-1", 10L);
@@ -85,9 +70,6 @@ class QuarkusJpaProjectionPositionTest {
         assertThat(advanced).isInstanceOf(QuarkusJpaProjectionPosition.class);
     }
 
-    /**
-     * 验证<code>original.getStreamId()</code> 等于 <code>"stream-1"</code>，<code>original.getNextEventNumber()</code> 等于 <code>10L</code>。
-     */
     @Test
     void withNextEventNumberShouldNotModifyOriginal() {
         QuarkusJpaProjectionPosition original = new QuarkusJpaProjectionPosition("stream-1", 10L);
@@ -98,9 +80,6 @@ class QuarkusJpaProjectionPositionTest {
         assertThat(original.getNextEventNumber()).isEqualTo(10L);
     }
 
-    /**
-     * 验证<code>advanced.getStreamId()</code> 等于 <code>"stream-abc"</code>，<code>advanced.getNextEventNumber()</code> 等于 <code>99L</code>。
-     */
     @Test
     void withNextEventNumberShouldPreserveStreamId() {
         QuarkusJpaProjectionPosition original = new QuarkusJpaProjectionPosition("stream-abc", 5L);
@@ -111,11 +90,6 @@ class QuarkusJpaProjectionPositionTest {
         assertThat(advanced.getNextEventNumber()).isEqualTo(99L);
     }
 
-    /**
-     * 在测试框架中执行 <code>Modifier.isPrivate()</code>、<code>QuarkusJpaProjectionPosition.class.getDeclaredField()</code>，验证该场景。
-     *
-     * @throws NoSuchFieldException 反射定位被测字段失败
-     */
     @Test
     void fieldsShouldBePrivate() throws NoSuchFieldException {
         assertThat(Modifier.isPrivate(QuarkusJpaProjectionPosition.class.getDeclaredField("streamId").getModifiers()))
@@ -124,9 +98,6 @@ class QuarkusJpaProjectionPositionTest {
                 .as("nextEventNumber 字段应为 private").isTrue();
     }
 
-    /**
-     * 验证<code>position.getStreamId()</code> 等于 <code>"stream-X"</code>，<code>position.getNextEventNumber()</code> 等于 <code>77L</code>。
-     */
     @Test
     void gettersShouldReturnCorrectValues() {
         QuarkusJpaProjectionPosition position = new QuarkusJpaProjectionPosition("stream-X", 77L);
@@ -135,9 +106,6 @@ class QuarkusJpaProjectionPositionTest {
         assertThat(position.getNextEventNumber()).isEqualTo(77L);
     }
 
-    /**
-     * 验证<code>position.getStreamId()</code>为空，<code>position.getNextEventNumber()</code> 等于 <code>0L</code>。
-     */
     @Test
     void noArgConstructorShouldCreateEmptyInstance() {
         QuarkusJpaProjectionPosition position = new QuarkusJpaProjectionPosition();

@@ -51,32 +51,17 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class ApiVersionWebInterceptorTest {
 
-    /**
-     * 使用默认回退模式的 API 版本解析器。
-     */
     private final ApiVersionResolver fallback =
             new ApiVersionResolver(ApiVersion.parse("1.0.0"), ApiVersionMode.FALLBACK);
 
-    /**
-     * 使用严格版本解析模式的 API 版本解析器。
-     */
     private final ApiVersionResolver strict =
             new ApiVersionResolver(ApiVersion.parse("1.0.0"), ApiVersionMode.STRICT);
 
-    /**
-     * 测试结束后执行 <code>ThreadContext.clear()</code> 完成资源回收或状态恢复。
-     */
     @AfterEach
     void clearContext() {
         ThreadContext.clear();
     }
 
-    /**
-     * 读取 <code>request</code> 供当前测试使用。
-     *
-     * @param uri 测试服务要访问的资源地址
-     * @return 当前测试使用的结果，取自 <code>request</code>
-     */
     private MockHttpServletRequest getRequest(String uri) {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", uri);
         request.setRequestURI(uri);
@@ -85,11 +70,6 @@ class ApiVersionWebInterceptorTest {
 
     // ------------------------------ 拦截器单元测试 ------------------------------
 
-    /**
-     * 验证<code>interceptor.preHandle(request, new MockHttpServletResponse(), new Object())</code>为真，<code>request.getAttribute(ApiVersionWebInterceptor.API_VERSION_ATTRIBUTE)</code> 等于 <code>ApiVersion.parse("2.1.0")</code>。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void preHandleResolvesHeaderVersionIntoAttribute() throws Exception {
         ApiVersionWebInterceptor interceptor = new ApiVersionWebInterceptor(fallback);
@@ -100,11 +80,6 @@ class ApiVersionWebInterceptorTest {
         assertEquals(ApiVersion.parse("2.1.0"), request.getAttribute(ApiVersionWebInterceptor.API_VERSION_ATTRIBUTE));
     }
 
-    /**
-     * 验证<code>interceptor.preHandle(request, new MockHttpServletResponse(), new Object())</code>为真，<code>request.getAttribute(ApiVersionWebInterceptor.API_VERSION_ATTRIBUTE)</code> 等于 <code>ApiVersion.parse("2.0.0")</code>。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void preHandleResolvesPathVersionWhenHeaderAbsent() throws Exception {
         ApiVersionWebInterceptor interceptor = new ApiVersionWebInterceptor(fallback);
@@ -114,11 +89,6 @@ class ApiVersionWebInterceptorTest {
         assertEquals(ApiVersion.parse("2.0.0"), request.getAttribute(ApiVersionWebInterceptor.API_VERSION_ATTRIBUTE));
     }
 
-    /**
-     * 验证<code>interceptor.preHandle(request, new MockHttpServletResponse(), new Object())</code>为真，<code>request.getAttribute(ApiVersionWebInterceptor.API_VERSION_ATTRIBUTE)</code> 等于 <code>ApiVersion.parse("1.0.0")</code>。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void preHandleFallsBackToDefaultVersionWhenBothMissing() throws Exception {
         ApiVersionWebInterceptor interceptor = new ApiVersionWebInterceptor(fallback);
@@ -128,11 +98,6 @@ class ApiVersionWebInterceptorTest {
         assertEquals(ApiVersion.parse("1.0.0"), request.getAttribute(ApiVersionWebInterceptor.API_VERSION_ATTRIBUTE));
     }
 
-    /**
-     * 验证<code>interceptor.isEnabled()</code>为假，<code>interceptor.preHandle(request, new MockHttpServletResponse(), new Object())</code>为真。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void preHandleDisabledLeavesAttributeAbsent() throws Exception {
         ApiVersionWebInterceptor interceptor = new ApiVersionWebInterceptor(fallback, false);
@@ -144,9 +109,6 @@ class ApiVersionWebInterceptorTest {
         assertNull(request.getAttribute(ApiVersionWebInterceptor.API_VERSION_ATTRIBUTE));
     }
 
-    /**
-     * 验证<code>interceptor.preHandle(request, new MockHttpServletResponse(), new Object())</code> 抛出 <code>ApiVersionRejectedException.class</code>，<code>exception.getStatus()</code> 等于 <code>400</code>，<code>request.getAttribute(ApiVersionWebInterceptor.API_VERSION_ATTRIBUTE)</code>为空。
-     */
     @Test
     void preHandleStrictModeRejectsIllegalVersion() {
         ApiVersionWebInterceptor interceptor = new ApiVersionWebInterceptor(strict);
@@ -160,9 +122,6 @@ class ApiVersionWebInterceptorTest {
         assertNull(request.getAttribute(ApiVersionWebInterceptor.API_VERSION_ATTRIBUTE));
     }
 
-    /**
-     * 验证 MVC 版本拦截器以最高优先级解析请求版本。
-     */
     @Test
     void interceptorOrderPrecedesContextInterceptor() {
         assertEquals(Ordered.HIGHEST_PRECEDENCE, new ApiVersionWebInterceptor(fallback).getOrder());
@@ -170,23 +129,11 @@ class ApiVersionWebInterceptorTest {
 
     // ------------------------------ MockMvc 集成测试 ------------------------------
 
-    /**
-     * 调用 <code>WebAccessPolicy.disabled()</code> 执行当前夹具操作。
-     *
-     * @return 提供给后续契约断言的 <code>Ddd4jWebMvcInterceptor</code> 结果
-     */
     private Ddd4jWebMvcInterceptor contextInterceptor() {
         return new Ddd4jWebMvcInterceptor(new WebRequestContextFactory(),
                 new WebRequestLifecycle(new BearerSubjectAuthenticator(), WebAccessPolicy.disabled()), null);
     }
 
-    /**
-     * 调用 <code>MockMvcBuilders.standaloneSetup()</code>、<code>contextInterceptor()</code> 执行当前夹具操作。
-     *
-     * @param resolver 传给 <code>MockMvcBuilders.standaloneSetup()</code> 的 <code>ApiVersionResolver</code> 输入
-     * @param enabled  是否开启当前测试使用的功能
-     * @return 提供给后续契约断言的 <code>MockMvc</code> 结果
-     */
     private MockMvc wiredMockMvc(ApiVersionResolver resolver, boolean enabled) {
         return MockMvcBuilders.standaloneSetup(new VersionProbeController())
                 .addInterceptors(new ApiVersionWebInterceptor(resolver, enabled), contextInterceptor())
@@ -194,11 +141,6 @@ class ApiVersionWebInterceptorTest {
                 .build();
     }
 
-    /**
-     * 验证<code>response.getStatus()</code> 等于 <code>200</code>，<code>response.getContentAsString()</code> 等于 <code>"2.1.0"</code>。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void handlerReadsApiVersionFromContext_whenHeaderPresent() throws Exception {
         MockMvc mockMvc = wiredMockMvc(fallback, true);
@@ -211,11 +153,6 @@ class ApiVersionWebInterceptorTest {
         assertEquals("2.1.0", response.getContentAsString());
     }
 
-    /**
-     * 验证<code>response.getStatus()</code> 等于 <code>200</code>，<code>response.getContentAsString()</code> 等于 <code>"2.0.0"</code>。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void handlerReadsApiVersionFromContext_whenPathVersionPresent() throws Exception {
         MockMvc mockMvc = wiredMockMvc(fallback, true);
@@ -228,11 +165,6 @@ class ApiVersionWebInterceptorTest {
         assertEquals("2.0.0", response.getContentAsString());
     }
 
-    /**
-     * 验证<code>response.getStatus()</code> 等于 <code>200</code>，<code>response.getContentAsString()</code> 等于 <code>"absent"</code>。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void handlerReadsNullApiVersion_whenWiringDisabled() throws Exception {
         MockMvc mockMvc = wiredMockMvc(fallback, false);
@@ -245,11 +177,6 @@ class ApiVersionWebInterceptorTest {
         assertEquals("absent", response.getContentAsString());
     }
 
-    /**
-     * 验证<code>response.getStatus()</code> 等于 <code>200</code>，<code>response.getContentAsString()</code> 等于 <code>"absent"</code>。
-     *
-     * @throws Exception 装配运行测试所需的组件时失败
-     */
     @Test
     void handlerReadsNullApiVersion_whenVersionInterceptorNotRegistered() throws Exception {
         //规格 Scenario：未接线（版本拦截器不注册）零影响，既有请求处理行为不变。
@@ -266,11 +193,6 @@ class ApiVersionWebInterceptorTest {
         assertEquals("absent", response.getContentAsString());
     }
 
-    /**
-     * 验证<code>response.getStatus()</code> 等于 <code>400</code>，<code>response.getContentAsString().contains("2.x")</code>为真。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void strictModeRejectsIllegalVersionWith400() throws Exception {
         MockMvc mockMvc = wiredMockMvc(strict, true);
@@ -290,12 +212,6 @@ class ApiVersionWebInterceptorTest {
     @RestController
     static class VersionProbeController {
 
-        /**
-         * 按 <code>(!(attribute instanceof WebRequestContext))</code> 等实际条件选择当前用例返回的结果。
-         *
-         * @param request 待交给被测服务处理的请求
-         * @return 根据测试条件返回的可能值，包括 <code>"no-context"</code>、<code>Objects.isNull(context.getApiVersion()) ? "absent" : context.getApiVersion().toString()</code>
-         */
         @GetMapping({"/version", "/v2/version"})
         public String version(HttpServletRequest request) {
             Object attribute = request.getAttribute(Ddd4jWebMvcInterceptor.CONTEXT_ATTRIBUTE);

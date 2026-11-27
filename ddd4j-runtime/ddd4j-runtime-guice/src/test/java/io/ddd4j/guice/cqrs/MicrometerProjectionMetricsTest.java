@@ -35,43 +35,25 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @DisplayName("MicrometerProjectionMetrics")
 class MicrometerProjectionMetricsTest {
 
-    /**
-     * 当前用例注册被测组件和观察指标的容器。
-     */
     private SimpleMeterRegistry registry;
-    /**
-     * 当前用例观察或驱动的投影指标实现。
-     */
     private MicrometerProjectionMetrics metrics;
 
-    /**
-     * 根据本次调用更新 <code>registry = new SimpleMeterRegistry()</code>、<code>metrics = new MicrometerProjectionMetrics(registry)</code>，用于后续测试步骤。
-     */
     @BeforeEach
     void setUp() {
         registry = new SimpleMeterRegistry();
         metrics = new MicrometerProjectionMetrics(registry);
     }
 
-    /**
-     * 验证被测调用 抛出 <code>NullPointerException.class</code>。
-     */
     @Test
     void constructor_nullRegistry_shouldThrowNPE() {
         assertThatThrownBy(() -> new MicrometerProjectionMetrics(null))
                 .isInstanceOf(NullPointerException.class);
     }
 
-    /**
-     * 覆盖 <code>onRunCompleted</code> 场景及其预期行为。
-     */
     @Nested
     @DisplayName("onRunCompleted")
     class OnRunCompletedTests {
 
-        /**
-         * 应记录事件计数器和运行耗时。
-         */
         @Test
         @DisplayName("应记录事件计数器和运行耗时")
         void shouldRecordEventCounterAndDuration() {
@@ -91,9 +73,6 @@ class MicrometerProjectionMetricsTest {
             assertThat(durationTimer.totalTime(TimeUnit.NANOSECONDS)).isEqualTo(5_000_000.0);
         }
 
-        /**
-         * 多次调用应累加。
-         */
         @Test
         @DisplayName("多次调用应累加")
         void multipleCalls_shouldAccumulate() {
@@ -111,9 +90,6 @@ class MicrometerProjectionMetricsTest {
             assertThat(durationTimer.count()).isEqualTo(2);
         }
 
-        /**
-         * 不同 streamId 应独立计数。
-         */
         @Test
         @DisplayName("不同 streamId 应独立计数")
         void differentStreamIds_shouldBeIndependent() {
@@ -130,16 +106,10 @@ class MicrometerProjectionMetricsTest {
         }
     }
 
-    /**
-     * 覆盖 <code>onRunFailed</code> 场景及其预期行为。
-     */
     @Nested
     @DisplayName("onRunFailed")
     class OnRunFailedTests {
 
-        /**
-         * 应记录错误计数器。
-         */
         @Test
         @DisplayName("应记录错误计数器")
         void shouldRecordErrorCounter() {
@@ -152,9 +122,6 @@ class MicrometerProjectionMetricsTest {
             assertThat(errorCounter.count()).isEqualTo(1.0);
         }
 
-        /**
-         * 多次失败应累加。
-         */
         @Test
         @DisplayName("多次失败应累加")
         void multipleFailures_shouldAccumulate() {
@@ -168,16 +135,10 @@ class MicrometerProjectionMetricsTest {
         }
     }
 
-    /**
-     * 覆盖 <code>onRunStarted</code> 场景及其预期行为。
-     */
     @Nested
     @DisplayName("onRunStarted")
     class OnRunStartedTests {
 
-        /**
-         * onRunStarted 不产生指标（默认 no-op）。
-         */
         @Test
         @DisplayName("onRunStarted 不产生指标（默认 no-op）")
         void shouldNotRecordAnything() {

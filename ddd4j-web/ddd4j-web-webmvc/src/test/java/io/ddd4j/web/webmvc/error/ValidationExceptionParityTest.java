@@ -23,14 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class ValidationExceptionParityTest {
 
-    /**
-     * 当前用例实际调用或配置行为的处理器。
-     */
     private GlobalExceptionHandler handler;
 
-    /**
-     * 测试执行前执行 <code>properties.setEnabled()</code> 完成资源准备。
-     */
     @BeforeEach
     void setUp() {
         ServerI18nProperties properties = new ServerI18nProperties();
@@ -38,9 +32,6 @@ class ValidationExceptionParityTest {
         handler = new GlobalExceptionHandler(new NestedMessageSource(), properties);
     }
 
-    /**
-     * 验证<code>validation.getCode()</code> 等于 <code>ApiCode.BAD_REQUEST.getCode()</code>，<code>validation.getMsg().contains("参数校验异常")</code>为真，<code>violation.getMsg()</code> 等于 <code>"invalid constraint"</code>。
-     */
     @Test
     void validationErrorsReturnBadRequest() {
         R<String> validation = handler.validationException(new ValidationException("invalid"));
@@ -53,9 +44,6 @@ class ValidationExceptionParityTest {
         assertEquals("invalid constraint", violation.getMsg());
     }
 
-    /**
-     * 验证<code>declaration.getCode()</code> 等于 <code>ApiCode.SERVER_ERROR.getCode()</code>，<code>definition.getCode()</code> 等于 <code>ApiCode.SERVER_ERROR.getCode()</code>，<code>type.getMsg().contains("约束验证器")</code>为真。
-     */
     @Test
     void invalidConstraintDefinitionsReturnServerError() {
         R<String> declaration = handler.constraintDeclarationException(

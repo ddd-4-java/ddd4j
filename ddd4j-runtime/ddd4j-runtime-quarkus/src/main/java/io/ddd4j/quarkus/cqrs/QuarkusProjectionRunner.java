@@ -33,9 +33,6 @@ public class QuarkusProjectionRunner extends ProjectionRunner<Object> {
 
     /**
      * 同一事务覆盖业务视图与位置更新；异常交给 JTA 回滚。
-     *
-     * @param view 本次执行的投影视图
-     * @return 本次投影执行的处理结果
      */
     @Override
     @Transactional

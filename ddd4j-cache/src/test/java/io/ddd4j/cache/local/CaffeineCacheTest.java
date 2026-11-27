@@ -29,12 +29,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class CaffeineCacheTest {
 
-    /**
-     * 创建最多存储 100 个条目且在写入后过期的 Caffeine 缓存。
-     *
-     * @param writeSeconds 写入后的存活时间，单位为秒
-     * @return 当前用例使用的 Caffeine 本地缓存
-     */
     private CaffeineCache<String, String> buildWithTtl(long writeSeconds) {
         CacheConfig config = CacheConfig.builder("test")
                 .maximumSize(100)
@@ -43,9 +37,6 @@ class CaffeineCacheTest {
         return CaffeineCache.create(config);
     }
 
-    /**
-     * 验证<code>cache.getIfPresent("k1")</code> 等于 <code>"v1"</code>。
-     */
     @Test
     void putAndGetIfPresent_shouldStoreAndRetrieve() {
         CaffeineCache<String, String> cache = buildWithTtl(300);
@@ -55,9 +46,6 @@ class CaffeineCacheTest {
         assertThat(cache.getIfPresent("k1")).isEqualTo("v1");
     }
 
-    /**
-     * 验证<code>cache.getIfPresent("missing")</code>为空。
-     */
     @Test
     void getIfPresent_shouldReturnNullForMissingKey() {
         CaffeineCache<String, String> cache = buildWithTtl(300);
@@ -65,9 +53,6 @@ class CaffeineCacheTest {
         assertThat(cache.getIfPresent("missing")).isNull();
     }
 
-    /**
-     * 验证<code>value</code> 等于 <code>"loaded-k1"</code>，<code>cache.getIfPresent("k1")</code> 等于 <code>"loaded-k1"</code>。
-     */
     @Test
     void getWithMappingFunction_shouldLoadOnMiss() {
         CaffeineCache<String, String> cache = buildWithTtl(300);
@@ -78,9 +63,6 @@ class CaffeineCacheTest {
         assertThat(cache.getIfPresent("k1")).isEqualTo("loaded-k1");
     }
 
-    /**
-     * 验证<code>second</code> 等于 <code>"v1"</code>，<code>counter.get()</code> 等于 <code>1</code>。
-     */
     @Test
     void getWithMappingFunction_shouldNotReloadWhenPresent() {
         CaffeineCache<String, String> cache = buildWithTtl(300);
@@ -93,9 +75,6 @@ class CaffeineCacheTest {
         assertThat(counter.get()).isEqualTo(1);
     }
 
-    /**
-     * 验证<code>cache.getIfPresent("k1")</code>为空。
-     */
     @Test
     void invalidate_shouldRemoveKey() {
         CaffeineCache<String, String> cache = buildWithTtl(300);
@@ -106,9 +85,6 @@ class CaffeineCacheTest {
         assertThat(cache.getIfPresent("k1")).isNull();
     }
 
-    /**
-     * 验证<code>cache.estimatedSize()</code>为零。
-     */
     @Test
     void invalidateAll_shouldClearEverything() {
         CaffeineCache<String, String> cache = buildWithTtl(300);
@@ -120,9 +96,6 @@ class CaffeineCacheTest {
         assertThat(cache.estimatedSize()).isZero();
     }
 
-    /**
-     * 验证<code>cache.getIfPresent("k1")</code> 等于 <code>"v1"</code>，<code>cache.getIfPresent("k2")</code> 等于 <code>"v2"</code>。
-     */
     @Test
     void putAll_shouldStoreMultipleEntries() {
         CaffeineCache<String, String> cache = buildWithTtl(300);
@@ -136,9 +109,6 @@ class CaffeineCacheTest {
         assertThat(cache.getIfPresent("k2")).isEqualTo("v2");
     }
 
-    /**
-     * 验证<code>first</code>为真，<code>second</code>为假，<code>cache.getIfPresent("k1")</code> 等于 <code>"v1"</code>。
-     */
     @Test
     void putIfAbsent_shouldReturnTrueForNewKeyAndFalseForExisting() {
         CaffeineCache<String, String> cache = buildWithTtl(300);
@@ -151,9 +121,6 @@ class CaffeineCacheTest {
         assertThat(cache.getIfPresent("k1")).isEqualTo("v1");
     }
 
-    /**
-     * 验证<code>replaced</code>为真，<code>cache.getIfPresent("k1")</code> 等于 <code>"v2"</code>。
-     */
     @Test
     void replace_shouldSwapWhenExpectedMatches() {
         CaffeineCache<String, String> cache = buildWithTtl(300);
@@ -165,9 +132,6 @@ class CaffeineCacheTest {
         assertThat(cache.getIfPresent("k1")).isEqualTo("v2");
     }
 
-    /**
-     * 验证<code>replaced</code>为假，<code>cache.getIfPresent("k1")</code> 等于 <code>"v1"</code>。
-     */
     @Test
     void replace_shouldFailWhenExpectedMismatches() {
         CaffeineCache<String, String> cache = buildWithTtl(300);
@@ -179,9 +143,6 @@ class CaffeineCacheTest {
         assertThat(cache.getIfPresent("k1")).isEqualTo("v1");
     }
 
-    /**
-     * 验证<code>removed</code>为假，<code>cache.getIfPresent("k1")</code> 等于 <code>"v1"</code>，<code>cache.getIfPresent("k1")</code>为空。
-     */
     @Test
     void removeIf_shouldDeleteOnlyWhenExpectedMatches() {
         CaffeineCache<String, String> cache = buildWithTtl(300);
@@ -196,9 +157,6 @@ class CaffeineCacheTest {
         assertThat(cache.getIfPresent("k1")).isNull();
     }
 
-    /**
-     * 验证<code>first</code> 等于 <code>5</code>，<code>second</code> 等于 <code>8</code>。
-     */
     @Test
     void increment_shouldAddToCounter() {
         CaffeineCache<String, Object> cache = CaffeineCache.create(
@@ -211,9 +169,6 @@ class CaffeineCacheTest {
         assertThat(second).isEqualTo(8);
     }
 
-    /**
-     * 验证<code>remaining</code> 等于 <code>7</code>。
-     */
     @Test
     void stockDecrement_shouldDeductStock() {
         CaffeineCache<String, Object> cache = CaffeineCache.create(
@@ -225,9 +180,6 @@ class CaffeineCacheTest {
         assertThat(remaining).isEqualTo(7);
     }
 
-    /**
-     * 验证<code>result</code> 小于 <code>0</code>。
-     */
     @Test
     void stockDecrement_shouldReturnNotEnoughWhenInsufficient() {
         CaffeineCache<String, Object> cache = CaffeineCache.create(
@@ -239,11 +191,6 @@ class CaffeineCacheTest {
         assertThat(result).isLessThan(0);
     }
 
-    /**
-     * 验证<code>cache.getIfPresent("k1")</code> 等于 <code>"v1"</code>，<code>cache.getIfPresent("k1")</code>为空。
-     *
-     * @throws InterruptedException 等待测试操作时被中断
-     */
     @Test
     void expireAfterWrite_shouldEvictKeyAfterTtl() throws InterruptedException {
         CaffeineCache<String, String> cache = buildWithTtl(1);
@@ -257,9 +204,6 @@ class CaffeineCacheTest {
         assertThat(cache.getIfPresent("k1")).isNull();
     }
 
-    /**
-     * 验证<code>cache.get("k1")</code> 等于 <code>"v1"</code>，<code>cache.get("missing")</code>为空。
-     */
     @Test
     void get_onNonLoadingCache_shouldBehaveLikeGetIfPresent() {
         CaffeineCache<String, String> cache = buildWithTtl(300);
@@ -269,9 +213,6 @@ class CaffeineCacheTest {
         assertThat(cache.get("missing")).isNull();
     }
 
-    /**
-     * 验证<code>cache.get("k1")</code> 等于 <code>"auto-k1"</code>。
-     */
     @Test
     void createLoading_shouldAutoLoadOnGet() {
         CacheConfig config = CacheConfig.builder("test").maximumSize(100).build();
@@ -280,9 +221,6 @@ class CaffeineCacheTest {
         assertThat(cache.get("k1")).isEqualTo("auto-k1");
     }
 
-    /**
-     * 验证<code>cache.unwrap()</code>非空。
-     */
     @Test
     void unwrap_shouldReturnUnderlyingCaffeineCache() {
         CaffeineCache<String, String> cache = buildWithTtl(300);

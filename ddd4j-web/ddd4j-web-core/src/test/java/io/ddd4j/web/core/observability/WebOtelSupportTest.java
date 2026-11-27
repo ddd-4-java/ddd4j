@@ -38,25 +38,11 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * 通过 <code>WebOtelSupport.isAvailable()</code>、<code>WebOtelSupport.startServerSpan()</code>、<code>span.getSpanContext()</code> 验证 <code>WebOtelSupport</code> 的运行行为。
- */
 class WebOtelSupportTest {
 
-    /**
-     * 用于捕获测试结束前已导出的跟踪数据。
-     */
     private InMemorySpanExporter exporter;
-    /**
-     * 为测试收集 OpenTelemetry 跟踪信息的提供器。
-     */
     private SdkTracerProvider tracerProvider;
 
-    /**
-     * 调用 <code>GlobalOpenTelemetry.resetForTest()</code>、<code>Ddd4jOtel.class.getDeclaredField()</code>、<code>field.setAccessible()</code> 执行当前夹具操作。
-     *
-     * @throws Exception 反射访问被测成员时失败
-     */
     private static void resetOpenTelemetry() throws Exception {
         GlobalOpenTelemetry.resetForTest();
         for (String fieldName : new String[]{"TRACER_CACHE", "METER_CACHE"}) {
@@ -69,11 +55,6 @@ class WebOtelSupportTest {
         available.setBoolean(null, false);
     }
 
-    /**
-     * 测试执行前执行 <code>resetOpenTelemetry()</code>、<code>InMemorySpanExporter.create()</code>、<code>SdkTracerProvider.builder()</code>、<code>SimpleSpanProcessor.create()</code> 完成资源准备。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @BeforeEach
     void setUp() throws Exception {
         resetOpenTelemetry();
@@ -87,11 +68,6 @@ class WebOtelSupportTest {
                 .buildAndRegisterGlobal();
     }
 
-    /**
-     * 测试结束后执行 <code>tracerProvider.close()</code>、<code>exporter.close()</code>、<code>resetOpenTelemetry()</code> 完成资源回收或状态恢复。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @AfterEach
     void tearDown() throws Exception {
         if (tracerProvider != null) {
@@ -103,11 +79,6 @@ class WebOtelSupportTest {
         resetOpenTelemetry();
     }
 
-    /**
-     * 验证<code>WebOtelSupport.isAvailable()</code>为真，<code>spanObject instanceof Span</code>为真。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void startAndActivateDelegateToRealOtelIntegration() throws Exception {
         assertTrue(WebOtelSupport.isAvailable());
@@ -124,9 +95,6 @@ class WebOtelSupportTest {
         WebOtelSupport.endServerSpan(span, 200);
     }
 
-    /**
-     * 验证<code>spans.size()</code> 等于 <code>1</code>，<code>data.getStatus().getStatusCode()</code> 等于 <code>StatusCode.ERROR</code>，<code>data.getEvents().isEmpty()</code>为假。
-     */
     @Test
     void errorAndStatusAreExportedThroughReflectionBridge() {
         Object span = WebOtelSupport.startServerSpan("POST", "/orders", new HashMap<>());
@@ -142,11 +110,6 @@ class WebOtelSupportTest {
         assertFalse(data.getEvents().isEmpty());
     }
 
-    /**
-     * 验证<code>headers.get("traceparent")</code>非空，<code>headers.get("traceparent").startsWith("00-")</code>为真。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void responseContextIsInjectedThroughReflectionBridge() throws Exception {
         Object span = WebOtelSupport.startServerSpan("GET", "/api", new HashMap<>());
@@ -161,9 +124,6 @@ class WebOtelSupportTest {
         assertTrue(headers.get("traceparent").startsWith("00-"));
     }
 
-    /**
-     * 验证<code>WebOtelSupport.startServerSpan("GET", "/api", null)</code>非空。
-     */
     @Test
     void nullInputsRemainSafe() {
         assertNotNull(WebOtelSupport.startServerSpan("GET", "/api", null));

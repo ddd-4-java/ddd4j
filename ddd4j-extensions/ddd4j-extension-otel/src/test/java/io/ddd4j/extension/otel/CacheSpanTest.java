@@ -31,25 +31,16 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class CacheSpanTest {
 
-    /**
-     * 测试执行前执行 <code>OpenTelemetrySdkSetter.set()</code>、<code>OpenTelemetry.noop()</code> 完成资源准备。
-     */
     @BeforeEach
     void setUp() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
     }
 
-    /**
-     * 测试结束后执行 <code>OpenTelemetrySdkSetter.set()</code>、<code>OpenTelemetry.noop()</code> 完成资源回收或状态恢复。
-     */
     @AfterEach
     void tearDown() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
     }
 
-    /**
-     * 验证<code>result</code> 等于 <code>"value-123"</code>，<code>executed</code>为真。
-     */
     @Test
     void instrument_readOperation_shouldExecuteSupplier() {
         AtomicBoolean executed = new AtomicBoolean(false);
@@ -64,9 +55,6 @@ class CacheSpanTest {
         assertThat(executed).isTrue();
     }
 
-    /**
-     * 验证<code>result</code>为空。
-     */
     @Test
     void instrument_cacheMiss_shouldStillExecuteSupplier() {
         String result = CacheSpan.instrument("userCache", "redis",
@@ -76,9 +64,6 @@ class CacheSpanTest {
         assertThat(result).isNull();
     }
 
-    /**
-     * 验证<code>executed</code>为真。
-     */
     @Test
     void instrument_writeOperation_shouldExecuteRunnable() {
         AtomicBoolean executed = new AtomicBoolean(false);
@@ -89,9 +74,6 @@ class CacheSpanTest {
         assertThat(executed).isTrue();
     }
 
-    /**
-     * 验证<code>executed</code>为真。
-     */
     @Test
     void instrument_evictOperation_shouldExecuteRunnable() {
         AtomicBoolean executed = new AtomicBoolean(false);
@@ -102,9 +84,6 @@ class CacheSpanTest {
         assertThat(executed).isTrue();
     }
 
-    /**
-     * 验证被测调用 抛出 <code>IllegalStateException.class</code>。
-     */
     @Test
     void instrument_throwingException_shouldPropagateException() {
         assertThatThrownBy(() -> CacheSpan.instrument("userCache", "redis", () -> {
@@ -114,9 +93,6 @@ class CacheSpanTest {
                 .hasMessage("cache failure");
     }
 
-    /**
-     * 验证被测调用 抛出 <code>RuntimeException.class</code>。
-     */
     @Test
     void instrument_writeOperation_throwingException_shouldPropagate() {
         assertThatThrownBy(() -> CacheSpan.instrument("userCache", "redis", "put", () -> {
@@ -126,9 +102,6 @@ class CacheSpanTest {
                 .hasMessage("write failed");
     }
 
-    /**
-     * 验证<code>result</code> 等于 <code>"value"</code>，<code>executed</code>为真。
-     */
     @Test
     void instrument_whenOtelNotAvailable_shouldExecuteWithoutSpan() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -145,9 +118,6 @@ class CacheSpanTest {
         assertThat(executed).isTrue();
     }
 
-    /**
-     * 验证<code>result</code> 等于 <code>"value"</code>。
-     */
     @Test
     void instrument_withOtelAvailable_shouldNotThrow() {
         // 提供一个 OpenTelemetry 实例（noop SDK + 真实 Tracer）

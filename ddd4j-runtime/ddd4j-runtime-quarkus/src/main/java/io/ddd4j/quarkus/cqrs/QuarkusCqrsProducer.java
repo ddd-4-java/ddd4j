@@ -31,11 +31,6 @@ import org.eclipse.microprofile.config.ConfigProvider;
  */
 @ApplicationScoped
 public class QuarkusCqrsProducer {
-    /**
-     * 在启动事件中验证当前容器的 CQRS 组件装配。
-     *
-     * @param event 当前框架生命周期或容器启动事件
-     */
     void validateBootstrap(@jakarta.enterprise.event.Observes @jakarta.annotation.Priority(800) io.quarkus.runtime.StartupEvent event) {
         String bootstrap = ConfigProvider.getConfig().getOptionalValue(
                 "ddd4j.quarkus.cqrs.projection.bootstrap-cron", String.class).orElse("off").stripLeading();

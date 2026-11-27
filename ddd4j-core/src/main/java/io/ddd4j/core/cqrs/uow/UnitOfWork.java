@@ -46,22 +46,10 @@ import java.util.function.Supplier;
 @Slf4j
 public final class UnitOfWork implements AutoCloseable {
 
-    /**
-     * 工作单元提交时按注册顺序执行的回调。
-     */
     private final List<Runnable> commitActions = new ArrayList<>();
-    /**
-     * 工作单元回滚时执行的回调。
-     */
     private final List<Runnable> rollbackActions = new ArrayList<>();
-    /**
-     * 当前工作单元所处的事务阶段。
-     */
     private State state = State.ACTIVE;
 
-    /**
-     * 限制调用方直接创建 <code>UnitOfWork</code> 实例。
-     */
     private UnitOfWork() {
     }
 
@@ -177,11 +165,6 @@ public final class UnitOfWork implements AutoCloseable {
         }
     }
 
-    /**
-     * 按列表顺序运行回调并记录失败，后续回调仍继续执行。
-     *
-     * @param actions 已登记的事务完成回调列表
-     */
     private void runActions(List<Runnable> actions) {
         for (Runnable action : actions) {
             try {
@@ -193,11 +176,6 @@ public final class UnitOfWork implements AutoCloseable {
         }
     }
 
-    /**
-     * 只允许尚未完成的工作单元登记或终结操作。
-     *
-     * @throws IllegalStateException 工作单元已经终止
-     */
     private void requireActive() {
         if (state != State.ACTIVE) {
             throw new IllegalStateException("UnitOfWork is already terminated: " + state);

@@ -8,16 +8,8 @@ import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * 通过 <code>Arrays.asList()</code>、<code>Instant.parse()</code>、<code>mapper.writeValueAsString()</code> 验证 <code>ProjectionRunInfoValueContract</code> 的运行行为。
- */
 class ProjectionRunInfoValueContractTest {
 
-    /**
-     * 验证<code>mapper.readTree(json).size()</code> 等于 <code>3</code>，<code>mapper.readValue(json, ProjectionRunInfo.class)</code> 等于 <code>value</code>。
-     *
-     * @throws Exception 处理测试数据的序列化时失败
-     */
     @Test
     void jsonRoundTripPreservesThreeComponents() throws Exception {
         ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();

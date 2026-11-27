@@ -37,48 +37,26 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
-/**
- * 验证 <code>SynchronousWebRequestSession</code> 在<code>open</code>等操作中的行为契约。
- */
 @ExtendWith(MockitoExtension.class)
 class SynchronousWebRequestSessionTest {
 
-    /**
-     * 用于隔离 <code>IdempotencyGuard</code> 调用并记录交互的测试替身。
-     */
     @Mock
     private IdempotencyGuard guard;
 
-    /**
-     * 创建 <code>new WebRequestContext</code> 供当前测试路径调用。
-     *
-     * @return 当前测试使用的结果，取自 <code>new WebRequestContext("r-1", "t-1", "tenant-a", "Bearer token", Locale.CHINA, "127.0.0.1", "POST", "/api/orders")</code>
-     */
     private static WebRequestContext request() {
         return new WebRequestContext("r-1", "t-1", "tenant-a", "Bearer token",
                 Locale.CHINA, "127.0.0.1", "POST", "/api/orders");
     }
 
-    /**
-     * 创建 <code>new WebRequestLifecycle</code> 供当前测试路径调用。
-     *
-     * @return 当前测试使用的结果，取自 <code>new WebRequestLifecycle(new BearerSubjectAuthenticator(), WebAccessPolicy.disabled())</code>
-     */
     private static WebRequestLifecycle lifecycle() {
         return new WebRequestLifecycle(new BearerSubjectAuthenticator(), WebAccessPolicy.disabled());
     }
 
-    /**
-     * 测试结束后执行 <code>ThreadContext.clear()</code> 完成资源回收或状态恢复。
-     */
     @AfterEach
     void clearContext() {
         ThreadContext.clear();
     }
 
-    /**
-     * 验证<code>session.requestContext()</code>非空。
-     */
     @Test
     void openAndCompleteSuccessfully() {
         when(guard.acquireLease(any(String.class), any(Duration.class)))
@@ -93,9 +71,6 @@ class SynchronousWebRequestSessionTest {
         session.close();
     }
 
-    /**
-     * 在测试框架中执行 <code>guard.acquireLease()</code>、<code>any()</code>、<code>Duration.ofMinutes()</code>，验证该场景。
-     */
     @Test
     void openAndCompleteAsFailure() {
         when(guard.acquireLease(any(String.class), any(Duration.class)))
@@ -108,9 +83,6 @@ class SynchronousWebRequestSessionTest {
         session.complete(false);
     }
 
-    /**
-     * 验证<code>session.requestContext()</code>非空。
-     */
     @Test
     void openWithoutIdempotencyLifecycle() {
         SynchronousWebRequestSession session = SynchronousWebRequestSession.open(
@@ -120,9 +92,6 @@ class SynchronousWebRequestSessionTest {
         session.complete(true);
     }
 
-    /**
-     * 验证<code>SynchronousWebRequestSession.open( null, lifecycle(), null, null)</code> 抛出 <code>NullPointerException.class</code>，<code>SynchronousWebRequestSession.open( request(), null, null, null)</code> 抛出 <code>NullPointerException.class</code>。
-     */
     @Test
     void openRejectsNullArguments() {
         assertThrows(NullPointerException.class, () -> SynchronousWebRequestSession.open(
@@ -131,9 +100,6 @@ class SynchronousWebRequestSessionTest {
                 request(), null, null, null));
     }
 
-    /**
-     * 验证<code>SynchronousWebRequestSession.open( unauthenticated, requiredLifecycle, null, null)</code> 抛出 <code>WebStatusException.class</code>。
-     */
     @Test
     void openPropagatesAuthenticationFailure() {
         WebRequestLifecycle requiredLifecycle = new WebRequestLifecycle(
@@ -145,9 +111,6 @@ class SynchronousWebRequestSessionTest {
                 unauthenticated, requiredLifecycle, null, null));
     }
 
-    /**
-     * 验证<code>ThreadContext.get(ContextConstants.TENANT_ID)</code> 等于 <code>"tenant-a"</code>，<code>session.complete(true)</code> 抛出 <code>IllegalStateException.class</code>，<code>ThreadContext.get(ContextConstants.TENANT_ID)</code> 等于 <code>"outer-tenant"</code>。
-     */
     @Test
     void completeFailureRestoresOuterThreadContext() {
         ThreadContext.set(ContextConstants.TENANT_ID, "outer-tenant");

@@ -20,11 +20,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class FlksecCryptoHttpContractTest {
 
-    /**
-     * 验证<code>restored</code> 等于 <code>"restored"</code>。
-     *
-     * @throws IOException 读取或写入测试数据时发生 I/O 错误
-     */
     @Test
     void decryptUsesRemotePlaintextRatherThanInputCiphertext() throws IOException {
         AtomicReference<String> body = new AtomicReference<>();
@@ -42,11 +37,6 @@ class FlksecCryptoHttpContractTest {
         }
     }
 
-    /**
-     * 在测试框架中执行 <code>HttpServer.create()</code>、<code>server.createContext()</code>、<code>reply()</code>，验证该场景。
-     *
-     * @throws IOException 读取或写入测试数据时发生 I/O 错误
-     */
     @Test
     void encryptAndHmacUseExpectedEndpointsAndRemoteResult() throws IOException {
         AtomicReference<String> encryptBody = new AtomicReference<>();
@@ -69,11 +59,6 @@ class FlksecCryptoHttpContractTest {
         }
     }
 
-    /**
-     * 验证被测调用 抛出 <code>BizRuntimeException.class</code>，<code>error.getMessage()</code> 等于 <code>"invalid-key"</code>。
-     *
-     * @throws IOException 读取或写入测试数据时发生 I/O 错误
-     */
     @Test
     void remoteBusinessErrorIsPropagated() throws IOException {
         HttpServer server = server("/api/crypto/sysEncrypt",
@@ -89,11 +74,6 @@ class FlksecCryptoHttpContractTest {
         }
     }
 
-    /**
-     * 在测试框架中执行 <code>HttpServer.create()</code>、<code>server.createContext()</code>、<code>reply()</code>，验证该场景。
-     *
-     * @throws IOException 读取或写入测试数据时发生 I/O 错误
-     */
     @Test
     void encodedInputIsSentForEncryptAndHmac() throws IOException {
         AtomicReference<String> encryptBody = new AtomicReference<>();
@@ -119,11 +99,6 @@ class FlksecCryptoHttpContractTest {
         }
     }
 
-    /**
-     * 验证被测调用 抛出 <code>BizRuntimeException.class</code>。
-     *
-     * @throws IOException 读取或写入测试数据时发生 I/O 错误
-     */
     @Test
     void nonSuccessHttpStatusIsReportedForEveryEndpoint() throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
@@ -149,26 +124,11 @@ class FlksecCryptoHttpContractTest {
         }
     }
 
-    /**
-     * 创建 <code>new FlksecCryptoStrategy</code> 供当前测试路径调用。
-     *
-     * @param server 传给 <code>String.valueOf()</code> 的 <code>HttpServer</code> 输入
-     * @return 当前测试使用的结果，取自 <code>new FlksecCryptoStrategy(new ObjectMapper(), "127.0.0.1", String.valueOf(server.getAddress().getPort()), "http")</code>
-     */
     private FlksecCryptoStrategy strategy(HttpServer server) {
         return new FlksecCryptoStrategy(new ObjectMapper(), "127.0.0.1",
                 String.valueOf(server.getAddress().getPort()), "http");
     }
 
-    /**
-     * 读取 <code>server</code> 供当前测试使用。
-     *
-     * @param path     测试请求的资源路径或待访问文件路径
-     * @param response 当前请求已收到的响应
-     * @param body     当前请求或响应中要读取的正文
-     * @return 当前测试使用的结果，取自 <code>server</code>
-     * @throws IOException 读取或写入测试数据时发生 I/O 错误
-     */
     private HttpServer server(String path, String response, AtomicReference<String> body) throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
         server.createContext(path, exchange -> reply(exchange, response, body));
@@ -176,27 +136,10 @@ class FlksecCryptoHttpContractTest {
         return server;
     }
 
-    /**
-     * 调用 <code>reply()</code> 执行当前夹具操作。
-     *
-     * @param exchange 当前 HTTP 请求及响应交换对象
-     * @param response 当前请求已收到的响应
-     * @param body     当前请求或响应中要读取的正文
-     * @throws IOException 读取或写入测试数据时发生 I/O 错误
-     */
     private void reply(HttpExchange exchange, String response, AtomicReference<String> body) throws IOException {
         reply(exchange, response, body, 200);
     }
 
-    /**
-     * 调用 <code>exchange.getRequestBody()</code>、<code>body.set()</code>、<code>Math.max()</code> 执行当前夹具操作。
-     *
-     * @param exchange 当前 HTTP 请求及响应交换对象
-     * @param response 当前请求已收到的响应
-     * @param body     当前请求或响应中要读取的正文
-     * @param status   当前 HTTP 或业务流程的状态
-     * @throws IOException 读取或写入测试数据时发生 I/O 错误
-     */
     private void reply(HttpExchange exchange, String response, AtomicReference<String> body, int status) throws IOException {
         byte[] request = new byte[4096];
         int length = exchange.getRequestBody().read(request);

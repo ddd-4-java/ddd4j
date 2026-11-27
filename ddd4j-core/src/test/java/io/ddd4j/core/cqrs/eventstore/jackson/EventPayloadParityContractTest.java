@@ -28,12 +28,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class EventPayloadParityContractTest {
 
-    /**
-     * 通过 <code>(EventPayloadSerializer)constructor.newInstance(mapper)</code> 取得当前测试需要的结果。
-     *
-     * @return 当前测试使用的结果，取自 <code>(EventPayloadSerializer)constructor.newInstance(mapper)</code>
-     * @throws Exception 反射访问被测成员时失败
-     */
     private static EventPayloadSerializer serializerForCurrentJacksonLine() throws Exception {
         Object mapper = JsonKit.defaultObjectMapper();
         try {
@@ -45,11 +39,6 @@ class EventPayloadParityContractTest {
         return (EventPayloadSerializer) constructor.newInstance(mapper);
     }
 
-    /**
-     * 验证<code>json.contains("\"&#64;class\"")</code>为假，<code>restored instanceof SampleEvent</code>为真。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void explicitEventTypeIgnoresUnknownAndUntrustedClassMarkers() throws Exception {
         EventPayloadSerializer serializer = serializerForCurrentJacksonLine();
@@ -66,11 +55,6 @@ class EventPayloadParityContractTest {
         assertEquals(original.getEventId(), restored.getEventId());
     }
 
-    /**
-     * 验证<code>serializer.deserialize("{\"fact\":", SampleEvent.class)</code> 抛出 <code>IllegalStateException.class</code>，<code>failure.getMessage()</code> 等于 <code>"Failed to deserialize event"</code>。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void malformedPayloadKeepsTheOriginalCause() throws Exception {
         EventPayloadSerializer serializer = serializerForCurrentJacksonLine();
@@ -84,42 +68,21 @@ class EventPayloadParityContractTest {
      * 可通过 Jackson 无参构造器恢复的领域事件。
      */
     public static final class SampleEvent extends DomainEvent<StringEntityId> {
-        /**
-         * 当前测试持久化或读取的业务事实样本。
-         */
         private String fact;
 
-        /**
-         * 使用 <code>super()</code> 初始化 <code>SampleEvent</code> 测试夹具。
-         */
         public SampleEvent() {
             super();
         }
 
-        /**
-         * 设置 <code>fact</code>，用于构造 <code>SampleEvent</code> 测试实例。
-         *
-         * @param fact 用于初始化 <code>SampleEvent</code> 的 <code>String</code> 值
-         */
         private SampleEvent(String fact) {
             super("order-1");
             this.fact = fact;
         }
 
-        /**
-         * 读取<code>fact</code> 字段。
-         *
-         * @return <code>fact</code> 字段
-         */
         public String getFact() {
             return fact;
         }
 
-        /**
-         * 设置<code>fact</code> 字段。
-         *
-         * @param fact 要写入的值
-         */
         public void setFact(String fact) {
             this.fact = fact;
         }

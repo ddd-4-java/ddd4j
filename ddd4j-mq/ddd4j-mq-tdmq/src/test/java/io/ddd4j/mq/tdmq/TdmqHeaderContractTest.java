@@ -19,17 +19,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * 验证 <code>TdmqHeaderContract</code> 在 <code>inMemoryRoute</code>、<code>legacyPublisher</code>、<code>injectedMetadataPublisher</code> 等场景中的行为。
- */
 class TdmqHeaderContractTest {
 
-    /**
-     * 构造 <code>MQEventSerialization</code> 作为当前测试的输入或结果。
-     *
-     * @param payload 传给被测操作的消息负载
-     * @return 提供给后续契约断言的 <code>MQEventSerialization</code> 结果
-     */
     private static MQEventSerialization serialization(MQEvent payload) {
         return new MQEventSerialization() {
             @Override
@@ -46,11 +37,6 @@ class TdmqHeaderContractTest {
         };
     }
 
-    /**
-     * 验证<code>probe.event.getMsgId()</code> 等于 <code>"stable-id"</code>，<code>probe.event.getCausationId()</code> 等于 <code>"native-causation"</code>。
-     *
-     * @throws Exception 准备或释放被测运行资源时失败
-     */
     @Test
     void inMemoryRouteShouldRestoreNativeHeadersOverPayloadMirror() throws Exception {
         MQEvent payload = new MQEvent();
@@ -85,9 +71,6 @@ class TdmqHeaderContractTest {
         }
     }
 
-    /**
-     * 验证<code>client.initProducer(new MQProperties()).accept(source)</code> 抛出 <code>IllegalStateException.class</code>，<code>sends.get()</code> 等于 <code>0</code>，<code>sends.get()</code> 等于 <code>1</code>。
-     */
     @Test
     void legacyPublisherShouldRejectCausalityItCannotCarry() {
         AtomicInteger sends = new AtomicInteger();
@@ -121,9 +104,6 @@ class TdmqHeaderContractTest {
         }
     }
 
-    /**
-     * 验证<code>publishedHeaders.get().get("ddd4j-message-id")</code> 等于 <code>"stable-id"</code>，<code>publishedHeaders.get().get("X-Correlation-Id")</code> 等于 <code>"correlation-id"</code>，<code>publishedHeaders.get().get("X-Causation-Id")</code> 等于 <code>"causation-id"</code>。
-     */
     @Test
     void injectedMetadataPublisherShouldReceiveFrozenHeaders() {
         AtomicReference<Map<String, String>> publishedHeaders = new AtomicReference<>();
@@ -162,20 +142,9 @@ class TdmqHeaderContractTest {
         }
     }
 
-    /**
-     * 将 <code>event</code> 等状态一起传入当前测试，供调用或结果断言使用。
-     */
     public static class Probe {
-        /**
-         * 用作输入或用于比较实际发布行为的测试事件。
-         */
         private MQEvent event;
 
-        /**
-         * 设置<code>event</code> 字段。
-         *
-         * @param event 要写入的值
-         */
         public void onEvent(MQEvent event) {
             this.event = event;
         }

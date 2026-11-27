@@ -61,9 +61,6 @@ import java.util.List;
 @ApplicationScoped
 public class AuthorizationResource {
 
-    /**
-     * 执行基于角色的授权与分配操作的应用服务。
-     */
     @Inject
     RbacService rbacService;
 

@@ -35,42 +35,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.mockito.Mockito.*;
 
-/**
- * 验证 <code>Ddd4jMicronautWebFilterUnit</code> 在 <code>secondConstructor</code> 等场景中的行为。
- */
 class Ddd4jMicronautWebFilterUnitTest {
 
-    /**
-     * 构造本组测试输入时复用的固定标识或名称。
-     */
     private static final String REQUEST_ID = "reqId-001";
 
-    /**
-     * 创建 <code>new WebRequestContextFactory</code> 供当前测试路径调用。
-     *
-     * @return 当前测试使用的结果，取自 <code>new WebRequestContextFactory(()-&gt;REQUEST_ID, ClientIpResolver.remoteAddressOnly())</code>
-     */
     private WebRequestContextFactory newContextFactory() {
         return new WebRequestContextFactory(
                 () -> REQUEST_ID,
                 ClientIpResolver.remoteAddressOnly());
     }
 
-    /**
-     * 构造 <code>WebRequestLifecycle</code>、<code>BearerSubjectAuthenticator</code> 作为当前测试的输入或结果。
-     *
-     * @return 提供给后续契约断言的 <code>WebRequestLifecycle</code> 结果
-     */
     private WebRequestLifecycle newLifecycle() {
         return new WebRequestLifecycle(
                 new BearerSubjectAuthenticator(),
                 new PathWebAccessPolicy(java.util.List.of("/test"), io.ddd4j.web.core.auth.AuthenticationMode.REQUIRED));
     }
 
-    /**
-     * 验证<code>new Ddd4jMicronautWebFilter(
-     * null, newLifecycle(), null)</code> 抛出 <code>NullPointerException</code>。
-     */
     @Test
     void secondConstructorRejectsNullContextFactory() {
         assertThatNullPointerException()
@@ -78,10 +58,6 @@ class Ddd4jMicronautWebFilterUnitTest {
                         null, newLifecycle(), null));
     }
 
-    /**
-     * 验证<code>new Ddd4jMicronautWebFilter(
-     * newContextFactory(), null, null)</code> 抛出 <code>NullPointerException</code>。
-     */
     @Test
     void secondConstructorRejectsNullRequestLifecycle() {
         assertThatNullPointerException()
@@ -89,9 +65,6 @@ class Ddd4jMicronautWebFilterUnitTest {
                         newContextFactory(), null, null));
     }
 
-    /**
-     * 验证<code>filter</code>非空。
-     */
     @Test
     void secondConstructorAcceptsNullIdempotency() {
         Ddd4jMicronautWebFilter filter = new Ddd4jMicronautWebFilter(
@@ -99,9 +72,6 @@ class Ddd4jMicronautWebFilterUnitTest {
         assertThat(filter).isNotNull();
     }
 
-    /**
-     * 验证<code>Flux.from(result).blockFirst()</code> 指向同一实例 <code>response</code>。
-     */
     @Test
     void publicPathProceedsThroughMicronautFilterChain() {
         Ddd4jMicronautWebFilter filter = new Ddd4jMicronautWebFilter(

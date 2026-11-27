@@ -10,9 +10,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class GoodsResourceScopeContractTest {
 
-    /**
-     * 验证<code>GoodsResource.class.getAnnotation(ApplicationScoped.class)</code>非空。
-     */
     @Test
     void resourceIsApplicationScoped() {
         assertThat(GoodsResource.class.getAnnotation(ApplicationScoped.class)).isNotNull();

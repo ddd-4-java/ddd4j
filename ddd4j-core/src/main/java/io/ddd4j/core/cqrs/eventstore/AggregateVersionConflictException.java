@@ -32,9 +32,6 @@ import java.util.List;
  */
 public class AggregateVersionConflictException extends RuntimeException {
 
-    /**
-     * Java 序列化版本标识。
-     */
     @Serial
     private static final long serialVersionUID = 1L;
 

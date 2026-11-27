@@ -37,17 +37,14 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 /**
- * 验证 Redis Stream 消息确认的并发与重试行为，以及 Jedis、Redisson 和 Lettuce 的命令映射。
+ * Redis Stream Acknowledgment 及 Jedis / Redisson / Lettuce 三种客户端 SPI 适配契约测试。
+ *
+ * <p>发布与消费已整合进 {@link RedisStreamClient}，相关单测见其模块；此处保留 SPI 层契约。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 class RedisStreamBrokerAdapterTest {
 
-    /**
-     * 验证请求重新入队的否定确认会等待正在执行的 XACK，且最终只发送一次 XACK。
-     *
-     * @throws Exception 等待并发操作时失败
-     */
     @Test
     void nackMustWaitForInFlightXackBeforeClaimingRequeue() throws Exception {
         RedisStreamOperations operations = mock(RedisStreamOperations.class);
@@ -83,9 +80,6 @@ class RedisStreamBrokerAdapterTest {
         }
     }
 
-    /**
-     * 验证手动确认通过 Jedis 向指定消费者组发送 XACK，并标记消息已确认。
-     */
     @Test
     void manualAckShouldMapToXack() {
         UnifiedJedis jedis = mock(UnifiedJedis.class);
@@ -104,9 +98,6 @@ class RedisStreamBrokerAdapterTest {
         assertTrue(ack.isAcknowledged());
     }
 
-    /**
-     * 验证 XACK 失败时保留未确认状态，同一确认对象可以重试并最终成功。
-     */
     @Test
     void failedXackMustRemainRetryableOnSameAcknowledgment() {
         UnifiedJedis jedis = mock(UnifiedJedis.class);
@@ -124,9 +115,6 @@ class RedisStreamBrokerAdapterTest {
         verify(jedis, times(2)).xack("orders", "workers", id);
     }
 
-    /**
-     * 验证请求重新入队时跳过 XACK，让消息留在待处理列表，同时结束本次本地确认。
-     */
     @Test
     void nackWithRequeueShouldLeaveEntryPendingAndMarkItHandled() {
         UnifiedJedis jedis = mock(UnifiedJedis.class);
@@ -140,9 +128,6 @@ class RedisStreamBrokerAdapterTest {
         assertTrue(acknowledgment.isAcknowledged());
     }
 
-    /**
-     * 验证 Redisson 适配层添加消息、创建消费者组及发送确认，并将消息标识转为字符串。
-     */
     @Test
     void redissonOperationsShouldMapStreamCommands() {
         RedissonClient client = mock(RedissonClient.class);
@@ -161,9 +146,6 @@ class RedisStreamBrokerAdapterTest {
         verify(stream).ack("sample", new StreamMessageId(1L, 0L));
     }
 
-    /**
-     * 验证 Lettuce 适配层将添加消息、创建消费者组及确认映射为对应的 Redis 命令。
-     */
     @Test
     void lettuceOperationsShouldMapStreamCommands() {
         RedisCommands<String, String> commands = mock(RedisCommands.class);

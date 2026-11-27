@@ -26,9 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class TenantAwareResourceTransferContractTest {
 
-    /**
-     * 验证<code>result.getTotal()</code> 等于 <code>3L</code>，<code>result.getCurrent()</code> 等于 <code>2L</code>，<code>result.getRecords()</code> 等于 <code>Arrays.asList("1", "2")</code>。
-     */
     @Test
     void transferPreservesMetadataAndMutableRecords() {
         Page<Integer> source = new Page<>();
@@ -46,16 +43,7 @@ class TenantAwareResourceTransferContractTest {
         assertEquals(Arrays.asList("1", "2"), result.getRecords());
     }
 
-    /**
-     * 实现 <code>TenantAwareResource</code>，供测试调用 <code>convert()</code> 并观察结果。
-     */
     private static final class ExposedResource extends TenantAwareResource {
-        /**
-         * 通过 <code>transfer()</code> 取得当前测试需要的结果。
-         *
-         * @param source 测试中待转换、读取或传播的数据来源
-         * @return 当前测试使用的结果，取自 <code>transfer(source, String::valueOf)</code>
-         */
         Page<String> convert(Page<Integer> source) {
             return transfer(source, String::valueOf);
         }

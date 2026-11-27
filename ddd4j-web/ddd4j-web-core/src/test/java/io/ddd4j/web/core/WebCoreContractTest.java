@@ -52,9 +52,6 @@ import static org.mockito.Mockito.when;
  */
 class WebCoreContractTest {
 
-    /**
-     * 测试结束后执行 <code>ThreadContext.clear()</code>、<code>BaseContext.clear()</code>、<code>CacheKit.unregister()</code> 完成资源回收或状态恢复。
-     */
     @AfterEach
     void clearContext() {
         ThreadContext.clear();
@@ -64,9 +61,6 @@ class WebCoreContractTest {
         CacheKit.unregister("web-session-test");
     }
 
-    /**
-     * 验证<code>resolver.resolve("Bearer token-1")</code> 包含 <code>"token-1"</code>，<code>resolver.resolve("bearer token-2")</code> 包含 <code>"token-2"</code>，<code>resolver.resolve("Bearer ")</code>为空。
-     */
     @Test
     void shouldResolveOnlyBearerAuthorization() {
         BearerTokenResolver resolver = new BearerTokenResolver();
@@ -77,9 +71,6 @@ class WebCoreContractTest {
         assertThat(resolver.resolve("Bearer ")).isEmpty();
     }
 
-    /**
-     * 验证<code>translator.translate(new IllegalArgumentException("bad")).status()</code> 等于 <code>400</code>，<code>translator.translate(new IdempotentException("duplicate")).status()</code> 等于 <code>409</code>，<code>translator.translate(new WebStatusException(401, "missing")).status()</code> 等于 <code>401</code>。
-     */
     @Test
     void shouldTranslateKnownExceptions() {
         DefaultWebExceptionTranslator translator = new DefaultWebExceptionTranslator();
@@ -90,9 +81,6 @@ class WebCoreContractTest {
         assertThat(translator.translate(new WebStatusException(401, "missing")).status()).isEqualTo(401);
     }
 
-    /**
-     * 验证<code>tenantId</code> 等于 <code>"tenant-a"</code>，<code>traceId</code> 等于 <code>"t-1"</code>，<code>clearedTraceId</code>为空。
-     */
     @Test
     void shouldRestoreThreadContextAfterRequest() {
         ThreadContext.put(ContextConstants.TENANT_ID, "outer");
@@ -112,9 +100,6 @@ class WebCoreContractTest {
         assertThat(clearedTraceId).isNull();
     }
 
-    /**
-     * 验证<code>guard.acquire("payment-1", Duration.ofMinutes(1))</code>为真，<code>guard.acquire("payment-1", Duration.ofMinutes(1))</code>为假。
-     */
     @Test
     void shouldGuardIdempotentExecution() {
         CacheIdempotencyGuard guard = newGuard("web-core-test");
@@ -127,9 +112,6 @@ class WebCoreContractTest {
         assertThat(guard.acquire("payment-1", Duration.ofMinutes(1))).isFalse();
     }
 
-    /**
-     * 验证<code>guard.acquire("payment-1", Duration.ofMinutes(1))</code> 抛出 <code>IllegalStateException.class</code>。
-     */
     @Test
     void shouldRejectUnregisteredIdempotencyCache() {
         CacheIdempotencyGuard guard = new CacheIdempotencyGuard("missing-idempotency-cache");
@@ -139,9 +121,6 @@ class WebCoreContractTest {
                 .hasMessageContaining("must be explicitly registered");
     }
 
-    /**
-     * 验证<code>guard.acquireLease("payment-lease", Duration.ofMinutes(1))</code>为空，<code>guard.acquireLease("payment-lease", Duration.ofMinutes(1))</code>存在值。
-     */
     @Test
     void shouldNotReleaseLeaseOwnedByLaterRequest() {
         CacheIdempotencyGuard guard = newGuard("web-core-test");
@@ -156,9 +135,6 @@ class WebCoreContractTest {
         assertThat(guard.acquireLease("payment-lease", Duration.ofMinutes(1))).isPresent();
     }
 
-    /**
-     * 验证<code>authentication.principal()</code> 指向同一实例 <code>principal</code>，<code>authentication.subject()</code> 指向同一实例 <code>subject</code>，<code>authentication.token()</code> 等于 <code>"valid-token"</code>。
-     */
     @Test
     void shouldAuthenticateBearerWithRegisteredSubject() {
         Subject subject = mock(Subject.class);
@@ -175,9 +151,6 @@ class WebCoreContractTest {
         assertThat(authentication.token()).isEqualTo("valid-token");
     }
 
-    /**
-     * 验证被测调用 抛出 <code>WebStatusException.class</code>。
-     */
     @Test
     void shouldRejectMissingAndInvalidBearer() {
         Subject subject = mock(Subject.class);
@@ -194,9 +167,6 @@ class WebCoreContractTest {
                 .isEqualTo(401);
     }
 
-    /**
-     * 验证<code>disabled</code>为空，<code>optional</code>为空，被测调用 抛出 <code>WebStatusException.class</code>。
-     */
     @Test
     void shouldApplyRequiredOptionalAndDisabledAuthenticationModes() {
         Subject subject = mock(Subject.class);
@@ -223,9 +193,6 @@ class WebCoreContractTest {
                 .isSameAs(principal);
     }
 
-    /**
-     * 验证<code>context.requestId()</code> 等于 <code>"generated-request"</code>，<code>context.traceId()</code> 等于 <code>"generated-request"</code>，<code>context.method()</code> 等于 <code>"POST"</code>。
-     */
     @Test
     void shouldCreateNormalizedRequestContextWithTrustedProxyPolicy() {
         WebRequestContextFactory factory = new WebRequestContextFactory(() -> "generated-request",
@@ -240,9 +207,6 @@ class WebCoreContractTest {
         assertThat(context.method()).isEqualTo("POST");
     }
 
-    /**
-     * 在测试框架中执行 <code>ClientIpResolver.remoteAddressOnly()</code>、<code>resolver.resolve()</code>，验证该场景。
-     */
     @Test
     void shouldIgnoreForwardedHeadersUnlessProxyIsTrusted() {
         ClientIpResolver resolver = ClientIpResolver.remoteAddressOnly();
@@ -251,9 +215,6 @@ class WebCoreContractTest {
                 .isEqualTo("127.0.0.1");
     }
 
-    /**
-     * 验证<code>lifecycle.open(context, "release-key")</code>存在值，<code>lifecycle.open(context, "complete-key")</code> 抛出 <code>WebStatusException.class</code>。
-     */
     @Test
     void shouldCompleteOrReleaseWebIdempotencyScope() {
         CacheIdempotencyGuard guard = newGuard("web-lifecycle-test");
@@ -272,9 +233,6 @@ class WebCoreContractTest {
                 .extracting("status").isEqualTo(409);
     }
 
-    /**
-     * 验证<code>session.requestContext()</code> 等于 <code>context</code>，<code>requestId</code>为空，<code>idempotencyLifecycle.open(context, "request-key")</code> 抛出 <code>WebStatusException.class</code>。
-     */
     @Test
     void shouldCompleteSynchronousRequestSessionAndRestoreContext() {
         Subject subject = mock(Subject.class);
@@ -300,23 +258,11 @@ class WebCoreContractTest {
                 .extracting("status").isEqualTo(409);
     }
 
-    /**
-     * 创建 <code>new WebRequestContext</code> 供当前测试路径调用。
-     *
-     * @param authorization 用于构造本次返回结果的 <code>String</code> 输入
-     * @return 当前测试使用的结果，取自 <code>new WebRequestContext("request-1", "trace-1", "tenant-a", authorization, Locale.CHINA, "127.0.0.1", "GET", "/orders")</code>
-     */
     private WebRequestContext requestContext(String authorization) {
         return new WebRequestContext("request-1", "trace-1", "tenant-a", authorization,
                 Locale.CHINA, "127.0.0.1", "GET", "/orders");
     }
 
-    /**
-     * 创建 <code>new SubjectProvider</code> 供当前测试路径调用。
-     *
-     * @param subject 用于构造本次返回结果的 <code>Subject</code> 输入
-     * @return 当前测试使用的结果，取自 <code>new SubjectProvider(){ &#64;Override public Subject getSubject() { return subject; } }</code>
-     */
     private SubjectProvider provider(Subject subject) {
         return new SubjectProvider() {
             /**
@@ -330,12 +276,6 @@ class WebCoreContractTest {
         };
     }
 
-    /**
-     * 创建 <code>new CacheIdempotencyGuard</code> 供当前测试路径调用。
-     *
-     * @param cacheName 传给 <code>CacheKit.build()</code> 的 <code>String</code> 输入
-     * @return 当前测试使用的结果，取自 <code>new CacheIdempotencyGuard(cacheName)</code>
-     */
     private CacheIdempotencyGuard newGuard(String cacheName) {
         CacheKit.build(cacheName, 300L);
         return new CacheIdempotencyGuard(cacheName);

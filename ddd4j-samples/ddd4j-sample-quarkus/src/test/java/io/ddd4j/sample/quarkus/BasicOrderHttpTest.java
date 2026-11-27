@@ -19,17 +19,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @QuarkusTest
 @QuarkusTestResource(value = CatalogDatabaseResource.class, restrictToAnnotatedClass = true)
 class BasicOrderHttpTest {
-    /**
-     * 本地测试服务的基础地址。
-     */
     @TestHTTPResource
     URI base;
 
-    /**
-     * 验证<code>response.statusCode()</code> 等于 <code>404</code>。
-     *
-     * @throws Exception 发起测试请求时失败
-     */
     @Test
     void sharedOrderIsDirectlyCallableWithoutAuthentication() throws Exception {
         var request = HttpRequest.newBuilder(base.resolve("/api/orders/missing"))
@@ -38,9 +30,6 @@ class BasicOrderHttpTest {
         assertEquals(404, response.statusCode(), response.body());
     }
 
-    /**
-     * 验证<code>Class.forName("org.quartz.Scheduler")</code> 抛出 <code>ClassNotFoundException.class</code>。
-     */
     @Test
     void quartzIsNotPartOfBasicApplication() {
         assertThrows(ClassNotFoundException.class, () -> Class.forName("org.quartz.Scheduler"));

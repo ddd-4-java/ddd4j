@@ -21,9 +21,6 @@ import io.micronaut.runtime.Micronaut;
  */
 public final class MicronautOrderApplication {
 
-    /**
-     * 限制调用方直接创建 <code>MicronautOrderApplication</code> 实例。
-     */
     private MicronautOrderApplication() {
     }
 

@@ -53,16 +53,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-/**
- * 通过 <code>resetOpenTelemetry()</code>、<code>InMemorySpanExporter.create()</code>、<code>SdkTracerProvider.builder()</code> 验证 <code>Ddd4jMicronautOtelScope</code> 的运行行为。
- */
 class Ddd4jMicronautOtelScopeTest {
 
-    /**
-     * 读取 <code>request</code> 供当前测试使用。
-     *
-     * @return 当前测试使用的结果，取自 <code>request</code>
-     */
     private static HttpRequest<?> request() {
         HttpRequest<?> request = mock(HttpRequest.class);
         io.micronaut.http.HttpHeaders headers = mock(io.micronaut.http.HttpHeaders.class);
@@ -74,11 +66,6 @@ class Ddd4jMicronautOtelScopeTest {
         return request;
     }
 
-    /**
-     * 调用 <code>GlobalOpenTelemetry.resetForTest()</code>、<code>Ddd4jOtel.class.getDeclaredField()</code>、<code>field.setAccessible()</code> 执行当前夹具操作。
-     *
-     * @throws Exception 反射访问被测成员时失败
-     */
     private static void resetOpenTelemetry() throws Exception {
         GlobalOpenTelemetry.resetForTest();
         for (String fieldName : new String[]{"TRACER_CACHE", "METER_CACHE"}) {
@@ -91,11 +78,6 @@ class Ddd4jMicronautOtelScopeTest {
         available.setBoolean(null, false);
     }
 
-    /**
-     * 验证<code>filter.filter(request(), continuation, propagatedContext)</code> 抛出 <code>IllegalStateException.class</code>，<code>exporter.getFinishedSpanItems().size()</code> 等于 <code>1</code>。
-     *
-     * @throws Exception 测试服务器请求、会话操作或响应解析失败
-     */
     @Test
     void synchronousDownstreamFailureEndsServerSpan() throws Exception {
         resetOpenTelemetry();
@@ -123,11 +105,6 @@ class Ddd4jMicronautOtelScopeTest {
         }
     }
 
-    /**
-     * 验证<code>filter.filter(request(), continuation, propagatedContext)</code> 抛出 <code>io.ddd4j.web.core.error.WebStatusException.class</code>，<code>exporter.getFinishedSpanItems().size()</code> 等于 <code>1</code>。
-     *
-     * @throws Exception 测试服务器请求、会话操作或响应解析失败
-     */
     @Test
     void authenticationFailureEndsServerSpan() throws Exception {
         resetOpenTelemetry();
@@ -155,11 +132,6 @@ class Ddd4jMicronautOtelScopeTest {
         }
     }
 
-    /**
-     * 验证<code>observed[0]</code>为真，<code>observed[2]</code>为假。
-     *
-     * @throws Exception 测试服务器请求、会话操作或响应解析失败
-     */
     @Test
     void filterMustCloseOtelScopeOnCallingThread() throws Exception {
         resetOpenTelemetry();

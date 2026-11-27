@@ -129,22 +129,10 @@ public final class Ddd4jOtel {
      */
     public static final AttributeKey<String> ATTR_DB_STATEMENT = AttributeKey.stringKey("db.statement");
 
-    /**
-     * 按观测作用域缓存 OpenTelemetry Tracer。
-     */
     private static final AtomicReference<Tracer> TRACER_CACHE = new AtomicReference<>();
-    /**
-     * 按观测作用域缓存 OpenTelemetry Meter。
-     */
     private static final AtomicReference<Meter> METER_CACHE = new AtomicReference<>();
-    /**
-     * 当前进程是否能使用 OpenTelemetry API。
-     */
     private static volatile boolean available = false;
 
-    /**
-     * 限制调用方直接创建 <code>Ddd4jOtel</code> 实例。
-     */
     private Ddd4jOtel() {
     }
 
@@ -242,14 +230,8 @@ public final class Ddd4jOtel {
      */
     static final class AttributesBuilderHelper {
 
-        /**
-         * 累积 OpenTelemetry 键值属性的原生构建器。
-         */
         private final AttributesBuilder delegate = Attributes.builder();
 
-        /**
-         * 读取 DDD4J 当前线程中的跟踪相关属性。
-         */
         void readFromThreadContext() {
             String tenantId = ThreadContext.get(ContextConstants.TENANT_ID);
             if (Objects.nonNull(tenantId)) {
@@ -273,20 +255,10 @@ public final class Ddd4jOtel {
             }
         }
 
-        /**
-         * 构造已收集的不可变 OpenTelemetry 属性集合。
-         *
-         * @return 可用于 Span 或指标的属性集合
-         */
         Attributes build() {
             return delegate.build();
         }
 
-        /**
-         * 把已收集的跟踪属性应用到指定 Span。
-         *
-         * @param span 接收当前跟踪属性的 Span
-         */
         void applyTo(Span span) {
             Attributes attrs = build();
             attrs.forEach((key, value) -> span.setAttribute((AttributeKey) key, value));

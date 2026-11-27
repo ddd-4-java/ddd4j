@@ -47,26 +47,11 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class MQCausalityBrokerHeaderMustTest {
 
-    /**
-     * 测试运行时用于接收待发布消息或领域事件的发布器。
-     */
     private final MqDomainEventPublisher publisher = new MqDomainEventPublisher();
-    /**
-     * 事件发布器实际收到的事件，供后续断言使用。
-     */
     private final List<MQEvent> publishedEvents = new ArrayList<>();
-    /**
-     * 测试期间的代理发布器注册表。
-     */
     private final Map<String, Consumer<MQEvent>> publisherMap = new ConcurrentHashMap<>();
-    /**
-     * 用于读写 JSON 数据的 Jackson 映射器。
-     */
     private final ObjectMapper objectMapper = JsonMapper.builder().build();
 
-    /**
-     * 测试前依次清除<code>publisherMap</code>、清除<code>publishedEvents</code>。
-     */
     @BeforeEach
     void setUp() {
         publisherMap.clear();
@@ -76,9 +61,6 @@ class MQCausalityBrokerHeaderMustTest {
         BaseContext.inject(MQEvent.MQ_PROPERTIES, new MQProperties());
     }
 
-    /**
-     * 测试后依次移除<code>BaseContext</code>、清除<code>ThreadContext</code>。
-     */
     @AfterEach
     void tearDown() {
         BaseContext.remove(MQEvent.MQ_EVENT_PUBLISHER);
@@ -88,9 +70,6 @@ class MQCausalityBrokerHeaderMustTest {
 
     // ========================= Scenario: 跨语言提取 =========================
 
-    /**
-     * 验证<code>"X-Correlation-Id"</code> 等于 <code>MQDeliveryHeaders.CORRELATION_ID</code>，<code>"X-Causation-Id"</code> 等于 <code>MQDeliveryHeaders.CAUSATION_ID</code>，<code>brokerHeaders.get(MQDeliveryHeaders.CAUSATION_ID)</code> 等于 <code>derived.getCausationId().asString()</code>。
-     */
     @Test
     void carrierMustExposeCausalityAsBrokerHeadersForNonJavaConsumers() {
         RootEvent cause = new RootEvent("order-001");
@@ -112,11 +91,6 @@ class MQCausalityBrokerHeaderMustTest {
 
     // ========================= Scenario: 既有消费方兼容 =========================
 
-    /**
-     * 验证<code>payload.get("correlation-id")</code>非空，<code>payload.get("causation-id")</code>非空，<code>payload.get("causation-id").asText()</code> 等于 <code>derived.getCausationId().asString()</code>。
-     *
-     * @throws Exception 处理测试数据的序列化时失败
-     */
     @Test
     void payloadMustKeepEmbeddedCausalityForLegacyConsumers() throws Exception {
         RootEvent cause = new RootEvent("order-001");
@@ -134,11 +108,6 @@ class MQCausalityBrokerHeaderMustTest {
 
     // ========================= Scenario: 双写一致 =========================
 
-    /**
-     * 验证<code>brokerHeaders.get(MQDeliveryHeaders.CORRELATION_ID)</code> 等于 <code>payload.get("correlation-id").asText()</code>，<code>brokerHeaders.get(MQDeliveryHeaders.CAUSATION_ID)</code> 等于 <code>payload.get("causation-id").asText()</code>。
-     *
-     * @throws Exception 处理测试数据的序列化时失败
-     */
     @Test
     void brokerHeaderAndPayloadMirrorMustBeWrittenFromSameSource() throws Exception {
         RootEvent cause = new RootEvent("order-001");
@@ -159,9 +128,6 @@ class MQCausalityBrokerHeaderMustTest {
 
     // ========================= 无因果源时不写因果 header =========================
 
-    /**
-     * 验证<code>brokerHeaders.containsKey(MQDeliveryHeaders.CORRELATION_ID)</code>为假，<code>brokerHeaders.containsKey(MQDeliveryHeaders.CAUSATION_ID)</code>为假。
-     */
     @Test
     void carrierWithoutCausalityMustOmitCausalHeaders() {
         RootEvent root = new RootEvent("order-001");
@@ -183,11 +149,6 @@ class MQCausalityBrokerHeaderMustTest {
      */
     static class RootEvent extends DomainEvent<StringEntityId> {
 
-        /**
-         * 使用 <code>super()</code> 初始化 <code>RootEvent</code> 测试夹具。
-         *
-         * @param entityId 用于初始化 <code>RootEvent</code> 的 <code>String</code> 值
-         */
         RootEvent(String entityId) {
             super(entityId);
         }
@@ -198,12 +159,6 @@ class MQCausalityBrokerHeaderMustTest {
      */
     static class DerivedEvent extends DomainEvent<StringEntityId> {
 
-        /**
-         * 使用 <code>super()</code> 初始化 <code>DerivedEvent</code> 测试夹具。
-         *
-         * @param entityId  用于初始化 <code>DerivedEvent</code> 的 <code>String</code> 值
-         * @param respondTo 用于初始化 <code>DerivedEvent</code> 的 <code>DomainEvent&lt;?&gt;</code> 值
-         */
         DerivedEvent(String entityId, DomainEvent<?> respondTo) {
             super(new EntityIdPath(new StringEntityId(entityId)), respondTo);
         }

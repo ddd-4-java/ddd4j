@@ -28,17 +28,8 @@ import java.util.Objects;
  */
 public final class SagaStep {
 
-    /**
-     * 用于诊断和区分业务步骤的标识。
-     */
     private final String name;
-    /**
-     * 正向执行该业务步骤的动作。
-     */
     private final Runnable action;
-    /**
-     * 步骤成功后可用于撤销其效果的动作。
-     */
     private final Runnable compensation;
 
     /**

@@ -40,25 +40,16 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class AuthSpanTest {
 
-    /**
-     * 测试执行前执行 <code>OpenTelemetrySdkSetter.set()</code>、<code>OpenTelemetry.noop()</code> 完成资源准备。
-     */
     @BeforeEach
     void setUp() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
     }
 
-    /**
-     * 测试结束后执行 <code>OpenTelemetrySdkSetter.set()</code>、<code>OpenTelemetry.noop()</code> 完成资源回收或状态恢复。
-     */
     @AfterEach
     void tearDown() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
     }
 
-    /**
-     * 验证<code>AuthSpan.ATTR_AUTH_FRAMEWORK.getKey()</code> 等于 <code>"auth.framework"</code>，<code>AuthSpan.ATTR_AUTH_LOGIN_ID.getKey()</code> 等于 <code>"auth.login_id"</code>，<code>AuthSpan.ATTR_AUTH_PERMISSION.getKey()</code> 等于 <code>"auth.permission"</code>。
-     */
     @Test
     void attributeKeys_shouldHaveCorrectNames() {
         assertThat(AuthSpan.ATTR_AUTH_FRAMEWORK.getKey()).isEqualTo("auth.framework");
@@ -69,9 +60,6 @@ class AuthSpanTest {
         assertThat(AuthSpan.ATTR_AUTH_PERMISSION.getKey()).isEqualTo("auth.permission");
     }
 
-    /**
-     * 在测试框架中执行 <code>OpenTelemetrySdkSetter.set()</code>、<code>OpenTelemetry.noop()</code>、<code>AuthSpan.hasRole()</code>，验证该场景。
-     */
     @Test
     void hasRole_shouldBeCallable_noopOTel() {
         // 即使无 SPI 也应能编译（无 OTel 时直接转发到 SubjectKit）
@@ -81,9 +69,6 @@ class AuthSpanTest {
                 .isInstanceOfAny(Exception.class);
     }
 
-    /**
-     * 在测试框架中执行 <code>OpenTelemetrySdkSetter.set()</code>、<code>OpenTelemetry.noop()</code>、<code>AuthSpan.hasPermission()</code>，验证该场景。
-     */
     @Test
     void hasPermission_shouldBeCallable_noopOTel() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -91,9 +76,6 @@ class AuthSpanTest {
                 .isInstanceOfAny(Exception.class);
     }
 
-    /**
-     * 在测试框架中执行 <code>OpenTelemetrySdkSetter.set()</code>、<code>OpenTelemetry.noop()</code>、<code>AuthSpan.isLogin()</code>，验证该场景。
-     */
     @Test
     void isLogin_shouldBeCallable_noopOTel() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -101,9 +83,6 @@ class AuthSpanTest {
                 .isInstanceOfAny(Exception.class);
     }
 
-    /**
-     * 在测试框架中执行 <code>OpenTelemetrySdkSetter.set()</code>、<code>OpenTelemetry.noop()</code>、<code>AuthSpan.login()</code>，验证该场景。
-     */
     @Test
     void login_shouldBeCallable_noopOTel() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -113,9 +92,6 @@ class AuthSpanTest {
                 .isInstanceOfAny(Exception.class);
     }
 
-    /**
-     * 在测试框架中执行 <code>OpenTelemetrySdkSetter.set()</code>、<code>OpenTelemetry.noop()</code>、<code>AuthSpan.logout()</code>，验证该场景。
-     */
     @Test
     void logout_shouldBeCallable_noopOTel() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -123,9 +99,6 @@ class AuthSpanTest {
                 .isInstanceOfAny(Exception.class);
     }
 
-    /**
-     * 在测试框架中执行 <code>OpenTelemetrySdkSetter.set()</code>、<code>OpenTelemetry.noop()</code>、<code>AuthSpan.logout()</code>，验证该场景。
-     */
     @Test
     void logout_withLoginId_shouldBeCallable_noopOTel() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -133,9 +106,6 @@ class AuthSpanTest {
                 .isInstanceOfAny(Exception.class);
     }
 
-    /**
-     * 在测试框架中执行 <code>OpenTelemetrySdkSetter.set()</code>、<code>OpenTelemetry.noop()</code>，验证该场景。
-     */
     @Test
     void verify_shouldBeCallable_noopOTel() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -143,9 +113,6 @@ class AuthSpanTest {
                 .isInstanceOfAny(Exception.class);
     }
 
-    /**
-     * 在测试框架中执行 <code>OpenTelemetrySdkSetter.set()</code>、<code>OpenTelemetry.noop()</code>、<code>AuthSpan.kickout()</code>，验证该场景。
-     */
     @Test
     void kickout_shouldBeCallable_noopOTel() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -153,9 +120,6 @@ class AuthSpanTest {
                 .isInstanceOfAny(Exception.class);
     }
 
-    /**
-     * 验证<code>true</code>为真。
-     */
     @Test
     void hasRole_shouldHandleNullArgument() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -169,9 +133,6 @@ class AuthSpanTest {
         }
     }
 
-    /**
-     * 验证<code>true</code>为真。
-     */
     @Test
     void hasPermission_shouldHandleNullArgument() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -182,9 +143,6 @@ class AuthSpanTest {
         }
     }
 
-    /**
-     * 验证<code>true</code>为真。
-     */
     @Test
     void login_withNullRequest_shouldBeCallable() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -195,9 +153,6 @@ class AuthSpanTest {
         }
     }
 
-    /**
-     * 验证<code>true</code>为真。
-     */
     @Test
     void verify_withNullToken_shouldBeCallable() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -208,9 +163,6 @@ class AuthSpanTest {
         }
     }
 
-    /**
-     * 验证<code>true</code>为真。
-     */
     @Test
     void logout_withNullLoginId_shouldBeCallable() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -221,9 +173,6 @@ class AuthSpanTest {
         }
     }
 
-    /**
-     * 验证<code>true</code>为真。
-     */
     @Test
     void kickout_withNullLoginId_shouldBeCallable() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -234,9 +183,6 @@ class AuthSpanTest {
         }
     }
 
-    /**
-     * 验证<code>invoked</code>非空。
-     */
     @Test
     void verify_withAuthPrincipal_shouldSetLoginIdAttribute() {
         // 验证 verify 在 noop 模式下也能正确处理（即使抛异常也是预期的）
@@ -251,9 +197,6 @@ class AuthSpanTest {
         assertThat(invoked).isNotNull();
     }
 
-    /**
-     * 验证<code>AuthSpan.ATTR_AUTH_FRAMEWORK</code>非空，<code>AuthSpan.ATTR_AUTH_LOGIN_ID</code>非空，<code>AuthSpan.ATTR_AUTH_OPERATION</code>非空。
-     */
     @Test
     void authSpan_constants_shouldBeImmutable() {
         // 验证常量定义（防止重构改动破坏调用）

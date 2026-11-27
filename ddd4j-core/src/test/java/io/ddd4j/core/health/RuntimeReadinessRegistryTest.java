@@ -24,14 +24,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-/**
- * 通过 <code>ReadinessResult.ready()</code>、<code>ReadinessResult.unavailable()</code>、<code>Collections.singletonList()</code> 验证 <code>RuntimeReadinessRegistry</code> 的运行行为。
- */
 class RuntimeReadinessRegistryTest {
 
-    /**
-     * 验证<code>registry.readiness().ready()</code>为真，<code>registry.readiness().ready()</code>为假，<code>registry.unregister(cache)</code>为真。
-     */
     @Test
     void shouldAggregateContributorsAndAllowRuntimeRegistrationChanges() {
         ReadinessContributor database = () -> ReadinessResult.ready("database");
@@ -49,9 +43,6 @@ class RuntimeReadinessRegistryTest {
         assertThat(registry.readiness().ready()).isTrue();
     }
 
-    /**
-     * 验证<code>registry.registerAll(null)</code> 指向同一实例 <code>registry</code>，<code>registry.registerAll(withNull)</code> 指向同一实例 <code>registry</code>，<code>registry.contributors()</code> 的大小为 <code>1</code>。
-     */
     @Test
     void shouldFilterNullCollectionAndElementsInRegisterAll() {
         RuntimeReadinessRegistry registry = new RuntimeReadinessRegistry();
@@ -64,9 +55,6 @@ class RuntimeReadinessRegistryTest {
         assertThat(registry.contributors()).hasSize(1);
     }
 
-    /**
-     * 验证<code>registry.register(null)</code> 抛出 <code>NullPointerException.class</code>。
-     */
     @Test
     void shouldRejectNullContributorOnRegister() {
         RuntimeReadinessRegistry registry = new RuntimeReadinessRegistry();
@@ -74,9 +62,6 @@ class RuntimeReadinessRegistryTest {
                 .isInstanceOf(NullPointerException.class);
     }
 
-    /**
-     * 验证<code>snapshot</code> 的大小为 <code>1</code>，被测调用 抛出 <code>UnsupportedOperationException.class</code>。
-     */
     @Test
     void shouldReturnImmutableSnapshotOfContributors() {
         RuntimeReadinessRegistry registry = new RuntimeReadinessRegistry(
@@ -90,9 +75,6 @@ class RuntimeReadinessRegistryTest {
                 .isInstanceOf(UnsupportedOperationException.class);
     }
 
-    /**
-     * 验证<code>registry.readiness().ready()</code>为假，<code>registry.readiness().results()</code> 的大小为 <code>1</code>。
-     */
     @Test
     void shouldAggregateUnavailableContributorAsUnready() {
         RuntimeReadinessRegistry registry = new RuntimeReadinessRegistry(

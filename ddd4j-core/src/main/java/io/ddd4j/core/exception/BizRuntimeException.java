@@ -40,9 +40,6 @@ import java.util.Objects;
  */
 public class BizRuntimeException extends RuntimeException {
 
-    /**
-     * Java 序列化版本标识。
-     */
     @Serial
     private static final long serialVersionUID = 6537688993883872154L;
 

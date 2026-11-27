@@ -38,17 +38,8 @@ import java.lang.reflect.Field;
 @Data
 public class DomainFieldInfo {
 
-    /**
-     * 关联领域属性的 Java 反射字段。
-     */
     private final Field field;
-    /**
-     * Java 领域模型中的属性名。
-     */
     private final String property;
-    /**
-     * 当前领域字段对应的持久化列名。
-     */
     private final String poColumn;
 
     /**

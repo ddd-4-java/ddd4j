@@ -28,13 +28,7 @@ import jakarta.inject.Singleton;
 @Singleton
 public class MicronautSampleIdempotencyCache {
 
-    /**
-     * 商品交易请求幂等检查使用的本地缓存名字。
-     */
     private static final String CACHE_NAME = "ddd4j-web-idempotency";
-    /**
-     * 去重记录在示例缓存中保留的秒数。
-     */
     private static final long CACHE_TTL_SECONDS = 300L;
 
     /**
@@ -44,9 +38,6 @@ public class MicronautSampleIdempotencyCache {
         CacheKit.build(CACHE_NAME, CACHE_TTL_SECONDS);
     }
 
-    /**
-     * 在 Micronaut 停止时撤销当前示例拥有的幂等缓存注册。
-     */
     @PreDestroy
     void destroy() {
         CacheKit.unregister(CACHE_NAME);

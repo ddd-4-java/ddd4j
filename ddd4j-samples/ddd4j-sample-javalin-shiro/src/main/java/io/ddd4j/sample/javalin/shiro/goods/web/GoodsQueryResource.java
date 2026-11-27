@@ -36,9 +36,6 @@ import static io.javalin.apibuilder.ApiBuilder.get;
  */
 public class GoodsQueryResource {
 
-    /**
-     * 处理商品创建、维护和查询操作的应用服务。
-     */
     private final GoodsApplicationService applicationService;
 
     /**
@@ -85,12 +82,6 @@ public class GoodsQueryResource {
         };
     }
 
-    /**
-     * 将分页和筛选请求属性绑定到领域商品查询。
-     *
-     * @param ctx 当前 Web 框架的请求上下文
-     * @return 可由仓储执行的商品查询
-     */
     private GoodsQuery buildQuery(io.javalin.http.Context ctx) {
         GoodsQuery query = new GoodsQuery();
         query.setCode(ctx.queryParam("code"));

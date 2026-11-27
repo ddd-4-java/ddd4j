@@ -52,9 +52,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class CommandRegistry {
 
-    /**
-     * 按命令类型记录的已注册命令执行器。
-     */
     private final Map<Class<? extends Command>, CommandExecutor<?>> executors = new ConcurrentHashMap<>();
 
     /**

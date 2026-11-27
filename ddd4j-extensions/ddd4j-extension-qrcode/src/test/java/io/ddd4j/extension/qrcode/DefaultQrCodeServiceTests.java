@@ -29,14 +29,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * 通过 <code>service.generate()</code>、<code>GenerateQrCodeCommand.builder()</code>、<code>QrCodeRequest.builder()</code> 验证 <code>DefaultQrCodeService</code> 的运行行为。
- */
 class DefaultQrCodeServiceTests {
 
-    /**
-     * 验证<code>artifact.getCorrelationId()</code> 等于 <code>"correlation-1"</code>，<code>scan.getCorrelationId()</code> 等于 <code>"correlation-2"</code>。
-     */
     @Test
     void generateAndDecodePreserveCorrelationMetadata() {
         try (DefaultQrCodeService service = new DefaultQrCodeService()) {
@@ -57,9 +51,6 @@ class DefaultQrCodeServiceTests {
         }
     }
 
-    /**
-     * 验证<code>result.getItems()</code> 的大小为 <code>100</code>，<code>result.successCount()</code> 等于 <code>99</code>，<code>result.getItems().get(99).getItemId()</code> 等于 <code>"item-99"</code>。
-     */
     @Test
     void batchIsOrderedAndNonAtomic() {
         try (DefaultQrCodeService service = new DefaultQrCodeService()) {

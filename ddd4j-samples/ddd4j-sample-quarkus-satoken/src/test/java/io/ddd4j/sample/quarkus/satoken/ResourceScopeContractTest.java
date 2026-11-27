@@ -15,9 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class ResourceScopeContractTest {
 
-    /**
-     * 验证<code>CatalogTradeResource.class.isAnnotationPresent(Singleton.class)</code>为真，<code>resource.isAnnotationPresent(ApplicationScoped.class)</code>为真。
-     */
     @Test
     void resourcesAreApplicationScoped() {
         assertTrue(CatalogTradeResource.class.isAnnotationPresent(Singleton.class));

@@ -53,15 +53,6 @@ public class GraphKit {
         return sortedNodes;
     }
 
-    /**
-     * 先遍历当前节点的未访问后继，再把当前节点加入结果。
-     *
-     * @param <T>          图节点类型
-     * @param graph        要遍历的有向图
-     * @param node         当前访问的节点
-     * @param visitedNodes 已经访问过的节点集合
-     * @param sortedNodes  按深度优先后序累积结果的列表
-     */
     private static <T> void depthFirstSearch(Graph<T> graph, T node, Set<T> visitedNodes, List<T> sortedNodes) {
         visitedNodes.add(node);
 

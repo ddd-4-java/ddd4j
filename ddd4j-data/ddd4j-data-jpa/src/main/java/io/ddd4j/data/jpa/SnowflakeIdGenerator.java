@@ -25,14 +25,8 @@ package io.ddd4j.data.jpa;
  */
 public final class SnowflakeIdGenerator {
 
-    /**
-     * 为 JPA 标识生成器提供 Snowflake 标识的策略。
-     */
     private static final SnowflakeIdStrategy STRATEGY = new SnowflakeIdStrategy();
 
-    /**
-     * 限制调用方直接创建 <code>SnowflakeIdGenerator</code> 实例。
-     */
     private SnowflakeIdGenerator() {
     }
 

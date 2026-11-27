@@ -72,25 +72,10 @@ public class SpringContextBridge implements ApplicationListener<ContextRefreshed
      * 命令总线提供者
      */
     private final ObjectProvider<CommandBus> commandBusProvider;
-    /**
-     * 管理当前示例或测试所拥有的 SPI 注册资源。
-     */
     private SpiRegistrationScope registrationScope;
-    /**
-     * 当前桥接装配到兼容主体入口的框架提供器。
-     */
     private SubjectProvider registeredSubjectProvider;
-    /**
-     * 为认证主体提供角色、权限等业务数据的组件。
-     */
     private SubjectDataProvider registeredSubjectDataProvider;
-    /**
-     * 安装框架主体提供器前已存在的全局提供器。
-     */
     private SubjectProvider previousSubjectProvider;
-    /**
-     * 进入当前执行范围前保存的组件，退出时用于恢复 <code>SubjectDataProvider</code>。
-     */
     private SubjectDataProvider previousSubjectDataProvider;
 
     /**
@@ -115,11 +100,6 @@ public class SpringContextBridge implements ApplicationListener<ContextRefreshed
         this.commandBusProvider = commandBusProvider;
     }
 
-    /**
-     * 在 Spring 刷新完成时把当前应用服务接入 DDD4J 共享上下文。
-     *
-     * @param event 当前框架生命周期或容器启动事件
-     */
     @Override
     public synchronized void onApplicationEvent(ContextRefreshedEvent event) {
         if (Objects.nonNull(registrationScope)) {
@@ -156,9 +136,6 @@ public class SpringContextBridge implements ApplicationListener<ContextRefreshed
         log.info("Spring ddd4j SPI services initialized");
     }
 
-    /**
-     * 在 Bean 销毁时撤销当前桥接拥有的运行时注册。
-     */
     @Override
     public synchronized void destroy() {
         if (Objects.nonNull(registrationScope)) {
@@ -168,12 +145,6 @@ public class SpringContextBridge implements ApplicationListener<ContextRefreshed
         restoreLegacySubjectFacade();
     }
 
-    /**
-     * 按当前主体及其数据提供器装配兼容调用所用的主体入口。
-     *
-     * @param subjectProvider     从当前认证框架解析主体的组件
-     * @param subjectDataProvider 提供角色和权限数据的桥接组件
-     */
     private void registerLegacySubjectFacade(SubjectProvider subjectProvider, SubjectDataProvider subjectDataProvider) {
         if (Objects.nonNull(subjectProvider)) {
             previousSubjectProvider = SubjectKit.subjectProvider;
@@ -187,9 +158,6 @@ public class SpringContextBridge implements ApplicationListener<ContextRefreshed
         }
     }
 
-    /**
-     * 当共享主体入口仍归当前桥接所有时恢复旧提供器。
-     */
     private void restoreLegacySubjectFacade() {
         if (Objects.equals(SubjectKit.subjectProvider, registeredSubjectProvider)) {
             SubjectKit.register(previousSubjectProvider);

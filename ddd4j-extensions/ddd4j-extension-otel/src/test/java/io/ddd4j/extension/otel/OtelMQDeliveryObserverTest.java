@@ -39,24 +39,10 @@ import static org.mockito.Mockito.*;
  */
 class OtelMQDeliveryObserverTest {
 
-    /**
-     * 提供测试指标注册能力的 OpenTelemetry Meter。
-     */
     private Meter meter;
-    /**
-     * 当前测试从样例配置创建被测组件的构建器。
-     */
     private LongCounterBuilder builder;
-    /**
-     * 用来验证指标或累计状态的计数器。
-     */
     private LongCounter counter;
 
-    /**
-     * 调用 <code>Ddd4jOtel.class.getDeclaredField()</code>、<code>field.setAccessible()</code>、<code>field.get()</code> 执行当前夹具操作。
-     *
-     * @param meter 传给 <code>((AtomicReference&lt;Meter&gt;)field.get(null)).set(meter)</code> 的 <code>Meter</code> 输入
-     */
     @SuppressWarnings("unchecked")
     private static void setMeterCache(Meter meter) {
         try {
@@ -68,9 +54,6 @@ class OtelMQDeliveryObserverTest {
         }
     }
 
-    /**
-     * 测试执行前执行 <code>mock()</code>、<code>meter.counterBuilder()</code>、<code>any()</code>、<code>builder.setUnit()</code> 完成资源准备。
-     */
     @BeforeEach
     void setUp() {
         meter = mock(Meter.class);
@@ -83,17 +66,11 @@ class OtelMQDeliveryObserverTest {
         setMeterCache(meter);
     }
 
-    /**
-     * 测试结束后执行 <code>setMeterCache()</code> 完成资源回收或状态恢复。
-     */
     @AfterEach
     void tearDown() {
         setMeterCache(null);
     }
 
-    /**
-     * 在测试框架中执行 <code>MQOutboxRecord.pending()</code>、<code>Collections.emptyMap()</code>、<code>observer.onOutboxPublished()</code>，验证该场景。
-     */
     @Test
     void shouldDelegateAllDeliveryOutcomesWithoutMessageAttributes() {
         OtelMQDeliveryObserver observer = new OtelMQDeliveryObserver("kafka");

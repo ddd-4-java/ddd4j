@@ -26,13 +26,6 @@ import java.util.Objects;
  */
 public class SaTokenSubjectDataBridge implements StpInterface {
 
-    /**
-     * 读取指定认证域中的账号主体并查询业务权限。
-     *
-     * @param loginId   当前认证域内的账号标识
-     * @param loginType 所属的 Sa-Token 认证域
-     * @return 账号权限列表，找不到主体时返回空列表
-     */
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
         AuthPrincipal principal = SubjectKit.getSubject(loginType).getPrincipalByLoginId(loginId);
@@ -42,13 +35,6 @@ public class SaTokenSubjectDataBridge implements StpInterface {
         return SubjectKit.getDataProvider().getPermissionList(principal);
     }
 
-    /**
-     * 读取指定认证域中的账号主体并查询业务角色。
-     *
-     * @param loginId   当前认证域内的账号标识
-     * @param loginType 所属的 Sa-Token 认证域
-     * @return 账号角色列表，找不到主体时返回空列表
-     */
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
         AuthPrincipal principal = SubjectKit.getSubject(loginType).getPrincipalByLoginId(loginId);

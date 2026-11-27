@@ -38,26 +38,11 @@ import java.util.Objects;
 @Priority(Priorities.AUTHENTICATION)
 public class ShiroRequestFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
-    /**
-     * 记录进入认证过滤器之前线程绑定的请求属性键。
-     */
     private static final String PREVIOUS = ShiroRequestFilter.class.getName() + ".previous";
-    /**
-     * 从认证请求头提取令牌时识别的协议前缀。
-     */
     private static final String BEARER_PREFIX = "Bearer ";
-    /**
-     * 读取已匹配 JAX-RS 资源和方法的注解信息。
-     */
     @Context
     ResourceInfo resourceInfo;
 
-    /**
-     * 在 JAX-RS 调用资源方法之前装配并验证当前原生认证上下文。
-     *
-     * @param requestContext 当前 JAX-RS 请求上下文
-     * @throws IOException 装配示例或处理当前 HTTP 请求失败
-     */
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
         Subject previous = ThreadContext.getSubject();
@@ -100,13 +85,6 @@ public class ShiroRequestFilter implements ContainerRequestFilter, ContainerResp
         }
     }
 
-    /**
-     * 在 JAX-RS 生成响应后清理当前请求的原生认证绑定。
-     *
-     * @param requestContext  当前 JAX-RS 请求上下文
-     * @param responseContext 当前 JAX-RS 响应上下文
-     * @throws IOException 装配示例或处理当前 HTTP 请求失败
-     */
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
         Runnable cleanup = (Runnable) requestContext.getProperty(PREVIOUS + ".cleanup");

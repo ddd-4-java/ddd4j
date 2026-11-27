@@ -33,13 +33,7 @@ public final class WebIdempotencyLifecycle {
      */
     public static final Duration DEFAULT_TTL = Duration.ofMinutes(5);
 
-    /**
-     * 获取、完成及释放幂等租约的组件。
-     */
     private final IdempotencyGuard guard;
-    /**
-     * 幂等记录保留的时长。
-     */
     private final Duration ttl;
 
     /**
@@ -91,24 +85,11 @@ public final class WebIdempotencyLifecycle {
         return Optional.of(new Scope(guard, lease.get()));
     }
 
-    /**
-     * 从请求范围与客户端幂等键构造存储键。
-     *
-     * @param context        当前框架调用所携带的请求上下文
-     * @param idempotencyKey 由客户端传入的幂等键头值
-     * @return 用于隔离不同请求范围的幂等记录键
-     */
     private String storageKey(WebRequestContext context, String idempotencyKey) {
         return value(context.tenantId()) + ':' + value(context.method()) + ':' + value(context.path()) + ':'
                 + idempotencyKey;
     }
 
-    /**
-     * 将可选请求字段归一为存储键使用的值。
-     *
-     * @param value 当前待写入或解析的值
-     * @return 归一化的字符串
-     */
     private String value(String value) {
         return StrKit.isBlank(value) ? "_" : value;
     }
@@ -121,29 +102,11 @@ public final class WebIdempotencyLifecycle {
      */
     public static final class Scope implements AutoCloseable {
 
-        /**
-         * 获取、完成及释放幂等租约的组件。
-         */
         private final IdempotencyGuard guard;
-        /**
-         * 当前请求持有的幂等租约。
-         */
         private final IdempotencyLease lease;
-        /**
-         * 当前幂等作用域是否已经提交成功状态。
-         */
         private boolean completed;
-        /**
-         * 当前实例是否已关闭。
-         */
         private boolean closed;
 
-        /**
-         * 记住所获得的幂等租约及其释放入口。
-         *
-         * @param guard 负责管理当前请求幂等状态的组件
-         * @param lease 当前请求已经获得的保护租约
-         */
         private Scope(IdempotencyGuard guard, IdempotencyLease lease) {
             this.guard = guard;
             this.lease = lease;

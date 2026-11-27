@@ -13,17 +13,8 @@ import java.util.Optional;
  * @param <E> 既有投影位置实体类型，具有 streamId 和 nextEventNumber 属性
  */
 public final class JpaProjectionPositionStore<E> {
-    /**
-     * 执行 JPA 查询和持久化操作的实体管理器。
-     */
     private final EntityManager entityManager;
-    /**
-     * JPA 投影检查点实体的 Java 类型。
-     */
     private final Class<E> entityType;
-    /**
-     * JPQL 查询中使用的检查点实体名称。
-     */
     private final String entityName;
 
     /**

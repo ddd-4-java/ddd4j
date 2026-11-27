@@ -24,9 +24,6 @@ package io.ddd4j.extension.qlexpress;
  */
 public final class QLExpress {
 
-    /**
-     * 限制调用方直接创建 <code>QLExpress</code> 实例。
-     */
     private QLExpress() {
     }
 

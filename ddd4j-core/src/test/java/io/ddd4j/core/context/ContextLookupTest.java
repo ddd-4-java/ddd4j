@@ -24,42 +24,24 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * 通过 <code>BaseContext.remove()</code>、<code>Contexts.getOrThrow()</code>、<code>Contexts.get()</code> 验证 <code>ContextLookup</code> 的运行行为。
- */
 class ContextLookupTest {
 
-    /**
-     * 记录当前用例检查共享注册所使用的服务键。
-     */
     private static final String[] sharedKeys = {
             SpiKeys.DOMAIN_EVENT_PUBLISHER,
             SpiKeys.MQ_EVENT_PUBLISHER
     };
-    /**
-     * 供不同用例定位同一项测试设置的键。
-     */
     private final String testKey = "ddd4j.test." + UUID.randomUUID();
 
-    /**
-     * 测试执行前执行 <code>clearSharedKeys()</code> 完成资源准备。
-     */
     @BeforeEach
     void setUp() {
         clearSharedKeys();
     }
 
-    /**
-     * 测试结束后执行 <code>clearSharedKeys()</code> 完成资源回收或状态恢复。
-     */
     @AfterEach
     void tearDown() {
         clearSharedKeys();
     }
 
-    /**
-     * 调用 <code>BaseContext.remove()</code>、<code>ThreadContext.remove()</code> 执行当前夹具操作。
-     */
     private void clearSharedKeys() {
         BaseContext.remove(testKey);
         ThreadContext.remove(testKey);
@@ -69,36 +51,24 @@ class ContextLookupTest {
         }
     }
 
-    /**
-     * 验证<code>Contexts.getOrThrow(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class)</code> 抛出 <code>IllegalStateException.class</code>。
-     */
     @Test
     void shouldThrowOnMissingService() {
         BaseContext.remove(SpiKeys.DOMAIN_EVENT_PUBLISHER);
         assertThrows(IllegalStateException.class, () -> Contexts.getOrThrow(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class));
     }
 
-    /**
-     * 验证<code>Contexts.get(SpiKeys.MQ_EVENT_PUBLISHER, DomainEventPublisher.class).isPresent()</code>为假。
-     */
     @Test
     void shouldReturnEmptyForMissingService() {
         BaseContext.remove(SpiKeys.MQ_EVENT_PUBLISHER);
         assertFalse(Contexts.get(SpiKeys.MQ_EVENT_PUBLISHER, DomainEventPublisher.class).isPresent());
     }
 
-    /**
-     * 验证<code>BaseContext.inject(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, null)</code> 抛出 <code>IllegalArgumentException.class</code>。
-     */
     @Test
     void shouldRejectNullValue() {
         assertThrows(IllegalArgumentException.class,
                 () -> BaseContext.inject(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, null));
     }
 
-    /**
-     * 验证<code>BaseContext.contains(testKey)</code>为真，<code>BaseContext.contains(testKey)</code>为假。
-     */
     @Test
     void shouldRemoveFromBaseContext() {
         BaseContext.inject(testKey, "value");
@@ -107,9 +77,6 @@ class ContextLookupTest {
         assertFalse(BaseContext.contains(testKey));
     }
 
-    /**
-     * 验证<code>BaseContext.get(testKey, Object.class).orElse(null)</code> 与…为同一实例 <code>service</code>，<code>BaseContext.remove(testKey).orElse(null)</code> 与…为同一实例 <code>service</code>，<code>BaseContext.get(testKey)</code> 与…为同一实例 <code>service</code>。
-     */
     @Test
     void plainContextWritesSupersedePendingRegistrationEvenForSameInstance() {
         Object service = new Object();
@@ -129,9 +96,6 @@ class ContextLookupTest {
         assertSame(service, BaseContext.get(testKey));
     }
 
-    /**
-     * 验证<code>BaseContext.get(testKey)</code> 与…为同一实例 <code>service</code>。
-     */
     @Test
     void rollbackCanRestoreDisplacedRegistrationThatCommitted() {
         Object service = new Object();
@@ -146,9 +110,6 @@ class ContextLookupTest {
         assertSame(service, BaseContext.get(testKey));
     }
 
-    /**
-     * 验证<code>BaseContext.contains(testKey)</code>为假。
-     */
     @Test
     void clearPreventsRollbackFromRestoringPreviousRegistrations() {
         BaseContext.inject(testKey, new Object());

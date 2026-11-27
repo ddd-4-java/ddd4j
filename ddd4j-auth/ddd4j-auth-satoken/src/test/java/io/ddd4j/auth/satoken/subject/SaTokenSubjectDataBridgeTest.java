@@ -40,35 +40,14 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class SaTokenSubjectDataBridgeTest {
 
-    /**
-     * 构造本组测试输入时复用的固定标识或名称。
-     */
     private static final String SHARED_LOGIN_ID = "data-bridge-shared-account";
-    /**
-     * 用于隔离管理员身份的测试认证域。
-     */
     private static final String ADMIN_REALM = "data-bridge-admin-realm";
-    /**
-     * 用于验证未知账号域处理的测试标识。
-     */
     private static final String UNKNOWN_REALM = "data-bridge-unknown-realm";
 
-    /**
-     * 被验证是否传递上下文或适配请求的桥接对象。
-     */
     private final SaTokenSubjectDataBridge bridge = new SaTokenSubjectDataBridge();
-    /**
-     * 用例修改前注册的服务提供器，供用例结束时恢复。
-     */
     private SubjectProvider originalProvider;
-    /**
-     * 进入当前执行范围前保存的组件，退出时用于恢复 <code>SubjectDataProvider</code>。
-     */
     private SubjectDataProvider originalDataProvider;
 
-    /**
-     * 测试前依次注册<code>SubjectKit</code>。
-     */
     @BeforeEach
     void setUp() {
         originalProvider = SubjectKit.subjectProvider;
@@ -101,18 +80,12 @@ class SaTokenSubjectDataBridgeTest {
         });
     }
 
-    /**
-     * 测试后依次注册<code>SubjectKit</code>。
-     */
     @AfterEach
     void tearDown() {
         SubjectKit.register(originalProvider);
         SubjectKit.setDataProvider(originalDataProvider);
     }
 
-    /**
-     * 验证<code>permissions</code> 等于 <code>Arrays.asList("order:read", "order:write")</code>。
-     */
     @Test
     void getPermissionListDelegatesToDataProvider() {
         SubjectKit.setDataProvider(new SubjectDataProvider() {
@@ -127,9 +100,6 @@ class SaTokenSubjectDataBridgeTest {
         assertEquals(Arrays.asList("order:read", "order:write"), permissions);
     }
 
-    /**
-     * 验证<code>permissions.isEmpty()</code>为真。
-     */
     @Test
     void getPermissionListReturnsEmptyForUnknownAccount() {
         List<String> permissions = bridge.getPermissionList("ghost", "login");
@@ -137,9 +107,6 @@ class SaTokenSubjectDataBridgeTest {
         assertTrue(permissions.isEmpty());
     }
 
-    /**
-     * 验证<code>roles</code> 等于 <code>Collections.singletonList("admin")</code>。
-     */
     @Test
     void getRoleListDelegatesToDataProvider() {
         SubjectKit.setDataProvider(new SubjectDataProvider() {
@@ -154,9 +121,6 @@ class SaTokenSubjectDataBridgeTest {
         assertEquals(Collections.singletonList("admin"), roles);
     }
 
-    /**
-     * 验证<code>roles.isEmpty()</code>为真。
-     */
     @Test
     void getRoleListReturnsEmptyForUnknownAccount() {
         List<String> roles = bridge.getRoleList("ghost", "login");
@@ -164,9 +128,6 @@ class SaTokenSubjectDataBridgeTest {
         assertTrue(roles.isEmpty());
     }
 
-    /**
-     * 验证<code>bridge.getPermissionList(SHARED_LOGIN_ID, defaultLogic.getLoginType())</code> 等于 <code>Collections.singletonList("customer:read")</code>，<code>bridge.getPermissionList(SHARED_LOGIN_ID, ADMIN_REALM)</code> 等于 <code>Collections.singletonList("operator:read")</code>。
-     */
     @Test
     void getPermissionListUsesRequestedLoginType() {
         withRealmSessions(new SaTokenSubjectProvider(), defaultLogic -> assertAll(
@@ -176,9 +137,6 @@ class SaTokenSubjectDataBridgeTest {
                         bridge.getPermissionList(SHARED_LOGIN_ID, ADMIN_REALM))));
     }
 
-    /**
-     * 验证<code>bridge.getRoleList(SHARED_LOGIN_ID, defaultLogic.getLoginType())</code> 等于 <code>Collections.singletonList("customer")</code>，<code>bridge.getRoleList(SHARED_LOGIN_ID, ADMIN_REALM)</code> 等于 <code>Collections.singletonList("operator")</code>。
-     */
     @Test
     void getRoleListUsesRequestedLoginType() {
         withRealmSessions(new SaTokenSubjectProvider(), defaultLogic -> assertAll(
@@ -188,9 +146,6 @@ class SaTokenSubjectDataBridgeTest {
                         bridge.getRoleList(SHARED_LOGIN_ID, ADMIN_REALM))));
     }
 
-    /**
-     * 验证<code>bridge.getPermissionList("missing-account", ADMIN_REALM).isEmpty()</code>为真，<code>bridge.getRoleList("missing-account", ADMIN_REALM).isEmpty()</code>为真，<code>bridge.getRoleList(SHARED_LOGIN_ID, UNKNOWN_REALM).isEmpty()</code>为真。
-     */
     @Test
     void missingAccountAndLoginTypeReturnEmptyLists() {
         withRealmSessions(new SaTokenSubjectProvider(), defaultLogic -> assertAll(
@@ -200,9 +155,6 @@ class SaTokenSubjectDataBridgeTest {
                 () -> assertTrue(bridge.getRoleList(SHARED_LOGIN_ID, UNKNOWN_REALM).isEmpty())));
     }
 
-    /**
-     * 验证<code>bridge.getPermissionList(SHARED_LOGIN_ID, loginType)</code> 等于 <code>Collections.singletonList("customer:read")</code>，<code>bridge.getRoleList(SHARED_LOGIN_ID, loginType)</code> 等于 <code>Collections.singletonList("customer")</code>，<code>bridge.getRoleList("missing-account", loginType).isEmpty()</code>为真。
-     */
     @Test
     void blankLoginTypesUseDefaultAccountSessions() {
         withRealmSessions(new SaTokenSubjectProvider(), defaultLogic -> {
@@ -216,9 +168,6 @@ class SaTokenSubjectDataBridgeTest {
         });
     }
 
-    /**
-     * 验证<code>bridge.getPermissionList(SHARED_LOGIN_ID, defaultLogic.getLoginType())</code> 等于 <code>Collections.singletonList("customer:read")</code>，<code>bridge.getPermissionList(SHARED_LOGIN_ID, ADMIN_REALM)</code> 等于 <code>Collections.singletonList("operator:read")</code>，<code>bridge.getRoleList(SHARED_LOGIN_ID, ADMIN_REALM)</code> 等于 <code>Collections.singletonList("operator")</code>。
-     */
     @Test
     void dataSubjectProviderUsesRequestedLoginType() {
         withRealmSessions(new SaTokenDataSubjectProvider(), defaultLogic -> assertAll(
@@ -234,9 +183,6 @@ class SaTokenSubjectDataBridgeTest {
 
     /**
      * 使用独立内存仓储为默认和管理账号体系写入同一登录 ID 的不同主体。
-     *
-     * @param provider 创建两个认证域主体的提供器
-     * @param verify   在测试会话有效期内运行的断言
      */
     private void withRealmSessions(SubjectProvider provider, Consumer<StpLogic> verify) {
         SaTokenDao originalDao = SaManager.getSaTokenDao();
@@ -265,12 +211,6 @@ class SaTokenSubjectDataBridgeTest {
         }
     }
 
-    /**
-     * 调用 <code>logic.getSessionByLoginId()</code> 执行当前夹具操作。
-     *
-     * @param logic    传给 <code>logic.getSessionByLoginId()</code> 的 <code>StpLogic</code> 输入
-     * @param identity 传给 <code>new AuthPrincipal</code> 的 <code>String</code> 输入
-     */
     private void storeRealmPrincipal(StpLogic logic, String identity) {
         AuthPrincipal principal = new AuthPrincipal().setLoginId(SHARED_LOGIN_ID).setUserId(identity).setRoleId(identity);
         logic.getSessionByLoginId(SHARED_LOGIN_ID).set(SaTokenSubject.PRINCIPAL_KEY, principal);

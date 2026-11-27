@@ -56,29 +56,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @RequiredArgsConstructor
 public class MQListenerRegistrar implements DisposableBean {
 
-    /**
-     * 捕获容器中带消息监听注解方法的后处理器。
-     */
     private final MQListenerBeanPostProcessor beanPostProcessor;
-    /**
-     * 当前 Spring 容器持有的消息代理适配器。
-     */
     private final List<MQClient> mqClients;
-    /**
-     * 当前消息代理客户端使用的连接和订阅配置。
-     */
     private final MQProperties properties;
-    /**
-     * 用于读写消息负载的协议编码组件。
-     */
     private final MQEventSerialization serialization;
-    /**
-     * 按需提供消息处理状态存储的组件。
-     */
     private final ObjectProvider<MQEventStorer<?>> storerProvider;
-    /**
-     * 当前 Spring 消息监听注册器是否已关闭。
-     */
     private final AtomicBoolean destroyed = new AtomicBoolean();
 
     /**
@@ -128,8 +110,6 @@ public class MQListenerRegistrar implements DisposableBean {
 
     /**
      * 逆序关闭所有客户端。单个客户端关闭失败不会阻止其余客户端释放资源。
-     *
-     * @throws Exception 关闭已注册的消息监听组件失败
      */
     @Override
     public void destroy() throws Exception {

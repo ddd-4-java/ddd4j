@@ -18,14 +18,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * 验证 <code>MicaMqttAcknowledgment</code> 在<code>requeueRequestsFail</code>、<code>nack</code>等操作中的行为契约。
- */
 class MicaMqttAcknowledgmentContractTest {
 
-    /**
-     * 验证<code>acknowledgment.nack(true)</code> 抛出 <code>UnsupportedOperationException.class</code>，<code>acknowledgment.reject(true)</code> 抛出 <code>UnsupportedOperationException.class</code>，<code>acknowledgment.isAcknowledged()</code>为假。
-     */
     @Test
     void requeueRequestsFailWithoutClaimingAcknowledgment() {
         MicaMqttAcknowledgment acknowledgment = new MicaMqttAcknowledgment(11L, "orders/paid", null);
@@ -37,9 +31,6 @@ class MicaMqttAcknowledgmentContractTest {
         assertFalse(acknowledgment.isAcknowledged());
     }
 
-    /**
-     * 验证<code>acknowledgment.isAcknowledged()</code>为真。
-     */
     @Test
     void nackWithoutRequeueMarksMessageHandled() {
         MicaMqttAcknowledgment acknowledgment = new MicaMqttAcknowledgment(12L, "orders/paid", null);

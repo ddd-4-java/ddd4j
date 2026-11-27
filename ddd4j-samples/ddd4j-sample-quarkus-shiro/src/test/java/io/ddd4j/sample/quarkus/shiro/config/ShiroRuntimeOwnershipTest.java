@@ -13,16 +13,8 @@ import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-/**
- * 验证 <code>ShiroRuntimeOwnership</code> 在 <code>restoresProcessManager</code> 等场景中的行为。
- */
 class ShiroRuntimeOwnershipTest {
 
-    /**
-     * 读取 <code>runtime</code> 供当前测试使用。
-     *
-     * @return 当前测试使用的结果，取自 <code>runtime</code>
-     */
     private static ShiroRuntimeConfig runtime() {
         ShiroRuntimeConfig runtime = new ShiroRuntimeConfig();
         runtime.userRepository = new InMemoryUserRepository();
@@ -30,11 +22,6 @@ class ShiroRuntimeOwnershipTest {
         return runtime;
     }
 
-    /**
-     * 调用 <code>SecurityUtils.getSecurityManager()</code> 执行当前夹具操作。
-     *
-     * @return 根据测试条件返回的可能值，包括 <code>SecurityUtils.getSecurityManager()</code>、<code>null</code>
-     */
     private static SecurityManager processManager() {
         try {
             return SecurityUtils.getSecurityManager();
@@ -43,9 +30,6 @@ class ShiroRuntimeOwnershipTest {
         }
     }
 
-    /**
-     * 验证<code>ThreadContext.getSecurityManager()</code> 与…为同一实例 <code>threadOwner</code>，<code>ThreadContext.unbindSecurityManager()</code> 与…为同一实例 <code>threadOwner</code>，<code>processManager()</code> 与…为同一实例 <code>previous</code>。
-     */
     @Test
     void restoresProcessManagerWithAnUnrelatedThreadBinding() {
         SecurityManager originalThread = ThreadContext.unbindSecurityManager();
@@ -73,9 +57,6 @@ class ShiroRuntimeOwnershipTest {
         }
     }
 
-    /**
-     * 验证<code>ThreadContext.unbindSecurityManager()</code> 与…为同一实例 <code>sampleManager</code>，<code>processManager()</code> 与…为同一实例 <code>replacement</code>。
-     */
     @Test
     void leavesReplacementProcessManagerInPlaceWhileThreadRetainsSampleManager() {
         SecurityManager originalThread = ThreadContext.unbindSecurityManager();

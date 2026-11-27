@@ -13,9 +13,6 @@ import java.util.Map;
  */
 @Controller("/auth")
 public final class AuthenticationController {
-    /**
-     * 处理当前示例应用登录状态的原生认证组件。
-     */
     private final NativeAuth auth;
 
     /**

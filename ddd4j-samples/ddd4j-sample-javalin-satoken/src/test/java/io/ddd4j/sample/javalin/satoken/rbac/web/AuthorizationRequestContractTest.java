@@ -13,28 +13,14 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-/**
- * 通过 <code>mapper.readValue()</code>、<code>request.userId()</code>、<code>request.username()</code> 验证 <code>AuthorizationRequestContract</code> 的运行行为。
- */
 class AuthorizationRequestContractTest {
 
-    /**
-     * 调用 <code>constructed.hashCode()</code>、<code>bean.hashCode()</code>、<code>Modifier.isFinal()</code> 执行当前夹具操作。
-     *
-     * @param bean        传给 <code>assertEquals()</code> 的 <code>Object</code> 输入
-     * @param constructed 传给 <code>assertEquals()</code> 的 <code>Object</code> 输入
-     */
     private static void valueContract(Object bean, Object constructed) {
         assertEquals(constructed, bean);
         assertEquals(constructed.hashCode(), bean.hashCode());
         assertFalse(Modifier.isFinal(bean.getClass().getModifiers()));
     }
 
-    /**
-     * 验证<code>request.userId()</code> 等于 <code>"u1"</code>，<code>request.username()</code> 等于 <code>"alice"</code>，<code>mapper.readValue(mapper.writeValueAsString(request), AuthorizationController.CreateUserRequest.class)</code> 等于 <code>request</code>。
-     *
-     * @throws Exception 处理测试数据的序列化时失败
-     */
     @Test
     void createUserRequestRetainsJsonFieldContract() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
@@ -49,9 +35,6 @@ class AuthorizationRequestContractTest {
                 AuthorizationController.CreateUserRequest.class));
     }
 
-    /**
-     * 验证<code>create.userId()</code> 等于 <code>create.getUserId()</code>，<code>create.username()</code> 等于 <code>create.getUsername()</code>，<code>update.toString().contains("new-secret")</code>为假。
-     */
     @Test
     void userRequestsRetainBeanAndComponentContracts() {
         AuthorizationController.CreateUserRequest create = new AuthorizationController.CreateUserRequest();
@@ -78,9 +61,6 @@ class AuthorizationRequestContractTest {
         assertFalse(update.toString().contains("new-secret"));
     }
 
-    /**
-     * 验证<code>create.roleId()</code> 等于 <code>create.getRoleId()</code>，<code>create.roleCode()</code> 等于 <code>create.getRoleCode()</code>，<code>update.status()</code> 等于 <code>update.getStatus()</code>。
-     */
     @Test
     void roleRequestsRetainBeanAndComponentContracts() {
         AuthorizationController.CreateRoleRequest create = new AuthorizationController.CreateRoleRequest();
@@ -105,9 +85,6 @@ class AuthorizationRequestContractTest {
         valueContract(update, new AuthorizationController.UpdateRoleRequest("Admin", "manage", status));
     }
 
-    /**
-     * 验证<code>create.permissionId()</code> 等于 <code>create.getPermissionId()</code>，<code>create.permissionCode()</code> 等于 <code>create.getPermissionCode()</code>，<code>update.status()</code> 等于 <code>update.getStatus()</code>。
-     */
     @Test
     void permissionRequestsRetainBeanAndComponentContracts() {
         AuthorizationController.CreatePermissionRequest create = new AuthorizationController.CreatePermissionRequest();
@@ -134,9 +111,6 @@ class AuthorizationRequestContractTest {
         valueContract(update, new AuthorizationController.UpdatePermissionRequest("Read goods", "goods", status));
     }
 
-    /**
-     * 验证<code>roles.roleIds()</code> 等于 <code>roles.getRoleIds()</code>，<code>permissions.permissionIds()</code> 等于 <code>permissions.getPermissionIds()</code>。
-     */
     @Test
     void assignmentRequestsRetainBeanAndComponentContracts() {
         AuthorizationController.AssignRolesRequest roles = new AuthorizationController.AssignRolesRequest();

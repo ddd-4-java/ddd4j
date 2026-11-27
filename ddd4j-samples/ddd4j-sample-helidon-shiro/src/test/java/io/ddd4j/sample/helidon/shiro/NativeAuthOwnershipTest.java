@@ -20,9 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  * 验证 Shiro 请求引擎和调用方引擎的所有权边界。
  */
 class NativeAuthOwnershipTest {
-    /**
-     * 验证<code>SecurityUtils.getSecurityManager()</code> 与…为同一实例 <code>caller</code>。
-     */
     @Test
     void applicationKeepsCallerVmManager() {
         SecurityManager previous = (SecurityManager) ReflectUtil.getStaticFieldValue(
@@ -43,9 +40,6 @@ class NativeAuthOwnershipTest {
         }
     }
 
-    /**
-     * 验证<code>SecurityUtils.getSubject()</code> 与…为不同的实例 <code>previous</code>，<code>SecurityUtils.getSecurityManager()</code> 与…为同一实例 <code>auth.manager()</code>，<code>ThreadContext.getSecurityManager()</code> 与…为同一实例 <code>caller</code>。
-     */
     @Test
     void requestFiltersRestoreCallerThreadBindings() {
         NativeAuth auth = new NativeAuth();

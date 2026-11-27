@@ -16,9 +16,6 @@ package io.ddd4j.guice.testbeans;
 
 import io.ddd4j.guice.annotation.ddd.DomainService;
 
-/**
- * 接收注入的订单仓储以验证领域服务装配。
- */
 @DomainService
 public class OrderService {
 }

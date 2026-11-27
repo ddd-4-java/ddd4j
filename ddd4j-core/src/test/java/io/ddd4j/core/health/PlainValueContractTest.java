@@ -13,13 +13,7 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-/**
- * 通过 <code>details.put()</code>、<code>result.details()</code>、<code>ReadinessResult.class.getSuperclass()</code> 验证 <code>PlainValueContract</code> 的运行行为。
- */
 class PlainValueContractTest {
-    /**
-     * 在测试框架中执行 <code>details.put()</code>、<code>result.details()</code>，验证该场景。
-     */
     @Test
     void diagnosticDetailsKeepInputOrder() {
         Map<String, String> details = new LinkedHashMap<>();
@@ -33,9 +27,6 @@ class PlainValueContractTest {
                 .containsExactly("alpha", "beta", "gamma", "delta", "epsilon");
     }
 
-    /**
-     * 验证<code>ReadinessResult.class.getSuperclass()</code> 等于 <code>Object.class</code>，<code>Modifier.isFinal(ReadinessResult.class.getModifiers())</code>为真，<code>ObjectStreamClass.lookup(LambdaCondition.class).getSerialVersionUID()</code> 等于 <code>-4292780888118581043L</code>。
-     */
     @Test
     void frameworkValuesAreFinalOrdinaryClasses() {
         assertThat(ReadinessResult.class.getSuperclass()).isEqualTo(Object.class);
@@ -47,9 +38,6 @@ class PlainValueContractTest {
                 .isEqualTo(-4292780888118581043L);
     }
 
-    /**
-     * 验证<code>result</code> 等于 <code>equal</code>，<code>result.hashCode()</code> 等于 <code>equal.hashCode()</code>，被测调用 抛出 <code>IllegalArgumentException.class</code>。
-     */
     @Test
     void componentsPreserveValuesAndDefensiveCopies() {
         Map<String, String> details = new HashMap<>();
@@ -66,9 +54,6 @@ class PlainValueContractTest {
         assertThatThrownBy(() -> new PropertyRef(PropertySpace.DOMAIN, String.class, "")).isInstanceOf(IllegalArgumentException.class);
     }
 
-    /**
-     * 验证<code>ready.hashCode()</code> 等于 <code>31 * (31 * "db".hashCode() + Boolean.hashCode(true)) + ready.details().hashCode()</code>，<code>unavailable.hashCode()</code> 等于 <code>31 * (31 * "db".hashCode() + Boolean.hashCode(false)) + unavailable.details().hashCode()</code>。
-     */
     @Test
     void readinessResultHashUsesTheSameBooleanValueAcrossLines() {
         ReadinessResult ready = ReadinessResult.ready("db");
@@ -80,9 +65,6 @@ class PlainValueContractTest {
                 31 * (31 * "db".hashCode() + Boolean.hashCode(false)) + unavailable.details().hashCode());
     }
 
-    /**
-     * 验证<code>ready.hashCode()</code> 等于 <code>31 * Boolean.hashCode(true) + ready.results().hashCode()</code>，<code>unavailable.hashCode()</code> 等于 <code>31 * Boolean.hashCode(false) + unavailable.results().hashCode()</code>。
-     */
     @Test
     void readinessReportHashUsesTheSameBooleanValueAcrossLines() {
         ReadinessReport ready = new ReadinessReport(true, Collections.emptyList());
@@ -94,11 +76,6 @@ class PlainValueContractTest {
                 31 * Boolean.hashCode(false) + unavailable.results().hashCode());
     }
 
-    /**
-     * 验证<code>roundTrip(valid)</code> 等于 <code>valid</code>，<code>roundTrip(valid)</code> 抛出 <code>InvalidObjectException.class</code>。
-     *
-     * @throws Exception 反射访问被测成员时失败
-     */
     @Test
     void javaSerializationPreservesCanonicalValidation() throws Exception {
         PropertyRef valid = new PropertyRef(PropertySpace.DOMAIN, String.class, "length");
@@ -109,13 +86,6 @@ class PlainValueContractTest {
         assertThatThrownBy(() -> roundTrip(valid)).isInstanceOf(InvalidObjectException.class);
     }
 
-    /**
-     * 通过 <code>input.readObject()</code> 取得当前测试需要的结果。
-     *
-     * @param value 当前用例传入的值
-     * @return 当前测试使用的结果，取自 <code>input.readObject()</code>
-     * @throws Exception 准备或读取夹具文件时失败
-     */
     private Object roundTrip(Object value) throws Exception {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         try (ObjectOutputStream output = new ObjectOutputStream(bytes)) {
@@ -126,11 +96,6 @@ class PlainValueContractTest {
         }
     }
 
-    /**
-     * 验证<code>mapper.readTree(json).properties()</code> 的大小为 <code>3</code>，<code>mapper.readValue(json, ReadinessResult.class)</code> 等于 <code>value</code>。
-     *
-     * @throws Exception 处理测试数据的序列化时失败
-     */
     @Test
     void jacksonPreservesComponentNamesAndCanonicalValidation() throws Exception {
         JsonMapper mapper = JsonMapper.builder().build();
@@ -141,9 +106,6 @@ class PlainValueContractTest {
         assertThat(mapper.readValue("{\"name\":\"db\",\"ready\":true,\"details\":null}", ReadinessResult.class).details()).isEmpty();
     }
 
-    /**
-     * 验证被测调用 抛出 <code>NullPointerException.class</code>。
-     */
     @Test
     void immutableValueCollectionsRejectNullEntries() {
         assertThatThrownBy(() -> new ReadinessResult("db", true,
@@ -154,11 +116,6 @@ class PlainValueContractTest {
                 .isInstanceOf(NullPointerException.class);
     }
 
-    /**
-     * 验证<code>mapper.readTree(json).get("ready").asBoolean()</code>为真，<code>mapper.readValue(json, ReadinessReport.class)</code> 等于 <code>report</code>，<code>report.toString()</code> 等于 <code>"ReadinessReport[ready=true, results=[ReadinessResult[name=db, ready=true, details={}]]]"</code>。
-     *
-     * @throws Exception 处理测试数据的序列化时失败
-     */
     @Test
     void readinessReportRetainsValueAndJsonContract() throws Exception {
         ReadinessReport report = new ReadinessReport(true,

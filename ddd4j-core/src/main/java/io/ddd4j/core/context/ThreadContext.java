@@ -340,39 +340,20 @@ public class ThreadContext {
         THREAD_LOCAL_POOL.remove();
     }
 
-    /**
-     * 在当前线程还没有资源表时初始化资源映射。
-     */
     private static void ensureResourcesInitialized() {
         if (Objects.isNull(THREAD_LOCAL_POOL.get())) {
             THREAD_LOCAL_POOL.set(new ConcurrentHashMap<>(4));
         }
     }
 
-    /**
-     * 为当前线程的上下文制作独立资源映射。
-     *
-     * @return 当前资源的浅拷贝，未初始化时返回空
-     */
     private static Map<Object, Object> snapshotResources() {
         return copyResources(THREAD_LOCAL_POOL.get());
     }
 
-    /**
-     * 复制已有资源映射并保持空引用语义。
-     *
-     * @param resources 要复制或安装的线程资源映射
-     * @return 副本映射，原引用为空时返回空
-     */
     private static Map<Object, Object> copyResources(Map<Object, Object> resources) {
         return Objects.isNull(resources) ? null : new ConcurrentHashMap<>(resources);
     }
 
-    /**
-     * 替换当前线程的资源映射，空映射或空引用表示清除当前绑定。
-     *
-     * @param resources 要复制或安装的线程资源映射
-     */
     private static void replaceResources(Map<Object, Object> resources) {
         if (Objects.isNull(resources) || resources.isEmpty()) {
             clear();
@@ -388,20 +369,9 @@ public class ThreadContext {
      */
     public static final class Scope implements AutoCloseable {
 
-        /**
-         * 建立当前线程作用域前保存的资源副本。
-         */
         private final Map<Object, Object> previousResources;
-        /**
-         * 当前实例是否已关闭。
-         */
         private boolean closed;
 
-        /**
-         * 保存进入前的线程资源，供当前作用域关闭时恢复。
-         *
-         * @param previousResources 进入作用域前的资源副本
-         */
         private Scope(Map<Object, Object> previousResources) {
             this.previousResources = previousResources;
         }

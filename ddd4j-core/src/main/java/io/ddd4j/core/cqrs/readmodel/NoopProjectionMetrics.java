@@ -30,9 +30,6 @@ public final class NoopProjectionMetrics implements ProjectionMetrics {
      */
     public static final NoopProjectionMetrics INSTANCE = new NoopProjectionMetrics();
 
-    /**
-     * 限制无操作指标实现通过内部单例构造。
-     */
     private NoopProjectionMetrics() {
         // 单例，禁止外部实例化
     }

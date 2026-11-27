@@ -53,9 +53,6 @@ public final class SubjectKit {
      */
     public static volatile SubjectStrategy strategy;
 
-    /**
-     * 限制调用方直接创建 <code>SubjectKit</code> 实例。
-     */
     private SubjectKit() {
     }
 

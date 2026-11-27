@@ -13,14 +13,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-/**
- * 验证 <code>JpaProjectionPositionRepository</code> 在<code>findAll</code>、<code>incrementByReportsTheStream</code>等操作中的行为契约。
- */
 class JpaProjectionPositionRepositoryTest {
 
-    /**
-     * 验证<code>positions.get(0).getNextEventNumber()</code> 等于 <code>2L</code>，<code>positions.add(positions.get(0))</code> 抛出 <code>UnsupportedOperationException.class</code>。
-     */
     @Test
     void findAllReturnsImmutablePositionValuesInRepositoryOrder() {
         SpringDataProjectionPositionRepository repository = mock(SpringDataProjectionPositionRepository.class);
@@ -39,9 +33,6 @@ class JpaProjectionPositionRepositoryTest {
                 .isInstanceOf(UnsupportedOperationException.class);
     }
 
-    /**
-     * 验证<code>positions.incrementBy("order-summary", 1L)</code> 抛出 <code>IllegalStateException.class</code>。
-     */
     @Test
     void incrementByReportsTheStreamWhenUpdatedRowDisappearsBeforeReload() {
         SpringDataProjectionPositionRepository repository = mock(SpringDataProjectionPositionRepository.class);

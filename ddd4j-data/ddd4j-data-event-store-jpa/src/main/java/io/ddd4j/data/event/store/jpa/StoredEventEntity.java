@@ -36,54 +36,30 @@ import java.time.Instant;
 @IdClass(StoredEventEntityId.class)
 public class StoredEventEntity {
 
-    /**
-     * 用于区分聚合类型的逻辑名称。
-     */
     @Id
     @Column(name = EventStoreConstants.COLUMN_AGGREGATE_TYPE, nullable = false, length = 255)
     private String aggregateType;
 
-    /**
-     * 事件所属聚合根的标识。
-     */
     @Id
     @Column(name = EventStoreConstants.COLUMN_AGGREGATE_ID, nullable = false, length = 255)
     private String aggregateId;
 
-    /**
-     * 当前事件在所属聚合流中的版本。
-     */
     @Id
     @Column(name = EventStoreConstants.COLUMN_VERSION, nullable = false)
     private long version;
 
-    /**
-     * 当前事件在事件表全局读取顺序中的位置。
-     */
     @Column(name = EventStoreConstants.COLUMN_POSITION, nullable = false)
     private long position;
 
-    /**
-     * 用于恢复实际负载 Java 类型的事件类型名。
-     */
     @Column(name = EventStoreConstants.COLUMN_EVENT_TYPE, nullable = false, length = 512)
     private String eventType;
 
-    /**
-     * 领域事件标识。
-     */
     @Column(name = EventStoreConstants.COLUMN_EVENT_ID, length = 64)
     private String eventId;
 
-    /**
-     * 用于关联同一次操作产生的事件或消息的标识。
-     */
     @Column(name = EventStoreConstants.COLUMN_CORRELATION_ID, length = 64)
     private String correlationId;
 
-    /**
-     * 触发该领域事件产生的上游事件标识。
-     */
     @Column(name = EventStoreConstants.COLUMN_CAUSATION_ID, length = 64)
     private String causationId;
 
@@ -93,9 +69,6 @@ public class StoredEventEntity {
     @Column(name = EventStoreConstants.COLUMN_PAYLOAD, nullable = false, columnDefinition = "TEXT")
     private String payload;
 
-    /**
-     * 当前事件发生的时间。
-     */
     @Column(name = EventStoreConstants.COLUMN_TIMESTAMP, nullable = false)
     private Instant timestamp;
 

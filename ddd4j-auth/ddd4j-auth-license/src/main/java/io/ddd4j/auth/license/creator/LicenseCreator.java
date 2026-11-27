@@ -31,15 +31,9 @@ import java.util.prefs.Preferences;
 @Slf4j
 public class LicenseCreator {
 
-    /**
-     * 未指定持有人或签发者时使用的默认主体标识。
-     */
     private static final X500Principal DEFAULT_HOLDER_AND_ISSUER =
             new X500Principal("CN=localhost, OU=localhost, O=localhost, L=SH, ST=SH, C=CN");
 
-    /**
-     * 生成许可证所需的签发配置和业务内容。
-     */
     private final LicenseCreatorParam param;
 
     /**
@@ -71,8 +65,6 @@ public class LicenseCreator {
 
     /**
      * 初始化证书生成密钥库参数。
-     *
-     * @return 含密钥库路径、别名和凭据的参数
      */
     private CustomKeyStoreParam initKeyStoreParam() {
         return new CustomKeyStoreParam(LicenseCreator.class,
@@ -85,8 +77,6 @@ public class LicenseCreator {
 
     /**
      * 设置证书生成正文信息。
-     *
-     * @return 待签发的许可证内容
      */
     private License initLicenseContent() {
         License content = V1.builder().subject(param.getSubject()).build().licenseFactory().license();

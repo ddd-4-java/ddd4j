@@ -15,12 +15,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
  * 没有日志依赖的真实 Spring MVC 初始化与请求分派入口。
  */
 public class WebMvcWithoutLogsProbe {
-    /**
-     * 调用 <code>Class.forName()</code>、<code>context.register()</code>、<code>servlet.init()</code> 执行当前夹具操作。
-     *
-     * @param args 从命令行传入测试探针的参数
-     * @throws Exception 反射访问被测成员时失败
-     */
     public static void main(String[] args) throws Exception {
         try {
             Class.forName("io.ddd4j.data.logs.ApiOperationLogProvider");
@@ -58,11 +52,6 @@ public class WebMvcWithoutLogsProbe {
      */
     @RestController
     public static class Endpoint {
-        /**
-         * 为当前用例提供固定的 <code>handle</code> 返回值。
-         *
-         * @return <code>"webmvc-ok"</code>
-         */
         @GetMapping("/r05-no-logs")
         public String handle() {
             return "webmvc-ok";

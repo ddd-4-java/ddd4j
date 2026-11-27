@@ -37,17 +37,8 @@ import java.util.*;
  */
 public class RbacService {
 
-    /**
-     * 读取和保存用户的仓储。
-     */
     private final InMemoryUserRepository userRepository;
-    /**
-     * 读取和保存角色的仓储。
-     */
     private final InMemoryRoleRepository roleRepository;
-    /**
-     * 查询和维护权限定义的仓储。
-     */
     private final InMemoryPermissionRepository permissionRepository;
 
     /**
@@ -312,8 +303,6 @@ public class RbacService {
 
     /**
      * 校验角色编码全部存在。
-     *
-     * @param roleCodes 待查找或校验的角色编码
      */
     private void validateRoleCodes(Set<String> roleCodes) {
         if (Objects.isNull(roleCodes)) {

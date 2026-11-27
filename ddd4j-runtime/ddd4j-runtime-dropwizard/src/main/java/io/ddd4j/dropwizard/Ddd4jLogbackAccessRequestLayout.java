@@ -18,12 +18,6 @@ import java.util.TimeZone;
  */
 final class Ddd4jLogbackAccessRequestLayout extends PatternLayout {
 
-    /**
-     * 装配 Dropwizard 请求日志的布局和时间格式。
-     *
-     * @param context  当前框架传入的执行或容器上下文
-     * @param timeZone 格式化访问时间使用的时区
-     */
     Ddd4jLogbackAccessRequestLayout(LoggerContext context, TimeZone timeZone) {
         setOutputPatternAsHeader(false);
         getInstanceConverterMap().put("requestParameter", SafeRequestParameterConverter::new);

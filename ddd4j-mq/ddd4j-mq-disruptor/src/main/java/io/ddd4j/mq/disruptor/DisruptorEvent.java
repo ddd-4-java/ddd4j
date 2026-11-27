@@ -27,29 +27,11 @@ import lombok.Setter;
 @Setter
 public class DisruptorEvent {
 
-    /**
-     * 作为物理主题名前缀使用的命名空间。
-     */
     private String namespace;
-    /**
-     * 消息投递或订阅的主题。
-     */
     private String topic;
-    /**
-     * 消息的路由标签。
-     */
     private String tag;
-    /**
-     * 消息标识。
-     */
     private String messageId;
-    /**
-     * 消息转移或发送时使用的序列化负载。
-     */
     private Object payload;
-    /**
-     * 当前事件在 Disruptor 环形缓冲区中的序号。
-     */
     private long sequence;
 
     /**

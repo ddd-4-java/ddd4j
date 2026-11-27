@@ -28,21 +28,9 @@ import java.util.Objects;
 @Builder
 public class LicenseVerificationResult {
 
-    /**
-     * 本次许可证验证是否成功。
-     */
     private final boolean valid;
-    /**
-     * 对外可区分的许可证验证结果类型。
-     */
     private final Status status;
-    /**
-     * 许可证验证结果的诊断说明。
-     */
     private final String message;
-    /**
-     * 验证成功后交给调用方的许可证信息。
-     */
     private final LicenseInfo licenseInfo;
 
     /**

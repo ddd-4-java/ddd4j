@@ -26,14 +26,8 @@ import java.util.Locale;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-/**
- * 验证 <code>WebPayloadJsonContract</code> 在 <code>requestFailureRetainsMethodAndPath</code> 等场景中的行为。
- */
 class WebPayloadJsonContractTest {
 
-    /**
-     * 验证<code>restored</code>非空，<code>restored</code> 等于 <code>original</code>，<code>restored.forwardedFor()</code> 等于 <code>"203.0.113.1"</code>。
-     */
     @Test
     void requestDataRetainsCapturedMetadata() {
         WebRequestData original = new WebRequestData("request-1", "trace-1", "tenant-1", "Bearer token",
@@ -46,9 +40,6 @@ class WebPayloadJsonContractTest {
         assertEquals("203.0.113.1", restored.forwardedFor());
     }
 
-    /**
-     * 验证<code>restored</code>非空，<code>restored</code> 等于 <code>original</code>，<code>restored.path()</code> 等于 <code>"/orders"</code>。
-     */
     @Test
     void requestFailureRetainsMethodAndPathWithNullCause() {
         WebRequestFailure original = new WebRequestFailure("POST", "/orders", null);
@@ -60,9 +51,6 @@ class WebPayloadJsonContractTest {
         assertEquals("/orders", restored.path());
     }
 
-    /**
-     * 验证<code>restored</code>非空，<code>restored</code> 等于 <code>original</code>，<code>restored.status()</code> 等于 <code>409</code>。
-     */
     @Test
     void webErrorRetainsStatusCodeMessageAndData() {
         WebError original = new WebError(409, "CONFLICT", "duplicate", "order-1");
@@ -74,9 +62,6 @@ class WebPayloadJsonContractTest {
         assertEquals(409, restored.status());
     }
 
-    /**
-     * 验证<code>restored</code>非空，<code>restored</code> 等于 <code>original</code>，<code>restored.ready()</code> 等于 <code>true</code>。
-     */
     @Test
     void readinessResponseRetainsBooleanState() {
         ReadinessResponse original = new ReadinessResponse(true);

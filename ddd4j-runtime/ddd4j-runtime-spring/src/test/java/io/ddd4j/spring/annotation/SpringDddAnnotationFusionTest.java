@@ -35,24 +35,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("ddd4j-runtime-spring DDD 注解与 Spring 元注解融合验收")
 class SpringDddAnnotationFusionTest {
 
-    /**
-     * 核对<code>annotationType.getAnnotation(DDDAnnotation.class)</code>非空，<code>annotationType.getAnnotation(springAnnotationType)</code>非空。
-     *
-     * @param annotationType       传给 <code>assertNotNull()</code> 的 <code>Class&lt;? extends Annotation&gt;</code> 输入
-     * @param springAnnotationType 传给 <code>assertNotNull()</code> 的 <code>Class&lt;? extends Annotation&gt;</code> 输入
-     */
     private static void assertMetaAnnotations(Class<? extends Annotation> annotationType,
                                               Class<? extends Annotation> springAnnotationType) {
         assertNotNull(annotationType.getAnnotation(DDDAnnotation.class));
         assertNotNull(annotationType.getAnnotation(springAnnotationType));
     }
 
-    /**
-     * 调用 <code>Class.forName()</code> 执行当前夹具操作。
-     *
-     * @param className 传给 <code>Class.forName()</code> 的 <code>String</code> 输入
-     * @return 根据测试条件返回的可能值，包括 <code>Class.forName(className)</code>、<code>null</code>
-     */
     private static Class<?> loadOptional(String className) {
         try {
             return Class.forName(className);
@@ -61,9 +49,6 @@ class SpringDddAnnotationFusionTest {
         }
     }
 
-    /**
-     * 验证 DDD 组件注解公开相应的 Spring 元注解。
-     */
     @Test
     void dddAnnotationsShouldExposeSpringMetaAnnotations() {
         assertMetaAnnotations(DomainService.class, Service.class);
@@ -78,9 +63,6 @@ class SpringDddAnnotationFusionTest {
         assertMetaAnnotations(DomainConverter.class, Component.class);
     }
 
-    /**
-     * 验证<code>AnnotationUtils.findAnnotation(TestDomainService.class, Service.class)</code>非空，<code>AnnotationUtils.findAnnotation(TestDomainService.class, DDDAnnotation.class)</code>非空，<code>AnnotationUtils.findAnnotation(TestDomainRepository.class, Repository.class)</code>非空。
-     */
     @Test
     void springShouldResolveComposedAnnotations() {
         /** 领域服务组合注解样例。 */
@@ -98,9 +80,6 @@ class SpringDddAnnotationFusionTest {
         assertNotNull(AnnotationUtils.findAnnotation(TestDomainRepository.class, Repository.class));
     }
 
-    /**
-     * 验证<code>annotation</code>非空，<code>annotation.aggregateRoot()</code>为真。
-     */
     @Test
     void domainEntityShouldKeepAggregateRootAttribute() {
         /** 聚合根属性样例。 */
@@ -113,9 +92,6 @@ class SpringDddAnnotationFusionTest {
         assertTrue(annotation.aggregateRoot());
     }
 
-    /**
-     * 验证<code>annotations.size()</code> 等于 <code>10</code>，<code>loadOptional("io.ddd4j.spring.annotation.DomainEvent")</code>为空。
-     */
     @Test
     void springAnnotationPackageShouldContainExpectedAnnotations() {
         Set<Class<?>> annotations = new HashSet<>(Arrays.asList(

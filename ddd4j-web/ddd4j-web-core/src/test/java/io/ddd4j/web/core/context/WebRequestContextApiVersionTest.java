@@ -30,19 +30,11 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class WebRequestContextApiVersionTest {
 
-    /**
-     * 创建 <code>new WebRequestContext</code> 供当前测试路径调用。
-     *
-     * @return 当前测试使用的结果，取自 <code>new WebRequestContext("request-1", "trace-1", "tenant-1", "Bearer token", Locale.CHINA, "203.0.113.1", "get", "/orders")</code>
-     */
     private WebRequestContext legacyContext() {
         return new WebRequestContext("request-1", "trace-1", "tenant-1", "Bearer token",
                 Locale.CHINA, "203.0.113.1", "get", "/orders");
     }
 
-    /**
-     * 验证<code>context.apiVersion()</code>为空，<code>context.getApiVersion()</code>为空，<code>context.getPath()</code> 等于 <code>"/orders"</code>。
-     */
     @Test
     void eightArgumentConstructorKeepsApiVersionNull() {
         WebRequestContext context = legacyContext();
@@ -56,9 +48,6 @@ class WebRequestContextApiVersionTest {
         assertEquals("/orders", context.getPath());
     }
 
-    /**
-     * 验证<code>context.apiVersion()</code> 等于 <code>ApiVersion.parse("2.1.0")</code>，<code>context.getApiVersion()</code> 等于 <code>ApiVersion.parse("2.1.0")</code>，<code>context.apiVersion()</code> 等于 <code>version</code>。
-     */
     @Test
     void nineArgumentConstructorCarriesApiVersion() {
         ApiVersion version = ApiVersion.parse("2.1.0");
@@ -70,9 +59,6 @@ class WebRequestContextApiVersionTest {
         assertEquals(version, context.apiVersion());
     }
 
-    /**
-     * 验证<code>explicitNull</code> 等于 <code>legacy</code>，<code>explicitNull.hashCode()</code> 等于 <code>legacy.hashCode()</code>。
-     */
     @Test
     void eightAndNineArgumentConstructorsAgreeWhenVersionIsNull() {
         WebRequestContext legacy = legacyContext();
@@ -83,9 +69,6 @@ class WebRequestContextApiVersionTest {
         assertEquals(legacy.hashCode(), explicitNull.hashCode());
     }
 
-    /**
-     * 验证<code>sameVersion</code> 等于 <code>withOldVersion</code>，<code>sameVersion.hashCode()</code> 等于 <code>withOldVersion.hashCode()</code>，<code>noVersion.hashCode()</code> 不等于 <code>withOldVersion.hashCode()</code>。
-     */
     @Test
     void equalsAndHashCodeIncludeApiVersion() {
         WebRequestContext withOldVersion = new WebRequestContext("request-1", "trace-1", "tenant-1", "Bearer token",
@@ -103,9 +86,6 @@ class WebRequestContextApiVersionTest {
         assertNotEquals(withOldVersion.hashCode(), noVersion.hashCode());
     }
 
-    /**
-     * 验证<code>context.toString().contains("apiVersion=2.1.0")</code>为真，<code>legacyContext().toString().contains("apiVersion=null")</code>为真。
-     */
     @Test
     void toStringIncludesApiVersion() {
         WebRequestContext context = new WebRequestContext("request-1", null, null, null,
@@ -115,9 +95,6 @@ class WebRequestContextApiVersionTest {
         assertTrue(legacyContext().toString().contains("apiVersion=null"));
     }
 
-    /**
-     * 验证<code>restored</code> 等于 <code>context</code>，<code>restored.apiVersion()</code> 等于 <code>ApiVersion.parse("2.1.0")</code>。
-     */
     @Test
     void jsonRoundTripPreservesApiVersion() {
         WebRequestContext context = new WebRequestContext("request-1", "trace-1", "tenant-1", null,
@@ -131,9 +108,6 @@ class WebRequestContextApiVersionTest {
         assertEquals(ApiVersion.parse("2.1.0"), restored.apiVersion());
     }
 
-    /**
-     * 验证<code>withoutVersion.getApiVersion()</code>为空，<code>withNullVersion</code> 等于 <code>withoutVersion</code>，<code>withVersion.getMethod()</code> 等于 <code>"POST"</code>。
-     */
     @Test
     void factoryCreateOverloadsPropagateApiVersion() {
         WebRequestContextFactory factory = new WebRequestContextFactory();

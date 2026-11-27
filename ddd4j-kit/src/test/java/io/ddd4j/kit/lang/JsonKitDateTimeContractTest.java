@@ -14,9 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class JsonKitDateTimeContractTest {
 
-    /**
-     * 验证<code>JsonKit.toJson(value)</code> 等于 <code>"\"2026-10-13\""</code>，<code>JsonKit.toObject("\"2026-10-13\"", LocalDate.class)</code> 等于 <code>value</code>。
-     */
     @Test
     void localDateUsesTheConfiguredCalendarFormat() {
         LocalDate value = LocalDate.of(2026, 10, 13);
@@ -24,9 +21,6 @@ class JsonKitDateTimeContractTest {
         assertEquals(value, JsonKit.toObject("\"2026-10-13\"", LocalDate.class));
     }
 
-    /**
-     * 验证<code>JsonKit.toJson(value)</code> 等于 <code>"\"2026-10-13 09:08:07\""</code>，<code>JsonKit.toObject("\"2026-10-13 09:08:07\"", LocalDateTime.class)</code> 等于 <code>value</code>。
-     */
     @Test
     void localDateTimeUsesTheConfiguredSecondPrecisionFormat() {
         LocalDateTime value = LocalDateTime.of(2026, 10, 13, 9, 8, 7);
@@ -34,9 +28,6 @@ class JsonKitDateTimeContractTest {
         assertEquals(value, JsonKit.toObject("\"2026-10-13 09:08:07\"", LocalDateTime.class));
     }
 
-    /**
-     * 验证<code>JsonKit.toJson(value)</code> 等于 <code>"\"2026-10-13T01:08:07Z\""</code>，<code>JsonKit.toObject("\"2026-10-13T01:08:07Z\"", Instant.class)</code> 等于 <code>value</code>。
-     */
     @Test
     void instantUsesIsoStringFormat() {
         Instant value = Instant.parse("2026-10-13T01:08:07Z");
@@ -44,9 +35,6 @@ class JsonKitDateTimeContractTest {
         assertEquals(value, JsonKit.toObject("\"2026-10-13T01:08:07Z\"", Instant.class));
     }
 
-    /**
-     * 验证<code>JsonKit.toJson(value)</code> 等于 <code>"\"PT1M7S\""</code>，<code>JsonKit.toObject("\"PT1M7S\"", Duration.class)</code> 等于 <code>value</code>。
-     */
     @Test
     void durationUsesIsoStringFormat() {
         Duration value = Duration.ofSeconds(67);

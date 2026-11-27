@@ -16,17 +16,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 @Testcontainers
 class JavalinBasicContractTest {
-    /**
-     * 为当前集成测试提供独立 MySQL 服务的容器。
-     */
     @Container
     static final MySQLContainer<?> MYSQL = new MySQLContainer<>("mysql:8.0.36");
 
-    /**
-     * 验证<code>app.token()</code> 等于 <code>""</code>，<code>result.statusCode()</code> 等于 <code>201</code>。
-     *
-     * @throws Exception 发起测试请求时失败
-     */
     @Test
     void offersAnUnauthenticatedBasicLifecycle() throws Exception {
         try (JavalinSample.JavalinApplication app = JavalinSample.start(0, JavalinEntryContractTest.catalog(MYSQL), false)) {
@@ -37,9 +29,6 @@ class JavalinBasicContractTest {
         }
     }
 
-    /**
-     * 验证<code>ThreadContext.getResources()</code> 等于 <code>expected</code>，<code>ThreadContext.getValues()</code> 等于 <code>expected</code>。
-     */
     @Test
     void closePreservesCallingThreadsCompleteContext() {
         try (ThreadContext.Scope original = ThreadContext.open()) {

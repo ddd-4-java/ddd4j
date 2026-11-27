@@ -73,13 +73,7 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
      */
     private static final String TIME_PATTERN = "HH:mm:ss";
 
-    /**
-     * 约定静态 Web 资源的 classpath 位置。
-     */
     private final String META_INF_RESOURCES = "classpath:/META-INF/resources/";
-    /**
-     * WebJars 静态资源的 classpath 位置。
-     */
     private final String META_INF_WEBJAR_RESOURCES = META_INF_RESOURCES + "webjars/";
 
     /**
@@ -111,11 +105,6 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
         this.ddd4jWebMvcInterceptor = ddd4jWebMvcInterceptor;
     }
 
-    /**
-     * 为 Spring MVC 配置默认 Servlet 的请求处理方式。
-     *
-     * @param configurer 控制默认 Servlet 处理方式的 Spring 配置对象
-     */
     @Override
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
         configurer.enable();
@@ -191,11 +180,6 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
         converters.add(new AllEncompassingFormHttpMessageConverter());
     }
 
-    /**
-     * 保留消息转换器自定义扩展入口。
-     *
-     * @param converters MVC 当前注册的 HTTP 消息转换器集合
-     */
     @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
 
@@ -218,8 +202,6 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
     /**
      * 配置静态资源映射。
      * <p>支持本地文件资源映射、静态目录资源及 WebJars 资源。</p>
-     *
-     * @param registry MVC 静态资源路由注册器
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

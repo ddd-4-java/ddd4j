@@ -26,9 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  */
 class ImportErrorContractTest {
 
-    /**
-     * 验证<code>error.getRowIndex()</code> 等于 <code>2</code>，<code>error.getColumnIndex()</code> 等于 <code>3</code>，<code>error.toString()</code> 等于 <code>"ImportError{row=2, col=3, type=ExcelDataConvertException, msg=cannot convert}"</code>。
-     */
     @Test
     void cellConversionErrorPreservesLocationValueAndMessage() {
         ReadCellData<String> cell = new ReadCellData<>("raw");
@@ -46,9 +43,6 @@ class ImportErrorContractTest {
                 error.toString());
     }
 
-    /**
-     * 验证<code>error.getRowIndex()</code> 等于 <code>7</code>，<code>error.getColumnIndex()</code> 等于 <code>-1</code>，<code>error.getErrorType()</code> 等于 <code>"NullPointerException"</code>。
-     */
     @Test
     void ordinaryExceptionUsesProvidedRowAndTypeAsMissingMessage() {
         ImportError error = ImportError.of(7, new NullPointerException());
@@ -60,9 +54,6 @@ class ImportErrorContractTest {
         assertEquals("NullPointerException", error.getErrorType());
     }
 
-    /**
-     * 验证<code>error.getRowIndex()</code> 等于 <code>5</code>，<code>error.getColumnIndex()</code> 等于 <code>-1</code>，<code>error.getErrorType()</code> 等于 <code>"ValidationFailed"</code>。
-     */
     @Test
     void validationErrorKeepsBusinessMessage() {
         ImportError error = ImportError.ofValidation(5, "invalid email");

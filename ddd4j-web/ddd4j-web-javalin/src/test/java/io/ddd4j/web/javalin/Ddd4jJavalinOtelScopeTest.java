@@ -37,16 +37,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * 通过 <code>resetOpenTelemetry()</code>、<code>SdkTracerProvider.builder()</code>、<code>SimpleSpanProcessor.create()</code> 验证 <code>Ddd4jJavalinOtelScope</code> 的运行行为。
- */
 class Ddd4jJavalinOtelScopeTest {
 
-    /**
-     * 调用 <code>GlobalOpenTelemetry.resetForTest()</code>、<code>Ddd4jOtel.class.getDeclaredField()</code>、<code>field.setAccessible()</code> 执行当前夹具操作。
-     *
-     * @throws Exception 反射访问被测成员时失败
-     */
     private static void resetOpenTelemetry() throws Exception {
         GlobalOpenTelemetry.resetForTest();
         for (String fieldName : new String[]{"TRACER_CACHE", "METER_CACHE"}) {
@@ -59,11 +51,6 @@ class Ddd4jJavalinOtelScopeTest {
         available.setBoolean(null, false);
     }
 
-    /**
-     * 验证<code>connection.getResponseCode()</code> 等于 <code>200</code>，<code>activeAfterDdd4jCompletion.get()</code>为假。
-     *
-     * @throws Exception 准备或释放被测运行资源时失败
-     */
     @Test
     void requestCompletionMustCloseOtelScope() throws Exception {
         resetOpenTelemetry();

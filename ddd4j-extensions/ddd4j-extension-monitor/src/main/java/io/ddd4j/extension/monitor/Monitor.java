@@ -52,9 +52,6 @@ import io.ddd4j.extension.monitor.runtime.ApplicationStartReporter;
  */
 public final class Monitor {
 
-    /**
-     * 限制调用方直接创建 <code>Monitor</code> 实例。
-     */
     private Monitor() {
     }
 

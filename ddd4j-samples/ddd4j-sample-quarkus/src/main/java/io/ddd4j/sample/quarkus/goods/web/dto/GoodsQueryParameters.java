@@ -32,44 +32,20 @@ import java.util.Objects;
 @Setter
 public class GoodsQueryParameters {
 
-    /**
-     * 当前请求的查询页号。
-     */
     @QueryParam("current")
     private Long current;
-    /**
-     * 当前分页查询希望返回的记录数。
-     */
     @QueryParam("size")
     private Long size;
-    /**
-     * 当前请求或结果使用的业务编码。
-     */
     @QueryParam("code")
     private String code;
-    /**
-     * 商品名称模糊匹配条件。
-     */
     @QueryParam("nameLike")
     private String nameLike;
-    /**
-     * 当前商品、账号或权限记录的业务状态。
-     */
     @QueryParam("status")
     private String status;
-    /**
-     * 筛选商品时的价格下限。
-     */
     @QueryParam("priceMin")
     private BigDecimal priceMin;
-    /**
-     * 筛选商品时的价格上限。
-     */
     @QueryParam("priceMax")
     private BigDecimal priceMax;
-    /**
-     * 可解析为排序字段和方向的查询文本。
-     */
     @QueryParam("orderBys")
     private String orderBys;
 
@@ -95,11 +71,6 @@ public class GoodsQueryParameters {
         return query;
     }
 
-    /**
-     * 把提供的查询状态转换为商品状态枚举，空白值不限制状态。
-     *
-     * @return 解析到的商品状态，没有值时为空
-     */
     private GoodsStatus parseStatus() {
         return StrKit.isBlank(status) ? null : GoodsStatus.valueOf(status.toUpperCase(Locale.ROOT));
     }

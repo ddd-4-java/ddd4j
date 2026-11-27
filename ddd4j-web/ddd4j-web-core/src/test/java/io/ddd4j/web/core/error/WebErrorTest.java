@@ -22,14 +22,8 @@ import java.io.Serializable;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-/**
- * 通过 <code>error.status()</code>、<code>error.code()</code>、<code>error.message()</code> 验证 <code>WebError</code> 的运行行为。
- */
 class WebErrorTest {
 
-    /**
-     * 验证<code>error.status()</code> 等于 <code>400</code>，<code>error.code()</code> 等于 <code>"PARAM"</code>，<code>error.getData()</code> 等于 <code>"detail"</code>。
-     */
     @Test
     void exposesComponents() {
         WebError error = new WebError(400, "PARAM", "bad request", "detail");
@@ -44,9 +38,6 @@ class WebErrorTest {
         assertEquals("detail", error.getData());
     }
 
-    /**
-     * 验证<code>error.code()</code>为空，<code>error.data()</code>为空。
-     */
     @Test
     void acceptsNullCodeAndData() {
         WebError error = new WebError(500, null, "boom", null);
@@ -54,18 +45,12 @@ class WebErrorTest {
         assertNull(error.data());
     }
 
-    /**
-     * 验证<code>error.code()</code> 等于 <code>Integer.valueOf(1001)</code>。
-     */
     @Test
     void acceptsSerializableCode() {
         WebError error = new WebError(409, Integer.valueOf(1001), "conflict", null);
         assertEquals(Integer.valueOf(1001), error.code());
     }
 
-    /**
-     * 验证<code>error.code()</code> 等于 <code>code</code>。
-     */
     @Test
     void bizRuntimeCodeIsSerializable() {
         Serializable code = new BizRuntimeException(422, "VALIDATION", "x").getCode();
@@ -73,9 +58,6 @@ class WebErrorTest {
         assertEquals(code, error.code());
     }
 
-    /**
-     * 验证<code>response.getCode()</code> 等于 <code>"VALIDATION"</code>，<code>response.getMsg()</code> 等于 <code>"bad input"</code>，<code>response.isOk()</code> 等于 <code>Boolean.FALSE</code>。
-     */
     @Test
     void toResponseCarriesErrorComponents() {
         WebError error = new WebError(422, "VALIDATION", "bad input", "detail");

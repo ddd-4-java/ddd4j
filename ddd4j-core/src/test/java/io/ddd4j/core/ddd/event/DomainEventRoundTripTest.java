@@ -37,16 +37,8 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 class DomainEventRoundTripTest {
 
     // Jackson 2 不会自动注册 java.time 支持；findAndAddModules 经 SPI 发现 classpath 上的 jsr310（JavaTimeModule）
-    /**
-     * 用于读写 JSON 数据的 Jackson 映射器。
-     */
     private final ObjectMapper objectMapper = JsonMapper.builder().findAndAddModules().build();
 
-    /**
-     * 验证<code>restored.getEntityIdPath().asString()</code> 等于 <code>original.getEntityIdPath().asString()</code>，<code>restored.getEntityIdPath().last().asString()</code> 等于 <code>"order-1"</code>，<code>restored.getEventTimestamp().toInstant()</code> 等于 <code>original.getEventTimestamp().toInstant()</code>。
-     *
-     * @throws Exception 处理测试数据的序列化时失败
-     */
     @Test
     void roundTripRestoresIdentityMetadataAndPayload() throws Exception {
         SampleEvent original = new SampleEvent("order-1", 2500L);
@@ -70,18 +62,12 @@ class DomainEventRoundTripTest {
         assertThat(restored.getEventTimestamp().toInstant()).isEqualTo(original.getEventTimestamp().toInstant());
     }
 
-    /**
-     * 验证<code>objectMapper.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)</code>为真。
-     */
     @Test
     void mapperKeepsPlatformDefaultUnknownPropertyHandling() {
         // 证明回读发生在默认严格模式下（未用 workaround 放宽）
         assertThat(objectMapper.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)).isTrue();
     }
 
-    /**
-     * 验证<code>single.size()</code> 等于 <code>1</code>，<code>single.last().asString()</code> 等于 <code>"order-1"</code>，<code>multi.last().asString()</code> 等于 <code>"item-9"</code>。
-     */
     @Test
     void valueOfParsesSingleAndMultiSegmentPaths() {
         EntityIdPath single = EntityIdPath.valueOf("String:order-1");
@@ -94,9 +80,6 @@ class DomainEventRoundTripTest {
         assertThat(multi.last().asString()).isEqualTo("item-9");
     }
 
-    /**
-     * 验证<code>EntityIdPath.valueOf("")</code> 抛出 <code>IllegalArgumentException</code>，<code>EntityIdPath.valueOf("String:")</code> 抛出 <code>IllegalArgumentException</code>。
-     */
     @Test
     void valueOfRejectsMalformedPaths() {
         // 空串 / 空白
@@ -120,9 +103,6 @@ class DomainEventRoundTripTest {
                 .withMessageContaining("String:");
     }
 
-    /**
-     * 验证<code>EntityIdPath.valueOf(original.asString()).asString()</code> 等于 <code>original.asString()</code>。
-     */
     @Test
     void valueOfIsIdempotentForSerializedForm() {
         EntityIdPath original = new EntityIdPath(new StringEntityId("order-1"), new StringEntityId("item-9"));
@@ -135,67 +115,32 @@ class DomainEventRoundTripTest {
      */
     static final class SampleEvent extends DomainEvent<StringEntityId> {
 
-        /**
-         * 订单标识。
-         */
         private String orderId;
 
-        /**
-         * 测试交易使用的数量或金额。
-         */
         private long amount;
 
-        /**
-         * 构造供当前测试使用的 <code>SampleEvent</code> 实例。
-         */
         SampleEvent() {
             // Jackson 回读
         }
 
-        /**
-         * 设置 <code>orderId</code>、<code>amount</code>，用于构造 <code>SampleEvent</code> 测试实例。
-         *
-         * @param orderId 订单标识
-         * @param amount  用于初始化 <code>SampleEvent</code> 的 <code>long</code> 值
-         */
         SampleEvent(String orderId, long amount) {
             super(orderId);
             this.orderId = orderId;
             this.amount = amount;
         }
 
-        /**
-         * 读取订单标识。
-         *
-         * @return 订单标识
-         */
         public String getOrderId() {
             return orderId;
         }
 
-        /**
-         * 设置订单标识。
-         *
-         * @param orderId 要写入的值
-         */
         public void setOrderId(String orderId) {
             this.orderId = orderId;
         }
 
-        /**
-         * 读取<code>amount</code> 字段。
-         *
-         * @return <code>amount</code> 字段
-         */
         public long getAmount() {
             return amount;
         }
 
-        /**
-         * 设置<code>amount</code> 字段。
-         *
-         * @param amount 要写入的值
-         */
         public void setAmount(long amount) {
             this.amount = amount;
         }

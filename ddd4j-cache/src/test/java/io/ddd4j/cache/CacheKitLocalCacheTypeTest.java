@@ -25,9 +25,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class CacheKitLocalCacheTypeTest {
 
-    /**
-     * 验证<code>types</code> 仅包含 <code>CacheKit.LocalCacheType.CAFFEINE</code>、<code>CacheKit.LocalCacheType.GUAVA</code>、<code>CacheKit.LocalCacheType.HUTOOL</code>。
-     */
     @Test
     void values_shouldContainCaffeineGuavaHutool() {
         CacheKit.LocalCacheType[] types = CacheKit.LocalCacheType.values();
@@ -38,9 +35,6 @@ class CacheKitLocalCacheTypeTest {
                 CacheKit.LocalCacheType.HUTOOL);
     }
 
-    /**
-     * 验证<code>CacheKit.LocalCacheType.valueOf("CAFFEINE")</code> 等于 <code>CacheKit.LocalCacheType.CAFFEINE</code>，<code>CacheKit.LocalCacheType.valueOf("GUAVA")</code> 等于 <code>CacheKit.LocalCacheType.GUAVA</code>，<code>CacheKit.LocalCacheType.valueOf("HUTOOL")</code> 等于 <code>CacheKit.LocalCacheType.HUTOOL</code>。
-     */
     @Test
     void valueOf_shouldResolveByName() {
         assertThat(CacheKit.LocalCacheType.valueOf("CAFFEINE"))
@@ -51,9 +45,6 @@ class CacheKitLocalCacheTypeTest {
                 .isEqualTo(CacheKit.LocalCacheType.HUTOOL);
     }
 
-    /**
-     * 验证<code>CacheKit.getDefaultType()</code> 等于 <code>CacheKit.LocalCacheType.CAFFEINE</code>。
-     */
     @Test
     void getDefaultType_shouldBeCaffeineByDefault() {
         CacheKit.setDefaultType(CacheKit.LocalCacheType.CAFFEINE);

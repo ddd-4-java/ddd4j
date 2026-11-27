@@ -30,9 +30,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class PageTest {
 
-    /**
-     * 验证<code>page.getTotal()</code>为零，<code>page.getCurrent()</code>为零，<code>page.getRecords()</code>为空。
-     */
     @Test
     void empty_shouldHaveZeroTotalAndEmptyRecords() {
         Page<String> page = Page.empty();
@@ -44,9 +41,6 @@ class PageTest {
         assertThat(page.getRecords()).isEmpty();
     }
 
-    /**
-     * 验证<code>page.getRecords()</code> 按顺序仅包含 <code>"a"</code>、<code>"b"</code>，<code>page.getTotal()</code> 等于 <code>2L</code>，<code>page.isEmpty()</code>为假。
-     */
     @Test
     void succeed_shouldCarryRecordsAndTotal() {
         List<String> records = Arrays.asList("a", "b");
@@ -60,9 +54,6 @@ class PageTest {
         assertThat(page.isEmpty()).isFalse();
     }
 
-    /**
-     * 验证<code>page.getCurrent()</code> 等于 <code>2L</code>，<code>page.getSize()</code> 等于 <code>20L</code>，<code>page.isEmpty()</code>为真。
-     */
     @Test
     void constructor_withCurrentAndSize_shouldInitEmptyRecords() {
         Page<String> page = new Page<>(2, 20);
@@ -73,9 +64,6 @@ class PageTest {
         assertThat(page.isEmpty()).isTrue();
     }
 
-    /**
-     * 验证<code>page.getRecords()</code> 按顺序仅包含 <code>"x"</code>。
-     */
     @Test
     void add_shouldAppendElement() {
         Page<String> page = Page.<String>empty().setCurrent(1).setSize(10);
@@ -85,9 +73,6 @@ class PageTest {
         assertThat(page.getRecords()).containsExactly("x");
     }
 
-    /**
-     * 验证<code>removed</code>为真，<code>page.getRecords()</code> 按顺序仅包含 <code>"b"</code>。
-     */
     @Test
     void remove_shouldDeleteElement() {
         Page<String> page = Page.succeed(new ArrayList<>(Arrays.asList("a", "b")), 2L, 1L, 10L);
@@ -98,9 +83,6 @@ class PageTest {
         assertThat(page.getRecords()).containsExactly("b");
     }
 
-    /**
-     * 验证<code>page.contains("a")</code>为真，<code>page.contains("z")</code>为假，<code>page.contains(null)</code>为假。
-     */
     @Test
     void contains_shouldDetectElement() {
         Page<String> page = Page.succeed(Collections.singletonList("a"), 1L, 1L, 10L);
@@ -110,9 +92,6 @@ class PageTest {
         assertThat(page.contains(null)).isFalse();
     }
 
-    /**
-     * 验证<code>page.isEmpty()</code>为真。
-     */
     @Test
     void isEmpty_shouldBeTrueWhenRecordsNull() {
         Page<String> page = new Page<>();
@@ -121,9 +100,6 @@ class PageTest {
         assertThat(page.isEmpty()).isTrue();
     }
 
-    /**
-     * 验证<code>result</code> 指向同一实例 <code>page</code>，<code>collected</code> 按顺序仅包含 <code>"a"</code>、<code>"b"</code>。
-     */
     @Test
     void peek_shouldApplyConsumerAndReturnSelf() {
         List<String> collected = new ArrayList<>();
@@ -135,9 +111,6 @@ class PageTest {
         assertThat(collected).containsExactly("a", "b");
     }
 
-    /**
-     * 验证<code>page.getExtras()</code> 含对应条目 <code>"key"</code>、<code>"value"</code>。
-     */
     @Test
     void extras_shouldLazilyInitMap() {
         Page<String> page = new Page<>();
@@ -147,9 +120,6 @@ class PageTest {
         assertThat(page.getExtras()).containsEntry("key", "value");
     }
 
-    /**
-     * 验证<code>collected</code> 按顺序仅包含 <code>"a"</code>、<code>"b"</code>。
-     */
     @Test
     void stream_shouldExposeRecords() {
         Page<String> page = Page.succeed(Arrays.asList("a", "b"), 2L, 1L, 10L);
@@ -159,9 +129,6 @@ class PageTest {
         assertThat(collected).containsExactly("a", "b");
     }
 
-    /**
-     * 验证<code>page.getRecords()</code> 按顺序仅包含 <code>"x"</code>，<code>page.getTotal()</code> 等于 <code>1L</code>，<code>page.getSize()</code> 等于 <code>5L</code>。
-     */
     @Test
     void builderMethods_shouldChainCorrectly() {
         Page<String> page = Page.<String>empty()
@@ -176,9 +143,6 @@ class PageTest {
         assertThat(page.getSize()).isEqualTo(5L);
     }
 
-    /**
-     * 验证<code>page.iterator()</code>非空，<code>page.iterator().hasNext()</code>为假，<code>visited</code>为空。
-     */
     @Test
     void emptyPages_shouldSupportIterationAndStreams() {
         for (Page<String> page : Arrays.asList(new Page<String>(), Page.<String>empty())) {

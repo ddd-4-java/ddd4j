@@ -79,16 +79,10 @@ import java.util.*;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    /**
-     * 解析 Spring MVC 错误消息使用的国际化资源。
-     */
     @Getter
     @Autowired
     private NestedMessageSource messageSource;
 
-    /**
-     * 为服务端异常响应选择语言的配置。
-     */
     @Autowired
     private ServerI18nProperties serverI18NProperties;
 

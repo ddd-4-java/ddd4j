@@ -29,9 +29,6 @@ import java.util.Objects;
 @Slf4j
 public final class AnnotationFusionVerifier {
 
-    /**
-     * 限制调用方直接创建 <code>AnnotationFusionVerifier</code> 实例。
-     */
     private AnnotationFusionVerifier() {
     }
 
@@ -99,13 +96,6 @@ public final class AnnotationFusionVerifier {
         }
     }
 
-    /**
-     * 验证 DDD 注解及当前框架需要的元注解。
-     *
-     * @param name          用于诊断的注解名称
-     * @param dddAnnotation 待验证的 DDD 注解类型
-     * @return 校验通过返回 1，失败返回 0
-     */
     private static int verify(
             String name,
             Class<? extends java.lang.annotation.Annotation> dddAnnotation) {
@@ -126,16 +116,8 @@ public final class AnnotationFusionVerifier {
 
 }
 
-/**
- * 提供带领域服务注解的示例 Bean，用于验证注解整合。
- */
 @DomainService
 class BusinessDomainService {
-    /**
-     * 返回注解融合测试使用的服务探针结果。
-     *
-     * @return 固定的探针文本
-     */
     public String hello() {
         return "hello";
     }

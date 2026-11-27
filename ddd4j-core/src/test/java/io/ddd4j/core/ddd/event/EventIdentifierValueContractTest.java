@@ -22,18 +22,8 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-/**
- * 通过 <code>value.asInt()</code>、<code>roundTrip()</code>、<code>value.asString()</code> 验证 <code>EventIdentifierValueContract</code> 的运行行为。
- */
 class EventIdentifierValueContractTest {
 
-    /**
-     * 通过 <code>input.readObject()</code> 取得当前测试需要的结果。
-     *
-     * @param value 当前用例传入的值
-     * @return 当前测试使用的结果，取自 <code>input.readObject()</code>
-     * @throws Exception 准备或读取夹具文件时失败
-     */
     private static Object roundTrip(Serializable value) throws Exception {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         try (ObjectOutputStream output = new ObjectOutputStream(bytes)) {
@@ -44,11 +34,6 @@ class EventIdentifierValueContractTest {
         }
     }
 
-    /**
-     * 验证<code>value.asInt()</code> 等于 <code>7</code>，<code>value.toString()</code> 等于 <code>"7"</code>。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void aggregateVersionHasStableValueSemantics() throws Exception {
         AggregateVersion value = new AggregateVersion(7);
@@ -60,11 +45,6 @@ class EventIdentifierValueContractTest {
         assertThatThrownBy(() -> new AggregateVersion(-1)).isInstanceOf(IllegalArgumentException.class);
     }
 
-    /**
-     * 验证<code>value.asString()</code> 等于 <code>"OrderCreated"</code>，<code>value.toString()</code> 等于 <code>"OrderCreated"</code>。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void eventTypeHasStableValueSemantics() throws Exception {
         EventType value = new EventType("OrderCreated");
@@ -78,11 +58,6 @@ class EventIdentifierValueContractTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    /**
-     * 验证<code>value.asString()</code> 等于 <code>"Order"</code>，<code>value.toString()</code> 等于 <code>"Order"</code>。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void stringEntityTypeHasStableValueSemantics() throws Exception {
         StringEntityType value = new StringEntityType("Order");
@@ -94,11 +69,6 @@ class EventIdentifierValueContractTest {
         assertThatThrownBy(() -> new StringEntityType(" ")).isInstanceOf(IllegalArgumentException.class);
     }
 
-    /**
-     * 验证<code>value.asUuid()</code> 等于 <code>uuid</code>，<code>value.asString()</code> 等于 <code>uuid.toString()</code>。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void eventIdHasStableValueSemantics() throws Exception {
         UUID uuid = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");

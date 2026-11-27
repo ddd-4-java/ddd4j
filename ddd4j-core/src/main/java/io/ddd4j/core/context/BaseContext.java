@@ -200,12 +200,6 @@ public class BaseContext {
         return new Registration(key, entry);
     }
 
-    /**
-     * 取出当前上下文节点中的业务值。
-     *
-     * @param entry 要读取的上下文绑定节点
-     * @return 绑定的值，节点不存在时返回空
-     */
     private static Object contextValue(ContextEntry entry) {
         return Objects.isNull(entry) ? null : entry.value;
     }
@@ -290,29 +284,12 @@ public class BaseContext {
         GLOBAL.clear();
     }
 
-    /**
-     * 保存一次上下文绑定的值及回滚链中的前一个节点。
-     */
     private static final class ContextEntry {
-        /**
-         * 本节点绑定的上下文值。
-         */
         private final Object value;
         // 同一键的 compute 回调负责访问和修改回滚链。
-        /**
-         * 同一键下最近的一次旧绑定，用于回滚当前节点。
-         */
         private ContextEntry previous;
-        /**
-         * 当前节点是否已被回滚。
-         */
         private boolean rolledBack;
 
-        /**
-         * 为共享上下文创建一个持有非空值的绑定节点。
-         *
-         * @param value 当前键要绑定的值
-         */
         private ContextEntry(Object value) {
             this.value = Objects.requireNonNull(value);
         }
@@ -326,25 +303,10 @@ public class BaseContext {
      * 一次待提交的全局注册。查找方法继续返回原始注册值。
      */
     public static final class Registration {
-        /**
-         * 参与 SPI 注册及查找的键。
-         */
         private final String key;
-        /**
-         * 归当前上下文注册持有的绑定节点。
-         */
         private final ContextEntry entry;
-        /**
-         * 记录当前尚未提交或尚未结束的注册状态。
-         */
         private boolean pending = true;
 
-        /**
-         * 将当前注册与上下文槽位及具体绑定节点关联。
-         *
-         * @param key   共享上下文键
-         * @param entry 当前注册的值节点
-         */
         private Registration(String key, ContextEntry entry) {
             this.key = key;
             this.entry = entry;

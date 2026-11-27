@@ -53,9 +53,6 @@ import static io.javalin.apibuilder.ApiBuilder.*;
  */
 public class AuthenticationController {
 
-    /**
-     * 执行基于角色的授权与分配操作的应用服务。
-     */
     private final RbacService rbacService;
 
     /**
@@ -238,19 +235,10 @@ public class AuthenticationController {
     @NoArgsConstructor
     public static class LoginRequest {
 
-        /**
-         * Java 序列化版本标识。
-         */
         private static final long serialVersionUID = 0L;
 
-        /**
-         * 当前身份凭据使用的用户名。
-         */
         private String username;
 
-        /**
-         * 当前登录或账号创建请求提供的口令。
-         */
         @ToString.Exclude
         private String password;
 
@@ -295,14 +283,8 @@ public class AuthenticationController {
     @NoArgsConstructor
     public static class KickoutRequest {
 
-        /**
-         * Java 序列化版本标识。
-         */
         private static final long serialVersionUID = 0L;
 
-        /**
-         * 账号身份或用户记录的主键。
-         */
         private String userId;
 
         /**
@@ -334,14 +316,8 @@ public class AuthenticationController {
     @NoArgsConstructor
     public static class RoleCheckRequest {
 
-        /**
-         * Java 序列化版本标识。
-         */
         private static final long serialVersionUID = 0L;
 
-        /**
-         * 当前请求要检查的角色标识。
-         */
         private String role;
 
         /**
@@ -373,14 +349,8 @@ public class AuthenticationController {
     @NoArgsConstructor
     public static class PermissionCheckRequest {
 
-        /**
-         * Java 序列化版本标识。
-         */
         private static final long serialVersionUID = 0L;
 
-        /**
-         * 当前请求要检查的权限标识。
-         */
         private String permission;
 
         /**

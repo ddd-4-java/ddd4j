@@ -21,11 +21,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class GeoBaiduHttpContractTest {
 
-    /**
-     * 验证<code>requested.get().contains("address=%E6%9D%AD%E5%B7%9E+%E8%A5%BF%E6%B9%96")</code>为真，<code>requested.get().contains("ak=test-ak")</code>为真，<code>requested.get().contains("|accept=application/json")</code>为真。
-     *
-     * @throws IOException 读取或写入测试数据时发生 I/O 错误
-     */
     @Test
     void addressLookupEncodesInputAndParsesCoordinates() throws IOException {
         AtomicReference<String> requested = new AtomicReference<>();
@@ -46,11 +41,6 @@ class GeoBaiduHttpContractTest {
         }
     }
 
-    /**
-     * 验证<code>result.isPresent()</code>为真，<code>result.get().getString("address")</code> 等于 <code>"CN|浙江|杭州"</code>，<code>template.getLocationByIp(null)</code> 抛出 <code>NullPointerException.class</code>。
-     *
-     * @throws IOException 读取或写入测试数据时发生 I/O 错误
-     */
     @Test
     void ipLookupParsesSuccessAndRejectsNull() throws IOException {
         AtomicReference<String> requested = new AtomicReference<>();
@@ -69,11 +59,6 @@ class GeoBaiduHttpContractTest {
         }
     }
 
-    /**
-     * 验证<code>template.getLocationByAddress("杭州").isPresent()</code>为假，<code>template.getLocationByIp("127.0.0.1").isPresent()</code>为假。
-     *
-     * @throws IOException 读取或写入测试数据时发生 I/O 错误
-     */
     @Test
     void failedHttpResponseReturnsEmptyLocation() throws IOException {
         AtomicReference<String> requested = new AtomicReference<>();
@@ -88,11 +73,6 @@ class GeoBaiduHttpContractTest {
         }
     }
 
-    /**
-     * 验证<code>template.getLocationByAddress("杭州")</code> 抛出 <code>IOException.class</code>，<code>template.getLocationByIp("127.0.0.1").isPresent()</code>为假。
-     *
-     * @throws IOException 读取或写入测试数据时发生 I/O 错误
-     */
     @Test
     void providerErrorKeepsAddressExceptionAndIpFallback() throws IOException {
         AtomicReference<String> requested = new AtomicReference<>();
@@ -108,12 +88,6 @@ class GeoBaiduHttpContractTest {
         }
     }
 
-    /**
-     * 创建 <code>new GeoBaiduTemplate</code> 供当前测试路径调用。
-     *
-     * @param server 传给 <code>server.getAddress()</code> 的 <code>HttpServer</code> 输入
-     * @return 当前测试使用的结果，取自 <code>new GeoBaiduTemplate("test-ak", base + "/geocoding?address=%s&amp;ak=%s", base + "/location?ak=%s&amp;ip=%s")</code>
-     */
     private GeoBaiduTemplate template(HttpServer server) {
         String base = "http://127.0.0.1:" + server.getAddress().getPort();
         return new GeoBaiduTemplate("test-ak",
@@ -121,15 +95,6 @@ class GeoBaiduHttpContractTest {
                 base + "/location?ak=%s&ip=%s");
     }
 
-    /**
-     * 读取 <code>server</code> 供当前测试使用。
-     *
-     * @param status    当前 HTTP 或业务流程的状态
-     * @param body      当前请求或响应中要读取的正文
-     * @param requested 传给 <code>server.createContext()</code> 的 <code>AtomicReference&lt;String&gt;</code> 输入
-     * @return 当前测试使用的结果，取自 <code>server</code>
-     * @throws IOException 读取或写入测试数据时发生 I/O 错误
-     */
     private HttpServer server(int status, String body, AtomicReference<String> requested) throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
         server.createContext("/", exchange -> reply(exchange, status, body, requested));
@@ -137,15 +102,6 @@ class GeoBaiduHttpContractTest {
         return server;
     }
 
-    /**
-     * 调用 <code>requested.set()</code>、<code>exchange.getRequestURI()</code>、<code>exchange.getRequestHeaders()</code> 执行当前夹具操作。
-     *
-     * @param exchange  当前 HTTP 请求及响应交换对象
-     * @param status    当前 HTTP 或业务流程的状态
-     * @param body      当前请求或响应中要读取的正文
-     * @param requested 传给 <code>requested.set()</code> 的 <code>AtomicReference&lt;String&gt;</code> 输入
-     * @throws IOException 读取或写入测试数据时发生 I/O 错误
-     */
     private void reply(HttpExchange exchange, int status, String body,
                        AtomicReference<String> requested) throws IOException {
         requested.set(exchange.getRequestURI().toString()

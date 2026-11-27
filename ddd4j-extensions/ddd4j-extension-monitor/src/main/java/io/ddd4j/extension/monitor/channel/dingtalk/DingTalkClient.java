@@ -88,11 +88,6 @@ public class DingTalkClient {
 
     /**
      * 计算钉钉机器人加签。
-     *
-     * @param timestamp 签名使用的时间戳
-     * @param secret    用于计算签名的密钥
-     * @return 编码后写入请求 URL 的签名
-     * @throws Exception 签名算法初始化或编码失败
      */
     private static String getSign(long timestamp, String secret) throws Exception {
         String stringToSign = timestamp + "\n" + secret;

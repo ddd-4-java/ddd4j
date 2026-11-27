@@ -15,27 +15,14 @@ import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * 验证 <code>SaTokenRuntimeOwnership</code> 在 <code>borrowedNativeStoreSurvivesClose</code>、<code>shutdownDetachesOwnedDao</code> 等场景中的行为。
- */
 class SaTokenRuntimeOwnershipTest {
 
-    /**
-     * 读取 <code>field</code> 供当前测试使用。
-     *
-     * @return 当前测试使用的结果，取自 <code>field</code>
-     */
     private static Field daoField() {
         Field field = Objects.requireNonNull(ReflectUtil.getField(SaManager.class, "saTokenDao"));
         ReflectUtil.setAccessible(field);
         return field;
     }
 
-    /**
-     * 验证<code>callerDao.destroyCalls</code> 等于 <code>0</code>，<code>daoField.get(null)</code> 与…为同一实例 <code>callerDao</code>，<code>callerDao.getObject("caller-owned-key")</code> 等于 <code>"preserved"</code>。
-     *
-     * @throws IllegalAccessException 无法访问所需的反射成员
-     */
     @Test
     void borrowedNativeStoreSurvivesCloseWithItsData() throws IllegalAccessException {
         Field daoField = daoField();
@@ -65,11 +52,6 @@ class SaTokenRuntimeOwnershipTest {
         }
     }
 
-    /**
-     * 验证<code>daoField.get(null)</code>非空，<code>daoField.get(null)</code>为空，<code>replacement.destroyCalls</code> 等于 <code>0</code>。
-     *
-     * @throws IllegalAccessException 无法访问所需的反射成员
-     */
     @Test
     void ownedDaoRestoresEmptySlotAndPreservesAReplacement() throws IllegalAccessException {
         Field daoField = daoField();
@@ -102,11 +84,6 @@ class SaTokenRuntimeOwnershipTest {
         }
     }
 
-    /**
-     * 验证<code>runtime.start(null)</code> 抛出 <code>RuntimeException.class</code>，<code>daoField.get(null)</code>为空。
-     *
-     * @throws IllegalAccessException 无法访问所需的反射成员
-     */
     @Test
     void failedDaoRegistrationRestoresAnEmptySlot() throws IllegalAccessException {
         Field daoField = daoField();
@@ -136,11 +113,6 @@ class SaTokenRuntimeOwnershipTest {
         }
     }
 
-    /**
-     * 验证<code>runtime.stop(null)</code> 抛出 <code>RuntimeException.class</code>，<code>failure</code> 与…为同一实例 <code>restoreFailure</code>，<code>failure.getSuppressed()[0]</code> 与…为同一实例 <code>detachFailure</code>。
-     *
-     * @throws IllegalAccessException 无法访问所需的反射成员
-     */
     @Test
     void shutdownDetachesOwnedDaoWhenRestoringPermissionsThrows() throws IllegalAccessException {
         Field daoField = daoField();
@@ -185,18 +157,9 @@ class SaTokenRuntimeOwnershipTest {
         }
     }
 
-    /**
-     * 记录 DAO 操作，供测试验证调用次数或参数。
-     */
     private static final class TrackingDao extends SaTokenDaoDefaultImpl {
-        /**
-         * 跟踪应用或代理资源执行销毁操作的次数。
-         */
         private int destroyCalls;
 
-        /**
-         * 调用 <code>super.destroy()</code> 执行当前夹具操作。
-         */
         @Override
         public void destroy() {
             destroyCalls++;

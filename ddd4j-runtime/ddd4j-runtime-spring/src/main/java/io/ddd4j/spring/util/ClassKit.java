@@ -36,9 +36,6 @@ import java.util.Objects;
 @UtilityClass
 public class ClassKit extends org.springframework.util.ClassUtils {
 
-    /**
-     * 从 Spring 支持的反射元数据读取参数名的组件。
-     */
     private final ParameterNameDiscoverer PARAMETERNAMEDISCOVERER = new DefaultParameterNameDiscoverer();
 
     /**

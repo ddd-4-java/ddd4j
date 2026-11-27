@@ -26,27 +26,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-/**
- * 验证 <code>HelidonDomainEventPublisher</code> 在<code>constructor</code>等操作中的行为契约。
- */
 @ExtendWith(MockitoExtension.class)
 class HelidonDomainEventPublisherTest {
 
-    /**
-     * 用于隔离 <code>BeanManager</code> 调用并记录交互的测试替身。
-     */
     @Mock
     private BeanManager beanManager;
 
-    /**
-     * 用于隔离 <code>Event&lt;Object&gt;</code> 调用并记录交互的测试替身。
-     */
     @Mock
     private Event<Object> event;
 
-    /**
-     * 在测试框架中执行 <code>beanManager.getEvent()</code>、<code>publisher.publish()</code>，验证该场景。
-     */
     @Test
     void publishFiresEvent() {
         when(beanManager.getEvent()).thenReturn(event);
@@ -57,9 +45,6 @@ class HelidonDomainEventPublisherTest {
         verify(event).fire("payload");
     }
 
-    /**
-     * 在测试框架中执行 <code>publisher.publish()</code>、<code>never()</code>、<code>org.mockito.ArgumentMatchers.any()</code>，验证该场景。
-     */
     @Test
     void publishSkipsNullEvent() {
         HelidonDomainEventPublisher publisher = new HelidonDomainEventPublisher(beanManager);
@@ -69,9 +54,6 @@ class HelidonDomainEventPublisherTest {
         verify(event, never()).fire(org.mockito.ArgumentMatchers.any());
     }
 
-    /**
-     * 在测试框架中执行 <code>beanManager.getEvent()</code>、<code>publisher.publish()</code>，验证该场景。
-     */
     @Test
     void publishDomainEventFiresTypedEvent() {
         when(beanManager.getEvent()).thenReturn(event);
@@ -84,9 +66,6 @@ class HelidonDomainEventPublisherTest {
         verify(event).fire(domainEvent);
     }
 
-    /**
-     * 验证被测调用 抛出 <code>NullPointerException.class</code>。
-     */
     @Test
     void constructorRejectsNullBeanManager() {
         assertThrows(NullPointerException.class, () -> new HelidonDomainEventPublisher(null));

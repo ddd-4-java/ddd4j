@@ -31,18 +31,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class I18nKit {
 
-    /**
-     * 为当前调用提供区域语言配置的注册项。
-     */
     private static final Map<String, I18nProvider> LOCALE_PROVIDERS = new ConcurrentHashMap<>();
-    /**
-     * 当前使用的国际化消息提供器。
-     */
     private static volatile I18nProvider provider = I18nProvider.DEFAULT;
 
-    /**
-     * 限制调用方直接创建 <code>I18nKit</code> 实例。
-     */
     private I18nKit() {
     }
 

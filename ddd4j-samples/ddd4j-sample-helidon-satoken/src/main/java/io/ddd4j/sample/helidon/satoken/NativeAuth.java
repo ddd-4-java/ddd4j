@@ -23,33 +23,12 @@ import java.util.Objects;
  */
 @ApplicationScoped
 public class NativeAuth {
-    /**
-     * 安装示例组件前保存的 Sa-Token 配置。
-     */
     private final SaTokenConfig previousConfig = SaManager.config;
-    /**
-     * 安装示例组件前保存的 Sa-Token 权限提供器。
-     */
     private final StpInterface previousPermissions = currentPermissions();
-    /**
-     * 本示例安装的 Sa-Token 会话配置。
-     */
     private final SaTokenConfig config;
-    /**
-     * 将 DDD4J 主体角色和权限数据接入 Sa-Token 的桥接组件。
-     */
     private final StpInterface permissions;
-    /**
-     * 安装示例组件前保存的 DDD4J 主体数据提供器。
-     */
     private final SubjectDataProvider previousData = SubjectKit.dataProvider;
-    /**
-     * 为示例账号提供权限和角色数据的 DDD4J 数据提供器。
-     */
     private final SubjectDataProvider data;
-    /**
-     * 仅在原 DAO 为空时注册的示例会话存储。
-     */
     private SaTokenDaoDefaultImpl ownedDao;
 
     /**
@@ -91,32 +70,16 @@ public class NativeAuth {
     }
 
     // SDK getter 会分配默认组件，直接读取原始槽位以区分未初始化和外部替换。
-
-    /**
-     * 读取 Sa-Token DAO 的原始槽位，避免创建默认会话存储。
-     *
-     * @return 已注册的会话存储，可以为空
-     */
     private static SaTokenDao currentDao() {
         return (SaTokenDao) ReflectUtil.getStaticFieldValue(Objects.requireNonNull(
                 ReflectUtil.getField(SaManager.class, "saTokenDao")));
     }
 
-    /**
-     * 读取权限提供器的原始槽位，避免 getter 安装默认组件。
-     *
-     * @return 当前的权限提供器，可以为空
-     */
     private static StpInterface currentPermissions() {
         return (StpInterface) ReflectUtil.getStaticFieldValue(Objects.requireNonNull(
                 ReflectUtil.getField(SaManager.class, "stpInterface")));
     }
 
-    /**
-     * 依次恢复所有组件，保留第一个异常及后续被抑制异常。
-     *
-     * @param components 按顺序恢复的共享组件
-     */
     private static void restore(Runnable... components) {
         Throwable failure = null;
         for (Runnable component : components) {

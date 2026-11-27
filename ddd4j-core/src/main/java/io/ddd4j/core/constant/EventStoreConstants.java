@@ -83,9 +83,6 @@ public final class EventStoreConstants {
      */
     public static final long ESDB_DEFAULT_READ_LIMIT = 4096L;
 
-    /**
-     * 限制调用方直接创建 <code>EventStoreConstants</code> 实例。
-     */
     private EventStoreConstants() {
     }
 }

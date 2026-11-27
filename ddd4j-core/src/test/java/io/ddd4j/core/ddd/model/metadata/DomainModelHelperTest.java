@@ -30,17 +30,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class DomainModelHelperTest {
 
-    /**
-     * 测试结束后执行 <code>DomainModelHelper.clear()</code> 完成资源回收或状态恢复。
-     */
     @AfterEach
     void tearDown() {
         DomainModelHelper.clear();
     }
 
-    /**
-     * 验证<code>mysqlMapping.getPoColumn("status")</code> 等于 <code>"mysql_status"</code>，<code>jpaMapping.getPoColumn("status")</code> 等于 <code>"jpa_status"</code>。
-     */
     @Test
     void mappingCacheShouldBeIsolatedByPersistenceType() {
         DomainModelInfo<Order> mysqlMapping = DomainModelHelper.getModelInfo(
@@ -52,9 +46,6 @@ class DomainModelHelperTest {
         assertThat(jpaMapping.getPoColumn("status")).isEqualTo("jpa_status");
     }
 
-    /**
-     * 验证<code>properties</code> 按顺序仅包含 <code>"status"</code>。
-     */
     @Test
     void metadataShouldExcludeStaticTransientAndSyntheticFields() {
         DomainModelInfo<Order> mapping = DomainModelHelper.getModelInfo(Order.class);
@@ -66,9 +57,6 @@ class DomainModelHelperTest {
         assertThat(properties).containsExactly("status");
     }
 
-    /**
-     * 验证<code>mysqlAgain</code> 指向同一实例 <code>mysql</code>，<code>jpa</code> 指向不同实例 <code>mysql</code>。
-     */
     @Test
     void cacheShouldReuseMappingByContextAndRemoveAllContextsForModel() {
         DomainModelInfo<Order> mysql = DomainModelHelper.getModelInfo(
@@ -89,9 +77,6 @@ class DomainModelHelperTest {
                 property -> "new_" + property)).isNotSameAs(jpa);
     }
 
-    /**
-     * 验证<code>DomainModelHelper.getModelInfo(null)</code>为空，被测调用 抛出 <code>NullPointerException.class</code>。
-     */
     @Test
     void invalidModelShouldReturnNullAndMissingPersistenceTypeShouldFail() {
         assertThat(DomainModelHelper.getModelInfo(null)).isNull();
@@ -106,17 +91,8 @@ class DomainModelHelperTest {
      */
     static final class Order {
 
-        /**
-         * 构造本组测试输入时复用的固定标识或名称。
-         */
         private static final String TYPE = "ORDER";
-        /**
-         * 测试记录的框架运行或关闭状态。
-         */
         private transient String runtimeState;
-        /**
-         * 测试替身返回、模拟或捕获的状态。
-         */
         private String status;
     }
 

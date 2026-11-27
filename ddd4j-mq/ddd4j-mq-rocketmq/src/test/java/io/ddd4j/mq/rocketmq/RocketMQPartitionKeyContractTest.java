@@ -26,9 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  */
 class RocketMQPartitionKeyContractTest {
 
-    /**
-     * 验证<code>client.partitionKey(event)</code>为空，<code>client.partitionKey(event)</code> 等于 <code>"created"</code>，<code>client.partitionKey(event)</code> 等于 <code>"created|tenant-a"</code>。
-     */
     @Test
     void configuredStrategiesReturnTheSameKeys() {
         RocketMQProperties properties = new RocketMQProperties();
@@ -49,9 +46,6 @@ class RocketMQPartitionKeyContractTest {
         assertEquals("created|tenant-a", client.partitionKey(event));
     }
 
-    /**
-     * 验证<code>client.partitionKey(null)</code>为空。
-     */
     @Test
     void nullEventFallsBackWithoutStartingBroker() {
         RocketMQClient client = new RocketMQClient(new RocketMQProperties());

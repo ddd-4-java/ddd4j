@@ -22,8 +22,5 @@ import lombok.Value;
 @Value
 public class QrCodeDecodeResult {
 
-    /**
-     * 从输入图像解码出的二维码文本。
-     */
     String text;
 }

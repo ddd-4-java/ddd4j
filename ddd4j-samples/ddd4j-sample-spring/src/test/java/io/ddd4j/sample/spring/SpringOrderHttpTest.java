@@ -23,18 +23,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 @Testcontainers
 class SpringOrderHttpTest {
-    /**
-     * 为当前集成测试提供独立 MySQL 服务的容器。
-     */
     @Container
     static final MySQLContainer<?> MYSQL = new MySQLContainer<>("mysql:8.0.36");
 
-    /**
-     * 调用 <code>application.setWebApplicationType()</code>、<code>application.run()</code>、<code>MYSQL.getJdbcUrl()</code> 执行当前夹具操作。
-     *
-     * @param type 用来解析、检查或构造测试对象的 Java 类型
-     * @return 提供给后续契约断言的 <code>ConfigurableApplicationContext</code> 结果
-     */
     private static ConfigurableApplicationContext start(WebApplicationType type) {
         SpringApplication application = new SpringApplication(SpringSampleApplication.class);
         application.setWebApplicationType(type);
@@ -43,17 +34,6 @@ class SpringOrderHttpTest {
                 "--CATALOG_DB_PASSWORD=" + MYSQL.getPassword());
     }
 
-    /**
-     * 读取 <code>response</code> 供当前测试使用。
-     *
-     * @param context 当前框架保存请求或运行时状态的上下文
-     * @param tenant  当前请求的数据租户
-     * @param method  发给被测服务的 HTTP 方法
-     * @param path    测试请求的资源路径或待访问文件路径
-     * @param status  当前 HTTP 或业务流程的状态
-     * @param body    当前请求或响应中要读取的正文
-     * @return 当前测试使用的结果，取自 <code>response</code>
-     */
     private static HttpResponse<String> request(ConfigurableApplicationContext context, String tenant, String method,
                                                 String path, int status, String body) {
         int port = ((WebServerApplicationContext) context).getWebServer().getPort();
@@ -72,27 +52,16 @@ class SpringOrderHttpTest {
         }
     }
 
-    /**
-     * 在 Servlet 应用下验证商品交易 HTTP 合同。
-     */
     @Test
     void mvc() {
         verify(WebApplicationType.SERVLET);
     }
 
-    /**
-     * 在响应式应用下验证商品交易 HTTP 合同。
-     */
     @Test
     void webflux() {
         verify(WebApplicationType.REACTIVE);
     }
 
-    /**
-     * 调用 <code>UUID.randomUUID()</code>、<code>start()</code>、<code>context.getBeanNamesForType()</code> 执行当前夹具操作。
-     *
-     * @param type 用来解析、检查或构造测试对象的 Java 类型
-     */
     private void verify(WebApplicationType type) {
         String tenantId = UUID.randomUUID().toString().substring(0, 20);
         try (var context = start(type)) {
@@ -124,17 +93,9 @@ class SpringOrderHttpTest {
         }
     }
 
-    /**
-     * 提供 <code>localeObservation()</code> 等供当前测试使用的独立操作。
-     */
     @org.springframework.context.annotation.Configuration(proxyBeanMethods = false)
     @org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication(type = org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type.REACTIVE)
     static class LocaleObservation {
-        /**
-         * 通过 <code>chain.filter()</code> 取得当前测试需要的结果。
-         *
-         * @return 当前测试使用的结果，取自 <code>chain.filter(exchange)</code>
-         */
         @org.springframework.context.annotation.Bean
         org.springframework.web.server.WebFilter localeObservation() {
             return (exchange, chain) -> {

@@ -35,21 +35,9 @@ import java.util.List;
 @Getter
 public final class ImportResult<T> {
 
-    /**
-     * 成功读取并通过校验的导入数据。
-     */
     private final List<T> data;
-    /**
-     * 导入时发生的逐行读取或校验错误。
-     */
     private final List<ImportError> errors;
 
-    /**
-     * 保存本次导入成功的数据及相应错误。
-     *
-     * @param data   成功数据集合
-     * @param errors 导入错误集合
-     */
     private ImportResult(List<T> data, List<ImportError> errors) {
         this.data = Collections.unmodifiableList(new ArrayList<>(data));
         this.errors = Collections.unmodifiableList(new ArrayList<>(errors));

@@ -61,9 +61,6 @@ public class JpaEncryptFieldListener {
      */
     private static volatile Ddd4jFieldCryptoHandler cachedHandler;
 
-    /**
-     * 在实体回调中处理需要加解密的字段。
-     */
     private final Ddd4jFieldCryptoHandler fieldCryptoHandler;
 
     /**
@@ -151,11 +148,6 @@ public class JpaEncryptFieldListener {
         decryptFields(entity);
     }
 
-    /**
-     * 在写入回调中加密实体声明需要保护的字段。
-     *
-     * @param entity 当前 JPA 回调处理的实体
-     */
     private void encryptFields(Object entity) {
         if (Objects.isNull(fieldCryptoHandler)) {
             return;
@@ -175,11 +167,6 @@ public class JpaEncryptFieldListener {
         }
     }
 
-    /**
-     * 在读取回调中解密实体声明需要保护的字段。
-     *
-     * @param entity 当前 JPA 回调处理的实体
-     */
     private void decryptFields(Object entity) {
         if (Objects.isNull(fieldCryptoHandler)) {
             return;

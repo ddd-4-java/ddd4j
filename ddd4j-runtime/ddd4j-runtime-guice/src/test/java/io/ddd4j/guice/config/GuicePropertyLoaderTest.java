@@ -22,14 +22,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * 通过 <code>Guice.createInjector()</code>、<code>injector.getInstance()</code>、<code>Key.get()</code> 验证 <code>GuicePropertyLoader</code> 的运行行为。
- */
 class GuicePropertyLoaderTest {
 
-    /**
-     * 验证<code>injector.getInstance(Key.get(String.class, Names.named("ddd4j.test.key")))</code> 等于 <code>"from-default"</code>。
-     */
     @Test
     void loadsDefaultConfigFile() {
         Injector injector = Guice.createInjector(new GuicePropertyLoader());
@@ -38,9 +32,6 @@ class GuicePropertyLoaderTest {
                 injector.getInstance(Key.get(String.class, Names.named("ddd4j.test.key"))));
     }
 
-    /**
-     * 验证<code>injector.getInstance(Key.get(String.class, Names.named("custom.key")))</code> 等于 <code>"custom-value"</code>。
-     */
     @Test
     void loadsCustomConfigFile() {
         Injector injector = Guice.createInjector(new GuicePropertyLoader("custom-config.properties"));
@@ -49,9 +40,6 @@ class GuicePropertyLoaderTest {
                 injector.getInstance(Key.get(String.class, Names.named("custom.key"))));
     }
 
-    /**
-     * 验证<code>injector</code>非空，<code>injector.getInstance(Key.get(String.class, Names.named("missing.key")))</code> 抛出 <code>com.google.inject.ConfigurationException.class</code>。
-     */
     @Test
     void toleratesMissingConfigFile() {
         Injector injector = Guice.createInjector(new GuicePropertyLoader("no-such-file.properties"));

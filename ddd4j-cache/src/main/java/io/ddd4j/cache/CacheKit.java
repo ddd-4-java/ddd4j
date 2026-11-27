@@ -612,10 +612,7 @@ public final class CacheKit {
     }
 
     /**
-     * 获取生效的缓存实例，优先查找普通缓存，其次查找自动加载缓存。
-     *
-     * @param biz 业务缓存注册名称
-     * @return 可用的缓存实例，未注册时返回空
+     * 获取生效的缓存实例（优先普通缓存，其次自动加载缓存）。
      */
     private Cache<String, Object> getEffectiveCache(String biz) {
         Cache<String, Object> cache = caches.get(biz);
@@ -625,12 +622,7 @@ public final class CacheKit {
     // ==================== 内部方法 ====================
 
     /**
-     * 按配置构造指定后端的本地缓存。
-     *
-     * @param type   本地缓存实现类型
-     * @param config 缓存容量、过期和统计等配置
-     * @return 新建的本地缓存
-     * @throws IllegalArgumentException 指定的类型不受支持
+     * 创建本地缓存实例。
      */
     private Cache<String, Object> createLocalCache(LocalCacheType type, CacheConfig config) {
         switch (type) {

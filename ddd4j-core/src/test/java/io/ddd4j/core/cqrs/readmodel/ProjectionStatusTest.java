@@ -32,16 +32,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @DisplayName("ProjectionStatus")
 class ProjectionStatusTest {
 
-    /**
-     * 覆盖 <code>值对象构造与校验</code> 场景及其预期行为。
-     */
     @Nested
     @DisplayName("值对象构造与校验")
     class RecordConstruction {
 
-        /**
-         * 验证<code>status.streamId()</code> 等于 <code>"orders"</code>，<code>status.nextEventNumber()</code> 等于 <code>42L</code>，<code>status.lastError()</code>为空。
-         */
         @Test
         void 正常构造_所有字段应正确赋值() {
             Instant now = Instant.now();
@@ -57,9 +51,6 @@ class ProjectionStatusTest {
             assertThat(status.lastError()).isNull();
         }
 
-        /**
-         * 验证被测调用 抛出 <code>NullPointerException.class</code>。
-         */
         @Test
         void streamId为null_应抛NullPointerException() {
             assertThatThrownBy(() -> new ProjectionStatus(
@@ -67,9 +58,6 @@ class ProjectionStatusTest {
             )).isInstanceOf(NullPointerException.class);
         }
 
-        /**
-         * 验证被测调用 抛出 <code>IllegalArgumentException.class</code>。
-         */
         @Test
         void nextEventNumber为负数_应抛IllegalArgumentException() {
             assertThatThrownBy(() -> new ProjectionStatus(
@@ -77,9 +65,6 @@ class ProjectionStatusTest {
             )).isInstanceOf(IllegalArgumentException.class);
         }
 
-        /**
-         * 验证被测调用 抛出 <code>IllegalArgumentException.class</code>。
-         */
         @Test
         void lastEventCount为负数_应抛IllegalArgumentException() {
             assertThatThrownBy(() -> new ProjectionStatus(
@@ -87,9 +72,6 @@ class ProjectionStatusTest {
             )).isInstanceOf(IllegalArgumentException.class);
         }
 
-        /**
-         * 验证<code>status.lastError()</code> 等于 <code>"connection timeout"</code>。
-         */
         @Test
         void lastError可为非null_记录失败信息() {
             ProjectionStatus status = new ProjectionStatus(
@@ -100,16 +82,10 @@ class ProjectionStatusTest {
         }
     }
 
-    /**
-     * 覆盖 <code>baseline 工厂方法</code> 场景及其预期行为。
-     */
     @Nested
     @DisplayName("baseline 工厂方法")
     class BaselineFactory {
 
-        /**
-         * 验证<code>status.streamId()</code> 等于 <code>"orders"</code>，<code>status.nextEventNumber()</code> 等于 <code>0L</code>，<code>status.lastError()</code>为空。
-         */
         @Test
         void baseline_running为true_应返回正确状态() {
             ProjectionStatus status = ProjectionStatus.baseline("orders", true);
@@ -122,9 +98,6 @@ class ProjectionStatusTest {
             assertThat(status.lastError()).isNull();
         }
 
-        /**
-         * 验证<code>status.running()</code>为假。
-         */
         @Test
         void baseline_running为false_应返回正确状态() {
             ProjectionStatus status = ProjectionStatus.baseline("orders", false);
@@ -133,16 +106,10 @@ class ProjectionStatusTest {
         }
     }
 
-    /**
-     * 覆盖 <code>不可变性与 equals/hashCode</code> 场景及其预期行为。
-     */
     @Nested
     @DisplayName("不可变性与 equals/hashCode")
     class Immutability {
 
-        /**
-         * 验证<code>a</code> 等于 <code>b</code>，<code>a.hashCode()</code> 等于 <code>b.hashCode()</code>。
-         */
         @Test
         void 相同字段值_应equals且hashCode相同() {
             Instant now = Instant.now();
@@ -153,9 +120,6 @@ class ProjectionStatusTest {
             assertThat(a.hashCode()).isEqualTo(b.hashCode());
         }
 
-        /**
-         * 验证<code>a</code> 不等于 <code>b</code>。
-         */
         @Test
         void 不同字段值_应不equals() {
             ProjectionStatus a = ProjectionStatus.baseline("orders", true);
@@ -165,16 +129,10 @@ class ProjectionStatusTest {
         }
     }
 
-    /**
-     * 覆盖 <code>ViewManager.getProjectionStatus() 默认行为</code> 场景及其预期行为。
-     */
     @Nested
     @DisplayName("ViewManager.getProjectionStatus() 默认行为")
     class ViewManagerDefaultBehavior {
 
-        /**
-         * 验证<code>status.streamId()</code> 等于 <code>"orders"</code>，<code>status.nextEventNumber()</code> 等于 <code>0L</code>，<code>status.lastError()</code>为空。
-         */
         @Test
         void default实现_running为true_应透传isRunning() {
             ViewManager manager = new ViewManager() {
@@ -206,9 +164,6 @@ class ProjectionStatusTest {
             assertThat(status.lastError()).isNull();
         }
 
-        /**
-         * 验证<code>status.running()</code>为假。
-         */
         @Test
         void default实现_running为false_应透传isRunning() {
             ViewManager manager = new ViewManager() {

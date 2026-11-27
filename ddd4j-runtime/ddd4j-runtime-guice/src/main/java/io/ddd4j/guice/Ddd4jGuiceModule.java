@@ -80,9 +80,6 @@ public class Ddd4jGuiceModule extends AbstractModule {
         };
     }
 
-    /**
-     * 把 DDD4J 运行时使用的基础服务注册到 Guice。
-     */
     @Override
     protected void configure() {
         // 启动期注册并托管全局 SPI；应用关闭时可从 Injector 获取后调用 close()。

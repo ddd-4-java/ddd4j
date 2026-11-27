@@ -29,9 +29,6 @@ import java.util.Objects;
  */
 public final class ActivemqKit {
 
-    /**
-     * 限制调用方直接创建 <code>ActivemqKit</code> 实例。
-     */
     private ActivemqKit() {
     }
 
@@ -148,12 +145,6 @@ public final class ActivemqKit {
         }
     }
 
-    /**
-     * 检查输入是否存在非空白字符。
-     *
-     * @param s 待检查的字符串
-     * @return 含有效文本时返回 true
-     */
     private static boolean hasText(String s) {
         return StrKit.isNotEmpty(s);
     }

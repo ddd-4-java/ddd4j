@@ -28,27 +28,18 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class ApiIdempotentTypeTest {
 
-    /**
-     * 验证<code>ApiIdempotentType.values()</code> 仅包含 <code>ApiIdempotentType.TOKEN</code>、<code>ApiIdempotentType.ARGS</code>。
-     */
     @Test
     void values_shouldContainTokenAndArgs() {
         assertThat(ApiIdempotentType.values())
                 .containsExactlyInAnyOrder(ApiIdempotentType.TOKEN, ApiIdempotentType.ARGS);
     }
 
-    /**
-     * 验证<code>ApiIdempotentType.valueOfIgnoreCase("TOKEN")</code> 等于 <code>ApiIdempotentType.TOKEN</code>，<code>ApiIdempotentType.valueOfIgnoreCase("ARGS")</code> 等于 <code>ApiIdempotentType.ARGS</code>。
-     */
     @Test
     void valueOfIgnoreCase_shouldResolveExactName() {
         assertThat(ApiIdempotentType.valueOfIgnoreCase("TOKEN")).isEqualTo(ApiIdempotentType.TOKEN);
         assertThat(ApiIdempotentType.valueOfIgnoreCase("ARGS")).isEqualTo(ApiIdempotentType.ARGS);
     }
 
-    /**
-     * 验证<code>ApiIdempotentType.valueOfIgnoreCase("UNKNOWN")</code> 抛出 <code>NoSuchElementException.class</code>。
-     */
     @Test
     void valueOfIgnoreCase_shouldThrowForUnknown() {
         assertThatThrownBy(() -> ApiIdempotentType.valueOfIgnoreCase("UNKNOWN"))
@@ -56,27 +47,18 @@ class ApiIdempotentTypeTest {
                 .hasMessageContaining("UNKNOWN");
     }
 
-    /**
-     * 验证<code>ApiIdempotentType.valueOfIgnoreCase(null)</code> 抛出 <code>NoSuchElementException.class</code>。
-     */
     @Test
     void valueOfIgnoreCase_shouldThrowForNull() {
         assertThatThrownBy(() -> ApiIdempotentType.valueOfIgnoreCase(null))
                 .isInstanceOf(NoSuchElementException.class);
     }
 
-    /**
-     * 验证<code>ApiIdempotentType.TOKEN.equals(ApiIdempotentType.TOKEN)</code>为真，<code>ApiIdempotentType.TOKEN.equals(ApiIdempotentType.ARGS)</code>为假。
-     */
     @Test
     void equals_enum_shouldCompareByName() {
         assertThat(ApiIdempotentType.TOKEN.equals(ApiIdempotentType.TOKEN)).isTrue();
         assertThat(ApiIdempotentType.TOKEN.equals(ApiIdempotentType.ARGS)).isFalse();
     }
 
-    /**
-     * 验证<code>ApiIdempotentType.TOKEN.equals("TOKEN")</code>为真，<code>ApiIdempotentType.ARGS.equals("ARGS")</code>为真，<code>ApiIdempotentType.TOKEN.equals("ARGS")</code>为假。
-     */
     @Test
     void equals_string_shouldCompareIgnoreCaseViaValueOf() {
         assertThat(ApiIdempotentType.TOKEN.equals("TOKEN")).isTrue();

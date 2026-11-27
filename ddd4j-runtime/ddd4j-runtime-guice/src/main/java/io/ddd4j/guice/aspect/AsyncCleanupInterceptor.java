@@ -37,13 +37,6 @@ import org.aopalliance.intercept.MethodInvocation;
 @Slf4j
 public class AsyncCleanupInterceptor implements MethodInterceptor {
 
-    /**
-     * 执行异步被拦截方法，并根据结果安排线程上下文清理。
-     *
-     * @param invocation 待执行的拦截方法调用
-     * @return 异步调用或目标方法返回的结果
-     * @throws Throwable 目标方法执行或其异步包装失败
-     */
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
         try {

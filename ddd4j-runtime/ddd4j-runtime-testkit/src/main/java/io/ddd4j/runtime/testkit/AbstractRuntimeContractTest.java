@@ -36,27 +36,18 @@ public abstract class AbstractRuntimeContractTest {
      */
     protected abstract RuntimeContract createRuntime();
 
-    /**
-     * 每个契约测试开始前清空线程上下文和全局服务注册。
-     */
     @BeforeEach
     void cleanContexts() {
         ThreadContext.clear();
         BaseContext.clear();
     }
 
-    /**
-     * 在契约测试结束后清空线程上下文和全局服务注册。
-     */
     @AfterEach
     void clearContexts() {
         ThreadContext.clear();
         BaseContext.clear();
     }
 
-    /**
-     * 验证运行时重复启动时保持正常就绪，关闭时释放登记的服务。
-     */
     @Test
     void shouldRegisterServicesAndCleanThemOnClose() {
         RuntimeContract runtime = createRuntime();
@@ -77,13 +68,6 @@ public abstract class AbstractRuntimeContractTest {
         }
     }
 
-    /**
-     * 绑定同类型的请求级代理，并检查请求读取时优先解析它。
-     *
-     * @param <T>  服务接口类型
-     * @param key  服务注册键
-     * @param type 用于构造请求级代理的服务接口
-     */
     private <T> void assertRequestOverride(String key, Class<T> type) {
         T requestScoped = type.cast(Proxy.newProxyInstance(type.getClassLoader(),
                 new Class<?>[]{type}, (proxy, method, args) -> null));

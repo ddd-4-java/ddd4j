@@ -31,13 +31,7 @@ import java.util.UUID;
 public class AppKit {
 
     //生成 app_secret 密钥
-    /**
-     * 计算默认应用密钥时使用的服务标识。
-     */
     private final String SERVER_NAME = "ddd4j_2021";
-    /**
-     * 生成应用标识或随机串时使用的字符池。
-     */
     private final String[] chars = new String[]{"a", "b", "c", "d", "e", "f",
             "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s",
             "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5",

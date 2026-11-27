@@ -20,22 +20,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * 通过 <code>event.setAggregateVersion()</code>、<code>objectMapper.writeValueAsString()</code> 验证 <code>DomainEventJson</code> 的运行行为。
- */
 class DomainEventJsonTest {
 
     // Jackson 2 不会自动注册 java.time 支持；findAndAddModules 经 SPI 发现 classpath 上的 jsr310（JavaTimeModule）
-    /**
-     * 用于读写 JSON 数据的 Jackson 映射器。
-     */
     private final ObjectMapper objectMapper = JsonMapper.builder().findAndAddModules().build();
 
-    /**
-     * 在测试框架中执行 <code>event.setAggregateVersion()</code>、<code>objectMapper.writeValueAsString()</code>，验证该场景。
-     *
-     * @throws Exception 处理测试数据的序列化时失败
-     */
     @Test
     void shouldSerializeEventMetadataAsStableScalarValues() throws Exception {
         SampleDomainEvent event = new SampleDomainEvent("order-1");
@@ -50,16 +39,8 @@ class DomainEventJsonTest {
                 .contains("\"aggregate-version\":3");
     }
 
-    /**
-     * 供传输、序列化或处理器分发验证的领域事件样本。
-     */
     private static final class SampleDomainEvent extends DomainEvent<StringEntityId> {
 
-        /**
-         * 使用 <code>super()</code> 初始化 <code>SampleDomainEvent</code> 测试夹具。
-         *
-         * @param orderId 测试中要定位的订单标识
-         */
         private SampleDomainEvent(String orderId) {
             super(orderId);
         }

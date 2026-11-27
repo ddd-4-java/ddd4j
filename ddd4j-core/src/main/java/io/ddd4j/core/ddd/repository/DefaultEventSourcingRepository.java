@@ -58,25 +58,10 @@ import java.util.function.Function;
 public class DefaultEventSourcingRepository<M extends AggregateRoot<ID>, ID extends Serializable>
         implements EventSourcingRepository<M, ID> {
 
-    /**
-     * 用于区分聚合类型的逻辑名称。
-     */
     private final String aggregateType;
-    /**
-     * 用于构造和恢复聚合的 Java 类型。
-     */
     private final Class<M> aggregateClass;
-    /**
-     * 将仓储主键转换成事件存储聚合根标识的适配器。
-     */
     private final Function<ID, ? extends AggregateRootId> idAdapter;
-    /**
-     * 读取及追加领域事件的事件存储。
-     */
     private final EventStore eventStore;
-    /**
-     * 跟踪仓储已经读取或追加的聚合事件版本。
-     */
     private final ConcurrentMap<ID, Long> trackedVersions = new ConcurrentHashMap<>();
 
     /**
@@ -179,12 +164,6 @@ public class DefaultEventSourcingRepository<M extends AggregateRoot<ID>, ID exte
         return aggregate;
     }
 
-    /**
-     * 读取聚合已持久化的全部事件并取得最后一个版本。
-     *
-     * @param aggregateId 待查询的聚合标识
-     * @return 最后一个事件的版本，事件流为空时为零
-     */
     private long currentStreamVersion(ID aggregateId) {
         List<StoredEvent> stored = eventStore.read(aggregateType, resolve(aggregateId));
         return stored.isEmpty() ? 0L : stored.get(stored.size() - 1).version();
@@ -207,22 +186,10 @@ public class DefaultEventSourcingRepository<M extends AggregateRoot<ID>, ID exte
         }
     }
 
-    /**
-     * 从聚合对象中取得非空标识。
-     *
-     * @param aggregate 待写入事件的聚合
-     * @return 聚合自身的标识
-     */
     private ID requireId(M aggregate) {
         return Objects.requireNonNull(aggregate.id(), "aggregate id must not be null");
     }
 
-    /**
-     * 通过适配器把仓储标识解析为事件存储可用的标识。
-     *
-     * @param aggregateId 仓储使用的聚合标识
-     * @return 转换后的事件存储标识
-     */
     private AggregateRootId resolve(ID aggregateId) {
         return Objects.requireNonNull(idAdapter.apply(aggregateId),
                 "idAdapter must not return null for id: " + aggregateId);

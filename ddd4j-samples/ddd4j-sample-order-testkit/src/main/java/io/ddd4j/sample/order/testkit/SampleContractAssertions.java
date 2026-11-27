@@ -22,9 +22,6 @@ import java.util.Objects;
  * 各鉴权样例共用的认证、授权与请求作用域断言。
  */
 public final class SampleContractAssertions {
-    /**
-     * 限制工具类实例化。
-     */
     private SampleContractAssertions() {
     }
 
@@ -66,23 +63,10 @@ public final class SampleContractAssertions {
         clean(driver, engine + " invalid token request cleanup");
     }
 
-    /**
-     * 断言一次请求结束后没有残留的认证主体。
-     *
-     * @param driver  可读取当前认证主体的示例驱动
-     * @param message 断言失败时的提示
-     */
     private static void clean(AuthSampleDriver driver, String message) {
         check(!driver.contextPrincipal().isPresent(), message);
     }
 
-    /**
-     * 断言执行操作时会抛出指定类型的运行时异常。
-     *
-     * @param type      期望的异常类型
-     * @param operation 被验证的操作
-     * @param message   断言失败时的提示
-     */
     private static void failure(Class<? extends RuntimeException> type, Runnable operation, String message) {
         try {
             operation.run();
@@ -95,12 +79,6 @@ public final class SampleContractAssertions {
         throw new AssertionError(message);
     }
 
-    /**
-     * 在条件不满足时抛出带给定消息的断言失败。
-     *
-     * @param condition 待验证的条件
-     * @param message   断言失败时的提示
-     */
     private static void check(boolean condition, String message) {
         if (!condition) {
             throw new AssertionError(message);

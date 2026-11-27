@@ -27,9 +27,6 @@ package io.ddd4j.core;
  */
 public class ProfileManager {
 
-    /**
-     * 读取当前运行配置中已启用环境的函数。
-     */
     private final java.util.function.Supplier<String[]> activeProfilesSupplier;
 
     /**

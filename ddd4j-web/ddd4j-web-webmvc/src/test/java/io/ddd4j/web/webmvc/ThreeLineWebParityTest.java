@@ -49,13 +49,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * 同输入验证跨版本 Web 注册与出站 header；不启动外部服务。
  */
 class ThreeLineWebParityTest {
-    /**
-     * 调用 <code>MappedInterceptor.class.getMethod()</code> 执行当前夹具操作。
-     *
-     * @param interceptor 传给 <code>MappedInterceptor.class.getMethod()</code> 的 <code>MappedInterceptor</code> 输入
-     * @return 根据测试条件返回的可能值，包括 <code>(String[])MappedInterceptor.class.getMethod("getIncludePathPatterns").invoke(interceptor)</code>、<code>(String[])MappedInterceptor.class.getMethod("getPathPatterns").invoke(interceptor)</code>
-     * @throws Exception 反射访问被测成员时失败
-     */
     private static String[] includedPatterns(MappedInterceptor interceptor) throws Exception {
         // Spring 7 移除了旧 getter，测试观察同一注册结果。
         try {
@@ -65,20 +58,12 @@ class ThreeLineWebParityTest {
         }
     }
 
-    /**
-     * 测试结束后执行 <code>ThreadContext.clear()</code>、<code>RequestContextHolder.resetRequestAttributes()</code> 完成资源回收或状态恢复。
-     */
     @AfterEach
     void clearContext() {
         ThreadContext.clear();
         RequestContextHolder.resetRequestAttributes();
     }
 
-    /**
-     * 验证<code>registry.entries().size()</code> 等于 <code>2</code>，<code>mapped.getInterceptor()</code> 与…为同一实例 <code>interceptor</code>。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void nonEmptyInterceptorsAreRegisteredWithTheirPaths() throws Exception {
         BaseWebInterceptor interceptor = new BaseWebInterceptor() {
@@ -120,9 +105,6 @@ class ThreeLineWebParityTest {
         assertFalse(mapped.matches(excluded));
     }
 
-    /**
-     * 验证<code>registry.entries().isEmpty()</code>为真。
-     */
     @Test
     void emptyAndNullInterceptorListsAreSafe() {
         RecordingRegistry registry = new RecordingRegistry();
@@ -131,11 +113,6 @@ class ThreeLineWebParityTest {
         assertTrue(registry.entries().isEmpty());
     }
 
-    /**
-     * 验证<code>template.headers().get(name)</code>非空。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void systemIdDefaultsForNullAndEmptyButPreservesAValue() throws Exception {
         for (String value : new String[]{null, "", "tenant-system"}) {
@@ -155,11 +132,6 @@ class ThreeLineWebParityTest {
         }
     }
 
-    /**
-     * 验证<code>response.getCode()</code> 等于 <code>400</code>，<code>response.getMsg()</code> 等于 <code>enabled ? "localized header message" : "缺少请求头: [X-Parity]."</code>。
-     *
-     * @throws Exception 反射访问被测成员时失败
-     */
     @Test
     void missingHeaderResponsePreservesStatusAndMessageWithOrWithoutI18n() throws Exception {
         ServerI18nProperties properties = new ServerI18nProperties();
@@ -183,35 +155,16 @@ class ThreeLineWebParityTest {
         }
     }
 
-    /**
-     * 作为空实现的测试替身，调用时保持当前夹具状态。
-     *
-     * @param value 当前用例传入的值
-     */
     private void headerEndpoint(String value) {
     }
 
-    /**
-     * 提供 <code>request()</code> 等供当前测试使用的独立操作。
-     */
     interface HeaderClient {
-        /**
-         * 向合同测试服务根路径发出不自动透传请求头和租户标识的 Feign GET 请求。
-         */
         @RequestLine("GET /")
         @FeignHeader(autoFillTenantId = false, useWebRequestHeader = false)
         void request();
     }
 
-    /**
-     * 实现 <code>InterceptorRegistry</code>，供测试调用 <code>entries()</code> 并观察结果。
-     */
     private static class RecordingRegistry extends InterceptorRegistry {
-        /**
-         * 通过 <code>getInterceptors()</code> 取得当前测试需要的结果。
-         *
-         * @return 当前测试使用的结果，取自 <code>getInterceptors()</code>
-         */
         List<Object> entries() {
             return getInterceptors();
         }

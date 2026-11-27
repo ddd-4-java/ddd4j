@@ -51,13 +51,7 @@ public class BigDecimalStringConverter implements Converter<BigDecimal> {
      */
     public static final String DEFAULT_PATTERN = "#,##0.00";
 
-    /**
-     * 金额导入及导出时使用的十进制格式。
-     */
     private final String pattern;
-    /**
-     * 每个线程独立使用的金额解析和格式化器。
-     */
     private final ThreadLocal<DecimalFormat> formatHolder;
 
     /**
@@ -82,34 +76,16 @@ public class BigDecimalStringConverter implements Converter<BigDecimal> {
         });
     }
 
-    /**
-     * 声明转换器处理的 Java 类型。
-     *
-     * @return BigDecimal 的类型标记
-     */
     @Override
     public Class<?> supportJavaTypeKey() {
         return BigDecimal.class;
     }
 
-    /**
-     * 声明转换器处理的 Excel 单元格类型。
-     *
-     * @return 字符串型单元格类型
-     */
     @Override
     public CellDataTypeEnum supportExcelTypeKey() {
         return CellDataTypeEnum.STRING;
     }
 
-    /**
-     * 使用十进制格式解析金额。
-     *
-     * @param cellData            当前读取的文本单元格
-     * @param contentProperty     当前字段的 Excel 列元数据
-     * @param globalConfiguration 工作簿级转换配置
-     * @return 解析后的金额，空白单元格返回空
-     */
     @Override
     public BigDecimal convertToJavaData(ReadCellData<?> cellData,
                                         ExcelContentProperty contentProperty,
@@ -138,14 +114,6 @@ public class BigDecimalStringConverter implements Converter<BigDecimal> {
         }
     }
 
-    /**
-     * 按十进制格式写出金额。
-     *
-     * @param value               待导出的值
-     * @param contentProperty     当前字段的 Excel 列元数据
-     * @param globalConfiguration 工作簿级转换配置
-     * @return 字符串型写入单元格，空引用写为空文本
-     */
     @Override
     public WriteCellData<?> convertToExcelData(BigDecimal value,
                                                ExcelContentProperty contentProperty,

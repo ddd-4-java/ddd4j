@@ -34,22 +34,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-/**
- * 验证 <code>PulsarAdapterContract</code> 在 <code>doesNotRedeliver</code> 等场景中的行为。
- */
 class PulsarAdapterContractTest {
 
-    /**
-     * 测试结束后执行 <code>BaseContext.clear()</code> 完成资源回收或状态恢复。
-     */
     @AfterEach
     void clearContext() {
         BaseContext.clear();
     }
 
-    /**
-     * 验证<code>PulsarMQClient.messageId(message)</code> 等于 <code>"stable-id"</code>，<code>acknowledgment.isAcknowledged()</code>为真。
-     */
     @Test
     void shouldPreferStableMessageIdAndNegativeAcknowledgeOnRetry() {
         Message<byte[]> message = mock(Message.class);
@@ -65,9 +56,6 @@ class PulsarAdapterContractTest {
         assertTrue(acknowledgment.isAcknowledged());
     }
 
-    /**
-     * 验证<code>acknowledgment.nack(false)</code> 抛出 <code>UnsupportedOperationException.class</code>，<code>acknowledgment.reject(false)</code> 抛出 <code>UnsupportedOperationException.class</code>，<code>acknowledgment.isAcknowledged()</code>为真。
-     */
     @Test
     void doesNotRedeliverWhenNonRequeueWasRequested() {
         Message<byte[]> message = mock(Message.class);
@@ -86,11 +74,6 @@ class PulsarAdapterContractTest {
         assertTrue(acknowledgment.isAcknowledged());
     }
 
-    /**
-     * 在测试框架中执行 <code>mock()</code>、<code>pulsarClient.newProducer()</code>、<code>producerBuilder.topic()</code>，验证该场景。
-     *
-     * @throws Exception 发起测试请求时失败
-     */
     @Test
     @SuppressWarnings("unchecked")
     void taggedEventUsesSubscribedPhysicalTopic() throws Exception {
@@ -134,11 +117,6 @@ class PulsarAdapterContractTest {
         client.close();
     }
 
-    /**
-     * 在测试框架中执行 <code>mock()</code>、<code>pulsarClient.newProducer()</code>、<code>producerBuilder.topic()</code>，验证该场景。
-     *
-     * @throws Exception 发起测试请求时失败
-     */
     @Test
     @SuppressWarnings("unchecked")
     void shouldPublishCausalityAsNativePulsarProperties() throws Exception {
@@ -207,11 +185,6 @@ class PulsarAdapterContractTest {
         client.close();
     }
 
-    /**
-     * 验证<code>received.get().getCorrelationId()</code> 等于 <code>"correlation-id"</code>，<code>acknowledgment.get().correlationId()</code>为空。
-     *
-     * @throws Exception 准备或释放被测运行资源时失败
-     */
     @Test
     @SuppressWarnings("unchecked")
     void shouldRestoreCausalityFromNativePulsarProperties() throws Exception {
@@ -285,11 +258,6 @@ class PulsarAdapterContractTest {
         verify(pulsarClient, never()).close();
     }
 
-    /**
-     * 验证被测调用 抛出 <code>IllegalStateException.class</code>。
-     *
-     * @throws Exception 发起测试请求时失败
-     */
     @Test
     @SuppressWarnings("unchecked")
     void shouldPropagateBrokerSendFailureToPublisher() throws Exception {

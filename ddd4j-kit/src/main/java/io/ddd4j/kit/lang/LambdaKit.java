@@ -36,9 +36,6 @@ import java.util.Objects;
  */
 public final class LambdaKit {
 
-    /**
-     * 限制调用方直接创建 <code>LambdaKit</code> 实例。
-     */
     private LambdaKit() {
     }
 

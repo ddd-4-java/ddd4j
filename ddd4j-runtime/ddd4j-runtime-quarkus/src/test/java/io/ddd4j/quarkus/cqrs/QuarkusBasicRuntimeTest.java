@@ -15,37 +15,17 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @QuarkusTest
 class QuarkusBasicRuntimeTest {
-    /**
-     * 供参数化测试覆盖的多个实际总线实现。
-     */
     @Inject
     Instance<CommandBus> buses;
-    /**
-     * 提供给容器选择测试管理器的候选集合。
-     */
     @Inject
     Instance<ViewManager> managers;
-    /**
-     * 容器可解析的多个投影运行器候选。
-     */
     @Inject
     Instance<ProjectionRunner<?>> runners;
-    /**
-     * 当前投影测试使用的原生调度器或替身。
-     */
     @Inject
     io.quarkus.scheduler.Scheduler scheduler;
-    /**
-     * 测试投影视图使用的 Quartz 调度器或其 CDI 实例。
-     */
     @Inject
     io.quarkus.quartz.QuartzScheduler quartz;
 
-    /**
-     * 验证<code>buses.isResolvable()</code>为真，<code>scheduler.getScheduledJobs()</code>为空。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void basicNeedsNoProjectionAndDoesNotRegisterJobs() throws Exception {
         assertThat(buses.isResolvable()).isTrue();

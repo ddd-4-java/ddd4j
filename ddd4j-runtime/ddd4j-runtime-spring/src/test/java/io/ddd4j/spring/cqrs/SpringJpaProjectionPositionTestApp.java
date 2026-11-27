@@ -10,9 +10,6 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-/**
- * 为 Spring JPA 投影检查点集成测试提供的启动配置。
- */
 @SpringBootConfiguration
 @EnableAutoConfiguration
 @EntityScan(basePackageClasses = SpringJpaProjectionPosition.class)

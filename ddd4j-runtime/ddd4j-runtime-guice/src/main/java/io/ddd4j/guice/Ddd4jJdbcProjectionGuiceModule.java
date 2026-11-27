@@ -56,9 +56,6 @@ import java.util.Objects;
 @Slf4j
 public class Ddd4jJdbcProjectionGuiceModule extends AbstractModule {
 
-    /**
-     * 执行投影位点 SQL 的 JDBC 数据源。
-     */
     private final DataSource dataSource;
 
     /**
@@ -70,9 +67,6 @@ public class Ddd4jJdbcProjectionGuiceModule extends AbstractModule {
         this.dataSource = Objects.requireNonNull(dataSource, "dataSource must not be null");
     }
 
-    /**
-     * 配置 JDBC 投影位点存储及其数据源。
-     */
     @Override
     protected void configure() {
         bind(ProjectionPositionRepository.class)

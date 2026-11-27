@@ -25,16 +25,7 @@ import lombok.Getter;
 @Builder
 public final class QrCodeArtifact {
 
-    /**
-     * 用于关联同一次操作产生的事件或消息的标识。
-     */
     private final String correlationId;
-    /**
-     * 当前制品生成时使用的模板标识。
-     */
     private final String templateId;
-    /**
-     * 当前制品生成的二维码图像。
-     */
     private final QrCodeOutput output;
 }

@@ -24,15 +24,9 @@ import java.util.regex.Pattern;
  */
 public final class IpAddressKit {
 
-    /**
-     * 校验 IPv4 文本格式的正则。
-     */
     private static final Pattern IPV4 = Pattern.compile(
             "^((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)\\.){3}(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)$");
 
-    /**
-     * 限制调用方直接创建 <code>IpAddressKit</code> 实例。
-     */
     private IpAddressKit() {
     }
 

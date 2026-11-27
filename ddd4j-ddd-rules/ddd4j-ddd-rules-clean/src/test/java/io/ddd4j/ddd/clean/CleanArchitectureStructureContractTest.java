@@ -31,15 +31,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class CleanArchitectureStructureContractTest {
 
-    /**
-     * JUnit 为本次测试分配的临时目录。
-     */
     @TempDir
     Path temporary;
 
-    /**
-     * 验证 Clean 架构预期结构的末尾直接结束于最后一个目录名。
-     */
     @Test
     void expectedStructureEndsAtLastDirectoryWithoutTrailingLineBreak() {
         String description = new CleanArchitectureChecker("example").getExpectedStructure();
@@ -63,11 +57,6 @@ class CleanArchitectureStructureContractTest {
                 "    └── external/"), description);
     }
 
-    /**
-     * 构造缺少分层目录的 Clean 项目并核对违规项顺序。
-     *
-     * @throws Exception 创建测试目录或读取扫描结果失败
-     */
     @Test
     void missingLayerViolationsFollowDocumentedLayerOrder() throws Exception {
         Files.createDirectories(temporary.resolve("example"));

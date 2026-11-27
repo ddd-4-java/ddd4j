@@ -37,22 +37,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("IdKit: Snowflake 分布式 ID 生成测试")
 class IdKitTest {
 
-    /**
-     * Snowflake 测试使用的工作节点编号。
-     */
     private static final long WORKER_ID = 1L;
-    /**
-     * Snowflake 测试使用的数据中心编号。
-     */
     private static final long DATA_CENTER_ID = 1L;
-    /**
-     * 并发测试中保留并记录的 ID 样本数上限。
-     */
     private static final int LOG_SAMPLE_SIZE = 20;
 
-    /**
-     * nextSnowflakeId 应生成正数 ID。
-     */
     @Test
     @DisplayName("nextSnowflakeId 应生成正数 ID")
     void nextSnowflakeId_shouldBePositive() {
@@ -61,9 +49,6 @@ class IdKitTest {
         assertTrue(id > 0, "Snowflake ID 应为正数，实际: " + id);
     }
 
-    /**
-     * nextSnowflakeId(workerId, dataCenterId) 应生成正数 ID。
-     */
     @Test
     @DisplayName("nextSnowflakeId(workerId, dataCenterId) 应生成正数 ID")
     void nextSnowflakeId_withDataCenter_shouldBePositive() {
@@ -72,9 +57,6 @@ class IdKitTest {
         assertTrue(id > 0, "Snowflake ID 应为正数，实际: " + id);
     }
 
-    /**
-     * nextSnowflakeIdStr 应返回非空字符串。
-     */
     @Test
     @DisplayName("nextSnowflakeIdStr 应返回非空字符串")
     void nextSnowflakeIdStr_shouldBeNonEmpty() {
@@ -88,9 +70,6 @@ class IdKitTest {
         assertTrue(parsed > 0);
     }
 
-    /**
-     * 连续生成 1000 个 ID 应全部唯一。
-     */
     @Test
     @DisplayName("连续生成 1000 个 ID 应全部唯一")
     void nextSnowflakeId_shouldGenerateUniqueIds() {
@@ -105,9 +84,6 @@ class IdKitTest {
         assertEquals(1000, ids.size());
     }
 
-    /**
-     * Snowflake ID 二进制长度应不超过 64 位。
-     */
     @Test
     @DisplayName("Snowflake ID 二进制长度应不超过 64 位")
     void nextSnowflakeId_shouldNotExceed64Bits() {
@@ -119,11 +95,6 @@ class IdKitTest {
                 "Snowflake ID 二进制长度应 <= 64，实际: " + binary.length());
     }
 
-    /**
-     * 并发生成 10 线程 x 100 ID 应全部唯一。
-     *
-     * @throws InterruptedException 等待测试操作时被中断
-     */
     @Test
     @DisplayName("并发生成 10 线程 x 100 ID 应全部唯一")
     void nextSnowflakeId_concurrentGeneration_shouldBeUnique() throws InterruptedException {
@@ -161,9 +132,6 @@ class IdKitTest {
                 "并发生成的 ID 应全部唯一，实际唯一数: " + allIds.size());
     }
 
-    /**
-     * 验证<code>second</code> 与…为同一实例 <code>first</code>，<code>first.nextId()</code> 不等于 <code>first.nextId()</code>。
-     */
     @Test
     void getSnowflake_withTimeOffset_shouldCreateReusableGenerator() {
         Snowflake first = IdKit.getSnowflake(1L, 1L, true, 5L);
@@ -173,9 +141,6 @@ class IdKitTest {
         assertNotEquals(first.nextId(), first.nextId());
     }
 
-    /**
-     * 验证<code>second</code> 与…为同一实例 <code>first</code>，<code>first.nextId()</code> 不等于 <code>first.nextId()</code>。
-     */
     @Test
     void getSnowflake_withRandomSequenceLimit_shouldCreateReusableGenerator() {
         Snowflake first = IdKit.getSnowflake(2L, 2L, false, 5L, 16L);
@@ -185,9 +150,6 @@ class IdKitTest {
         assertNotEquals(first.nextId(), first.nextId());
     }
 
-    /**
-     * 不同 workerId 生成的 ID 应不同（大概率）。
-     */
     @Test
     @DisplayName("不同 workerId 生成的 ID 应不同（大概率）")
     void nextSnowflakeId_differentWorkers_shouldDiffer() {
@@ -199,9 +161,6 @@ class IdKitTest {
                 "不同 workerId 生成的 ID 不应相同");
     }
 
-    /**
-     * getSnowflake 单例应返回同一实例。
-     */
     @Test
     @DisplayName("getSnowflake 单例应返回同一实例")
     void getSnowflake_shouldReturnSingleton() {
@@ -212,9 +171,6 @@ class IdKitTest {
         assertSame(sf1, sf2, "getSnowflake 应返回单例");
     }
 
-    /**
-     * getLastIPAddress 应返回非零值。
-     */
     @Test
     @DisplayName("getLastIPAddress 应返回非零值")
     void getLastIPAddress_shouldReturnNonZero() {
@@ -224,24 +180,12 @@ class IdKitTest {
         assertNotNull(lastIp);
     }
 
-    /**
-     * 记录测试生成的 Snowflake ID、场景和二进制表示。
-     *
-     * @param scenario 产出该 ID 的测试场景
-     * @param id       新生成的 ID
-     */
     private void logSnowflakeId(String scenario, long id) {
         String binary = Long.toBinaryString(id);
         log.info("Snowflake id sample: scenario={}, workerId={}, dataCenterId={}, id={}, binaryLength={}, binary={}",
                 scenario, WORKER_ID, DATA_CENTER_ID, id, binary.length(), binary);
     }
 
-    /**
-     * 同步向样本列表追加 ID，直至达到样本数上限。
-     *
-     * @param sampleIds 保存抽样 ID 的共享列表
-     * @param id        候选 ID
-     */
     private void addSampleId(List<Long> sampleIds, long id) {
         synchronized (sampleIds) {
             if (sampleIds.size() < LOG_SAMPLE_SIZE) {

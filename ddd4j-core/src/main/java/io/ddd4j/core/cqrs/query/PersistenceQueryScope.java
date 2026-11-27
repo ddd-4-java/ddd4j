@@ -35,21 +35,9 @@ import java.util.*;
  */
 public final class PersistenceQueryScope<M extends AggregateRoot<?>, P> {
 
-    /**
-     * 接收持久化字段查询条件的原始领域查询。
-     */
     private final Query<M> query;
-    /**
-     * 允许本查询作用域引用的持久化对象类型。
-     */
     private final Class<P> persistenceType;
 
-    /**
-     * 为已有领域查询打开显式的持久化对象字段作用域。
-     *
-     * @param query           要接收条件的领域查询
-     * @param persistenceType 持久化对象类型
-     */
     PersistenceQueryScope(Query<M> query, Class<P> persistenceType) {
         this.query = Objects.requireNonNull(query, "query must not be null");
         this.persistenceType = Objects.requireNonNull(persistenceType, "persistenceType must not be null");
@@ -342,27 +330,12 @@ public final class PersistenceQueryScope<M extends AggregateRoot<?>, P> {
         return query.count();
     }
 
-    /**
-     * 将本作用域中的持久化属性转换成查询筛选条件。
-     *
-     * @param condition 是否追加该条件
-     * @param property  持久化属性的方法引用
-     * @param operator  条件运算符
-     * @param value     比较值或查询操作数
-     * @return 当前持久化查询作用域
-     */
     private PersistenceQueryScope<M, P> condition(boolean condition, SFunction<P, ?> property,
                                                   String operator, Object value) {
         query.addCondition(condition, reference(property), operator, value);
         return this;
     }
 
-    /**
-     * 按本作用域绑定的持久化类型解析字段引用。
-     *
-     * @param property 持久化属性访问器的方法引用
-     * @return 标识持久化字段的属性引用
-     */
     private PropertyRef reference(SFunction<P, ?> property) {
         return PropertyRef.persistence(persistenceType, property);
     }

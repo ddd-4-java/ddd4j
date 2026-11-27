@@ -69,9 +69,6 @@ public final class RepositoryRegistry {
      */
     private static final String PREFIX = "ddd4j.repository.";
 
-    /**
-     * 按注册键查找当前仓储实例的映射。
-     */
     private static final Map<Class<?>, Repository> INSTANCES = new ConcurrentHashMap<>();
 
     /**
@@ -79,9 +76,6 @@ public final class RepositoryRegistry {
      */
     private static final Map<Class<?>, Repository> QUERY_INSTANCES = new ConcurrentHashMap<>();
 
-    /**
-     * 限制调用方直接创建 <code>RepositoryRegistry</code> 实例。
-     */
     private RepositoryRegistry() {
     }
 

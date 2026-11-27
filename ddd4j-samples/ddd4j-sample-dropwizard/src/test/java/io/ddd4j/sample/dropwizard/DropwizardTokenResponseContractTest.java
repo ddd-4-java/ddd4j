@@ -15,9 +15,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class DropwizardTokenResponseContractTest {
 
-    /**
-     * 验证<code>response.getToken()</code> 等于 <code>"token-1"</code>，<code>response.token()</code> 等于 <code>response.getToken()</code>，<code>response.getToken()</code> 等于 <code>"token-3"</code>。
-     */
     @Test
     void tokenResponseKeepsBeanAndComponentAccessors() {
         TokenResponse response = new TokenResponse("token-1");

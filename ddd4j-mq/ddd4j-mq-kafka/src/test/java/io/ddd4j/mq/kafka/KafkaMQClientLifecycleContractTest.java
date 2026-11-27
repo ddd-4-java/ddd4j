@@ -34,11 +34,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * Kafka 消费组解析和客户端资源所有权的回归契约。
  */
 class KafkaMQClientLifecycleContractTest {
-    /**
-     * 读取 <code>properties</code> 供当前测试使用。
-     *
-     * @return 当前测试使用的结果，取自 <code>properties</code>
-     */
     private static KafkaMQProperties properties() {
         KafkaMQProperties properties = new KafkaMQProperties() {
             @Override
@@ -53,30 +48,16 @@ class KafkaMQClientLifecycleContractTest {
         return properties;
     }
 
-    /**
-     * 通过 <code>MQListener.of()</code> 取得当前测试需要的结果。
-     *
-     * @return 当前测试使用的结果，取自 <code>MQListener.of(new Handler(), method, method.getAnnotation(MQEventListener.class))</code>
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     private static MQListener listener() throws Exception {
         Method method = Handler.class.getMethod("onLifecycleEvent", MQEvent.class);
         return MQListener.of(new Handler(), method, method.getAnnotation(MQEventListener.class));
     }
 
-    /**
-     * 测试结束后执行 <code>BaseContext.clear()</code> 完成资源回收或状态恢复。
-     */
     @AfterEach
     void clearContext() {
         BaseContext.clear();
     }
 
-    /**
-     * 验证<code>resolve.invoke(client, listener)</code> 等于 <code>"billing-onLifecycleEvent"</code>，<code>resolve.invoke(client, listener)</code> 等于 <code>"explicit"</code>，<code>resolve.invoke(client, listener)</code> 等于 <code>"ddd4j-onLifecycleEvent"</code>。
-     *
-     * @throws Exception 反射访问被测成员时失败
-     */
     @Test
     void configuredGroupPrefixIsUsedUnlessListenerHasExplicitGroup() throws Exception {
         KafkaMQProperties properties = properties();
@@ -95,11 +76,6 @@ class KafkaMQClientLifecycleContractTest {
         assertEquals("ddd4j-onLifecycleEvent", resolve.invoke(client, listener));
     }
 
-    /**
-     * 验证<code>producer.send(new ProducerRecord&lt;&gt;("orders", "value"))</code> 抛出 <code>IllegalStateException.class</code>，<code>client.initProducer(new MQProperties())</code> 抛出 <code>IllegalStateException.class</code>。
-     *
-     * @throws Exception 反射访问被测成员、发起测试请求时失败
-     */
     @Test
     @SuppressWarnings("unchecked")
     void closeReleasesOwnedProducerAndRejectsReinitialization() throws Exception {
@@ -119,9 +95,6 @@ class KafkaMQClientLifecycleContractTest {
         }
     }
 
-    /**
-     * 验证<code>producer.closed()</code>为假，<code>producer.history().size()</code> 等于 <code>1</code>。
-     */
     @Test
     void closeDoesNotCloseExternallyOwnedProducer() {
         MockProducer<String, String> producer =
@@ -135,11 +108,6 @@ class KafkaMQClientLifecycleContractTest {
         producer.close();
     }
 
-    /**
-     * 验证<code>ManagementFactory.getPlatformMBeanServer().isRegistered(consumerInfo)</code>为真，<code>workers.size()</code> 等于 <code>1</code>，<code>client.initConsumer(listener(), new MQProperties())</code> 抛出 <code>IllegalStateException.class</code>。
-     *
-     * @throws Exception 等待并发操作时失败
-     */
     @Test
     void closeStopsConsumerAndItsExecutorAndRejectsNewConsumers() throws Exception {
         KafkaMQClient client = new KafkaMQClient(properties(), null);
@@ -172,11 +140,6 @@ class KafkaMQClientLifecycleContractTest {
         }
     }
 
-    /**
-     * 验证<code>consumerCreationEntered.await(5, TimeUnit.SECONDS)</code>为真，<code>closeEntered.await(5, TimeUnit.SECONDS)</code>为真，<code>callers.awaitTermination(5, TimeUnit.SECONDS)</code>为真。
-     *
-     * @throws Exception 等待并发操作时失败
-     */
     @Test
     void closeWaitsForInFlightConsumerInitialization() throws Exception {
         CountDownLatch consumerCreationEntered = new CountDownLatch(1);
@@ -224,11 +187,6 @@ class KafkaMQClientLifecycleContractTest {
         }
     }
 
-    /**
-     * 验证<code>client.startupStatus().snapshot().state()</code> 等于 <code>MQStartupState.STOPPED</code>，<code>client.initConsumer(listener(), new MQProperties())</code> 抛出 <code>IllegalStateException.class</code>。
-     *
-     * @throws Exception 准备或释放被测运行资源时失败
-     */
     @Test
     void closeBeforeInitializationDoesNotCreateResources() throws Exception {
         KafkaMQClient client = new KafkaMQClient(properties(), null);
@@ -239,9 +197,6 @@ class KafkaMQClientLifecycleContractTest {
         assertThrows(IllegalStateException.class, () -> client.initConsumer(listener(), new MQProperties()));
     }
 
-    /**
-     * 验证<code>producer.closed()</code>为真，<code>holder[0].initProducer(properties)</code> 抛出 <code>IllegalStateException.class</code>。
-     */
     @Test
     void ownedProducerCallbackMayCloseClientWithoutDeadlock() {
         AsyncCallbackProducer producer = new AsyncCallbackProducer();
@@ -265,11 +220,6 @@ class KafkaMQClientLifecycleContractTest {
         assertThrows(IllegalStateException.class, () -> holder[0].initProducer(properties));
     }
 
-    /**
-     * 验证<code>client.initConsumer(listener(), new MQProperties())</code> 抛出 <code>RejectedExecutionException.class</code>，<code>consumer.closeCount.get()</code> 等于 <code>1</code>。
-     *
-     * @throws Exception 准备或释放被测运行资源时失败
-     */
     @Test
     void rejectedConsumerExecutionCleansUpPartialInitialization() throws Exception {
         TrackingConsumer consumer = new TrackingConsumer();
@@ -295,11 +245,6 @@ class KafkaMQClientLifecycleContractTest {
         assertEquals(1, consumer.closeCount.get(), "rejected worker must be removed from client ownership");
     }
 
-    /**
-     * 验证<code>client.initConsumer(listener(), new MQProperties())</code> 抛出 <code>IllegalStateException.class</code>，<code>consumer.closeCount.get()</code> 等于 <code>1</code>。
-     *
-     * @throws Exception 准备或释放被测运行资源时失败
-     */
     @Test
     void executorCreationFailureClosesAlreadyCreatedConsumer() throws Exception {
         TrackingConsumer consumer = new TrackingConsumer();
@@ -323,11 +268,6 @@ class KafkaMQClientLifecycleContractTest {
         client.close();
     }
 
-    /**
-     * 验证<code>client.initConsumer(listener(), new MQProperties())</code>为真，<code>consumerClosed.await(2, TimeUnit.SECONDS)</code>为真，<code>consumer.closeCount.get()</code> 等于 <code>1</code>。
-     *
-     * @throws Exception 等待并发操作时失败
-     */
     @Test
     void unexpectedPollFailureReleasesConsumerWithoutClientClose() throws Exception {
         CountDownLatch consumerClosed = new CountDownLatch(1);
@@ -359,11 +299,6 @@ class KafkaMQClientLifecycleContractTest {
         }
     }
 
-    /**
-     * 验证<code>client.handleRecord(listener(), properties, consumer, record)</code> 抛出 <code>WakeupException.class</code>，<code>consumer.seekCalled</code>为假。
-     *
-     * @throws Exception 准备或释放被测运行资源时失败
-     */
     @Test
     void wakeupDuringCommitEscapesRecordHandlingWithoutSeek() throws Exception {
         MockProducer<String, String> producer =
@@ -397,38 +332,17 @@ class KafkaMQClientLifecycleContractTest {
         producer.close();
     }
 
-    /**
-     * 提供 <code>onLifecycleEvent()</code> 等供当前测试使用的独立操作。
-     */
     public static final class Handler {
-        /**
-         * 作为空实现的测试替身，调用时保持当前夹具状态。
-         *
-         * @param event 交给被测入口处理的测试领域事件
-         */
         @MQEventListener(topic = "orders")
         public void onLifecycleEvent(MQEvent event) {
         }
     }
 
-    /**
-     * 实现 <code>MockProducer</code>，供测试调用 <code>send()</code> 并观察结果。
-     */
     private static final class AsyncCallbackProducer extends MockProducer<String, String> {
-        /**
-         * 使用 <code>super()</code> 初始化 <code>AsyncCallbackProducer</code> 测试夹具。
-         */
         private AsyncCallbackProducer() {
             super(true, null, new StringSerializer(), new StringSerializer());
         }
 
-        /**
-         * 读取 <code>result</code> 供当前测试使用。
-         *
-         * @param record   本次调用使用的 <code>ProducerRecord&lt;String, String&gt;</code> 参数 <code>record</code>
-         * @param callback 传给 <code>callback.onCompletion()</code> 的 <code>Callback</code> 输入
-         * @return 当前测试使用的结果，取自 <code>result</code>
-         */
         @Override
         public synchronized Future<RecordMetadata> send(ProducerRecord<String, String> record, Callback callback) {
             CompletableFuture<RecordMetadata> result = new CompletableFuture<>();
@@ -442,25 +356,13 @@ class KafkaMQClientLifecycleContractTest {
         }
     }
 
-    /**
-     * 实现 <code>MockConsumer</code>，供测试调用 <code>close()</code> 并观察结果。
-     */
     private static class TrackingConsumer extends MockConsumer<String, String> {
-        /**
-         * 在测试线程之间共享当前操作次数或更新数量的计数器。
-         */
         private final AtomicInteger closeCount = new AtomicInteger();
 
-        /**
-         * 使用 <code>super()</code> 初始化 <code>TrackingConsumer</code> 测试夹具。
-         */
         private TrackingConsumer() {
             super(OffsetResetStrategy.EARLIEST);
         }
 
-        /**
-         * 调用 <code>closeCount.incrementAndGet()</code>、<code>super.close()</code> 执行当前夹具操作。
-         */
         @Override
         public void close() {
             closeCount.incrementAndGet();
@@ -468,31 +370,14 @@ class KafkaMQClientLifecycleContractTest {
         }
     }
 
-    /**
-     * 实现 <code>TrackingConsumer</code>，供测试调用 <code>commitSync()</code>、<code>seek()</code> 并观察结果。
-     */
     private static final class WakeupCommitConsumer extends TrackingConsumer {
-        /**
-         * 记录消费者是否被要求重新定位到指定偏移。
-         */
         private boolean seekCalled;
 
-        /**
-         * 构造 <code>WakeupException</code> 作为当前测试的输入或结果。
-         *
-         * @param offsets 本次调用使用的 <code>java.util.Map&lt;TopicPartition, org.apache.kafka.clients.consumer.OffsetAndMetadata&gt;</code> 参数 <code>offsets</code>
-         */
         @Override
         public void commitSync(java.util.Map<TopicPartition, org.apache.kafka.clients.consumer.OffsetAndMetadata> offsets) {
             throw new WakeupException();
         }
 
-        /**
-         * 根据本次调用更新 <code>seekCalled = true</code>，用于后续测试步骤。
-         *
-         * @param partition 传给 <code>super.seek()</code> 的 <code>TopicPartition</code> 输入
-         * @param offset    传给 <code>super.seek()</code> 的 <code>long</code> 输入
-         */
         @Override
         public void seek(TopicPartition partition, long offset) {
             seekCalled = true;
@@ -500,71 +385,35 @@ class KafkaMQClientLifecycleContractTest {
         }
     }
 
-    /**
-     * 实现 <code>AbstractExecutorService</code>，供测试调用 <code>shutdown()</code>、<code>shutdownNow()</code>、<code>isShutdown()</code> 并观察结果。
-     */
     private static final class RejectingExecutor extends AbstractExecutorService {
-        /**
-         * 后台组件是否已进入关闭过程。
-         */
         private volatile boolean shutdown;
 
-        /**
-         * 根据本次调用更新 <code>shutdown = true</code>，用于后续测试步骤。
-         */
         @Override
         public void shutdown() {
             shutdown = true;
         }
 
-        /**
-         * 通过 <code>Collections.emptyList()</code> 取得当前测试需要的结果。
-         *
-         * @return 当前测试使用的结果，取自 <code>Collections.emptyList()</code>
-         */
         @Override
         public List<Runnable> shutdownNow() {
             shutdown = true;
             return Collections.emptyList();
         }
 
-        /**
-         * 读取后台组件是否已进入关闭过程。
-         *
-         * @return 后台组件是否已进入关闭过程
-         */
         @Override
         public boolean isShutdown() {
             return shutdown;
         }
 
-        /**
-         * 读取后台组件是否已进入关闭过程。
-         *
-         * @return 后台组件是否已进入关闭过程
-         */
         @Override
         public boolean isTerminated() {
             return shutdown;
         }
 
-        /**
-         * 读取后台组件是否已进入关闭过程。
-         *
-         * @param timeout 等待测试事件的超时时长
-         * @param unit    时长参数所使用的时间单位
-         * @return 当前测试使用的结果，取自 <code>shutdown</code>
-         */
         @Override
         public boolean awaitTermination(long timeout, TimeUnit unit) {
             return shutdown;
         }
 
-        /**
-         * 构造 <code>RejectedExecutionException</code> 作为当前测试的输入或结果。
-         *
-         * @param command 交给总线处理的测试命令
-         */
         @Override
         public void execute(Runnable command) {
             throw new RejectedExecutionException("test rejection");

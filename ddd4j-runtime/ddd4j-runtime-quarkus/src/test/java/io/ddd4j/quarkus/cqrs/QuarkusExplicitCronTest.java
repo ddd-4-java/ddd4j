@@ -23,26 +23,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestProfile(QuarkusExplicitCronTest.Profile.class)
 class QuarkusExplicitCronTest {
 
-    /**
-     * 当前投影测试使用的调度表达式。
-     */
     private static final String CRON = "*/30 * * * * ?";
-    /**
-     * 当前测试使用并负责释放的视图或认证管理器。
-     */
     @Inject
     QuarkusJpaViewManager manager;
-    /**
-     * 当前投影测试使用的原生调度器或替身。
-     */
     @Inject
     Scheduler scheduler;
 
-    /**
-     * 验证<code>scheduler.isStarted()</code>为真，<code>scheduler.isShutdown()</code>为假。
-     *
-     * @throws Exception 准备或释放被测运行资源时失败
-     */
     @Test
     void explicitCronRegistersOneJobAndReleasesItOnStop() throws Exception {
         try {
@@ -63,11 +49,6 @@ class QuarkusExplicitCronTest {
         assertThat(scheduler.isShutdown()).isFalse();
     }
 
-    /**
-     * 核对<code>keys</code> 的大小为 <code>1</code>，<code>trigger.getCronExpression()</code> 等于 <code>CRON</code>。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     private void assertOneCronJob() throws Exception {
         Set<JobKey> keys = scheduler.getJobKeys(GroupMatcher.anyJobGroup());
         assertThat(keys).hasSize(1);
@@ -75,15 +56,7 @@ class QuarkusExplicitCronTest {
         assertThat(trigger.getCronExpression()).isEqualTo(CRON);
     }
 
-    /**
-     * 实现 <code>QuarkusTestProfile</code>，供测试调用 <code>getConfigOverrides()</code> 并观察结果。
-     */
     public static class Profile implements QuarkusTestProfile {
-        /**
-         * 通过 <code>Collections.singletonMap()</code> 取得当前测试需要的结果。
-         *
-         * @return 当前测试使用的结果，取自 <code>Collections.singletonMap(QuarkusJpaViewManager.CRON_KEY, CRON)</code>
-         */
         @Override
         public Map<String, String> getConfigOverrides() {
             return Collections.singletonMap(QuarkusJpaViewManager.CRON_KEY, CRON);

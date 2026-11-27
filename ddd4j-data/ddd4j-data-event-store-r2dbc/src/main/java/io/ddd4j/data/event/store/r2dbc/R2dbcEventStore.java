@@ -27,9 +27,6 @@ import java.util.Objects;
  */
 public class R2dbcEventStore implements EventStore {
 
-    /**
-     * 提供同步适配器底层读写行为的响应式事件存储。
-     */
     private final R2dbcAsyncEventStore asyncEventStore;
 
     /**
@@ -41,21 +38,10 @@ public class R2dbcEventStore implements EventStore {
         this(new R2dbcAsyncEventStore(connectionFactory));
     }
 
-    /**
-     * 为异步事件存储提供同步事件存储入口。
-     *
-     * @param asyncEventStore 负责实际事件读写的响应式存储
-     */
     R2dbcEventStore(R2dbcAsyncEventStore asyncEventStore) {
         this.asyncEventStore = Objects.requireNonNull(asyncEventStore, "asyncEventStore must not be null");
     }
 
-    /**
-     * 将响应式事件读取结果转成同步事件存储的记录结构。
-     *
-     * @param event 要序列化或转换的事件
-     * @return 具有相同身份、版本和负载的存储事件
-     */
     private static StoredEvent toStoredEvent(AsyncStoredEvent event) {
         return new StoredEvent(
                 event.eventId(),
@@ -71,11 +57,6 @@ public class R2dbcEventStore implements EventStore {
 
     /**
      * 在同步边界追加领域事件。
-     *
-     * @param aggregateType   聚合类型
-     * @param aggregateId     聚合根标识
-     * @param events          按顺序追加或回放的领域事件
-     * @param expectedVersion 预期的当前聚合版本
      */
     @Override
     public void append(String aggregateType, AggregateRootId aggregateId,
@@ -86,10 +67,6 @@ public class R2dbcEventStore implements EventStore {
 
     /**
      * 在同步边界读取完整聚合流。
-     *
-     * @param aggregateType 聚合类型
-     * @param aggregateId   聚合根标识
-     * @return 按版本顺序返回的领域事件流
      */
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId) {
@@ -101,12 +78,6 @@ public class R2dbcEventStore implements EventStore {
 
     /**
      * 在同步边界读取闭合版本区间。
-     *
-     * @param aggregateType 聚合类型
-     * @param aggregateId   聚合根标识
-     * @param fromVersion   读取起始版本
-     * @param toVersion     读取结束版本
-     * @return 按版本顺序返回的领域事件流
      */
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId,
@@ -119,10 +90,6 @@ public class R2dbcEventStore implements EventStore {
 
     /**
      * 在同步边界读取全局事件流分页。
-     *
-     * @param fromPosition 起始流位置
-     * @param limit        本次最多读取的记录数
-     * @return 按全局位置排序的事件
      */
     @Override
     public List<StoredEvent> readAll(long fromPosition, int limit) {

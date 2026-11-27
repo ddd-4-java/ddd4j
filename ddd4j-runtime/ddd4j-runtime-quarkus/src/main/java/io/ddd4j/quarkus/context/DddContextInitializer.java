@@ -57,9 +57,6 @@ import java.util.Objects;
 @ApplicationScoped
 public class DddContextInitializer {
 
-    /**
-     * 汇总当前组件就绪状态的注册表。
-     */
     private final RuntimeReadinessRegistry readinessRegistry = new RuntimeReadinessRegistry();
     /**
      * 领域事件发布器实例
@@ -76,19 +73,10 @@ public class DddContextInitializer {
      */
     @Inject
     Instance<I18nProvider> i18nProvider;
-    /**
-     * 从当前框架解析命令执行器并调用的命令总线。
-     */
     @Inject
     Instance<CommandBus> commandBus;
-    /**
-     * 参与应用就绪状态汇总的运行组件。
-     */
     @Inject
     Instance<ReadinessContributor> readinessContributors;
-    /**
-     * 当前容器装配并负责关闭的 DDD4J 运行时。
-     */
     private Ddd4jQuarkusRuntime runtime;
 
     /**
@@ -106,8 +94,6 @@ public class DddContextInitializer {
      * 应用启动完成后注入 SPI 服务到上下文。
      * <p>
      * 使用 {@link Instance} 而非直接注入，避免业务方未提供某 SPI 时启动失败。
-     *
-     * @param event Quarkus 启动事件
      */
     synchronized void onStart(@Observes StartupEvent event) {
         if (Objects.nonNull(runtime)) {
@@ -126,18 +112,10 @@ public class DddContextInitializer {
         log.info("Quarkus ddd4j SPI services initialized");
     }
 
-    /**
-     * 监听应用停止事件并关闭 DDD4J 运行时。
-     *
-     * @param event 当前框架生命周期或容器启动事件
-     */
     synchronized void onStop(@Observes ShutdownEvent event) {
         closeRuntime();
     }
 
-    /**
-     * 关闭本次 Quarkus 应用中负责基础服务的运行时。
-     */
     @PreDestroy
     synchronized void closeRuntime() {
         if (Objects.nonNull(runtime)) {

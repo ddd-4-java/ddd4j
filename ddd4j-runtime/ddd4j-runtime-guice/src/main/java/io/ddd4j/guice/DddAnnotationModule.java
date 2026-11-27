@@ -37,9 +37,6 @@ import java.util.Set;
 @Slf4j
 public class DddAnnotationModule extends AbstractModule {
 
-    /**
-     * 扫描时识别并注册为 Guice 组件的 DDD 注解名。
-     */
     private static final String[] DDD_ANNOTATION_NAMES = {
             "io.ddd4j.guice.annotation.ddd.DomainService",
             "io.ddd4j.guice.annotation.ddd.DomainRepository",
@@ -82,9 +79,6 @@ public class DddAnnotationModule extends AbstractModule {
         this.basePackages = Objects.isNull(basePackages) ? new String[0] : basePackages;
     }
 
-    /**
-     * 在 Guice 装配时扫描并绑定可识别的 DDD 注解组件。
-     */
     @Override
     protected void configure() {
         if (!enableClassGraph) {
@@ -94,9 +88,6 @@ public class DddAnnotationModule extends AbstractModule {
         scanAndBind();
     }
 
-    /**
-     * 扫描约定包并按 DDD 注解绑定尚未登记的类。
-     */
     private void scanAndBind() {
         long start = System.currentTimeMillis();
         Set<Class<?>> boundClasses = new LinkedHashSet<>();
@@ -117,13 +108,6 @@ public class DddAnnotationModule extends AbstractModule {
                 Arrays.toString(basePackages), boundClasses.size(), elapsed);
     }
 
-    /**
-     * 收集具有指定 DDD 注解的候选并为其建立 Guice 绑定。
-     *
-     * @param scan           当前注解扫描结果
-     * @param annotationName 查找组件时使用的全限定注解名
-     * @param boundClasses   已建立绑定的组件类型
-     */
     @SuppressWarnings("unchecked")
     private void bindAnnotatedClasses(ScanResult scan, String annotationName, Set<Class<?>> boundClasses) {
         try {
@@ -137,13 +121,6 @@ public class DddAnnotationModule extends AbstractModule {
         }
     }
 
-    /**
-     * 按组件类型与作用域绑定单个注解扫描结果。
-     *
-     * @param classInfo      待转成 Guice 服务绑定的扫描类记录
-     * @param annotationType 当前要识别的注解类型
-     * @param boundClasses   已建立绑定的组件类型
-     */
     private void bindClass(ClassInfo classInfo, Class<? extends Annotation> annotationType,
                            Set<Class<?>> boundClasses) {
         if (!classInfo.isStandardClass()) {
@@ -165,13 +142,6 @@ public class DddAnnotationModule extends AbstractModule {
         }
     }
 
-    /**
-     * 根据类和框架注解判断组件应否使用单例绑定。
-     *
-     * @param clazz          待验证生命周期或作用域的组件类型
-     * @param annotationType 当前要识别的注解类型
-     * @return 需要单例绑定时返回 true
-     */
     private boolean isSingletonScoped(Class<?> clazz, Class<? extends Annotation> annotationType) {
         return clazz.isAnnotationPresent(Singleton.class)
                 || annotationType.isAnnotationPresent(Singleton.class);

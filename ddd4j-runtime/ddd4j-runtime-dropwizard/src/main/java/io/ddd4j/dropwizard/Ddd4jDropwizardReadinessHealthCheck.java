@@ -25,9 +25,6 @@ import java.util.Objects;
  */
 public class Ddd4jDropwizardReadinessHealthCheck extends HealthCheck {
 
-    /**
-     * 汇总当前组件就绪状态的注册表。
-     */
     private final RuntimeReadinessRegistry readinessRegistry;
 
     /**
@@ -40,11 +37,6 @@ public class Ddd4jDropwizardReadinessHealthCheck extends HealthCheck {
                 "readinessRegistry must not be null");
     }
 
-    /**
-     * 读取当前运行时就绪报告并转换为 Dropwizard 健康结果。
-     *
-     * @return 应用的就绪健康检查结果
-     */
     @Override
     protected Result check() {
         ReadinessReport report = readinessRegistry.readiness();

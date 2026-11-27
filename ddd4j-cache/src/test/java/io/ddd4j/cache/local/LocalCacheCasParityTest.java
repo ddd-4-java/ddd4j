@@ -15,16 +15,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  */
 class LocalCacheCasParityTest {
 
-    /**
-     * 对比 Caffeine 和 Guava 原子更新时共用的缓存配置。
-     */
     private static final CacheConfig CONFIG = CacheConfig.builder("local-cas-parity")
             .maximumSize(100)
             .build();
 
-    /**
-     * 验证<code>current.key()</code> 等于 <code>"key"</code>，<code>current.value()</code>为空，<code>cache.getIfPresent("key")</code> 等于 <code>"updated"</code>。
-     */
     @Test
     void caffeineShouldExposeCurrentValueAndStoreComputedValue() {
         CaffeineCache<String, String> cache = CaffeineCache.create(CONFIG);
@@ -41,9 +35,6 @@ class LocalCacheCasParityTest {
         assertEquals("updated", cache.getIfPresent("key"));
     }
 
-    /**
-     * 验证<code>current.key()</code> 等于 <code>"key"</code>，<code>current.value()</code>为空，<code>cache.getIfPresent("key")</code> 等于 <code>"updated"</code>。
-     */
     @Test
     void guavaShouldExposeCurrentValueAndStoreComputedValue() {
         GuavaCache<String, String> cache = GuavaCache.create(CONFIG);

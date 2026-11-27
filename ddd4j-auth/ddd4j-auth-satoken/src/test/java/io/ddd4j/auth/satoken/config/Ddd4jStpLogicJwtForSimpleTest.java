@@ -27,51 +27,18 @@ import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * 验证 <code>Ddd4jStpLogicJwtForSimple</code> 在<code>eachInstanceIssuesAndValidates</code>等操作中的行为契约。
- */
 class Ddd4jStpLogicJwtForSimpleTest {
 
-    /**
-     * 测试登录和校验使用的账号域。
-     */
     private static final String LOGIN_TYPE = "jwt-signing-isolation";
-    /**
-     * 测试令牌声明使用的签发方。
-     */
     private static final String ISSUER = "test-issuer";
-    /**
-     * 测试令牌声明使用的接收方。
-     */
     private static final String AUDIENCE = "test-audience";
-    /**
-     * 构造本组测试输入时复用的固定键。
-     */
     private static final String FIRST_KEY = "test-only-jwt-signing-isolation-first";
-    /**
-     * 构造本组测试输入时复用的固定键。
-     */
     private static final String SECOND_KEY = "test-only-jwt-signing-isolation-second";
-    /**
-     * 构造本组测试输入时复用的固定键。
-     */
     private static final String GLOBAL_KEY = "test-only-jwt-signing-isolation-global";
 
-    /**
-     * 组件装配前保存的配置，供退出时恢复。
-     */
     private SaTokenConfig previousConfig;
-    /**
-     * 被测注册安装前的原生登录逻辑。
-     */
     private StpLogic previousLogic;
 
-    /**
-     * 读取 <code>properties</code> 供当前测试使用。
-     *
-     * @param key 用于在测试上下文或缓存中索引数据的键
-     * @return 当前测试使用的结果，取自 <code>properties</code>
-     */
     private static SaTokenSecurityProperties properties(String key) {
         SaTokenSecurityProperties properties = new SaTokenSecurityProperties();
         properties.setAuthenticationMode(SaTokenAuthenticationMode.JWT_SIMPLE);
@@ -82,13 +49,6 @@ class Ddd4jStpLogicJwtForSimpleTest {
         return properties;
     }
 
-    /**
-     * 读取 <code>claims</code> 供当前测试使用。
-     *
-     * @param issuer   传给 <code>claims.put()</code> 的 <code>String</code> 输入
-     * @param audience 传给 <code>claims.put()</code> 的 <code>String</code> 输入
-     * @return 当前测试使用的结果，取自 <code>claims</code>
-     */
     private static Map<String, Object> claims(String issuer, String audience) {
         Map<String, Object> claims = new LinkedHashMap<>();
         claims.put("iss", issuer);
@@ -96,22 +56,10 @@ class Ddd4jStpLogicJwtForSimpleTest {
         return claims;
     }
 
-    /**
-     * 通过 <code>SaJwtUtil.createToken()</code> 取得当前测试需要的结果。
-     *
-     * @param loginType 传给 <code>SaJwtUtil.createToken()</code> 的 <code>String</code> 输入
-     * @param issuer    传给 <code>SaJwtUtil.createToken()</code> 的 <code>String</code> 输入
-     * @param audience  传给 <code>SaJwtUtil.createToken()</code> 的 <code>String</code> 输入
-     * @param key       用于在测试上下文或缓存中索引数据的键
-     * @return 当前测试使用的结果，取自 <code>SaJwtUtil.createToken(loginType, "sdk-user", "web", 60L, claims(issuer, audience), key)</code>
-     */
     private static String sdkToken(String loginType, String issuer, String audience, String key) {
         return SaJwtUtil.createToken(loginType, "sdk-user", "web", 60L, claims(issuer, audience), key);
     }
 
-    /**
-     * 测试前依次恢复或安装配置<code>SaManager</code>。
-     */
     @BeforeEach
     void setUp() {
         previousConfig = SaManager.getConfig();
@@ -119,9 +67,6 @@ class Ddd4jStpLogicJwtForSimpleTest {
         SaManager.setConfig(new SaTokenConfig().setIsPrint(false).setJwtSecretKey(GLOBAL_KEY));
     }
 
-    /**
-     * 测试后依次恢复或安装配置<code>SaManager</code>、注册登录逻辑<code>SaManager</code>。
-     */
     @AfterEach
     void restore() {
         SaManager.setConfig(previousConfig);
@@ -131,9 +76,6 @@ class Ddd4jStpLogicJwtForSimpleTest {
         }
     }
 
-    /**
-     * 验证<code>firstPayload.get("iss")</code> 等于 <code>ISSUER</code>，<code>firstPayload.get("aud")</code> 等于 <code>AUDIENCE</code>，<code>second.hasExpectedClaims(sdkToken(LOGIN_TYPE, ISSUER, AUDIENCE, GLOBAL_KEY))</code>为假。
-     */
     @Test
     void eachInstanceIssuesAndValidatesWithItsConfiguredKey() {
         SaTokenSecurityProperties firstProperties = properties(FIRST_KEY);
@@ -169,9 +111,6 @@ class Ddd4jStpLogicJwtForSimpleTest {
         assertFalse(second.hasExpectedClaims(sdkToken(LOGIN_TYPE, ISSUER, AUDIENCE, GLOBAL_KEY)));
     }
 
-    /**
-     * 验证<code>logic.hasExpectedClaims(sdkToken(LOGIN_TYPE, ISSUER, AUDIENCE, FIRST_KEY))</code>为真，<code>logic.hasExpectedClaims(sdkToken(LOGIN_TYPE, "other-issuer", AUDIENCE, FIRST_KEY))</code>为假，<code>logic.hasExpectedClaims(sdkToken("other-realm", ISSUER, AUDIENCE, FIRST_KEY))</code>为假。
-     */
     @Test
     void validSignatureStillRequiresExpectedIssuerAudienceAndRealm() {
         Ddd4jStpLogicJwtForSimple logic = new Ddd4jStpLogicJwtForSimple(properties(FIRST_KEY));

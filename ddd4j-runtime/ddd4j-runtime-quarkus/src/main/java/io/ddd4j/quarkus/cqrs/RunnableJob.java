@@ -30,11 +30,6 @@ import java.util.Objects;
  */
 public class RunnableJob implements Job {
 
-    /**
-     * 从 Quartz 任务上下文找出登记的投影回调并执行。
-     *
-     * @param context 当前框架传入的执行或容器上下文
-     */
     @Override
     public void execute(JobExecutionContext context) {
         String identity = context.getJobDetail().getJobDataMap().getString(QuarkusViewScheduler.TASK_KEY);

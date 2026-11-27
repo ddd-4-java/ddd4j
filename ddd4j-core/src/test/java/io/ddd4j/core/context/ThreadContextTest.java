@@ -25,24 +25,13 @@ import java.util.concurrent.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-/**
- * 验证 <code>ThreadContext</code> 在<code>shouldClearResources</code>等操作中的行为契约。
- */
 class ThreadContextTest {
 
-    /**
-     * 测试结束后执行 <code>ThreadContext.clear()</code> 完成资源回收或状态恢复。
-     */
     @AfterEach
     void tearDown() {
         ThreadContext.clear();
     }
 
-    /**
-     * 验证<code>(Object) ThreadContext.get("tenant-id")</code> 等于 <code>"tenant-a"</code>，<code>ThreadContext.getResources()</code> 含对应条目 <code>"tenant-id"</code>、<code>"tenant-a"</code>，<code>childResources.get("shared-value")</code> 指向同一实例 <code>sharedValue</code>。
-     *
-     * @throws Exception 等待并发操作时失败
-     */
     @Test
     void shouldIsolateMutableResourceMapOnPlainChildThread() throws Exception {
         Object sharedValue = new Object();
@@ -68,11 +57,6 @@ class ThreadContextTest {
         assertThat(childResources.get("shared-value")).isSameAs(sharedValue);
     }
 
-    /**
-     * 验证<code>(Object) ThreadContext.get("tenant-id")</code> 等于 <code>"request"</code>。
-     *
-     * @throws Exception 等待并发操作时失败
-     */
     @Test
     void shouldRestoreExistingWorkerContextAfterWrappedTaskFails() throws Exception {
         ExecutorService raw = Executors.newSingleThreadExecutor();
@@ -100,11 +84,6 @@ class ThreadContextTest {
         }
     }
 
-    /**
-     * 验证<code>childResources.get()</code> 含对应条目 <code>"tenant-id"</code>、<code>"tenant-b"</code>，<code>ThreadContext.getResources()</code> 含对应条目 <code>"tenant-id"</code>、<code>"tenant-a"</code>。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void shouldIsolateMutableResourceMapFromThreadPoolTask() throws Exception {
         ExecutorService executor = TtlExecutors.getTtlExecutorService(Executors.newSingleThreadExecutor());
@@ -128,11 +107,6 @@ class ThreadContextTest {
         }
     }
 
-    /**
-     * 验证<code>firstTenant.get()</code> 等于 <code>"tenant-a"</code>，<code>secondTenant.get()</code> 等于 <code>"tenant-b"</code>。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void shouldCaptureResourcesForEachThreadPoolTask() throws Exception {
         ExecutorService executor = TtlExecutors.getTtlExecutorService(Executors.newSingleThreadExecutor());
@@ -150,9 +124,6 @@ class ThreadContextTest {
         }
     }
 
-    /**
-     * 验证<code>(Object) ThreadContext.get("tenant-id")</code> 等于 <code>"tenant-b"</code>，<code>(Object) ThreadContext.get("tenant-id")</code> 等于 <code>"tenant-a"</code>。
-     */
     @Test
     void shouldRestoreResourcesAfterNestedScopes() {
         ThreadContext.set("tenant-id", "tenant-a");
@@ -168,9 +139,6 @@ class ThreadContextTest {
         assertThat((Object) ThreadContext.get("tenant-id")).isEqualTo("tenant-a");
     }
 
-    /**
-     * 验证<code>(Object) ThreadContext.get("tenant-id")</code> 等于 <code>"tenant-b"</code>，<code>(Object) ThreadContext.get("tenant-id")</code> 等于 <code>"tenant-a"</code>。
-     */
     @Test
     void shouldReplaceAndRestoreResourcesForScope() {
         ThreadContext.set("tenant-id", "tenant-a");
@@ -184,9 +152,6 @@ class ThreadContextTest {
         assertThat((Object) ThreadContext.get("tenant-id")).isEqualTo("tenant-a");
     }
 
-    /**
-     * 验证<code>(Object) ThreadContext.get("tenant-id")</code> 等于 <code>"tenant-a"</code>。
-     */
     @Test
     void shouldDefensivelyCopyResourceMaps() {
         Map<Object, Object> resources = new HashMap<>();
@@ -200,9 +165,6 @@ class ThreadContextTest {
         assertThat((Object) ThreadContext.get("tenant-id")).isEqualTo("tenant-a");
     }
 
-    /**
-     * 验证<code>ThreadContext.getResources()</code>为空。
-     */
     @Test
     void shouldClearResourcesWhenReplacementIsNull() {
         ThreadContext.set("tenant-id", "tenant-a");

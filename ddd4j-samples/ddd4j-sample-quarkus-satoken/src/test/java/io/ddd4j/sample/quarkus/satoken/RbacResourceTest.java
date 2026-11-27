@@ -43,19 +43,9 @@ import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 @QuarkusTest
 class RbacResourceTest {
 
-    /**
-     * 用于控制示例账号与角色数据的配置对象。
-     */
     @Inject
     RbacConfig rbacConfig;
 
-    /**
-     * 通过 <code>given()</code> 取得当前测试需要的结果。
-     *
-     * @param username 测试会话使用的用户名
-     * @param password 测试账号的口令
-     * @return 当前测试使用的结果，取自 <code>given().contentType("application/json").body(body).when().post("/auth/login").then().statusCode(200).extract().path("token")</code>
-     */
     private static String loginAs(String username, String password) {
         Map<String, String> body = new HashMap<>();
         body.put("username", username);
@@ -68,15 +58,6 @@ class RbacResourceTest {
 
     // ========== 登录 / 认证 ==========
 
-    /**
-     * 读取 <code>newUser</code> 供当前测试使用。
-     *
-     * @param id          当前要查找的测试记录标识
-     * @param username    测试会话使用的用户名
-     * @param displayName 传给 <code>newUser.put()</code> 的 <code>String</code> 输入
-     * @param role        本次鉴权断言所使用的角色标识
-     * @return 当前测试使用的结果，取自 <code>newUser</code>
-     */
     private static Map<String, Object> createUserBody(String id, String username, String displayName, String role) {
         Map<String, Object> newUser = new HashMap<>();
         newUser.put("id", id);
@@ -89,15 +70,6 @@ class RbacResourceTest {
         return newUser;
     }
 
-    /**
-     * 读取 <code>newUser</code> 供当前测试使用。
-     *
-     * @param id          当前要查找的测试记录标识
-     * @param username    测试会话使用的用户名
-     * @param displayName 传给 <code>newUser.put()</code> 的 <code>String</code> 输入
-     * @param roles       传给 <code>newUser.put()</code> 的 <code>Object</code> 输入
-     * @return 当前测试使用的结果，取自 <code>newUser</code>
-     */
     private static Map<String, Object> createUserBody(String id, String username, String displayName, Object roles) {
         Map<String, Object> newUser = new HashMap<>();
         newUser.put("id", id);
@@ -108,17 +80,11 @@ class RbacResourceTest {
         return newUser;
     }
 
-    /**
-     * 测试执行前执行 <code>rbacConfig.reset()</code> 完成资源准备。
-     */
     @BeforeEach
     void resetRbacData() {
         rbacConfig.reset();
     }
 
-    /**
-     * 使用管理员会话时请求 <code>POST /auth/login</code>，确认 HTTP 响应状态为 200，响应中的 <code>data.principal.userCode</code> 等于 <code>"admin"</code>。
-     */
     @Test
     void shouldLoginSuccessfullyAsAdmin() {
         Map<String, String> body = new HashMap<>();
@@ -133,9 +99,6 @@ class RbacResourceTest {
                 .body("data.principal.userCode", equalTo("admin"));
     }
 
-    /**
-     * 使用普通用户会话时请求 <code>POST /auth/login</code>，确认 HTTP 响应状态为 200，响应中的 <code>data.principal.userCode</code> 等于 <code>"user"</code>。
-     */
     @Test
     void shouldLoginSuccessfullyAsUser() {
         Map<String, String> body = new HashMap<>();
@@ -150,9 +113,6 @@ class RbacResourceTest {
                 .body("data.principal.userCode", equalTo("user"));
     }
 
-    /**
-     * 请求 <code>POST /auth/login</code>，确认 HTTP 响应状态为 500。
-     */
     @Test
     void shouldRejectInvalidPassword() {
         Map<String, String> body = new HashMap<>();
@@ -164,9 +124,6 @@ class RbacResourceTest {
                 .then().statusCode(500);
     }
 
-    /**
-     * 请求 <code>POST /auth/login</code>，确认 HTTP 响应状态为 500。
-     */
     @Test
     void shouldRejectLoginForDisabledUser() {
         Map<String, String> body = new HashMap<>();
@@ -178,9 +135,6 @@ class RbacResourceTest {
                 .then().statusCode(500);
     }
 
-    /**
-     * 请求 <code>POST /auth/login</code>，确认 HTTP 响应状态为 500。
-     */
     @Test
     void shouldRejectLoginWithUnknownUser() {
         Map<String, String> body = new HashMap<>();
@@ -194,9 +148,6 @@ class RbacResourceTest {
 
     // ========== 鉴权（3 种鉴权方式） ==========
 
-    /**
-     * 请求 <code>GET /auth/status</code>，确认 HTTP 响应状态为 200，响应中的 <code>data.login</code> 等于 <code>false</code>。
-     */
     @Test
     void shouldReturnLoginStatus() {
         given().when().get("/auth/status")
@@ -205,27 +156,18 @@ class RbacResourceTest {
                 .body("data.login", is(false));
     }
 
-    /**
-     * 已登录时请求 <code>GET /auth/me</code>，确认 HTTP 响应状态为 401。
-     */
     @Test
     void shouldReturnNotAuthenticatedWhenNotLogin() {
         given().when().get("/auth/me")
                 .then().statusCode(401);
     }
 
-    /**
-     * 请求 <code>GET /admin/users</code>，确认 HTTP 响应状态为 401。
-     */
     @Test
     void shouldReturn401WhenAccessAdminUsersWithoutLogin() {
         given().when().get("/admin/users")
                 .then().statusCode(401);
     }
 
-    /**
-     * 请求 <code>GET /auth/me</code>，确认 HTTP 响应状态为 200，响应中的 <code>data.userCode</code> 等于 <code>"user"</code>。
-     */
     @Test
     void shouldAccessMeWhenLoggedIn() {
         String token = loginAs("user", "123456");
@@ -237,9 +179,6 @@ class RbacResourceTest {
                 .body("data.userCode", equalTo("user"));
     }
 
-    /**
-     * 使用管理员会话时请求 <code>GET /auth/me</code>，确认 HTTP 响应状态为 200，响应中的 <code>data.roleCode</code> 等于 <code>"admin"</code>。
-     */
     @Test
     void shouldAccessMeAsAdmin() {
         String token = loginAs("admin", "123456");
@@ -251,9 +190,6 @@ class RbacResourceTest {
                 .body("data.roleCode", equalTo("admin"));
     }
 
-    /**
-     * 请求 <code>POST /admin/users</code>，确认 HTTP 响应状态为 403。
-     */
     @Test
     void shouldDenyAccessToAdminEndpointWithoutAdminRole() {
         String token = loginAs("user", "123456");
@@ -266,9 +202,6 @@ class RbacResourceTest {
                 .then().statusCode(403);
     }
 
-    /**
-     * 请求 <code>GET /auth/check/permission</code>，确认 HTTP 响应状态为 200，响应中的 <code>data.has</code> 等于 <code>true</code>。
-     */
     @Test
     void shouldCheckPermissionAtRuntime() {
         String token = loginAs("admin", "123456");
@@ -281,9 +214,6 @@ class RbacResourceTest {
                 .body("data.has", is(true));
     }
 
-    /**
-     * 请求 <code>GET /auth/check/role</code>，确认 HTTP 响应状态为 200，响应中的 <code>data.has</code> 等于 <code>true</code>。
-     */
     @Test
     void shouldCheckRoleAtRuntime() {
         String token = loginAs("admin", "123456");
@@ -296,9 +226,6 @@ class RbacResourceTest {
                 .body("data.has", is(true));
     }
 
-    /**
-     * 请求 <code>GET /auth/check/permission</code>，确认 HTTP 响应状态为 200，响应中的 <code>data.has</code> 等于 <code>false</code>。
-     */
     @Test
     void shouldCheckRuntimePermissionForNonExistingPermission() {
         String token = loginAs("admin", "123456");
@@ -312,9 +239,6 @@ class RbacResourceTest {
 
     // ========== 业务侧鉴权：3 种鉴权组合 ==========
 
-    /**
-     * 请求 <code>GET /auth/check/role</code>，确认 HTTP 响应状态为 200，响应中的 <code>data.has</code> 等于 <code>false</code>。
-     */
     @Test
     void shouldCheckRuntimeRoleForNonExistingRole() {
         String token = loginAs("admin", "123456");
@@ -326,27 +250,18 @@ class RbacResourceTest {
                 .body("data.has", is(false));
     }
 
-    /**
-     * 请求 <code>GET /auth/check/permission?permission=anything</code>，确认 HTTP 响应状态为 401。
-     */
     @Test
     void shouldDenyAccessToCheckPermissionWithoutLogin() {
         given().when().get("/auth/check/permission?permission=anything")
                 .then().statusCode(401);
     }
 
-    /**
-     * 请求 <code>GET /auth/check/role?role=anything</code>，确认 HTTP 响应状态为 401。
-     */
     @Test
     void shouldDenyAccessToCheckRoleWithoutLogin() {
         given().when().get("/auth/check/role?role=anything")
                 .then().statusCode(401);
     }
 
-    /**
-     * 使用管理员会话时请求 <code>GET /auth/users</code>，确认 HTTP 响应状态为 200。
-     */
     @Test
     void shouldListUsersAsAdminViaAuthEndpoint() {
         String token = loginAs("admin", "123456");
@@ -357,9 +272,6 @@ class RbacResourceTest {
                 .body("data.items.size()", is(3));
     }
 
-    /**
-     * 使用管理员会话时请求 <code>GET /admin/users</code>，确认 HTTP 响应状态为 200。
-     */
     @Test
     void shouldListUsersAsAdminViaAdminEndpoint() {
         String token = loginAs("admin", "123456");
@@ -370,9 +282,6 @@ class RbacResourceTest {
                 .body("data.size()", is(3));
     }
 
-    /**
-     * 请求 <code>POST /auth/orders/o-1001/pay</code>，确认 HTTP 响应状态为 403。
-     */
     @Test
     void shouldPayOrderWithOrderPayPermissionDenied() {
         String token = loginAs("user", "123456");
@@ -381,9 +290,6 @@ class RbacResourceTest {
                 .then().statusCode(403);
     }
 
-    /**
-     * 请求 <code>POST /auth/orders/o-1001/pay</code>，确认 HTTP 响应状态为 200，响应中的 <code>data.paid</code> 等于 <code>true</code>。
-     */
     @Test
     void shouldPayOrderWithOrderPayPermissionAllowed() {
         String token = loginAs("admin", "123456");
@@ -395,9 +301,6 @@ class RbacResourceTest {
 
     // ========== 用户 CRUD (admin 角色权限) ==========
 
-    /**
-     * 使用管理员会话时请求 <code>DELETE /auth/users/u-temp</code>，确认 HTTP 响应状态为 200，响应中的 <code>data</code> 等于 <code>true</code>。
-     */
     @Test
     void shouldDeleteUserAsAdmin() {
         String token = loginAs("admin", "123456");
@@ -408,9 +311,6 @@ class RbacResourceTest {
                 .body("data", is(true));
     }
 
-    /**
-     * 请求 <code>DELETE /auth/users/u-temp</code>，确认 HTTP 响应状态为 403。
-     */
     @Test
     void shouldDenyDeleteUserAsRegularUser() {
         String token = loginAs("user", "123456");
@@ -419,18 +319,12 @@ class RbacResourceTest {
                 .then().statusCode(403);
     }
 
-    /**
-     * 请求 <code>GET /auth/users</code>，确认 HTTP 响应状态为 401。
-     */
     @Test
     void shouldDenyAccessToBusinessEndpointWithoutLogin() {
         given().when().get("/auth/users")
                 .then().statusCode(401);
     }
 
-    /**
-     * 使用管理员会话时请求 <code>POST /admin/users</code>，确认 HTTP 响应状态为 200，响应中的 <code>data.username</code> 等于 <code>"newuser"</code>。
-     */
     @Test
     void shouldCreateUserAsAdmin() {
         String token = loginAs("admin", "123456");
@@ -446,9 +340,6 @@ class RbacResourceTest {
                 .body("data.username", equalTo("newuser"));
     }
 
-    /**
-     * 请求 <code>GET /admin/users/{id}</code>，确认 HTTP 响应状态为 200，响应中的 <code>data.username</code> 等于 <code>"admin"</code>。
-     */
     @Test
     void shouldFindUserById() {
         String token = loginAs("admin", "123456");
@@ -460,9 +351,6 @@ class RbacResourceTest {
                 .body("data.username", equalTo("admin"));
     }
 
-    /**
-     * 使用管理员会话时请求 <code>PUT /admin/users/{id}</code>，确认 HTTP 响应状态为 200，响应中的 <code>data.displayName</code> 等于 <code>"更新后"</code>。
-     */
     @Test
     void shouldUpdateUserAsAdmin() {
         String token = loginAs("admin", "123456");
@@ -487,9 +375,6 @@ class RbacResourceTest {
 
     // ========== 角色 / 权限 CRUD ==========
 
-    /**
-     * 使用管理员会话时请求 <code>DELETE /admin/users/{id}</code>，确认 HTTP 响应状态为 200，响应中的 <code>data</code> 等于 <code>true</code>。
-     */
     @Test
     void shouldDeleteUserAsAdminViaAdminEndpoint() {
         String token = loginAs("admin", "123456");
@@ -507,9 +392,6 @@ class RbacResourceTest {
                 .body("data", is(true));
     }
 
-    /**
-     * 使用管理员会话时请求 <code>POST /admin/users/{id}/roles/{code}</code>，确认 HTTP 响应状态为 200。
-     */
     @Test
     void shouldAssignRoleToUserAsAdmin() {
         String token = loginAs("admin", "123456");
@@ -527,9 +409,6 @@ class RbacResourceTest {
                 .body("data.roleCodes", notNullValue());
     }
 
-    /**
-     * 使用管理员会话时请求 <code>DELETE /admin/users/{id}/roles/{code}</code>，确认 HTTP 响应状态为 200。
-     */
     @Test
     void shouldRevokeRoleFromUserAsAdmin() {
         String token = loginAs("admin", "123456");
@@ -546,9 +425,6 @@ class RbacResourceTest {
                 .statusCode(200);
     }
 
-    /**
-     * 已登录时请求 <code>GET /admin/roles</code>，确认 HTTP 响应状态为 200。
-     */
     @Test
     void shouldListRolesAsAuthenticatedUser() {
         String token = loginAs("user", "123456");
@@ -559,9 +435,6 @@ class RbacResourceTest {
                 .body("data.size()", greaterThanOrEqualTo(2));
     }
 
-    /**
-     * 请求 <code>GET /admin/roles/{code}</code>，确认 HTTP 响应状态为 200，响应中的 <code>data.code</code> 等于 <code>"admin"</code>。
-     */
     @Test
     void shouldFindRoleByCode() {
         String token = loginAs("admin", "123456");
@@ -572,9 +445,6 @@ class RbacResourceTest {
                 .body("data.code", equalTo("admin"));
     }
 
-    /**
-     * 使用管理员会话时请求 <code>POST /admin/roles</code>，确认 HTTP 响应状态为 200，响应中的 <code>data.code</code> 等于 <code>roleCode</code>。
-     */
     @Test
     void shouldCreateRoleAsAdmin() {
         String token = loginAs("admin", "123456");
@@ -592,9 +462,6 @@ class RbacResourceTest {
                 .body("data.code", equalTo(roleCode));
     }
 
-    /**
-     * 使用管理员会话时请求 <code>PUT /admin/roles/{code}</code>，确认 HTTP 响应状态为 200。
-     */
     @Test
     void shouldUpdateRoleAsAdmin() {
         String token = loginAs("admin", "123456");
@@ -619,9 +486,6 @@ class RbacResourceTest {
                 .statusCode(200);
     }
 
-    /**
-     * 使用管理员会话时请求 <code>DELETE /admin/roles/{code}</code>，确认 HTTP 响应状态为 200，响应中的 <code>data</code> 等于 <code>true</code>。
-     */
     @Test
     void shouldDeleteRoleAsAdmin() {
         String token = loginAs("admin", "123456");
@@ -643,9 +507,6 @@ class RbacResourceTest {
                 .body("data", is(true));
     }
 
-    /**
-     * 使用管理员会话时请求 <code>POST /admin/roles/{code}/permissions/{pcode}</code>，确认 HTTP 响应状态为 200。
-     */
     @Test
     void shouldGrantPermissionToRoleAsAdmin() {
         String token = loginAs("admin", "123456");
@@ -655,9 +516,6 @@ class RbacResourceTest {
                 .statusCode(200);
     }
 
-    /**
-     * 使用管理员会话时请求 <code>DELETE /admin/roles/{code}/permissions/{pcode}</code>，确认 HTTP 响应状态为 200。
-     */
     @Test
     void shouldRevokePermissionFromRoleAsAdmin() {
         String token = loginAs("admin", "123456");
@@ -671,9 +529,6 @@ class RbacResourceTest {
                 .then().statusCode(200);
     }
 
-    /**
-     * 已登录时请求 <code>GET /admin/permissions</code>，确认 HTTP 响应状态为 200。
-     */
     @Test
     void shouldListPermissionsAsAuthenticatedUser() {
         String token = loginAs("user", "123456");
@@ -684,9 +539,6 @@ class RbacResourceTest {
                 .body("data.size()", greaterThanOrEqualTo(5));
     }
 
-    /**
-     * 使用管理员会话时请求 <code>POST /admin/permissions</code>，确认 HTTP 响应状态为 200，响应中的 <code>data.code</code> 等于 <code>permCode</code>。
-     */
     @Test
     void shouldCreatePermissionAsAdmin() {
         String token = loginAs("admin", "123456");
@@ -703,9 +555,6 @@ class RbacResourceTest {
                 .body("data.code", equalTo(permCode));
     }
 
-    /**
-     * 使用管理员会话时请求 <code>DELETE /admin/permissions/{code}</code>，确认 HTTP 响应状态为 200，响应中的 <code>data</code> 等于 <code>true</code>。
-     */
     @Test
     void shouldDeletePermissionAsAdmin() {
         String token = loginAs("admin", "123456");
@@ -726,9 +575,6 @@ class RbacResourceTest {
                 .body("data", is(true));
     }
 
-    /**
-     * 请求 <code>POST /admin/users</code>，确认 HTTP 响应状态为 403。
-     */
     @Test
     void shouldDenyCreateUserForRegularUser() {
         String token = loginAs("user", "123456");
@@ -739,9 +585,6 @@ class RbacResourceTest {
                 .then().statusCode(403);
     }
 
-    /**
-     * 请求 <code>POST /admin/roles</code>，确认 HTTP 响应状态为 403。
-     */
     @Test
     void shouldDenyCreateRoleForRegularUser() {
         String token = loginAs("user", "123456");
@@ -756,9 +599,6 @@ class RbacResourceTest {
                 .then().statusCode(403);
     }
 
-    /**
-     * 请求 <code>POST /admin/permissions</code>，确认 HTTP 响应状态为 403。
-     */
     @Test
     void shouldDenyCreatePermissionForRegularUser() {
         String token = loginAs("user", "123456");
@@ -774,9 +614,6 @@ class RbacResourceTest {
 
     // ============ 工具方法 ============
 
-    /**
-     * 请求 <code>POST /admin/users/{id}/roles/{code}</code>，确认 HTTP 响应状态为 403。
-     */
     @Test
     void shouldDenyAssignRoleForRegularUser() {
         String token = loginAs("user", "123456");
@@ -785,9 +622,6 @@ class RbacResourceTest {
                 .then().statusCode(403);
     }
 
-    /**
-     * 请求 <code>GET /admin/roles</code>，确认 HTTP 响应状态为 401。
-     */
     @Test
     void shouldDenyListUsersWithoutUserListPermission() {
         // Sa-Token 中：访问 /admin/users 需要 user:list + login。
@@ -798,9 +632,6 @@ class RbacResourceTest {
                 .then().statusCode(401);
     }
 
-    /**
-     * 已登录时请求 <code>POST /auth/logout</code>，确认 HTTP 响应状态为 200，响应中的 <code>data.success</code> 等于 <code>true</code>。
-     */
     @Test
     void shouldLogoutAsAuthenticatedUser() {
         String token = loginAs("user", "123456");

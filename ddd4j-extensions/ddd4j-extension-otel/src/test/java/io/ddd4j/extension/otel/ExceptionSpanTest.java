@@ -28,34 +28,22 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class ExceptionSpanTest {
 
-    /**
-     * 测试执行前执行 <code>OpenTelemetrySdkSetter.set()</code>、<code>OpenTelemetry.noop()</code> 完成资源准备。
-     */
     @BeforeEach
     void setUp() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
     }
 
-    /**
-     * 测试结束后执行 <code>OpenTelemetrySdkSetter.set()</code>、<code>OpenTelemetry.noop()</code> 完成资源回收或状态恢复。
-     */
     @AfterEach
     void tearDown() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
     }
 
-    /**
-     * 验证<code>true</code>为真。
-     */
     @Test
     void record_withNull_shouldNotThrow() {
         ExceptionSpan.record(null);
         assertThat(true).isTrue();
     }
 
-    /**
-     * 验证<code>true</code>为真。
-     */
     @Test
     void record_whenOtelNotAvailable_shouldNotThrow() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -63,27 +51,18 @@ class ExceptionSpanTest {
         assertThat(true).isTrue();
     }
 
-    /**
-     * 验证<code>true</code>为真。
-     */
     @Test
     void record_withNullSpan_shouldNotThrow() {
         ExceptionSpan.record(null, new RuntimeException("test"));
         assertThat(true).isTrue();
     }
 
-    /**
-     * 验证<code>true</code>为真。
-     */
     @Test
     void record_withNullThrowableAndNullSpan_shouldNotThrow() {
         ExceptionSpan.record(null, null);
         assertThat(true).isTrue();
     }
 
-    /**
-     * 验证<code>true</code>为真。
-     */
     @Test
     void record_shouldAcceptAnyThrowable() {
         // 不抛异常即通过（noop OTel 下 record 是 noop）

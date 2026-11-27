@@ -40,9 +40,6 @@ import java.util.ResourceBundle;
 public class I18nKit {
 
     // 国际化文件前缀
-    /**
-     * 加载国际化资源文件时使用的统一名称前缀。
-     */
     private final String I18N_FILE_PREFIX = "i18n/messages";
 
     /**
@@ -91,13 +88,6 @@ public class I18nKit {
         ThreadContext.set(ContextConstants.LOCALE, locale);
     }
 
-    /**
-     * 将参数应用到本地化消息模板。
-     *
-     * @param template 带占位符的消息模板
-     * @param args     依序代入消息模板的参数值
-     * @return 替换占位符后的消息文本
-     */
     private String format(String template, Object... args) {
         if (Objects.isNull(template) || !org.springframework.util.StringUtils.hasLength(template) || Objects.isNull(args) || args.length == 0) {
             return template;
@@ -302,11 +292,6 @@ public class I18nKit {
         return messageSource().getMessage(key, args, defaultMsg, LocaleContextHolder.getLocale());
     }
 
-    /**
-     * 从 Spring 容器取得本地化消息入口。
-     *
-     * @return 用于解析消息键的 MessageSource
-     */
     private static NestedMessageSource messageSource() {
         return SpringContextUtils.getContext().getApplicationContext().getBean(NestedMessageSource.class);
     }

@@ -60,9 +60,6 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 public class AuthorizationResource {
 
-    /**
-     * 执行基于角色的授权与分配操作的应用服务。
-     */
     @Inject
     RbacService rbacService;
 
@@ -70,20 +67,12 @@ public class AuthorizationResource {
 
     /**
      * 静态工具：抛出 401/403 响应。
-     *
-     * @return 表示当前请求未通过身份验证的响应
      */
     static WebApplicationException unauthorized() {
         return new WebApplicationException(Response.status(Response.Status.UNAUTHORIZED)
                 .entity(R.of(401, "unauthenticated")).build());
     }
 
-    /**
-     * 用诊断原因构造当前示例的访问拒绝结果。
-     *
-     * @param reason 用于响应拒绝原因的说明
-     * @return 拒绝当前请求时返回的业务或 HTTP 错误
-     */
     static WebApplicationException forbidden(String reason) {
         return new WebApplicationException(Response.status(Response.Status.FORBIDDEN)
                 .entity(R.of(403, reason)).build());

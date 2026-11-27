@@ -5,14 +5,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * 通过 <code>create.setCode()</code>、<code>create.setName()</code>、<code>create.setPermissions()</code> 验证 <code>RolePermissionRequestContract</code> 的运行行为。
- */
 class RolePermissionRequestContractTest {
 
-    /**
-     * 验证<code>create.getCode()</code> 等于 <code>"admin"</code>，<code>create.code()</code> 等于 <code>create.getCode()</code>，<code>update.permissions()</code> 与…的元素逐项相同 <code>update.getPermissions()</code>。
-     */
     @Test
     void roleRequestsKeepBeanComponentAndArrayValueContracts() {
         AuthorizationController.CreateRoleRequest create =
@@ -40,9 +34,6 @@ class RolePermissionRequestContractTest {
                 new String[]{"report:read"}), update);
     }
 
-    /**
-     * 验证<code>request.code()</code> 等于 <code>request.getCode()</code>，<code>request.description()</code> 等于 <code>request.getDescription()</code>，<code>request.hashCode()</code> 等于 <code>same.hashCode()</code>。
-     */
     @Test
     void permissionRequestKeepsBeanAndComponentContract() {
         AuthorizationController.CreatePermissionRequest request =

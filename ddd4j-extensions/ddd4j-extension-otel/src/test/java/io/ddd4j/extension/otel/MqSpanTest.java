@@ -31,25 +31,16 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class MqSpanTest {
 
-    /**
-     * 测试执行前执行 <code>OpenTelemetrySdkSetter.set()</code>、<code>OpenTelemetry.noop()</code> 完成资源准备。
-     */
     @BeforeEach
     void setUp() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
     }
 
-    /**
-     * 测试结束后执行 <code>OpenTelemetrySdkSetter.set()</code>、<code>OpenTelemetry.noop()</code> 完成资源回收或状态恢复。
-     */
     @AfterEach
     void tearDown() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
     }
 
-    /**
-     * 验证<code>headers</code>非空。
-     */
     @Test
     void producer_shouldExecuteRunnable() {
         Map<String, String> headers = new HashMap<>();
@@ -62,9 +53,6 @@ class MqSpanTest {
         assertThat(headers).isNotNull();
     }
 
-    /**
-     * 在测试框架中执行 <code>OpenTelemetrySdkSetter.set()</code>、<code>OpenTelemetry.noop()</code>、<code>MqSpan.producer()</code>，验证该场景。
-     */
     @Test
     void producer_whenOtelNotAvailable_shouldNotInjectHeaders() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -77,9 +65,6 @@ class MqSpanTest {
         assertThat(headers).doesNotContainKey("traceparent");
     }
 
-    /**
-     * 验证<code>scope</code>非空。
-     */
     @Test
     void consumer_shouldReturnNonNullScope() {
         Map<String, String> headers = new HashMap<>();
@@ -92,9 +77,6 @@ class MqSpanTest {
         }
     }
 
-    /**
-     * 验证<code>scope</code>非空。
-     */
     @Test
     void consumer_withEmptyHeaders_shouldReturnNoopScope() {
         Map<String, String> headers = new HashMap<>();
@@ -105,9 +87,6 @@ class MqSpanTest {
         scope.close();
     }
 
-    /**
-     * 验证<code>true</code>为真。
-     */
     @Test
     void endConsumer_shouldNotThrowWithNullSpan() {
         MqSpan.endConsumer(null);
@@ -115,9 +94,6 @@ class MqSpanTest {
         assertThat(true).isTrue();
     }
 
-    /**
-     * 验证<code>true</code>为真。
-     */
     @Test
     void producer_supportsVariousBrokers() {
         for (String broker : new String[]{"kafka", "rabbitmq", "rocketmq", "redisStream", "pulsar"}) {
@@ -128,9 +104,6 @@ class MqSpanTest {
         assertThat(true).isTrue();
     }
 
-    /**
-     * 验证<code>true</code>为真。
-     */
     @Test
     void producer_handlesNullTopic() {
         Map<String, String> headers = new HashMap<>();
@@ -141,9 +114,6 @@ class MqSpanTest {
         assertThat(true).isTrue();
     }
 
-    /**
-     * 验证<code>true</code>为真。
-     */
     @Test
     void producer_acceptsNullHeaders() {
         MqSpan.producer("kafka", "topic", null, () -> {

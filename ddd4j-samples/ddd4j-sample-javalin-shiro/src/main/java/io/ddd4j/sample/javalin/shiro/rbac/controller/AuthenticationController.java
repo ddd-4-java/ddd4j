@@ -44,9 +44,6 @@ import java.util.*;
  */
 public class AuthenticationController {
 
-    /**
-     * 执行基于角色的授权与分配操作的应用服务。
-     */
     private final RbacService rbacService;
 
     /**
@@ -195,19 +192,10 @@ public class AuthenticationController {
     @NoArgsConstructor
     public static class LoginRequest {
 
-        /**
-         * Java 序列化版本标识。
-         */
         private static final long serialVersionUID = 0L;
 
-        /**
-         * 用来识别账号的登录标识。
-         */
         private String loginId;
 
-        /**
-         * 当前登录或账号创建请求提供的口令。
-         */
         @ToString.Exclude
         private String password;
 

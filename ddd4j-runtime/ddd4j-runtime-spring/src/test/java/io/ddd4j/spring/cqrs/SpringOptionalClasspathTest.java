@@ -16,33 +16,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * 基础模式在真正缺失 ORM、持久化 API 和事件源的独立进程中启动。
  */
 class SpringOptionalClasspathTest {
-    /**
-     * 在测试框架中执行 <code>BasicSpringProcess.class.getName()</code>，验证该场景。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void startsWithoutJpaAndEventStoreClasses() throws Exception {
         assertStarts(BasicSpringProcess.class.getName(), "basic-spring");
     }
 
-    /**
-     * 验证缺少 JPA 和事件存储依赖时，无包名 Spring 探针仍可启动。
-     *
-     * @throws Exception 准备测试数据库、启动框架或执行业务合同失败
-     */
     @Test
     void startsFromUnnamedPackageWithoutJpaAndEventStoreClasses() throws Exception {
         assertStarts("UnnamedBasicSpringProcess", "unnamed-basic-spring");
     }
 
-    /**
-     * 核对<code>process.waitFor(30, TimeUnit.SECONDS)</code>为真，<code>process.exitValue()</code> 等于 <code>0</code>。
-     *
-     * @param mainClass 传给 <code>List.of()</code> 的 <code>String</code> 输入
-     * @param logPrefix 传给 <code>Files.writeString()</code> 的 <code>String</code> 输入
-     * @throws Exception 准备或读取夹具文件、等待并发操作时失败
-     */
     private void assertStarts(String mainClass, String logPrefix) throws Exception {
         String classpath = Arrays.stream(System.getProperty("java.class.path").split(java.io.File.pathSeparator))
                 .filter(path -> !path.contains("jakarta.persistence") && !path.contains("spring-data-")

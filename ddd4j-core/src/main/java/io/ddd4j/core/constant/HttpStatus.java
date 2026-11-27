@@ -252,9 +252,6 @@ public final class HttpStatus {
      */
     public static final int SC_NETWORK_AUTHENTICATION_REQUIRED = 511;
 
-    /**
-     * 限制状态码工具类实例化。
-     */
     private HttpStatus() {
         // 工具类，禁止实例化
     }

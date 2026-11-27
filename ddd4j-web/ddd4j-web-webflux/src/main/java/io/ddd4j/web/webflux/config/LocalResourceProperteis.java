@@ -26,21 +26,12 @@ import java.util.Map;
 public class LocalResourceProperteis {
 
     // 本地存储路径
-    /**
-     * 本地静态资源目录。
-     */
     private String localStorage;
 
     // 本地静态资源映射是否是相对于localStorage的地址
-    /**
-     * 静态资源目录是否相对于本地存储路径解析。
-     */
     private boolean localRelative;
 
     // 本地静态资源映射
-    /**
-     * URL 路径模式与本地静态资源目录的映射。
-     */
     private Map<String, String> localLocations = new HashMap<>();
 
 }

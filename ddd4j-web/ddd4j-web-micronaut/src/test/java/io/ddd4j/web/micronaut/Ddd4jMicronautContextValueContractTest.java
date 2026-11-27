@@ -14,9 +14,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class Ddd4jMicronautContextValueContractTest {
 
-    /**
-     * 验证<code>context.requestContext()</code> 等于 <code>request</code>，<code>context.getRequestContext()</code> 等于 <code>request</code>，<code>context.getSubject()</code> 等于 <code>Optional.empty()</code>。
-     */
     @Test
     void beanAndComponentAccessorsReadSameState() {
         WebRequestContext request = request("request-1");
@@ -28,9 +25,6 @@ class Ddd4jMicronautContextValueContractTest {
         assertEquals(Optional.empty(), context.getSubject());
     }
 
-    /**
-     * 验证<code>same</code> 等于 <code>left</code>，<code>same.hashCode()</code> 等于 <code>left.hashCode()</code>，<code>left.toString().contains("Ddd4jMicronautContext")</code>为真。
-     */
     @Test
     void valueMethodsUseRequestAndSubject() {
         Ddd4jMicronautContext left = new Ddd4jMicronautContext(request("request-1"), Optional.empty());
@@ -43,11 +37,6 @@ class Ddd4jMicronautContextValueContractTest {
         assertTrue(left.toString().contains("Ddd4jMicronautContext"));
     }
 
-    /**
-     * 验证<code>restored</code> 等于 <code>original</code>。
-     *
-     * @throws Exception 处理测试数据的序列化时失败
-     */
     @Test
     void jsonRoundTripPreservesRequestState() throws Exception {
         Ddd4jMicronautContext original = new Ddd4jMicronautContext(request("request-1"), Optional.empty());
@@ -59,12 +48,6 @@ class Ddd4jMicronautContextValueContractTest {
         assertEquals(original, restored);
     }
 
-    /**
-     * 创建 <code>new WebRequestContext</code> 供当前测试路径调用。
-     *
-     * @param id 当前要查找的测试记录标识
-     * @return 当前测试使用的结果，取自 <code>new WebRequestContext(id, "trace-1", "tenant-1", null, Locale.ENGLISH, "127.0.0.1", "GET", "/test")</code>
-     */
     private WebRequestContext request(String id) {
         return new WebRequestContext(id, "trace-1", "tenant-1", null,
                 Locale.ENGLISH, "127.0.0.1", "GET", "/test");

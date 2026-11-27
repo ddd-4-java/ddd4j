@@ -23,9 +23,6 @@ import java.util.Objects;
  */
 final class RedisStreamIds {
 
-    /**
-     * 限制调用方直接创建 <code>RedisStreamIds</code> 实例。
-     */
     private RedisStreamIds() {
     }
 

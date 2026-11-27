@@ -21,9 +21,6 @@ import io.ddd4j.kit.lang.StrKit;
  */
 public final class DefaultClientIpResolver implements ClientIpResolver {
 
-    /**
-     * 是否允许用反向代理转发头解析客户端地址。
-     */
     private final boolean trustForwardedHeaders;
 
     /**
@@ -35,16 +32,6 @@ public final class DefaultClientIpResolver implements ClientIpResolver {
         this.trustForwardedHeaders = trustForwardedHeaders;
     }
 
-    /**
-     * 结合代理头与远端地址解析客户端 IP。
-     *
-     * <p>此实现调用 <code>firstForwardedAddress(forwardedFor)</code>。</p>
-     *
-     * @param forwardedFor  代理转发地址
-     * @param realIp        真实 IP 请求头
-     * @param remoteAddress 连接远端地址
-     * @return 根据执行路径返回<code>forwardedAddress</code>、<code>realIp.trim()</code>、<code>StrKit.isBlank(remoteAddress) ? null : remoteAddress.trim()</code>
-     */
     @Override
     public String resolve(String forwardedFor, String realIp, String remoteAddress) {
         if (trustForwardedHeaders) {
@@ -59,12 +46,6 @@ public final class DefaultClientIpResolver implements ClientIpResolver {
         return StrKit.isBlank(remoteAddress) ? null : remoteAddress.trim();
     }
 
-    /**
-     * 从可信转发地址列表取出首个客户端地址。
-     *
-     * @param forwardedFor X-Forwarded-For 中的地址列表
-     * @return 第一项客户端来源地址，未提供时为空
-     */
     private String firstForwardedAddress(String forwardedFor) {
         if (StrKit.isBlank(forwardedFor)) {
             return null;

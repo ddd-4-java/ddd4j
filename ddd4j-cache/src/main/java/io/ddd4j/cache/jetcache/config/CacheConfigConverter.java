@@ -31,9 +31,6 @@ import java.time.Duration;
  */
 public final class CacheConfigConverter {
 
-    /**
-     * 限制配置转换工具类实例化。
-     */
     private CacheConfigConverter() {
     }
 

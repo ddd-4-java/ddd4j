@@ -38,62 +38,34 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class SecuritySubjectTest {
 
-    /**
-     * 进入当前执行范围前保存的组件，退出时用于恢复 <code>SubjectDataProvider</code>。
-     */
     private SubjectDataProvider originalDataProvider;
 
-    /**
-     * 创建 <code>new SecuritySubject</code> 供当前测试路径调用。
-     *
-     * @return 当前测试使用的结果，取自 <code>new SecuritySubject()</code>
-     */
     private SecuritySubject subject() {
         return new SecuritySubject();
     }
 
-    /**
-     * 创建 <code>new AuthPrincipal</code> 供当前测试路径调用。
-     *
-     * @param loginId 测试会话使用的账号标识
-     * @return 当前测试使用的结果，取自 <code>new AuthPrincipal().setLoginId(loginId).setUserId("user-" + loginId).setOrgId("org-1").setRoleId("role-1")</code>
-     */
     private AuthPrincipal principal(String loginId) {
         return new AuthPrincipal().setLoginId(loginId).setUserId("user-" + loginId)
                 .setOrgId("org-1").setRoleId("role-1");
     }
 
-    /**
-     * 测试前依次清除上下文<code>org.springframework.security.core.context.SecurityContextHolder</code>。
-     */
     @BeforeEach
     void setUp() {
         originalDataProvider = SubjectKit.dataProvider;
         org.springframework.security.core.context.SecurityContextHolder.clearContext();
     }
 
-    /**
-     * 测试后依次清除上下文<code>org.springframework.security.core.context.SecurityContextHolder</code>。
-     */
     @AfterEach
     void tearDown() {
         org.springframework.security.core.context.SecurityContextHolder.clearContext();
         SubjectKit.setDataProvider(originalDataProvider);
     }
 
-    /**
-     * 调用 <code>org.springframework.security.core.context.SecurityContextHolder.getContext()</code> 执行当前夹具操作。
-     *
-     * @param auth 传给 <code>org.springframework.security.core.context.SecurityContextHolder.getContext()</code> 的 <code>org.springframework.security.core.Authentication</code> 输入
-     */
     private void authenticate(org.springframework.security.core.Authentication auth) {
         org.springframework.security.core.context.SecurityContextHolder.getContext()
                 .setAuthentication(auth);
     }
 
-    /**
-     * 验证<code>subject.getPrincipal()</code>为空，<code>subject.getPrincipalByLoginId("anyone")</code>为空，<code>subject.isDisabled("anyone")</code>为假。
-     */
     @Test
     void defaultsWhenNotLoggedIn() {
         SecuritySubject subject = subject();
@@ -135,9 +107,6 @@ class SecuritySubjectTest {
         subject.untieDisable("anyone");
     }
 
-    /**
-     * 验证<code>subject.getPrincipal()</code>为空，<code>subject.isAuthenticated()</code>为假，<code>subject.isPermitted("anything")</code>为假。
-     */
     @Test
     void anonymousTokenIsNotAuthenticated() {
         authenticate(new AnonymousAuthenticationToken("key", "guest",
@@ -150,9 +119,6 @@ class SecuritySubjectTest {
         assertFalse(subject.isPermitted("anything"));
     }
 
-    /**
-     * 验证<code>result</code> 等于 <code>"user-1"</code>，<code>subject.isAuthenticated()</code>为真，<code>subject.isAuthenticated("user-1")</code>为真。
-     */
     @Test
     void loginStoresAuthPrincipalAndReturnsLoginId() {
         SecuritySubject subject = subject();
@@ -171,9 +137,6 @@ class SecuritySubjectTest {
         assertTrue(subject.isAuthenticated("user-1"));
     }
 
-    /**
-     * 验证<code>principal</code>非空，<code>principal.getLoginId()</code> 等于 <code>"user-2"</code>，<code>principal.getUserCode()</code> 等于 <code>"user-2"</code>。
-     */
     @Test
     void loginWithoutPrincipalAdaptsFromName() {
         SecuritySubject subject = subject();
@@ -187,9 +150,6 @@ class SecuritySubjectTest {
         assertEquals("user-2", principal.getUserCode());
     }
 
-    /**
-     * 验证<code>subject().getPrincipal()</code> 与…为同一实例 <code>principal</code>。
-     */
     @Test
     void principalFromAuthUserDetailsDelegate() {
         AuthPrincipal principal = principal("user-3");
@@ -201,9 +161,6 @@ class SecuritySubjectTest {
         assertSame(principal, subject().getPrincipal());
     }
 
-    /**
-     * 验证<code>principal.getLoginId()</code> 等于 <code>"user-4"</code>，<code>principal.getRoleCode()</code> 等于 <code>"admin"</code>，<code>principal.getRoles().get(1).getRoleCode()</code> 等于 <code>"editor"</code>。
-     */
     @Test
     void principalAdaptsRolesFromAuthorities() {
         authenticate(new UsernamePasswordAuthenticationToken("user-4", "pw",
@@ -219,9 +176,6 @@ class SecuritySubjectTest {
         assertEquals("editor", principal.getRoles().get(1).getRoleCode());
     }
 
-    /**
-     * 验证<code>subject.isAuthenticated()</code>为真，<code>subject.isRemembered()</code>为真，<code>subject.getPrincipal().getLoginId()</code> 等于 <code>"user-5"</code>。
-     */
     @Test
     void rememberMeTokenIsRemembered() {
         authenticate(new RememberMeAuthenticationToken("key", principal("user-5"),
@@ -233,9 +187,6 @@ class SecuritySubjectTest {
         assertEquals("user-5", subject.getPrincipal().getLoginId());
     }
 
-    /**
-     * 验证<code>subject.isAuthenticated()</code>为真，<code>subject.isAuthenticated()</code>为假。
-     */
     @Test
     void logoutAndKickoutClearContext() {
         SecuritySubject subject = subject();
@@ -250,9 +201,6 @@ class SecuritySubjectTest {
         assertFalse(subject.isAuthenticated());
     }
 
-    /**
-     * 验证<code>subject.refresh()</code> 等于 <code>"user-7"</code>。
-     */
     @Test
     void refreshReturnsCurrentName() {
         SecuritySubject subject = subject();
@@ -261,9 +209,6 @@ class SecuritySubjectTest {
         assertEquals("user-7", subject.refresh());
     }
 
-    /**
-     * 验证<code>subject.getExtra("ignored-token", "channel")</code> 等于 <code>"web"</code>，<code>subject.getExtra("ignored-token", "missing")</code>为空。
-     */
     @Test
     void getExtraReadsPrincipalProfile() {
         SecuritySubject subject = subject();
@@ -275,9 +220,6 @@ class SecuritySubjectTest {
         assertNull(subject.getExtra("ignored-token", "missing"));
     }
 
-    /**
-     * 验证<code>subject.isPermitted("order:read")</code>为真，<code>subject.isPermitted("order:delete")</code>为假，<code>subject.isPermittedAny()</code>为假。
-     */
     @Test
     void permissionMatrixReflectsDataProvider() {
         SecuritySubject subject = subject();
@@ -309,9 +251,6 @@ class SecuritySubjectTest {
         assertFalse(subject.isPermittedAny());
     }
 
-    /**
-     * 验证<code>subject.hasRole("admin")</code>为真，<code>subject.hasRole("viewer")</code>为假，<code>subject.hasAllRole()</code>为假。
-     */
     @Test
     void roleMatrixReflectsDataProvider() {
         SecuritySubject subject = subject();
@@ -342,9 +281,6 @@ class SecuritySubjectTest {
         assertFalse(subject.hasAllRole());
     }
 
-    /**
-     * 验证<code>subject.isPermitted("nobody", new String[]{"a"}).length</code> 等于 <code>0</code>，<code>subject.isPermittedAny("nobody", new String[]{"a"})</code>为假，<code>subject.hasAllRole("nobody", new String[]{"admin"})</code>为假。
-     */
     @Test
     void loginIdVariantChecksReturnDefaultsForUnknownAccount() {
         SecuritySubject subject = subject();

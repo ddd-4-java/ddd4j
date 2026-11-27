@@ -27,9 +27,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public final class RuntimeReadinessRegistry {
 
-    /**
-     * 参与运行时就绪状态检查的组件。
-     */
     private final List<ReadinessContributor> contributors = new CopyOnWriteArrayList<>();
 
     /**

@@ -72,9 +72,6 @@ import java.util.Map;
  */
 public final class ExcelKit {
 
-    /**
-     * 限制调用方直接创建 <code>ExcelKit</code> 实例。
-     */
     private ExcelKit() {
     }
 

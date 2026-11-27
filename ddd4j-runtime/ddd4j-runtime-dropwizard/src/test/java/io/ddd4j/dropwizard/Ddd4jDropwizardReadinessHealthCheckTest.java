@@ -22,14 +22,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * 验证 <code>Ddd4jDropwizardReadinessHealthCheck</code> 在<code>shouldMapReadyAndUnavailableReports</code>等操作中的行为契约。
- */
 class Ddd4jDropwizardReadinessHealthCheckTest {
 
-    /**
-     * 验证<code>ready.isHealthy()</code>为真，<code>unavailable.isHealthy()</code>为假。
-     */
     @Test
     void shouldMapReadyAndUnavailableReportsWithoutExposingFailureDetails() {
         RuntimeReadinessRegistry registry = new RuntimeReadinessRegistry()

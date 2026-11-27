@@ -69,16 +69,6 @@ public class RankKit {
         }
     }
 
-    /**
-     * 相同键并列且之后可能跳过名次。
-     *
-     * @param <T>          被排名的元素类型
-     * @param <U>          比较是否并列的排名键类型
-     * @param top          要保留的名次上限，空值或非正数时不限制
-     * @param sortedList   已排序且等待附加名次的记录
-     * @param keyExtractor 提取用于判定并列的排名键
-     * @return 含名次和原记录的排名列表
-     */
     private static <T, U> List<RankModel<T>> doRankSameNonContinuous(Integer top, List<T> sortedList, Function<? super T, ? extends U> keyExtractor) {
         List<RankModel<T>> result = new ArrayList<>();
         int rankNumber = 0;
@@ -97,16 +87,6 @@ public class RankKit {
         return result;
     }
 
-    /**
-     * 相同键并列且之后连续计名次。
-     *
-     * @param <T>          被排名的元素类型
-     * @param <U>          比较是否并列的排名键类型
-     * @param top          要保留的名次上限，空值或非正数时不限制
-     * @param sortedList   已排序且等待附加名次的记录
-     * @param keyExtractor 提取用于判定并列的排名键
-     * @return 含名次和原记录的排名列表
-     */
     private static <T, U> List<RankModel<T>> doRankSameContinuous(Integer top, List<T> sortedList, Function<? super T, ? extends U> keyExtractor) {
         List<RankModel<T>> result = new ArrayList<>();
         int rankNumber = 0;
@@ -123,14 +103,6 @@ public class RankKit {
         return result;
     }
 
-    /**
-     * 按列表顺序逐行计名次。
-     *
-     * @param <T>        被排名的元素类型
-     * @param top        要保留的名次上限，空值或非正数时不限制
-     * @param sortedList 已排序且等待附加名次的记录
-     * @return 含名次和原记录的排名列表
-     */
     private static <T> List<RankModel<T>> doRankNatural(Integer top, List<T> sortedList) {
         List<RankModel<T>> result = new ArrayList<>();
         int rankNumber = 1;

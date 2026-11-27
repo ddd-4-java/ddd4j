@@ -36,14 +36,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class ContextTest {
 
-    /**
-     * 供不同用例定位同一项测试设置的键。
-     */
     private String testKey;
 
-    /**
-     * 测试执行前执行 <code>UUID.randomUUID()</code>、<code>BaseContext.clear()</code>、<code>ThreadContext.clear()</code> 完成资源准备。
-     */
     @BeforeEach
     void setUp() {
         testKey = "ddd4j.test." + UUID.randomUUID();
@@ -51,21 +45,12 @@ class ContextTest {
         ThreadContext.clear();
     }
 
-    /**
-     * 测试结束后执行 <code>BaseContext.clear()</code>、<code>ThreadContext.clear()</code> 完成资源回收或状态恢复。
-     */
     @AfterEach
     void tearDown() {
         BaseContext.clear();
         ThreadContext.clear();
     }
 
-    /**
-     * 构造 <code>DomainEventPublisher</code> 作为当前测试的输入或结果。
-     *
-     * @param name 当前测试指定的对象或属性名称
-     * @return 提供给后续契约断言的 <code>DomainEventPublisher</code> 结果
-     */
     private DomainEventPublisher stub(String name) {
         return new DomainEventPublisher() {
             @Override
@@ -90,9 +75,6 @@ class ContextTest {
 
     // ========================= BaseContext =========================
 
-    /**
-     * 验证<code>resolved</code> 包含 <code>publisher</code>。
-     */
     @Test
     void baseContext_injectTyped_shouldLookupBySameType() {
         DomainEventPublisher publisher = stub("p1");
@@ -103,27 +85,18 @@ class ContextTest {
         assertThat(resolved).contains(publisher);
     }
 
-    /**
-     * 验证<code>BaseContext.inject(testKey, DomainEventPublisher.class, null)</code> 抛出 <code>IllegalArgumentException.class</code>。
-     */
     @Test
     void baseContext_injectTyped_shouldRejectNullValue() {
         assertThatThrownBy(() -> BaseContext.inject(testKey, DomainEventPublisher.class, null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    /**
-     * 验证<code>BaseContext.inject(null, DomainEventPublisher.class, stub("p"))</code> 抛出 <code>IllegalArgumentException.class</code>。
-     */
     @Test
     void baseContext_injectTyped_shouldRejectNullKey() {
         assertThatThrownBy(() -> BaseContext.inject(null, DomainEventPublisher.class, stub("p")))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    /**
-     * 验证<code>BaseContext.inject(testKey, targetType, "not-a-publisher")</code> 抛出 <code>IllegalArgumentException.class</code>。
-     */
     @Test
     @SuppressWarnings({"unchecked", "rawtypes"})
     void baseContext_injectTyped_shouldRejectTypeMismatch() {
@@ -133,9 +106,6 @@ class ContextTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    /**
-     * 验证<code>BaseContext.get(testKey, Integer.class)</code>为空。
-     */
     @Test
     void baseContext_injectTyped_shouldReturnEmptyForTypeMismatch() {
         BaseContext.inject(testKey, "value");
@@ -143,9 +113,6 @@ class ContextTest {
         assertThat(BaseContext.get(testKey, Integer.class)).isEmpty();
     }
 
-    /**
-     * 验证<code>(String) BaseContext.get(testKey)</code> 等于 <code>"value"</code>，<code>BaseContext.contains(testKey)</code>为真。
-     */
     @Test
     void baseContext_injectUntyped_shouldStoreAndRetrieveValue() {
         BaseContext.inject(testKey, "value");
@@ -154,33 +121,21 @@ class ContextTest {
         assertThat(BaseContext.contains(testKey)).isTrue();
     }
 
-    /**
-     * 验证<code>(Object) BaseContext.get("missing")</code>为空。
-     */
     @Test
     void baseContext_get_shouldReturnNullForMissingKey() {
         assertThat((Object) BaseContext.get("missing")).isNull();
     }
 
-    /**
-     * 验证<code>BaseContext.get("missing", "default")</code> 等于 <code>"default"</code>。
-     */
     @Test
     void baseContext_getWithDefault_shouldReturnDefaultForMissingKey() {
         assertThat(BaseContext.get("missing", "default")).isEqualTo("default");
     }
 
-    /**
-     * 验证<code>BaseContext.contains(null)</code>为假。
-     */
     @Test
     void baseContext_contains_shouldReturnFalseForNullKey() {
         assertThat(BaseContext.contains(null)).isFalse();
     }
 
-    /**
-     * 验证<code>BaseContext.contains(testKey)</code>为真，<code>BaseContext.contains(testKey)</code>为假。
-     */
     @Test
     void baseContext_remove_shouldDeleteEntry() {
         BaseContext.inject(testKey, "value");
@@ -191,9 +146,6 @@ class ContextTest {
         assertThat(BaseContext.contains(testKey)).isFalse();
     }
 
-    /**
-     * 验证<code>BaseContext.contains(testKey)</code>为假。
-     */
     @Test
     void baseContext_clear_shouldRemoveAllEntries() {
         BaseContext.inject(testKey, "v1");
@@ -206,9 +158,6 @@ class ContextTest {
 
     // ========================= ThreadContext =========================
 
-    /**
-     * 验证<code>resolved</code> 包含 <code>publisher</code>。
-     */
     @Test
     void threadContext_injectTyped_shouldLookupOnSameThread() {
         DomainEventPublisher publisher = stub("tp");
@@ -219,9 +168,6 @@ class ContextTest {
         assertThat(resolved).contains(publisher);
     }
 
-    /**
-     * 验证<code>ThreadContext.get(testKey, Integer.class)</code>为空。
-     */
     @Test
     void threadContext_injectTyped_shouldReturnEmptyForTypeMismatch() {
         ThreadContext.inject(testKey, String.class, "value");
@@ -229,17 +175,11 @@ class ContextTest {
         assertThat(ThreadContext.get(testKey, Integer.class)).isEmpty();
     }
 
-    /**
-     * 验证<code>ThreadContext.get(testKey, String.class)</code>为空。
-     */
     @Test
     void threadContext_injectTyped_shouldReturnEmptyForMissing() {
         assertThat(ThreadContext.get(testKey, String.class)).isEmpty();
     }
 
-    /**
-     * 验证<code>(String) ThreadContext.get(testKey)</code> 等于 <code>"value"</code>。
-     */
     @Test
     void threadContext_set_shouldStoreValue() {
         ThreadContext.set(testKey, "value");
@@ -247,9 +187,6 @@ class ContextTest {
         assertThat((String) ThreadContext.get(testKey)).isEqualTo("value");
     }
 
-    /**
-     * 验证<code>(Object) ThreadContext.get(testKey)</code>为空。
-     */
     @Test
     void threadContext_set_shouldIgnoreNullString() {
         ThreadContext.set(testKey, "");
@@ -257,9 +194,6 @@ class ContextTest {
         assertThat((Object) ThreadContext.get(testKey)).isNull();
     }
 
-    /**
-     * 验证<code>(Object) ThreadContext.get(testKey)</code>为空，<code>(String) ThreadContext.get(testKey)</code> 等于 <code>"v1"</code>。
-     */
     @Test
     void threadContext_setConditional_shouldStoreOnlyWhenTrue() {
         ThreadContext.set(false, testKey, "v1");
@@ -269,9 +203,6 @@ class ContextTest {
         assertThat((String) ThreadContext.get(testKey)).isEqualTo("v1");
     }
 
-    /**
-     * 验证<code>(Object) ThreadContext.get(testKey)</code>为空。
-     */
     @Test
     void threadContext_remove_shouldDeleteEntry() {
         ThreadContext.set(testKey, "value");
@@ -280,9 +211,6 @@ class ContextTest {
         assertThat((Object) ThreadContext.get(testKey)).isNull();
     }
 
-    /**
-     * 验证<code>(Object) ThreadContext.get(testKey)</code>为空。
-     */
     @Test
     void threadContext_clear_shouldRemoveThreadBindings() {
         ThreadContext.set(testKey, "value");
@@ -293,9 +221,6 @@ class ContextTest {
 
     // ========================= Contexts =========================
 
-    /**
-     * 验证<code>resolved</code> 包含 <code>publisher</code>。
-     */
     @Test
     void contexts_inject_shouldFallbackToBaseContext() {
         DomainEventPublisher publisher = stub("base");
@@ -306,9 +231,6 @@ class ContextTest {
         assertThat(resolved).contains(publisher);
     }
 
-    /**
-     * 验证<code>Contexts.getOrThrow(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class)</code> 抛出 <code>IllegalStateException.class</code>。
-     */
     @Test
     void contexts_getOrThrow_shouldThrowWhenNotFound() {
         BaseContext.remove(SpiKeys.DOMAIN_EVENT_PUBLISHER);
@@ -319,9 +241,6 @@ class ContextTest {
                 .hasMessageContaining("SPI service not found");
     }
 
-    /**
-     * 验证<code>resolved</code> 包含 <code>thread</code>。
-     */
     @Test
     void contexts_inject_threadShouldOverrideBase() {
         DomainEventPublisher base = stub("base");
@@ -334,9 +253,6 @@ class ContextTest {
         assertThat(resolved).contains(thread);
     }
 
-    /**
-     * 验证<code>BaseContext.get(testKey, DomainEventPublisher.class)</code> 包含 <code>publisher</code>。
-     */
     @Test
     void contexts_register_shouldDelegateToBaseContext() {
         DomainEventPublisher publisher = stub("registered");

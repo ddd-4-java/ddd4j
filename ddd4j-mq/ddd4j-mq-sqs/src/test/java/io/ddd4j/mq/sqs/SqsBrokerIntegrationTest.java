@@ -42,9 +42,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Testcontainers(disabledWithoutDocker = true)
 class SqsBrokerIntegrationTest {
 
-    /**
-     * 为集成测试提供隔离 <code>Generic</code> 服务的容器。
-     */
     @Container
     static final GenericContainer<?> SQS = new GenericContainer<>(
             DockerImageName.parse("softwaremill/elasticmq:1.6.16"))
@@ -52,13 +49,6 @@ class SqsBrokerIntegrationTest {
             .waitingFor(Wait.forListeningPort())
             .withStartupTimeout(Duration.ofMinutes(2));
 
-    /**
-     * 调用 <code>System.nanoTime()</code>、<code>TimeUnit.SECONDS.toNanos()</code>、<code>nativeClient.getQueueAttributes()</code> 执行当前夹具操作。
-     *
-     * @param nativeClient 传给 <code>nativeClient.getQueueAttributes()</code> 的 <code>SqsClient</code> 输入
-     * @param queueUrl     传给 <code>nativeClient.getQueueAttributes()</code> 的 <code>String</code> 输入
-     * @throws Exception 等待并发操作时失败
-     */
     private static void awaitQueueEmpty(SqsClient nativeClient, String queueUrl) throws Exception {
         long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
         int outstanding;
@@ -78,11 +68,6 @@ class SqsBrokerIntegrationTest {
         assertEquals(0, outstanding);
     }
 
-    /**
-     * 验证<code>adapter.initConsumer(listener, properties)</code>为真，<code>receiver.received.await(10, TimeUnit.SECONDS)</code>为真，<code>receiver.correlationId</code> 等于 <code>event.getCorrelationId()</code>。
-     *
-     * @throws Exception 等待并发操作时失败
-     */
     @Test
     void publishesConsumesAndDeletesMessageThroughSqsProtocol() throws Exception {
         SqsProperties properties = new SqsProperties();
@@ -125,11 +110,6 @@ class SqsBrokerIntegrationTest {
         }
     }
 
-    /**
-     * 验证<code>adapter.initConsumer(listener, properties)</code>为真，<code>receiver.receivedTwice.await(10, TimeUnit.SECONDS)</code>为真，<code>receiver.correlationId</code> 等于 <code>event.getCorrelationId()</code>。
-     *
-     * @throws Exception 等待并发操作时失败
-     */
     @Test
     void redeliversAfterListenerFailureAndDeletesAfterSuccess() throws Exception {
         SqsProperties properties = new SqsProperties();
@@ -177,17 +157,8 @@ class SqsBrokerIntegrationTest {
      * 记录实际消费到的消息值。
      */
     public static final class RecordingListener {
-        /**
-         * 等待数据到达的同步门闩。
-         */
         private final CountDownLatch received = new CountDownLatch(1);
-        /**
-         * 消息标识。
-         */
         private volatile String messageId;
-        /**
-         * 用于关联同一次操作产生的事件或消息的标识。
-         */
         private volatile String correlationId;
 
         /**
@@ -204,21 +175,9 @@ class SqsBrokerIntegrationTest {
      * 第一次消费失败，第二次记录实际重投。
      */
     public static final class FailOnceListener {
-        /**
-         * 跟踪测试操作的调用或重试次数。
-         */
         private final AtomicInteger attempts = new AtomicInteger();
-        /**
-         * 协调测试线程在指定执行阶段等待或继续的门闩。
-         */
         private final CountDownLatch receivedTwice = new CountDownLatch(1);
-        /**
-         * 消息标识。
-         */
         private volatile String messageId;
-        /**
-         * 用于关联同一次操作产生的事件或消息的标识。
-         */
         private volatile String correlationId;
 
         /**

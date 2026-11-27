@@ -31,32 +31,14 @@ import java.util.Objects;
 @ConfigurationProperties("ddd4j.web")
 public class Ddd4jMicronautWebConfiguration {
 
-    /**
-     * 跳过默认认证拦截的公开路径配置。
-     */
     private List<String> publicPaths = new ArrayList<>(List.of(
             "/health", "/health/readiness", "/health/liveness"));
-    /**
-     * 未单独配置路径时采用的默认鉴权模式。
-     */
     private AuthenticationMode defaultAuthenticationMode = AuthenticationMode.REQUIRED;
-    /**
-     * 是否允许用反向代理转发头解析客户端地址。
-     */
     @Setter
     private boolean trustForwardedHeaders;
-    /**
-     * 是否给匹配路由启用幂等防护。
-     */
     @Setter
     private boolean idempotencyEnabled = true;
-    /**
-     * 幂等检查查找的本地缓存注册名。
-     */
     private String idempotencyCacheName = "ddd4j-web-idempotency";
-    /**
-     * 幂等条目在缓存中的存活时间配置。
-     */
     private Duration idempotencyTtl = Duration.ofMinutes(5);
 
     // Micronaut 在 Lombok 之前分析配置元数据，因此 setter 必须显式存在于源码 AST 中。

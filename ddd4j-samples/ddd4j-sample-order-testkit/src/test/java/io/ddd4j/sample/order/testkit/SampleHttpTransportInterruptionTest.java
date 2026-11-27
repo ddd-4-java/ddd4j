@@ -21,20 +21,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * 真实 HTTP 调用在中断前后保持原生异常与线程标记。
  */
 class SampleHttpTransportInterruptionTest {
-    /**
-     * 当前测试使用的本地 HTTP 服务。
-     */
     private HttpServer server;
-    /**
-     * 当前测试服务的 HTTP 请求地址。
-     */
     private String url;
 
-    /**
-     * 启动使用动态本地端口的 HTTP 测试服务。
-     *
-     * @throws IOException 无法绑定或启动本地 HTTP 服务
-     */
     @BeforeEach
     void startServer() throws IOException {
         server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
@@ -46,17 +35,11 @@ class SampleHttpTransportInterruptionTest {
         url = "http://127.0.0.1:" + server.getAddress().getPort();
     }
 
-    /**
-     * 关闭当前测试启动的 HTTP 服务。
-     */
     @AfterEach
     void stopServer() {
         server.stop(0);
     }
 
-    /**
-     * 验证外部传输入口将中断报告为 I/O 异常并恢复线程中断标记。
-     */
     @Test
     void nativePublicTransportConvertsInterruptionToIoAndRestoresFlag() {
         Thread.currentThread().interrupt();
@@ -70,11 +53,6 @@ class SampleHttpTransportInterruptionTest {
         }
     }
 
-    /**
-     * 验证对端尚未响应时中断调用方会关闭活动连接。
-     *
-     * @throws Exception 测试连接、等待或线程结果获取失败
-     */
     @Test
     void interruptClosesActiveConnectionBeforeThePeerResponds() throws Exception {
         CountDownLatch received = new CountDownLatch(1);

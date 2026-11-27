@@ -46,9 +46,6 @@ public final class LicenseCache {
      */
     public static final long DEFAULT_TTL_SECONDS = 300L;
 
-    /**
-     * 限制调用方直接创建 <code>LicenseCache</code> 实例。
-     */
     private LicenseCache() {
     }
 

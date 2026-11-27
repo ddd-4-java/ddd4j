@@ -26,32 +26,20 @@ import java.util.Collections;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
-/**
- * 验证 <code>Ddd4jMicronautExceptionHandler</code> 在<code>constructor</code>等操作中的行为契约。
- */
 class Ddd4jMicronautExceptionHandlerTest {
 
-    /**
-     * 验证<code>new Ddd4jMicronautExceptionHandler((WebExceptionTranslator) null)</code> 抛出 <code>NullPointerException</code>。
-     */
     @Test
     void constructorRejectsNullTranslator() {
         assertThatNullPointerException()
                 .isThrownBy(() -> new Ddd4jMicronautExceptionHandler((WebExceptionTranslator) null));
     }
 
-    /**
-     * 验证<code>handler</code>非空。
-     */
     @Test
     void defaultConstructorCreatesDefaultTranslator() {
         Ddd4jMicronautExceptionHandler handler = new Ddd4jMicronautExceptionHandler();
         assertThat(handler).isNotNull();
     }
 
-    /**
-     * 验证<code>response.getStatus().getCode()</code> 等于 <code>400</code>，<code>response.body()</code>非空。
-     */
     @Test
     void handleTranslatesClientErrorToResponse() {
         Ddd4jMicronautExceptionHandler handler =
@@ -65,9 +53,6 @@ class Ddd4jMicronautExceptionHandlerTest {
         assertThat(response.body()).isNotNull();
     }
 
-    /**
-     * 验证<code>response.getStatus().getCode()</code> 大于或等于 <code>500</code>。
-     */
     @Test
     void handleTranslatesServerErrorToResponse() {
         Ddd4jMicronautExceptionHandler handler =
@@ -80,9 +65,6 @@ class Ddd4jMicronautExceptionHandlerTest {
         assertThat(response.getStatus().getCode()).isGreaterThanOrEqualTo(500);
     }
 
-    /**
-     * 验证<code>response.getStatus().getCode()</code> 等于 <code>409</code>。
-     */
     @Test
     void handleTranslatesConflictForIllegalState() {
         Ddd4jMicronautExceptionHandler handler =
@@ -95,9 +77,6 @@ class Ddd4jMicronautExceptionHandlerTest {
         assertThat(response.getStatus().getCode()).isEqualTo(409);
     }
 
-    /**
-     * 验证<code>response.getStatus().getCode()</code> 等于 <code>403</code>。
-     */
     @Test
     void handleTranslatesUnauthorized() {
         Ddd4jMicronautExceptionHandler handler =
@@ -110,9 +89,6 @@ class Ddd4jMicronautExceptionHandlerTest {
         assertThat(response.getStatus().getCode()).isEqualTo(403);
     }
 
-    /**
-     * 验证<code>response.code()</code> 等于 <code>409</code>，<code>response.reason()</code> 等于 <code>"inventory is locked"</code>，<code>((R&lt;?&gt;) response.body()).getMsg()</code> 等于 <code>"inventory is locked"</code>。
-     */
     @Test
     void retainsSingleLineReasonAndErrorEnvelope() {
         HttpResponse<?> response = new Ddd4jMicronautExceptionHandler().handle(
@@ -123,9 +99,6 @@ class Ddd4jMicronautExceptionHandlerTest {
         assertThat(((R<?>) response.body()).getMsg()).isEqualTo("inventory is locked");
     }
 
-    /**
-     * 验证<code>response.code()</code> 等于 <code>409</code>，<code>response.reason()</code> 等于 <code>"Conflict"</code>，<code>((R&lt;?&gt;) response.body()).getMsg()</code> 等于 <code>message</code>。
-     */
     @Test
     void keepsMultilineErrorInBodyAndUsesStandardReason() {
         String message = "inventory is locked\r\ntry again later";
@@ -137,9 +110,6 @@ class Ddd4jMicronautExceptionHandlerTest {
         assertThat(((R<?>) response.body()).getMsg()).isEqualTo(message);
     }
 
-    /**
-     * 验证<code>response.code()</code> 等于 <code>409</code>，<code>response.reason()</code> 的大小为 <code>"Conflict".length()</code>，<code>((R&lt;?&gt;) response.body()).getMsg()</code> 等于 <code>message</code>。
-     */
     @Test
     void longErrorKeepsBodyAndUsesStandardReason() {
         String message = String.join("", Collections.nCopies(4081, "x"));

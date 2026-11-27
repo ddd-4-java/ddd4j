@@ -29,9 +29,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @UtilityClass
 public final class MappingKit {
     // Bean容器
-    /**
-     * 按映射名称保存的对象键值转换表。
-     */
     private final Map<String, Map<Object, Object>> BEAN_MAPPINGS = new ConcurrentHashMap<>();
 
     /**

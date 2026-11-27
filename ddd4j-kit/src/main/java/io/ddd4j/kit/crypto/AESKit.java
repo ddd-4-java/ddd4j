@@ -34,9 +34,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @UtilityClass
 public class AESKit {
 
-    /**
-     * 复用由指定密钥及初始化向量创建的 AES 运算对象。
-     */
     private final Map<String, AES> aesMap = new ConcurrentHashMap<>();
 
     /**

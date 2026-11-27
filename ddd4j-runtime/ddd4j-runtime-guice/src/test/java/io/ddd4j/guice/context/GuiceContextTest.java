@@ -25,25 +25,14 @@ import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * 通过 <code>GuiceContext.setInjector()</code>、<code>injector()</code>、<code>GuiceContext.isInitialized()</code> 验证 <code>GuiceContext</code> 的运行行为。
- */
 class GuiceContextTest {
 
-    /**
-     * 测试结束后执行 <code>GuiceContext.clear()</code>、<code>System.clearProperty()</code> 完成资源回收或状态恢复。
-     */
     @AfterEach
     void tearDown() {
         GuiceContext.clear();
         System.clearProperty("guice.context.test.prop");
     }
 
-    /**
-     * 调用 <code>Guice.createInjector()</code> 执行当前夹具操作。
-     *
-     * @return 提供给后续契约断言的 <code>Injector</code> 结果
-     */
     private Injector injector() {
         return Guice.createInjector(new AbstractModule() {
             @Override
@@ -54,9 +43,6 @@ class GuiceContextTest {
         });
     }
 
-    /**
-     * 验证<code>GuiceContext.isInitialized()</code>为真，<code>GuiceContext.getInjector()</code>非空，<code>GuiceContext.getInstance("greeting", String.class)</code> 等于 <code>"hello"</code>。
-     */
     @Test
     void setAndGetInjectorAndInstances() {
         GuiceContext.setInjector(injector());
@@ -66,9 +52,6 @@ class GuiceContextTest {
         assertEquals("hello", GuiceContext.getInstance("greeting", String.class));
     }
 
-    /**
-     * 验证<code>runnables.size()</code> 等于 <code>1</code>，<code>runnables.iterator().next() instanceof CountingRunnable</code>为真。
-     */
     @Test
     void getInstancesCollectsSubtypeBindings() {
         GuiceContext.setInjector(injector());
@@ -79,9 +62,6 @@ class GuiceContextTest {
         assertTrue(runnables.iterator().next() instanceof CountingRunnable);
     }
 
-    /**
-     * 验证<code>GuiceContext.getProperty("guice.context.test.prop")</code> 等于 <code>"sys-value"</code>。
-     */
     @Test
     void getPropertyResolvesSystemPropertyFirst() {
         System.setProperty("guice.context.test.prop", "sys-value");
@@ -90,9 +70,6 @@ class GuiceContextTest {
         assertEquals("sys-value", GuiceContext.getProperty("guice.context.test.prop"));
     }
 
-    /**
-     * 验证<code>GuiceContext.getProperty("guice.context.attr")</code> 等于 <code>"attr-value"</code>，<code>GuiceContext.getProperty("guice.context.missing", "fallback")</code> 等于 <code>"fallback"</code>，<code>GuiceContext.getProperty("guice.context.missing")</code>为空。
-     */
     @Test
     void getPropertyFallsBackToAttributesAndDefault() {
         GuiceContext.setAttribute("guice.context.attr", "attr-value");
@@ -102,9 +79,6 @@ class GuiceContextTest {
         assertNull(GuiceContext.getProperty("guice.context.missing"));
     }
 
-    /**
-     * 验证<code>GuiceContext.getAttribute("k")</code> 等于 <code>"v"</code>，<code>GuiceContext.getAttribute("missing")</code>为空。
-     */
     @Test
     void attributesRoundTrip() {
         GuiceContext.setAttribute("k", "v");
@@ -113,9 +87,6 @@ class GuiceContextTest {
         assertNull(GuiceContext.getAttribute("missing"));
     }
 
-    /**
-     * 验证<code>GuiceContext.getBoundTypes().contains(String.class)</code>为真，<code>GuiceContext.getBoundTypes().contains(Runnable.class)</code>为真。
-     */
     @Test
     void getBoundTypesListsAllBindingTypes() {
         GuiceContext.setInjector(injector());
@@ -124,9 +95,6 @@ class GuiceContextTest {
         assertTrue(GuiceContext.getBoundTypes().contains(Runnable.class));
     }
 
-    /**
-     * 验证<code>GuiceContext.isInitialized()</code>为假，<code>GuiceContext.getAttribute("k")</code>为空。
-     */
     @Test
     void clearResetsState() {
         GuiceContext.setInjector(injector());
@@ -137,11 +105,6 @@ class GuiceContextTest {
         assertNull(GuiceContext.getAttribute("k"));
     }
 
-    /**
-     * 验证<code>captured.get()</code>非空。
-     *
-     * @throws Exception 等待并发操作时失败
-     */
     @Test
     void getInjectorInterruptedWhileWaitingThrows() throws Exception {
         GuiceContext.clear();
@@ -161,9 +124,6 @@ class GuiceContextTest {
         assertNotNull(captured.get());
     }
 
-    /**
-     * 验证<code>runnables.isEmpty()</code>为真。
-     */
     @Test
     void getInstancesSkipsBindingsThatFailInstantiation() {
         GuiceContext.setInjector(Guice.createInjector(new AbstractModule() {
@@ -178,9 +138,6 @@ class GuiceContextTest {
         assertTrue(runnables.isEmpty());
     }
 
-    /**
-     * 验证<code>GuiceContext.getProperty("HOME")</code> 等于 <code>home</code>。
-     */
     @Test
     void getPropertyReadsEnvironmentVariables() {
         String home = System.getenv("HOME");
@@ -189,9 +146,6 @@ class GuiceContextTest {
         }
     }
 
-    /**
-     * 验证<code>GuiceContext.getInstance("greeting", String.class)</code> 等于 <code>"hello"</code>。
-     */
     @Test
     void setInjectorTwiceWarnsButOverwrites() {
         GuiceContext.setInjector(injector());
@@ -200,34 +154,19 @@ class GuiceContextTest {
         assertEquals("hello", GuiceContext.getInstance("greeting", String.class));
     }
 
-    /**
-     * 在当前用例所选线程上执行可观察的任务。
-     */
     public static final class CountingRunnable implements Runnable {
 
-        /**
-         * 提供测试替身回调，调用时保持夹具状态。
-         */
         @Override
         public void run() {
         }
     }
 
-    /**
-     * 在当前用例所选线程上执行可观察的任务。
-     */
     public static final class BrokenRunnable implements Runnable {
 
-        /**
-         * 构造供当前测试使用的 <code>BrokenRunnable</code> 实例。
-         */
         public BrokenRunnable() {
             throw new IllegalStateException("cannot create");
         }
 
-        /**
-         * 提供测试替身回调，调用时保持夹具状态。
-         */
         @Override
         public void run() {
         }

@@ -28,9 +28,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class ImportResultTest {
 
-    /**
-     * 验证<code>result.getData()</code> 的大小为 <code>2</code>。
-     */
     @Test
     void of_should_return_immutable_view() {
         ImportResult<String> result = ImportResult.of(
@@ -43,9 +40,6 @@ class ImportResultTest {
         assertThat(result.getData()).hasSize(2);
     }
 
-    /**
-     * 验证<code>r.hasErrors()</code>为假，<code>r.getTotalCount()</code>为零，<code>r.successRate()</code> 等于 <code>0.0</code>。
-     */
     @Test
     void hasErrors_empty_should_be_false() {
         ImportResult<String> r = ImportResult.empty();
@@ -54,9 +48,6 @@ class ImportResultTest {
         assertThat(r.successRate()).isEqualTo(0.0);
     }
 
-    /**
-     * 验证<code>r.getTotalCount()</code> 等于 <code>3</code>。
-     */
     @Test
     void successRate_with_errors_should_be_ratio() {
         ImportResult<String> r = ImportResult.of(
@@ -66,9 +57,6 @@ class ImportResultTest {
         assertThat(r.successRate()).isCloseTo(2.0 / 3.0, org.assertj.core.data.Offset.offset(0.001));
     }
 
-    /**
-     * 验证<code>e.getRowIndex()</code> 等于 <code>5</code>，<code>e.getMessage()</code> 等于 <code>"邮箱格式错误"</code>，<code>e.getErrorType()</code> 等于 <code>"ValidationFailed"</code>。
-     */
     @Test
     void importError_of_validation_should_record_message() {
         ImportError e = ImportError.ofValidation(5, "邮箱格式错误");
@@ -77,9 +65,6 @@ class ImportResultTest {
         assertThat(e.getErrorType()).isEqualTo("ValidationFailed");
     }
 
-    /**
-     * 验证<code>e.getRowIndex()</code> 等于 <code>10</code>，<code>e.getErrorType()</code> 等于 <code>"NullPointerException"</code>。
-     */
     @Test
     void importError_of_runtime_exception_should_capture_message() {
         ImportError e = ImportError.of(10, new NullPointerException("null cell"));
@@ -87,9 +72,6 @@ class ImportResultTest {
         assertThat(e.getErrorType()).isEqualTo("NullPointerException");
     }
 
-    /**
-     * 验证被测调用 抛出 <code>IllegalArgumentException.class</code>。
-     */
     @Test
     void batchReadListener_should_throw_for_invalid_batch_size() {
         assertThatThrownBy(() -> new BatchReadListener<>(0, list -> {
@@ -97,9 +79,6 @@ class ImportResultTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    /**
-     * 验证<code>flushed</code> 的大小为 <code>1</code>，<code>flushed.get(0)</code> 按顺序仅包含 <code>1</code>、<code>2</code>、<code>3</code>。
-     */
     @Test
     void batchReadListener_should_flush_at_batch_boundary() {
         // given
@@ -122,9 +101,6 @@ class ImportResultTest {
         assertThat(flushed.get(0)).containsExactly(1, 2, 3);
     }
 
-    /**
-     * 验证<code>flushed</code>为空。
-     */
     @Test
     void batchReadListener_doAfterAllAnalysed_should_flush_remaining() {
         // given：写 2 个（未达到批 3），剩余应在 doAfterAllAnalysed 时 flush

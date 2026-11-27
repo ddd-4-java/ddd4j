@@ -44,26 +44,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Testcontainers(disabledWithoutDocker = true)
 class PulsarContainerIntegrationTest {
 
-    /**
-     * 为当前集成测试提供独立 Pulsar 服务的容器。
-     */
     @Container
     static final PulsarContainer PULSAR = new PulsarContainer(DockerImageName.parse("apachepulsar/pulsar:4.2.4"))
             .withTmpFs(Map.of("/pulsar/data", "rw,mode=1777", "/pulsar/logs", "rw,mode=1777"));
 
-    /**
-     * 测试结束后执行 <code>BaseContext.clear()</code> 完成资源回收或状态恢复。
-     */
     @AfterEach
     void clearContext() {
         BaseContext.clear();
     }
 
-    /**
-     * 验证<code>delivered.await(30, TimeUnit.SECONDS)</code>为真，<code>received.get().getMsgId()</code> 等于 <code>event.getMsgId()</code>，<code>acknowledgment.get().correlationId()</code> 等于 <code>event.getCorrelationId()</code>。
-     *
-     * @throws Exception 等待并发操作时失败
-     */
     @Test
     void taggedEventReachesSubscriberWithNativeCausalityProperties() throws Exception {
         PulsarProperties properties = new PulsarProperties();
@@ -122,11 +111,6 @@ class PulsarContainerIntegrationTest {
         }
     }
 
-    /**
-     * 验证<code>retried.await(30, TimeUnit.SECONDS)</code>为真，<code>attempts.get()</code> 等于 <code>2</code>。
-     *
-     * @throws Exception 等待并发操作时失败
-     */
     @Test
     void failedListenerIsRedeliveredByNativeBroker() throws Exception {
         PulsarProperties properties = new PulsarProperties();

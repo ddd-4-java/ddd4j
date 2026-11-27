@@ -40,9 +40,6 @@ import java.util.Objects;
  */
 public final class SqlSpan {
 
-    /**
-     * 限制调用方直接创建 <code>SqlSpan</code> 实例。
-     */
     private SqlSpan() {
     }
 

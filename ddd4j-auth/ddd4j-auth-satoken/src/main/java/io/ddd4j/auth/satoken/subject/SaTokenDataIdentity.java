@@ -40,30 +40,11 @@ import java.util.function.Function;
 @Slf4j
 public final class SaTokenDataIdentity {
 
-    /**
-     * 用于在当前请求中绑定已验证数据身份的键。
-     */
     private static final String REQUEST_KEY = SaTokenDataIdentity.class.getName();
-    /**
-     * 当前业务数据所属的租户标识。
-     */
     private final String tenantId;
-    /**
-     * 已验证身份所属的应用标识。
-     */
     private final String appId;
-    /**
-     * 已验证身份对应的用户标识。
-     */
     private final String userId;
 
-    /**
-     * 用给定值初始化 <code>SaTokenDataIdentity</code> 实例。
-     *
-     * @param tenantId 当前业务数据所属的租户标识
-     * @param appId    <code>appId</code> 字段
-     * @param userId   <code>userId</code> 字段
-     */
     private SaTokenDataIdentity(String tenantId, String appId, String userId) {
         this.tenantId = tenantId;
         this.appId = appId;
@@ -136,23 +117,10 @@ public final class SaTokenDataIdentity {
         };
     }
 
-    /**
-     * 检查请求是否省略范围标识或只提供了与认证身份一致的唯一值。
-     *
-     * @param values   请求实际提供的范围标识集合
-     * @param expected 已验证的数据范围标识
-     * @return 无需覆盖范围或请求范围一致时返回 true
-     */
     private static boolean matches(List<String> values, String expected) {
         return values.isEmpty() || (values.size() == 1 && expected.equals(values.get(0)));
     }
 
-    /**
-     * 从认证主体的属性和账号信息提取数据范围。
-     *
-     * @param principal 原生会话关联的认证主体
-     * @return 完整的租户、应用和用户组合，信息缺失时为空
-     */
     static SaTokenDataIdentity fromPrincipal(AuthPrincipal principal) {
         if (Objects.isNull(principal.getProfile())) {
             return null;
@@ -161,36 +129,16 @@ public final class SaTokenDataIdentity {
                 identifier(principal.getAppId()), identifier(principal.getUserId()));
     }
 
-    /**
-     * 从原生令牌会话提取租户、应用和用户标识。
-     *
-     * @param session 保存认证范围字段的令牌会话上下文
-     * @return 合法且完整的数据身份，缺少字段时为空
-     */
     static SaTokenDataIdentity fromSession(Map<?, ?> session) {
         return create(identifier(session.get("tenantId")), identifier(session.get("appId")),
                 identifier(session.get("userId")));
     }
 
-    /**
-     * 仅当三项范围标识都有值时创建数据身份。
-     *
-     * @param tenant 数据身份对应的租户标识
-     * @param app    数据身份对应的应用标识
-     * @param user   数据身份对应的用户标识
-     * @return 数据身份或空引用
-     */
     private static SaTokenDataIdentity create(String tenant, String app, String user) {
         return Objects.nonNull(tenant) && Objects.nonNull(app) && Objects.nonNull(user)
                 ? new SaTokenDataIdentity(tenant, app, user) : null;
     }
 
-    /**
-     * 只接受字符串、数字和 UUID 作为标识，排除空白或控制字符。
-     *
-     * @param value 当前操作准备写入、复用或规范化的值
-     * @return 规范化后的文本标识，值不合法时返回空
-     */
     private static String identifier(Object value) {
         if (!(value instanceof String || value instanceof Number || value instanceof UUID)) {
             return null;
@@ -199,12 +147,6 @@ public final class SaTokenDataIdentity {
         return StrKit.hasText(text) && text.chars().noneMatch(Character::isISOControl) ? text : null;
     }
 
-    /**
-     * 比较租户、应用及用户三项范围是否完全一致。
-     *
-     * @param identity 当前已经验证的租户、应用和用户身份
-     * @return 三项均一致时返回 true
-     */
     private boolean sameScope(SaTokenDataIdentity identity) {
         return Objects.nonNull(identity) && tenantId.equals(identity.tenantId)
                 && appId.equals(identity.appId) && userId.equals(identity.userId);
@@ -224,31 +166,12 @@ public final class SaTokenDataIdentity {
         }
     }
 
-    /**
-     * 将当前请求使用的 Sa-Token 登录逻辑、令牌和数据身份绑定在一起。
-     */
     private static final class RequestBinding {
 
-        /**
-         * 当前请求已选定的登录逻辑。
-         */
         private final StpLogic logic;
-        /**
-         * 当前请求携带且绑定到数据身份的令牌。
-         */
         private final String token;
-        /**
-         * 从当前经过校验的令牌会话取得的数据身份。
-         */
         private final SaTokenDataIdentity identity;
 
-        /**
-         * 保存当前请求绑定的登录逻辑、令牌和数据身份。
-         *
-         * @param logic    对应账号域的原生登录逻辑
-         * @param token    待检查或读取上下文的访问令牌
-         * @param identity 当前已经验证的租户、应用和用户身份
-         */
         private RequestBinding(StpLogic logic, String token, SaTokenDataIdentity identity) {
             this.logic = logic;
             this.token = token;

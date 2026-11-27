@@ -42,9 +42,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Testcontainers(disabledWithoutDocker = true)
 class MicaMqttContainerIntegrationTest {
 
-    /**
-     * 为集成测试提供隔离 <code>Generic</code> 服务的容器。
-     */
     @Container
     static final GenericContainer<?> MOSQUITTO = new GenericContainer<>(
             DockerImageName.parse("eclipse-mosquitto:2.0.22"))
@@ -55,11 +52,6 @@ class MicaMqttContainerIntegrationTest {
             .waitingFor(Wait.forListeningPort())
             .withStartupTimeout(Duration.ofMinutes(2));
 
-    /**
-     * 验证<code>client.initConsumer(listener, properties)</code>为真，<code>bean.received.await(10, TimeUnit.SECONDS)</code>为真，<code>nativeClient.isConnected()</code>为真。
-     *
-     * @throws Exception 等待并发操作时失败
-     */
     @Test
     void publishesAndConsumesPayloadIdWithoutClosingInjectedClient() throws Exception {
         String suffix = UUID.randomUUID().toString().replace("-", "");
@@ -151,53 +143,19 @@ class MicaMqttContainerIntegrationTest {
         }
     }
 
-    /**
-     * 保存监听回调结果，供断言检查事件传递行为。
-     */
     public static final class RecordingListener {
-        /**
-         * 用来识别测试探针任务的编号。
-         */
         private final String probeId;
-        /**
-         * 协调测试线程在指定执行阶段等待或继续的门闩。
-         */
         private final CountDownLatch probeReceived = new CountDownLatch(1);
-        /**
-         * 等待数据到达的同步门闩。
-         */
         private final CountDownLatch received = new CountDownLatch(1);
-        /**
-         * 当前测试期间收集的领域事件，供断言比较发布内容或顺序。
-         */
         private final LinkedBlockingQueue<MQEvent> events = new LinkedBlockingQueue<>();
-        /**
-         * 消息标识。
-         */
         private volatile String messageId;
-        /**
-         * 用于关联同一次操作产生的事件或消息的标识。
-         */
         private volatile String correlationId;
-        /**
-         * 当前事件携带的上游事件标识。
-         */
         private volatile String causationId;
 
-        /**
-         * 设置 <code>probeId</code>，用于构造 <code>RecordingListener</code> 测试实例。
-         *
-         * @param probeId 用于初始化 <code>RecordingListener</code> 的 <code>String</code> 值
-         */
         private RecordingListener(String probeId) {
             this.probeId = probeId;
         }
 
-        /**
-         * 根据本次调用更新 <code>messageId = event.getMsgId()</code>、<code>correlationId = event.getCorrelationId()</code>，用于后续测试步骤。
-         *
-         * @param event 交给被测入口处理的测试领域事件
-         */
         public void handle(MQEvent event) {
             if (probeId.equals(event.getMsgId())) {
                 probeReceived.countDown();

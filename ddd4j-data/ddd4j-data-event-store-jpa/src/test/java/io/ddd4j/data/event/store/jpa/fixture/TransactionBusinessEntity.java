@@ -32,24 +32,12 @@ import lombok.Setter;
 @Table(name = "tx_test_business")
 public class TransactionBusinessEntity {
 
-    /**
-     * 用于构造和定位测试记录的主键。
-     */
     @Id
     private String id;
 
-    /**
-     * 供持久化或序列化往返比较的字段值。
-     */
     @Column(name = "payload_value")
     private String value;
 
-    /**
-     * 以给定状态构造 <code>TransactionBusinessEntity</code> 测试对象。
-     *
-     * @param id    用于构造和定位测试记录的主键
-     * @param value 供持久化或序列化往返比较的字段值
-     */
     public TransactionBusinessEntity(String id, String value) {
         this.id = id;
         this.value = value;

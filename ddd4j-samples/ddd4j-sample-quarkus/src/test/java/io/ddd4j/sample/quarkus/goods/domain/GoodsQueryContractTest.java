@@ -27,21 +27,11 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  */
 class GoodsQueryContractTest {
 
-    /**
-     * 核对<code>condition.property()</code> 等于 <code>property</code>，<code>condition.getOperator()</code> 等于 <code>direction</code>。
-     *
-     * @param condition 决定本次测试操作或断言是否成立的条件
-     * @param property  传给 <code>assertEquals()</code> 的 <code>String</code> 输入
-     * @param direction 传给 <code>assertEquals()</code> 的 <code>String</code> 输入
-     */
     private static void assertOrder(LambdaCondition condition, String property, String direction) {
         assertEquals(property, condition.property());
         assertEquals(direction, condition.getOperator());
     }
 
-    /**
-     * 验证<code>query.setOrderBys( "id_ASC,createTime_DESC,updateTime_ASC,price_DESC,unknown_ASC,invalid")</code> 与…为同一实例 <code>query</code>，<code>orders.size()</code> 等于 <code>4</code>。
-     */
     @Test
     void supportsAllWhitelistedSortPropertiesAndIgnoresInvalidClauses() {
         GoodsQuery query = new GoodsQuery();
@@ -57,9 +47,6 @@ class GoodsQueryContractTest {
         assertOrder(orders.get(3), "price", "DESC");
     }
 
-    /**
-     * 验证<code>query.setOrderBys(" ")</code> 与…为同一实例 <code>query</code>，<code>query.getOrderByConditions().size()</code> 等于 <code>0</code>。
-     */
     @Test
     void blankSortExpressionDoesNotAddConditions() {
         GoodsQuery query = new GoodsQuery();

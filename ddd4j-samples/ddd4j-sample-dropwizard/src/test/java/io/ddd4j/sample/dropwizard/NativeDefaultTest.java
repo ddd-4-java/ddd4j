@@ -31,35 +31,17 @@ import static org.junit.jupiter.api.Assertions.*;
 @Testcontainers
 class NativeDefaultTest {
 
-    /**
-     * 为当前集成测试提供独立 MySQL 服务的容器。
-     */
     @Container
     static final MySQLContainer<?> MYSQL = new MySQLContainer<>("mysql:8.0.36");
-    /**
-     * 商品测试所使用的路由或业务编码。
-     */
     private static final String GOODS = """
             {"spuName":"Lunch","skuCode":"S1","skuName":"Weekday","salePriceCent":1250,"shopId":7}
             """;
-    /**
-     * 测试订单的固定标识，用于组织和查询测试数据。
-     */
     private static final String ORDER = """
             {"shopId":7,"items":[{"skuCode":"S1","quantity":2}]}
             """;
 
-    /**
-     * 负责转换测试或协议正文中 JSON 数据的 Jackson 映射器。
-     */
     private static final ObjectMapper JSON = new ObjectMapper();
 
-    /**
-     * 读取 <code>name</code> 供当前测试使用。
-     *
-     * @return 当前测试使用的结果，取自 <code>name</code>
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     private static String runAndClose() throws Exception {
         DropwizardOrderConfiguration configuration = configuration(0);
         DropwizardTestSupport<DropwizardOrderConfiguration> app = application(configuration);
@@ -74,12 +56,6 @@ class NativeDefaultTest {
         return name;
     }
 
-    /**
-     * 读取 <code>configuration</code> 供当前测试使用。
-     *
-     * @param port 测试服务监听的本地端口
-     * @return 当前测试使用的结果，取自 <code>configuration</code>
-     */
     private static DropwizardOrderConfiguration configuration(int port) {
         DropwizardOrderConfiguration configuration = new DropwizardOrderConfiguration();
         configuration.setCatalogJdbcUrl(MYSQL.getJdbcUrl());
@@ -91,30 +67,10 @@ class NativeDefaultTest {
         return configuration;
     }
 
-    /**
-     * 创建 <code>new DropwizardTestSupport&lt;&gt;</code> 供当前测试路径调用。
-     *
-     * @param configuration 用于构造本次返回结果的 <code>DropwizardOrderConfiguration</code> 输入
-     * @return 当前测试使用的结果，取自 <code>new DropwizardTestSupport&lt;&gt;(DropwizardOrderApplication.class, configuration)</code>
-     */
     private static DropwizardTestSupport<DropwizardOrderConfiguration> application(DropwizardOrderConfiguration configuration) {
         return new DropwizardTestSupport<>(DropwizardOrderApplication.class, configuration);
     }
 
-    /**
-     * 通过 <code>JSON.readTree()</code> 取得当前测试需要的结果。
-     *
-     * @param client 用于发出测试请求的客户端
-     * @param base   传给 <code>client.target()</code> 的 <code>String</code> 输入
-     * @param method 发给被测服务的 HTTP 方法
-     * @param path   测试请求的资源路径或待访问文件路径
-     * @param token  从测试登录获得的会话凭据
-     * @param key    用于在测试上下文或缓存中索引数据的键
-     * @param body   当前请求或响应中要读取的正文
-     * @param status 当前 HTTP 或业务流程的状态
-     * @return 当前测试使用的结果，取自 <code>JSON.readTree(actual)</code>
-     * @throws Exception 处理测试数据的序列化、发起测试请求时失败
-     */
     private static JsonNode request(Client client, String base, String method, String path, String token,
                                     String key, String body, int status) throws Exception {
         Invocation.Builder request = client.target(base + path).request()
@@ -133,11 +89,6 @@ class NativeDefaultTest {
         }
     }
 
-    /**
-     * 在测试框架中执行 <code>ConfigOverride.config()</code>、<code>MYSQL.getJdbcUrl()</code>、<code>MYSQL.getUsername()</code>，验证该场景。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void stockYamlRunsAnonymousOrderThroughNativeHttp() throws Exception {
         DropwizardTestSupport<DropwizardOrderConfiguration> app = new DropwizardTestSupport<>(
@@ -161,11 +112,6 @@ class NativeDefaultTest {
         }
     }
 
-    /**
-     * 验证<code>created.path("grossAmountCent").asLong()</code> 等于 <code>2500</code>，<code>CacheKit.getCache(configuration.getDdd4jWeb().getIdempotencyCacheName())</code>为空。
-     *
-     * @throws Exception 测试服务器请求、会话操作或响应解析失败
-     */
     @Test
     void anonymousDefaultRunsCreateAddPayAndFind() throws Exception {
         DropwizardOrderConfiguration configuration = configuration(0);
@@ -196,11 +142,6 @@ class NativeDefaultTest {
         assertNull(CacheKit.getCache(configuration.getDdd4jWeb().getIdempotencyCacheName()));
     }
 
-    /**
-     * 在测试框架中执行 <code>configuration()</code>、<code>configuration.getDdd4jWeb()</code>、<code>application()</code>，验证该场景。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void explicitLegacyAuthenticationStillRequiresAndAcceptsBearer() throws Exception {
         DropwizardOrderConfiguration configuration = configuration(0);
@@ -224,11 +165,6 @@ class NativeDefaultTest {
         }
     }
 
-    /**
-     * 验证<code>second</code> 不等于 <code>first</code>，<code>CacheKit.getCache(existingName)</code> 与…为同一实例 <code>existing</code>。
-     *
-     * @throws Exception 装配运行测试所需的组件时失败
-     */
     @Test
     void managedCachesAreUniqueAndPreserveAnExistingCache() throws Exception {
         String existingName = "ddd4j-web-idempotency";
@@ -250,11 +186,6 @@ class NativeDefaultTest {
         }
     }
 
-    /**
-     * 验证被测调用 抛出 <code>Exception.class</code>，<code>CacheKit.getCache(configuration.getDdd4jWeb().getIdempotencyCacheName())</code>为空。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void failedNativeBootReleasesItsManagedCache() throws Exception {
         try (ServerSocket occupied = new ServerSocket(0)) {
@@ -270,11 +201,6 @@ class NativeDefaultTest {
         }
     }
 
-    /**
-     * 验证<code>CacheKit.getCache(name)</code> 与…为同一实例 <code>callerCache</code>，<code>CacheKit.get(name, "caller-entry")</code> 等于 <code>"caller-loaded"</code>。
-     *
-     * @throws Exception 装配运行测试所需的组件时失败
-     */
     @Test
     void shutdownPreservesCallerReplacementAndLoadingCache() throws Exception {
         DropwizardOrderConfiguration configuration = configuration(0);
@@ -301,11 +227,6 @@ class NativeDefaultTest {
         }
     }
 
-    /**
-     * 验证<code>CacheKit.getCache(configuration.getDdd4jWeb().getIdempotencyCacheName())</code>为空。
-     *
-     * @throws Exception 测试服务器请求、会话操作或响应解析失败
-     */
     @Test
     void disabledIdempotencyDoesNotAllocateItsManagedCache() throws Exception {
         DropwizardOrderConfiguration configuration = configuration(0);

@@ -69,9 +69,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Testcontainers(disabledWithoutDocker = true)
 class MybatisAggregateRepositoryMySQLTest {
 
-    /**
-     * 为当前集成测试提供独立 MySQL 服务的容器。
-     */
     @Container
     private static final MySQLContainer<?> MYSQL = new MySQLContainer<>("mysql:8.4")
             // 数据仅用于本轮集成验证，避免占用宿主 Docker 持久盘。
@@ -80,28 +77,11 @@ class MybatisAggregateRepositoryMySQLTest {
             .withUsername("ddd4j")
             .withPassword("ddd4j");
 
-    /**
-     * 为 MyBatis 合同测试打开会话的工厂。
-     */
     private static SqlSessionFactory sqlSessionFactory;
-    /**
-     * 当前被验证或替换的持久化 Mapper 实例。
-     */
     private static OrderMapper mapper;
-    /**
-     * 被测仓储或用于提供测试数据的仓储实例。
-     */
     private static TestRepository repository;
-    /**
-     * 测试中用于执行 Mapper 操作的数据库会话。
-     */
     private static SqlSession session;
 
-    /**
-     * 测试执行前执行 <code>MYSQL.createConnection()</code>、<code>conn.createStatement()</code>、<code>stmt.execute()</code>、<code>MYSQL.getJdbcUrl()</code> 完成资源准备。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @BeforeAll
     static void setUp() throws Exception {
         // 1. 建表
@@ -144,9 +124,6 @@ class MybatisAggregateRepositoryMySQLTest {
         repository = new TestRepository(mapper);
     }
 
-    /**
-     * 测试后依次关闭<code>session</code>、注销<code>RepositoryRegistry</code>。
-     */
     @AfterAll
     static void closeSession() {
         if (Objects.nonNull(session)) {
@@ -156,14 +133,6 @@ class MybatisAggregateRepositoryMySQLTest {
         RepositoryRegistry.unregisterQuery(OrderQuery.class);
     }
 
-    /**
-     * 读取 <code>model</code> 供当前测试使用。
-     *
-     * @param key        用于在测试上下文或缓存中索引数据的键
-     * @param ordinaryId 传给 <code>model.setId()</code> 的 <code>Long</code> 输入
-     * @param name       当前测试指定的对象或属性名称
-     * @return 当前测试使用的结果，取自 <code>model</code>
-     */
     private static IdentityOrder identityOrder(Long key, Long ordinaryId, String name) {
         IdentityOrder model = new IdentityOrder();
         model.setBusinessId(key);
@@ -172,9 +141,6 @@ class MybatisAggregateRepositoryMySQLTest {
         return model;
     }
 
-    /**
-     * 测试前依次清除<code>ThreadContext</code>。
-     */
     @BeforeEach
     void cleanTable() {
         ThreadContext.clear();
@@ -182,17 +148,11 @@ class MybatisAggregateRepositoryMySQLTest {
         session.getMapper(BatchMapper.class).delete(null);
     }
 
-    /**
-     * 测试后依次清除<code>ThreadContext</code>。
-     */
     @AfterEach
     void clearContext() {
         ThreadContext.clear();
     }
 
-    /**
-     * save：新聚合插入数据库并可按 ID 读回。
-     */
     @Test
     @DisplayName("save：新聚合插入数据库并可按 ID 读回")
     void saveInsertsNewAggregate() {
@@ -205,9 +165,6 @@ class MybatisAggregateRepositoryMySQLTest {
         assertThat(found.get().getStatus()).isEqualTo("CREATED");
     }
 
-    /**
-     * updateById（P0 回归）：已存在聚合仅更新，不触发插入分支。
-     */
     @Test
     @DisplayName("updateById（P0 回归）：已存在聚合仅更新，不触发插入分支")
     void updateByIdUpdatesExistingOnly() {
@@ -222,9 +179,6 @@ class MybatisAggregateRepositoryMySQLTest {
         assertThat(repository.count()).isEqualTo(1);
     }
 
-    /**
-     * updateById（P0 回归）：不存在的 ID 不会隐式插入。
-     */
     @Test
     @DisplayName("updateById（P0 回归）：不存在的 ID 不会隐式插入")
     void updateByIdDoesNotInsertWhenAbsent() {
@@ -234,9 +188,6 @@ class MybatisAggregateRepositoryMySQLTest {
         assertThat(repository.count()).isZero();
     }
 
-    /**
-     * insertOrUpdate：不存在插入、存在更新（upsert 语义）。
-     */
     @Test
     @DisplayName("insertOrUpdate：不存在插入、存在更新（upsert 语义）")
     void insertOrUpdateBehavesAsUpsert() {
@@ -249,9 +200,6 @@ class MybatisAggregateRepositoryMySQLTest {
                 .get().extracting(Order::getStatus).isEqualTo("SHIPPED");
     }
 
-    /**
-     * deleteById / existsById：删除后不可查。
-     */
     @Test
     @DisplayName("deleteById / existsById：删除后不可查")
     void deleteByIdRemovesRow() {
@@ -264,9 +212,6 @@ class MybatisAggregateRepositoryMySQLTest {
         assertThat(repository.findAll()).isEmpty();
     }
 
-    /**
-     * 原版模型与 Query：直接保存更新、单条列表分页和存在判断，无命令总线或事件存储。
-     */
     @Test
     @DisplayName("原版模型与 Query：直接保存更新、单条列表分页和存在判断，无命令总线或事件存储")
     void originalModelAndQueryUsagePersistsWithoutCqrsInfrastructure() {
@@ -295,9 +240,6 @@ class MybatisAggregateRepositoryMySQLTest {
                 .get().extracting(Order::getStatus).isEqualTo("PAID");
     }
 
-    /**
-     * 转换与填充：读回 PO 映射为领域对象，按需执行业务仓储填充。
-     */
     @Test
     @DisplayName("转换与填充：读回 PO 映射为领域对象，按需执行业务仓储填充")
     void originalQueriesConvertAndFillPersistedModels() {
@@ -320,9 +262,6 @@ class MybatisAggregateRepositoryMySQLTest {
         assertThat(converted.getStatusLabel()).isEqualTo("已支付");
     }
 
-    /**
-     * 租户：原版保存自动填租户，Query 单条列表分页和存在判断隔离租户。
-     */
     @Test
     @DisplayName("租户：原版保存自动填租户，Query 单条列表分页和存在判断隔离租户")
     void originalQueriesScopeRowsToCurrentTenant() {
@@ -343,9 +282,6 @@ class MybatisAggregateRepositoryMySQLTest {
         assertThat(new OrderQuery().eq(Order::getStatus, "DRAFT").exist()).isTrue();
     }
 
-    /**
-     * 验证<code>batch.saveBatch(List.of(first, second))</code> 按顺序仅包含 <code>first</code>、<code>second</code>，<code>first.getId()</code>非空，<code>persisted.selectCount(null)</code> 等于 <code>3</code>。
-     */
     @Test
     void longInheritedIdsSupportBatchInsertUpdateAndUpsert() {
         BatchRepository batch = new BatchRepository(session.getMapper(BatchMapper.class));
@@ -379,9 +315,6 @@ class MybatisAggregateRepositoryMySQLTest {
         }
     }
 
-    /**
-     * 验证<code>batch.saveBatch(List.of( new BatchModel(777L, "first"), new BatchModel(777L, "duplicate")))</code> 抛出 <code>RuntimeException.class</code>，<code>read.getMapper(BatchMapper.class).selectCount(null)</code>为零。
-     */
     @Test
     void failedBatchRollsBackEarlierStatements() {
         BatchRepository batch = new BatchRepository(session.getMapper(BatchMapper.class));
@@ -393,9 +326,6 @@ class MybatisAggregateRepositoryMySQLTest {
         }
     }
 
-    /**
-     * 验证<code>identities.save(model)</code> 指向同一实例 <code>model</code>，<code>model.id()</code>非空，<code>identities.findById(model.id()).get().getName()</code> 等于 <code>"updated"</code>。
-     */
     @Test
     void namedInheritedKeyIsMappedBackToOriginalDomainObject() {
         IdentityRepository identities = identityRepository();
@@ -410,9 +340,6 @@ class MybatisAggregateRepositoryMySQLTest {
         assertThat(identities.findById(model.id()).get().getName()).isEqualTo("updated");
     }
 
-    /**
-     * 验证<code>identities.count(query)</code> 等于 <code>1</code>，<code>identities.maps(query).get(0)</code> 含对应条目 <code>"order_pk"</code>、<code>101L</code>，<code>identities.findFirst(poQuery).get().id()</code> 等于 <code>101L</code>。
-     */
     @Test
     void domainAndPersistenceQueriesUseAnnotatedPrimaryKeyColumn() {
         IdentityRepository identities = identityRepository();
@@ -430,9 +357,6 @@ class MybatisAggregateRepositoryMySQLTest {
         assertThat(identities.findFirst(poQuery).get().id()).isEqualTo(101L);
     }
 
-    /**
-     * 在测试框架中执行 <code>identityRepository()</code>、<code>identities.getBaseMapper()</code>、<code>identities.toPersistenceObject()</code>，验证该场景。
-     */
     @Test
     void listConversionUsesExistingDomainObjectMapper() {
         IdentityRepository identities = identityRepository();
@@ -441,9 +365,6 @@ class MybatisAggregateRepositoryMySQLTest {
         assertThat(identities.findAll()).extracting(IdentityOrder::id).containsExactly(101L);
     }
 
-    /**
-     * 验证<code>first.id()</code>非空，<code>second.id()</code>非空，<code>identities.findById(third.id()).get().getName()</code> 等于 <code>"new despite ordinary id"</code>。
-     */
     @Test
     void batchOperationsPreserveNamedIdentityAndMappedBackfill() {
         IdentityRepository identities = identityRepository();
@@ -463,9 +384,6 @@ class MybatisAggregateRepositoryMySQLTest {
         assertThat(identities.findById(third.id()).get().getName()).isEqualTo("new despite ordinary id");
     }
 
-    /**
-     * 验证<code>identities.update(patch, query)</code>为真，<code>patch.id()</code> 等于 <code>101L</code>，<code>identities.findById(901L)</code>存在值。
-     */
     @Test
     void conditionalUpdateAndDeleteUseMappedIdentity() {
         IdentityRepository identities = identityRepository();
@@ -485,159 +403,76 @@ class MybatisAggregateRepositoryMySQLTest {
 
     // =================== 测试夹具 ===================
 
-    /**
-     * 创建 <code>new IdentityRepository</code> 供当前测试路径调用。
-     *
-     * @return 当前测试使用的结果，取自 <code>new IdentityRepository(identityMapper)</code>
-     */
     private IdentityRepository identityRepository() {
         IdentityMapper identityMapper = session.getMapper(IdentityMapper.class);
         identityMapper.delete(null);
         return new IdentityRepository(identityMapper);
     }
 
-    /**
-     * 替代数据库 Mapper，供仓储测试检查 CRUD 调用和映射结果。
-     */
     interface BatchMapper extends BaseMapper<BatchPo> {
     }
 
-    /**
-     * 为订单持久化测试提供的映射入口。
-     */
     interface OrderMapper extends BaseMapper<OrderPO> {
     }
 
-    /**
-     * 替代数据库 Mapper，供仓储测试检查 CRUD 调用和映射结果。
-     */
     public interface IdentityMapper extends BaseMapper<IdentityPO> {
     }
 
-    /**
-     * 绑定测试聚合和持久化类型的批量仓储。
-     */
     static final class BatchRepository
             extends MybatisAggregateRepository<BatchMapper, BatchModel, BatchPo, BatchQuery, Long> {
-        /**
-         * 使用 <code>super()</code> 初始化 <code>BatchRepository</code> 测试夹具。
-         *
-         * @param mapper 当前测试登记或使用的持久化映射组件
-         */
         BatchRepository(BatchMapper mapper) {
             super(mapper);
         }
     }
 
-    /**
-     * 用于控制查询条件或路由类型的测试查询。
-     */
     static final class BatchQuery extends Query<BatchModel> {
     }
 
-    /**
-     * 供测试验证事件应用和持久化的聚合样本。
-     */
     @Getter
     @Setter
     @NoArgsConstructor
     public static class BatchModel extends AggregateRoot<Long> {
-        /**
-         * 用于构造和定位测试记录的主键。
-         */
         private Long id;
-        /**
-         * 测试对象的显示名称。
-         */
         private String name;
-        /**
-         * 记录创建的时间。
-         */
         private LocalDateTime createdAt;
-        /**
-         * 最近更新记录的时间。
-         */
         private LocalDateTime updatedAt;
 
-        /**
-         * 以给定状态构造 <code>BatchModel</code> 测试对象。
-         *
-         * @param id   用于构造和定位测试记录的主键
-         * @param name 测试对象的显示名称
-         */
         BatchModel(Long id, String name) {
             this.id = id;
             this.name = name;
         }
 
-        /**
-         * 读取<code>id</code> 字段。
-         *
-         * @return <code>id</code> 字段
-         */
         @Override
         public Long id() {
             return id;
         }
     }
 
-    /**
-     * 使用 <code>id</code> 验证当前测试的输入和数据映射。
-     */
     @Getter
     @Setter
     public static class BatchIdentity {
-        /**
-         * 用于构造和定位测试记录的主键。
-         */
         @TableId(type = IdType.AUTO)
         private Long id;
     }
 
-    /**
-     * 映射到测试表，以验证 ORM 字段或主键规则的持久化对象。
-     */
     @Getter
     @Setter
     @TableName("order_batch")
     public static class BatchPo extends BatchIdentity {
-        /**
-         * 测试对象的显示名称。
-         */
         private String name;
-        /**
-         * 记录创建的时间。
-         */
         @io.ddd4j.annotation.orm.OnCreate
         private LocalDateTime createdAt;
-        /**
-         * 最近更新记录的时间。
-         */
         @io.ddd4j.annotation.orm.OnUpdate
         private LocalDateTime updatedAt;
     }
 
-    /**
-     * 实现 <code>MybatisAggregateRepository</code>，供测试调用 <code>fill()</code> 并观察结果。
-     */
     static final class TestRepository
             extends MybatisAggregateRepository<OrderMapper, Order, OrderPO, OrderQuery, String> {
 
-        /**
-         * 使用 <code>super()</code> 初始化 <code>TestRepository</code> 测试夹具。
-         *
-         * @param mapper 当前测试登记或使用的持久化映射组件
-         */
         TestRepository(OrderMapper mapper) {
             super(mapper, Order.class, OrderPO.class);
         }
 
-        /**
-         * 根据本次调用更新 <code>order.statusLabel = "已支付"</code>，用于后续测试步骤。
-         *
-         * @param query  用来读取测试数据的查询对象
-         * @param models 本次调用使用的 <code>List&lt;Order&gt;</code> 参数 <code>models</code>
-         */
         @Override
         public void fill(Query<Order> query, List<Order> models) {
             if (query.fill("statusLabel")) {
@@ -650,330 +485,152 @@ class MybatisAggregateRepositoryMySQLTest {
         }
     }
 
-    /**
-     * 订单测试查询对象，供构造仓储检索条件。
-     */
     static final class OrderQuery extends Query<Order> {
     }
 
-    /**
-     * 供测试验证事件应用和持久化的聚合样本。
-     */
     static final class Order extends AggregateRoot<String> {
 
-        /**
-         * 用于构造和定位测试记录的主键。
-         */
         private String id;
-        /**
-         * 测试对象当前的业务状态。
-         */
         private String status;
-        /**
-         * 记录被逻辑删除的时间。
-         */
         private LocalDateTime deletedAt;
-        /**
-         * 暴露给观察器或写入响应的状态标签。
-         */
         private String statusLabel;
 
-        /**
-         * 创建字段使用默认初始值的 <code>Order</code> 测试对象。
-         */
         Order() {
         }
 
-        /**
-         * 用给定值初始化 <code>Order</code> 实例。
-         *
-         * @param id        <code>id</code> 字段
-         * @param status    <code>status</code> 字段
-         * @param deletedAt 记录被逻辑删除的时间
-         */
         Order(String id, String status, LocalDateTime deletedAt) {
             this.id = id;
             this.status = status;
             this.deletedAt = deletedAt;
         }
 
-        /**
-         * 读取<code>id</code> 字段。
-         *
-         * @return <code>id</code> 字段
-         */
         @Override
         public String id() {
             return id;
         }
 
-        /**
-         * 读取<code>id</code> 字段。
-         *
-         * @return <code>id</code> 字段
-         */
         public String getId() {
             return id;
         }
 
-        /**
-         * 设置<code>id</code> 字段。
-         *
-         * @param id 要写入的值
-         */
         public void setId(String id) {
             this.id = id;
         }
 
-        /**
-         * 读取<code>status</code> 字段。
-         *
-         * @return <code>status</code> 字段
-         */
         String getStatus() {
             return status;
         }
 
-        /**
-         * 设置<code>status</code> 字段。
-         *
-         * @param status 要写入的值
-         */
         public void setStatus(String status) {
             this.status = status;
         }
 
-        /**
-         * 读取记录被逻辑删除的时间。
-         *
-         * @return 记录被逻辑删除的时间
-         */
         LocalDateTime getDeletedAt() {
             return deletedAt;
         }
 
-        /**
-         * 设置记录被逻辑删除的时间。
-         *
-         * @param deletedAt 要写入的值
-         */
         public void setDeletedAt(LocalDateTime deletedAt) {
             this.deletedAt = deletedAt;
         }
 
-        /**
-         * 读取<code>statusLabel</code> 字段。
-         *
-         * @return <code>statusLabel</code> 字段
-         */
         String getStatusLabel() {
             return statusLabel;
         }
     }
 
-    /**
-     * 持久化层使用的订单测试数据模型。
-     */
     @TableName("orders")
     static final class OrderPO {
 
-        /**
-         * 用于构造和定位测试记录的主键。
-         */
         @TableId
         private String id;
 
-        /**
-         * 测试对象当前的业务状态。
-         */
         @TableField("order_status")
         private String status;
 
-        /**
-         * 记录被逻辑删除的时间。
-         */
         @TableField("deleted_at")
         private LocalDateTime deletedAt;
 
-        /**
-         * 当前业务数据所属的租户标识。
-         */
         @TenantId
         private String tenantId;
 
-        /**
-         * 创建字段使用默认初始值的 <code>OrderPO</code> 测试对象。
-         */
         OrderPO() {
         }
 
-        /**
-         * 读取<code>id</code> 字段。
-         *
-         * @return <code>id</code> 字段
-         */
         public String getId() {
             return id;
         }
 
-        /**
-         * 设置<code>id</code> 字段。
-         *
-         * @param id 要写入的值
-         */
         public void setId(String id) {
             this.id = id;
         }
 
-        /**
-         * 读取<code>status</code> 字段。
-         *
-         * @return <code>status</code> 字段
-         */
         public String getStatus() {
             return status;
         }
 
-        /**
-         * 设置<code>status</code> 字段。
-         *
-         * @param status 要写入的值
-         */
         public void setStatus(String status) {
             this.status = status;
         }
 
-        /**
-         * 读取记录被逻辑删除的时间。
-         *
-         * @return 记录被逻辑删除的时间
-         */
         public LocalDateTime getDeletedAt() {
             return deletedAt;
         }
 
-        /**
-         * 设置记录被逻辑删除的时间。
-         *
-         * @param deletedAt 要写入的值
-         */
         public void setDeletedAt(LocalDateTime deletedAt) {
             this.deletedAt = deletedAt;
         }
 
-        /**
-         * 读取当前业务数据所属的租户标识。
-         *
-         * @return 当前业务数据所属的租户标识
-         */
         public String getTenantId() {
             return tenantId;
         }
 
-        /**
-         * 设置当前业务数据所属的租户标识。
-         *
-         * @param tenantId 要写入的值
-         */
         public void setTenantId(String tenantId) {
             this.tenantId = tenantId;
         }
     }
 
-    /**
-     * 供测试验证事件应用和持久化的聚合样本。
-     */
     @Getter
     @Setter
     public static class IdentityModelBase extends AggregateRoot<Long> {
-        /**
-         * 区分测试交易记录的业务标识。
-         */
         @DomainField(poField = "orderKey")
         private Long businessId;
 
-        /**
-         * 读取<code>businessId</code> 字段。
-         *
-         * @return <code>businessId</code> 字段
-         */
         @Override
         public Long id() {
             return businessId;
         }
     }
 
-    /**
-     * 使用 <code>id</code>、<code>name</code> 验证当前测试的输入和数据映射。
-     */
     @Getter
     @Setter
     public static class IdentityOrder extends IdentityModelBase {
-        /**
-         * 用于构造和定位测试记录的主键。
-         */
         private Long id;
-        /**
-         * 测试对象的显示名称。
-         */
         private String name;
     }
 
-    /**
-     * 将 <code>orderKey</code> 等状态一起传入当前测试，供调用或结果断言使用。
-     */
     @Getter
     @Setter
     public static class IdentityPoBase {
-        /**
-         * 用于定位同一订单记录的测试业务键。
-         */
         @TableId(value = "order_pk", type = IdType.AUTO)
         private Long orderKey;
     }
 
-    /**
-     * 映射到测试表，以验证 ORM 字段或主键规则的持久化对象。
-     */
     @Getter
     @Setter
     @TableName("order_identity")
     public static class IdentityPO extends IdentityPoBase {
-        /**
-         * 用于构造和定位测试记录的主键。
-         */
         private Long id;
-        /**
-         * 测试对象的显示名称。
-         */
         private String name;
     }
 
-    /**
-     * 用于控制查询条件或路由类型的测试查询。
-     */
     public static class IdentityQuery extends Query<IdentityOrder> {
     }
 
-    /**
-     * 实现 <code>MybatisAggregateRepository</code>，供测试调用 <code>toModel()</code>、<code>toPersistenceObject()</code> 并观察结果。
-     */
     static class IdentityRepository extends MybatisAggregateRepository<IdentityMapper, IdentityOrder, IdentityPO, IdentityQuery, Long> {
-        /**
-         * 使用 <code>super()</code> 初始化 <code>IdentityRepository</code> 测试夹具。
-         *
-         * @param mapper 当前测试登记或使用的持久化映射组件
-         */
         IdentityRepository(IdentityMapper mapper) {
             super(mapper, IdentityOrder.class, IdentityPO.class);
         }
 
-        /**
-         * 读取 <code>model</code> 供当前测试使用。
-         *
-         * @param po 传给 <code>BeanKit.copy()</code> 的 <code>IdentityPO</code> 输入
-         * @return 当前测试使用的结果，取自 <code>model</code>
-         */
         @Override
         public IdentityOrder toModel(IdentityPO po) {
             IdentityOrder model = BeanKit.copy(po, IdentityOrder.class);
@@ -981,12 +638,6 @@ class MybatisAggregateRepositoryMySQLTest {
             return model;
         }
 
-        /**
-         * 读取 <code>po</code> 供当前测试使用。
-         *
-         * @param model 传给 <code>BeanKit.copy()</code> 的 <code>IdentityOrder</code> 输入
-         * @return 当前测试使用的结果，取自 <code>po</code>
-         */
         @Override
         public IdentityPO toPersistenceObject(IdentityOrder model) {
             IdentityPO po = BeanKit.copy(model, IdentityPO.class);

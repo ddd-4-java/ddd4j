@@ -28,9 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class Ddd4jQuarkusPublicPathsContractTest {
 
-    /**
-     * 在测试框架中执行 <code>Proxy.newProxyInstance()</code>、<code>Config.class.getClassLoader()</code>、<code>method.getName()</code>，验证该场景。
-     */
     @Test
     void trimsAndDiscardsBlankPaths() {
         Config config = (Config) Proxy.newProxyInstance(Config.class.getClassLoader(),

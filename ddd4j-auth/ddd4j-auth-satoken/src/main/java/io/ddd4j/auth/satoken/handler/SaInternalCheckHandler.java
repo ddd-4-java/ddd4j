@@ -30,23 +30,11 @@ import java.lang.reflect.AnnotatedElement;
  */
 public class SaInternalCheckHandler implements SaAnnotationHandlerInterface<SaInternalCheck> {
 
-    /**
-     * 声明由当前处理器解释的内部认证注解。
-     *
-     * @return 内部 API 校验注解的类型
-     */
     @Override
     public Class<SaInternalCheck> getHandlerAnnotationClass() {
         return SaInternalCheck.class;
     }
 
-    /**
-     * 读取当前请求的 API 密钥并按注解范围执行内部认证。
-     *
-     * @param at      声明当前入口认证要求的注解
-     * @param element 触发认证检查的注解元素
-     * @throws SaTokenException 请求缺少密钥或未通过内部检查
-     */
     @Override
     public void checkMethod(SaInternalCheck at, AnnotatedElement element) {
         String apiKey = readApiKey();

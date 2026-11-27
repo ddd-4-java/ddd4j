@@ -30,9 +30,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class SpringMqBridgeContractTest {
 
-    /**
-     * 验证<code>processor.getListeners().size()</code> 等于 <code>1</code>，<code>processor.getListeners().get(0).getTopic()</code> 等于 <code>"orders"</code>，<code>processor.getListeners().size()</code> 等于 <code>2</code>。
-     */
     @Test
     void shouldDiscoverListenerWithoutDefiningBrokerMessageSemantics() {
         MQProperties properties = new MQProperties();
@@ -54,24 +51,13 @@ class SpringMqBridgeContractTest {
         assertEquals(2, processor.getListeners().size());
     }
 
-    /**
-     * 提供 <code>onPaid()</code> 等供当前测试使用的独立操作。
-     */
     static final class OrderListener {
 
-        /**
-         * 作为空实现的测试替身，调用时保持当前夹具状态。
-         *
-         * @param event 交给被测入口处理的测试领域事件
-         */
         @MQEventListener(topic = "orders", tags = "paid")
         public void onPaid(OrderPaidEvent event) {
         }
     }
 
-    /**
-     * 表示测试订单已支付的领域事件。
-     */
     static final class OrderPaidEvent extends MQEvent {
     }
 }

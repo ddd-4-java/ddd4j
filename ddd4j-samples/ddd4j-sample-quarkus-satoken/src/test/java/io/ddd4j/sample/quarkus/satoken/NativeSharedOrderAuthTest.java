@@ -45,49 +45,21 @@ import static org.junit.jupiter.api.Assertions.*;
 @QuarkusTestResource(CatalogDatabaseResource.class)
 class NativeSharedOrderAuthTest {
 
-    /**
-     * 构造本组测试输入时复用的固定标识或名称。
-     */
     private static final String PROBE_HEADER = "X-Order-Completion-Probe";
-    /**
-     * 供测试线程安全保存当前观察结果的引用。
-     */
     private static final AtomicReference<CompletionProbe> PROBE = new AtomicReference<>();
 
-    /**
-     * 本地测试服务的基础地址。
-     */
     @TestHTTPResource
     URI base;
-    /**
-     * 共用商品交易用例的 HTTP 操作入口。
-     */
     @Inject
     CatalogApi catalog;
-    /**
-     * 当前示例用来解析角色编辑和权限分配的配置。
-     */
     @Inject
     RbacConfig rbac;
 
-    /**
-     * 调用 <code>given()</code> 执行当前夹具操作。
-     *
-     * @param authorization 传给 <code>given()</code> 的 <code>String</code> 输入
-     * @param id            当前要查找的测试记录标识
-     * @return 提供给后续契约断言的 <code>String</code> 结果
-     */
     private static String createOrder(String authorization, String id) {
         return given().header("Authorization", authorization).contentType("application/json")
                 .body(ORDER).post(ORDERS + id).then().statusCode(201).extract().path("orderNo");
     }
 
-    /**
-     * 通过 <code>"Bearer " + token</code> 取得当前测试需要的结果。
-     *
-     * @param user 传给 <code>MapKit.builder()</code> 的 <code>String</code> 输入
-     * @return 当前测试使用的结果，取自 <code>"Bearer " + token</code>
-     */
     private static String login(String user) {
         Map<String, String> credentials = MapKit.builder("username", user).put("password", "123456").build();
         String token = given().contentType("application/json").body(credentials)
@@ -95,18 +67,12 @@ class NativeSharedOrderAuthTest {
         return "Bearer " + token;
     }
 
-    /**
-     * 测试执行前执行 <code>rbac.reset()</code>、<code>seed()</code> 完成资源准备。
-     */
     @BeforeEach
     void prepareGoods() {
         rbac.reset();
         seed(catalog);
     }
 
-    /**
-     * 验证<code>catalog.order(TENANT, orderNo).getStatus()</code> 等于 <code>404</code>。
-     */
     @Test
     void unauthorizedRequestsCannotReadOrCreateOrders() {
         String orderNo = "anonymous-" + UUID.randomUUID();
@@ -119,9 +85,6 @@ class NativeSharedOrderAuthTest {
         assertEquals(404, catalog.order(TENANT, orderNo).getStatus());
     }
 
-    /**
-     * 验证<code>response</code> 等于 <code>expected</code>。
-     */
     @Test
     void bearerSchemeCaseDoesNotChangeProtectedOrderReads() {
         String authorization = login("admin");
@@ -139,9 +102,6 @@ class NativeSharedOrderAuthTest {
                 .get(ORDERS + id).then().statusCode(401);
     }
 
-    /**
-     * 验证<code>response.statusCode()</code> 等于 <code>200</code>，<code>response.as(Map.class)</code> 等于 <code>expected</code>。
-     */
     @Test
     void bearerSeparatorSpacesDoNotChangeProtectedOrderReads() {
         String authorization = login("admin");
@@ -166,9 +126,6 @@ class NativeSharedOrderAuthTest {
         }
     }
 
-    /**
-     * 验证<code>catalog.order(TENANT, id).getStatus()</code> 等于 <code>200</code>，<code>catalog.order(TENANT, "revoked-" + id).getStatus()</code> 等于 <code>404</code>。
-     */
     @Test
     void authorizedOrderUsesSharedStoreThroughPaymentAndLogout() {
         String token = login("admin");
@@ -185,11 +142,6 @@ class NativeSharedOrderAuthTest {
         assertEquals(404, catalog.order(TENANT, "revoked-" + id).getStatus());
     }
 
-    /**
-     * 验证<code>PROBE.compareAndSet(null, probe)</code>为真，<code>probe.entered.await(10, TimeUnit.SECONDS)</code>为真，<code>probe.contextPresentAtCompletion</code>为假。
-     *
-     * @throws Exception 准备或读取夹具文件、等待并发操作时失败
-     */
     @Test
     void disconnectedOrderReadCleansNativeContextOnDispatchThread() throws Exception {
         String token = login("admin");
@@ -215,41 +167,14 @@ class NativeSharedOrderAuthTest {
         }
     }
 
-    /**
-     * 将 <code>id</code>、<code>entered</code>、<code>release</code>、<code>completed</code> 等状态一起传入当前测试，供调用或结果断言使用。
-     */
     private static final class CompletionProbe {
-        /**
-         * 标识当前测试对象的主键或事件标识。
-         */
         private final String id = UUID.randomUUID().toString();
-        /**
-         * 等待被测操作已进入执行的同步门闩。
-         */
         private final CountDownLatch entered = new CountDownLatch(1);
-        /**
-         * 用来控制测试线程退出等待或观察操作完成的同步门闩。
-         */
         private final CountDownLatch release = new CountDownLatch(1);
-        /**
-         * 用来控制测试线程退出等待或观察操作完成的同步门闩。
-         */
         private final CountDownLatch completed = new CountDownLatch(1);
-        /**
-         * 记录测试业务实际被分发到的线程。
-         */
         private Thread dispatchThread;
-        /**
-         * 请求结束回调实际使用的线程名。
-         */
         private Thread completionThread;
-        /**
-         * 进入业务回调时观察到的原生登录状态。
-         */
         private boolean nativeLoginAtEntry;
-        /**
-         * 记录请求完成回调是否还能看到业务线程上下文。
-         */
         private boolean contextPresentAtCompletion;
     }
 
@@ -259,12 +184,6 @@ class NativeSharedOrderAuthTest {
     @Provider
     @Priority(Priorities.AUTHENTICATION + 1)
     public static class CompletionObserver implements ContainerRequestFilter {
-        /**
-         * 根据本次调用更新 <code>probe.dispatchThread = Thread.currentThread()</code>、<code>probe.nativeLoginAtEntry = StpUtil.isLogin()</code>，用于后续测试步骤。
-         *
-         * @param context 当前框架保存请求或运行时状态的上下文
-         * @throws IOException 读取或写入测试数据时发生 I/O 错误
-         */
         @Override
         public void filter(ContainerRequestContext context) throws IOException {
             CompletionProbe probe = PROBE.get();

@@ -176,8 +176,6 @@ public class ColaArchitectureChecker {
 
     /**
      * 使用 ArchUnit 做类级别的依赖检查。
-     *
-     * @param sourceRoot 待导入并检查的源码或类目录根路径
      */
     private void checkArchUnitRules(String sourceRoot) {
         JavaClasses classes = importClasses(sourceRoot);

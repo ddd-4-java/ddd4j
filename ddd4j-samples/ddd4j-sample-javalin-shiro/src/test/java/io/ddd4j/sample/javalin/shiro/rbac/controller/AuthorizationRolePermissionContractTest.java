@@ -8,14 +8,8 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * 通过 <code>create.setCode()</code>、<code>create.setName()</code>、<code>create.setPermissions()</code> 验证 <code>AuthorizationRolePermissionContract</code> 的运行行为。
- */
 class AuthorizationRolePermissionContractTest {
 
-    /**
-     * 验证<code>create.code()</code> 等于 <code>create.getCode()</code>，<code>create.name()</code> 等于 <code>create.getName()</code>，<code>update.hashCode()</code> 等于 <code>sameUpdate.hashCode()</code>。
-     */
     @Test
     void roleRequestsRetainMutableBeanAndArrayValueContract() {
         AuthorizationController.CreateRoleRequest create = new AuthorizationController.CreateRoleRequest();
@@ -43,9 +37,6 @@ class AuthorizationRolePermissionContractTest {
         assertEquals(sameUpdate.hashCode(), update.hashCode());
     }
 
-    /**
-     * 验证<code>request.code()</code> 等于 <code>request.getCode()</code>，<code>request.description()</code> 等于 <code>request.getDescription()</code>，<code>request.hashCode()</code> 等于 <code>same.hashCode()</code>。
-     */
     @Test
     void permissionRequestRetainsMutableBeanContract() {
         AuthorizationController.CreatePermissionRequest request =
@@ -60,9 +51,6 @@ class AuthorizationRolePermissionContractTest {
         assertEquals(same.hashCode(), request.hashCode());
     }
 
-    /**
-     * 验证<code>user.loginId()</code> 等于 <code>user.getLoginId()</code>，<code>user.displayName()</code> 等于 <code>user.getDisplayName()</code>，<code>permission.description()</code> 等于 <code>permission.getDescription()</code>。
-     */
     @Test
     void viewsRetainReadOnlyBeanAndValueContract() {
         Set<String> roles = new HashSet<>(Arrays.asList("admin"));

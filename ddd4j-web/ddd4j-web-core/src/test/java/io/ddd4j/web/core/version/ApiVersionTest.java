@@ -25,9 +25,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class ApiVersionTest {
 
-    /**
-     * 验证<code>ApiVersion.parse("v2").toString()</code> 等于 <code>"2.0.0"</code>，<code>ApiVersion.parse("2").toString()</code> 等于 <code>"2.0.0"</code>，<code>parsed.patch()</code> 等于 <code>2</code>。
-     */
     @Test
     void parseAcceptsCommonForms() {
         assertEquals("2.0.0", ApiVersion.parse("v2").toString());
@@ -42,9 +39,6 @@ class ApiVersionTest {
         assertEquals(2, parsed.patch());
     }
 
-    /**
-     * 验证<code>ApiVersion.parse("2.1")</code> 等于 <code>ApiVersion.parse("2.1.0")</code>，<code>ApiVersion.parse("v2.1")</code> 等于 <code>ApiVersion.parse("2.1.0")</code>，<code>ApiVersion.parse("2.1").hashCode()</code> 等于 <code>ApiVersion.parse("2.1.0").hashCode()</code>。
-     */
     @Test
     void missingSegmentsAreZeroPadded() {
         //规格 Scenario：缺失段补零等价（2.1 == 2.1.0）。
@@ -57,9 +51,6 @@ class ApiVersionTest {
         assertEquals(ApiVersion.parse("2.1.0").hashCode(), ApiVersion.parse("2.1").hashCode());
     }
 
-    /**
-     * 验证<code>ApiVersion.parse("2.10.0").compareTo(ApiVersion.parse("2.9.0")) &gt; 0</code>为真，<code>ApiVersion.parse("2.9.1").compareTo(ApiVersion.parse("2.10.0")) &lt; 0</code>为真，<code>ApiVersion.parse("2.10.0").compareTo(ApiVersion.parse("2.10.0"))</code> 等于 <code>0</code>。
-     */
     @Test
     void minorVersionsCompareNumerically() {
         //规格 Scenario：次版本数值比较（2.10.0 > 2.9.0，非字典序）。
@@ -70,9 +61,6 @@ class ApiVersionTest {
         assertEquals(0, ApiVersion.parse("2.10.0").compareTo(ApiVersion.parse("2.10.0")));
     }
 
-    /**
-     * 验证<code>ApiVersion.parse(illegal)</code> 抛出 <code>IllegalArgumentException.class</code>，<code>ApiVersion.parse(null)</code> 抛出 <code>IllegalArgumentException.class</code>，<code>ApiVersion.of(1, -1, 0)</code> 抛出 <code>IllegalArgumentException.class</code>。
-     */
     @Test
     void rejectsIllegalForms() {
         String[] illegals = {"", "  ", "2.x", "vx", "v", "1.2.3.4", "-1", "2..1", "abc", "2.1.", "+2", "9999999999999"};
@@ -85,9 +73,6 @@ class ApiVersionTest {
         assertThrows(IllegalArgumentException.class, () -> ApiVersion.of(1, -1, 0));
     }
 
-    /**
-     * 验证<code>twoOne</code> 等于 <code>twoOne</code>，<code>twoOneFull</code> 等于 <code>twoOne</code>，<code>twoOne.isCompatibleWith(null)</code>为假。
-     */
     @Test
     void equalsHashCodeAndCompatibility() {
         ApiVersion twoOne = ApiVersion.parse("2.1");
@@ -104,9 +89,6 @@ class ApiVersionTest {
         assertFalse(twoOne.isCompatibleWith(null));
     }
 
-    /**
-     * 验证<code>ApiVersion.parse("1.9.9").compareTo(ApiVersion.parse("2.0.0")) &lt; 0</code>为真，<code>ApiVersion.of(2, 0, 1).compareTo(ApiVersion.parse("2.0.0")) &gt; 0</code>为真，<code>ApiVersion.parse("1.0.0").compareTo(null)</code> 抛出 <code>NullPointerException.class</code>。
-     */
     @Test
     void compareToOrdersBySegmentInSequence() {
         assertTrue(ApiVersion.parse("1.9.9").compareTo(ApiVersion.parse("2.0.0")) < 0);

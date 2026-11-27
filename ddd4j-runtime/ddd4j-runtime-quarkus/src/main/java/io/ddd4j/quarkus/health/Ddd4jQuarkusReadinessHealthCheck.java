@@ -32,9 +32,6 @@ import java.util.Objects;
 @ApplicationScoped
 public class Ddd4jQuarkusReadinessHealthCheck implements HealthCheck {
 
-    /**
-     * 汇总当前组件就绪状态的注册表。
-     */
     private final RuntimeReadinessRegistry readinessRegistry;
 
     /**
@@ -48,11 +45,6 @@ public class Ddd4jQuarkusReadinessHealthCheck implements HealthCheck {
                 "readinessRegistry must not be null");
     }
 
-    /**
-     * 将 DDD4J 就绪报告转换为 MicroProfile 健康检查结果。
-     *
-     * @return Quarkus 就绪端点返回的结果
-     */
     @Override
     public HealthCheckResponse call() {
         ReadinessReport report = readinessRegistry.readiness();

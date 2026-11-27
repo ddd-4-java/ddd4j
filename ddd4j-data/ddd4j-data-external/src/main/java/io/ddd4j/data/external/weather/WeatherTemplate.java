@@ -66,9 +66,6 @@ public class WeatherTemplate {
      * HTTP 客户端
      */
     private final HttpClient httpClient;
-    /**
-     * 天气服务请求使用的地址模板。
-     */
     private final String weatherUrlTemplate;
 
     /**
@@ -80,21 +77,10 @@ public class WeatherTemplate {
         this(httpClient, SOJSON_WEATHER_URL);
     }
 
-    /**
-     * 使用指定接口地址模板创建天气查询客户端。
-     *
-     * @param weatherUrlTemplate 天气接口请求地址模板
-     */
     WeatherTemplate(String weatherUrlTemplate) {
         this(HttpClient.newHttpClient(), weatherUrlTemplate);
     }
 
-    /**
-     * 用给定值初始化 <code>WeatherTemplate</code> 实例。
-     *
-     * @param httpClient         HTTP 客户端
-     * @param weatherUrlTemplate <code>weatherUrlTemplate</code> 字段
-     */
     private WeatherTemplate(HttpClient httpClient, String weatherUrlTemplate) {
         this.httpClient = httpClient;
         this.weatherUrlTemplate = Objects.requireNonNull(weatherUrlTemplate, "weatherUrlTemplate must not be null");

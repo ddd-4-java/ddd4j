@@ -32,25 +32,10 @@ import java.util.Objects;
  */
 public final class SqlObservation {
 
-    /**
-     * 执行 SQL 对应的 MyBatis 映射语句标识。
-     */
     private final String statementId;
-    /**
-     * 本次 SQL 执行的语句文本。
-     */
     private final String sql;
-    /**
-     * 按原参数位置排序的观测参数。
-     */
     private final List<String> sortedParams;
-    /**
-     * SQL 执行耗时，单位为纳秒。
-     */
     private final long elapsedNanos;
-    /**
-     * SQL 执行失败时记录的异常。
-     */
     private final Throwable error;
 
     /**
@@ -182,9 +167,6 @@ public final class SqlObservation {
 
     /**
      * 按全部观测字段判断值相等，保证跨版本去重语义一致。
-     *
-     * @param o 待比较的对象
-     * @return 另一观测具有相同字段值时返回 true
      */
     @Override
     public boolean equals(Object o) {
@@ -204,8 +186,6 @@ public final class SqlObservation {
 
     /**
      * 按 record 组件顺序计算哈希，引用字段允许为空。
-     *
-     * @return 根据观测字段计算的散列值
      */
     @Override
     public int hashCode() {
@@ -219,8 +199,6 @@ public final class SqlObservation {
 
     /**
      * 返回与其他版本 record 相同的观测文本。
-     *
-     * @return 用于诊断的 SQL 观测内容
      */
     @Override
     public String toString() {

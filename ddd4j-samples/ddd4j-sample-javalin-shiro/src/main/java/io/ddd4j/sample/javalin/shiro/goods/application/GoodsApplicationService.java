@@ -33,13 +33,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class GoodsApplicationService {
 
-    /**
-     * 生成示例商品主键使用的进程内序列。
-     */
     private static final AtomicLong ID_GENERATOR = new AtomicLong(1000L);
-    /**
-     * 用于持久化及读取示例商品模型的仓储。
-     */
     private final GoodsRepository repository;
 
     /**
@@ -197,44 +191,24 @@ public class GoodsApplicationService {
         return query.count();
     }
 
-    /**
-     * 检查商品编码是否满足创建或查询规则。
-     *
-     * @param code 待检查的商品属性
-     */
     private void validateCode(String code) {
         if (Objects.isNull(code) || StrKit.isBlank(code)) {
             throw new BizRuntimeException("goods.code.invalid", "code must not be blank");
         }
     }
 
-    /**
-     * 检查商品名称是否满足写入规则。
-     *
-     * @param name 待检查的商品属性
-     */
     private void validateName(String name) {
         if (Objects.isNull(name) || StrKit.isBlank(name)) {
             throw new BizRuntimeException("goods.name.invalid", "name must not be blank");
         }
     }
 
-    /**
-     * 检查商品价格是否满足写入规则。
-     *
-     * @param price 待检查的商品属性
-     */
     private void validatePrice(BigDecimal price) {
         if (Objects.isNull(price) || price.signum() < 0) {
             throw new BizRuntimeException("goods.price.invalid", "price must be >= 0");
         }
     }
 
-    /**
-     * 递增当前示例进程的商品主键序列。
-     *
-     * @return 新生成的商品主键
-     */
     private Long nextId() {
         return ID_GENERATOR.incrementAndGet();
     }

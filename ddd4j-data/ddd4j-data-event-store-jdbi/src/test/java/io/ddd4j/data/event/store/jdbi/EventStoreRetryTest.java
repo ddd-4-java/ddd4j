@@ -32,11 +32,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class EventStoreRetryTest {
 
-    /**
-     * 验证<code>result</code> 等于 <code>"ok"</code>，<code>sleeper.calls.isEmpty()</code>为真。
-     *
-     * @throws Exception 执行被测拦截器或调用失败
-     */
     @Test
     void 首次成功_不调用Sleeper() throws Exception {
         RecordingSleeper sleeper = new RecordingSleeper();
@@ -48,11 +43,6 @@ class EventStoreRetryTest {
         assertTrue(sleeper.calls.isEmpty());
     }
 
-    /**
-     * 验证<code>result</code> 等于 <code>"ok"</code>，<code>sleeper.calls.size()</code> 等于 <code>1</code>。
-     *
-     * @throws Exception 执行被测拦截器或调用失败
-     */
     @Test
     void 第二次成功_调用一次Sleeper() throws Exception {
         RecordingSleeper sleeper = new RecordingSleeper();
@@ -70,9 +60,6 @@ class EventStoreRetryTest {
         assertEquals(1, sleeper.calls.size());
     }
 
-    /**
-     * 验证被测调用 抛出 <code>SQLIntegrityConstraintViolationException.class</code>，<code>sleeper.calls.size()</code> 等于 <code>2</code>。
-     */
     @Test
     void 可重试异常_耗尽所有重试后抛出() {
         RecordingSleeper sleeper = new RecordingSleeper();
@@ -86,9 +73,6 @@ class EventStoreRetryTest {
         assertEquals(2, sleeper.calls.size());
     }
 
-    /**
-     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，<code>attempts.get()</code> 等于 <code>1</code>，<code>sleeper.calls.isEmpty()</code>为真。
-     */
     @Test
     void IllegalStateException_乐观锁失败_不重试_立即抛出() {
         RecordingSleeper sleeper = new RecordingSleeper();
@@ -105,44 +89,29 @@ class EventStoreRetryTest {
         assertTrue(sleeper.calls.isEmpty());
     }
 
-    /**
-     * 验证<code>EventStoreRetry.isRetriable( new SQLException("duplicate key for constraint uk_position"))</code>为真。
-     */
     @Test
     void SQLException_含uk_position关键字_判定可重试() {
         assertTrue(EventStoreRetry.isRetriable(
                 new SQLException("duplicate key for constraint uk_position")));
     }
 
-    /**
-     * 验证<code>EventStoreRetry.isRetriable( new SQLException("Unique constraint violation detected"))</code>为真。
-     */
     @Test
     void SQLException_含unique_constraint关键字_判定可重试() {
         assertTrue(EventStoreRetry.isRetriable(
                 new SQLException("Unique constraint violation detected")));
     }
 
-    /**
-     * 验证<code>EventStoreRetry.isRetriable(new RuntimeException("other"))</code>为假，<code>EventStoreRetry.isRetriable(new NullPointerException())</code>为假。
-     */
     @Test
     void 任意RuntimeException_非IllegalState_不可重试() {
         assertFalse(EventStoreRetry.isRetriable(new RuntimeException("other")));
         assertFalse(EventStoreRetry.isRetriable(new NullPointerException()));
     }
 
-    /**
-     * 验证<code>EventStoreRetry.isRetriable(new SQLException("connection lost"))</code>为假。
-     */
     @Test
     void SQLException_不含关键字_不可重试() {
         assertFalse(EventStoreRetry.isRetriable(new SQLException("connection lost")));
     }
 
-    /**
-     * 验证<code>EventStoreRetry.isRetriable(wrapper)</code>为真，<code>EventStoreRetry.isRetriable(outer)</code>为真。
-     */
     @Test
     void 嵌套cause中的SQLException_也判定可重试() {
         SQLException sqlCause = new SQLException("uk_position");
@@ -152,9 +121,6 @@ class EventStoreRetryTest {
         assertTrue(EventStoreRetry.isRetriable(outer));
     }
 
-    /**
-     * 验证<code>delay &gt;= minimum &amp;&amp; delay &lt;= minimum + 10L</code>为真。
-     */
     @Test
     void 退避延迟_指数增长() {
         for (int attempt = 1; attempt <= 5; attempt++) {
@@ -164,9 +130,6 @@ class EventStoreRetryTest {
         }
     }
 
-    /**
-     * 验证被测调用 抛出 <code>IllegalArgumentException.class</code>，<code>error.getMessage().contains("maxAttempts")</code>为真。
-     */
     @Test
     void maxAttempts_小于1_构造失败() {
         IllegalArgumentException error = assertThrows(IllegalArgumentException.class,
@@ -175,9 +138,6 @@ class EventStoreRetryTest {
         assertTrue(error.getMessage().contains("maxAttempts"));
     }
 
-    /**
-     * 验证被测调用 抛出 <code>IllegalArgumentException.class</code>，<code>error.getMessage().contains("baseDelayMillis")</code>为真。
-     */
     @Test
     void baseDelayMillis_负数_构造失败() {
         IllegalArgumentException error = assertThrows(IllegalArgumentException.class,
@@ -186,9 +146,6 @@ class EventStoreRetryTest {
         assertTrue(error.getMessage().contains("baseDelayMillis"));
     }
 
-    /**
-     * 验证<code>EventStoreRetry.isRetriable(wrapped)</code>为真。
-     */
     @Test
     void 任意RuntimeException_message含uk_position关键字_判定可重试() {
         // 模拟 Hibernate 把 SQLException 包装为 PersistenceException 时，
@@ -198,9 +155,6 @@ class EventStoreRetryTest {
         assertTrue(EventStoreRetry.isRetriable(wrapped));
     }
 
-    /**
-     * 验证<code>EventStoreRetry.isRetriable(wrapped)</code>为真。
-     */
     @Test
     void 任意RuntimeException_message含unique_index关键字_判定可重试() {
         // H2 错误信息原文："Unique index uk_position violation"
@@ -208,18 +162,12 @@ class EventStoreRetryTest {
         assertTrue(EventStoreRetry.isRetriable(wrapped));
     }
 
-    /**
-     * 验证<code>EventStoreRetry.isRetriable(wrapped)</code>为真。
-     */
     @Test
     void 任意RuntimeException_message含duplicate_entry关键字_判定可重试() {
         RuntimeException wrapped = new RuntimeException("Duplicate entry 'x' for key 'uk_position'");
         assertTrue(EventStoreRetry.isRetriable(wrapped));
     }
 
-    /**
-     * 验证<code>EventStoreRetry.isRetriable(outer)</code>为真。
-     */
     @Test
     void cause链中任意Throwable_message含uk_position_判定可重试() {
         // 深层嵌套场景：顶层 RuntimeException → cause RuntimeException → message 含关键字
@@ -228,9 +176,6 @@ class EventStoreRetryTest {
         assertTrue(EventStoreRetry.isRetriable(outer));
     }
 
-    /**
-     * 验证<code>EventStoreRetry.isRetriable(wrapped)</code>为真。
-     */
     @Test
     void cause链中类名ConstraintViolationException_判定可重试() {
         // 模拟 Hibernate ConstraintViolationException：编译期不可见，仅按类名匹配。
@@ -239,11 +184,6 @@ class EventStoreRetryTest {
         assertTrue(EventStoreRetry.isRetriable(wrapped));
     }
 
-    /**
-     * 验证被测调用 抛出 <code>RuntimeException.class</code>，<code>error.getMessage().contains("interrupted")</code>为真，<code>Thread.currentThread().isInterrupted()</code>为真。
-     *
-     * @throws Exception 执行被测拦截器或调用失败
-     */
     @Test
     void 线程中断_sleeper被中断_恢复中断标志() throws Exception {
         EventStoreRetry.Sleeper interruptingSleeper = millis -> {
@@ -264,9 +204,6 @@ class EventStoreRetryTest {
         }
     }
 
-    /**
-     * 验证被测调用 抛出 <code>SQLException.class</code>，<code>attempts.get()</code> 等于 <code>1</code>，<code>sleeper.calls.isEmpty()</code>为真。
-     */
     @Test
     void nonRetriableException_thrownImmediately() {
         RecordingSleeper sleeper = new RecordingSleeper();
@@ -286,16 +223,8 @@ class EventStoreRetryTest {
      * 桩 Sleeper：仅记录调用次数与延迟，不真正睡眠。
      */
     static final class RecordingSleeper implements EventStoreRetry.Sleeper {
-        /**
-         * 记录被测入口实际触发的调用。
-         */
         final List<Long> calls = new ArrayList<>();
 
-        /**
-         * 调用 <code>calls.add()</code> 执行当前夹具操作。
-         *
-         * @param millis 等待或推进的毫秒数
-         */
         @Override
         public void sleep(long millis) {
             calls.add(millis);
@@ -306,11 +235,6 @@ class EventStoreRetryTest {
      * 仅用简单类名触发兼容路径；消息不含任何可重试关键字。
      */
     private static final class ConstraintViolationException extends RuntimeException {
-        /**
-         * 使用 <code>super()</code> 初始化 <code>ConstraintViolationException</code> 测试夹具。
-         *
-         * @param message 测试传递或用于诊断的消息
-         */
         private ConstraintViolationException(String message) {
             super(message);
         }

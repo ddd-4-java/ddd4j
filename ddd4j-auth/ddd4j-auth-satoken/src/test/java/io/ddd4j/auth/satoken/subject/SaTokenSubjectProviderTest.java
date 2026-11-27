@@ -26,9 +26,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class SaTokenSubjectProviderTest {
 
-    /**
-     * 验证<code>subject</code>非空。
-     */
     @Test
     void getSubject_shouldReturnNonNullSubject() {
         SaTokenSubjectProvider provider = new SaTokenSubjectProvider();
@@ -38,9 +35,6 @@ class SaTokenSubjectProviderTest {
         assertThat(subject).isNotNull();
     }
 
-    /**
-     * 验证<code>subject</code> 的类型为 <code>SaTokenSubject.class</code>。
-     */
     @Test
     void getSubject_shouldReturnSaTokenSubjectInstance() {
         SaTokenSubjectProvider provider = new SaTokenSubjectProvider();
@@ -50,9 +44,6 @@ class SaTokenSubjectProviderTest {
         assertThat(subject).isInstanceOf(SaTokenSubject.class);
     }
 
-    /**
-     * 验证<code>first</code> 指向不同实例 <code>second</code>。
-     */
     @Test
     void getSubject_shouldReturnNewInstanceEachCall() {
         SaTokenSubjectProvider provider = new SaTokenSubjectProvider();
@@ -63,9 +54,6 @@ class SaTokenSubjectProviderTest {
         assertThat(first).isNotSameAs(second);
     }
 
-    /**
-     * 验证<code>subject</code>非空，<code>subject</code> 的类型为 <code>SaTokenSubject.class</code>。
-     */
     @Test
     void getSubjectByRealm_shouldReturnNonNullSubject() {
         SaTokenSubjectProvider provider = new SaTokenSubjectProvider();
@@ -76,9 +64,6 @@ class SaTokenSubjectProviderTest {
         assertThat(subject).isInstanceOf(SaTokenSubject.class);
     }
 
-    /**
-     * 验证<code>subject</code>非空。
-     */
     @Test
     void getSubjectByRealm_withNullRealm_shouldStillReturnSubject() {
         SaTokenSubjectProvider provider = new SaTokenSubjectProvider();

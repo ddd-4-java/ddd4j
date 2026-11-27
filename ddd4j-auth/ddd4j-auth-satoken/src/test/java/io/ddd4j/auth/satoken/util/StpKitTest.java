@@ -40,27 +40,12 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * 验证 <code>StpKit</code> 在<code>commonPayloadConstantsResolveClaims</code>、<code>typedIdAccessorsPreferDocumentedClaims</code>、<code>infoIdStringAndIntegerReturnNull</code>、<code>infoIdLong</code>等操作中的行为契约。
- */
 class StpKitTest {
 
-    /**
-     * 进入测试场景前注册的配置。
-     */
     private SaTokenConfig originalConfig;
-    /**
-     * 进入测试场景前注册的会话存储。
-     */
     private SaTokenDao originalDao;
-    /**
-     * 进入测试场景前注册的认证逻辑。
-     */
     private StpLogic originalLogic;
 
-    /**
-     * 测试前依次恢复或安装配置<code>SaManager</code>、恢复或安装原生存储<code>SaManager</code>。
-     */
     @BeforeEach
     void setUp() {
         originalConfig = SaManager.getConfig();
@@ -81,9 +66,6 @@ class StpKitTest {
         SaTokenSecurityConfigurer.configure(properties);
     }
 
-    /**
-     * 测试后依次清除上下文<code>cn.dev33.satoken.context.mock.SaTokenContextMockUtil</code>、恢复或安装登录逻辑<code>StpUtil</code>、恢复或安装原生存储<code>SaManager</code>、恢复或安装配置<code>SaManager</code>。
-     */
     @AfterEach
     void tearDown() {
         cn.dev33.satoken.context.mock.SaTokenContextMockUtil.clearContext();
@@ -92,9 +74,6 @@ class StpKitTest {
         SaManager.setConfig(originalConfig);
     }
 
-    /**
-     * 调用 <code>extras.put()</code>、<code>StpUtil.login()</code> 执行当前夹具操作。
-     */
     private void loginWithExtras() {
         Map<String, Object> extras = new HashMap<>();
         extras.put("userId", 1001L);
@@ -108,9 +87,6 @@ class StpKitTest {
         StpUtil.login(1001L, new SaLoginParameter().setTimeout(600).setExtraData(extras));
     }
 
-    /**
-     * 验证<code>StpKit.getLoginIdAsLong()</code> 等于 <code>Long.valueOf(1001)</code>，<code>StpKit.getLoginIdAsString()</code> 等于 <code>"1001"</code>，<code>StpKit.getLoginIdAsInteger()</code> 等于 <code>Integer.valueOf(1001)</code>。
-     */
     @Test
     void loginIdAccessorsReturnTypedValues() {
         loginWithExtras();
@@ -120,9 +96,6 @@ class StpKitTest {
         assertEquals(Integer.valueOf(1001), StpKit.getLoginIdAsInteger());
     }
 
-    /**
-     * 验证<code>((Number) StpKit.getUserId()).longValue()</code> 等于 <code>1001L</code>，<code>StpKit.getUserIdAsLong().longValue()</code> 等于 <code>1001L</code>，<code>StpKit.getUserIdAsInteger()</code> 等于 <code>Integer.valueOf(1001)</code>。
-     */
     @Test
     void userIdAccessorsReadExtraData() {
         loginWithExtras();
@@ -133,9 +106,6 @@ class StpKitTest {
         assertEquals(Integer.valueOf(1001), StpKit.getUserIdAsInteger());
     }
 
-    /**
-     * 验证<code>((Number) StpKit.getOrgId()).longValue()</code> 等于 <code>10L</code>，<code>StpKit.getOrgIdAsString()</code> 等于 <code>"10"</code>，<code>StpKit.getRoleIdAsLong().longValue()</code> 等于 <code>7L</code>。
-     */
     @Test
     void orgAndRoleAccessorsReadTheirOwnClaims() {
         loginWithExtras();
@@ -150,12 +120,6 @@ class StpKitTest {
         assertEquals(7L, StpKit.getRoleIdAsLong().longValue());
     }
 
-    /**
-     * 验证<code>claims.get(suppliedKey)</code> 等于 <code>"tenant-1"</code>，<code>claims.containsKey(absentKey)</code>为假。
-     *
-     * @param suppliedKey 传给 <code>new SaTokenSubject</code> 的 <code>String</code> 输入
-     * @param absentKey   传给 <code>assertFalse()</code> 的 <code>String</code> 输入
-     */
     @ParameterizedTest
     @CsvSource({"tenant_id,tenantId", "tenantId,tenant_id"})
     void signedJwtPreservesSuppliedTenantKey(String suppliedKey, String absentKey) {
@@ -168,9 +132,6 @@ class StpKitTest {
         assertEquals("tenant-1", StpKit.getExtraAs(token, suppliedKey, String.class));
     }
 
-    /**
-     * 验证<code>StpKit.getExtraAsString("tenant_id")</code> 等于 <code>"tenant-1"</code>，<code>SaConstants.PAYLOAD_TENANT_ID</code> 等于 <code>"tenant_id"</code>，<code>SaConstants.PAYLOAD_ORG_ID</code> 等于 <code>"org_id"</code>。
-     */
     @Test
     void commonPayloadConstantsResolveClaimsWithoutChangingExistingKeys() {
         loginWithExtras();
@@ -186,9 +147,6 @@ class StpKitTest {
         assertEquals("org_id", SaConstants.PAYLOAD_ORG_ID);
     }
 
-    /**
-     * 验证<code>StpKit.getUserIdAsString()</code> 等于 <code>"11"</code>，<code>StpKit.getOrgIdAsLong().longValue()</code> 等于 <code>21L</code>，<code>StpKit.getRoleIdAsInteger().intValue()</code> 等于 <code>31</code>。
-     */
     @Test
     void typedIdAccessorsPreferDocumentedClaimsWhenBothKeyStylesExist() {
         new SaTokenSubject().login(AuthRequest.of("mixed-keys")
@@ -201,9 +159,6 @@ class StpKitTest {
         assertEquals(31, StpKit.getRoleIdAsInteger().intValue());
     }
 
-    /**
-     * 验证<code>StpKit.class.getMethod("getXqOrgIdAsString").invoke(null)</code> 等于 <code>"042"</code>，<code>StpKit.class.getMethod("getXqOrgIdAsInteger").invoke(null)</code> 等于 <code>Integer.valueOf(42)</code>，<code>StpKit.class.getMethod("getIdentityIdAsInteger").invoke(null)</code> 等于 <code>Integer.valueOf(7)</code>。
-     */
     @Test
     void campusSchoolAndIdentityAccessorsReadDocumentedClaims() {
         new SaTokenSubject().login(AuthRequest.of("campus-login")
@@ -220,9 +175,6 @@ class StpKitTest {
                 () -> assertEquals(Integer.valueOf(7), StpKit.class.getMethod("getIdentityIdAsInteger").invoke(null)));
     }
 
-    /**
-     * 验证<code>StpKit.class.getMethod("getXqOrgIdAsString").invoke(null)</code>为空，<code>StpKit.class.getMethod("getXqOrgIdAsInteger").invoke(null)</code>为空，<code>StpKit.class.getMethod("getIdentityIdAsInteger").invoke(null)</code>为空。
-     */
     @Test
     void campusSchoolAndIdentityAccessorsReturnNullForMissingClaims() {
         loginWithExtras();
@@ -235,9 +187,6 @@ class StpKitTest {
                 () -> assertNull(StpKit.class.getMethod("getIdentityIdAsInteger").invoke(null)));
     }
 
-    /**
-     * 验证<code>claims.get("info_id")</code> 等于 <code>"042"</code>，<code>StpKit.class.getMethod("getInfoIdAsString").invoke(null)</code> 等于 <code>"042"</code>，<code>StpKit.class.getMethod("getInfoIdAsInteger").invoke(null)</code> 等于 <code>Integer.valueOf(42)</code>。
-     */
     @Test
     void infoIdStringAndIntegerReadOnlyTheInfoClaim() {
         String token = new SaTokenSubject().login(AuthRequest.of("info-login")
@@ -252,9 +201,6 @@ class StpKitTest {
                 () -> assertEquals(Integer.valueOf(42), StpKit.class.getMethod("getInfoIdAsInteger").invoke(null)));
     }
 
-    /**
-     * 验证<code>claims.containsKey("info_id")</code>为假，<code>StpKit.class.getMethod("getInfoIdAsString").invoke(null)</code>为空，<code>StpKit.class.getMethod("getInfoIdAsInteger").invoke(null)</code>为空。
-     */
     @Test
     void infoIdStringAndIntegerReturnNullWithoutTheInfoClaim() {
         String token = new SaTokenSubject().login(AuthRequest.of("missing-info-login")
@@ -268,11 +214,6 @@ class StpKitTest {
                 () -> assertNull(StpKit.class.getMethod("getInfoIdAsInteger").invoke(null)));
     }
 
-    /**
-     * 验证<code>claims.get("org_id")</code> 等于 <code>"081"</code>，<code>claims.get("info_id")</code> 等于 <code>"042"</code>，<code>accessor.invoke(null)</code> 等于 <code>Long.valueOf(81)</code>。
-     *
-     * @throws ReflectiveOperationException 无法反射访问测试所需的构件
-     */
     @Test
     void infoIdLongReadsHistoricalOrganizationClaimFromSignedToken() throws ReflectiveOperationException {
         String token = new SaTokenSubject().login(AuthRequest.of("legacy-info-long")
@@ -286,11 +227,6 @@ class StpKitTest {
         assertEquals(Long.valueOf(81), accessor.invoke(null));
     }
 
-    /**
-     * 验证<code>claims.containsKey("org_id")</code>为假，<code>accessor.invoke(null)</code>为空。
-     *
-     * @throws ReflectiveOperationException 无法反射访问测试所需的构件
-     */
     @Test
     void infoIdLongReturnsNullWithoutHistoricalOrganizationClaim() throws ReflectiveOperationException {
         String token = new SaTokenSubject().login(AuthRequest.of("legacy-info-long-missing")
@@ -303,9 +239,6 @@ class StpKitTest {
         assertNull(accessor.invoke(null));
     }
 
-    /**
-     * 验证<code>accessor.invoke(null)</code> 抛出 <code>InvocationTargetException.class</code>。
-     */
     @Test
     void infoIdLongPreservesInvalidOrganizationClaimError() {
         new SaTokenSubject().login(AuthRequest.of("legacy-info-long-invalid")
@@ -316,9 +249,6 @@ class StpKitTest {
         assertInstanceOf(NumberFormatException.class, error.getCause());
     }
 
-    /**
-     * 验证<code>StpKit.getExtraAsString("custom-key")</code> 等于 <code>"custom-value"</code>，<code>StpKit.getExtraAsLong("orgId").longValue()</code> 等于 <code>10L</code>，<code>StpKit.getExtraAsLong("missing-key")</code>为空。
-     */
     @Test
     void getExtraAsAppliesMapperAndTypeConversion() {
         loginWithExtras();
@@ -332,9 +262,6 @@ class StpKitTest {
         assertNull(StpKit.getExtraAsLong("missing-key"));
     }
 
-    /**
-     * 验证<code>kit.getExtraAsString(token, "custom-key")</code> 等于 <code>"custom-value"</code>，<code>StpKit.getExtraAsLong(token, "orgId").longValue()</code> 等于 <code>10L</code>，<code>StpKit.getExtraAs(token, "missing-key", String.class)</code>为空。
-     */
     @Test
     void getExtraAsWithTokenValueReadsSpecificSession() {
         loginWithExtras();
@@ -347,9 +274,6 @@ class StpKitTest {
         assertNull(StpKit.getExtraAs(token, "missing-key", String.class));
     }
 
-    /**
-     * 验证<code>kit.getExtraAsString(token, "custom-key")</code> 等于 <code>"custom-value"</code>，<code>kit.getExtraAsInteger(token, "userId")</code> 等于 <code>Integer.valueOf(1001)</code>。
-     */
     @Test
     void instanceExtraAccessorsDelegate() {
         loginWithExtras();
@@ -360,9 +284,6 @@ class StpKitTest {
         assertEquals(Integer.valueOf(1001), kit.getExtraAsInteger(token, "userId"));
     }
 
-    /**
-     * 验证<code>StpKit.DEFAULT</code>非空，<code>StpKit.ADMIN</code>非空，<code>SaManager.getStpLogic("xx", false)</code> 与…为同一实例 <code>StpKit.XXX</code>。
-     */
     @Test
     void defaultAndNamedStpLogicsAreAvailable() {
         assertNotNull(StpKit.DEFAULT);

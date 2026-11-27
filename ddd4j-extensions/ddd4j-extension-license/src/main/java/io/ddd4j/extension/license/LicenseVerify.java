@@ -35,42 +35,15 @@ import java.util.Objects;
 @Slf4j
 public class LicenseVerify {
 
-    /**
-     * 当前服务接受的许可证主题。
-     */
     private final String subject;
-    /**
-     * 从验证密钥库中选择公钥证书条目的别名。
-     */
     private final String publicAlias;
-    /**
-     * 打开验证密钥库的口令。
-     */
     private final String storePass;
-    /**
-     * 当前待安装和验证的许可证文件路径。
-     */
     private final String licensePath;
-    /**
-     * 保存验证公钥的密钥库文件路径。
-     */
     private final String publicKeysStorePath;
-    /**
-     * 执行许可证约束验证的管理组件。
-     */
     private final CustomLicenseManager licenseManager;
-    /**
-     * 用于关联当前许可证和公钥配置的验证缓存键。
-     */
     private final String cacheKey;
 
-    /**
-     * 最近一次安装及验签是否成功。
-     */
     private volatile boolean installSuccess;
-    /**
-     * 许可证验证结果的缓存存活秒数。
-     */
     private long cacheTtlSeconds = LicenseCache.DEFAULT_TTL_SECONDS;
 
     /**
@@ -97,13 +70,6 @@ public class LicenseVerify {
         this.cacheKey = buildCacheKey();
     }
 
-    /**
-     * 检查许可证配置中的必填文本。
-     *
-     * @param value 待检查的配置值
-     * @param field 用于诊断的配置字段名称
-     * @throws IllegalArgumentException 配置未提供有效文本
-     */
     private static void requireText(String value, String field) {
         if (StrKit.isBlank(value)) {
             throw new IllegalArgumentException(field + " 不能为空");
@@ -208,12 +174,6 @@ public class LicenseVerify {
         return LicenseCache.exists(cacheKey);
     }
 
-    /**
-     * 读取签名信封并用配置公钥验签，通过后解析许可证信息。
-     *
-     * @return 通过签名验证的许可证信息
-     * @throws Exception 文件、密钥、公钥验证或负载解析失败
-     */
     private LicenseInfo readVerifiedLicense() throws Exception {
         SignedLicense signedLicense = SignedLicense.parse(Files.readAllBytes(Paths.get(licensePath)));
         PublicKey publicKey = loadPublicKey();
@@ -230,12 +190,6 @@ public class LicenseVerify {
         return licenseInfo;
     }
 
-    /**
-     * 打开配置的 JKS 密钥库并读取指定证书的公钥。
-     *
-     * @return 许可证验签所用的公钥
-     * @throws Exception 无法读取密钥库或找不到指定证书
-     */
     private PublicKey loadPublicKey() throws Exception {
         KeyStore keyStore = KeyStore.getInstance("JKS");
         try (var inputStream = Files.newInputStream(Paths.get(publicKeysStorePath))) {
@@ -248,11 +202,6 @@ public class LicenseVerify {
         return certificate.getPublicKey();
     }
 
-    /**
-     * 核对主题、有效期和当前环境绑定要求。
-     *
-     * @param licenseInfo 已经解析的许可证信息
-     */
     private void validateLicense(LicenseInfo licenseInfo) {
         if (!Objects.equals(subject, licenseInfo.getSubject())) {
             throw new IllegalStateException("License subject 不匹配");
@@ -263,12 +212,6 @@ public class LicenseVerify {
         licenseManager.validate(licenseInfo);
     }
 
-    /**
-     * 将环境绑定失败与其他许可证验证故障分类。
-     *
-     * @param exception 验证过程中抛出的异常
-     * @return 对外报告的失败类型
-     */
     private LicenseVerificationResult.Status statusFor(Exception exception) {
         String message = exception.getMessage();
         if (Objects.nonNull(message) && (message.contains("IP 校验") || message.contains("MAC 校验") || message.contains("SN 校验"))) {
@@ -277,11 +220,6 @@ public class LicenseVerify {
         return LicenseVerificationResult.Status.INVALID;
     }
 
-    /**
-     * 根据主题、公钥别名及规范化文件路径生成验证缓存键。
-     *
-     * @return 区分当前许可证与验证配置的缓存键
-     */
     private String buildCacheKey() {
         String normalizedLicensePath = Paths.get(licensePath).toAbsolutePath().normalize().toString();
         String normalizedKeyStorePath = Paths.get(publicKeysStorePath).toAbsolutePath().normalize().toString();

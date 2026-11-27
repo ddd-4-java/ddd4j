@@ -19,11 +19,6 @@ package io.ddd4j.extension.qrcode.template;
  */
 public final class QrCodeBlockElement extends QrCodeFrameElement {
 
-    /**
-     * 按构建参数复制二维码占位块的位置、尺寸与层级。
-     *
-     * @param builder 提供占位块边界和叠放顺序的构建器
-     */
     private QrCodeBlockElement(Builder builder) {
         super(builder.x, builder.y, builder.width, builder.height, builder.zIndex);
     }
@@ -43,25 +38,10 @@ public final class QrCodeBlockElement extends QrCodeFrameElement {
      * <p>逐步设置区域坐标、尺寸与层级后构建不可变元素。
      */
     public static final class Builder {
-        /**
-         * 元素在模板画布中的横向像素坐标。
-         */
         private int x;
-        /**
-         * 元素在模板画布中的纵向像素坐标。
-         */
         private int y;
-        /**
-         * 在编码或绘制时使用的像素宽度。
-         */
         private int width;
-        /**
-         * 在编码或绘制时使用的像素高度。
-         */
         private int height;
-        /**
-         * 重叠元素在画布中的叠放顺序。
-         */
         private int zIndex;
 
         /**

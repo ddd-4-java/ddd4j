@@ -36,11 +36,6 @@ import static org.mockito.Mockito.*;
  */
 class ActiveMQAdapterContractTest {
 
-    /**
-     * 在测试框架中执行 <code>mock()</code>、<code>factory.createConnection()</code>、<code>connection.createSession()</code>，验证该场景。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void shouldPublishCausalHeadersAsNativeJmsProperties() throws Exception {
         ActiveMQConnectionFactory factory = mock(ActiveMQConnectionFactory.class);
@@ -81,11 +76,6 @@ class ActiveMQAdapterContractTest {
         }
     }
 
-    /**
-     * 验证<code>factory.toURI().toString().contains("localhost")</code>为真。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void shouldConstructArtemisFactoryWithoutContainer() throws Exception {
         try (ActiveMQConnectionFactory factory =
@@ -94,11 +84,6 @@ class ActiveMQAdapterContractTest {
         }
     }
 
-    /**
-     * 验证<code>ActiveMQClient.messageId(message)</code> 等于 <code>"test-id"</code>，<code>acknowledgment.isAcknowledged()</code>为真。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void shouldReadMessageIdAndRequeueOnNack() throws Exception {
         Message message = mock(Message.class);
@@ -115,11 +100,6 @@ class ActiveMQAdapterContractTest {
         assertTrue(acknowledgment.isAcknowledged());
     }
 
-    /**
-     * 验证<code>ActiveMQClient.messageId(message)</code> 等于 <code>"legacy-id"</code>。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void shouldFallbackToLegacyWhenPrimaryMissing() throws Exception {
         Message message = mock(Message.class);
@@ -129,11 +109,6 @@ class ActiveMQAdapterContractTest {
         assertEquals("legacy-id", ActiveMQClient.messageId(message));
     }
 
-    /**
-     * 验证<code>client.initProducer(new MQProperties())</code> 抛出 <code>IllegalStateException.class</code>，<code>failure.getCause()</code> 与…为同一实例 <code>startFailure</code>。
-     *
-     * @throws Exception 准备或释放被测运行资源时失败
-     */
     @Test
     void shouldCloseConnectionWhenStartFails() throws Exception {
         ActiveMQConnectionFactory factory = mock(ActiveMQConnectionFactory.class);
@@ -152,11 +127,6 @@ class ActiveMQAdapterContractTest {
         verify(connection, times(1)).close();
     }
 
-    /**
-     * 在测试框架中执行 <code>mock()</code>、<code>factory.createConnection()</code>、<code>connection.createSession()</code>，验证该场景。
-     *
-     * @throws Exception 反射访问被测成员时失败
-     */
     @Test
     void shouldCloseConsumerSessionAndConnectionInReverseOrderOnlyOnce() throws Exception {
         ActiveMQConnectionFactory factory = mock(ActiveMQConnectionFactory.class);
@@ -192,9 +162,6 @@ class ActiveMQAdapterContractTest {
         order.verify(connection).close();
     }
 
-    /**
-     * 作为空实现的测试替身，调用时保持当前夹具状态。
-     */
     @SuppressWarnings("unused")
     private void listenerMethod() {
     }

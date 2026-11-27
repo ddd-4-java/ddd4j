@@ -32,9 +32,6 @@ import static org.mockito.Mockito.*;
  */
 class DddCdiExtensionContractTest {
 
-    /**
-     * 验证<code>scope.getValue().annotationType()</code> 等于 <code>ApplicationScoped.class</code>。
-     */
     @Test
     void addsApplicationScopeToDddService() {
         ProcessAnnotatedType<Object> event = event();
@@ -51,9 +48,6 @@ class DddCdiExtensionContractTest {
         assertEquals(ApplicationScoped.class, scope.getValue().annotationType());
     }
 
-    /**
-     * 在测试框架中执行 <code>event()</code>、<code>event.getAnnotatedType()</code>、<code>type.isAnnotationPresent()</code>，验证该场景。
-     */
     @Test
     void preservesExistingApplicationScope() {
         ProcessAnnotatedType<Object> event = event();
@@ -66,9 +60,6 @@ class DddCdiExtensionContractTest {
         verify(event, never()).configureAnnotatedType();
     }
 
-    /**
-     * 在测试框架中执行 <code>event()</code>、<code>never()</code>，验证该场景。
-     */
     @Test
     void ignoresNonDddType() {
         ProcessAnnotatedType<Object> event = event();
@@ -78,11 +69,6 @@ class DddCdiExtensionContractTest {
         verify(event, never()).configureAnnotatedType();
     }
 
-    /**
-     * 读取 <code>event</code> 供当前测试使用。
-     *
-     * @return 当前测试使用的结果，取自 <code>event</code>
-     */
     @SuppressWarnings("unchecked")
     private ProcessAnnotatedType<Object> event() {
         ProcessAnnotatedType<Object> event = mock(ProcessAnnotatedType.class);

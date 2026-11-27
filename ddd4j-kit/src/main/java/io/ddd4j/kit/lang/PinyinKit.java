@@ -29,9 +29,6 @@ import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombi
 @Slf4j(topic = "### BASE-KIT : PinyinKit ###")
 @UtilityClass
 public class PinyinKit {
-    /**
-     * 当前转换操作使用的汉语拼音输出格式。
-     */
     HanyuPinyinOutputFormat format = new HanyuPinyinOutputFormat();
 
     static {

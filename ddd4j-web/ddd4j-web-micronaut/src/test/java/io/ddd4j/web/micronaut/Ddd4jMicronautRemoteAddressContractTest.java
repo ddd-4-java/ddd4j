@@ -24,13 +24,6 @@ import static org.mockito.Mockito.when;
  */
 class Ddd4jMicronautRemoteAddressContractTest {
 
-    /**
-     * 通过 <code>(WebRequestContext)createContext.invoke(filter, request)</code> 取得当前测试需要的结果。
-     *
-     * @param remoteAddress 传给 <code>when()</code> 的 <code>InetSocketAddress</code> 输入
-     * @return 当前测试使用的结果，取自 <code>(WebRequestContext)createContext.invoke(filter, request)</code>
-     * @throws Exception 反射访问被测成员时失败
-     */
     private WebRequestContext contextFor(InetSocketAddress remoteAddress) throws Exception {
         Ddd4jMicronautWebFilter filter = new Ddd4jMicronautWebFilter(
                 new WebRequestContextFactory(() -> "request-1", ClientIpResolver.remoteAddressOnly()),
@@ -47,21 +40,11 @@ class Ddd4jMicronautRemoteAddressContractTest {
         return (WebRequestContext) createContext.invoke(filter, request);
     }
 
-    /**
-     * 验证<code>contextFor(null).clientIp()</code> 等于 <code>"unknown"</code>。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void absentRemoteAddressUsesUnknown() throws Exception {
         assertEquals("unknown", contextFor(null).clientIp());
     }
 
-    /**
-     * 验证<code>contextFor(InetSocketAddress.createUnresolved("example.test", 8080)).clientIp()</code> 等于 <code>"unknown"</code>。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void unresolvedRemoteAddressUsesUnknown() throws Exception {
         assertEquals("unknown", contextFor(InetSocketAddress.createUnresolved("example.test", 8080)).clientIp());

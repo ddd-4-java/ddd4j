@@ -46,9 +46,6 @@ import java.util.Set;
  */
 public final class RbacConfig {
 
-    /**
-     * 限制调用方直接创建 <code>RbacConfig</code> 实例。
-     */
     private RbacConfig() {
     }
 
@@ -134,9 +131,6 @@ public final class RbacConfig {
 
     /**
      * 派生用户最终权限码：用户直接权限 ∪ 角色持有的权限。
-     *
-     * @param roleRepository 用于读取角色的仓储
-     * @return 合并用户直接权限和角色权限的函数
      */
     private static java.util.function.Function<User, List<String>> rbacServicePerms(InMemoryRoleRepository roleRepository) {
         return user -> {

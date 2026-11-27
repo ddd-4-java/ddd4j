@@ -43,28 +43,17 @@ import java.util.*;
 @ApplicationScoped
 public class RbacConfig {
 
-    /**
-     * 读取和保存用户的仓储。
-     */
     @Inject
     InMemoryUserRepository userRepository;
 
-    /**
-     * 读取和保存角色的仓储。
-     */
     @Inject
     InMemoryRoleRepository roleRepository;
 
-    /**
-     * 查询和维护权限定义的仓储。
-     */
     @Inject
     InMemoryPermissionRepository permissionRepository;
 
     /**
      * 应用启动时初始化演示数据。
-     *
-     * @param event 当前框架触发的应用启动事件
      */
     void onStart(@Observes StartupEvent event) {
         reset();
@@ -139,9 +128,6 @@ public class RbacConfig {
 
     /**
      * 聚合多角色下的全部权限编码（去重）。
-     *
-     * @param roleCodes 待查找或校验的角色编码
-     * @return 所有匹配角色拥有的权限集合
      */
     private List<String> aggregatePermissions(Set<String> roleCodes) {
         if (CollKit.isEmpty(roleCodes)) {

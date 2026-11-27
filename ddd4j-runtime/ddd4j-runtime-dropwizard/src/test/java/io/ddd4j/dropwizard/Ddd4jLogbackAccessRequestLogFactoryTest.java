@@ -16,9 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class Ddd4jLogbackAccessRequestLogFactoryTest {
 
-    /**
-     * 验证<code>compatible</code> 与…为不同的实例 <code>original</code>，<code>compatible.getAppenders()</code> 与…为同一实例 <code>original.getAppenders()</code>，<code>server.getRequestLogFactory()</code> 与…为同一实例 <code>compatible</code>。
-     */
     @Test
     void replacesDefaultFactoryAndPreservesAppenders() {
         Configuration configuration = new Configuration();
@@ -35,9 +32,6 @@ class Ddd4jLogbackAccessRequestLogFactoryTest {
         assertSame(compatible, server.getRequestLogFactory());
     }
 
-    /**
-     * 验证<code>((LogbackAccessRequestLogFactory) server.getRequestLogFactory()).getAppenders().isEmpty()</code>为真，<code>server.getRequestLogFactory().isEnabled()</code> 等于 <code>original.isEnabled()</code>。
-     */
     @Test
     void keepsDisabledAccessLoggingDisabled() {
         Configuration configuration = new Configuration();
@@ -52,9 +46,6 @@ class Ddd4jLogbackAccessRequestLogFactoryTest {
         assertEquals(original.isEnabled(), server.getRequestLogFactory().isEnabled());
     }
 
-    /**
-     * 验证<code>server.getRequestLogFactory()</code> 与…为同一实例 <code>custom</code>。
-     */
     @Test
     void preservesCustomRequestLogFactory() {
         Configuration configuration = new Configuration();
@@ -68,9 +59,6 @@ class Ddd4jLogbackAccessRequestLogFactoryTest {
         assertSame(custom, server.getRequestLogFactory());
     }
 
-    /**
-     * 验证<code>layout.isStarted()</code>为真。
-     */
     @Test
     void startsDefaultLayoutWithoutRemovedClassicConverterMap() {
         LoggerContext context = new LoggerContext();

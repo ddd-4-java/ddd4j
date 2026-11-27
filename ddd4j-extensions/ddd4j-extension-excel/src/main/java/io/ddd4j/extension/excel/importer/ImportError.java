@@ -57,15 +57,6 @@ public final class ImportError {
      */
     private final String errorType;
 
-    /**
-     * 用给定值初始化 <code>ImportError</code> 实例。
-     *
-     * @param rowIndex    出错行号（从 0 开始，含表头行）
-     * @param columnIndex 出错列号（-1 表示非单元格级错误）
-     * @param cellData    原始单元格内容（可能为 null）
-     * @param message     <code>message</code> 字段
-     * @param errorType   错误类型名称（短类名）
-     */
     private ImportError(long rowIndex, int columnIndex, String cellData, String message, String errorType) {
         this.rowIndex = rowIndex;
         this.columnIndex = columnIndex;

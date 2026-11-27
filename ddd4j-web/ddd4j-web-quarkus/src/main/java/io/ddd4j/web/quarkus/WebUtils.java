@@ -31,14 +31,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class WebUtils {
 
-    /**
-     * 将客户端语言标记映射成 Locale 的表。
-     */
     private static final Map<String, String> LANG_MAP = new ConcurrentHashMap<>();
 
-    /**
-     * 加载 Web 本地化提示文本时使用的资源包名。
-     */
     private static final String BUNDLE_BASENAME = "i18n/messages";
 
     static {
@@ -134,12 +128,6 @@ public class WebUtils {
         return Objects.isNull(parameters) || parameters.length == 0 ? pattern : MessageFormat.format(pattern, parameters);
     }
 
-    /**
-     * 将语言代码分隔符规范化后转换为 Locale，空白值回退到默认区域。
-     *
-     * @param lang 调用方传入的语言与地区标记
-     * @return 请求对应的区域
-     */
     private static Locale resolveLocale(String lang) {
         if (StrKit.isBlank(lang)) {
             return Locale.getDefault();

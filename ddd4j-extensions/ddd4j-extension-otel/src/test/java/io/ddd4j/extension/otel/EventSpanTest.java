@@ -32,25 +32,16 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class EventSpanTest {
 
-    /**
-     * 测试执行前执行 <code>OpenTelemetrySdkSetter.set()</code>、<code>OpenTelemetry.noop()</code> 完成资源准备。
-     */
     @BeforeEach
     void setUp() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
     }
 
-    /**
-     * 测试结束后执行 <code>OpenTelemetrySdkSetter.set()</code>、<code>OpenTelemetry.noop()</code> 完成资源回收或状态恢复。
-     */
     @AfterEach
     void tearDown() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
     }
 
-    /**
-     * 验证<code>executed</code>为真。
-     */
     @Test
     void publish_shouldExecuteRunnable() {
         AtomicBoolean executed = new AtomicBoolean(false);
@@ -61,9 +52,6 @@ class EventSpanTest {
         assertThat(executed).isTrue();
     }
 
-    /**
-     * 验证<code>result</code> 的大小为 <code>2</code>。
-     */
     @Test
     void query_shouldReturnValue() {
         List<String> result = EventSpan.query("OrderQuery", () -> Arrays.asList("ORD-001", "ORD-002"));
@@ -71,9 +59,6 @@ class EventSpanTest {
         assertThat(result).hasSize(2);
     }
 
-    /**
-     * 验证<code>result</code> 等于 <code>42</code>。
-     */
     @Test
     void projection_shouldReturnValue() {
         int result = EventSpan.projection("OrderProjection", () -> 42);
@@ -81,9 +66,6 @@ class EventSpanTest {
         assertThat(result).isEqualTo(42);
     }
 
-    /**
-     * 验证<code>executed</code>为真。
-     */
     @Test
     void publish_whenOtelNotAvailable_shouldExecuteNormally() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -96,9 +78,6 @@ class EventSpanTest {
         assertThat(executed).isTrue();
     }
 
-    /**
-     * 验证<code>true</code>为真。
-     */
     @Test
     void query_withNullSupplier_shouldThrowNpe() {
         try {
@@ -109,9 +88,6 @@ class EventSpanTest {
         }
     }
 
-    /**
-     * 验证<code>result</code> 等于 <code>"string-result"</code>。
-     */
     @Test
     void projection_shouldAcceptAnyReturnType() {
         Object result = EventSpan.projection("Projection", () -> "string-result");

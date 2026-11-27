@@ -41,21 +41,9 @@ import java.util.Objects;
  */
 public class AuthModule extends AbstractModule {
 
-    /**
-     * 读取和保存用户的仓储。
-     */
     private final InMemoryUserRepository userRepository;
-    /**
-     * 读取和保存角色的仓储。
-     */
     private final InMemoryRoleRepository roleRepository;
-    /**
-     * 查询和维护权限定义的仓储。
-     */
     private final InMemoryPermissionRepository permissionRepository;
-    /**
-     * 执行基于角色的授权与分配操作的应用服务。
-     */
     private final RbacService rbacService;
 
     /**
@@ -87,13 +75,6 @@ public class AuthModule extends AbstractModule {
                 new InMemoryPermissionRepository());
     }
 
-    /**
-     * 保存构建认证与授权组件需要的示例仓储。
-     *
-     * @param userRepository       当前示例使用的内存用户仓储
-     * @param roleRepository       当前示例使用的内存角色仓储
-     * @param permissionRepository 当前示例使用的内存权限仓储
-     */
     private AuthModule(InMemoryUserRepository userRepository,
                        InMemoryRoleRepository roleRepository,
                        InMemoryPermissionRepository permissionRepository) {
@@ -102,9 +83,6 @@ public class AuthModule extends AbstractModule {
         RbacConfig.initSeedData(rbacService);
     }
 
-    /**
-     * 为当前认证示例安装用户、角色、权限及主体相关 Guice 绑定。
-     */
     @Override
     protected void configure() {
         // ========================= RBAC 模块 =========================

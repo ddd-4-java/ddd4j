@@ -19,36 +19,17 @@ import java.util.function.Function;
  */
 @Slf4j
 public final class JavalinCqrsApplication {
-    /**
-     * 未指定监听端口时使用的默认端口。
-     */
     public static final int DEFAULT_PORT = 7001;
 
-    /**
-     * 限制调用方直接创建 <code>JavalinCqrsApplication</code> 实例。
-     */
     private JavalinCqrsApplication() {
     }
 
-    /**
-     * 按启动参数配置 HTTP 端口，启动 Javalin CQRS 示例并注册关闭钩子。
-     *
-     * @param args 应用启动参数
-     */
     public static void main(String[] args) {
         Javalin app = startCatalog(parsePort(args), CatalogRuntime::start, new EventBus());
         log.info("Javalin CQRS catalog listening {}", app.port());
         Runtime.getRuntime().addShutdownHook(new Thread(app::stop, "javalin-catalog-cqrs-close"));
     }
 
-    /**
-     * 启动启用了命令路由和事件发布的商品交易 CQRS 应用。
-     *
-     * @param port       当前 HTTP 示例要监听的端口
-     * @param initialize 按框架发布器创建商品交易操作的工厂
-     * @param events     转发当前应用领域事件的事件总线
-     * @return 已启动的 HTTP 示例服务
-     */
     static Javalin startCatalog(int port, Function<DomainEventPublisher, CatalogApi> initialize, EventBus events) {
         var api = initialize.apply(new GuiceDomainEventPublisher(events));
         var catalog = new CatalogCqrs(api, new GuiceCommandBus(List.of(CatalogCqrs.executor(api))));
@@ -68,12 +49,6 @@ public final class JavalinCqrsApplication {
         }
     }
 
-    /**
-     * 从命令行读取监听端口，缺省时使用示例默认端口。
-     *
-     * @param args 应用启动时提供的命令行参数
-     * @return 当前应用启动时使用的端口
-     */
     private static int parsePort(String[] args) {
         if (Objects.isNull(args) || args.length == 0) {
             return DEFAULT_PORT;
@@ -86,11 +61,6 @@ public final class JavalinCqrsApplication {
         }
     }
 
-    /**
-     * 注册接入 CQRS 命令和投影的商品交易路由。
-     *
-     * @param catalog 当前商品交易入口
-     */
     private static void catalogRoutes(CatalogCqrs catalog) {
         io.javalin.apibuilder.ApiBuilder.post("/orders/catalog/goods/{code}", ctx -> {
             var reply = catalog.createGoods(ctx.header("X-Tenant-Id"), ctx.pathParam("code"), ctx.body());

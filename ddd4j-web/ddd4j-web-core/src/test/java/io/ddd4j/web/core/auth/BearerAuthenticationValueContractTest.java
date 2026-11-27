@@ -19,14 +19,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * 通过 <code>authentication.token()</code>、<code>authentication.getToken()</code>、<code>authentication.principal()</code> 验证 <code>BearerAuthenticationValueContract</code> 的运行行为。
- */
 class BearerAuthenticationValueContractTest {
 
-    /**
-     * 验证<code>authentication.token()</code> 等于 <code>authentication.getToken()</code>，<code>authentication.principal()</code> 等于 <code>authentication.getPrincipal()</code>，<code>authentication.toString()</code> 等于 <code>"Authentication[token=token-1, principal=null, subject=null]"</code>。
-     */
     @Test
     void beanAndComponentMethodsExposeTheSameValue() {
         BearerSubjectAuthenticator.Authentication authentication =
@@ -43,9 +37,6 @@ class BearerAuthenticationValueContractTest {
                 "Authentication[token=token-1, principal=null, subject=null]");
     }
 
-    /**
-     * 验证<code>restored</code> 等于 <code>authentication</code>。
-     */
     @Test
     void jsonRoundTripRestoresTheAuthenticationValue() {
         BearerSubjectAuthenticator.Authentication authentication =

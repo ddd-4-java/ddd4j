@@ -9,14 +9,8 @@ import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * 通过 <code>create.setCode()</code>、<code>create.setName()</code>、<code>create.setPrice()</code> 验证 <code>PlainJavalinDtoContract</code> 的运行行为。
- */
 class PlainJavalinDtoContractTest {
 
-    /**
-     * 验证<code>create.code()</code> 等于 <code>create.getCode()</code>，<code>create.name()</code> 等于 <code>create.getName()</code>，<code>update.toString().contains("UpdateGoodsRequest(")</code>为真。
-     */
     @Test
     void goodsRequestsSupportBeanAndComponentAccess() {
         CreateGoodsRequest create = new CreateGoodsRequest();

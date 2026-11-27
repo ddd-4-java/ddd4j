@@ -37,9 +37,6 @@ import java.util.Objects;
 @AllArgsConstructor
 public class LicenseInfo implements Serializable {
 
-    /**
-     * Java 序列化版本标识。
-     */
     private static final long serialVersionUID = 1L;
 
     /**

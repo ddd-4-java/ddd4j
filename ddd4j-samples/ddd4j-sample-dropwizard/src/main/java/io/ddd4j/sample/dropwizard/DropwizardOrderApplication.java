@@ -32,13 +32,7 @@ import java.util.UUID;
  */
 public final class DropwizardOrderApplication extends Application<DropwizardOrderConfiguration> {
 
-    /**
-     * 幂等缓存条目存活时间，单位为秒。
-     */
     private static final long IDEMPOTENCY_CACHE_TTL_SECONDS = 300L;
-    /**
-     * 用于注册或定位缓存实例的名称。
-     */
     private final String cacheName = "dropwizard-order-" + UUID.randomUUID();
 
     /**
@@ -49,11 +43,6 @@ public final class DropwizardOrderApplication extends Application<DropwizardOrde
         new DropwizardOrderApplication().run(args);
     }
 
-    /**
-     * 在 Dropwizard 引导阶段添加商品交易示例所需的组件。
-     *
-     * @param bootstrap 当前 Dropwizard 应用的引导对象
-     */
     @Override
     public void initialize(Bootstrap<DropwizardOrderConfiguration> bootstrap) {
         bootstrap.addBundle(new Ddd4jBundle<>());
@@ -63,12 +52,6 @@ public final class DropwizardOrderApplication extends Application<DropwizardOrde
         }));
     }
 
-    /**
-     * 从配置装配商品交易应用并向 Dropwizard 环境注册资源。
-     *
-     * @param configuration 当前应用加载的认证或交易配置
-     * @param environment   用于登记路由、过滤器及生命周期的框架环境
-     */
     @Override
     public void run(DropwizardOrderConfiguration configuration, Environment environment) {
         if (configuration.getDdd4jWeb().isIdempotencyEnabled()) {

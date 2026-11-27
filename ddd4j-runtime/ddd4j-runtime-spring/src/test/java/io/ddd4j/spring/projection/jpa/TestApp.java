@@ -41,12 +41,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EntityScan(basePackages = "io.ddd4j.data.projection.jpa")
 @EnableJpaRepositories(basePackages = "io.ddd4j.spring.projection.jpa")
 class TestApp {
-    /**
-     * 创建 <code>new JpaProjectionPositionRepository</code> 供当前测试路径调用。
-     *
-     * @param repository 当前测试访问的仓储实例
-     * @return 当前测试使用的结果，取自 <code>new JpaProjectionPositionRepository(repository)</code>
-     */
     @Bean
     JpaProjectionPositionRepository jpaProjectionPositionRepository(SpringDataProjectionPositionRepository repository) {
         return new JpaProjectionPositionRepository(repository);

@@ -32,9 +32,6 @@ import java.util.Objects;
 @SuppressWarnings("unchecked")
 public class Ddd4jFieldCryptoHandler {
 
-    /**
-     * 负责字段加解密运算的策略。
-     */
     private final CryptoStrategy cryptoStrategy;
 
     /**

@@ -28,14 +28,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-/**
- * 验证 <code>DropwizardDomainEventPublisher</code> 在<code>constructor</code>等操作中的行为契约。
- */
 class DropwizardDomainEventPublisherTest {
 
-    /**
-     * 在测试框架中执行 <code>mock()</code>、<code>Arrays.asList()</code>、<code>publisher.publish()</code>，验证该场景。
-     */
     @Test
     void publishNotifiesAllListeners() {
         Consumer<Object> first = mock(Consumer.class);
@@ -49,9 +43,6 @@ class DropwizardDomainEventPublisherTest {
         verify(second).accept("payload");
     }
 
-    /**
-     * 验证未调用 <code>listener</code>。
-     */
     @Test
     void publishSkipsNullEvent() {
         Consumer<Object> listener = mock(Consumer.class);
@@ -63,9 +54,6 @@ class DropwizardDomainEventPublisherTest {
         org.mockito.Mockito.verifyNoInteractions(listener);
     }
 
-    /**
-     * 在测试框架中执行 <code>mock()</code>、<code>Collections.singletonList()</code>、<code>publisher.publish()</code>，验证该场景。
-     */
     @Test
     void publishDomainEventNotifiesListeners() {
         Consumer<Object> listener = mock(Consumer.class);
@@ -79,9 +67,6 @@ class DropwizardDomainEventPublisherTest {
         verify(listener).accept(event);
     }
 
-    /**
-     * 验证被测调用 抛出 <code>NullPointerException.class</code>。
-     */
     @Test
     void constructorRejectsNullAndSnapshotsListeners() {
         assertThrows(NullPointerException.class, () -> new DropwizardDomainEventPublisher(null));

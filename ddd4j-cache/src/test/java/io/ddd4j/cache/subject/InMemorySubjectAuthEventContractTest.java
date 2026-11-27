@@ -30,23 +30,11 @@ import java.util.Objects;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-/**
- * 验证内存主体登录成功与失败时发布的认证事件及当前主体。
- */
 class InMemorySubjectAuthEventContractTest {
 
-    /**
-     * 当前测试期间收集的领域事件，供断言比较发布内容或顺序。
-     */
     private final List<Object> events = new ArrayList<>();
-    /**
-     * 当前用例中负责内存登录和发布认证事件的主体。
-     */
     private InMemorySubject subject;
 
-    /**
-     * 清除当前线程的主体并注销测试使用的会话和账号状态缓存。
-     */
     @AfterEach
     void tearDown() {
         if (Objects.nonNull(subject)) {
@@ -62,9 +50,6 @@ class InMemorySubjectAuthEventContractTest {
         }
     }
 
-    /**
-     * 验证<code>events</code> 的大小为 <code>1</code>，<code>events.get(0)</code> 的类型为 <code>AuthSucceededEvent.class</code>，<code>current</code> 指向同一实例 <code>event.principal()</code>。
-     */
     @Test
     void loginSuccessPublishesCurrentPrincipalAndToken() {
         subject = new InMemorySubject(events::add);
@@ -84,9 +69,6 @@ class InMemorySubjectAuthEventContractTest {
         assertThat(current).isSameAs(event.principal());
     }
 
-    /**
-     * 验证<code>subject.login(request)</code> 抛出 <code>IllegalArgumentException.class</code>，<code>events</code> 的大小为 <code>1</code>，<code>subject.isAuthenticated()</code>为假。
-     */
     @Test
     void invalidLoginPublishesFailureAndKeepsSubjectAnonymous() {
         subject = new InMemorySubject(events::add);

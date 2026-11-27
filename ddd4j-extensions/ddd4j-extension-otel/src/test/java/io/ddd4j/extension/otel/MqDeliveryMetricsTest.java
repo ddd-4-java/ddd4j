@@ -39,24 +39,10 @@ import static org.mockito.Mockito.*;
  */
 class MqDeliveryMetricsTest {
 
-    /**
-     * 提供测试指标注册能力的 OpenTelemetry Meter。
-     */
     private Meter meter;
-    /**
-     * 当前测试从样例配置创建被测组件的构建器。
-     */
     private LongCounterBuilder builder;
-    /**
-     * 用来验证指标或累计状态的计数器。
-     */
     private LongCounter counter;
 
-    /**
-     * 调用 <code>Ddd4jOtel.class.getDeclaredField()</code>、<code>field.setAccessible()</code>、<code>field.get()</code> 执行当前夹具操作。
-     *
-     * @param meter 传给 <code>((AtomicReference&lt;Meter&gt;)field.get(null)).set(meter)</code> 的 <code>Meter</code> 输入
-     */
     @SuppressWarnings("unchecked")
     private static void setMeterCache(Meter meter) {
         try {
@@ -68,9 +54,6 @@ class MqDeliveryMetricsTest {
         }
     }
 
-    /**
-     * 测试执行前执行 <code>mock()</code>、<code>meter.counterBuilder()</code>、<code>any()</code>、<code>builder.setUnit()</code> 完成资源准备。
-     */
     @BeforeEach
     void setUp() {
         meter = mock(Meter.class);
@@ -83,17 +66,11 @@ class MqDeliveryMetricsTest {
         setMeterCache(meter);
     }
 
-    /**
-     * 测试结束后执行 <code>setMeterCache()</code> 完成资源回收或状态恢复。
-     */
     @AfterEach
     void tearDown() {
         setMeterCache(null);
     }
 
-    /**
-     * 在测试框架中执行 <code>MqDeliveryMetrics.outboxPublished()</code>、<code>MqDeliveryMetrics.outboxRetry()</code>、<code>MqDeliveryMetrics.outboxDead()</code>，验证该场景。
-     */
     @Test
     void outboxMetrics_shouldUseControlledOutcomesAndNeverAttachMessageData() {
         MqDeliveryMetrics.outboxPublished("kafka");
@@ -115,9 +92,6 @@ class MqDeliveryMetricsTest {
                 .containsExactlyInAnyOrder("published", "retry", "dead");
     }
 
-    /**
-     * 在测试框架中执行 <code>MqDeliveryMetrics.inboxProcessed()</code>、<code>MqDeliveryMetrics.inboxDuplicate()</code>、<code>MqDeliveryMetrics.inboxFailed()</code>，验证该场景。
-     */
     @Test
     void inboxMetrics_shouldExposeOnlyExpectedOutcomeAndFallbackBroker() {
         MqDeliveryMetrics.inboxProcessed(null);

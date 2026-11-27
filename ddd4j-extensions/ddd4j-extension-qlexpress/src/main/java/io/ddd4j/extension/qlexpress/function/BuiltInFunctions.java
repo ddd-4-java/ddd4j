@@ -21,9 +21,6 @@ import java.util.List;
  */
 public final class BuiltInFunctions {
 
-    /**
-     * 限制调用方直接创建 <code>BuiltInFunctions</code> 实例。
-     */
     private BuiltInFunctions() {
     }
 

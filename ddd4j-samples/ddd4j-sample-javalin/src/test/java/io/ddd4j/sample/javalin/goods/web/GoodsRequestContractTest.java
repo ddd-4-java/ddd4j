@@ -16,11 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class GoodsRequestContractTest {
 
-    /**
-     * 验证<code>request.code()</code> 等于 <code>"goods-1"</code>，<code>request.name()</code> 等于 <code>"Notebook"</code>，<code>restored.stock()</code> 等于 <code>request.stock()</code>。
-     *
-     * @throws Exception 处理测试数据的序列化时失败
-     */
     @Test
     void createRequestKeepsFluentAccessorsAndJsonFields() throws Exception {
         GoodsController.CreateGoodsRequest request = new GoodsController.CreateGoodsRequest(
@@ -39,11 +34,6 @@ class GoodsRequestContractTest {
         assertEquals(request.stock(), restored.stock());
     }
 
-    /**
-     * 验证<code>request.name()</code> 等于 <code>"Updated"</code>，<code>restored.name()</code> 等于 <code>request.name()</code>，<code>restored.price()</code> 等于 <code>request.price()</code>。
-     *
-     * @throws Exception 处理测试数据的序列化时失败
-     */
     @Test
     void updateRequestKeepsFluentAccessorsAndJsonFields() throws Exception {
         GoodsController.UpdateGoodsRequest request = new GoodsController.UpdateGoodsRequest(

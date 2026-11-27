@@ -27,11 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 class RedisStreamRecordJsonContractTest {
 
-    /**
-     * 验证<code>restored</code>非空，<code>restored.getStream()</code> 等于 <code>original.getStream()</code>，<code>restored.getNativeMessage()</code> 等于 <code>original.getNativeMessage()</code>。
-     *
-     * @throws Exception 处理测试数据的序列化时失败
-     */
     @Test
     void jsonRoundTripPreservesPublicFields() throws Exception {
         RedisStreamRecord original = new RedisStreamRecord("orders", "1-0",

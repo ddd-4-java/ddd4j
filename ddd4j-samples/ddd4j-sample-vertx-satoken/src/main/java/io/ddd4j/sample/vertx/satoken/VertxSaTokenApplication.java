@@ -37,54 +37,18 @@ import java.util.function.BiConsumer;
  */
 @Slf4j
 public final class VertxSaTokenApplication {
-    /**
-     * 为当前示例提供 HTTP 服务及工作线程的 Vert.x 实例。
-     */
     private final Vertx vertx = Vertx.vertx();
-    /**
-     * 当前示例已装配的 Vert.x DDD4J 运行时。
-     */
     private final Ddd4jVertxRuntime runtime = Ddd4jVertxRuntime.create(vertx, List.of());
-    /**
-     * 解析请求认证主体的提供器或管理其注册生命周期的作用域。
-     */
     private final io.ddd4j.core.util.SubjectKitRegistrationScope subjects = new io.ddd4j.core.util.SubjectKitRegistrationScope(
             new io.ddd4j.auth.satoken.subject.SaTokenSubjectProvider());
-    /**
-     * 当前 HTTP 示例使用的共用商品交易入口。
-     */
     private final CatalogEndpoints catalog;
-    /**
-     * 在请求处理后通知测试或外部观察者的回调。
-     */
     private final BiConsumer<String, Boolean> completed;
-    /**
-     * 已经提交且尚未完成的请求处理任务。
-     */
     private final Set<Future<?>> inFlight = ConcurrentHashMap.newKeySet();
-    /**
-     * 处理当前示例应用登录状态的原生认证组件。
-     */
     private NativeAuth auth;
-    /**
-     * 由当前应用持有并在停止时关闭的 Vert.x HTTP 服务器。
-     */
     private HttpServer server;
-    /**
-     * 标记当前示例是否已经开始关闭。
-     */
     private volatile boolean closing;
-    /**
-     * 用于观察异步停止及资源回收结果的完成信号。
-     */
     private CompletableFuture<Void> closed;
 
-    /**
-     * 保存商品交易入口及流程结束时使用的观察回调。
-     *
-     * @param catalog   当前商品交易入口
-     * @param completed 请求处理完成时调用的观察回调或完成信号
-     */
     private VertxSaTokenApplication(CatalogEndpoints catalog, BiConsumer<String, Boolean> completed) {
         this.catalog = catalog;
         this.completed = completed;
@@ -100,15 +64,6 @@ public final class VertxSaTokenApplication {
     }
 
     // 所有入口共用路由；包内观测器只观察工作线程恢复后的结果，不修改上下文。
-
-    /**
-     * 启动包含商品交易路由的 Vert.x HTTP 服务。
-     *
-     * @param port      当前 HTTP 示例要监听的端口
-     * @param catalog   当前商品交易入口
-     * @param completed 请求处理完成时调用的观察回调或完成信号
-     * @return 应用启动后的运行实例或其异步结果
-     */
     static Future<VertxSaTokenApplication> start(int port, CatalogEndpoints catalog, BiConsumer<String, Boolean> completed) {
         var app = new VertxSaTokenApplication(catalog, completed);
         var promise = io.vertx.core.Promise.<VertxSaTokenApplication>promise();
@@ -143,12 +98,6 @@ public final class VertxSaTokenApplication {
         }, "vertx-satoken-close"));
     }
 
-    /**
-     * 启动失败时清理部分装配的资源，再报告原始失败。
-     *
-     * @param failure 导致应用无法完成启动的原始异常
-     * @param promise 报告当前应用启动结果的异步句柄
-     */
     private void failStart(Throwable failure, io.vertx.core.Promise<VertxSaTokenApplication> promise) {
         close().onComplete(cleanup -> {
             if (cleanup.failed() && cleanup.cause() != failure) {
@@ -165,11 +114,6 @@ public final class VertxSaTokenApplication {
         return server.actualPort();
     }
 
-    /**
-     * 注册示例健康、原生鉴权及商品交易路由。
-     *
-     * @return 装配完毕的 Vert.x 路由器
-     */
     private Router router() {
         Router router = Router.router(vertx);
         router.get("/health").handler(ctx -> ctx.response().end("UP"));
@@ -189,12 +133,6 @@ public final class VertxSaTokenApplication {
         return router;
     }
 
-    /**
-     * 拒绝关闭后到达的请求，并追踪已接收的操作直至执行完成。
-     *
-     * @param ctx       当前 Web 框架的请求上下文
-     * @param operation 当前请求的商品交易操作或待执行的工作回调
-     */
     private void execute(RoutingContext ctx, String operation) {
         if (closing) {
             ctx.fail(new WebStatusException(503, "application closing"));
@@ -267,12 +205,6 @@ public final class VertxSaTokenApplication {
         });
     }
 
-    /**
-     * 读取并要求存在可供认证请求处理的 JSON 对象。
-     *
-     * @param ctx 当前 Web 框架的请求上下文
-     * @return 请求体中的 JSON 对象
-     */
     private JsonObject body(RoutingContext ctx) {
         JsonObject body = ctx.body().asJsonObject();
         if (Objects.isNull(body)) {

@@ -60,29 +60,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @Testcontainers(disabledWithoutDocker = true)
 class RabbitMQContainerIntegrationTest {
 
-    /**
-     * 为当前集成测试提供独立 RabbitMQ 服务的容器。
-     */
     @Container
     static final RabbitMQContainer RABBIT = new RabbitMQContainer("rabbitmq:4.1.8-management")
             .withEnv("RABBITMQ_ERLANG_COOKIE", "ddd4j-test-cookie-for-rabbitmq")
             .withTmpFs(Collections.singletonMap("/var/lib/rabbitmq", "rw,size=512m"))
             .withCopyToContainer(Transferable.of("ddd4j-test-cookie-for-rabbitmq", 0600),
                     "/var/lib/rabbitmq/.erlang.cookie");
-    /**
-     * 用于发布、订阅或绑定测试消息的交换机名称。
-     */
     private static final String EXCHANGE = "ddd4j.it.rabbit";
-    /**
-     * 测试消费者读写消息的代理队列名称。
-     */
     private static final String QUEUE = "ddd4j.it.rabbit.verify";
 
-    /**
-     * 读取 <code>properties</code> 供当前测试使用。
-     *
-     * @return 当前测试使用的结果，取自 <code>properties</code>
-     */
     private static RabbitMQProperties brokerProperties() {
         RabbitMQProperties properties = new RabbitMQProperties();
         properties.setHost(RABBIT.getHost());
@@ -93,11 +79,6 @@ class RabbitMQContainerIntegrationTest {
         return properties;
     }
 
-    /**
-     * 验证<code>received</code>非空，<code>received.getBody().length</code> 等于 <code>body.length</code>。
-     *
-     * @throws Exception 装配运行测试所需的组件时失败
-     */
     @Test
     void rabbitMQPropertiesConnectsToContainerBroker() throws Exception {
         RabbitMQProperties properties = brokerProperties();
@@ -141,11 +122,6 @@ class RabbitMQContainerIntegrationTest {
         }
     }
 
-    /**
-     * 验证<code>RABBIT.getAmqpPort()</code>非空，<code>RABBIT.getHost()</code>非空。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void rabbitMQContainerExposesStandardAmqpPort() throws Exception {
         assertNotNull(RABBIT.getAmqpPort(), "AMQP 端口应就绪");
@@ -154,11 +130,6 @@ class RabbitMQContainerIntegrationTest {
         assertTrue(RABBIT.getAmqpPort() > 0);
     }
 
-    /**
-     * 验证<code>raw</code>非空，<code>headers.get(MQDeliveryHeaders.MESSAGE_ID).toString()</code> 等于 <code>event.getMsgId()</code>，<code>acknowledgment.get().correlationId()</code> 等于 <code>"native-correlation"</code>。
-     *
-     * @throws Exception 等待并发操作时失败
-     */
     @Test
     void clientShouldRoundTripCausalityThroughNativeAmqpHeaders() throws Exception {
         String suffix = UUID.randomUUID().toString().replace("-", "");
@@ -248,11 +219,6 @@ class RabbitMQContainerIntegrationTest {
         }
     }
 
-    /**
-     * 验证<code>producer.accept(event)</code> 抛出 <code>IllegalStateException.class</code>，<code>failure.getCause() instanceof com.rabbitmq.client.ShutdownSignalException</code>为真。
-     *
-     * @throws Exception 准备或释放被测运行资源时失败
-     */
     @Test
     void producerMustReportClosedConnectionInsteadOfReturningSuccess() throws Exception {
         RabbitMQProperties properties = brokerProperties();
@@ -285,11 +251,6 @@ class RabbitMQContainerIntegrationTest {
         }
     }
 
-    /**
-     * 验证<code>client.initConsumer(listener, properties)</code>为真，<code>bean.redelivered.await(10, TimeUnit.SECONDS)</code>为真，<code>bean.lastMessageId</code> 等于 <code>event.getMsgId()</code>。
-     *
-     * @throws Exception 等待并发操作时失败
-     */
     @Test
     void failedListenerShouldBeNackedAndRedeliveredByTheBroker() throws Exception {
         String suffix = UUID.randomUUID().toString().replace("-", "");
@@ -341,11 +302,6 @@ class RabbitMQContainerIntegrationTest {
         }
     }
 
-    /**
-     * 验证<code>first</code>非空，<code>retry.isAcknowledged()</code>为真。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void nativeAcknowledgmentShouldRequeueThenPermanentlyConfirm() throws Exception {
         String queue = "ddd4j.it.rabbit.ack." + UUID.randomUUID().toString().replace("-", "");
@@ -376,11 +332,6 @@ class RabbitMQContainerIntegrationTest {
         }
     }
 
-    /**
-     * 验证<code>client.init(Collections.singletonList(listener), properties, new JsonMQEventSerialization(), null)</code> 抛出 <code>MQInitializationException.class</code>，<code>setup.isOpen()</code>为真。
-     *
-     * @throws Exception 准备或释放被测运行资源时失败
-     */
     @Test
     void requiredListenerDeclarationFailureShouldRollBackOwnedChannels() throws Exception {
         String suffix = UUID.randomUUID().toString().replace("-", "");
@@ -417,11 +368,6 @@ class RabbitMQContainerIntegrationTest {
         }
     }
 
-    /**
-     * 验证<code>client.startupStatus().snapshot().state()</code> 等于 <code>MQStartupState.DEGRADED</code>，<code>client.lifecycle().checkpoint()</code> 等于 <code>0</code>。
-     *
-     * @throws Exception 准备或释放被测运行资源时失败
-     */
     @Test
     void optionalListenerDeclarationFailureShouldKeepProducerAvailable() throws Exception {
         String suffix = UUID.randomUUID().toString().replace("-", "");
@@ -468,11 +414,6 @@ class RabbitMQContainerIntegrationTest {
         }
     }
 
-    /**
-     * 验证<code>client.initConsumer(listener, properties)</code>为真，<code>bean.entered.await(5, TimeUnit.SECONDS)</code>为真，<code>bean.attempts.get()</code> 等于 <code>1</code>。
-     *
-     * @throws Exception 等待并发操作时失败
-     */
     @Test
     void closingDuringUnacknowledgedDeliveryShouldReleaseAndRequeue() throws Exception {
         String suffix = UUID.randomUUID().toString().replace("-", "");
@@ -536,28 +477,11 @@ class RabbitMQContainerIntegrationTest {
         }
     }
 
-    /**
-     * 将 <code>attempts</code>、<code>redelivered</code>、<code>lastMessageId</code> 等状态一起传入当前测试，供调用或结果断言使用。
-     */
     public static final class RetryingListener {
-        /**
-         * 跟踪测试操作的调用或重试次数。
-         */
         private final AtomicInteger attempts = new AtomicInteger();
-        /**
-         * 协调测试线程在指定执行阶段等待或继续的门闩。
-         */
         private final CountDownLatch redelivered = new CountDownLatch(1);
-        /**
-         * 最近一次投递或确认时读取的消息标识。
-         */
         private volatile String lastMessageId;
 
-        /**
-         * 根据本次调用更新 <code>lastMessageId = event.getMsgId()</code>，用于后续测试步骤。
-         *
-         * @param event 交给被测入口处理的测试领域事件
-         */
         public void handle(MQEvent event) {
             lastMessageId = event.getMsgId();
             if (attempts.incrementAndGet() == 1) {
@@ -567,29 +491,11 @@ class RabbitMQContainerIntegrationTest {
         }
     }
 
-    /**
-     * 将 <code>attempts</code>、<code>entered</code>、<code>release</code> 等状态一起传入当前测试，供调用或结果断言使用。
-     */
     public static final class BlockingListener {
-        /**
-         * 跟踪测试操作的调用或重试次数。
-         */
         private final AtomicInteger attempts = new AtomicInteger();
-        /**
-         * 等待被测操作已进入执行的同步门闩。
-         */
         private final CountDownLatch entered = new CountDownLatch(1);
-        /**
-         * 用来控制测试线程退出等待或观察操作完成的同步门闩。
-         */
         private final CountDownLatch release = new CountDownLatch(1);
 
-        /**
-         * 调用 <code>attempts.incrementAndGet()</code>、<code>entered.countDown()</code>、<code>release.await()</code> 执行当前夹具操作。
-         *
-         * @param event 交给被测入口处理的测试领域事件
-         * @throws InterruptedException 等待测试操作时被中断
-         */
         public void handle(MQEvent event) throws InterruptedException {
             attempts.incrementAndGet();
             entered.countDown();

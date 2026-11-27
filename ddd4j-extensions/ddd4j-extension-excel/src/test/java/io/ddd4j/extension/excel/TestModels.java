@@ -63,30 +63,18 @@ public class TestModels {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class UserVO {
-        /**
-         * 用于构造和定位测试记录的主键。
-         */
         @ExcelProperty("用户ID")
         @ColumnWidth(15)
         private Long id;
 
-        /**
-         * 测试对象的显示名称。
-         */
         @ExcelProperty("姓名")
         @ColumnWidth(20)
         private String name;
 
-        /**
-         * 用于验证日期字段序列化或数据映射的生日样本。
-         */
         @ExcelProperty(value = "生日", converter = LocalDateConverter.class)
         @ColumnWidth(20)
         private LocalDate birthday;
 
-        /**
-         * 测试持久化模型中的创建时间字段。
-         */
         @ExcelProperty("创建时间")
         @DateTimeFormat("yyyy-MM-dd HH:mm:ss")
         @ColumnWidth(25)

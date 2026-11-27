@@ -37,34 +37,13 @@ import java.util.*;
 @Priority(Priorities.AUTHENTICATION)
 public final class Ddd4jHelidonRequestFilter implements ContainerRequestFilter {
 
-    /**
-     * 请求属性中保存会话或认证上下文的键。
-     */
     static final String SESSION_PROPERTY = Ddd4jHelidonRequestFilter.class.getName() + ".session";
-    /**
-     * 请求属性中保存 DDD4J 上下文作用域的键。
-     */
     static final String CONTEXT_PROPERTY = Ddd4jHelidonRequestFilter.class.getName() + ".context";
-    /**
-     * 请求属性中保存 OpenTelemetry 跟踪 Span 的键。
-     */
     static final String OTEL_SPAN_PROPERTY = Ddd4jHelidonRequestFilter.class.getName() + ".otelSpan";
-    /**
-     * 请求属性中保存 OpenTelemetry 上下文作用域的键。
-     */
     static final String OTEL_SCOPE_PROPERTY = Ddd4jHelidonRequestFilter.class.getName() + ".otelScope";
 
-    /**
-     * 根据框架请求元数据装配共用 Web 请求上下文。
-     */
     private final WebRequestContextFactory contextFactory;
-    /**
-     * 开启和关闭当前 Web 请求上下文的组件。
-     */
     private final WebRequestLifecycle requestLifecycle;
-    /**
-     * 在请求处理阶段获取及释放幂等保护的组件。
-     */
     private final WebIdempotencyLifecycle idempotencyLifecycle;
 
     /**
@@ -107,12 +86,6 @@ public final class Ddd4jHelidonRequestFilter implements ContainerRequestFilter {
         this.idempotencyLifecycle = idempotencyLifecycle;
     }
 
-    /**
-     * 提取请求头，每个有值的请求头保留第一个值。
-     *
-     * @param request 当前框架 HTTP 请求或交换上下文
-     * @return 供请求上下文读取的请求头映射
-     */
     private static Map<String, String> extractRequestHeaders(ContainerRequestContext request) {
         Map<String, String> headers = new HashMap<>();
         request.getHeaders().forEach((k, v) -> {
@@ -123,11 +96,6 @@ public final class Ddd4jHelidonRequestFilter implements ContainerRequestFilter {
         return headers;
     }
 
-    /**
-     * 开启 Helidon 请求跟踪，解析请求元数据并装配认证及幂等保护。
-     *
-     * @param request 当前进入调用链的 HTTP 请求
-     */
     @Override
     public void filter(ContainerRequestContext request) {
         // OTel: 提取上游 TraceContext 并开启 SERVER span
@@ -155,12 +123,6 @@ public final class Ddd4jHelidonRequestFilter implements ContainerRequestFilter {
         }
     }
 
-    /**
-     * 从框架请求提取租户、跟踪标识、认证和路由信息，组装共用上下文。
-     *
-     * @param request 当前框架 HTTP 请求
-     * @return 供上下文和认证处理链使用的请求上下文
-     */
     private WebRequestContext createContext(ContainerRequestContext request) {
         return contextFactory.create(new WebRequestData(
                 request.getHeaderString(WebHeaders.REQUEST_ID),

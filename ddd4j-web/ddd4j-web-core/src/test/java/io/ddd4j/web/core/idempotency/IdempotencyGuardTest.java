@@ -29,14 +29,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class IdempotencyGuardTest {
 
-    /**
-     * 测试缓存或租约使用的保留时长。
-     */
     private static final Duration TTL = Duration.ofMinutes(5);
 
-    /**
-     * 验证<code>lease.isPresent()</code>为真，<code>lease.get().key()</code> 等于 <code>"order-1"</code>，<code>lease.get().ttl()</code> 等于 <code>TTL</code>。
-     */
     @Test
     void acquireLeaseReturnsLeaseWhenAcquired() {
         RecordingGuard guard = new RecordingGuard(true);
@@ -49,18 +43,12 @@ class IdempotencyGuardTest {
         assertEquals(TTL, lease.get().ttl());
     }
 
-    /**
-     * 验证<code>guard.acquireLease("order-1", TTL).isPresent()</code>为假。
-     */
     @Test
     void acquireLeaseReturnsEmptyWhenNotAcquired() {
         RecordingGuard guard = new RecordingGuard(false);
         assertFalse(guard.acquireLease("order-1", TTL).isPresent());
     }
 
-    /**
-     * 验证<code>guard.completedKey</code> 等于 <code>"order-1"</code>。
-     */
     @Test
     void completeByLeaseDelegatesToKey() {
         RecordingGuard guard = new RecordingGuard(true);
@@ -71,9 +59,6 @@ class IdempotencyGuardTest {
         assertEquals("order-1", guard.completedKey);
     }
 
-    /**
-     * 验证<code>guard.releasedKey</code> 等于 <code>"order-1"</code>。
-     */
     @Test
     void releaseByLeaseDelegatesToKey() {
         RecordingGuard guard = new RecordingGuard(true);
@@ -89,24 +74,10 @@ class IdempotencyGuardTest {
      */
     private static final class RecordingGuard implements IdempotencyGuard {
 
-        /**
-         * 记录受测操作是否成功获取了当前资源。
-         */
         private final boolean acquired;
-        /**
-         * 最近一个完成处理的业务或幂等记录键。
-         */
         private String completedKey;
-        /**
-         * 测试观察到退出时已释放的幂等键。
-         */
         private String releasedKey;
 
-        /**
-         * 设置 <code>acquired</code>，用于构造 <code>RecordingGuard</code> 测试实例。
-         *
-         * @param acquired 用于初始化 <code>RecordingGuard</code> 的 <code>boolean</code> 值
-         */
         private RecordingGuard(boolean acquired) {
             this.acquired = acquired;
         }

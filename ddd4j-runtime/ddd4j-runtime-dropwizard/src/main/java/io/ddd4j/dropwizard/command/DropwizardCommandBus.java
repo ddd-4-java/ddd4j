@@ -21,12 +21,6 @@ public class DropwizardCommandBus extends DefaultCommandBus {
         super(registered(executors));
     }
 
-    /**
-     * 从显式传入的执行器建立已注册的命令总线。
-     *
-     * @param executors 当前框架容器提供的命令执行器
-     * @return 完成执行器登记的 Dropwizard 命令总线
-     */
     private static Collection<CommandExecutor<?>> registered(Collection<? extends CommandExecutor<?>> executors) {
         Objects.requireNonNull(executors, "executors must not be null");
         CommandRegistry registry = new CommandRegistry();

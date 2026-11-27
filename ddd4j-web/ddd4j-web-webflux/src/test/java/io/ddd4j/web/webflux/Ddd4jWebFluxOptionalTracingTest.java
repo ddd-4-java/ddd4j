@@ -17,9 +17,6 @@ import static org.mockito.Mockito.withSettings;
  * 无可选追踪时真实交换属性不接受 null，且业务失败仍保持原异常。
  */
 class Ddd4jWebFluxOptionalTracingTest {
-    /**
-     * 验证<code>exchange.getAttributes().containsKey(Ddd4jWebFluxFilter.class.getName() + ".otelSpan")</code>为假，被测调用 抛出 <code>IllegalArgumentException.class</code>，<code>actual</code> 与…为同一实例 <code>businessFailure</code>。
-     */
     @Test
     void absentSpanMustNotBreakPublicRequestOrMaskBusinessFailure() {
         try (MockedStatic<WebOtelSupport> telemetry = mockStatic(

@@ -75,9 +75,6 @@ public class PconlineRegionTemplate {
      * HTTP 客户端
      */
     private final HttpClient httpClient;
-    /**
-     * 当前地区查询适配器使用的请求地址模板。
-     */
     private final String urlTemplate;
     /**
      * 缓存服务
@@ -119,23 +116,10 @@ public class PconlineRegionTemplate {
         this(httpClient, regionCache, GET_COUNTRY_BY_IP_URL);
     }
 
-    /**
-     * 装配使用太平洋网络接口查询 IP 归属地区的实现。
-     *
-     * @param regionCache 读取和缓存 IP 地区查询结果的组件
-     * @param urlTemplate 可替换的地区查询地址模板
-     */
     PconlineRegionTemplate(RegionCache regionCache, String urlTemplate) {
         this(HttpClient.newHttpClient(), regionCache, urlTemplate);
     }
 
-    /**
-     * 装配使用太平洋网络接口查询 IP 归属地区的实现。
-     *
-     * @param httpClient  发起地区查询的 HTTP 客户端
-     * @param regionCache 读取和缓存 IP 地区查询结果的组件
-     * @param urlTemplate 可替换的地区查询地址模板
-     */
     private PconlineRegionTemplate(HttpClient httpClient, RegionCache regionCache, String urlTemplate) {
         this.httpClient = httpClient;
         this.regionCache = Objects.isNull(regionCache) ? RegionCache.none() : regionCache;
@@ -156,12 +140,6 @@ public class PconlineRegionTemplate {
         mapLL2.ifPresent(location -> log.info("Location: {}", location.toJSONString()));
     }
 
-    /**
-     * 清除地区服务返回值的首尾空白并保留空引用。
-     *
-     * @param value 地区服务返回的字符串
-     * @return 清理后的字符串
-     */
     private static String trimWhitespace(String value) {
         return Objects.isNull(value) ? null : value.strip();
     }

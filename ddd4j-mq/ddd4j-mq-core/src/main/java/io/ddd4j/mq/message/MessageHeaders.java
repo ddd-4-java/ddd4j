@@ -81,9 +81,6 @@ public final class MessageHeaders {
      */
     public static final String HEADER_DESTINATION_NAMESPACE = "ddd4j.destination.namespace";
 
-    /**
-     * 限制调用方直接创建 <code>MessageHeaders</code> 实例。
-     */
     private MessageHeaders() {
     }
 }

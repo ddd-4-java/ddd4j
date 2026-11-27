@@ -27,16 +27,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-/**
- * 通过 <code>mock()</code>、<code>RabbitMQClient.messageId()</code>、<code>acknowledgment.nack()</code> 验证 <code>RabbitMQAdapterContract</code> 的运行行为。
- */
 class RabbitMQAdapterContractTest {
 
-    /**
-     * 验证<code>RabbitMQClient.messageId(properties)</code> 等于 <code>"stable-id"</code>，<code>acknowledgment.isAcknowledged()</code>为真。
-     *
-     * @throws Exception 装配运行测试所需的组件时失败
-     */
     @Test
     void shouldPreferStableMessageIdAndNackForRedelivery() throws Exception {
         AMQP.BasicProperties properties = new AMQP.BasicProperties.Builder()
@@ -53,11 +45,6 @@ class RabbitMQAdapterContractTest {
         assertTrue(acknowledgment.isAcknowledged());
     }
 
-    /**
-     * 验证<code>captor.getValue().getDeliveryMode()</code> 等于 <code>2</code>，<code>captor.getValue().getHeaders().get(MQDeliveryHeaders.CORRELATION_ID)</code> 等于 <code>"correlation-1"</code>。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void shouldPublishPersistentMessageAndWaitForBrokerConfirm() throws Exception {
         // 池创建 N 个 channel（默认 32），故 confirmSelect 也调用 N 次。
@@ -111,11 +98,6 @@ class RabbitMQAdapterContractTest {
         verify(borrowed).waitForConfirmsOrDie(properties.getPublisherConfirmTimeoutMillis());
     }
 
-    /**
-     * 验证<code>listenerByChannel.size()</code> 等于 <code>poolSize</code>，被测调用 抛出 <code>IllegalStateException.class</code>。
-     *
-     * @throws Exception 装配运行测试所需的组件时失败
-     */
     @Test
     void shouldRejectMessageReturnedAsUnroutable() throws Exception {
         // 池化后每个 channel 独立注册自己的 ReturnListener 与 return holder。
@@ -171,11 +153,6 @@ class RabbitMQAdapterContractTest {
         assertThrows(IllegalStateException.class, event::publish);
     }
 
-    /**
-     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，<code>anyPublish</code>为真。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void shouldReplenishPoolAfterChannelFailure() throws Exception {
         // channels[0] 在 basicPublish 时抛 IO 异常，验证：
@@ -248,11 +225,6 @@ class RabbitMQAdapterContractTest {
         assertTrue(anyPublish, "Expected basicPublish on any non-broken channel after pool replenishment");
     }
 
-    /**
-     * 在测试框架中执行 <code>mock()</code>、<code>ch.isOpen()</code>、<code>channels.add()</code>，验证该场景。
-     *
-     * @throws Exception 当前用例准备资源或调用测试入口失败
-     */
     @Test
     void shouldCloseOwnedChannelsButNotInjectedConnectionOnlyOnce() throws Exception {
         int poolSize = 32;

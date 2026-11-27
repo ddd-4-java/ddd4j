@@ -11,9 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class ActiveMQClientIdConfigurationTest {
 
-    /**
-     * 验证<code>reads.get()</code> 等于 <code>1</code>。
-     */
     @Test
     void readsClientIdPrefixOnceWhenSettingFactoryClientId() {
         AtomicInteger reads = new AtomicInteger();

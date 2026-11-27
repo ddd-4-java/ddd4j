@@ -15,14 +15,8 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * 通过 <code>MockServerWebExchange.from()</code>、<code>MockServerHttpRequest.get()</code>、<code>context.get()</code> 验证 <code>DefaultWebFluxConfigurationRequestContext</code> 的运行行为。
- */
 class DefaultWebFluxConfigurationRequestContextTest {
 
-    /**
-     * 验证<code>seenExchange</code> 与…为同一实例 <code>exchange</code>，<code>context.get(ServerWebExchange.class)</code> 与…为同一实例 <code>exchange</code>，<code>context.hasKey(ServerHttpResponse.class)</code>为假。
-     */
     @Test
     void suppliesTheExistingRequestContextKeysOnlyDownstream() {
         MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/orders"));
@@ -43,9 +37,6 @@ class DefaultWebFluxConfigurationRequestContextTest {
         })).contextWrite(context -> context.put("outer", "present")).block();
     }
 
-    /**
-     * 验证<code>messages.getBasename()</code> 等于 <code>Collections.singletonList("messages")</code>，<code>resources.getLocalLocations()</code> 等于 <code>Collections.emptyMap()</code>，<code>messages.getBasename()</code> 等于 <code>Arrays.asList("messages", "orders")</code>。
-     */
     @Test
     void usesMutableDefaultsPerConfiguration() {
         MessageSourceConfigurationProperties messages = new MessageSourceConfigurationProperties();

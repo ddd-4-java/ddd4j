@@ -6,14 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * 通过 <code>request.setLoginId()</code>、<code>request.setPassword()</code>、<code>request.setDisplayName()</code> 验证 <code>UserRequestContract</code> 的运行行为。
- */
 class UserRequestContractTest {
 
-    /**
-     * 验证<code>request.loginId()</code> 等于 <code>request.getLoginId()</code>，<code>request.password()</code> 等于 <code>request.getPassword()</code>，<code>request.toString().contains("secret")</code>为假。
-     */
     @Test
     void createUserSupportsBeanAndComponentAccessorsAndArrayValues() {
         CreateUserRequest request = new CreateUserRequest();
@@ -39,9 +33,6 @@ class UserRequestContractTest {
         });
     }
 
-    /**
-     * 验证<code>request.displayName()</code> 等于 <code>request.getDisplayName()</code>，<code>request.password()</code> 等于 <code>request.getPassword()</code>，<code>request.toString().contains("secret")</code>为假。
-     */
     @Test
     void updateUserSupportsBeanAndComponentAccessorsAndArrayValues() {
         UpdateUserRequest request = new UpdateUserRequest();

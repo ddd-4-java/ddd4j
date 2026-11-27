@@ -40,17 +40,9 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * 通过 <code>SaManager.getConfig()</code>、<code>SaManager.getSaTokenDao()</code>、<code>SaManager.getSaJsonTemplate()</code> 验证 <code>SaTokenSubjectRedis</code> 的运行行为。
- */
 @EnabledIfSystemProperty(named = "ddd4j.test.redis.port", matches = "[0-9]+")
 class SaTokenSubjectRedisTest {
 
-    /**
-     * 验证<code>adminToken</code> 等于 <code>"redis-admin-token"</code>，<code>adminToken</code>非空。
-     *
-     * @param mode 传给 <code>properties.setAuthenticationMode()</code> 的 <code>SaTokenAuthenticationMode</code> 输入
-     */
     @ParameterizedTest
     @EnumSource(SaTokenAuthenticationMode.class)
     void realRedisRetainsRealmIsolationThroughLoginRenewalAndLogout(SaTokenAuthenticationMode mode) {
@@ -160,13 +152,6 @@ class SaTokenSubjectRedisTest {
         }
     }
 
-    /**
-     * 构造 <code>AuthPrincipal</code>、<code>AuthSessionConfig</code> 作为当前测试的输入或结果。
-     *
-     * @param userId 传给 <code>AuthRequest.of()</code> 的 <code>String</code> 输入
-     * @param token  从测试登录获得的会话凭据
-     * @return 提供给后续契约断言的 <code>AuthRequest</code> 结果
-     */
     private AuthRequest loginRequest(String userId, String token) {
         return AuthRequest.of("shared")
                 .setPrincipal(new AuthPrincipal().setLoginId("shared").setUserId(userId))
@@ -175,13 +160,6 @@ class SaTokenSubjectRedisTest {
                         .setCreateTokenSessionNow(true).setPresetToken(token));
     }
 
-    /**
-     * 核对<code>ttl &gt; timeout - 5 &amp;&amp; ttl &lt;= timeout</code>为真。
-     *
-     * @param dao     传给 <code>dao.getTimeout()</code> 的 <code>SaTokenDao</code> 输入
-     * @param key     用于在测试上下文或缓存中索引数据的键
-     * @param timeout 等待测试事件的超时时长
-     */
     private void assertTtl(SaTokenDao dao, String key, long timeout) {
         long ttl = dao.getTimeout(key);
         assertTrue(ttl > timeout - 5 && ttl <= timeout, () -> key + " has unexpected TTL " + ttl);
