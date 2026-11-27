@@ -20,6 +20,8 @@ class BomAlignmentTest(unittest.TestCase):
             bom = root / "ddd4j-bom"
             bom.mkdir()
             (bom / "pom.xml").write_text("<project/>")
+            modules, entry = ("subprojects", "subproject") if namespace == "4.1.0" else ("modules", "module")
+            (root / "pom.xml").write_text(f"<project><{modules}><{entry}>sample</{entry}></{modules}></project>")
             module = root / "sample"
             module.mkdir()
             parent = ("  <parent><groupId>io.ddd4j</groupId>"

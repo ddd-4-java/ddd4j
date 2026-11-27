@@ -68,7 +68,9 @@ public class ActiveMQAcknowledgment implements Acknowledgment {
      * 关联 ID
      */
     private final String correlationId;
-    /** \u8bb0\u5f55\u5df2\u786e\u8ba4\u6d88\u606f\u7684\u72b6\u6001\u6216\u7ed3\u679c\u3002 */
+    /**
+     * \u8bb0\u5f55\u5df2\u786e\u8ba4\u6d88\u606f\u7684\u72b6\u6001\u6216\u7ed3\u679c\u3002
+     */
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 
     /**
@@ -189,7 +191,7 @@ public class ActiveMQAcknowledgment implements Acknowledgment {
      * 通过底层消息会话更新当前投递的确认状态。
      *
      * @param multiple 是否批量否定
-     * @param requeue 是否重新入队
+     * @param requeue  是否重新入队
      */
     @Override
     public void nack(boolean multiple, boolean requeue) {
@@ -229,7 +231,7 @@ public class ActiveMQAcknowledgment implements Acknowledgment {
      *
      * <p>ActiveMQ 实现调用 <code>Optional.empty()</code>。</p>
      *
-     * @param <T> 类型参数
+     * @param <T>        类型参数
      * @param nativeType 原生类型
      * @return 根据执行路径返回<code>Optional.empty()</code>、<code>Optional.of(nativeType.cast(session))</code>、<code>Optional.of(nativeType.cast(message))</code>
      */

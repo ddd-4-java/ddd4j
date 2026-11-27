@@ -29,13 +29,21 @@ import java.util.Arrays;
 @Setter
 public class DropwizardOrderConfiguration extends Configuration {
 
-    /** \u5546\u54c1\u4ea4\u6613\u793a\u4f8b\u7684 JDBC \u8fde\u63a5\u5730\u5740\u3002 */
+    /**
+     * \u5546\u54c1\u4ea4\u6613\u793a\u4f8b\u7684 JDBC \u8fde\u63a5\u5730\u5740\u3002
+     */
     private String catalogJdbcUrl;
-    /** \u5546\u54c1\u4ea4\u6613\u793a\u4f8b\u6570\u636e\u5e93\u8d26\u53f7\u3002 */
+    /**
+     * \u5546\u54c1\u4ea4\u6613\u793a\u4f8b\u6570\u636e\u5e93\u8d26\u53f7\u3002
+     */
     private String catalogDbUser;
-    /** \u8fde\u63a5\u5546\u54c1\u4ea4\u6613\u793a\u4f8b\u6570\u636e\u5e93\u6240\u7528\u7684\u53e3\u4ee4\u3002 */
+    /**
+     * \u8fde\u63a5\u5546\u54c1\u4ea4\u6613\u793a\u4f8b\u6570\u636e\u5e93\u6240\u7528\u7684\u53e3\u4ee4\u3002
+     */
     private String catalogDbPassword;
-    /** \u5f53\u524d\u793a\u4f8b\u4f7f\u7528\u7684\u8bf7\u6c42\u4e0a\u4e0b\u6587\u548c\u8bbf\u95ee\u7b56\u7565\u914d\u7f6e\u3002 */
+    /**
+     * \u5f53\u524d\u793a\u4f8b\u4f7f\u7528\u7684\u8bf7\u6c42\u4e0a\u4e0b\u6587\u548c\u8bbf\u95ee\u7b56\u7565\u914d\u7f6e\u3002
+     */
     private Ddd4jDropwizardWebConfiguration ddd4jWeb = defaultWebConfiguration();
 
     /**

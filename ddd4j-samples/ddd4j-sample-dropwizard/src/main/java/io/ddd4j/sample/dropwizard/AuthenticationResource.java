@@ -29,14 +29,20 @@ public final class AuthenticationResource {
         return R.ok(new TokenResponse(SubjectKit.getSubject().login(AuthRequest.of(userId))));
     }
 
-    /** \u5c01\u88c5\u7b7e\u53d1\u7ed9\u793a\u4f8b\u5ba2\u6237\u7aef\u7684\u4f1a\u8bdd\u4ee4\u724c\u3002 */
+    /**
+     * \u5c01\u88c5\u7b7e\u53d1\u7ed9\u793a\u4f8b\u5ba2\u6237\u7aef\u7684\u4f1a\u8bdd\u4ee4\u724c\u3002
+     */
     @Data
     public static class TokenResponse {
 
-        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
+        /**
+         * Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002
+         */
         private static final long serialVersionUID = 0L;
 
-        /** \u5f53\u524d\u793a\u4f8b\u7b7e\u53d1\u6216\u8fd4\u56de\u5ba2\u6237\u7aef\u7684\u4f1a\u8bdd\u4ee4\u724c\u3002 */
+        /**
+         * \u5f53\u524d\u793a\u4f8b\u7b7e\u53d1\u6216\u8fd4\u56de\u5ba2\u6237\u7aef\u7684\u4f1a\u8bdd\u4ee4\u724c\u3002
+         */
         private String token;
 
         /**

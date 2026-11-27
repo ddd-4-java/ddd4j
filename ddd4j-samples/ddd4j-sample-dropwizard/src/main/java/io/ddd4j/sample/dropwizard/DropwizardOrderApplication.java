@@ -33,9 +33,13 @@ import java.util.UUID;
  */
 public final class DropwizardOrderApplication extends Application<DropwizardOrderConfiguration> {
 
-    /** \u5e42\u7b49\u7f13\u5b58\u6761\u76ee\u5b58\u6d3b\u65f6\u95f4\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002 */
+    /**
+     * \u5e42\u7b49\u7f13\u5b58\u6761\u76ee\u5b58\u6d3b\u65f6\u95f4\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002
+     */
     private static final long IDEMPOTENCY_CACHE_TTL_SECONDS = 300L;
-    /** \u7528\u4e8e\u6ce8\u518c\u6216\u5b9a\u4f4d\u7f13\u5b58\u5b9e\u4f8b\u7684\u540d\u79f0\u3002 */
+    /**
+     * \u7528\u4e8e\u6ce8\u518c\u6216\u5b9a\u4f4d\u7f13\u5b58\u5b9e\u4f8b\u7684\u540d\u79f0\u3002
+     */
     private final String cacheName = "dropwizard-order-" + UUID.randomUUID();
 
     /**
@@ -62,7 +66,7 @@ public final class DropwizardOrderApplication extends Application<DropwizardOrde
     /**
      * \u4ece\u914d\u7f6e\u88c5\u914d\u5546\u54c1\u4ea4\u6613\u5e94\u7528\u5e76\u5411 Dropwizard \u73af\u5883\u6ce8\u518c\u8d44\u6e90\u3002
      * @param configuration \u5f53\u524d\u5e94\u7528\u52a0\u8f7d\u7684\u8ba4\u8bc1\u6216\u4ea4\u6613\u914d\u7f6e
-     * @param environment \u7528\u4e8e\u767b\u8bb0\u8def\u7531\u3001\u8fc7\u6ee4\u5668\u53ca\u751f\u547d\u5468\u671f\u7684\u6846\u67b6\u73af\u5883
+     * @param environment   \u7528\u4e8e\u767b\u8bb0\u8def\u7531\u3001\u8fc7\u6ee4\u5668\u53ca\u751f\u547d\u5468\u671f\u7684\u6846\u67b6\u73af\u5883
      */
     @Override
     public void run(DropwizardOrderConfiguration configuration, Environment environment) {
