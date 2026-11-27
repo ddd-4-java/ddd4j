@@ -4,6 +4,8 @@ Guice 绑定、可选能力与 Javalin 运行时接线。
 
 ## 实现与调用
 
+使用 `Ddd4jMybatisGuiceModule` 的应用需要在自己的 POM 中声明 `io.ddd4j:ddd4j-data-mybatisplus`。商品交易示例通过 `ddd4j-sample-order-jdbc` 引入普通 MyBatis 适配器。这两个适配器提供同名配置类，同时装配会导致方法签名冲突。
+
 从 [Ddd4jGuiceModule](src/main/java/io/ddd4j/guice/Ddd4jGuiceModule.java)、[GuiceCommandBus](src/main/java/io/ddd4j/guice/command/GuiceCommandBus.java)、[GuiceI18nProvider](src/main/java/io/ddd4j/guice/i18n/GuiceI18nProvider.java) 进入。
 
 修改 `Ddd4jGuiceModule` 时，核对公开入口 `basic`、`eventBus`、`projectionRunner`、`projectionService` 的调用方。

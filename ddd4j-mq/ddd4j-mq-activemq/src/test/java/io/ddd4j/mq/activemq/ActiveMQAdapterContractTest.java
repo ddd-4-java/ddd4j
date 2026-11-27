@@ -19,6 +19,7 @@ import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.event.MQEventSerialization;
 import io.ddd4j.mq.listener.MQListener;
+import io.ddd4j.mq.activemq.util.ActivemqKit;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.serialization.JsonMQEventSerialization;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
@@ -44,6 +45,13 @@ import static org.mockito.Mockito.*;
  * ActiveMQ 因果头、消息读取与连接生命周期三线契约。
  */
 class ActiveMQAdapterContractTest {
+    /** 空白主题回退到默认目的地，字面量 NULL 保留为调用方指定的主题名。 */
+    @Test
+    void resolvesBlankAndLiteralTopicNames() {
+        assertEquals("ddd4j.default.topic", ActivemqKit.resolvePhysical(" ", "\t", " "));
+        assertEquals("NULL", ActivemqKit.resolvePhysical(null, "NULL", null));
+    }
+
 
     /**
      * \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>mock()</code>\u3001<code>factory.createConnection()</code>\u3001<code>connection.createSession()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002

@@ -1,5 +1,8 @@
 package io.ddd4j.sample.order;
 
+import io.ddd4j.core.constant.ContextConstants;
+import io.ddd4j.core.context.ThreadContext;
+import io.ddd4j.data.mybatis.context.Ddd4jTenantContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ddd4j.core.cqrs.command.DefaultCommandBus;
 import io.ddd4j.core.ddd.event.DomainEvent;
@@ -19,6 +22,7 @@ import io.ddd4j.sample.order.domain.model.GoodsSku;
 import io.ddd4j.sample.order.domain.model.GoodsSpu;
 import io.ddd4j.sample.order.infrastructure.CatalogDatabase;
 import java.util.NoSuchElementException;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.apache.ibatis.datasource.unpooled.UnpooledDataSource;
 import org.testcontainers.containers.MySQLContainer;
@@ -27,6 +31,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /** \u4f7f\u7528\u771f\u5b9e MySQL \u9a8c\u8bc1\u5546\u54c1\u4ea4\u6613\u7684\u8868\u7ed3\u6784\u3001\u4e8b\u52a1\u3001\u79df\u6237\u9694\u79bb\u548c\u72b6\u6001\u6d41\u8f6c\u3002 */
@@ -224,4 +229,26 @@ class CatalogTradeTest {
         assertEquals(Map.of("goods_spu", 17, "goods_sku", 14, "trade_order", 20, "trade_order_item", 14), counts);
     }
 
+
+    /**
+     * 验证 MyBatis 事务把业务租户传给 DDD4J，并在异常后恢复请求租户。
+     */
+    @Test
+    void catalogTransactionScopesAndRestoresTenant() {
+        var source = new UnpooledDataSource(MYSQL.getDriverClassName(), MYSQL.getJdbcUrl(), MYSQL.getUsername(), MYSQL.getPassword());
+        var transactions = CatalogDatabase.open(source);
+        var context = new Ddd4jTenantContext();
+        try (var request = ThreadContext.open(); var ignored = context.open("request-tenant")) {
+            ThreadContext.set(ContextConstants.PREPARING_SQL, "caller-sql");
+            var failure = assertThrows(IllegalStateException.class, () -> transactions.execute("trade-tenant", session -> {
+                assertEquals("trade-tenant", context.getCurrentTenantId());
+                assertTrue(session.goods().findById(Long.MAX_VALUE).isEmpty());
+                assertNotEquals("caller-sql", ThreadContext.get(ContextConstants.PREPARING_SQL));
+                throw new IllegalStateException("rollback");
+            }));
+            assertEquals("rollback", failure.getMessage());
+            assertEquals("request-tenant", context.getCurrentTenantId());
+            assertEquals("caller-sql", ThreadContext.get(ContextConstants.PREPARING_SQL));
+        }
+    }
 }

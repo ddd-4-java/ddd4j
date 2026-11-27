@@ -1,5 +1,8 @@
 package io.ddd4j.sample.order.infrastructure;
 
+import io.ddd4j.core.context.ThreadContext;
+import io.ddd4j.data.mybatis.context.Ddd4jTenantContext;
+import io.ddd4j.data.mybatis.config.Ddd4jMybatisConfigurer;
 import io.ddd4j.sample.order.domain.gateway.TradeSession;
 import io.ddd4j.sample.order.infrastructure.persistence.CatalogMapper;
 import io.ddd4j.sample.order.infrastructure.persistence.MybatisRepositories;
@@ -54,12 +57,16 @@ public final class CatalogDatabase {
         initializeSchema(source);
         Configuration config = new Configuration(new Environment("catalog", new JdbcTransactionFactory(), source));
         config.setMapUnderscoreToCamelCase(true);
+        config.addInterceptor(new Ddd4jMybatisConfigurer().build());
         config.addMapper(CatalogMapper.class);
         SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(config);
+        Ddd4jTenantContext tenantContext = new Ddd4jTenantContext();
         return new TradeSession.Transactions() {
             @Override
             public <T> T execute(String tenant, Function<TradeSession, T> work) {
-                try (SqlSession session = factory.openSession(false)) {
+                try (ThreadContext.Scope transactionContext = ThreadContext.open();
+                     Ddd4jTenantContext.Scope scope = tenantContext.open(Objects.requireNonNull(tenant, "tenant"));
+                     SqlSession session = factory.openSession(false)) {
                     T result = work.apply(new MybatisRepositories(session.getMapper(CatalogMapper.class), tenant));
                     session.commit();
                     return result;

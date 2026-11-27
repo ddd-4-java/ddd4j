@@ -84,6 +84,12 @@ public final class Ddd4jGuiceRuntime implements AutoCloseable {
                 .register(SpiKeys.COMMAND_BUS, CommandBus.class,
                         Objects.requireNonNull(commandBus, "commandBus must not be null"));
         readinessRegistry = new RuntimeReadinessRegistry(readinessContributors);
+        // 显式能力先完成启动；失败时其自身回滚线程和句柄，尚未发布任何本实例全局状态。
+        Binding<Ddd4jProjectionGuiceModule.Startup> projectionStartup = injector.getExistingBinding(
+                Key.get(Ddd4jProjectionGuiceModule.Startup.class));
+        if (Objects.nonNull(projectionStartup)) {
+            projectionStartup.getProvider().get();
+        }
         start();
         GuiceContext.setInjector(this.injector);
     }

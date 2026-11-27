@@ -51,11 +51,11 @@ public final class ActivemqKit {
      * @return \u7269\u7406\u76ee\u7684\u5730\u540d\u79f0
      */
     public static String resolvePhysical(String namespace, String topic, String tag) {
-        String base = hasText(topic) ? topic : "ddd4j.default.topic";
-        if (hasText(namespace)) {
+        String base = StrKit.hasText(topic) ? topic : "ddd4j.default.topic";
+        if (StrKit.hasText(namespace)) {
             base = namespace + "." + base;
         }
-        return hasText(tag) ? base + "." + tag : base;
+        return StrKit.hasText(tag) ? base + "." + tag : base;
     }
 
     /**
@@ -152,14 +152,5 @@ public final class ActivemqKit {
         } catch (JMSException e) {
             return 0L;
         }
-    }
-
-    /**
-     * \u68c0\u67e5\u8f93\u5165\u662f\u5426\u5b58\u5728\u975e\u7a7a\u767d\u5b57\u7b26\u3002
-     * @param s \u5f85\u68c0\u67e5\u7684\u5b57\u7b26\u4e32
-     * @return \u542b\u6709\u6548\u6587\u672c\u65f6\u8fd4\u56de true
-     */
-    private static boolean hasText(String s) {
-        return StrKit.isNotEmpty(s);
     }
 }
