@@ -18,9 +18,11 @@ import io.ddd4j.core.ddd.event.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -55,6 +57,102 @@ class InMemoryEventStoreTest extends EventStoreContractTest {
         assertEquals(1, store.read("Order", id, 1, 1).size());
         assertEquals(2, store.readAll(0, 10).size());
         assertThrows(AggregateVersionConflictException.class, () -> store.append("Order", id, Collections.<DomainEvent<?>>singletonList(new TestEvent(id)), 0));
+    }
+
+    /**
+     * 验证<code>store.append( "Order", id, Arrays.asList(new TestEvent(id), invalid), 1)</code> 抛出 <code>NullPointerException.class</code>，<code>store.read("Order", id).size()</code> 等于 <code>1</code>，<code>appended.eventId()</code> 等于 <code>retry.getEventId()</code>。
+     */
+    @Test
+    void failedBatchPreservesCommittedEventsAndGlobalPosition() {
+        InMemoryEventStore store = new InMemoryEventStore();
+        TestId id = new TestId("order-1");
+        TestEvent original = new TestEvent(id);
+        store.append("Order", id, Collections.<DomainEvent<?>>singletonList(original), 0);
+        DomainEvent<TestId> invalid = new DomainEvent<TestId>(new EntityIdPath(id)) {
+            @Override
+            public EventId getEventId() {
+                return null;
+            }
+        };
+
+        assertThrows(NullPointerException.class, () -> store.append(
+                "Order", id, Arrays.asList(new TestEvent(id), invalid), 1));
+
+        assertAll(
+                () -> assertEquals(1, store.read("Order", id).size()),
+                () -> assertEquals(1, store.readAll(0, 10).size()));
+
+        TestEvent retry = new TestEvent(id);
+        store.append("Order", id, Collections.<DomainEvent<?>>singletonList(retry), 1);
+        StoredEvent appended = store.readAll(2, 1).get(0);
+        assertEquals(2L, appended.position());
+        assertEquals(2L, appended.version());
+        assertEquals(retry.getEventId(), appended.eventId());
+    }
+
+
+    /**
+     * 验证<code>all.size()</code> 等于 <code>2</code>，<code>all.get(0).position()</code> 等于 <code>1L</code>，<code>store.read("Order", outerId).get(0).version()</code> 等于 <code>1L</code>。
+     */
+    @Test
+    void reentrantAppendToOtherStreamPreservesBothGlobalPositions() {
+        InMemoryEventStore store = new InMemoryEventStore();
+        TestId outerId = new TestId("order-outer");
+        TestId innerId = new TestId("order-inner");
+        TestEvent innerEvent = new TestEvent(innerId);
+        DomainEvent<TestId> outerEvent = eventWithNestedAppend(outerId, () -> store.append(
+                "Order", innerId, Collections.<DomainEvent<?>>singletonList(innerEvent), 0));
+
+        store.append("Order", outerId, Collections.<DomainEvent<?>>singletonList(outerEvent), 0);
+
+        List<StoredEvent> all = store.readAll(1, 10);
+        assertEquals(2, all.size());
+        assertEquals(1L, all.get(0).position());
+        assertEquals(2L, all.get(1).position());
+        assertEquals(innerEvent.getEventId(), all.get(0).eventId());
+        assertEquals(outerEvent.getEventId(), all.get(1).eventId());
+        assertEquals(1L, store.read("Order", innerId).get(0).version());
+        assertEquals(1L, store.read("Order", outerId).get(0).version());
+    }
+
+    /**
+     * 验证<code>store.append("Order", id, Collections.&lt;DomainEvent&lt;?&gt;&gt;singletonList(outerEvent), 0)</code> 抛出 <code>AggregateVersionConflictException.class</code>，<code>conflict.expectedVersion()</code> 等于 <code>0L</code>，<code>all.get(0).eventId()</code> 等于 <code>innerEvent.getEventId()</code>。
+     */
+    @Test
+    void reentrantAppendToSameStreamCausesExpectedVersionConflict() {
+        InMemoryEventStore store = new InMemoryEventStore();
+        TestId id = new TestId("order-1");
+        TestEvent innerEvent = new TestEvent(id);
+        DomainEvent<TestId> outerEvent = eventWithNestedAppend(id, () -> store.append(
+                "Order", id, Collections.<DomainEvent<?>>singletonList(innerEvent), 0));
+
+        AggregateVersionConflictException conflict = assertThrows(AggregateVersionConflictException.class,
+                () -> store.append("Order", id, Collections.<DomainEvent<?>>singletonList(outerEvent), 0));
+
+        assertEquals(0L, conflict.expectedVersion());
+        assertEquals(1L, conflict.actualVersion());
+        assertEquals(1, store.read("Order", id).size());
+        List<StoredEvent> all = store.readAll(1, 10);
+        assertEquals(1, all.size());
+        assertEquals(1L, all.get(0).position());
+        assertEquals(innerEvent.getEventId(), all.get(0).eventId());
+    }
+
+    /**
+     * 构造 <code>DomainEvent&lt;TestId&gt;</code>、<code>EntityIdPath</code> 作为当前测试的输入或结果。
+     *
+     * @param id           当前要查找的测试记录标识
+     * @param nestedAppend 用于构造本次返回结果的 <code>Runnable</code> 输入
+     * @return 提供给后续契约断言的 <code>DomainEvent&lt;TestId&gt;</code> 结果
+     */
+    private DomainEvent<TestId> eventWithNestedAppend(TestId id, Runnable nestedAppend) {
+        return new DomainEvent<TestId>(new EntityIdPath(id)) {
+            @Override
+            public EventId getCorrelationId() {
+                nestedAppend.run();
+                return super.getCorrelationId();
+            }
+        };
     }
 
     /** \u4e3a\u6d4b\u8bd5\u805a\u5408\u63d0\u4f9b\u72ec\u7acb\u6807\u8bc6\u7684\u503c\u5bf9\u8c61\u3002 */
