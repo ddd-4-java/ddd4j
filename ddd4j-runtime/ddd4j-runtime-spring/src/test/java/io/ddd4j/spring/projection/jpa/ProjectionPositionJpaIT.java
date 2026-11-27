@@ -14,6 +14,7 @@
  */
 package io.ddd4j.spring.projection.jpa;
 
+import io.ddd4j.data.projection.jpa.ProjectionPositionEntity;
 import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
 import jakarta.persistence.EntityManager;
@@ -66,6 +67,27 @@ class ProjectionPositionJpaIT {
     /** \u6267\u884c JPA \u67e5\u8be2\u548c\u6301\u4e45\u5316\u64cd\u4f5c\u7684\u5b9e\u4f53\u7ba1\u7406\u5668\u3002 */
     @PersistenceContext
     private EntityManager entityManager;
+
+    /**
+     * 当前测试使用的框架上下文或请求作用域。
+     */
+    @Autowired
+    private org.springframework.context.ApplicationContext context;
+
+    /**
+     * 验证<code>context.getBean("jpaProjectionPositionRepository")</code> 指向同一实例 <code>positions</code>，<code>entityManager.getMetamodel().getEntities()</code> 的大小为 <code>1</code>，<code>ProjectionPositionEntity.class.getAnnotation(jakarta.persistence.Table.class).name()</code> 等于 <code>"ddd4j_projection_position"</code>。
+     */
+    @Test
+    void preservesLegacyBeanNameAndSinglePositionProvider() {
+        assertThat(context.getBean("jpaProjectionPositionRepository")).isSameAs(positions);
+        assertThat(context.getBeansOfType(io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository.class))
+                .containsOnlyKeys("jpaProjectionPositionRepository");
+        assertThat(entityManager.getMetamodel().getEntities()).hasSize(1);
+        assertThat(entityManager.getMetamodel().entity(ProjectionPositionEntity.class).getName())
+                .isEqualTo("ProjectionPositionEntity");
+        assertThat(ProjectionPositionEntity.class.getAnnotation(jakarta.persistence.Table.class).name())
+                .isEqualTo("ddd4j_projection_position");
+    }
 
     /** \u6d4b\u8bd5\u6267\u884c\u524d\u6267\u884c <code>repository.deleteAll()</code> \u5b8c\u6210\u8d44\u6e90\u51c6\u5907\u3002 */
     @BeforeEach

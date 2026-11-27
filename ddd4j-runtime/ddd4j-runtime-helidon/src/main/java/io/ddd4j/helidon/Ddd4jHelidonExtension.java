@@ -19,26 +19,23 @@ import io.ddd4j.cache.subject.InMemorySubjectProvider;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.DefaultCommandBus;
-import io.ddd4j.core.ddd.event.DomainEventPublisher;
-import io.ddd4j.core.i18n.I18nProvider;
+import io.ddd4j.core.cqrs.readmodel.*;
 import io.ddd4j.core.health.ReadinessContributor;
-import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.core.health.RuntimeReadinessRegistry;
-import jakarta.inject.Singleton;
-import jakarta.enterprise.inject.spi.AfterBeanDiscovery;
+import io.ddd4j.core.i18n.I18nProvider;
+import io.ddd4j.core.subject.SubjectProvider;
+import io.ddd4j.helidon.cqrs.HelidonProjectionScheduler;
+import io.ddd4j.helidon.cqrs.HelidonProjectionViewManager;
+import jakarta.enterprise.context.spi.Contextual;
 import jakarta.enterprise.context.spi.CreationalContext;
 import jakarta.enterprise.event.Observes;
-import jakarta.enterprise.inject.spi.AfterDeploymentValidation;
-import jakarta.enterprise.inject.spi.Bean;
-import jakarta.enterprise.inject.spi.BeanManager;
-import jakarta.enterprise.inject.spi.BeforeShutdown;
-import jakarta.enterprise.inject.spi.Extension;
+import jakarta.enterprise.inject.spi.*;
+import jakarta.enterprise.util.TypeLiteral;
+import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.lang.reflect.Type;
+import java.util.*;
 
 /**
  * Helidon MP 启动和关闭阶段的 ddd4j SPI CDI Extension。
@@ -46,14 +43,106 @@ import java.util.Set;
 @Slf4j
 public final class Ddd4jHelidonExtension implements Extension {
 
-    /** \u6c47\u603b\u5f53\u524d\u7ec4\u4ef6\u5c31\u7eea\u72b6\u6001\u7684\u6ce8\u518c\u8868\u3002 */
+    /**
+     * 汇总当前组件就绪状态的注册表。
+     */
     private final RuntimeReadinessRegistry readinessRegistry = new RuntimeReadinessRegistry();
-    /** \u5f53\u524d\u5bb9\u5668\u88c5\u914d\u5e76\u8d1f\u8d23\u5173\u95ed\u7684 DDD4J \u8fd0\u884c\u65f6\u3002 */
+    /**
+     * 由 CDI 扩展获取并负责释放的上下文引用。
+     */
+    private final List<CreationalContext<?>> references = new ArrayList<>();
+    /**
+     * 当前容器装配并负责关闭的 DDD4J 运行时。
+     */
     private Ddd4jHelidonRuntime runtime;
+    /**
+     * 负责在应用生命周期内管理投影任务的组件。
+     */
+    private HelidonProjectionViewManager projectionManager;
+    /**
+     * 当前运行实例拥有并负责关闭的调度器。
+     */
+    private HelidonProjectionScheduler ownedScheduler;
 
     /**
-     * \u4e3a CDI \u751f\u547d\u5468\u671f\u6ce8\u518c DDD4J \u5c31\u7eea\u68c0\u67e5\u6ce8\u518c\u8868\u3002
-     * @param event \u5f53\u524d\u6846\u67b6\u751f\u547d\u5468\u671f\u6216\u5bb9\u5668\u542f\u52a8\u4e8b\u4ef6
+     * 执行清理动作并将后续失败合并至已有异常。
+     *
+     * @param firstFailure 已记录的原始清理异常
+     * @param action       当前需要尝试执行的清理回调
+     * @return 原异常或当前新出现的清理异常
+     */
+    private static Throwable cleanup(Throwable firstFailure, Runnable action) {
+        try {
+            action.run();
+        } catch (RuntimeException | Error failure) {
+            if (Objects.isNull(firstFailure)) {
+                return failure;
+            }
+            if (firstFailure != failure) {
+                firstFailure.addSuppressed(failure);
+            }
+        }
+        return firstFailure;
+    }
+
+    /**
+     * 根据配置为 CDI 容器登记 DDD4J 投影组件。
+     *
+     * @param event       当前框架生命周期或容器启动事件
+     * @param beanManager 用来发现或获取 CDI Bean 的管理器
+     */
+    void registerProjection(@Observes AfterBeanDiscovery event, BeanManager beanManager) {
+        if (projectionEnabled()) {
+            event.addBean().addType(ViewManager.class).addType(HelidonProjectionViewManager.class)
+                    .scope(Singleton.class).createWith(context -> createProjection(beanManager));
+        }
+    }
+
+    /**
+     * 查看当前 Helidon 配置是否启用投影。
+     *
+     * @return 投影已配置开启时返回 true
+     */
+    private boolean projectionEnabled() {
+        return new Ddd4jHelidonConfig().value("ddd4j.cqrs.projection.enabled", Boolean.class).orElse(false);
+    }
+
+    /**
+     * 从 CDI 解析必要组件并装配 Helidon 视图管理器。
+     *
+     * @param beanManager 用来发现或获取 CDI Bean 的管理器
+     * @return 用于运行显式投影配置的管理器
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private HelidonProjectionViewManager createProjection(BeanManager beanManager) {
+        EventChunkReader<Object> reader = projectionBean(beanManager, new TypeLiteral<EventChunkReader<?>>() {
+                }.getType(),
+                EventChunkReader.class, NoopEventChunkReader.class);
+        ProjectionPositionRepository positions = projectionBean(beanManager, ProjectionPositionRepository.class,
+                ProjectionPositionRepository.class, InMemoryProjectionPositionRepository.class);
+        if (Objects.isNull(reader) || Objects.isNull(positions)) {
+            throw new IllegalStateException("Explicit Helidon projection requires EventChunkReader and ProjectionPositionRepository");
+        }
+        List<ProjectionView<?>> views = new ArrayList<>();
+        Type viewType = new TypeLiteral<ProjectionView<?>>() {
+        }.getType();
+        for (Bean<?> viewBean : projectionBeans(beanManager, ProjectionView.class, viewType)) {
+            views.add(reference(beanManager, viewBean, viewType, ProjectionView.class));
+        }
+        ViewScheduler scheduler = bean(beanManager, ViewScheduler.class);
+        if (Objects.isNull(scheduler)) {
+            ownedScheduler = new HelidonProjectionScheduler();
+            scheduler = ownedScheduler;
+        }
+        projectionManager = new HelidonProjectionViewManager(scheduler,
+                new ProjectionRunner<>(new DefaultProjectionService(positions), reader), views);
+        return projectionManager;
+    }
+
+    /**
+     * 为 CDI 生命周期注册 DDD4J 就绪检查注册表。
+     *
+     * @param event 当前框架生命周期或容器启动事件
      */
     void registerReadinessRegistry(@Observes AfterBeanDiscovery event) {
         event.addBean()
@@ -63,59 +152,99 @@ public final class Ddd4jHelidonExtension implements Extension {
     }
 
     /**
-     * \u5728 CDI \u90e8\u7f72\u5b8c\u6210\u540e\u521b\u5efa\u5e76\u542f\u52a8 DDD4J \u8fd0\u884c\u65f6\u3002
-     * @param event \u5f53\u524d\u6846\u67b6\u751f\u547d\u5468\u671f\u6216\u5bb9\u5668\u542f\u52a8\u4e8b\u4ef6
-     * @param beanManager \u7528\u6765\u53d1\u73b0\u6216\u83b7\u53d6 CDI Bean \u7684\u7ba1\u7406\u5668
+     * 在 CDI 部署完成后创建并启动 DDD4J 运行时。
+     *
+     * @param event       当前框架生命周期或容器启动事件
+     * @param beanManager 用来发现或获取 CDI Bean 的管理器
      */
     void start(@Observes AfterDeploymentValidation event, BeanManager beanManager) {
-        HelidonDomainEventPublisher publisher = new HelidonDomainEventPublisher(beanManager);
-        SubjectProvider subjectProvider = bean(beanManager, SubjectProvider.class);
-        if (Objects.isNull(subjectProvider)) {
-            subjectProvider = new InMemorySubjectProvider(new InMemorySubject(publisher::publish));
+        try {
+            HelidonDomainEventPublisher publisher = new HelidonDomainEventPublisher(beanManager);
+            SubjectProvider subjectProvider = bean(beanManager, SubjectProvider.class);
+            if (Objects.isNull(subjectProvider)) {
+                subjectProvider = new InMemorySubjectProvider(new InMemorySubject(publisher::publish));
+            }
+            I18nProvider i18nProvider = bean(beanManager, I18nProvider.class);
+            if (Objects.isNull(i18nProvider)) {
+                i18nProvider = I18nProvider.DEFAULT;
+            }
+            CommandBus commandBus = bean(beanManager, CommandBus.class);
+            if (Objects.isNull(commandBus)) {
+                commandBus = new DefaultCommandBus(commandExecutors(beanManager));
+            }
+            readinessRegistry.registerAll(readinessContributors(beanManager));
+            runtime = new Ddd4jHelidonRuntime(publisher, subjectProvider, i18nProvider, commandBus,
+                    readinessRegistry);
+            runtime.start();
+            if (projectionEnabled()) {
+                // CDI 解析歧义直接失败，禁止旧、新两套管理器同时启动。
+                ViewManager manager = bean(beanManager, ViewManager.class);
+                Objects.requireNonNull(manager, "explicit projection manager missing").start();
+            }
+            log.info("ddd4j Helidon runtime initialized");
+        } catch (RuntimeException | Error failure) {
+            try {
+                stop(null);
+            } catch (RuntimeException | Error closeFailure) {
+                if (failure != closeFailure) {
+                    failure.addSuppressed(closeFailure);
+                }
+            }
+            throw failure;
         }
-        I18nProvider i18nProvider = bean(beanManager, I18nProvider.class);
-        if (Objects.isNull(i18nProvider)) {
-            i18nProvider = I18nProvider.DEFAULT;
-        }
-        CommandBus commandBus = bean(beanManager, CommandBus.class);
-        if (Objects.isNull(commandBus)) {
-            commandBus = new DefaultCommandBus(commandExecutors(beanManager));
-        }
-        readinessRegistry.registerAll(readinessContributors(beanManager));
-        runtime = new Ddd4jHelidonRuntime(publisher, subjectProvider, i18nProvider, commandBus,
-                readinessRegistry);
-        runtime.start();
-        log.info("ddd4j Helidon runtime initialized");
     }
 
     /**
-     * \u5728\u5bb9\u5668\u5173\u95ed\u524d\u505c\u6b62\u8fd0\u884c\u65f6\u3001\u6295\u5f71\u5e76\u6e05\u7406\u5df2\u83b7\u53d6\u5f15\u7528\u3002
-     * @param event \u5f53\u524d\u6846\u67b6\u751f\u547d\u5468\u671f\u6216\u5bb9\u5668\u542f\u52a8\u4e8b\u4ef6
+     * 在容器关闭前停止运行时、投影并清理已获取引用。
+     *
+     * @param event 当前框架生命周期或容器启动事件
      */
     void stop(@Observes BeforeShutdown event) {
+        Throwable firstFailure = null;
+        if (Objects.nonNull(projectionManager)) {
+            firstFailure = cleanup(firstFailure, projectionManager::stop);
+        }
+        if (Objects.nonNull(ownedScheduler)) {
+            firstFailure = cleanup(firstFailure, ownedScheduler::shutdown);
+        }
         if (Objects.nonNull(runtime)) {
-            runtime.close();
+            firstFailure = cleanup(firstFailure, runtime::close);
+        }
+        List<CreationalContext<?>> ownedReferences = new ArrayList<>(references);
+        references.clear();
+        for (CreationalContext<?> reference : ownedReferences) {
+            firstFailure = cleanup(firstFailure, reference::release);
+        }
+        if (firstFailure instanceof RuntimeException) {
+            throw (RuntimeException) firstFailure;
+        }
+        if (firstFailure instanceof Error) {
+            throw (Error) firstFailure;
         }
     }
 
     /**
-     * \u4ece CDI \u5bb9\u5668\u67e5\u627e\u5e76\u6536\u96c6\u547d\u4ee4\u6267\u884c\u5668\u3002
-     * @param beanManager \u7528\u6765\u53d1\u73b0\u6216\u83b7\u53d6 CDI Bean \u7684\u7ba1\u7406\u5668
-     * @return \u5bb9\u5668\u4e2d\u53ef\u89e3\u6790\u7684\u547d\u4ee4\u6267\u884c\u5668\u96c6\u5408
+     * 从 CDI 容器查找并收集命令执行器。
+     *
+     * @param beanManager 用来发现或获取 CDI Bean 的管理器
+     * @return 容器中可解析的命令执行器集合
      */
     private List<CommandExecutor<?>> commandExecutors(BeanManager beanManager) {
         List<CommandExecutor<?>> executors = new ArrayList<>();
-        for (Bean<?> bean : beanManager.getBeans(CommandExecutor.class)) {
-            CommandExecutor<?> executor = reference(beanManager, bean, CommandExecutor.class);
+        Type executorType = new TypeLiteral<CommandExecutor<?>>() {
+        }.getType();
+        for (Bean<?> bean : projectionBeans(beanManager, CommandExecutor.class, executorType)) {
+            CommandExecutor<?> executor = reference(beanManager, bean, executorType, CommandExecutor.class);
             executors.add(executor);
         }
         return executors;
     }
 
     /**
-     * \u4ece CDI \u627e\u5230\u53ef\u53c2\u4e0e\u5e94\u7528\u5c31\u7eea\u68c0\u67e5\u7684\u8d21\u732e\u8005\u3002
-     * @param beanManager \u7528\u6765\u53d1\u73b0\u6216\u83b7\u53d6 CDI Bean \u7684\u7ba1\u7406\u5668
-     * @return \u5e94\u7528\u7684\u5c31\u7eea\u68c0\u67e5\u8d21\u732e\u8005\u96c6\u5408
+     * 从 CDI 找到可参与应用就绪检查的贡献者。
+     *
+     * @param beanManager 用来发现或获取 CDI Bean 的管理器
+     * @return 应用的就绪检查贡献者集合
      */
     private List<ReadinessContributor> readinessContributors(BeanManager beanManager) {
         List<ReadinessContributor> contributors = new ArrayList<>();
@@ -126,11 +255,12 @@ public final class Ddd4jHelidonExtension implements Extension {
     }
 
     /**
-     * \u4ece CDI \u4e2d\u89e3\u6790\u6307\u5b9a\u7c7b\u578b\u7684\u5e94\u7528\u7ec4\u4ef6\u3002
-     * @param <T> \u5f53\u524d\u5bb9\u5668\u5904\u7406\u7684\u7ec4\u4ef6\u6216\u4e8b\u4ef6\u7c7b\u578b
-     * @param beanManager \u7528\u6765\u53d1\u73b0\u6216\u83b7\u53d6 CDI Bean \u7684\u7ba1\u7406\u5668
-     * @param type \u8981\u89e3\u6790\u7684 Bean \u7c7b\u578b\u6216 CDI \u7c7b\u578b\u4fe1\u606f
-     * @return \u89e3\u6790\u5230\u7684\u7ec4\u4ef6\u5b9e\u4f8b
+     * 从 CDI 中解析指定类型的应用组件。
+     *
+     * @param <T>         当前容器处理的组件或事件类型
+     * @param beanManager 用来发现或获取 CDI Bean 的管理器
+     * @param type        要解析的 Bean 类型或 CDI 类型信息
+     * @return 解析到的组件实例
      */
     private <T> T bean(BeanManager beanManager, Class<T> type) {
         Set<Bean<?>> beans = beanManager.getBeans(type);
@@ -142,15 +272,81 @@ public final class Ddd4jHelidonExtension implements Extension {
     }
 
     /**
-     * \u83b7\u53d6 CDI Bean \u5f15\u7528\uff0c\u5e76\u767b\u8bb0\u9000\u51fa\u65f6\u9700\u91ca\u653e\u7684 CreationalContext\u3002
-     * @param <T> \u5f53\u524d\u5bb9\u5668\u5904\u7406\u7684\u7ec4\u4ef6\u6216\u4e8b\u4ef6\u7c7b\u578b
-     * @param beanManager \u7528\u6765\u53d1\u73b0\u6216\u83b7\u53d6 CDI Bean \u7684\u7ba1\u7406\u5668
-     * @param bean \u88ab\u9009\u5b9a\u7528\u4e8e\u521b\u5efa\u5f15\u7528\u7684 CDI Bean \u5bf9\u8c61
-     * @param type \u8981\u89e3\u6790\u7684 Bean \u7c7b\u578b\u6216 CDI \u7c7b\u578b\u4fe1\u606f
-     * @return \u5f53\u524d\u90e8\u7f72\u53ef\u4f7f\u7528\u7684 CDI Bean \u5f15\u7528
+     * 合并旧裸类型与具体业务泛型的 CDI 发现结果，同一个 Bean 只注册一次。
+     *
+     * @param beanManager 用于查询 CDI Bean 的管理器
+     * @param rawType     泛型查询失败时用来继续匹配的原始类型
+     * @param genericType 用于匹配 Bean 的泛型类型
+     * @return 与指定类型匹配的 CDI Bean 集合
+     */
+    private Set<Bean<?>> projectionBeans(BeanManager beanManager, Class<?> rawType, Type genericType) {
+        Set<Bean<?>> beans = new LinkedHashSet<>(beanManager.getBeans(rawType));
+        if (!rawType.equals(genericType)) {
+            beans.addAll(beanManager.getBeans(genericType));
+        }
+        return beans;
+    }
+
+    /**
+     * 仅在装配期检查 CDI 已管理的真实目标；运行时仍调用代理以保留拦截器语义。
+     *
+     * @param beanManager            用于查询 CDI Bean 的管理器
+     * @param lookupType             用于查找 CDI Bean 的类型
+     * @param type                   返回组件应实现的类型
+     * @param rejectedImplementation 应从查找结果中排除的实现
+     * @param <T>                    投影组件的期望类型
+     * @return 找到的投影组件引用
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private <T> T projectionBean(BeanManager beanManager, Type lookupType, Class<T> type,
+                                 Class<?> rejectedImplementation) {
+        Set<Bean<?>> beans = projectionBeans(beanManager, type, lookupType);
+        if (beans.isEmpty()) {
+            return null;
+        }
+        Bean<?> bean = beanManager.resolve(beans);
+        CreationalContext<?> context = beanManager.createCreationalContext(bean);
+        references.add(context);
+        Type referenceType = bean.getTypes().contains(type) ? type : lookupType;
+        T proxy = type.cast(beanManager.getReference(bean, referenceType, context));
+        Object target = proxy;
+        if (beanManager.isNormalScope(bean.getScope())) {
+            // 同一上下文取目标，不创建第二个 Bean；Dependent 本身即真实引用。
+            target = beanManager.getContext(bean.getScope()).get((Contextual) bean, (CreationalContext) context);
+        }
+        if (rejectedImplementation.isInstance(target)) {
+            throw new IllegalStateException("Explicit Helidon projection requires a real event source and durable positions");
+        }
+        return proxy;
+    }
+
+    /**
+     * 获取 CDI Bean 引用，并登记退出时需释放的 CreationalContext。
+     *
+     * @param <T>         当前容器处理的组件或事件类型
+     * @param beanManager 用来发现或获取 CDI Bean 的管理器
+     * @param bean        被选定用于创建引用的 CDI Bean 对象
+     * @param type        要解析的 Bean 类型或 CDI 类型信息
+     * @return 当前部署可使用的 CDI Bean 引用
      */
     private <T> T reference(BeanManager beanManager, Bean<?> bean, Class<T> type) {
+        return reference(beanManager, bean, type, type);
+    }
+
+    /**
+     * 获取 CDI Bean 引用，并登记退出时需释放的 CreationalContext。
+     *
+     * @param <T>         当前容器处理的组件或事件类型
+     * @param beanManager 用来发现或获取 CDI Bean 的管理器
+     * @param bean        被选定用于创建引用的 CDI Bean 对象
+     * @param lookupType  从 CDI 查找或获取引用时指定的类型
+     * @param type        要解析的 Bean 类型或 CDI 类型信息
+     * @return 当前部署可使用的 CDI Bean 引用
+     */
+    private <T> T reference(BeanManager beanManager, Bean<?> bean, Type lookupType, Class<T> type) {
         CreationalContext<?> context = beanManager.createCreationalContext(bean);
-        return type.cast(beanManager.getReference(bean, type, context));
+        references.add(context);
+        Type referenceType = bean.getTypes().contains(type) ? type : lookupType;
+        return type.cast(beanManager.getReference(bean, referenceType, context));
     }
 }
