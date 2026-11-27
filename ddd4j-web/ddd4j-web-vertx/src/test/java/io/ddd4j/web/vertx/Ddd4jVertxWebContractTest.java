@@ -45,6 +45,23 @@ import static org.mockito.Mockito.when;
 /** \u5b9e\u73b0 <code>AbstractWebContractTest</code>\uff0c\u4f9b\u6d4b\u8bd5\u8c03\u7528 <code>setUp()</code>\u3001<code>tearDown()</code>\u3001<code>client()</code> \u5e76\u89c2\u5bdf\u7ed3\u679c\u3002 */
 class Ddd4jVertxWebContractTest extends AbstractWebContractTest {
 
+    /** 默认就绪端点接受匿名请求，以 JSON 返回当前注册表的状态。 */
+    @org.junit.jupiter.api.Test
+    void defaultRouterServesReadiness() {
+        Router router = Router.router(vertx);
+        new Ddd4jVertxWeb().install(router);
+        HttpServer healthServer = vertx.createHttpServer().requestHandler(router).listen(0)
+                .toCompletionStage().toCompletableFuture().join();
+        try {
+            WebContractClient client = new VertxContractClient(HttpClient.newHttpClient(), healthServer.actualPort());
+            WebContractResponse result = client.request("GET", io.ddd4j.web.core.health.ReadinessEndpoint.PATH, Map.of(), null);
+            org.junit.jupiter.api.Assertions.assertEquals(200, result.status());
+            org.junit.jupiter.api.Assertions.assertEquals(Boolean.TRUE, new io.vertx.core.json.JsonObject(result.body()).getBoolean("ready"));
+        } finally {
+            healthServer.close().toCompletionStage().toCompletableFuture().join();
+        }
+    }
+
     /** \u7531\u5f53\u524d\u6d4b\u8bd5\u521b\u5efa\u548c\u91ca\u653e\u7684 Vert.x \u8fd0\u884c\u73af\u5883\u3002 */
     private Vertx vertx;
     /** \u5f53\u524d\u6d4b\u8bd5\u542f\u52a8\u5e76\u8d1f\u8d23\u91ca\u653e\u7684\u672c\u5730\u670d\u52a1\u3002 */

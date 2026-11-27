@@ -84,4 +84,13 @@ class Ddd4jDropwizardWebBundleTest {
 
         verify(jersey, atLeastOnce()).register(any(Ddd4jDropwizardRequestFilter.class));
     }
+    /** HTTP 405 的允许方法应随异常映射保留。 */
+    @org.junit.jupiter.api.Test
+    void preservesAllowHeaderOnMethodNotAllowed() {
+        var cause = new jakarta.ws.rs.WebApplicationException(jakarta.ws.rs.core.Response.status(405).allow("GET", "HEAD").build());
+        try (var response = new Ddd4jDropwizardExceptionMapper().toResponse(cause)) {
+            org.junit.jupiter.api.Assertions.assertEquals(405, response.getStatus());
+            org.junit.jupiter.api.Assertions.assertEquals(java.util.Set.of("GET", "HEAD"), response.getAllowedMethods());
+        }
+    }
 }
