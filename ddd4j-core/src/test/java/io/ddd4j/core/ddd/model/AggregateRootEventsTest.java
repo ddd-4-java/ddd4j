@@ -264,31 +264,54 @@ class AggregateRootEventsTest {
             this.value = value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 实际返回<code>TYPE</code>，供调用方取得当前值
+         */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 实际返回<code>value</code>，供调用方取得当前值
+         */
         @Override
         public String asString() {
             return value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * <p>测试夹具会调用 <code>TYPE.asString()</code>。</p>
+         *
+         * @return 实际返回<code>TYPE.asString() + " " + value</code>
+         */
         @Override
         public String asTypedString() {
             return TYPE.asString() + " " + value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 生成用于调试和日志的对象描述。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 比较两个对象的值是否相等。
+         *
+         * @param o 用来比较的另一个对象，允许为空
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object o) {
             if (this == o) {
@@ -300,7 +323,11 @@ class AggregateRootEventsTest {
             return value.equals(((OrderId) o).value);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             return value.hashCode();
@@ -310,7 +337,11 @@ class AggregateRootEventsTest {
     /** \u6d4b\u8bd5\u8ba2\u5355\u805a\u5408\u7684\u5b9e\u4f53\u7c7b\u578b\u6807\u8bc6\u3002 */
     static final class OrderEntityType implements EntityType {
 
-        /** {@inheritDoc} */
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 实际返回<code>"Order"</code>，供调用方取得当前值
+         */
         @Override
         public String asString() {
             return "Order";
@@ -334,14 +365,27 @@ class AggregateRootEventsTest {
             return Optional.of(new Order(String.valueOf(id)));
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 写入或更新给定的领域对象或存储记录。
+         *
+         * <p>此实现更新<code>this.saved = aggregate</code>。</p>
+         *
+         * @param aggregate 待处理聚合根
+         * @return 实际返回<code>aggregate</code>，供调用方取得当前值
+         */
         @Override
         public Order save(Order aggregate) {
             this.saved = aggregate;
             return aggregate;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 删除指定记录。
+         *
+         * <p>此实现更新<code>this.deleted = aggregate</code>。</p>
+         *
+         * @param aggregate 待处理聚合根
+         */
         @Override
         public void delete(Order aggregate) {
             this.deleted = aggregate;

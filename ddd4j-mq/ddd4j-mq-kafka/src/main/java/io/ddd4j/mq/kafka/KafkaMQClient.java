@@ -116,19 +116,31 @@ public class KafkaMQClient implements MQClient {
         return Objects.nonNull(properties) ? properties.getPublishAckTimeoutMillis() : DEFAULT_PUBLISH_ACK_TIMEOUT_MILLIS;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 返回此消息适配器在 DDD4J 中登记的实现名。
+     *
+     * @return 实际返回<code>"kafka"</code>，供调用方取得当前值
+     */
     @Override
     public String impl() {
         return "kafka";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 返回管理连接、生产者和消费者资源的生命周期对象。
+     *
+     * @return 当前消息适配器用于登记和关闭资源的生命周期对象
+     */
     @Override
     public MQClientLifecycle lifecycle() {
         return lifecycle;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 返回消息客户端当前记录的启动状态。
+     *
+     * @return 当前消息适配器记录的启动状态
+     */
     @Override
     public MQStartupStatus startupStatus() {
         return startupStatus;
@@ -146,7 +158,14 @@ public class KafkaMQClient implements MQClient {
 
     // ========================= 生产者 =========================
 
-    /** {@inheritDoc} */
+    /**
+     * 准备消息生产者并返回可发布事件的入口。
+     *
+     * <p>Kafka 实现调用 <code>ensureOpen()</code>。</p>
+     *
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 接收待发布事件的函数
+     */
     @Override
     public synchronized Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         ensureOpen();
@@ -248,7 +267,16 @@ public class KafkaMQClient implements MQClient {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 为监听器建立消息消费所需的订阅和客户端资源。
+     *
+     * <p>Kafka 实现调用 <code>ensureOpen()</code>。</p>
+     *
+     * @param mqListener 传给 <code>properties.consumerProperties(buildGroupId(mqListener))</code>
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 消费者完成注册时为真
+     * @throws Exception 当前框架、存储或底层客户端无法完成此操作时
+     */
     @Override
     public synchronized boolean initConsumer(MQListener mqListener, MQProperties mqProperties) throws Exception {
         ensureOpen();
@@ -480,7 +508,11 @@ public class KafkaMQClient implements MQClient {
             }
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 执行当前组件的任务体。
+         *
+         * <p>此实现调用 <code>Thread.currentThread()</code>。</p>
+         */
         @Override
         public void run() {
             thread = Thread.currentThread();

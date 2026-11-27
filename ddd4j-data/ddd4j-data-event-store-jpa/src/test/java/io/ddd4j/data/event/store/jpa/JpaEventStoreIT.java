@@ -135,19 +135,33 @@ class JpaEventStoreIT {
             this.value = value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 实际返回<code>TYPE</code>，供调用方取得当前值
+         */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 实际返回<code>value</code>，供调用方取得当前值
+         */
         @Override
         public String asString() {
             return value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * <p>测试夹具会调用 <code>TYPE.asString()</code>。</p>
+         *
+         * @return 实际返回<code>TYPE.asString() + ":" + value</code>
+         */
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
@@ -162,7 +176,14 @@ class JpaEventStoreIT {
             return value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 根据<code>value</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -175,7 +196,11 @@ class JpaEventStoreIT {
             return Objects.equals(this.value, other.value);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 0;
@@ -183,7 +208,11 @@ class JpaEventStoreIT {
             return result;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>value</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "TestAggregateRootId[value=" + value + "]";

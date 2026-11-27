@@ -128,13 +128,21 @@ public class OnsMQClient implements MQClient {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 返回此消息适配器在 DDD4J 中登记的实现名。
+     *
+     * @return 实际返回<code>"ons"</code>，供调用方取得当前值
+     */
     @Override
     public String impl() {
         return "ons";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 返回管理连接、生产者和消费者资源的生命周期对象。
+     *
+     * @return 当前消息适配器用于登记和关闭资源的生命周期对象
+     */
     @Override
     public MQClientLifecycle lifecycle() {
         return lifecycle;
@@ -142,7 +150,11 @@ public class OnsMQClient implements MQClient {
 
     // ========================= 生产者 =========================
 
-    /** {@inheritDoc} */
+    /**
+     * 返回消息客户端当前记录的启动状态。
+     *
+     * @return 当前消息适配器记录的启动状态
+     */
     @Override
     public MQStartupStatus startupStatus() {
         return startupStatus;
@@ -159,7 +171,14 @@ public class OnsMQClient implements MQClient {
         return ONSFactory.createProducer(sessionProperties);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 准备消息生产者并返回可发布事件的入口。
+     *
+     * <p>满足 <code>closed</code> 时抛出 <code>IllegalStateException</code>。 此实现调用 <code>producerSession.isActive()</code>。</p>
+     *
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 接收待发布事件的函数
+     */
     @Override
     public synchronized Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         if (closed) {
@@ -250,7 +269,16 @@ public class OnsMQClient implements MQClient {
         return ONSFactory.createConsumer(sessionProperties);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 为监听器建立消息消费所需的订阅和客户端资源。
+     *
+     * <p>满足 <code>closed</code> 时抛出 <code>IllegalStateException</code>。 此实现调用 <code>StrKit.hasText(listener.getGroup())</code>。</p>
+     *
+     * @param listener 监听器定义
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 此实现返回<code>true</code>
+     * @throws Exception 当前框架、存储或底层客户端无法完成此操作时
+     */
     @Override
     public synchronized boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         if (closed) {
@@ -316,7 +344,7 @@ public class OnsMQClient implements MQClient {
 
     // ========================= 关闭 =========================
 
-    /** {@inheritDoc} */
+    /** 提供生命周期启动回调，当前实现的客户端在初始化阶段启动，此处无额外操作。 */
     @Override
     public void start() {
         // ONS producer/consumer 在各自创建时已启动；此方法留作 future 扩展。

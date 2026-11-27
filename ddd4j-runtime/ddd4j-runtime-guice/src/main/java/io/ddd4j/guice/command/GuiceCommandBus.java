@@ -50,7 +50,15 @@ public class GuiceCommandBus extends DefaultCommandBus {
         return super.execute(command);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 为已有动态发现平台提供缺失路由钩子；默认快照模式不发现新执行器。
+     *
+     * <p>此实现调用 <code>candidate.supportedCommands().contains(commandType)</code>。</p>
+     *
+     * @param commandType 未缓存的命令精确类型
+     * @param registeredExecutors 当前路由中执行器的只读实时视图，禁止结构修改
+     * @return 根据执行路径返回<code>candidate</code>、<code>null</code>
+     */
     @Override
     protected CommandExecutor<?> resolveMissingExecutor(Class<? extends Command> commandType,
                                                         Collection<CommandExecutor<?>> registeredExecutors) {

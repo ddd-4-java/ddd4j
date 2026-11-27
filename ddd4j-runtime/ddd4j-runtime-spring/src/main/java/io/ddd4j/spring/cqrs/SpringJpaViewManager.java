@@ -96,7 +96,11 @@ public class SpringJpaViewManager implements ViewManager {
         this.projectionMetrics = projectionMetrics;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 启动当前组件并准备其运行资源。
+     *
+     * <p>JPA 实现调用 <code>running.compareAndSet(false, true)</code>。</p>
+     */
     @Override
     public void start() {
         if (running.compareAndSet(false, true)) {
@@ -104,7 +108,11 @@ public class SpringJpaViewManager implements ViewManager {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 停止当前组件并清理已登记的运行资源。
+     *
+     * <p>JPA 实现调用 <code>running.getAndSet(false)</code>。</p>
+     */
     @Override
     public void stop() {
         boolean wasRunning = running.getAndSet(false);
@@ -133,13 +141,23 @@ public class SpringJpaViewManager implements ViewManager {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 检查当前组件是否仍处于运行状态。
+     *
+     * <p>JPA 实现调用 <code>running.get()</code>。</p>
+     *
+     * @return 实际返回<code>running.get()</code>
+     */
     @Override
     public boolean isRunning() {
         return running.get();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 请求立即执行指定投影视图的一轮更新。
+     *
+     * <p>JPA 实现调用 <code>log.info("triggerOnce() - \u4e1a\u52a1\u65b9\u5e94\u5728\u5b50\u7c7b override")</code>。</p>
+     */
     @Override
     public void triggerOnce() {
         // 业务方可在测试或运维场景调用，由具体 View 实现增量拉取

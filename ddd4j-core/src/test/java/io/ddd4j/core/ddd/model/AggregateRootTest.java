@@ -188,19 +188,33 @@ class AggregateRootTest {
             this.value = value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 实际返回<code>TYPE</code>，供调用方取得当前值
+         */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 实际返回<code>value</code>，供调用方取得当前值
+         */
         @Override
         public String asString() {
             return value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * <p>测试夹具会调用 <code>TYPE.asString()</code>。</p>
+         *
+         * @return 实际返回<code>TYPE.asString() + ":" + value</code>
+         */
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
@@ -302,7 +316,12 @@ class AggregateRootTest {
             return Optional.empty();
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 写入或更新给定的领域对象或存储记录。
+         *
+         * @param aggregate 待处理聚合根
+         * @return 实际返回<code>aggregate</code>，供调用方取得当前值
+         */
         @Override
         public PersistentAggregate save(PersistentAggregate aggregate) {
             saves++;
@@ -398,31 +417,54 @@ class AggregateRootTest {
             this.value = value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 实际返回<code>TYPE</code>，供调用方取得当前值
+         */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 实际返回<code>value</code>，供调用方取得当前值
+         */
         @Override
         public String asString() {
             return value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * <p>测试夹具会调用 <code>TYPE.asString()</code>。</p>
+         *
+         * @return 实际返回<code>TYPE.asString() + " " + value</code>
+         */
         @Override
         public String asTypedString() {
             return TYPE.asString() + " " + value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 生成用于调试和日志的对象描述。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 比较两个对象的值是否相等。
+         *
+         * @param o 用来比较的另一个对象，允许为空
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object o) {
             if (this == o) {
@@ -434,7 +476,11 @@ class AggregateRootTest {
             return value.equals(((OrderId) o).value);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             return value.hashCode();
@@ -455,7 +501,11 @@ class AggregateRootTest {
             this.name = name;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 实际返回<code>name</code>，供调用方取得当前值
+         */
         @Override
         public String asString() {
             return name;

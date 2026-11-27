@@ -79,7 +79,14 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
         RepositoryRegistry.register(modelClass, this);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 按主键读取领域对象或持久化记录。
+     *
+     * <p>JPA 实现调用 <code>Optional.empty()</code>。</p>
+     *
+     * @param id 聚合根标识
+     * @return 实际返回<code>Optional.empty()</code>
+     */
     @Override
     public Optional<M> findById(ID id) {
         if (Objects.isNull(id)) {
@@ -88,7 +95,14 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
         return Optional.ofNullable(entityManager.find(persistenceClass, id)).map(this::toModel);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 写入或更新给定的领域对象或存储记录。
+     *
+     * <p>JPA 实现调用 <code>entityManager.merge(toPersistenceObject(aggregate))</code>。</p>
+     *
+     * @param aggregate 待处理聚合根
+     * @return 实际返回<code>toModel(managed)</code>
+     */
     @Override
     public M save(M aggregate) {
         Objects.requireNonNull(aggregate, "aggregate must not be null");
@@ -96,7 +110,13 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
         return toModel(managed);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 按主键删除记录。
+     *
+     * <p>JPA 实现调用 <code>entityManager.find(persistenceClass, id)</code>。</p>
+     *
+     * @param id 聚合根标识
+     */
     @Override
     public void deleteById(ID id) {
         if (Objects.isNull(id)) {
@@ -108,7 +128,14 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 批量读取指定主键对应的记录。
+     *
+     * <p>JPA 实现调用 <code>ids.isEmpty()</code>。</p>
+     *
+     * @param ids 聚合根标识集合
+     * @return 与给定主键相匹配的记录
+     */
     @Override
     public List<M> findByIds(Collection<ID> ids) {
         if (Objects.isNull(ids) || ids.isEmpty()) {
@@ -121,7 +148,14 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
         return convert(entityManager.createQuery(cq).getResultList());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 批量保存传入的对象。
+     *
+     * <p>JPA 实现调用 <code>aggregates.isEmpty()</code>。</p>
+     *
+     * @param aggregates 待处理聚合根集合
+     * @return 根据执行路径返回<code>Collections.emptyList()</code>、<code>result</code>
+     */
     @Override
     public List<M> saveBatch(Collection<M> aggregates) {
         if (Objects.isNull(aggregates) || aggregates.isEmpty()) {
@@ -136,7 +170,14 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
         return result;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 按主键批量更新数据。
+     *
+     * <p>JPA 实现调用 <code>aggregates.isEmpty()</code>。</p>
+     *
+     * @param aggregates 待处理聚合根集合
+     * @return 根据执行路径返回<code>0</code>、<code>count</code>
+     */
     @Override
     public int updateBatchById(Collection<M> aggregates) {
         if (Objects.isNull(aggregates) || aggregates.isEmpty()) {
@@ -151,13 +192,27 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
         return count;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 批量写入数据，根据各记录是否存在选择插入或更新。
+     *
+     * <p>JPA 实现调用 <code>updateBatchById(aggregates)</code>。</p>
+     *
+     * @param aggregates 待处理聚合根集合
+     * @return 实际返回<code>updateBatchById(aggregates)</code>
+     */
     @Override
     public int insertOrUpdateBatch(Collection<M> aggregates) {
         return updateBatchById(aggregates);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 批量删除给定主键对应的记录。
+     *
+     * <p>JPA 实现调用 <code>ids.isEmpty()</code>。</p>
+     *
+     * @param ids 聚合根标识集合
+     * @return 根据执行路径返回<code>0</code>、<code>entityManager.createQuery(cd).executeUpdate()</code>
+     */
     @Override
     public int deleteByIds(Collection<ID> ids) {
         if (Objects.isNull(ids) || ids.isEmpty()) {
@@ -170,7 +225,13 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
         return entityManager.createQuery(cd).executeUpdate();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 读取满足条件的第一条记录。
+     *
+     * <p>JPA 实现调用 <code>entityManager.createQuery("SELECT p FROM " + persistenceClass.getSimpleName() + " p", persistenceClass)</code>。</p>
+     *
+     * @return 第一个匹配条件的结果
+     */
     @Override
     public Optional<M> findFirst() {
         List<P> results = entityManager
@@ -180,7 +241,13 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
         return results.isEmpty() ? Optional.empty() : Optional.ofNullable(results.get(0)).map(this::toModel);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 查询存储中符合条件的记录。
+     *
+     * <p>JPA 实现调用 <code>entityManager.createQuery("SELECT p FROM " + persistenceClass.getSimpleName() + " p", persistenceClass)</code>。</p>
+     *
+     * @return 满足条件的结果列表
+     */
     @Override
     public List<M> findAll() {
         return convert(entityManager
@@ -188,7 +255,13 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
                 .getResultList());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 统计符合查询范围的数据数量。
+     *
+     * <p>JPA 实现调用 <code>entityManager.createQuery("SELECT COUNT(p) FROM " + persistenceClass.getSimpleName() + " p", Long.class)</code>。</p>
+     *
+     * @return 满足筛选条件的记录数量
+     */
     @Override
     public long count() {
         Long result = entityManager
@@ -197,7 +270,14 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
         return Objects.nonNull(result) ? result : 0L;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 根据分页参数和查询条件读取结果。
+     *
+     * <p>JPA 实现调用 <code>entityManager.getCriteriaBuilder()</code>。</p>
+     *
+     * @param query 查询条件
+     * @return 实际返回<code>Page.succeed(records, count(query), current, query.getSize())</code>
+     */
     @Override
     public Page<M> page(Query<M> query) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -217,7 +297,14 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
         return Page.succeed(records, count(query), current, query.getSize());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 统计符合查询范围的数据数量。
+     *
+     * <p>JPA 实现调用 <code>entityManager.getCriteriaBuilder()</code>。</p>
+     *
+     * @param query 查询条件
+     * @return 满足筛选条件的记录数量
+     */
     @Override
     public long count(Query<M> query) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -229,7 +316,14 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
         return Objects.nonNull(result) ? result : 0L;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 读取满足条件的第一条记录。
+     *
+     * <p>JPA 实现调用 <code>entityManager.getCriteriaBuilder()</code>。</p>
+     *
+     * @param query 查询条件
+     * @return 第一个匹配条件的结果
+     */
     @Override
     public Optional<M> findFirst(Query<M> query) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -243,7 +337,14 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
         return results.isEmpty() ? Optional.empty() : Optional.ofNullable(results.get(0)).map(this::toModel);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 按查询条件读取记录列表。
+     *
+     * <p>JPA 实现调用 <code>entityManager.getCriteriaBuilder()</code>。</p>
+     *
+     * @param query 查询条件
+     * @return 满足条件的结果列表
+     */
     @Override
     public List<M> findList(Query<M> query) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -254,7 +355,14 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
         return convert(entityManager.createQuery(criteriaQuery).getResultList());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 按条件查询 Map 列表（对应 {@code selectMaps(Wrapper)}）。
+     *
+     * <p>JPA 实现调用 <code>entityManager.getCriteriaBuilder()</code>。</p>
+     *
+     * @param query 查询条件
+     * @return 查询结果
+     */
     @Override
     public List<Map<String, Object>> maps(Query<M> query) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -281,7 +389,14 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
                 .collect(Collectors.toList());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 删除匹配查询条件的记录。
+     *
+     * <p>JPA 实现调用 <code>entityManager.getCriteriaBuilder()</code>。</p>
+     *
+     * @param query 查询条件
+     * @return 实际返回<code>entityManager.createQuery(criteriaDelete).executeUpdate() &gt; 0</code>
+     */
     @Override
     public boolean deleteByQuery(Query<M> query) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -295,7 +410,12 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
         return entityManager.createQuery(criteriaDelete).executeUpdate() > 0;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 接收<code>fill</code>回调，当前实现无需在此步骤更新状态。
+     *
+     * @param query 查询条件
+     * @param model 待填充聚合根
+     */
     @Override
     public void fill(Query<M> query, AggregateRoot<?> model) {
         // 业务仓储按需覆盖
@@ -478,7 +598,14 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
         return Collections.emptyList();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 将持久化对象转换为领域模型。
+     *
+     * <p>JPA 实现调用 <code>BeanKit.copy(persistenceObject, modelClass)</code>。</p>
+     *
+     * @param persistenceObject persistence object
+     * @return 由持久化数据构造的领域模型
+     */
     @Override
     public M toModel(P persistenceObject) {
         if (Objects.isNull(persistenceObject)) {
@@ -487,7 +614,14 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
         return BeanKit.copy(persistenceObject, modelClass);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 将领域模型转换为仓储使用的持久化对象。
+     *
+     * <p>JPA 实现调用 <code>BeanKit.copy(model, persistenceClass)</code>。</p>
+     *
+     * @param model domain model
+     * @return 由领域模型生成的持久化对象
+     */
     @Override
     public P toPersistenceObject(M model) {
         if (Objects.isNull(model)) {

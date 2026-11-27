@@ -40,19 +40,39 @@ public final class EntityManagerProjectionPositionRepository implements Projecti
         return new DefaultProjectionPosition(entity.getStreamId(), entity.getNextEventNumber());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 查询指定事件流的投影检查点。
+     *
+     * <p>此实现调用 <code>store.findByStreamId(streamId)</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     * @return 与给定流标识对应的投影检查点
+     */
     @Override
     public Optional<ProjectionPosition> findByStreamId(String streamId) {
         return store.findByStreamId(streamId).map(EntityManagerProjectionPositionRepository::snapshot);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 查询存储中符合条件的记录。
+     *
+     * <p>此实现调用 <code>store.findAll().stream()</code>。</p>
+     *
+     * @return 满足条件的结果列表
+     */
     @Override
     public List<ProjectionPosition> findAll() {
         return store.findAll().stream().map(EntityManagerProjectionPositionRepository::snapshot).toList();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 在持久化存储中写入指定事件流的投影检查点。
+     *
+     * <p>此实现调用 <code>requireTransaction()</code>。</p>
+     *
+     * @param position 投影位置
+     * @return 实际返回<code>snapshot(entity)</code>
+     */
     @Override
     public ProjectionPosition save(ProjectionPosition position) {
         Objects.requireNonNull(position, "position must not be null");
@@ -65,7 +85,13 @@ public final class EntityManagerProjectionPositionRepository implements Projecti
         return snapshot(entity);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 删除指定事件流的投影检查点。
+     *
+     * <p>此实现调用 <code>requireTransaction()</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     */
     @Override
     public void deleteByStreamId(String streamId) {
         requireTransaction();
@@ -73,7 +99,13 @@ public final class EntityManagerProjectionPositionRepository implements Projecti
         entityManager.flush();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 将指定流的投影检查点重置为零。
+     *
+     * <p>此实现调用 <code>requireTransaction()</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     */
     @Override
     public void resetToZero(String streamId) {
         requireTransaction();

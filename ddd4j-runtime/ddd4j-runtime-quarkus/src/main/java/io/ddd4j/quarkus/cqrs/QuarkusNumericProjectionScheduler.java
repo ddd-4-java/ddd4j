@@ -60,7 +60,16 @@ public class QuarkusNumericProjectionScheduler implements ViewScheduler {
         executor.shutdownNow();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 按给定时间规则安排任务。
+     *
+     * <p>Quarkus 实现调用 <code>ProjectionCron.parse(cron)</code>。</p>
+     *
+     * @param viewName 视图名称（用于日志 / 调试）
+     * @param cron CRON 表达式
+     * @param task 要执行的任务
+     * @return 实际返回<code>handle</code>
+     */
     @Override
     public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
         Objects.requireNonNull(viewName, "viewName must not be null");
@@ -117,7 +126,11 @@ public class QuarkusNumericProjectionScheduler implements ViewScheduler {
             future = executor.schedule(this, delayMillis, TimeUnit.MILLISECONDS);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 执行当前组件的任务体。
+         *
+         * <p>此实现调用 <code>task.run()</code>。</p>
+         */
         @Override
         public void run() {
             if (cancelled) {
@@ -130,7 +143,11 @@ public class QuarkusNumericProjectionScheduler implements ViewScheduler {
             }
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 撤销当前任务句柄允许撤销的操作。
+         *
+         * <p>此实现调用 <code>f.cancel(false)</code>。</p>
+         */
         @Override
         public void cancel() {
             cancelled = true;
@@ -140,7 +157,13 @@ public class QuarkusNumericProjectionScheduler implements ViewScheduler {
             }
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 检查当前句柄是否仍处于有效状态。
+         *
+         * <p>此实现调用 <code>f.isCancelled()</code>。</p>
+         *
+         * @return 根据执行路径返回<code>false</code>、<code>Objects.nonNull(f) &amp;&amp; !f.isCancelled() &amp;&amp; !f.isDone()</code>
+         */
         @Override
         public boolean isActive() {
             if (cancelled) {

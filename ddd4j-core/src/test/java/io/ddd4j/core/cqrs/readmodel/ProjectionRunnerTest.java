@@ -205,37 +205,63 @@ class ProjectionRunnerTest {
             this.eventTypes = eventTypes;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回当前配置、视图或处理器的名称。
+         *
+         * @return 实际返回<code>name</code>，供调用方取得当前值
+         */
         @Override
         public String getName() {
             return name;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回当前投影绑定的事件流标识。
+         *
+         * @return 实际返回<code>Objects.nonNull(streamId) ? streamId : name</code>，供调用方取得当前值
+         */
         @Override
         public String getStreamId() {
             return Objects.nonNull(streamId) ? streamId : name;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回投影视图配置的调度表达式。
+         *
+         * @return 实际返回<code>"0/5 * * * * ?"</code>，供调用方取得当前值
+         */
         @Override
         public String getCron() {
             return "0/5 * * * * ?";
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回投影单次读取事件的最大条数。
+         *
+         * @return 实际返回<code>chunkSize</code>，供调用方取得当前值
+         */
         @Override
         public int getChunkSize() {
             return chunkSize;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回投影或处理器关心的事件类型。
+         *
+         * @return 实际返回<code>eventTypes</code>，供调用方取得当前值
+         */
         @Override
         public Collection<String> getEventTypes() {
             return eventTypes;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 处理本批投影事件。
+         *
+         * <p>测试夹具会调用 <code>handled.addAll(events)</code>。</p>
+         *
+         * @param events 事件列表
+         */
         @Override
         public void handleEvents(Collection<String> events) {
             handled.addAll(events);
@@ -244,7 +270,17 @@ class ProjectionRunnerTest {
 
     /** \u5b9e\u73b0 <code>EventChunkReader</code>\uff0c\u4f9b\u6d4b\u8bd5\u8c03\u7528 <code>read()</code> \u5e76\u89c2\u5bdf\u7ed3\u679c\u3002 */
     private static final class FixedReader implements EventChunkReader<String> {
-        /** {@inheritDoc} */
+        /**
+         * 读取调用指定的数据或事件流。
+         *
+         * <p>测试夹具会调用 <code>Collections.singletonList(streamId)</code>。</p>
+         *
+         * @param streamId 投影流 ID
+         * @param from 用于此操作的 <code>from</code>（<code>long</code>）
+         * @param size 用于此操作的 <code>size</code>（<code>int</code>）
+         * @param types 用于此操作的 <code>types</code>（<code>Collection&lt;String&gt;</code>）
+         * @return 事件块
+         */
         @Override
         public EventChunk<String> read(String streamId, long from, int size, Collection<String> types) {
             return new EventChunk<String>(Collections.singletonList(streamId), from + 1L);
@@ -270,25 +306,45 @@ class ProjectionRunnerTest {
             this.fail = fail;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回当前配置、视图或处理器的名称。
+         *
+         * @return 实际返回<code>name</code>，供调用方取得当前值
+         */
         @Override
         public String getName() {
             return name;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回投影视图配置的调度表达式。
+         *
+         * @return 实际返回<code>"* * * * *"</code>，供调用方取得当前值
+         */
         @Override
         public String getCron() {
             return "* * * * *";
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回投影或处理器关心的事件类型。
+         *
+         * <p>测试夹具会调用 <code>Collections.emptyList()</code>。</p>
+         *
+         * @return 实际返回<code>Collections.emptyList()</code>
+         */
         @Override
         public Collection<String> getEventTypes() {
             return Collections.emptyList();
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 处理本批投影事件。
+         *
+         * <p>满足 <code>fail</code> 时抛出 <code>IllegalStateException</code>。 测试夹具会调用 <code>handled.incrementAndGet()</code>。</p>
+         *
+         * @param events 事件列表
+         */
         @Override
         public void handleEvents(Collection<String> events) {
             if (fail) {
@@ -303,7 +359,14 @@ class ProjectionRunnerTest {
         /** \u5728\u6d4b\u8bd5\u7ebf\u7a0b\u4e4b\u95f4\u5171\u4eab\u5f53\u524d\u64cd\u4f5c\u6b21\u6570\u6216\u66f4\u65b0\u6570\u91cf\u7684\u8ba1\u6570\u5668\u3002 */
         private final AtomicInteger circuitOpened = new AtomicInteger();
 
-        /** {@inheritDoc} */
+        /**
+         * 同一视图连续失败达到 {@link ProjectionRunner#CONSECUTIVE_FAILURE_THRESHOLD} 次时。
+         *
+         * <p>测试夹具会调用 <code>circuitOpened.set(consecutiveFailures)</code>。</p>
+         *
+         * @param viewName 投影视图名
+         * @param consecutiveFailures 传给 <code>circuitOpened.set(consecutiveFailures)</code>
+         */
         @Override
         public void onCircuitOpened(String viewName, int consecutiveFailures) {
             circuitOpened.set(consecutiveFailures);

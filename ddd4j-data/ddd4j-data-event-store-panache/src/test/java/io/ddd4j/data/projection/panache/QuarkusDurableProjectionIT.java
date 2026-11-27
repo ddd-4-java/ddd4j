@@ -134,13 +134,26 @@ class QuarkusDurableProjectionIT {
         @Inject
         QuarkusProjectionPositionRepository positions;
 
-        /** {@inheritDoc} */
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>Set.of(TxCommand.class)</code>。</p>
+         *
+         * @return 实际返回<code>Set.of(TxCommand.class)</code>
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Set.of(TxCommand.class);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>positions.save(new DefaultProjectionPosition("r08-command", 19L))</code>、<code>Result.fail("business failure")</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>Result.fail("business failure")</code>
+         */
         @Override
         @Transactional
         public Result<?> execute(TxCommand command) {
@@ -191,25 +204,45 @@ class QuarkusDurableProjectionIT {
             fail = value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回当前配置、视图或处理器的名称。
+         *
+         * @return 实际返回<code>"r08-events"</code>，供调用方取得当前值
+         */
         @Override
         public String getName() {
             return "r08-events";
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回投影视图配置的调度表达式。
+         *
+         * @return 实际返回<code>"0 0 0 1 JAN ? 2099"</code>，供调用方取得当前值
+         */
         @Override
         public String getCron() {
             return "0 0 0 1 JAN ? 2099";
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回投影或处理器关心的事件类型。
+         *
+         * <p>测试夹具会调用 <code>Set.of("PositionAdvanced")</code>。</p>
+         *
+         * @return 实际返回<code>Set.of("PositionAdvanced")</code>
+         */
         @Override
         public Collection<String> getEventTypes() {
             return Set.of("PositionAdvanced");
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 处理本批投影事件。
+         *
+         * <p>测试夹具会调用 <code>positions.save(new DefaultProjectionPosition("r08-read-model", (Long)events.iterator().next()))</code>、<code>events.iterator().next()</code>。</p>
+         *
+         * @param events 事件列表
+         */
         @Override
         public void handleEvents(Collection<Object> events) {
             positions.save(new DefaultProjectionPosition("r08-read-model", (Long) events.iterator().next()));

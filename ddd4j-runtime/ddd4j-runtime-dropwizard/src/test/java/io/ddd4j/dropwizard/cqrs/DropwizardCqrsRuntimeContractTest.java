@@ -53,7 +53,13 @@ class DropwizardCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest 
         };
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 创建测试中用于操作当前框架的契约适配器。
+     *
+     * <p>测试夹具会调用 <code>List.of(new StubExecutorA(), new StubExecutorB())</code>、<code>DropwizardProjectionScheduler.create(new Environment("contract"), List.of(), runner)</code>。</p>
+     *
+     * @return CQRS 运行时契约
+     */
     @Override
     protected CqrsRuntimeContract createContract() {
         DropwizardCommandBus bus = new DropwizardCommandBus(List.of(new StubExecutorA(), new StubExecutorB()));

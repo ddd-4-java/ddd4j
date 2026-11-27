@@ -292,13 +292,24 @@ class DefaultCommandBusCompatibilityTest {
             this.commandTypes = new LinkedHashSet<>(Arrays.asList(commandTypes));
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * @return 实际返回<code>commandTypes</code>，供调用方取得当前值
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return commandTypes;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>executed.add(command)</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>result</code>
+         */
         @Override
         public Result<?> execute(Command command) {
             executed.add(command);

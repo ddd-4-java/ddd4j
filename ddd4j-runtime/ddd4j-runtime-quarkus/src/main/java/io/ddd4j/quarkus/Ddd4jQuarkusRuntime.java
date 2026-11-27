@@ -105,7 +105,11 @@ public final class Ddd4jQuarkusRuntime implements AutoCloseable {
         return readinessRegistry;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 结束当前组件持有的资源。
+     *
+     * <p>Quarkus 实现调用 <code>registrations.close()</code>。</p>
+     */
     @Override
     public void close() {
         registrations.close();

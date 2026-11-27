@@ -155,13 +155,22 @@ class BaseErrorConfigurationTest {
             this(stubbed, new DefaultWebExceptionTranslator(), WebErrorResponseBuilder.defaults());
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回当前适配实现对应的运行框架名称。
+         *
+         * @return 实际返回<code>"Stub"</code>，供调用方取得当前值
+         */
         @Override
         protected String frameworkName() {
             return "Stub";
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 策略翻译，子类可覆盖以先归一框架特定异常（如 JAX-RS {@code WebApplicationException}），。
+         *
+         * @param throwable 原始异常
+         * @return 实际返回<code>stubbed</code>，供调用方取得当前值
+         */
         @Override
         protected WebError doTranslate(Throwable throwable) {
             return stubbed;
@@ -178,7 +187,11 @@ class BaseErrorConfigurationTest {
             super();
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回当前适配实现对应的运行框架名称。
+         *
+         * @return 实际返回<code>"Stub"</code>，供调用方取得当前值
+         */
         @Override
         protected String frameworkName() {
             return "Stub";

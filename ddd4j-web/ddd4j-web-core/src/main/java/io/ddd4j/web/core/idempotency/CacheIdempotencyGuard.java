@@ -58,7 +58,15 @@ public final class CacheIdempotencyGuard implements IdempotencyGuard {
         this.cacheName = cacheName;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 尝试获取幂等键。
+     *
+     * <p>此实现调用 <code>requireKey(key)</code>。</p>
+     *
+     * @param key 幂等键
+     * @param ttl 有效期
+     * @return 实际返回<code>acquired</code>
+     */
     @Override
     public boolean acquire(String key, Duration ttl) {
         requireKey(key);
@@ -71,7 +79,15 @@ public final class CacheIdempotencyGuard implements IdempotencyGuard {
         return acquired;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 获取带所有者标识的幂等租约。
+     *
+     * <p>此实现调用 <code>requireKey(key)</code>。</p>
+     *
+     * @param key 幂等键
+     * @param ttl 有效期
+     * @return 根据执行路径返回<code>Optional.empty()</code>、<code>Optional.of(new IdempotencyLease(key, ownerToken, ttl))</code>
+     */
     @Override
     public Optional<IdempotencyLease> acquireLease(String key, Duration ttl) {
         requireKey(key);
@@ -85,14 +101,26 @@ public final class CacheIdempotencyGuard implements IdempotencyGuard {
         return Optional.of(new IdempotencyLease(key, ownerToken, ttl));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 标记指定幂等键的业务处理已完成。
+     *
+     * <p>此实现调用 <code>requireKey(key)</code>。</p>
+     *
+     * @param key 幂等键
+     */
     @Override
     public void complete(String key) {
         requireKey(key);
         CacheKit.replace(cacheName, key, PROCESSING, COMPLETED);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 完成指定租约。默认实现兼容旧的按 key 完成语义。
+     *
+     * <p>此实现调用 <code>effectiveLease.ownerToken()</code>。</p>
+     *
+     * @param lease 幂等租约
+     */
     @Override
     public void complete(IdempotencyLease lease) {
         IdempotencyLease effectiveLease = Objects.requireNonNull(lease, "lease must not be null");
@@ -106,14 +134,26 @@ public final class CacheIdempotencyGuard implements IdempotencyGuard {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 释放指定幂等键，允许重试。
+     *
+     * <p>此实现调用 <code>requireKey(key)</code>。</p>
+     *
+     * @param key 幂等键
+     */
     @Override
     public void release(String key) {
         requireKey(key);
         CacheKit.removeIf(cacheName, key, PROCESSING);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 释放指定租约。默认实现兼容旧的按 key 释放语义。
+     *
+     * <p>此实现调用 <code>effectiveLease.ownerToken()</code>。</p>
+     *
+     * @param lease 幂等租约
+     */
     @Override
     public void release(IdempotencyLease lease) {
         IdempotencyLease effectiveLease = Objects.requireNonNull(lease, "lease must not be null");

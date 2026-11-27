@@ -44,7 +44,16 @@ public class QuarkusViewScheduler implements ViewScheduler {
      */
     static final String TASK_KEY = "ddd4j.task";
 
-    /** {@inheritDoc} */
+    /**
+     * 按给定时间规则安排任务。
+     *
+     * <p>Quarkus 实现调用 <code>NativeQuartz.schedule(viewName, cron, task)</code>。</p>
+     *
+     * @param viewName 视图名称（用于日志 / 调试）
+     * @param cron CRON 表达式
+     * @param task 要执行的任务
+     * @return 实际返回<code>NativeQuartz.schedule(viewName, cron, task)</code>
+     */
     @Override
     public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
         try {

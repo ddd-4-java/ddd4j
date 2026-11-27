@@ -71,7 +71,13 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 创建测试中用于操作当前框架的契约适配器。
+     *
+     * <p>测试夹具会调用 <code>Vertx.vertx()</code>、<code>VertxCommandBus.create(vertx, List.of(new StubExecutorA(), new StubExecutorB()))</code>。</p>
+     *
+     * @return CQRS 运行时契约
+     */
     @Override
     protected CqrsRuntimeContract createContract() {
         Vertx vertx = Vertx.vertx();

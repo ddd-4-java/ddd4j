@@ -23,25 +23,43 @@ public final class CatalogOrderView
     /** \u6309\u79df\u6237\u548c\u8ba2\u5355\u53f7\u5206\u533a\u7684\u8ba2\u5355\u5feb\u7167\u3002 */
     private final Map<String, ConcurrentHashMap<String, TradeOrderSnapshot>> orders = new ConcurrentHashMap<>();
 
-    /** {@inheritDoc} */
+    /**
+     * 返回当前配置、视图或处理器的名称。
+     *
+     * @return 实际返回<code>"catalog-orders"</code>，供调用方取得当前值
+     */
     @Override
     public String getName() {
         return "catalog-orders";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 返回投影视图配置的调度表达式。
+     *
+     * @return 当前视图使用的 Cron 表达式
+     */
     @Override
     public String getCron() {
         return "";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 返回投影或处理器关心的事件类型。
+     *
+     * <p>此实现调用 <code>Set.of()</code>。</p>
+     *
+     * @return 实际返回<code>Set.of()</code>
+     */
     @Override
     public Collection<String> getEventTypes() {
         return Set.of();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 处理本批投影事件。
+     *
+     * @param requests 传给 <code>requests.forEach(this::rebuild)</code>
+     */
     @Override
     public void handleEvents(Collection<TradeOrderQuery> requests) {
         requests.forEach(this::rebuild);
@@ -61,13 +79,24 @@ public final class CatalogOrderView
                 .compute(orderNo, (key, previous) -> TradeOrderSnapshot.from(readCommittedOrder.apply(request)));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 声明当前查询处理器接受的查询类型。
+     *
+     * @return 本处理器接受的查询类型
+     */
     @Override
     public Class<ProjectedTradeOrderQuery> queryType() {
         return ProjectedTradeOrderQuery.class;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 处理调用方传入的消息或请求。
+     *
+     * <p>此实现调用 <code>Optional.ofNullable(orders.get(query.getTenantId()))</code>。</p>
+     *
+     * @param query 查询对象
+     * @return 查询结果
+     */
     @Override
     public TradeOrderSnapshot handle(ProjectedTradeOrderQuery query) {
         return Optional.ofNullable(orders.get(query.getTenantId()))

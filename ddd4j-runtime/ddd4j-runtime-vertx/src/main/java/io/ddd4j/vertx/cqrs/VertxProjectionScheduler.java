@@ -38,7 +38,16 @@ public class VertxProjectionScheduler implements ViewScheduler, AutoCloseable {
         this.vertx = Objects.requireNonNull(vertx, "vertx must not be null");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 按给定时间规则安排任务。
+     *
+     * <p>满足 <code>closed</code> 时抛出 <code>IllegalStateException</code>。 Vert.x 实现调用 <code>CronExpression.parse(cron)</code>。</p>
+     *
+     * @param viewName 视图名称（用于日志 / 调试）
+     * @param cron CRON 表达式
+     * @param task 要执行的任务
+     * @return 实际返回<code>handle</code>
+     */
     @Override
     public synchronized ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
         if (closed) {
@@ -66,7 +75,11 @@ public class VertxProjectionScheduler implements ViewScheduler, AutoCloseable {
         handles.clear();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 结束当前组件持有的资源。
+     *
+     * <p>Vert.x 实现调用 <code>shutdown()</code>。</p>
+     */
     @Override
     public void close() {
         shutdown();
@@ -181,7 +194,11 @@ public class VertxProjectionScheduler implements ViewScheduler, AutoCloseable {
             });
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 撤销当前任务句柄允许撤销的操作。
+         *
+         * <p>此实现调用 <code>vertx.cancelTimer(timerId)</code>。</p>
+         */
         @Override
         public synchronized void cancel() {
             cancelled = true;
@@ -192,7 +209,11 @@ public class VertxProjectionScheduler implements ViewScheduler, AutoCloseable {
             handles.remove(this);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 检查当前句柄是否仍处于有效状态。
+         *
+         * @return 实际返回<code>!cancelled &amp;&amp; !closed</code>，作为本次判断结果
+         */
         @Override
         public boolean isActive() {
             return !cancelled && !closed;

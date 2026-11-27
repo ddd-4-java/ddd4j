@@ -159,11 +159,19 @@ public class R2dbcAsyncEventStore implements AsyncEventStore {
     }
 
     /**
-     * {@inheritDoc}
+     * 向指定聚合的事件流追加这一批领域事件。
      *
-     * <p>乐观锁校验、position 分配与全部事件写入在同一事务内原子完成；
-     * 版本冲突以 {@link AggregateVersionConflictException} 错误信号终止并整体回滚。
-     * 订阅在提交前取消时，回滚事务后再释放连接。
+     * <p>\u4e50\u89c2\u9501\u6821\u9a8c\u3001position \u5206\u914d\u4e0e\u5168\u90e8\u4e8b\u4ef6\u5199\u5165\u5728\u540c\u4e00\u4e8b\u52a1\u5185\u539f\u5b50\u5b8c\u6210\uff1b
+     *  \u7248\u672c\u51b2\u7a81\u4ee5 {@link AggregateVersionConflictException} \u9519\u8bef\u4fe1\u53f7\u7ec8\u6b62\u5e76\u6574\u4f53\u56de\u6eda\u3002
+     *  \u8ba2\u9605\u5728\u63d0\u4ea4\u524d\u53d6\u6d88\u65f6\uff0c\u56de\u6eda\u4e8b\u52a1\u540e\u518d\u91ca\u653e\u8fde\u63a5\u3002
+     *
+     * <p>R2DBC 实现调用 <code>events.collectList()</code>。</p>
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId 聚合 ID
+     * @param events 要追加的事件流（实现会先行物化，订阅一次即完成追加）
+     * @param expectedVersion 期望的当前版本号（乐观锁，空流为 0）
+     * @return 完成信号；版本冲突时以 {@code AggregateVersionConflictException} 失败
      */
     @Override
     public Mono<Void> append(String aggregateType, AggregateRootId aggregateId,
@@ -217,7 +225,13 @@ public class R2dbcAsyncEventStore implements AsyncEventStore {
     }
 
     /**
-     * {@inheritDoc}
+     * 按聚合查询其事件流并还原已存储的事件。
+     *
+     * <p>R2DBC 实现调用 <code>ensureInitialized()</code>。</p>
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId 聚合 ID
+     * @return 按版本升序的持久化事件流；无事件时为空流
      */
     @Override
     public Flux<AsyncStoredEvent> read(String aggregateType, AggregateRootId aggregateId) {
@@ -236,7 +250,15 @@ public class R2dbcAsyncEventStore implements AsyncEventStore {
     }
 
     /**
-     * {@inheritDoc}
+     * 按聚合查询其事件流并还原已存储的事件。
+     *
+     * <p>R2DBC 实现调用 <code>ensureInitialized()</code>。</p>
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId 聚合 ID
+     * @param fromVersion 起始版本号（含）
+     * @param toVersion 结束版本号（含）
+     * @return 版本区间内的持久化事件流，按版本升序
      */
     @Override
     public Flux<AsyncStoredEvent> read(String aggregateType, AggregateRootId aggregateId,
@@ -258,10 +280,16 @@ public class R2dbcAsyncEventStore implements AsyncEventStore {
     }
 
     /**
-     * {@inheritDoc}
+     * 按全局位置读取用于投影或重放的存储事件。
      *
-     * <p>typed aggregate id 经 {@link EntityIdRegistry} 还原：自定义 id 类型需先注册，
-     * 未注册类型显式报错（附注册指引）。
+     * <p>typed aggregate id \u7ecf {@link EntityIdRegistry} \u8fd8\u539f\uff1a\u81ea\u5b9a\u4e49 id \u7c7b\u578b\u9700\u5148\u6ce8\u518c\uff0c
+     *  \u672a\u6ce8\u518c\u7c7b\u578b\u663e\u5f0f\u62a5\u9519\uff08\u9644\u6ce8\u518c\u6307\u5f15\uff09\u3002
+     *
+     * <p>R2DBC 实现调用 <code>Flux.error(new IllegalArgumentException("limit must be positive"))</code>。</p>
+     *
+     * @param fromPosition 起始 position（含）
+     * @param limit 最大读取数量
+     * @return 实际返回<code>Flux.error(new IllegalArgumentException("limit must be positive"))</code>
      */
     @Override
     public Flux<AsyncStoredEvent> readAll(long fromPosition, int limit) {

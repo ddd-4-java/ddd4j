@@ -238,13 +238,25 @@ class JpaManagedParticipationTest {
         /** \u5185\u5b58\u5b58\u50a8\u5b9e\u9645\u6536\u5230\u7684\u9886\u57df\u4e8b\u4ef6\u3002 */
         private int savedEvents;
 
-        /** {@inheritDoc} */
+        /**
+         * 查询指定聚合事件流的当前版本。
+         *
+         * @param aggregateType 聚合类型
+         * @param aggregateId 聚合根标识
+         * @return 实际返回<code>0</code>，供调用方取得当前值
+         */
         @Override
         public long findCurrentVersion(String aggregateType, String aggregateId) {
             return 0;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 按版本升序查询指定聚合的事件记录。
+         *
+         * @param aggregateType 聚合类型
+         * @param aggregateId 聚合根标识
+         * @return 实际返回<code>readResults</code>，供调用方取得当前值
+         */
         @Override
         public List<StoredEventEntity> findByAggregateTypeAndAggregateIdOrderByVersionAsc(
                 String aggregateType, String aggregateId) {
@@ -254,27 +266,49 @@ class JpaManagedParticipationTest {
             return readResults;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 按版本升序查询指定聚合在给定版本范围内的事件记录。
+         *
+         * @param aggregateType 聚合类型
+         * @param aggregateId 聚合根标识
+         * @param fromVersion 起始版本（包含）
+         * @param toVersion 结束版本（包含）
+         * @return 实际返回<code>readResults</code>，供调用方取得当前值
+         */
         @Override
         public List<StoredEventEntity> findByAggregateTypeAndAggregateIdAndVersionBetweenOrderByVersionAsc(
                 String aggregateType, String aggregateId, long fromVersion, long toVersion) {
             return readResults;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 按全局位置升序读取起点及其后的事件记录。
+         *
+         * @param fromPosition 起始 position（包含）
+         * @param limit 最大返回条数
+         * @return 实际返回<code>readResults</code>，供调用方取得当前值
+         */
         @Override
         public List<StoredEventEntity> findByPositionGreaterThanEqualOrderByPositionAsc(
                 long fromPosition, int limit) {
             return readResults;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 写入或更新给定的领域对象或存储记录。
+         *
+         * @param entity 事件实体
+         */
         @Override
         public void save(StoredEventEntity entity) {
             savedEvents++;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 分配事件存储中的下一个全局位置。
+         *
+         * @return 实际返回<code>savedEvents + 1L</code>，供调用方取得当前值
+         */
         @Override
         public long nextPosition() {
             return savedEvents + 1L;
@@ -297,19 +331,33 @@ class JpaManagedParticipationTest {
             this.value = value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 实际返回<code>TYPE</code>，供调用方取得当前值
+         */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 实际返回<code>value</code>，供调用方取得当前值
+         */
         @Override
         public String asString() {
             return value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * <p>测试夹具会调用 <code>TYPE.asString()</code>。</p>
+         *
+         * @return 实际返回<code>TYPE.asString() + ":" + value</code>
+         */
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;

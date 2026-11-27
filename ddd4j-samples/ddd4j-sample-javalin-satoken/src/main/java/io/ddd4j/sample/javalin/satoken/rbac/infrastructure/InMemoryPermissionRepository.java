@@ -73,7 +73,14 @@ public class InMemoryPermissionRepository implements PermissionRepository {
         return Optional.ofNullable(rows.get(id)).map(InMemoryPermissionRepository::toModel);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 按权限编码查询权限。
+     *
+     * <p>此实现调用 <code>StrKit.isBlank(permissionCode)</code>。</p>
+     *
+     * @param permissionCode 权限编码
+     * @return 实际返回<code>Optional.empty()</code>
+     */
     @Override
     public Optional<Permission> findByPermissionCode(String permissionCode) {
         if (StrKit.isBlank(permissionCode)) {
@@ -85,7 +92,14 @@ public class InMemoryPermissionRepository implements PermissionRepository {
                 .map(InMemoryPermissionRepository::toModel);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 查询指定模块下的权限条目。
+     *
+     * <p>此实现调用 <code>StrKit.isBlank(module)</code>。</p>
+     *
+     * @param module 所属模块
+     * @return 实际返回<code>Collections.emptyList()</code>
+     */
     @Override
     public List<Permission> findByModule(String module) {
         if (StrKit.isBlank(module)) {
@@ -97,7 +111,13 @@ public class InMemoryPermissionRepository implements PermissionRepository {
                 .collect(java.util.stream.Collectors.toList());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 查询存储中符合条件的记录。
+     *
+     * <p>此实现调用 <code>rows.values().stream()</code>。</p>
+     *
+     * @return 满足条件的结果列表
+     */
     @Override
     public List<Permission> findAll() {
         return rows.values().stream()
@@ -105,7 +125,14 @@ public class InMemoryPermissionRepository implements PermissionRepository {
                 .collect(java.util.stream.Collectors.toList());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 写入或更新给定的领域对象或存储记录。
+     *
+     * <p>此实现调用 <code>rows.put(aggregate.id(), toRow(aggregate))</code>。</p>
+     *
+     * @param aggregate 传给 <code>rows.put(aggregate.id(), toRow(aggregate))</code>
+     * @return 实际返回<code>aggregate</code>
+     */
     @Override
     public Permission save(Permission aggregate) {
         Objects.requireNonNull(aggregate, "aggregate must not be null");

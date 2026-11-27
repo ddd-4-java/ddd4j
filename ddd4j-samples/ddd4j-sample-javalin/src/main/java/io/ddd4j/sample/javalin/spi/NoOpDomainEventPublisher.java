@@ -34,7 +34,14 @@ import java.util.Objects;
 @Slf4j
 public class NoOpDomainEventPublisher implements DomainEventPublisher {
 
-    /** {@inheritDoc} */
+    /**
+     * 将传入的事件交给当前发布通道。
+     *
+     * <p>此实现调用 <code>log.info("[DomainEvent] {}", event.getClass().getSimpleName())</code>。</p>
+     *
+     * @param <ID> 实体标识类型
+     * @param event 领域事件
+     */
     @Override
     public <ID extends EntityId> void publish(DomainEvent<ID> event) {
         if (Objects.isNull(event)) {
@@ -43,7 +50,12 @@ public class NoOpDomainEventPublisher implements DomainEventPublisher {
         log.info("[DomainEvent] {}", event.getClass().getSimpleName());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 发布传入的领域事件序列。
+     *
+     * @param <ID> 实体标识类型
+     * @param events 领域事件集合
+     */
     @Override
     public <ID extends EntityId> void publishAll(Collection<DomainEvent<ID>> events) {
         if (Objects.nonNull(events)) {

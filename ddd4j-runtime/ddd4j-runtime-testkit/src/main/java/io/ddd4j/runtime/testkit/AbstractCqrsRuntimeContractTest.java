@@ -249,13 +249,26 @@ public abstract class AbstractCqrsRuntimeContractTest {
         /** \u8bb0\u5f55 A \u6267\u884c\u5668\u88ab\u8c03\u7528\u7684\u72b6\u6001\u3002 */
         private final AtomicBoolean invoked = new AtomicBoolean(false);
 
-        /** {@inheritDoc} */
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>此实现调用 <code>Collections.singleton(CmdA.class)</code>。</p>
+         *
+         * @return 当前处理器声明可接收的命令类型集合
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.singleton(CmdA.class);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>此实现调用 <code>invoked.set(true)</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>Result.ok("executor-a:" + command.getPayload())</code>
+         */
         @Override
         @SuppressWarnings("unchecked")
         public Result execute(CmdA command) {
@@ -279,13 +292,26 @@ public abstract class AbstractCqrsRuntimeContractTest {
         /** \u8bb0\u5f55 B \u6267\u884c\u5668\u88ab\u8c03\u7528\u7684\u72b6\u6001\u3002 */
         private final AtomicBoolean invoked = new AtomicBoolean(false);
 
-        /** {@inheritDoc} */
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>此实现调用 <code>Collections.singleton(CmdB.class)</code>。</p>
+         *
+         * @return 当前处理器声明可接收的命令类型集合
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.singleton(CmdB.class);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>此实现调用 <code>invoked.set(true)</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>Result.ok("executor-b:" + command.getValue())</code>
+         */
         @Override
         @SuppressWarnings("unchecked")
         public Result execute(CmdB command) {

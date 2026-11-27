@@ -168,7 +168,11 @@ class OnsRollbackRetryTest {
             client.init(listeners, properties, serialization, null);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 结束当前组件持有的资源。
+         *
+         * <p>测试夹具会调用 <code>client.close()</code>、<code>restore(MQEvent.MQ_EVENT_PUBLISHER, previousPublishers)</code>。</p>
+         */
         @Override
         public void close() {
             try {

@@ -62,9 +62,14 @@ public class JpaProjectionPositionRepository implements ProjectionPositionReposi
     }
 
     /**
-     * {@inheritDoc}
+     * 查询指定事件流的投影检查点。
      *
-     * <p>实体转不可变值对象返回（不泄漏持久化实体到领域层）。
+     * <p>\u5b9e\u4f53\u8f6c\u4e0d\u53ef\u53d8\u503c\u5bf9\u8c61\u8fd4\u56de\uff08\u4e0d\u6cc4\u6f0f\u6301\u4e45\u5316\u5b9e\u4f53\u5230\u9886\u57df\u5c42\uff09\u3002
+     *
+     * <p>JPA 实现调用 <code>repository.findById(streamId)</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     * @return 与给定流标识对应的投影检查点
      */
     @Override
     @Transactional(readOnly = true)
@@ -74,7 +79,13 @@ public class JpaProjectionPositionRepository implements ProjectionPositionReposi
                         entity.getStreamId(), entity.getNextEventNumber()));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 查询存储中符合条件的记录。
+     *
+     * <p>JPA 实现调用 <code>repository.findAll().stream()</code>。</p>
+     *
+     * @return 满足条件的结果列表
+     */
     @Override
     @Transactional(readOnly = true)
     public List<ProjectionPosition> findAll() {
@@ -85,11 +96,14 @@ public class JpaProjectionPositionRepository implements ProjectionPositionReposi
     }
 
     /**
-     * {@inheritDoc}
+     * 在持久化存储中写入指定事件流的投影检查点。
      *
-     * <p>upsert 语义：行不存在则插入（{@code ProjectionDispatcher} 首次推进
-     * 「缺行按 0 推进再 save」的路径依赖此行为），已存在则原位更新位置计数。
+     * <p>upsert \u8bed\u4e49\uff1a\u884c\u4e0d\u5b58\u5728\u5219\u63d2\u5165\uff08{@code ProjectionDispatcher} \u9996\u6b21\u63a8\u8fdb
+     *  \u300c\u7f3a\u884c\u6309 0 \u63a8\u8fdb\u518d save\u300d\u7684\u8def\u5f84\u4f9d\u8d56\u6b64\u884c\u4e3a\uff09\uff0c\u5df2\u5b58\u5728\u5219\u539f\u4f4d\u66f4\u65b0\u4f4d\u7f6e\u8ba1\u6570\u3002
      *
+     * <p>JPA 实现调用 <code>repository.findById(position.getStreamId())</code>。</p>
+     *
+     * @param position 投影位置
      * @return 持久化后的不可变位置值
      */
     @Override
@@ -103,7 +117,13 @@ public class JpaProjectionPositionRepository implements ProjectionPositionReposi
         return new DefaultProjectionPosition(position.getStreamId(), position.getNextEventNumber());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 删除指定事件流的投影检查点。
+     *
+     * <p>JPA 实现调用 <code>repository.deleteById(streamId)</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     */
     @Override
     @Transactional
     public void deleteByStreamId(String streamId) {
@@ -111,11 +131,15 @@ public class JpaProjectionPositionRepository implements ProjectionPositionReposi
     }
 
     /**
-     * {@inheritDoc}
+     * 将指定流的投影检查点重置为零。
      *
-     * <p>走数据库端原子 UPDATE；行不存在时按 core
-     * {@code InMemoryProjectionPositionRepository} 同款语义插入 0 位置
-     * （保证 reset 后 {@link #findByStreamId} 可读到 0 而非空）。
+     * <p>\u8d70\u6570\u636e\u5e93\u7aef\u539f\u5b50 UPDATE\uff1b\u884c\u4e0d\u5b58\u5728\u65f6\u6309 core
+     *  {@code InMemoryProjectionPositionRepository} \u540c\u6b3e\u8bed\u4e49\u63d2\u5165 0 \u4f4d\u7f6e
+     *  \uff08\u4fdd\u8bc1 reset \u540e {@link #findByStreamId} \u53ef\u8bfb\u5230 0 \u800c\u975e\u7a7a\uff09\u3002
+     *
+     * <p>JPA 实现调用 <code>repository.resetToZero(streamId)</code>。</p>
+     *
+     * @param streamId 投影流 ID
      */
     @Override
     @Transactional

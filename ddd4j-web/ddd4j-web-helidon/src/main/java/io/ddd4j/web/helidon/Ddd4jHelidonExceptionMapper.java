@@ -52,7 +52,11 @@ public final class Ddd4jHelidonExceptionMapper extends BaseErrorConfiguration im
         super(translator);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 返回当前适配实现对应的运行框架名称。
+     *
+     * @return 框架标识
+     */
     @Override
     protected String frameworkName() {
         return "Helidon";

@@ -55,7 +55,12 @@ public final class EventType implements Serializable {
         return value;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 根据<code>value</code>比较对象的值是否相等。
+     *
+     * @param object 用于此操作的 <code>object</code>（<code>Object</code>）
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object object) {
         if (this == object) {
@@ -68,13 +73,21 @@ public final class EventType implements Serializable {
         return Objects.equals(value, that.value);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 用<code>value</code>计算哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         return Objects.hash(value);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 生成用于调试和日志的对象描述。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return value;

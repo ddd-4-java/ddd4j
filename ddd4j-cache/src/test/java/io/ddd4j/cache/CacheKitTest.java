@@ -323,43 +323,85 @@ class CacheKitTest {
             this.store = store;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 读取现有缓存值。
+         *
+         * <p>测试夹具会调用 <code>store.get(key)</code>。</p>
+         *
+         * @param key 缓存键
+         * @return 实际返回<code>store.get(key)</code>
+         */
         @Override
         public Object getIfPresent(String key) {
             return store.get(key);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 读取调用指定的当前值。
+         *
+         * <p>测试夹具会调用 <code>store.computeIfAbsent(key, mappingFunction)</code>。</p>
+         *
+         * @param key 缓存键
+         * @param mappingFunction 值加载函数
+         * @return 实际返回<code>store.computeIfAbsent(key, mappingFunction)</code>
+         */
         @Override
         public Object get(String key, java.util.function.Function<String, Object> mappingFunction) {
             return store.computeIfAbsent(key, mappingFunction);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 将给定数据写入当前存储。
+         *
+         * <p>测试夹具会调用 <code>store.put(key, value)</code>。</p>
+         *
+         * @param key 缓存键
+         * @param value 缓存值
+         */
         @Override
         public void put(String key, Object value) {
             store.put(key, value);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 使指定键的缓存条目失效。
+         *
+         * <p>测试夹具会调用 <code>store.remove(key)</code>。</p>
+         *
+         * @param key 缓存键
+         */
         @Override
         public void invalidate(String key) {
             store.remove(key);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 使当前缓存中的全部条目失效。
+         *
+         * <p>测试夹具会调用 <code>store.clear()</code>。</p>
+         */
         @Override
         public void invalidateAll() {
             store.clear();
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回当前缓存条目规模的估算值。
+         *
+         * <p>测试夹具会调用 <code>store.size()</code>。</p>
+         *
+         * @return 实际返回<code>store.size()</code>
+         */
         @Override
         public long estimatedSize() {
             return store.size();
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回当前缓存实现记录的统计信息。
+         *
+         * @return 此实现返回<code>null</code>
+         */
         @Override
         public CacheStats stats() {
             return null;

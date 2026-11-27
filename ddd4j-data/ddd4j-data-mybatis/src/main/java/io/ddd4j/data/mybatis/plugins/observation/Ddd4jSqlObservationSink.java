@@ -27,7 +27,13 @@ import java.util.Objects;
  */
 public class Ddd4jSqlObservationSink implements SqlObservationSink, org.apache.ibatis.enhance.spi.SqlObservationSink {
 
-    /** {@inheritDoc} */
+    /**
+     * 接收调用方提交的记录。
+     *
+     * <p>此实现调用 <code>observation.mappedStatementId()</code>。</p>
+     *
+     * @param observation SQL 观测数据
+     */
     @Override
     public void accept(org.apache.ibatis.enhance.spi.SqlObservation observation) {
         if (Objects.nonNull(observation)) {
@@ -36,7 +42,13 @@ public class Ddd4jSqlObservationSink implements SqlObservationSink, org.apache.i
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 接收调用方提交的记录。
+     *
+     * <p>此实现调用 <code>ThreadContext.set(ContextConstants.PREPARING_SQL, observation.sql())</code>。</p>
+     *
+     * @param observation SQL 观测数据
+     */
     @Override
     public void accept(SqlObservation observation) {
         if (Objects.isNull(observation)) {

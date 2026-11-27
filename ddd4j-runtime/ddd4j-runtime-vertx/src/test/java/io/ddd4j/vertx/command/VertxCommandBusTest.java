@@ -211,25 +211,47 @@ class VertxCommandBusTest {
             this.result = result;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>Collections.singleton(commandType)</code>。</p>
+         *
+         * @return 实际返回<code>Collections.singleton(commandType)</code>
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.singleton(commandType);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>Result.ok(result)</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>Result.ok(result)</code>
+         */
         @Override
         public Result<String> execute(Command command) {
             return Result.ok(result);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 比较两个对象的值是否相等。
+         *
+         * @param other 与当前对象比较的对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object other) {
             return other instanceof EqualExecutor;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             return EqualExecutor.class.hashCode();
@@ -252,7 +274,13 @@ class VertxCommandBusTest {
      */
     static class OverlappingMultiTypeHandler implements CommandExecutor<Command> {
 
-        /** {@inheritDoc} */
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>Arrays.asList(SampleCommand.class, CompanionCommand.class)</code>。</p>
+         *
+         * @return 支持的命令类型集合
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(SampleCommand.class, CompanionCommand.class)));

@@ -272,7 +272,13 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 创建测试中用于操作当前框架的契约适配器。
+     *
+     * <p>测试夹具会调用 <code>ApplicationContext.builder().build()</code>、<code>ApplicationContext.builder()</code>。</p>
+     *
+     * @return CQRS 运行时契约
+     */
     @Override
     protected CqrsRuntimeContract createContract() {
         ApplicationContext context = ApplicationContext.builder().build();
@@ -323,7 +329,15 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
     @Singleton
     @Requires(property = PARTIAL_START, value = "true")
     static class UnusedReader implements EventChunkReader<Object> {
-        /** {@inheritDoc} */
+        /**
+         * 读取调用指定的数据或事件流。
+         *
+         * @param stream Redis Stream 的名称
+         * @param from 用于此操作的 <code>from</code>（<code>long</code>）
+         * @param size 用于此操作的 <code>size</code>（<code>int</code>）
+         * @param types 用于此操作的 <code>types</code>（<code>Collection&lt;String&gt;</code>）
+         * @return 事件块
+         */
         @Override
         public EventChunk<Object> read(String stream, long from, int size, Collection<String> types) {
             throw new AssertionError("failed startup must not read events");
@@ -332,31 +346,63 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
 
     /** \u6a21\u62df\u6295\u5f71\u4f4d\u70b9\u5b58\u50a8\u5e76\u63a7\u5236\u5199\u5165\u884c\u4e3a\u3002 */
     private static final class UnusedRepository implements ProjectionPositionRepository {
-        /** {@inheritDoc} */
+        /**
+         * 查询指定事件流的投影检查点。
+         *
+         * <p>测试夹具会调用 <code>unexpectedAccess()</code>。</p>
+         *
+         * @param streamId 投影流 ID
+         * @return 投影位置（不存在时返回 {@code Optional#empty()}）
+         */
         @Override
         public Optional<ProjectionPosition> findByStreamId(String streamId) {
             throw unexpectedAccess();
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 查询存储中符合条件的记录。
+         *
+         * <p>测试夹具会调用 <code>unexpectedAccess()</code>。</p>
+         *
+         * @return 全部投影位置
+         */
         @Override
         public List<ProjectionPosition> findAll() {
             throw unexpectedAccess();
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 写入或更新给定的领域对象或存储记录。
+         *
+         * <p>测试夹具会调用 <code>unexpectedAccess()</code>。</p>
+         *
+         * @param position 投影位置
+         * @return 持久化后的投影位置
+         */
         @Override
         public ProjectionPosition save(ProjectionPosition position) {
             throw unexpectedAccess();
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 删除指定事件流的投影检查点。
+         *
+         * <p>测试夹具会调用 <code>unexpectedAccess()</code>。</p>
+         *
+         * @param streamId 投影流 ID
+         */
         @Override
         public void deleteByStreamId(String streamId) {
             throw unexpectedAccess();
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 将指定流的投影检查点重置为零。
+         *
+         * <p>测试夹具会调用 <code>unexpectedAccess()</code>。</p>
+         *
+         * @param streamId 投影流 ID
+         */
         @Override
         public void resetToZero(String streamId) {
             throw unexpectedAccess();
@@ -394,13 +440,26 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         /** \u4ee4\u5f53\u524d\u66ff\u8eab\u5728\u6307\u5b9a\u6d4b\u8bd5\u8def\u5f84\u4e2d\u8fd4\u56de\u5931\u8d25\u3002 */
         boolean fail;
 
-        /** {@inheritDoc} */
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>Set.of(NativeCommand.class)</code>。</p>
+         *
+         * @return 实际返回<code>Set.of(NativeCommand.class)</code>
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Set.of(NativeCommand.class);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>Result.ok("native")</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>Result.ok("native")</code>
+         */
         @Override
         public Result execute(NativeCommand command) {
             if (fail) {

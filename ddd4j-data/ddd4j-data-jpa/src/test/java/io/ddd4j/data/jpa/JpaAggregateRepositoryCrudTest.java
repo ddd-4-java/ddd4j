@@ -156,7 +156,14 @@ class JpaAggregateRepositoryCrudTest {
             return persistenceProperty(property);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 将领域属性名映射为 JPA 持久化属性名。
+         *
+         * <p>测试夹具会调用 <code>"status".equals(domainProperty)</code>、<code>super.persistenceProperty(domainProperty)</code>。</p>
+         *
+         * @param domainProperty 领域属性名
+         * @return 根据执行路径返回<code>"orderStatus"</code>、<code>super.persistenceProperty(domainProperty)</code>
+         */
         @Override
         protected String persistenceProperty(String domainProperty) {
             if ("status".equals(domainProperty)) {

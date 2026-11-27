@@ -251,7 +251,18 @@ class ApiOperationLogHttpBridgeTest {
         /** \u7528\u6765\u65ad\u8a00\u4ed3\u50a8\u5b9e\u9645\u4fdd\u5b58\u5185\u5bb9\u6216\u4fdd\u5b58\u72b6\u6001\u7684\u8bb0\u5f55\u3002 */
         private int saved;
 
-        /** {@inheritDoc} */
+        /**
+         * 保存日志（子类可重写此方法实现持久化）。
+         *
+         * <p>此实现更新<code>this.result = returned</code>。</p>
+         *
+         * @param point 用于此操作的 <code>point</code>（<code>JoinPoint</code>）
+         * @param method 方法
+         * @param annotation 用于此操作的 <code>annotation</code>（<code>Operation</code>）
+         * @param returned 用于此操作的 <code>returned</code>（<code>Object</code>）
+         * @param thrown 用于此操作的 <code>thrown</code>（<code>Throwable</code>）
+         * @param watch 用于此操作的 <code>watch</code>（<code>Stopwatch</code>）
+         */
         @Override
         protected void saveLog(JoinPoint point, Method method, Operation annotation,
                                Object returned, Throwable thrown, Stopwatch watch) {

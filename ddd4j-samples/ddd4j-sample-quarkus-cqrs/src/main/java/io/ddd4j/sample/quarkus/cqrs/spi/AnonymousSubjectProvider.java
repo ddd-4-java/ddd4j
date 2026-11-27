@@ -24,7 +24,11 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class AnonymousSubjectProvider implements SubjectProvider {
 
-    /** {@inheritDoc} */
+    /**
+     * 取得当前请求使用的认证主体接口。
+     *
+     * @return 此实现返回<code>null</code>
+     */
     @Override
     public Subject getSubject() {
         return null;

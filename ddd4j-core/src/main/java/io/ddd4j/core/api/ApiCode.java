@@ -315,7 +315,11 @@ public enum ApiCode implements IEnum<Integer>, CustomApiCode {
         return resultCode;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 返回该对象公开的说明。
+     *
+     * @return 实际返回<code>reason</code>，供调用方取得当前值
+     */
     @Override
     public String getDesc() {
         return reason;

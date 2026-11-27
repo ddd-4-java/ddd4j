@@ -35,13 +35,21 @@ public class MybatisRepositories implements TradeSession {
     /** \u5f53\u524d\u4ed3\u50a8\u4f1a\u8bdd\u53ef\u8bbf\u95ee\u7684\u79df\u6237\u6807\u8bc6\u3002 */
     private final String tenant;
 
-    /** {@inheritDoc} */
+    /**
+     * 取得当前事务中的商品仓储。
+     *
+     * @return 商品仓储
+     */
     @Override
     public GoodsSpuRepository goods() {
         return new GoodsStore();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 取得当前事务中的订单仓储。
+     *
+     * @return 订单仓储
+     */
     @Override
     public TradeOrderRepository orders() {
         return new OrderStore();
@@ -49,13 +57,27 @@ public class MybatisRepositories implements TradeSession {
 
     /** \u5728\u5f53\u524d\u79df\u6237\u4f1a\u8bdd\u5185\u8bfb\u5199\u5546\u54c1\u805a\u5408\u548c\u53ef\u552e\u89c4\u683c\u3002 */
     private final class GoodsStore implements GoodsSpuRepository {
-        /** {@inheritDoc} */
+        /**
+         * 按主键读取领域对象或持久化记录。
+         *
+         * <p>此实现调用 <code>Optional.ofNullable(mapper.goodsById(tenant, id))</code>。</p>
+         *
+         * @param id 当前操作使用的记录主键或业务标识
+         * @return 此操作产生的<code>Optional&lt;GoodsSpu&gt;</code>结果
+         */
         @Override
         public Optional<GoodsSpu> findById(Long id) {
             return Optional.ofNullable(mapper.goodsById(tenant, id)).map(MybatisRepositories.this::goods);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 写入或更新给定的领域对象或存储记录。
+         *
+         * <p>满足 <code>Objects.nonNull(goods.id())</code> 时抛出 <code>UnsupportedOperationException</code>。 此实现调用 <code>goods.id()</code>。</p>
+         *
+         * @param goods 传给 <code>goods.id()</code>
+         * @return 实际返回<code>findById(insertGoods(goods)).orElseThrow()</code>
+         */
         @Override
         public GoodsSpu save(GoodsSpu goods) {
             if (Objects.nonNull(goods.id())) {
@@ -64,13 +86,28 @@ public class MybatisRepositories implements TradeSession {
             return findById(insertGoods(goods)).orElseThrow();
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 按业务编码查找对应记录。
+         *
+         * <p>此实现调用 <code>goods(required(mapper.goods(tenant, code)))</code>。</p>
+         *
+         * @param code 业务编号
+         * @return 实际返回<code>goods(required(mapper.goods(tenant, code)))</code>
+         */
         @Override
         public GoodsSpu findByCode(String code) {
             return goods(required(mapper.goods(tenant, code)));
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 查询指定商品规格的在售数据。
+         *
+         * <p>此实现调用 <code>required(mapper.offer(tenant, shopId, skuCode))</code>。</p>
+         *
+         * @param shopId 门店主键
+         * @param skuCode 租户内 SKU 编号
+         * @return 实际返回<code>required(mapper.offer(tenant, shopId, skuCode))</code>
+         */
         @Override
         public GoodsSkuOffer findOffer(long shopId, String skuCode) {
             return required(mapper.offer(tenant, shopId, skuCode));
@@ -79,13 +116,27 @@ public class MybatisRepositories implements TradeSession {
 
     /** \u5728\u5f53\u524d\u79df\u6237\u4f1a\u8bdd\u5185\u8bfb\u5199\u8ba2\u5355\u805a\u5408\u53ca\u5176\u660e\u7ec6\u3002 */
     private final class OrderStore implements TradeOrderRepository {
-        /** {@inheritDoc} */
+        /**
+         * 按主键读取领域对象或持久化记录。
+         *
+         * <p>此实现调用 <code>Optional.ofNullable(mapper.orderById(tenant, id))</code>。</p>
+         *
+         * @param id 当前操作使用的记录主键或业务标识
+         * @return 此操作产生的<code>Optional&lt;TradeOrder&gt;</code>结果
+         */
         @Override
         public Optional<TradeOrder> findById(Long id) {
             return Optional.ofNullable(mapper.orderById(tenant, id)).map(MybatisRepositories.this::order);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 写入或更新给定的领域对象或存储记录。
+         *
+         * <p>满足 <code>Objects.nonNull(order.id())</code> 时抛出 <code>UnsupportedOperationException</code>。 此实现调用 <code>order.id()</code>。</p>
+         *
+         * @param order 传给 <code>order.id()</code>
+         * @return 实际返回<code>findById(insertOrder(order)).orElseThrow()</code>
+         */
         @Override
         public TradeOrder save(TradeOrder order) {
             if (Objects.nonNull(order.id())) {
@@ -94,13 +145,25 @@ public class MybatisRepositories implements TradeSession {
             return findById(insertOrder(order)).orElseThrow();
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 按业务订单号读取并锁定订单记录。
+         *
+         * <p>此实现调用 <code>order(required(mapper.lockOrder(tenant, orderNo)))</code>。</p>
+         *
+         * @param orderNo 租户内订单编号
+         * @return 实际返回<code>order(required(mapper.lockOrder(tenant, orderNo)))</code>
+         */
         @Override
         public TradeOrder lockByOrderNo(String orderNo) {
             return order(required(mapper.lockOrder(tenant, orderNo)));
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 通过<code>row.setTenantId(tenant)</code>、<code>row.setId(order.id())</code>处理当前调用。
+         *
+         * @param order 传给 <code>row.setId(order.id())</code>
+         * @return 实际返回<code>findById(order.id()).orElseThrow()</code>
+         */
         @Override
         public TradeOrder updateById(TradeOrder order) {
             TradeOrderPO row = new TradeOrderPO();
@@ -117,7 +180,14 @@ public class MybatisRepositories implements TradeSession {
             return findById(order.id()).orElseThrow();
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 按业务订单号查找订单记录。
+         *
+         * <p>此实现调用 <code>order(required(mapper.order(tenant, code)))</code>。</p>
+         *
+         * @param code 传给 <code>order(required(mapper.order(tenant, code)))</code>
+         * @return 实际返回<code>order(required(mapper.order(tenant, code)))</code>
+         */
         @Override
         public TradeOrder findByOrderNo(String code) {
             return order(required(mapper.order(tenant, code)));

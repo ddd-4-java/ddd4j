@@ -70,7 +70,12 @@ public class GoodsId implements Serializable {
         return value;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 根据<code>value</code>比较对象的值是否相等。
+     *
+     * @param o 用来比较的另一个对象，允许为空
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -83,13 +88,21 @@ public class GoodsId implements Serializable {
         return Objects.equals(value, that.value);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         return Objects.hashCode(value);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 生成用于调试和日志的对象描述。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "GoodsId{" + value + '}';

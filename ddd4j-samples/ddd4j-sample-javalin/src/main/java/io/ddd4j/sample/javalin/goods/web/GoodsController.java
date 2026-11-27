@@ -366,7 +366,12 @@ public class GoodsController {
             return other instanceof CreateGoodsRequest;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 比较两个对象的值是否相等。
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -385,7 +390,11 @@ public class GoodsController {
                     && Objects.equals(getStock(), other.getStock());
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 1;
@@ -396,7 +405,11 @@ public class GoodsController {
             return result;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>code</code>、<code>name</code>、<code>price</code>、<code>stock</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "GoodsController.CreateGoodsRequest(code=" + getCode() + ", name=" + getName() + ", price=" + getPrice() + ", stock=" + getStock() + ")";
@@ -487,7 +500,12 @@ public class GoodsController {
             return other instanceof UpdateGoodsRequest;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 比较两个对象的值是否相等。
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -504,7 +522,11 @@ public class GoodsController {
                     && Objects.equals(getPrice(), other.getPrice());
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 1;
@@ -513,7 +535,11 @@ public class GoodsController {
             return result;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>name</code>、<code>price</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "GoodsController.UpdateGoodsRequest(name=" + getName() + ", price=" + getPrice() + ")";

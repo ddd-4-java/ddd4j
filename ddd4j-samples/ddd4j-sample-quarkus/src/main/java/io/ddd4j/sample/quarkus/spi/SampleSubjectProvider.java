@@ -46,7 +46,11 @@ public class SampleSubjectProvider implements SubjectProvider {
                 .setPerms(new java.util.HashSet<>(java.util.Arrays.asList("order:read", "order:write")))));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 取得当前请求使用的认证主体接口。
+     *
+     * @return 本次调用使用的认证主体接口
+     */
     @Override
     public Subject getSubject() {
         return subject;

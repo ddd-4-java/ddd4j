@@ -299,7 +299,15 @@ class NativeAuthHttpTest {
             }
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 以传入的凭据启动认证会话。
+         *
+         * <p>测试夹具会调用 <code>Map.of("username", user, "password", password)</code>。</p>
+         *
+         * @param user 传给 <code>send("POST", "/auth/login", Map.of("username", user, "password", password), null).body()</code>
+         * @param password 已配置密码
+         * @return 实际登录响应中的令牌
+         */
         @Override
         public String login(String user, String password) {
             try {
@@ -309,13 +317,26 @@ class NativeAuthHttpTest {
             }
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 通过已认证请求探测服务端识别出的登录主体。
+         *
+         * @param token 令牌
+         * @return 实际返回<code>request("GET", "/auth/me", null, token)</code>
+         */
         @Override
         public String authenticatedPrincipal(String token) {
             return request("GET", "/auth/me", null, token);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 访问当前鉴权契约中受权限约束的资源。
+         *
+         * <p>测试夹具会调用 <code>request("GET", "/auth/resource?permission=" + permission, null, token)</code>。</p>
+         *
+         * @param token 令牌
+         * @param permission 权限
+         * @return 实际返回<code>request("GET", "/auth/resource?permission=" + permission, null, token)</code>
+         */
         @Override
         public String authorizedResource(String token, String permission) {
             return request("GET", "/auth/resource?permission=" + permission, null, token);
@@ -343,19 +364,37 @@ class NativeAuthHttpTest {
             assertEquals(201, response.statusCode(), response.body());
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 访问测试中指定会失败的请求路径。
+         *
+         * <p>测试夹具会调用 <code>Map.of("paidAmountCent", 1)</code>。</p>
+         *
+         * @param token 令牌；调用已注入业务异常的受保护入口并保留 IllegalStateException
+         */
         @Override
         public void failingRequest(String token) {
             request("POST", ORDERS + emptyOrder + "/payment", Map.of("paidAmountCent", 1), token);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 结束由当前调用指定的认证会话。
+         *
+         * <p>测试夹具会调用 <code>request("POST", "/auth/logout", null, token)</code>。</p>
+         *
+         * @param token 令牌；实际退出入口必须使该令牌失效
+         */
         @Override
         public void logout(String token) {
             request("POST", "/auth/logout", null, token);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 探测当前请求上下文里可读取的登录主体。
+         *
+         * <p>测试夹具会调用 <code>CLEAN.contains(false)</code>、<code>Optional.of("leaked")</code>。</p>
+         *
+         * @return 实际返回<code>CLEAN.contains(false) ? Optional.of("leaked") : Optional.empty()</code>
+         */
         @Override
         public Optional<String> contextPrincipal() {
             return CLEAN.contains(false) ? Optional.of("leaked") : Optional.empty();

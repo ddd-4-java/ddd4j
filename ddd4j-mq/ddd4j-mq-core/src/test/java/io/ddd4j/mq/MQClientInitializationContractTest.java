@@ -549,25 +549,44 @@ class MQClientInitializationContractTest {
             return this;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回此消息适配器在 DDD4J 中登记的实现名。
+         *
+         * @return 实际返回<code>"test"</code>，供调用方取得当前值
+         */
         @Override
         public String impl() {
             return "test";
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回管理连接、生产者和消费者资源的生命周期对象。
+         *
+         * @return 实际返回<code>lifecycle</code>，供调用方取得当前值
+         */
         @Override
         public MQClientLifecycle lifecycle() {
             return lifecycle;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回消息客户端当前记录的启动状态。
+         *
+         * @return 实际返回<code>status</code>，供调用方取得当前值
+         */
         @Override
         public MQStartupStatus startupStatus() {
             return status;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 准备消息生产者并返回可发布事件的入口。
+         *
+         * <p>测试夹具会调用 <code>producerInitHook.run()</code>。</p>
+         *
+         * @param properties MQ 配置
+         * @return 发布函数，null 表示不提供发布能力
+         */
         @Override
         public Consumer<MQEvent> initProducer(MQProperties properties) {
             lifecycle.register("producer", closedResources::incrementAndGet);
@@ -578,7 +597,15 @@ class MQClientInitializationContractTest {
             return event -> publishedEvents.incrementAndGet();
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 为监听器建立消息消费所需的订阅和客户端资源。
+         *
+         * <p>测试夹具会调用 <code>consumerInitHook.run()</code>、<code>attempts.getAndIncrement()</code>。</p>
+         *
+         * @param listener 监听器定义
+         * @param properties MQ 配置
+         * @return 实际返回<code>results[index]</code>
+         */
         @Override
         public boolean initConsumer(MQListener listener, MQProperties properties) {
             consumerInitHook.run();

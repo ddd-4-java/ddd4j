@@ -106,19 +106,34 @@ class MQListenerLifecycleContractTest {
             this.closed = closed;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回此消息适配器在 DDD4J 中登记的实现名。
+         *
+         * @return 实际返回<code>impl</code>，供调用方取得当前值
+         */
         @Override
         public String impl() {
             return impl;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 准备消息生产者并返回可发布事件的入口。
+         *
+         * @param properties MQ 配置
+         * @return 此实现返回<code>null</code>
+         */
         @Override
         public Consumer<MQEvent> initProducer(MQProperties properties) {
             return null;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 为监听器建立消息消费所需的订阅和客户端资源。
+         *
+         * @param listener 监听器定义
+         * @param properties MQ 配置
+         * @return 此实现返回<code>true</code>
+         */
         @Override
         public boolean initConsumer(MQListener listener, MQProperties properties) {
             return true;
@@ -135,14 +150,28 @@ class MQListenerLifecycleContractTest {
 
     /** \u5b9e\u73b0 <code>MQEventSerialization</code>\uff0c\u4f9b\u6d4b\u8bd5\u8c03\u7528 <code>serialize()</code>\u3001<code>deserialize()</code> \u5e76\u89c2\u5bdf\u7ed3\u679c\u3002 */
     private static final class Serialization implements MQEventSerialization {
-        /** {@inheritDoc} */
+        /**
+         * 将传入消息编码为发布通道使用的格式。
+         *
+         * @param <T> 序列化结果类型
+         * @param event 当前发布、消费或处理的事件
+         * @return 实际返回<code>(T)"{}"</code>，供调用方取得当前值
+         */
         @Override
         @SuppressWarnings("unchecked")
         public <T> T serialize(Object event) {
             return (T) "{}";
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 从消息通道载荷还原事件。
+         *
+         * @param <S> 源类型
+         * @param <T> 目标类型
+         * @param value 要写入或作为比较条件传入的值
+         * @param type 当前操作用于选择实现或转换结果的类型
+         * @return 此实现返回<code>null</code>
+         */
         @Override
         public <S, T> T deserialize(S value, Class<T> type) {
             return null;

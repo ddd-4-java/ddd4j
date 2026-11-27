@@ -121,7 +121,13 @@ class QuarkusLegacyServiceTest {
         @Inject
         TrackedRequest request;
 
-        /** {@inheritDoc} */
+        /**
+         * 拉取投影尚未处理的事件并更新读模型。
+         *
+         * <p>测试夹具会调用 <code>request.touch()</code>、<code>calls.incrementAndGet()</code>。</p>
+         *
+         * @param streamId 投影流标识
+         */
         @Override
         protected void pullAndApply(String streamId) {
             request.touch();

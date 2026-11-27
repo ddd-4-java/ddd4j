@@ -46,7 +46,13 @@ class SpringCoreConfigReadinessContractTest {
     /** \u5411\u8fd0\u884c\u65f6\u6d4b\u8bd5\u63d0\u4f9b\u53ef\u63a7\u7684\u5c31\u7eea\u72b6\u6001\u3002 */
     @Order(2)
     static final class LateContributor implements ReadinessContributor {
-        /** {@inheritDoc} */
+        /**
+         * 执行当前实现对应的检查。
+         *
+         * <p>测试夹具会调用 <code>ReadinessResult.ready("late")</code>。</p>
+         *
+         * @return 实际返回<code>ReadinessResult.ready("late")</code>
+         */
         @Override
         public ReadinessResult check() {
             return ReadinessResult.ready("late");
@@ -56,7 +62,13 @@ class SpringCoreConfigReadinessContractTest {
     /** \u5411\u8fd0\u884c\u65f6\u6d4b\u8bd5\u63d0\u4f9b\u53ef\u63a7\u7684\u5c31\u7eea\u72b6\u6001\u3002 */
     @Order(1)
     static final class EarlyContributor implements ReadinessContributor {
-        /** {@inheritDoc} */
+        /**
+         * 执行当前实现对应的检查。
+         *
+         * <p>测试夹具会调用 <code>ReadinessResult.ready("early")</code>。</p>
+         *
+         * @return 实际返回<code>ReadinessResult.ready("early")</code>
+         */
         @Override
         public ReadinessResult check() {
             return ReadinessResult.ready("early");

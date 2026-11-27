@@ -53,7 +53,11 @@ public class FeishuRobotSender implements Sender {
         return client;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 通过当前适配器发出请求或消息。
+     *
+     * @param msg 已格式化为通道要求的字符串（通常为 markdown 或 JSON payload）
+     */
     @Override
     public void send(String msg) {
         // 入参 msg 是 markdown 文本，这里包一层为标准 post 富文本结构：

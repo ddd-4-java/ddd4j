@@ -137,13 +137,22 @@ public final class SaTokenDataSubjectProvider extends SaTokenSubjectProvider {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 取得当前请求使用的认证主体接口。
+     *
+     * @return 本次调用使用的认证主体接口
+     */
     @Override
     public Subject getSubject() {
         return new TokenSubject(null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 取得当前请求使用的认证主体接口。
+     *
+     * @param realm 要取得主体的认证域
+     * @return 本次调用使用的认证主体接口
+     */
     @Override
     public Subject getSubject(String realm) {
         return new TokenSubject(realm);
@@ -164,7 +173,14 @@ public final class SaTokenDataSubjectProvider extends SaTokenSubjectProvider {
             this.realm = realm;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 以传入的凭据启动认证会话。
+         *
+         * <p>此实现调用 <code>request.getSessionConfig()</code>。</p>
+         *
+         * @param request 框架传入的当前请求
+         * @return 实际返回<code>token</code>
+         */
         @Override
         public String login(AuthRequest request) {
             AuthSessionConfig original = request.getSessionConfig();
@@ -199,7 +215,15 @@ public final class SaTokenDataSubjectProvider extends SaTokenSubjectProvider {
             return token;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 校验当前调用传入的数据或凭据。
+         *
+         * <p>此实现调用 <code>tokenPrincipal(verifiedTokenContext(stpLogic(realm), token))</code>。</p>
+         *
+         * @param <T> 此操作处理的值或结果的 Java 类型
+         * @param token 待校验或用于定位会话的令牌
+         * @return 根据执行路径返回<code>tokenPrincipal(verifiedTokenContext(stpLogic(realm), token))</code>、<code>null</code>
+         */
         @Override
         public <T extends AuthPrincipal> T verify(String token) {
             try {
@@ -210,7 +234,14 @@ public final class SaTokenDataSubjectProvider extends SaTokenSubjectProvider {
             }
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 读取当前会话的认证主体。
+         *
+         * <p>此实现调用 <code>SaManager.getSaTokenContext().isValid()</code>。</p>
+         *
+         * @param <T> 此操作处理的值或结果的 Java 类型
+         * @return 当前会话绑定的主体
+         */
         @Override
         public <T extends AuthPrincipal> T getPrincipal() {
             if (!SaManager.getSaTokenContext().isValid()) {
@@ -225,19 +256,36 @@ public final class SaTokenDataSubjectProvider extends SaTokenSubjectProvider {
             }
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 检查当前会话是否已经认证。
+         *
+         * <p>此实现调用 <code>getPrincipal()</code>。</p>
+         *
+         * @return 当前会话通过身份认证时为真
+         */
         @Override
         public boolean isAuthenticated() {
             return Objects.nonNull(getPrincipal());
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 检查当前会话是否已经认证。
+         *
+         * @param loginId 用来定位身份或登录会话的登录标识
+         * @return 当前会话通过身份认证时为真
+         */
         @Override
         public boolean isAuthenticated(Object loginId) {
             return Boolean.TRUE.equals(resolveAccount(loginId, super::isAuthenticated, principal -> Boolean.TRUE));
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 查询指定登录标识关联的认证主体。
+         *
+         * @param <T> 此操作处理的值或结果的 Java 类型
+         * @param loginId 用来定位身份或登录会话的登录标识
+         * @return 给定登录标识关联的主体
+         */
         @Override
         @SuppressWarnings("unchecked")
         public <T extends AuthPrincipal> T getPrincipalByLoginId(Object loginId) {

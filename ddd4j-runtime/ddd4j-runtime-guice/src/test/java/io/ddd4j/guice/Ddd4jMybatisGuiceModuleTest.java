@@ -329,7 +329,13 @@ class Ddd4jMybatisGuiceModuleTest {
         /** \u4fdd\u5b58\u5df2\u4ea4\u7ed9 ORM \u7ed3\u679c\u586b\u5145\u5165\u53e3\u7684\u6570\u636e\u3002 */
         private List<? extends AggregateRoot<?>> filled;
 
-        /** {@inheritDoc} */
+        /**
+         * 补充当前查询执行所需的参数。
+         *
+         * <p>此实现更新<code>filled = models</code>。</p>
+         *
+         * @param models 待填充的聚合根列表
+         */
         @Override
         public void doFills(List<? extends AggregateRoot<?>> models) {
             fillCount++;

@@ -62,7 +62,14 @@ public class TenantAwareId implements Serializable {
         return new TenantAwareId(id, tenantId);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 根据<code>id</code>、<code>tenantId</code>比较对象的值是否相等。
+     *
+     * <p>只比较运行时类型相同的对象。</p>
+     *
+     * @param o 用来比较的另一个对象，允许为空
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -75,7 +82,11 @@ public class TenantAwareId implements Serializable {
         return Objects.equals(id, that.id) && Objects.equals(tenantId, that.tenantId);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 用<code>id</code>、<code>tenantId</code>计算哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         return Objects.hash(id, tenantId);

@@ -196,19 +196,33 @@ class ProjectionHandlerRegistryTest {
         /** \u5f53\u524d\u6d4b\u8bd5\u6a21\u578b\u7528\u4e8e\u5c55\u793a\u548c\u65ad\u8a00\u7684\u540d\u79f0\u3002 */
         String name = "first";
 
-        /** {@inheritDoc} */
+        /**
+         * 返回当前配置、视图或处理器的名称。
+         *
+         * @return 实际返回<code>name</code>，供调用方取得当前值
+         */
         @Override
         public String getName() {
             return name;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回此处理器接受的事件类型。
+         *
+         * @return 实际返回<code>types</code>，供调用方取得当前值
+         */
         @Override
         public Collection<Class<? extends DomainEvent<?>>> eventTypes() {
             return types;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 处理调用方传入的消息或请求。
+         *
+         * <p>测试夹具会调用 <code>handled.add(event)</code>。</p>
+         *
+         * @param event 订阅类型之一的领域事件，非空
+         */
         @Override
         public void handle(DomainEvent<?> event) {
             handled.add(event);
@@ -258,19 +272,33 @@ class ProjectionHandlerRegistryTest {
             return handled;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回当前配置、视图或处理器的名称。
+         *
+         * @return 实际返回<code>name</code>，供调用方取得当前值
+         */
         @Override
         public String getName() {
             return name;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回此处理器接受的事件类型。
+         *
+         * @return 实际返回<code>eventTypes</code>，供调用方取得当前值
+         */
         @Override
         public Collection<Class<? extends DomainEvent<?>>> eventTypes() {
             return eventTypes;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 处理调用方传入的消息或请求。
+         *
+         * <p>测试夹具会调用 <code>handled.add(event)</code>。</p>
+         *
+         * @param event 订阅类型之一的领域事件，非空
+         */
         @Override
         public void handle(DomainEvent<?> event) {
             if (Objects.nonNull(failure)) {

@@ -38,7 +38,13 @@ class Ddd4jHelidonRuntimeTest extends AbstractRuntimeContractTest {
         runtime.close();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 为契约测试构造当前框架的运行实例。
+     *
+     * <p>测试夹具会调用 <code>fixtures.publisher()</code>、<code>fixtures.subjectProvider()</code>。</p>
+     *
+     * @return 待验证的运行时适配器
+     */
     @Override
     protected RuntimeContract createRuntime() {
         RuntimeFixtures fixtures = new RuntimeFixtures();

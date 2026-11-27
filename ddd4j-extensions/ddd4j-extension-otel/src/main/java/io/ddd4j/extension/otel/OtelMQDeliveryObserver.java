@@ -36,43 +36,88 @@ public final class OtelMQDeliveryObserver implements MQDeliveryObserver {
         this.broker = StrKit.isBlank(broker) ? "unknown" : StrKit.trim(broker);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Outbox 消息已由持有租约的实例确认发布。
+     *
+     * <p>此实现调用 <code>MqDeliveryMetrics.outboxPublished(broker)</code>。</p>
+     *
+     * @param record 已发布记录
+     */
     @Override
     public void onOutboxPublished(MQOutboxRecord record) {
         MqDeliveryMetrics.outboxPublished(broker);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Outbox 消息已安排后续重试。
+     *
+     * <p>此实现调用 <code>MqDeliveryMetrics.outboxRetry(broker)</code>。</p>
+     *
+     * @param record 投递失败记录
+     */
     @Override
     public void onOutboxRetry(MQOutboxRecord record) {
         MqDeliveryMetrics.outboxRetry(broker);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Outbox 消息已超过重试上限并进入死信状态。
+     *
+     * <p>此实现调用 <code>MqDeliveryMetrics.outboxDead(broker)</code>。</p>
+     *
+     * @param record 死信记录
+     */
     @Override
     public void onOutboxDead(MQOutboxRecord record) {
         MqDeliveryMetrics.outboxDead(broker);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Outbox 发送或状态确认失败，最终状态尚未确定。
+     *
+     * <p>此实现调用 <code>MqDeliveryMetrics.outboxFailed(broker)</code>。</p>
+     *
+     * @param record 投递状态不确定的记录
+     */
     @Override
     public void onOutboxFailed(MQOutboxRecord record) {
         MqDeliveryMetrics.outboxFailed(broker);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Inbox 首次成功处理消息。
+     *
+     * <p>此实现调用 <code>MqDeliveryMetrics.inboxProcessed(broker)</code>。</p>
+     *
+     * @param consumerId 消费者标识
+     * @param messageId 稳定消息标识
+     */
     @Override
     public void onInboxProcessed(String consumerId, String messageId) {
         MqDeliveryMetrics.inboxProcessed(broker);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Inbox 识别到已处理的重复消息。
+     *
+     * <p>此实现调用 <code>MqDeliveryMetrics.inboxDuplicate(broker)</code>。</p>
+     *
+     * @param consumerId 消费者标识
+     * @param messageId 稳定消息标识
+     */
     @Override
     public void onInboxDuplicate(String consumerId, String messageId) {
         MqDeliveryMetrics.inboxDuplicate(broker);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Inbox 记录或业务处理失败，调用方应保持不 ACK 以触发重投。
+     *
+     * <p>此实现调用 <code>MqDeliveryMetrics.inboxFailed(broker)</code>。</p>
+     *
+     * @param consumerId 消费者标识
+     * @param messageId 稳定消息标识
+     */
     @Override
     public void onInboxFailed(String consumerId, String messageId) {
         MqDeliveryMetrics.inboxFailed(broker);

@@ -37,32 +37,64 @@ public class GuiceInMemoryProjectionPositionRepository implements ProjectionPosi
      */
     private final ConcurrentMap<String, ProjectionPosition> store = new ConcurrentHashMap<>();
 
-    /** {@inheritDoc} */
+    /**
+     * 查询指定事件流的投影检查点。
+     *
+     * <p>此实现调用 <code>Optional.ofNullable(store.get(streamId))</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     * @return 与给定流标识对应的投影检查点
+     */
     @Override
     public Optional<ProjectionPosition> findByStreamId(String streamId) {
         return Optional.ofNullable(store.get(streamId));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 查询存储中符合条件的记录。
+     *
+     * <p>此实现调用 <code>List.copyOf(store.values())</code>。</p>
+     *
+     * @return 满足条件的结果列表
+     */
     @Override
     public List<ProjectionPosition> findAll() {
         return List.copyOf(store.values());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 在持久化存储中写入指定事件流的投影检查点。
+     *
+     * <p>此实现调用 <code>store.put(position.getStreamId(), position)</code>。</p>
+     *
+     * @param position 投影位置
+     * @return 实际返回<code>position</code>
+     */
     @Override
     public ProjectionPosition save(ProjectionPosition position) {
         store.put(position.getStreamId(), position);
         return position;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 删除指定事件流的投影检查点。
+     *
+     * <p>此实现调用 <code>store.remove(streamId)</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     */
     @Override
     public void deleteByStreamId(String streamId) {
         store.remove(streamId);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 将指定流的投影检查点重置为零。
+     *
+     * <p>此实现调用 <code>store.get(streamId)</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     */
     @Override
     public void resetToZero(String streamId) {
         ProjectionPosition old = store.get(streamId);

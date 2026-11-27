@@ -372,14 +372,30 @@ class NativePrimaryKeyMappingTest {
             return po;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 查询符合条件的持久化记录。
+         *
+         * <p>测试夹具会调用 <code>query.getWhereConditions().isEmpty()</code>、<code>query.getWhereConditions()</code>。</p>
+         *
+         * @param query 领域查询，null 表示无额外条件
+         * @param offset 从零开始的偏移量
+         * @param limit 最大行数，负数表示不分页
+         * @return 实际返回<code>baseMapper.selectRows(key)</code>
+         */
         @Override
         protected List<OrderPO> selectRows(Query<Order> query, long offset, long limit) {
             Long key = query.getWhereConditions().isEmpty() ? null : (Long) query.getWhereConditions().get(0).value();
             return baseMapper.selectRows(key);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 统计符合条件的持久化记录数。
+         *
+         * <p>测试夹具会调用 <code>selectRows(query, 0, -1).size()</code>、<code>selectRows(query, 0, -1)</code>。</p>
+         *
+         * @param query 领域查询，null 表示无额外条件
+         * @return 实际返回<code>selectRows(query, 0, -1).size()</code>
+         */
         @Override
         protected long countRows(Query<Order> query) {
             return selectRows(query, 0, -1).size();
@@ -395,7 +411,14 @@ class NativePrimaryKeyMappingTest {
             return baseMapper.remove(key);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 删除符合条件的持久化记录。
+         *
+         * <p>测试夹具会调用 <code>baseMapper.remove(key)</code>。</p>
+         *
+         * @param keys 用于此操作的 <code>keys</code>（<code>Collection&lt;Long&gt;</code>）
+         * @return 实际返回<code>count</code>
+         */
         @Override
         protected int deleteRows(Collection<Long> keys) {
             int count = 0;

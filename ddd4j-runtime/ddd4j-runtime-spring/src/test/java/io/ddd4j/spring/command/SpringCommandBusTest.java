@@ -312,13 +312,26 @@ class SpringCommandBusTest {
      */
     static class TestCommandExecutor implements CommandExecutor<TestCommand> {
 
-        /** {@inheritDoc} */
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>java.util.Collections.&lt;Class&lt;? extends Command&gt;&gt;singleton(TestCommand.class)</code>。</p>
+         *
+         * @return 实际返回<code>java.util.Collections.&lt;Class&lt;? extends Command&gt;&gt;singleton(TestCommand.class)</code>
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return java.util.Collections.<Class<? extends Command>>singleton(TestCommand.class);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>Result.ok("executed: " + command.getValue())</code>、<code>command.getValue()</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>Result.ok("executed: " + command.getValue())</code>
+         */
         @Override
         public Result execute(TestCommand command) {
             return Result.ok("executed: " + command.getValue());
@@ -330,13 +343,26 @@ class SpringCommandBusTest {
      */
     static class AnotherCommandExecutor implements CommandExecutor<AnotherCommand> {
 
-        /** {@inheritDoc} */
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>java.util.Collections.&lt;Class&lt;? extends Command&gt;&gt;singleton(AnotherCommand.class)</code>。</p>
+         *
+         * @return 实际返回<code>java.util.Collections.&lt;Class&lt;? extends Command&gt;&gt;singleton(AnotherCommand.class)</code>
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return java.util.Collections.<Class<? extends Command>>singleton(AnotherCommand.class);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>Result.ok("another: " + command.getValue())</code>、<code>command.getValue()</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>Result.ok("another: " + command.getValue())</code>
+         */
         @Override
         public Result execute(AnotherCommand command) {
             return Result.ok("another: " + command.getValue());

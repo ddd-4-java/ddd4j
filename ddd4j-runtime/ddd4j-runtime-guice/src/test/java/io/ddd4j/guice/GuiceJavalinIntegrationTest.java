@@ -101,13 +101,26 @@ class GuiceJavalinIntegrationTest {
             this.source = source;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>Set.of(TxCommand.class)</code>。</p>
+         *
+         * @return 实际返回<code>Set.of(TxCommand.class)</code>
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Set.of(TxCommand.class);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>source.getConnection()</code>、<code>connection.setAutoCommit(false)</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 根据执行路径返回<code>failed</code>、<code>Result.ok("committed")</code>
+         */
         @Override
         public Result<String> execute(TxCommand command) {
             try (Connection connection = source.getConnection()) {

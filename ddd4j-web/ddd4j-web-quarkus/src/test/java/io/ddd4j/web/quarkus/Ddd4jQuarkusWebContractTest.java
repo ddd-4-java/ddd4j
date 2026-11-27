@@ -69,7 +69,11 @@ class Ddd4jQuarkusWebContractTest extends AbstractWebContractTest {
         CacheKit.unregister("quarkus-contract");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 返回发送测试请求所用的客户端。
+     *
+     * @return 实际返回<code>contractClient</code>，供调用方取得当前值
+     */
     @Override
     protected WebContractClient client() {
         return contractClient;
@@ -95,7 +99,15 @@ class Ddd4jQuarkusWebContractTest extends AbstractWebContractTest {
         /** \u7528\u4e8e\u53d1\u9001 HTTP \u8bf7\u6c42\u7684\u5ba2\u6237\u7aef\u3002 */
         private final HttpClient httpClient = HttpClient.newHttpClient();
 
-        /** {@inheritDoc} */
+        /**
+         * 通过当前客户端发起 HTTP 请求。
+         *
+         * @param method HTTP 方法
+         * @param path 请求路径
+         * @param headers 请求头
+         * @param body 请求体
+         * @return 响应快照
+         */
         @Override
         public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
             HttpRequest.Builder builder = HttpRequest.newBuilder(baseUri.resolve(path));

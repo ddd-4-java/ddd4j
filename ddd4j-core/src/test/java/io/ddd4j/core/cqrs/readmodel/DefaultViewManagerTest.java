@@ -180,13 +180,17 @@ class DefaultViewManagerTest {
         /** \u8bb0\u5f55\u6d4b\u8bd5\u89c2\u5bdf\u5230\u7684\u4efb\u52a1\u53d6\u6d88\u8c03\u7528\u6b21\u6570\u3002 */
         private int cancels;
 
-        /** {@inheritDoc} */
+        /** 撤销当前任务句柄允许撤销的操作。 */
         @Override
         public void cancel() {
             cancels++;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 检查当前句柄是否仍处于有效状态。
+         *
+         * @return 实际返回<code>cancels == 0</code>，作为本次判断结果
+         */
         @Override
         public boolean isActive() {
             return cancels == 0;

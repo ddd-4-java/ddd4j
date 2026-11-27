@@ -469,7 +469,14 @@ public class RbacService implements SubjectDataProvider {
 
     // ============================ SubjectDataProvider 实现 ============================
 
-    /** {@inheritDoc} */
+    /**
+     * 读取与当前用户或角色关联的权限列表。
+     *
+     * <p>此实现调用 <code>principal.getUserId()</code>。</p>
+     *
+     * @param principal 认证主体
+     * @return 实际返回<code>List.of()</code>
+     */
     @Override
     public List<String> getPermissionList(AuthPrincipal principal) {
         Objects.requireNonNull(principal, "principal must not be null");
@@ -480,7 +487,14 @@ public class RbacService implements SubjectDataProvider {
         return new ArrayList<>(listPermissionCodesOfUser(String.valueOf(userId)));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 读取与当前账号关联的角色列表。
+     *
+     * <p>此实现调用 <code>principal.getUserId()</code>。</p>
+     *
+     * @param principal 认证主体
+     * @return 实际返回<code>List.of()</code>
+     */
     @Override
     public List<String> getRoleList(AuthPrincipal principal) {
         Objects.requireNonNull(principal, "principal must not be null");

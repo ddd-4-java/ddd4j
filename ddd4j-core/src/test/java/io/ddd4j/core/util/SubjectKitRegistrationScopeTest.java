@@ -84,13 +84,22 @@ class SubjectKitRegistrationScopeTest {
 
     /** \u63d0\u4f9b\u53d7\u7528\u4f8b\u63a7\u5236\u7684\u8ba4\u8bc1\u4e3b\u4f53\uff0c\u4fbf\u4e8e\u9a8c\u8bc1\u6388\u6743\u8def\u5f84\u3002 */
     private static final class EqualProvider implements SubjectProvider {
-        /** {@inheritDoc} */
+        /**
+         * 比较两个对象的值是否相等。
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             return obj instanceof EqualProvider;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             return EqualProvider.class.hashCode();

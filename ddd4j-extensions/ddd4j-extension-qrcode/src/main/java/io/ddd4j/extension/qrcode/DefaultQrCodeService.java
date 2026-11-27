@@ -76,7 +76,14 @@ public class DefaultQrCodeService implements QrCodeService, AutoCloseable {
         this.maxBatchSize = maxBatchSize;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 生成调用所需的标识或结果。
+     *
+     * <p>此实现调用 <code>command.getRequest()</code>。</p>
+     *
+     * @param command 生成命令
+     * @return 二维码产物
+     */
     @Override
     public QrCodeArtifact generate(GenerateQrCodeCommand command) {
         Objects.requireNonNull(command, "command must not be null");
@@ -88,7 +95,14 @@ public class DefaultQrCodeService implements QrCodeService, AutoCloseable {
                 .build();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 将传入内容解码为可读取的数据。
+     *
+     * <p>此实现调用 <code>command.getRequest()</code>。</p>
+     *
+     * @param command 解码命令
+     * @return 识别结果
+     */
     @Override
     public QrCodeScanResult decode(DecodeQrCodeCommand command) {
         Objects.requireNonNull(command, "command must not be null");
@@ -96,7 +110,14 @@ public class DefaultQrCodeService implements QrCodeService, AutoCloseable {
         return new QrCodeScanResult(command.getCorrelationId(), decode(command.getRequest().getBytes()));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 根据批量请求生成二维码结果。
+     *
+     * <p>此实现调用 <code>items.size()</code>。</p>
+     *
+     * @param items 批量项目
+     * @return 批量结果
+     */
     @Override
     public QrCodeBatchResult generateBatch(List<QrCodeBatchItem> items) {
         Objects.requireNonNull(items, "items must not be null");
@@ -208,7 +229,11 @@ public class DefaultQrCodeService implements QrCodeService, AutoCloseable {
         };
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 结束当前组件持有的资源。
+     *
+     * <p>此实现调用 <code>executorService.shutdownNow()</code>。</p>
+     */
     @Override
     public void close() {
         executorService.shutdownNow();

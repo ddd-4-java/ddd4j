@@ -405,7 +405,14 @@ class RedisStreamNativeCausalityIT {
             super(properties);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 通过<code>acknowledgment.set(ack)</code>、<code>listener.getMethod().invoke(listener.getBean(), event)</code>处理当前调用。
+         *
+         * @param listener 供当前客户端注册的消息监听器
+         * @param event 当前发布、消费或处理的事件
+         * @param ack 传给 <code>acknowledgment.set(ack)</code>
+         * @throws Throwable 反射访问被测成员时失败
+         */
         @Override
         public void consume(MQListener listener, MQEvent event, Acknowledgment ack) throws Throwable {
             acknowledgment.set(ack);

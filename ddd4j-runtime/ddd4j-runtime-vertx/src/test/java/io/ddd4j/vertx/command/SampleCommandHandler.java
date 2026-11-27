@@ -43,7 +43,13 @@ public class SampleCommandHandler implements CommandExecutor<SampleCommand> {
      */
     static final String HANDLED = "handled-by-vertx-handler";
 
-    /** {@inheritDoc} */
+    /**
+     * 声明当前处理器可以接收的命令类型。
+     *
+     * <p>测试夹具会调用 <code>Collections.singleton(SampleCommand.class)</code>。</p>
+     *
+     * @return 实际返回<code>Collections.singleton(SampleCommand.class)</code>
+     */
     @Override
     public Set<Class<? extends Command>> supportedCommands() {
         return Collections.singleton(SampleCommand.class);

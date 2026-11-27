@@ -82,7 +82,14 @@ public class InMemoryUserRepository implements UserRepository {
         return Optional.ofNullable(rows.get(id)).map(InMemoryUserRepository::toModel);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 按用户名查找用户。
+     *
+     * <p>此实现调用 <code>StrKit.isBlank(username)</code>。</p>
+     *
+     * @param username 用户名
+     * @return 实际返回<code>Optional.empty()</code>
+     */
     @Override
     public Optional<User> findByUsername(String username) {
         if (StrKit.isBlank(username)) {
@@ -94,7 +101,14 @@ public class InMemoryUserRepository implements UserRepository {
                 .map(InMemoryUserRepository::toModel);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 查询匹配指定状态的记录。
+     *
+     * <p>此实现调用 <code>rows.values().stream()</code>。</p>
+     *
+     * @param status 状态
+     * @return 用户列表
+     */
     @Override
     public List<User> findByStatus(User.Status status) {
         return rows.values().stream()
@@ -103,7 +117,13 @@ public class InMemoryUserRepository implements UserRepository {
                 .collect(java.util.stream.Collectors.toList());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 查询存储中符合条件的记录。
+     *
+     * <p>此实现调用 <code>rows.values().stream()</code>。</p>
+     *
+     * @return 满足条件的结果列表
+     */
     @Override
     public List<User> findAll() {
         return rows.values().stream()
@@ -113,7 +133,14 @@ public class InMemoryUserRepository implements UserRepository {
 
     // ============================ 模型与行转换 ============================
 
-    /** {@inheritDoc} */
+    /**
+     * 写入或更新给定的领域对象或存储记录。
+     *
+     * <p>此实现调用 <code>rows.put(aggregate.id(), toRow(aggregate))</code>。</p>
+     *
+     * @param aggregate 传给 <code>rows.put(aggregate.id(), toRow(aggregate))</code>
+     * @return 实际返回<code>aggregate</code>
+     */
     @Override
     public User save(User aggregate) {
         Objects.requireNonNull(aggregate, "aggregate must not be null");

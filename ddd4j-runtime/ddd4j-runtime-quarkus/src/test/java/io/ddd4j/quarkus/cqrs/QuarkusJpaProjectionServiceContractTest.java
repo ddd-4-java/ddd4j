@@ -102,7 +102,13 @@ class QuarkusJpaProjectionServiceContractTest {
         /** \u63a7\u5236\u6d4b\u8bd5\u66ff\u8eab\u5728\u54ea\u4e2a\u8c03\u7528\u6761\u4ef6\u4e0b\u629b\u51fa\u5f02\u5e38\u3002 */
         private String failOn;
 
-        /** {@inheritDoc} */
+        /**
+         * 拉取投影尚未处理的事件并更新读模型。
+         *
+         * <p>测试夹具会调用 <code>streams.add(streamId)</code>、<code>streamId.equals(failOn)</code>。</p>
+         *
+         * @param streamId 投影流标识
+         */
         @Override
         protected void pullAndApply(String streamId) {
             streams.add(streamId);

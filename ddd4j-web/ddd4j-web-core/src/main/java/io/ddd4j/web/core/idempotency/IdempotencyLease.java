@@ -109,7 +109,14 @@ public final class IdempotencyLease {
         return ttl;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 根据<code>key</code>、<code>ownerToken</code>、<code>ttl</code>比较对象的值是否相等。
+     *
+     * <p>只比较运行时类型相同的对象。</p>
+     *
+     * @param obj 用来比较或转换的输入对象
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -124,7 +131,11 @@ public final class IdempotencyLease {
                 && Objects.equals(ttl, other.ttl);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         int result = Objects.hashCode(key);
@@ -133,7 +144,11 @@ public final class IdempotencyLease {
         return result;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>key</code>、<code>ownerToken</code>、<code>ttl</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "IdempotencyLease[key=" + key + ", ownerToken=" + ownerToken + ", ttl=" + ttl + "]";

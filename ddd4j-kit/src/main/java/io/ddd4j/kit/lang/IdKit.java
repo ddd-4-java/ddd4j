@@ -401,7 +401,12 @@ public class IdKit extends IdUtil {
             this.randomSequenceLimit = randomSequenceLimit;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 根据<code>workerId</code>、<code>dataCenterId</code>、<code>useSystemClock</code>、<code>timeOffset</code>、<code>randomSequenceLimit</code>比较对象的值是否相等。
+         *
+         * @param object 用于此操作的 <code>object</code>（<code>Object</code>）
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object object) {
             if (this == object) {
@@ -418,7 +423,11 @@ public class IdKit extends IdUtil {
                     && randomSequenceLimit == that.randomSequenceLimit;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = (int) (workerId ^ (workerId >>> 32));

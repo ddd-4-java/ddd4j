@@ -25,31 +25,56 @@ public class HelidonProjectionViewManager implements ViewManager {
                 (Collection<ProjectionView<Object>>) (Collection<?>) views);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 启动当前组件并准备其运行资源。
+     *
+     * <p>Helidon 实现调用 <code>delegate.start()</code>。</p>
+     */
     @Override
     public void start() {
         delegate.start();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 停止当前组件并清理已登记的运行资源。
+     *
+     * <p>Helidon 实现调用 <code>delegate.stop()</code>。</p>
+     */
     @Override
     public void stop() {
         delegate.stop();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 检查当前组件是否仍处于运行状态。
+     *
+     * <p>Helidon 实现调用 <code>delegate.isRunning()</code>。</p>
+     *
+     * @return 实际返回<code>delegate.isRunning()</code>
+     */
     @Override
     public boolean isRunning() {
         return delegate.isRunning();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 请求立即执行指定投影视图的一轮更新。
+     *
+     * <p>Helidon 实现调用 <code>delegate.triggerOnce()</code>。</p>
+     */
     @Override
     public void triggerOnce() {
         delegate.triggerOnce();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 汇总当前登记的投影视图及其运行状态。
+     *
+     * <p>Helidon 实现调用 <code>delegate.getProjectionStatus(streamId)</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     * @return 实际返回<code>delegate.getProjectionStatus(streamId)</code>
+     */
     @Override
     public ProjectionStatus getProjectionStatus(String streamId) {
         return delegate.getProjectionStatus(streamId);

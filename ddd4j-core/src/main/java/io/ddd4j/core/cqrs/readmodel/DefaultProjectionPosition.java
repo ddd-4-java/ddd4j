@@ -75,7 +75,12 @@ public final class DefaultProjectionPosition implements ProjectionPosition {
         return new DefaultProjectionPosition(streamId, 0);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 以新事件位置构造同一流的投影检查点。
+     *
+     * @param nextEventNumber 新的下一个事件号
+     * @return 实际返回<code>this</code>，供调用方取得当前值
+     */
     @Override
     public ProjectionPosition withNextEventNumber(long nextEventNumber) {
         if (nextEventNumber == this.nextEventNumber) {

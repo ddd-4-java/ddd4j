@@ -50,7 +50,16 @@ public class InMemoryEventStore implements EventStore {
     /** \u8ddf\u8e2a\u5206\u914d\u7ed9\u65b0\u4e8b\u4ef6\u7684\u5168\u5c40\u4f4d\u7f6e\u3002 */
     private long globalPosition;
 
-    /** {@inheritDoc} */
+    /**
+     * 向指定聚合的事件流追加这一批领域事件。
+     *
+     * <p>此实现调用 <code>streamKey(aggregateType, aggregateId)</code>。</p>
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId 聚合 ID
+     * @param events 要追加的事件（非空列表）
+     * @param expectedVersion 期望的当前版本号（乐观锁，空流为 0）
+     */
     @Override
     public synchronized void append(String aggregateType, AggregateRootId aggregateId,
                                     List<? extends DomainEvent<?>> events, long expectedVersion) {
@@ -92,13 +101,31 @@ public class InMemoryEventStore implements EventStore {
         globalPosition = position;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 按聚合查询其事件流并还原已存储的事件。
+     *
+     * <p>此实现调用 <code>store.getOrDefault(streamKey(aggregateType, aggregateId), Collections.emptyList())</code>。</p>
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId 聚合 ID
+     * @return 实际返回<code>store.getOrDefault(streamKey(aggregateType, aggregateId), Collections.emptyList())</code>
+     */
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId) {
         return store.getOrDefault(streamKey(aggregateType, aggregateId), Collections.emptyList());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 按聚合查询其事件流并还原已存储的事件。
+     *
+     * <p>此实现调用 <code>read(aggregateType, aggregateId)</code>。</p>
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId 聚合 ID
+     * @param fromVersion 起始版本号（含）
+     * @param toVersion 结束版本号（含）
+     * @return 实际返回<code>result</code>
+     */
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId, long fromVersion, long toVersion) {
         List<StoredEvent> events = read(aggregateType, aggregateId);
@@ -111,7 +138,15 @@ public class InMemoryEventStore implements EventStore {
         return result;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 按全局位置读取用于投影或重放的存储事件。
+     *
+     * <p>此实现调用 <code>positionIndex.tailMap(fromPosition, true)</code>。</p>
+     *
+     * @param fromPosition 起始 position（含）
+     * @param limit 最大读取数量
+     * @return 实际返回<code>result</code>
+     */
     @Override
     public List<StoredEvent> readAll(long fromPosition, int limit) {
         NavigableMap<Long, StoredEvent> tail = positionIndex.tailMap(fromPosition, true);

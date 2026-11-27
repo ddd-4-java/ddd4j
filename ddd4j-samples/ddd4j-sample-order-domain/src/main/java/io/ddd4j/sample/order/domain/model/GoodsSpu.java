@@ -174,7 +174,11 @@ public class GoodsSpu extends AggregateRoot<Long> {
                 .build();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 读取<code>id</code>提供给调用方。
+     *
+     * @return 实际返回<code>id</code>，供调用方取得当前值
+     */
     @Override
     public Long id() {
         return id;

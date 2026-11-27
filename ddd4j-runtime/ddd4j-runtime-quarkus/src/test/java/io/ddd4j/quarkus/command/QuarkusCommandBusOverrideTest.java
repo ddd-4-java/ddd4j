@@ -65,7 +65,15 @@ class QuarkusCommandBusOverrideTest {
     @ApplicationScoped
     @IfBuildProperty(name = "ddd4j.test.business-command-bus", stringValue = "true")
     public static class BusinessCommandBus implements CommandBus {
-        /** {@inheritDoc} */
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>Result.fail("Business command bus")</code>。</p>
+         *
+         * @param <R> 命令结果数据类型
+         * @param command 待执行命令
+         * @return 实际返回<code>Result.fail("Business command bus")</code>
+         */
         @Override
         public <R> Result<R> execute(Command command) {
             return Result.fail("Business command bus");

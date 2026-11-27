@@ -86,7 +86,11 @@ class QuartzViewScheduleHandle implements ViewScheduler.ViewScheduleHandle {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 撤销当前任务句柄允许撤销的操作。
+     *
+     * <p>此实现调用 <code>scheduler.deleteJob(new JobKey(identity + "-job"))</code>。</p>
+     */
     @Override
     public synchronized void cancel() {
         if (!active) {
@@ -105,7 +109,11 @@ class QuartzViewScheduleHandle implements ViewScheduler.ViewScheduleHandle {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 检查当前句柄是否仍处于有效状态。
+     *
+     * @return 实际返回<code>active</code>，作为本次判断结果
+     */
     @Override
     public boolean isActive() {
         return active;

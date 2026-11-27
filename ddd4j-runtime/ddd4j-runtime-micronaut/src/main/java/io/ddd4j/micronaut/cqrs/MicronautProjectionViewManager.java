@@ -85,7 +85,11 @@ public class MicronautProjectionViewManager implements ViewManager {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 启动当前组件并准备其运行资源。
+     *
+     * <p>Micronaut 实现调用 <code>delegate.start()</code>。</p>
+     */
     @Override
     public void start() {
         if (Objects.nonNull(delegate)) {
@@ -93,7 +97,11 @@ public class MicronautProjectionViewManager implements ViewManager {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 停止当前组件并清理已登记的运行资源。
+     *
+     * <p>Micronaut 实现调用 <code>delegate.stop()</code>。</p>
+     */
     @Override
     public void stop() {
         if (Objects.nonNull(delegate)) {
@@ -101,13 +109,23 @@ public class MicronautProjectionViewManager implements ViewManager {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 检查当前组件是否仍处于运行状态。
+     *
+     * <p>Micronaut 实现调用 <code>delegate.isRunning()</code>。</p>
+     *
+     * @return 实际返回<code>Objects.nonNull(delegate) &amp;&amp; delegate.isRunning()</code>
+     */
     @Override
     public boolean isRunning() {
         return Objects.nonNull(delegate) && delegate.isRunning();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 请求立即执行指定投影视图的一轮更新。
+     *
+     * <p>Micronaut 实现调用 <code>delegate.triggerOnce()</code>。</p>
+     */
     @Override
     public void triggerOnce() {
         if (Objects.nonNull(delegate)) {
@@ -115,7 +133,14 @@ public class MicronautProjectionViewManager implements ViewManager {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 汇总当前登记的投影视图及其运行状态。
+     *
+     * <p>Micronaut 实现调用 <code>delegate.getProjectionStatus(streamId)</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     * @return 投影状态快照
+     */
     @Override
     public ProjectionStatus getProjectionStatus(String streamId) {
         return Objects.nonNull(delegate) ? delegate.getProjectionStatus(streamId) : ProjectionStatus.baseline(streamId, false);

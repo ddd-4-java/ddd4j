@@ -24,7 +24,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * 使用真实 Helidon SE 适配器，原生 MP/JAR/持久恢复另有集成证据。
  */
 class HelidonCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
-    /** {@inheritDoc} */
+    /**
+     * 创建测试中用于操作当前框架的契约适配器。
+     *
+     * <p>测试夹具会调用 <code>ServiceLoader.load(CommandExecutor.class)</code>、<code>HelidonServiceLoader.builder(services).useSystemServiceLoader(false).addService(new StubExecutorA())</code>。</p>
+     *
+     * @return CQRS 运行时契约
+     */
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected CqrsRuntimeContract createContract() {

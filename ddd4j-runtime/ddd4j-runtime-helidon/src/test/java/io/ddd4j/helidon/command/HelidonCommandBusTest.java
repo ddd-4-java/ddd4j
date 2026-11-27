@@ -121,7 +121,13 @@ class HelidonCommandBusTest {
      */
     static class OverlappingMultiTypeHandler implements CommandExecutor<Command> {
 
-        /** {@inheritDoc} */
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>java.util.Arrays.asList(SampleCommand.class, CompanionCommand.class)</code>。</p>
+         *
+         * @return 支持的命令类型集合
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return java.util.Collections.unmodifiableSet(new java.util.LinkedHashSet<>(

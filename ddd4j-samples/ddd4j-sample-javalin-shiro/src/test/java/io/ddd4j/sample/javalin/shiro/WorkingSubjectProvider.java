@@ -34,13 +34,22 @@ public class WorkingSubjectProvider implements SubjectProvider {
         this.userRepository = userRepository;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 取得当前请求使用的认证主体接口。
+     *
+     * @return Subject 实例
+     */
     @Override
     public Subject getSubject() {
         return new WorkingShiroSubject(userRepository);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 取得当前请求使用的认证主体接口。
+     *
+     * @param realm 账号体系标识（如 sa-token 的 "admin"/"user"）
+     * @return 对应 realm 的 Subject 实例
+     */
     @Override
     public Subject getSubject(String realm) {
         return new WorkingShiroSubject(userRepository);

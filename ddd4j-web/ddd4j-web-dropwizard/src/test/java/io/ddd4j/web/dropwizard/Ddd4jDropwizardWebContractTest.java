@@ -102,7 +102,11 @@ class Ddd4jDropwizardWebContractTest extends AbstractWebContractTest {
         CacheKit.unregister("dropwizard-contract");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 返回发送测试请求所用的客户端。
+     *
+     * @return 实际返回<code>contractClient</code>，供调用方取得当前值
+     */
     @Override
     protected WebContractClient client() {
         return contractClient;
@@ -125,7 +129,15 @@ class Ddd4jDropwizardWebContractTest extends AbstractWebContractTest {
     /** \u5728\u5f53\u524d HTTP \u6846\u67b6\u4e2d\u6267\u884c\u5171\u7528\u5408\u540c\u7684\u5ba2\u6237\u7aef\u9002\u914d\u5668\u3002 */
     private static final class DropwizardContractClient implements WebContractClient {
 
-        /** {@inheritDoc} */
+        /**
+         * 通过当前客户端发起 HTTP 请求。
+         *
+         * @param method HTTP 方法
+         * @param path 请求路径
+         * @param headers 请求头
+         * @param body 请求体
+         * @return 响应快照
+         */
         @Override
         public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
             jakarta.ws.rs.client.Invocation.Builder builder = RESOURCES.target(path).request();

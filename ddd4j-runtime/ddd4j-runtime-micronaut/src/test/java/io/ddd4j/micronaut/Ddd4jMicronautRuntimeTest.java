@@ -90,7 +90,13 @@ class Ddd4jMicronautRuntimeTest extends AbstractRuntimeContractTest {
                 fixtures.commandBus(), Collections.emptyList(), manager);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 为契约测试构造当前框架的运行实例。
+     *
+     * <p>测试夹具会调用 <code>fixtures.publisher()</code>、<code>fixtures.subjectProvider()</code>。</p>
+     *
+     * @return 待验证的运行时适配器
+     */
     @Override
     protected RuntimeContract createRuntime() {
         RuntimeFixtures fixtures = new RuntimeFixtures();
@@ -121,14 +127,22 @@ class Ddd4jMicronautRuntimeTest extends AbstractRuntimeContractTest {
             this.stopFailure = stopFailure;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 启动当前组件并准备其运行资源。
+         *
+         * <p>测试夹具会调用 <code>startFailure.run()</code>。</p>
+         */
         @Override
         public void start() {
             running = true;
             startFailure.run();
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 停止当前组件并清理已登记的运行资源。
+         *
+         * <p>测试夹具会调用 <code>stopFailure.run()</code>。</p>
+         */
         @Override
         public void stop() {
             running = false;
@@ -136,13 +150,17 @@ class Ddd4jMicronautRuntimeTest extends AbstractRuntimeContractTest {
             stopFailure.run();
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 检查当前组件是否仍处于运行状态。
+         *
+         * @return 实际返回<code>running</code>，作为本次判断结果
+         */
         @Override
         public boolean isRunning() {
             return running;
         }
 
-        /** {@inheritDoc} */
+        /** 提供测试替身回调，调用时保持夹具状态。 */
         @Override
         public void triggerOnce() {
         }

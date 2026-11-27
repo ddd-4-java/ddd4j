@@ -629,7 +629,11 @@ class TrueLicenseMigrationTest {
             super(subject, keyStoreParam, preferences);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 检查待创建记录是否满足创建条件。
+         *
+         * @param content 待签发许可证正文
+         */
         @Override
         protected synchronized void validateCreate(License content) {
             Objects.requireNonNull(content, "content");
@@ -659,7 +663,14 @@ class TrueLicenseMigrationTest {
             this.rejectConsumer = rejectConsumer;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 检查待创建记录是否满足创建条件。
+         *
+         * <p>测试夹具会调用 <code>super.validateCreate(content)</code>、<code>testValidationException("synthetic create hook rejection")</code>。</p>
+         *
+         * @param content 待签发许可证正文
+         * @throws LicenseValidationException 当前操作无法正常完成时
+         */
         @Override
         protected synchronized void validateCreate(License content) throws LicenseValidationException {
             super.validateCreate(content);
@@ -668,7 +679,14 @@ class TrueLicenseMigrationTest {
             }
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 校验当前调用提交的数据。
+         *
+         * <p>测试夹具会调用 <code>super.validate(content)</code>、<code>testValidationException("synthetic consumer hook rejection")</code>。</p>
+         *
+         * @param content 待校验许可证正文
+         * @throws LicenseValidationException 当前操作无法正常完成时
+         */
         @Override
         protected synchronized void validate(License content) throws LicenseValidationException {
             super.validate(content);
@@ -699,7 +717,14 @@ class TrueLicenseMigrationTest {
             rejectConsumer = true;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 校验当前调用提交的数据。
+         *
+         * <p>测试夹具会调用 <code>super.validate(content)</code>。</p>
+         *
+         * @param content 待校验许可证正文
+         * @throws LicenseValidationException 当前操作无法正常完成时
+         */
         @Override
         protected synchronized void validate(License content) throws LicenseValidationException {
             super.validate(content);
@@ -726,7 +751,11 @@ class TrueLicenseMigrationTest {
             this.text = text;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 生成用于调试和日志的对象描述。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return text;

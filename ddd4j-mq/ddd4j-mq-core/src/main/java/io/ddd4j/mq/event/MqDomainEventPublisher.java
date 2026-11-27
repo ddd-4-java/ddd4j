@@ -84,7 +84,14 @@ public class MqDomainEventPublisher implements DomainEventPublisher {
         this.serialization = Objects.requireNonNull(serialization, "serialization must not be null");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 将传入的事件交给当前发布通道。
+     *
+     * <p>此实现调用 <code>toCarrier(event)</code>。</p>
+     *
+     * @param <ID> 实体标识类型
+     * @param event 领域事件
+     */
     @Override
     public <ID extends EntityId> void publish(DomainEvent<ID> event) {
         if (Objects.isNull(event)) {
@@ -95,7 +102,13 @@ public class MqDomainEventPublisher implements DomainEventPublisher {
         carrier.publish();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 将传入的事件交给当前发布通道。
+     *
+     * <p>此实现调用 <code>publish((DomainEvent&lt;?&gt;)event)</code>。</p>
+     *
+     * @param event 任意事件对象
+     */
     @Override
     public void publish(Object event) {
         if (event instanceof DomainEvent<?>) {
@@ -106,7 +119,12 @@ public class MqDomainEventPublisher implements DomainEventPublisher {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 发布传入的领域事件序列。
+     *
+     * @param <ID> 实体标识类型
+     * @param events 领域事件集合
+     */
     @Override
     public <ID extends EntityId> void publishAll(Collection<DomainEvent<ID>> events) {
         if (Objects.nonNull(events)) {

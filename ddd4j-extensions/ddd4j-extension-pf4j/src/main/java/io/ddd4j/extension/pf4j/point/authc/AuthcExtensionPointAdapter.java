@@ -52,7 +52,16 @@ public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
     /** PF4J \u8ba4\u8bc1\u6269\u5c55\u9002\u914d\u5668\u7684\u65e5\u5fd7\u8bb0\u5f55\u5668\u3002 */
     private static final Logger log = LoggerFactory.getLogger(AuthcExtensionPointAdapter.class);
 
-    /** {@inheritDoc} */
+    /**
+     * 从请求中获取认证令牌。
+     *
+     * <p>此实现调用 <code>request.getHeader(AUTHORIZATION_HEADER)</code>。</p>
+     *
+     * @param request HTTP 请求
+     * @param params 请求参数
+     * @return 根据执行路径返回<code>null</code>、<code>authHeader.substring(BEARER_PREFIX.length()).trim()</code>、<code>tokenParam.trim()</code>
+     * @throws PluginRuntimeException 当前操作无法正常完成时
+     */
     @Override
     public String getToken(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException {
         if (request == null) {
@@ -70,7 +79,15 @@ public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
         return null;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 处理认证请求头。
+     *
+     * <p>此实现调用 <code>request.getHeaderNames()</code>。</p>
+     *
+     * @param request HTTP 请求
+     * @param params 请求参数
+     * @throws PluginRuntimeException 当前操作无法正常完成时
+     */
     @Override
     public void handleHeader(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException {
         if (request == null || params == null) {
@@ -86,7 +103,15 @@ public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 处理认证请求。
+     *
+     * <p>此实现调用 <code>request.getParameterMap()</code>。</p>
+     *
+     * @param request HTTP 请求
+     * @param params 请求参数
+     * @throws PluginRuntimeException 当前操作无法正常完成时
+     */
     @Override
     public void handleRequest(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException {
         if (request == null || params == null) {
@@ -104,7 +129,13 @@ public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 处理认证结果。
+     *
+     * @param res 处理结果
+     * @return 实际返回<code>res</code>，供调用方取得当前值
+     * @throws PluginRuntimeException 当前操作无法正常完成时
+     */
     @Override
     public Object handleResult(Object res) throws PluginRuntimeException {
         // 默认实现：原样返回结果

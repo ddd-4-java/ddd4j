@@ -135,7 +135,11 @@ public enum RankSortTypeEnum {
         return this.compareTo(sortType) == 0;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 生成用于调试和日志的对象描述。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return name + " -> " + value;

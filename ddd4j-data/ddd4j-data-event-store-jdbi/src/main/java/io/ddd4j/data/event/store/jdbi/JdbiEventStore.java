@@ -194,15 +194,22 @@ public class JdbiEventStore implements EventStore {
     }
 
     /**
-     * {@inheritDoc}
+     * 向指定聚合的事件流追加这一批领域事件。
      *
-     * <p>乐观锁：事务内先查询当前流事件数（即当前版本），与 {@code expectedVersion}
-     * 不一致即抛 {@link IllegalStateException} 并回滚。多事件在同一事务内原子提交，
-     * 不留半截流。
+     * <p>\u4e50\u89c2\u9501\uff1a\u4e8b\u52a1\u5185\u5148\u67e5\u8be2\u5f53\u524d\u6d41\u4e8b\u4ef6\u6570\uff08\u5373\u5f53\u524d\u7248\u672c\uff09\uff0c\u4e0e {@code expectedVersion}
+     *  \u4e0d\u4e00\u81f4\u5373\u629b {@link IllegalStateException} \u5e76\u56de\u6eda\u3002\u591a\u4e8b\u4ef6\u5728\u540c\u4e00\u4e8b\u52a1\u5185\u539f\u5b50\u63d0\u4ea4\uff0c
+     *  \u4e0d\u7559\u534a\u622a\u6d41\u3002
      *
-     * <p>position 生成：事务内逐条以 {@code COALESCE(MAX(position), 0) + 1} 递增，
-     * 与 JPA/R2DBC 侧策略一致。首条的 position 在循环前预取 maxPos，
-     * 后续每条 +1，避免每条都执行 MAX 查询。
+     *  <p>position \u751f\u6210\uff1a\u4e8b\u52a1\u5185\u9010\u6761\u4ee5 {@code COALESCE(MAX(position), 0) + 1} \u9012\u589e\uff0c
+     *  \u4e0e JPA/R2DBC \u4fa7\u7b56\u7565\u4e00\u81f4\u3002\u9996\u6761\u7684 position \u5728\u5faa\u73af\u524d\u9884\u53d6 maxPos\uff0c
+     *  \u540e\u7eed\u6bcf\u6761 +1\uff0c\u907f\u514d\u6bcf\u6761\u90fd\u6267\u884c MAX \u67e5\u8be2\u3002
+     *
+     * <p>Jdbi 实现调用 <code>events.isEmpty()</code>。</p>
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId 聚合 ID
+     * @param events 要追加的事件（非空列表）
+     * @param expectedVersion 期望的当前版本号（乐观锁，空流为 0）
      */
     @Override
     public void append(String aggregateType, AggregateRootId aggregateId,
@@ -263,10 +270,16 @@ public class JdbiEventStore implements EventStore {
     }
 
     /**
-     * {@inheritDoc}
+     * 按聚合查询其事件流并还原已存储的事件。
      *
-     * <p>按版本升序读取指定聚合的全部事件。
-     * 事件载荷通过 {@link EventPayloadSerializer} 反序列化，类型无法还原时抛出 {@link IllegalStateException}。
+     * <p>\u6309\u7248\u672c\u5347\u5e8f\u8bfb\u53d6\u6307\u5b9a\u805a\u5408\u7684\u5168\u90e8\u4e8b\u4ef6\u3002
+     *  \u4e8b\u4ef6\u8f7d\u8377\u901a\u8fc7 {@link EventPayloadSerializer} \u53cd\u5e8f\u5217\u5316\uff0c\u7c7b\u578b\u65e0\u6cd5\u8fd8\u539f\u65f6\u629b\u51fa {@link IllegalStateException}\u3002
+     *
+     * <p>Jdbi 实现调用 <code>ensureInitialized()</code>。</p>
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId 聚合 ID
+     * @return 按版本升序的持久化事件；无事件时为空列表
      */
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId) {
@@ -280,7 +293,17 @@ public class JdbiEventStore implements EventStore {
                 .list());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 按聚合查询其事件流并还原已存储的事件。
+     *
+     * <p>Jdbi 实现调用 <code>ensureInitialized()</code>。</p>
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId 聚合 ID
+     * @param fromVersion 起始版本号（含）
+     * @param toVersion 结束版本号（含）
+     * @return 版本区间内的持久化事件，按版本升序
+     */
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId,
                                   long fromVersion, long toVersion) {
@@ -295,10 +318,16 @@ public class JdbiEventStore implements EventStore {
     }
 
     /**
-     * {@inheritDoc}
+     * 按全局位置读取用于投影或重放的存储事件。
      *
-     * <p>按全局 position 升序分页读取事件。
-     * {@code limit} 下推为 SQL {@code LIMIT}，从 SQL 层截断避免物化多余行。
+     * <p>\u6309\u5168\u5c40 position \u5347\u5e8f\u5206\u9875\u8bfb\u53d6\u4e8b\u4ef6\u3002
+     *  {@code limit} \u4e0b\u63a8\u4e3a SQL {@code LIMIT}\uff0c\u4ece SQL \u5c42\u622a\u65ad\u907f\u514d\u7269\u5316\u591a\u4f59\u884c\u3002
+     *
+     * <p>满足 <code>limit &lt;= 0</code> 时抛出 <code>IllegalArgumentException</code>。 Jdbi 实现调用 <code>ensureInitialized()</code>。</p>
+     *
+     * @param fromPosition 起始 position（含）
+     * @param limit 最大读取数量
+     * @return position 升序的持久化事件
      */
     @Override
     public List<StoredEvent> readAll(long fromPosition, int limit) {
@@ -396,20 +425,34 @@ public class JdbiEventStore implements EventStore {
             this.value = value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 实际返回<code>TYPE</code>，供调用方取得当前值
+         */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 不含类型标记的业务标识
+         */
         @Override
         @JsonValue
         public String asString() {
             return value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * <p>此实现调用 <code>TYPE.asString()</code>。</p>
+         *
+         * @return 包含类型标记的标识
+         */
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
@@ -424,7 +467,14 @@ public class JdbiEventStore implements EventStore {
             return value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 根据<code>value</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -437,7 +487,11 @@ public class JdbiEventStore implements EventStore {
             return Objects.equals(this.value, other.value);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 0;
@@ -445,7 +499,11 @@ public class JdbiEventStore implements EventStore {
             return result;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>value</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "StringAggregateRootId[value=" + value + "]";

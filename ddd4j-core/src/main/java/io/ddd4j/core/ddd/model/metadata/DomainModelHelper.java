@@ -159,7 +159,12 @@ public final class DomainModelHelper {
             this.persistenceType = persistenceType;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 比较两个对象的值是否相等。
+         *
+         * @param o 用来比较的另一个对象，允许为空
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object o) {
             if (this == o) {
@@ -172,7 +177,11 @@ public final class DomainModelHelper {
             return modelType.equals(that.modelType) && persistenceType.equals(that.persistenceType);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             return 31 * modelType.hashCode() + persistenceType.hashCode();

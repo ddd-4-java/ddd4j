@@ -94,7 +94,11 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
         CacheKit.unregister("webmvc-contract");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 返回发送测试请求所用的客户端。
+     *
+     * @return 实际返回<code>contractClient</code>，供调用方取得当前值
+     */
     @Override
     protected WebContractClient client() {
         return contractClient;
@@ -196,7 +200,15 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
             this.mockMvc = mockMvc;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 通过当前客户端发起 HTTP 请求。
+         *
+         * @param method HTTP 方法
+         * @param path 请求路径
+         * @param headers 请求头
+         * @param body 请求体
+         * @return 响应快照
+         */
         @Override
         public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
             try {
@@ -236,7 +248,14 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
             return mockMvc;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 根据<code>mockMvc</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -249,7 +268,11 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
             return Objects.equals(this.mockMvc, other.mockMvc);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 0;
@@ -257,7 +280,11 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
             return result;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>mockMvc</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "MockMvcContractClient[mockMvc=" + mockMvc + "]";

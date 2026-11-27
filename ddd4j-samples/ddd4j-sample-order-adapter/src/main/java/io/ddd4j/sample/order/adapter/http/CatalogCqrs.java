@@ -34,43 +34,102 @@ public final class CatalogCqrs implements CatalogEndpoints {
         projectedQueries = new DefaultQueryBus(List.of(view));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 将商品创建请求交给商品目录命令处理。
+     *
+     * <p>此实现调用 <code>api.createGoods(commands, tenant, code, body)</code>。</p>
+     *
+     * @param tenant 租户编号
+     * @param code 租户内业务编号
+     * @param body 请求 JSON 正文
+     * @return 实际返回<code>api.createGoods(commands, tenant, code, body)</code>
+     */
     @Override
     public Reply createGoods(String tenant, String code, String body) {
         return api.createGoods(commands, tenant, code, body);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 查询指定商品。
+     *
+     * <p>此实现调用 <code>api.goods(tenant, code)</code>。</p>
+     *
+     * @param tenant 租户编号
+     * @param code 租户内业务编号
+     * @return 实际返回<code>api.goods(tenant, code)</code>
+     */
     @Override
     public Reply goods(String tenant, String code) {
         return api.goods(tenant, code);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 将下单请求交给交易命令处理。
+     *
+     * <p>此实现调用 <code>api.placeOrder(commands, tenant, code, body)</code>。</p>
+     *
+     * @param tenant 租户编号
+     * @param code 租户内业务编号
+     * @param body 请求 JSON 正文
+     * @return 实际返回<code>api.placeOrder(commands, tenant, code, body)</code>
+     */
     @Override
     public Reply placeOrder(String tenant, String code, String body) {
         return api.placeOrder(commands, tenant, code, body);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 将支付确认请求交给交易命令处理。
+     *
+     * <p>此实现调用 <code>api.confirmPayment(commands, tenant, orderNo, body)</code>。</p>
+     *
+     * @param tenant 租户编号
+     * @param orderNo 租户内订单编号
+     * @param body 请求 JSON 正文
+     * @return 实际返回<code>api.confirmPayment(commands, tenant, orderNo, body)</code>
+     */
     @Override
     public Reply confirmPayment(String tenant, String orderNo, String body) {
         return api.confirmPayment(commands, tenant, orderNo, body);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 将订单取消请求交给交易命令处理。
+     *
+     * <p>此实现调用 <code>api.changeOrder(commands, tenant, orderNo, ChangeTradeOrderCmd.Action.CANCEL)</code>。</p>
+     *
+     * @param tenant 租户编号
+     * @param orderNo 租户内订单编号
+     * @return 实际返回<code>api.changeOrder(commands, tenant, orderNo, ChangeTradeOrderCmd.Action.CANCEL)</code>
+     */
     @Override
     public Reply cancelOrder(String tenant, String orderNo) {
         return api.changeOrder(commands, tenant, orderNo, ChangeTradeOrderCmd.Action.CANCEL);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 将订单履约请求交给交易命令处理。
+     *
+     * <p>此实现调用 <code>api.changeOrder(commands, tenant, orderNo, ChangeTradeOrderCmd.Action.FULFILL)</code>。</p>
+     *
+     * @param tenant 租户编号
+     * @param orderNo 租户内订单编号
+     * @return 实际返回<code>api.changeOrder(commands, tenant, orderNo, ChangeTradeOrderCmd.Action.FULFILL)</code>
+     */
     @Override
     public Reply fulfillOrder(String tenant, String orderNo) {
         return api.changeOrder(commands, tenant, orderNo, ChangeTradeOrderCmd.Action.FULFILL);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 查询指定订单。
+     *
+     * <p>此实现调用 <code>api.order(tenant, code)</code>。</p>
+     *
+     * @param tenant 租户编号
+     * @param code 租户内业务编号
+     * @return 根据执行路径返回<code>api.order(tenant, code)</code>、<code>api.projectedOrder(projectedQueries, tenant, code)</code>
+     */
     @Override
     public Reply order(String tenant, String code) {
         if (Objects.isNull(tenant) || Objects.isNull(code)) {

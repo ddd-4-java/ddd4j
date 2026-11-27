@@ -509,7 +509,14 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return total;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 按主键读取领域对象或持久化记录。
+     *
+     * <p>MyBatis 实现调用 <code>Optional.empty()</code>。</p>
+     *
+     * @param id 聚合根标识
+     * @return 根据执行路径返回<code>Optional.empty()</code>、<code>Optional.of(toModel(persistenceObject))</code>
+     */
     @Override
     public Optional<M> findById(ID id) {
         if (Objects.isNull(id)) {
@@ -522,13 +529,27 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return Optional.of(toModel(persistenceObject));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 检查指定主键是否存在。
+     *
+     * <p>MyBatis 实现调用 <code>getBaseMapper().selectById(id)</code>。</p>
+     *
+     * @param id 聚合根标识
+     * @return 实际返回<code>Objects.nonNull(id) &amp;&amp; Objects.nonNull(getBaseMapper().selectById(id))</code>
+     */
     @Override
     public boolean existsById(ID id) {
         return Objects.nonNull(id) && Objects.nonNull(getBaseMapper().selectById(id));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 写入或更新给定的领域对象或存储记录。
+     *
+     * <p>MyBatis 实现调用 <code>toPersistenceObject(aggregate)</code>。</p>
+     *
+     * @param aggregate 待处理聚合根
+     * @return 实际返回<code>aggregate</code>
+     */
     @Override
     public M save(M aggregate) {
         Objects.requireNonNull(aggregate, "aggregate must not be null");
@@ -560,7 +581,13 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return aggregate;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 按主键删除记录。
+     *
+     * <p>MyBatis 实现调用 <code>getBaseMapper().deleteById(id)</code>。</p>
+     *
+     * @param id 聚合根标识
+     */
     @Override
     public void deleteById(ID id) {
         if (Objects.nonNull(id)) {
@@ -579,7 +606,13 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return Objects.isNull(id) || Objects.isNull(getBaseMapper().selectById(id));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 读取满足条件的第一条记录。
+     *
+     * <p>MyBatis 实现调用 <code>getDefaultWrapper(false)</code>。</p>
+     *
+     * @return 第一个匹配条件的结果
+     */
     @Override
     public Optional<M> findFirst() {
         QueryWrapper<P> wrapper = getDefaultWrapper(false);
@@ -591,20 +624,39 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return Optional.of(toModel(persistenceObjects.get(0)));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 查询存储中符合条件的记录。
+     *
+     * <p>MyBatis 实现调用 <code>convert(getBaseMapper().selectList(getDefaultWrapper(false)))</code>。</p>
+     *
+     * @return 满足条件的结果列表
+     */
     @Override
     public List<M> findAll() {
         return convert(getBaseMapper().selectList(getDefaultWrapper(false)));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 统计符合查询范围的数据数量。
+     *
+     * <p>MyBatis 实现调用 <code>getBaseMapper().selectCount(getDefaultWrapper(false))</code>。</p>
+     *
+     * @return 满足筛选条件的记录数量
+     */
     @Override
     public long count() {
         Long count = getBaseMapper().selectCount(getDefaultWrapper(false));
         return Objects.nonNull(count) ? count : 0L;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 根据分页参数和查询条件读取结果。
+     *
+     * <p>MyBatis 实现调用 <code>getBaseWrapper(query)</code>。</p>
+     *
+     * @param query 查询条件
+     * @return 实际返回<code>page</code>
+     */
     @Override
     public Page<M> page(Query<M> query) {
         QueryWrapper<P> wrapper = getBaseWrapper(query);
@@ -625,14 +677,28 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return page;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 统计符合查询范围的数据数量。
+     *
+     * <p>MyBatis 实现调用 <code>getBaseMapper().selectCount(getBaseWrapper(query))</code>。</p>
+     *
+     * @param query 查询条件
+     * @return 满足筛选条件的记录数量
+     */
     @Override
     public long count(Query<M> query) {
         Long count = getBaseMapper().selectCount(getBaseWrapper(query));
         return Objects.nonNull(count) ? count : 0L;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 读取满足条件的第一条记录。
+     *
+     * <p>MyBatis 实现调用 <code>getBaseWrapper(query)</code>。</p>
+     *
+     * @param query 查询条件
+     * @return 第一个匹配条件的结果
+     */
     @Override
     public Optional<M> findFirst(Query<M> query) {
         QueryWrapper<P> wrapper = getBaseWrapper(query);
@@ -646,7 +712,14 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return Optional.of(model);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 按查询条件读取记录列表。
+     *
+     * <p>MyBatis 实现调用 <code>convert(getBaseMapper().selectList(getBaseWrapper(query)))</code>。</p>
+     *
+     * @param query 查询条件
+     * @return 满足条件的结果列表
+     */
     @Override
     public List<M> findList(Query<M> query) {
         List<M> models = convert(getBaseMapper().selectList(getBaseWrapper(query)));
@@ -654,13 +727,28 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return models;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 按条件查询 Map 列表（对应 {@code selectMaps(Wrapper)}）。
+     *
+     * <p>MyBatis 实现调用 <code>getBaseMapper().selectMaps(getBaseWrapper(query))</code>。</p>
+     *
+     * @param query 查询条件
+     * @return 实际返回<code>getBaseMapper().selectMaps(getBaseWrapper(query))</code>
+     */
     @Override
     public List<Map<String, Object>> maps(Query<M> query) {
         return getBaseMapper().selectMaps(getBaseWrapper(query));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 更新已经存在的记录。
+     *
+     * <p>MyBatis 实现调用 <code>toPersistenceObject(modelClass().cast(aggregate))</code>。</p>
+     *
+     * @param aggregate 待处理聚合根
+     * @param query 查询条件
+     * @return 实际返回<code>updated</code>
+     */
     @Override
     public boolean update(AggregateRoot<?> aggregate, Query<M> query) {
         Objects.requireNonNull(aggregate, "aggregate must not be null");
@@ -673,7 +761,14 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return updated;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 删除匹配查询条件的记录。
+     *
+     * <p>MyBatis 实现调用 <code>SqlHelper.retBool(getBaseMapper().delete(getBaseWrapper(query)))</code>。</p>
+     *
+     * @param query 查询条件
+     * @return 实际返回<code>SqlHelper.retBool(getBaseMapper().delete(getBaseWrapper(query)))</code>
+     */
     @Override
     public boolean deleteByQuery(Query<M> query) {
         return SqlHelper.retBool(getBaseMapper().delete(getBaseWrapper(query)));
@@ -726,7 +821,14 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return convert(getBaseMapper().selectList(getKeyWrapper(keys)));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 为目标对象填充此适配器负责的数据。
+     *
+     * <p>MyBatis 实现调用 <code>modelClass().isInstance(model)</code>。</p>
+     *
+     * @param query 查询条件
+     * @param model 待填充聚合根
+     */
     @Override
     public void fill(Query<M> query, AggregateRoot<?> model) {
         if (modelClass().isInstance(model)) {
@@ -734,12 +836,24 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 接收<code>fill</code>回调，当前实现无需在此步骤更新状态。
+     *
+     * @param query 查询条件
+     * @param models 聚合根列表
+     */
     @Override
     public void fill(Query<M> query, List<M> models) {
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 将持久化对象转换为领域模型。
+     *
+     * <p>MyBatis 实现调用 <code>BeanKit.copy(persistenceObject, modelClass())</code>。</p>
+     *
+     * @param persistenceObject persistence object
+     * @return 由持久化数据构造的领域模型
+     */
     @Override
     public M toModel(P persistenceObject) {
         if (Objects.isNull(persistenceObject)) {
@@ -748,7 +862,14 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return BeanKit.copy(persistenceObject, modelClass());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 将领域模型转换为仓储使用的持久化对象。
+     *
+     * <p>MyBatis 实现调用 <code>BeanKit.copy(model, persistenceObjectClass())</code>。</p>
+     *
+     * @param model domain model
+     * @return 由领域模型生成的持久化对象
+     */
     @Override
     public P toPersistenceObject(M model) {
         if (Objects.isNull(model)) {
