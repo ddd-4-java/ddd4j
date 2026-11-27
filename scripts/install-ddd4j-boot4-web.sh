@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Install the pinned Spring Boot 4 Web adapters without relying on a mutable snapshot.
+# Install the pinned Spring Boot 4 Web and authentication adapters without relying on a mutable snapshot.
 set -euo pipefail
 
 revision=f5ae36355e83259eded49ba018a8e3c8d9ecacab
@@ -9,7 +9,7 @@ trap 'rm -rf -- "$source_dir"' EXIT
 
 # The adapters depend on this reactor's DDD4J Web contracts and BOM.
 (cd "$root" && bash mvnw -B --no-transfer-progress \
-  -pl :ddd4j-bom,:ddd4j-runtime-spring,:ddd4j-web-webmvc,:ddd4j-web-webflux -am -DskipTests install)
+  -pl :ddd4j-bom,:ddd4j-auth-spring,:ddd4j-auth-satoken,:ddd4j-auth-shiro,:ddd4j-runtime-spring,:ddd4j-web-webmvc,:ddd4j-web-webflux -am -DskipTests install)
 
 git -C "$source_dir" init --quiet
 git -C "$source_dir" fetch --quiet --depth 1 https://github.com/ddd-4-java/ddd4j-boot.git "$revision"
@@ -21,7 +21,8 @@ test "$(git -C "$source_dir" rev-parse HEAD)" = "$revision"
 (
   cd "$source_dir"
   for module in . ddd4j-boot-dependencies ddd4j-boot-core ddd4j-boot-web \
-    ddd4j-boot-web/ddd4j-boot-web-webmvc ddd4j-boot-web/ddd4j-boot-web-webflux; do
+    ddd4j-boot-web/ddd4j-boot-web-webmvc ddd4j-boot-web/ddd4j-boot-web-webflux \
+    ddd4j-boot-auth ddd4j-boot-auth/ddd4j-boot-auth-satoken ddd4j-boot-auth/ddd4j-boot-auth-shiro; do
     bash mvnw -B --no-transfer-progress -N -f "$module/pom.xml" -DskipTests install
   done
 )
