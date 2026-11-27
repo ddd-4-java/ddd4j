@@ -65,6 +65,33 @@ class ScannerTests(unittest.TestCase):
             origins = json.loads((output / 'reactor-component-origins.json').read_text())
             self.assertEqual(origins[purl], [consumer.relative_to(root).as_posix()])
 
+    def test_boot_consumer_resolves_installed_parent_before_scanning(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'pom.xml').write_text('<project><packaging>pom</packaging></project>')
+            sample = root / 'spring'
+            sample.mkdir()
+            (sample / 'pom.xml').write_text('<project><dependencies><dependency>'
+                                            '<groupId>io.ddd4j.boot</groupId><artifactId>adapter</artifactId>'
+                                            '</dependency></dependencies></project>')
+            output = root / 'reports'
+            output.mkdir()
+            purl = 'pkg:maven/io.ddd4j.boot/adapter@2.7'
+            def execute(command, **kwargs):
+                target = sample / 'target/weekly-deps.json'
+                target.parent.mkdir(exist_ok=True)
+                components = []
+                if '-f' in command:
+                    self.assertEqual(Path(command[command.index('-f') + 1]), (sample / 'pom.xml').resolve())
+                    self.assertIn('dependency:tree', command)
+                    components.append({'group': 'io.ddd4j.boot', 'name': 'adapter', 'version': '2.7', 'purl': purl})
+                target.write_text(json.dumps({'bomFormat': 'CycloneDX', 'components': components}))
+
+            with patch.object(scanner.subprocess, 'run', side_effect=execute):
+                scanner.reactor_sbom(root, output)
+            origins = json.loads((output / 'reactor-component-origins.json').read_text())
+            self.assertEqual(origins[purl], ['spring'])
+
     def test_maven4_pom_modules_are_not_treated_as_deployable_jars(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / 'project'

@@ -35,6 +35,7 @@ def count_findings(report, threshold):
 def reactor_sbom(root, output):
     """Resolve every deployable and sample module with Maven, then merge exact releases."""
     modules = []
+    boot_consumers = []
     for pom in sorted(root.rglob('pom.xml')):
         if 'target' in pom.parts or '.git' in pom.parts:
             continue
@@ -42,6 +43,9 @@ def reactor_sbom(root, output):
         packaging = next((child.text for child in node if child.tag.rsplit('}', 1)[-1] == 'packaging'), 'jar')
         if packaging != 'pom':
             modules.append(pom.parent)
+            if any(dep.findtext('{*}groupId') == 'io.ddd4j.boot'
+                   for dep in node.findall('./{*}dependencies/{*}dependency')):
+                boot_consumers.append(pom)
     if not modules:
         raise ValueError('No non-POM reactor modules to scan')
     for module in modules:
@@ -58,6 +62,13 @@ def reactor_sbom(root, output):
         env['JAVA_HOME'] = env['BUILD_JAVA_HOME']
         env['PATH'] = str(Path(env['JAVA_HOME']) / 'bin') + os.pathsep + env.get('PATH', '')
     subprocess.run(command, cwd=root, env=env, check=True)
+
+    # Inside this reactor Maven 3 can interpolate the Boot parent's revision into
+    # the framework BOM. Resolve Boot consumers against the installed release POMs.
+    # dependency:tree fails the build if the graph cannot be collected.
+    for pom in boot_consumers:
+        subprocess.run(command + ['dependency:tree', '-f', str(pom.resolve())],
+                       cwd=root, env=env, check=True)
 
     # The published-runtime consumers are standalone Maven projects. Include their
     # resolved dependencies and provenance in the same report as the reactor.
