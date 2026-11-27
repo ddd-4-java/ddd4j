@@ -40,9 +40,6 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
      */
     private static final int DEFAULT_THREAD_POOL_SIZE = GuiceConstants.DEFAULT_THREAD_POOL_SIZE;
 
-    /** 管理显式注册的业务视图及其调度句柄。 */
-    private DefaultViewManager<Object> delegate;
-
     /**
      * projection position repository (optional, for real status queries)
      */
@@ -67,6 +64,9 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
      * scheduler thread pool
      */
     private ScheduledExecutorService executor;
+
+    /** 管理显式注册的业务视图及其调度句柄。 */
+    private DefaultViewManager<Object> delegate;
 
     /**
      * Create a new GuiceViewManager with default thread pool size (2).
@@ -113,6 +113,21 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
         this.threadPoolSize = threadPoolSize;
         this.positionRepository = positionRepository;
         this.projectionMetrics = projectionMetrics;
+    }
+
+    /**
+     * 显式视图装配；共享管理器驱动事件，平台保留线程池和已有间隔表达式。
+     *
+     * @param threadPoolSize 调度线程数
+     * @param repository     位置仓储
+     * @param runner         真实事件运行器
+     * @param views          业务视图
+     */
+    public GuiceViewManager(int threadPoolSize, ProjectionPositionRepository repository,
+                            ProjectionRunner<Object> runner,
+                            java.util.Collection<? extends ProjectionView<Object>> views) {
+        this(threadPoolSize, repository, null);
+        delegate = new DefaultViewManager<>(this, runner, views);
     }
 
     /**
@@ -176,6 +191,26 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
                 }
             }
         }
+    }
+
+    /**
+     * 关闭由当前管理器持有的调度执行器。
+     */
+    private void stopOwnedExecutor() {
+        handles.values().forEach(handle -> handle.cancel(false));
+        if (Objects.nonNull(executor)) {
+            executor.shutdownNow();
+            try {
+                if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+                    log.warn("ViewManager executor did not terminate in time");
+                }
+            } catch (InterruptedException exception) {
+                Thread.currentThread().interrupt();
+            }
+            executor = null;
+        }
+        handles.clear();
+        log.info("GuiceViewManager stopped");
     }
 
     /**
@@ -370,39 +405,4 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
             return !future.isCancelled() && !future.isDone();
         }
     }
-    /**
-     * 关闭由当前管理器持有的调度执行器。
-     */
-    private void stopOwnedExecutor() {
-        handles.values().forEach(handle -> handle.cancel(false));
-        if (Objects.nonNull(executor)) {
-            executor.shutdownNow();
-            try {
-                if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
-                    log.warn("ViewManager executor did not terminate in time");
-                }
-            } catch (InterruptedException exception) {
-                Thread.currentThread().interrupt();
-            }
-            executor = null;
-        }
-        handles.clear();
-        log.info("GuiceViewManager stopped");
-    }
-
-    /**
-     * 显式视图装配；共享管理器驱动事件，平台保留线程池和已有间隔表达式。
-     *
-     * @param threadPoolSize 调度线程数
-     * @param repository     位置仓储
-     * @param runner         真实事件运行器
-     * @param views          业务视图
-     */
-    public GuiceViewManager(int threadPoolSize, ProjectionPositionRepository repository,
-                            ProjectionRunner<Object> runner,
-                            java.util.Collection<? extends ProjectionView<Object>> views) {
-        this(threadPoolSize, repository, null);
-        delegate = new DefaultViewManager<>(this, runner, views);
-    }
-
 }

@@ -4075,14 +4075,14 @@
       "path": "ddd4j-core/src/test/java/io/ddd4j/core/health/PlainValueContractTest.java",
       "productionPath": "ddd4j-core/src/main/java/io/ddd4j/core/health/ReadinessResult.java",
       "sourceSha256": [
-        "3e0425a3c3e1f85f20af4339a4222cd75a3d2621617535e14ab2dea561ca0d12",
-        "272e84dab026fcf6e1204bed2dfddda2b154915c5e51675b69430825b143a672",
-        "b5c46a76a5f50de147ff4a36c8b06afeb08e661ea8c462502643f84199548202"
+        "ddb7ca634d21d11b28adb3aed5dfc54bc559aa0707ce5c274615ae642569607e",
+        "5d50b1a4fa2e52617328b93dc89190631391b4fd51259179b93d9129918d80fa",
+        "4d7bdf2126a3581ab385f5fe163c195bfb505a374f84976bb4e7c085655ec6f1"
       ],
       "productionSha256": [
-        "0b61c7cd6f74df83559b9f46e44eff269760b5bef0376dbfd7676c1b73ec8708",
-        "0b61c7cd6f74df83559b9f46e44eff269760b5bef0376dbfd7676c1b73ec8708",
-        "0b61c7cd6f74df83559b9f46e44eff269760b5bef0376dbfd7676c1b73ec8708"
+        "236a61ed90b2d01ff442a6b0c04369e8db6770c5ada788d23403133141fe61ce",
+        "6db199f7fd5f2b40e6f669dc22bac7e85f6a4840b1d6fa6569716ab6a3034da1",
+        "236a61ed90b2d01ff442a6b0c04369e8db6770c5ada788d23403133141fe61ce"
       ],
       "testMethods": [
         "diagnosticDetailsKeepInputOrder",
@@ -4325,14 +4325,14 @@
       "path": "ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStoreTest.java",
       "productionPath": "ddd4j-data/ddd4j-data-event-store-r2dbc/src/main/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStore.java",
       "sourceSha256": [
-        "0dada77c63b390239b34a655ad9d383ddd0694a9c78d570992829f80627566be",
-        "10102bf0c7945437c0291834ccbac80af6ee6bcb9705663290dd1b34c159cded",
-        "10102bf0c7945437c0291834ccbac80af6ee6bcb9705663290dd1b34c159cded"
+        "8fafee2473b77fc29758523566cd99a30f825f974692467c034e5b4d92b5cc52",
+        "abab9cd1f542d9a6c9a591dd83e619eca7c84ab53ee384e790dc826f84ddb905",
+        "81195e045c1f814481c53e9d293789daa027ca7d87c888e10c5ae1c2c8242c96"
       ],
       "productionSha256": [
-        "965da85d46381a1c0d5fbdd153212f11bbcd30833e81968c6139ae65cad0de9a",
-        "965da85d46381a1c0d5fbdd153212f11bbcd30833e81968c6139ae65cad0de9a",
-        "965da85d46381a1c0d5fbdd153212f11bbcd30833e81968c6139ae65cad0de9a"
+        "4ca25f3994f29f8907678ccd83196c65eb21cb9ac4bffad0be8d8e9a33238bd1",
+        "63e41df69699fa2af65be79f1d77010047d777c5128325fc249e388b7b4f9f52",
+        "4ca25f3994f29f8907678ccd83196c65eb21cb9ac4bffad0be8d8e9a33238bd1"
       ],
       "testMethods": [
         "setUp",
@@ -4640,14 +4640,14 @@
       "path": "ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStorePostgresIT.java",
       "productionPath": "ddd4j-data/ddd4j-data-event-store-r2dbc/src/main/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStore.java",
       "sourceSha256": [
-        "94b83e2b1fd0b7533e146e6a779c91d7d257d041f211c61d5f7af309f75f5cd6",
-        "71b7884ae9fa3c1911a2afa0ab94b87e52d5a798d93e2621798d38a940cb34c6",
-        "4f62b531d9d39f76fd2b18ca6250d4d2cfcee4ed923a3bda2df1fc84eb76916e"
+        "99a4948fd9a8a3dfa696e7f916a4d6d023ce3d41635193641e0db0ae150329cc",
+        "3ba5139538c370ff1a02f5236d8c9d52d02f4c49464b84904851b7f025c6e248",
+        "7ff8b912777b3884242112159a29453a3678fd1161be6fadb4d36aada24d51c4"
       ],
       "productionSha256": [
-        "965da85d46381a1c0d5fbdd153212f11bbcd30833e81968c6139ae65cad0de9a",
-        "965da85d46381a1c0d5fbdd153212f11bbcd30833e81968c6139ae65cad0de9a",
-        "965da85d46381a1c0d5fbdd153212f11bbcd30833e81968c6139ae65cad0de9a"
+        "4ca25f3994f29f8907678ccd83196c65eb21cb9ac4bffad0be8d8e9a33238bd1",
+        "63e41df69699fa2af65be79f1d77010047d777c5128325fc249e388b7b4f9f52",
+        "4ca25f3994f29f8907678ccd83196c65eb21cb9ac4bffad0be8d8e9a33238bd1"
       ],
       "testMethods": [
         "setUp",
