@@ -131,7 +131,7 @@ class CatalogTradeTest {
         assertEquals(200, rebuilt.project(tenant, "O1").getStatus());
         assertEquals(cqrs.order(tenant, "O1").getPayload(), rebuilt.order(tenant, "O1").getPayload());
     }
-    /** {@inheritDoc} */
+    /** 验证<code>order.getOrderState()</code> 等于 <code>"CONFIRMED"</code>，<code>api.confirmPayment(tenant + "x", "O1", 2500L).getStatus()</code> 等于 <code>404</code>，<code>api.confirmPayment(tenant, "O1", 2499L).getStatus()</code> 等于 <code>409</code>。 */
     @Test
     void paymentUpdatesTradeFactsAndPreservesTheOriginalSnapshot() {
         UnpooledDataSource source = new UnpooledDataSource(MYSQL.getDriverClassName(), MYSQL.getJdbcUrl(), MYSQL.getUsername(), MYSQL.getPassword());

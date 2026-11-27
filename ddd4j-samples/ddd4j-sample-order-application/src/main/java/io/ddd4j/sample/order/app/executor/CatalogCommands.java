@@ -20,14 +20,25 @@ public final class CatalogCommands implements CommandExecutor<Command> {
     /** \u843d\u5b9e\u5546\u54c1\u4ea4\u6613\u5199\u7528\u4f8b\u7684\u5e94\u7528\u670d\u52a1\u3002 */
     private final CatalogService service;
 
-    /** {@inheritDoc} */
+    /**
+     * 声明当前处理器可以接收的命令类型。
+     *
+     * @return 当前处理器声明可接收的命令类型集合
+     */
     @Override
     public Set<Class<? extends Command>> supportedCommands() {
         return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(CreateGoodsSpuCmd.class, PlaceTradeOrderCmd.class,
                 ConfirmTradePaymentCmd.class, ChangeTradeOrderCmd.class)));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 用当前处理器执行传入命令或操作。
+     *
+     * <p>此实现调用 <code>Result.ok(service.create((CreateGoodsSpuCmd)command))</code>。</p>
+     *
+     * @param command 命令对象
+     * @return 根据执行路径返回<code>Result.ok(service.create((CreateGoodsSpuCmd)command))</code>、<code>Result.ok(service.place((PlaceTradeOrderCmd)command))</code>、<code>Result.ok(service.confirmPayment((ConfirmTradePaymentCmd)command))</code>
+     */
     @Override
     public Result<Object> execute(Command command) {
         if (command instanceof CreateGoodsSpuCmd) {

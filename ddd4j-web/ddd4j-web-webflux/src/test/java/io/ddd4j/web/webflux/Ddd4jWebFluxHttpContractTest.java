@@ -91,7 +91,11 @@ class Ddd4jWebFluxHttpContractTest extends AbstractWebContractTest {
         CacheKit.unregister("webflux-contract");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 返回发送测试请求所用的客户端。
+     *
+     * @return 实际返回<code>contractClient</code>，供调用方取得当前值
+     */
     @Override
     protected WebContractClient client() {
         return contractClient;
@@ -268,19 +272,35 @@ class Ddd4jWebFluxHttpContractTest extends AbstractWebContractTest {
             return Objects.equals(this.webTestClient, other.webTestClient);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 用<code>webTestClient</code>计算哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             return java.util.Objects.hash(webTestClient);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>webTestClient</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "WebFluxContractClient{" + "webTestClient=" + webTestClient + "}";
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 通过当前客户端发起 HTTP 请求。
+         *
+         * @param method HTTP 方法
+         * @param path 请求路径
+         * @param headers 请求头
+         * @param body 请求体
+         * @return 响应快照
+         */
         @Override
         public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
             WebTestClient.RequestBodySpec request = webTestClient.method(HttpMethod.valueOf(method)).uri(path);

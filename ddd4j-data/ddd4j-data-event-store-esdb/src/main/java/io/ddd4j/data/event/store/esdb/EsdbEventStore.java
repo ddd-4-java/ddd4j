@@ -79,7 +79,16 @@ public class EsdbEventStore implements EventStore {
         return revision.toRawLong() < 0 ? 0L : revision.toRawLong() + 1L;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 向指定聚合的事件流追加这一批领域事件。
+     *
+     * <p>此实现调用 <code>events.isEmpty()</code>。</p>
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId 聚合 ID
+     * @param events 要追加的事件（非空列表）
+     * @param expectedVersion 期望的当前版本号（乐观锁，空流为 0）
+     */
     @Override
     public void append(String aggregateType, AggregateRootId aggregateId,
                        List<? extends DomainEvent<?>> events, long expectedVersion) {
@@ -101,7 +110,15 @@ public class EsdbEventStore implements EventStore {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 按聚合查询其事件流并还原已存储的事件。
+     *
+     * <p>此实现调用 <code>streamName(aggregateType, aggregateId)</code>。</p>
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId 聚合 ID
+     * @return 实际返回<code>java.util.Arrays.asList()</code>
+     */
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId) {
         String streamName = streamName(aggregateType, aggregateId);
@@ -117,7 +134,17 @@ public class EsdbEventStore implements EventStore {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 按聚合查询其事件流并还原已存储的事件。
+     *
+     * <p>此实现调用 <code>read(aggregateType, aggregateId).stream()</code>。</p>
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId 聚合 ID
+     * @param fromVersion 起始版本号（含）
+     * @param toVersion 结束版本号（含）
+     * @return 版本区间内的持久化事件，按版本升序
+     */
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId, long fromVersion, long toVersion) {
         return Collections.unmodifiableList(read(aggregateType, aggregateId).stream()
@@ -125,7 +152,15 @@ public class EsdbEventStore implements EventStore {
                 .collect(java.util.stream.Collectors.toList()));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 按全局位置读取用于投影或重放的存储事件。
+     *
+     * <p>满足 <code>limit &lt;= 0</code> 时抛出 <code>IllegalArgumentException</code>。 此实现调用 <code>ReadAllOptions.get().forwards().fromPosition(new Position(fromPosition, fromPosition))</code>。</p>
+     *
+     * @param fromPosition 起始 position（含）
+     * @param limit 最大读取数量
+     * @return 实际返回<code>events</code>
+     */
     @Override
     public List<StoredEvent> readAll(long fromPosition, int limit) {
         if (limit <= 0) throw new IllegalArgumentException("limit must be positive");
@@ -233,20 +268,34 @@ public class EsdbEventStore implements EventStore {
             this.value = value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 实际返回<code>TYPE</code>，供调用方取得当前值
+         */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 不含类型标记的业务标识
+         */
         @Override
         @JsonValue
         public String asString() {
             return value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * <p>此实现调用 <code>TYPE.asString()</code>。</p>
+         *
+         * @return 包含类型标记的标识
+         */
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
@@ -263,13 +312,21 @@ public class EsdbEventStore implements EventStore {
             return this == o || (o instanceof StringAggregateRootId && java.util.Objects.equals(value, ((StringAggregateRootId) o).value));
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             return java.util.Objects.hashCode(value);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>value</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "StringAggregateRootId[value=" + value + "]";

@@ -51,7 +51,15 @@ public class DefaultQueryBus implements QueryBus {
         Objects.requireNonNull(queryHandlers, "queryHandlers must not be null").forEach(this::register);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 将给定查询交给查询总线处理。
+     *
+     * <p>此实现调用 <code>handlers.get(actual.getClass())</code>。</p>
+     *
+     * @param <R> 此操作处理的值或结果的 Java 类型
+     * @param query 交给查询处理器或仓储的查询条件
+     * @return 实际返回<code>(R)handler.handle(actual)</code>
+     */
     @Override
     public <R> R ask(Object query) {
         Object actual = Objects.requireNonNull(query, "query must not be null");

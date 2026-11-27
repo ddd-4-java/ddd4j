@@ -71,7 +71,14 @@ public class JetCacheAdapter<K, V> implements Cache<K, V> {
         return jetCache;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 读取现有缓存值。
+     *
+     * <p>此实现调用 <code>jetCache.GET(key)</code>。</p>
+     *
+     * @param key 缓存键
+     * @return 根据执行路径返回<code>result.getValue()</code>、<code>null</code>
+     */
     @Override
     public V getIfPresent(K key) {
         CacheGetResult<V> result = jetCache.GET(key);
@@ -81,14 +88,29 @@ public class JetCacheAdapter<K, V> implements Cache<K, V> {
         return null;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 读取调用指定的当前值。
+     *
+     * <p>此实现调用 <code>jetCache.computeIfAbsent(key, mappingFunction)</code>。</p>
+     *
+     * @param key 缓存键
+     * @param mappingFunction 值加载函数
+     * @return 实际返回<code>jetCache.computeIfAbsent(key, mappingFunction)</code>
+     */
     @Override
     public V get(K key, Function<K, V> mappingFunction) {
         // 使用 JetCache 的 computeIfAbsent，内置防穿透保护
         return jetCache.computeIfAbsent(key, mappingFunction);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 读取调用指定的当前值。
+     *
+     * <p>此实现调用 <code>jetCache.get(key)</code>。</p>
+     *
+     * @param key 缓存键
+     * @return 根据执行路径返回<code>jetCache.get(key)</code>、<code>null</code>
+     */
     @Override
     public V get(K key) {
         // JetCache 的 get 方法在配置了 loader 时自动加载，否则等价于 getIfPresent
@@ -100,7 +122,14 @@ public class JetCacheAdapter<K, V> implements Cache<K, V> {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 将给定数据写入当前存储。
+     *
+     * <p>此实现调用 <code>jetCache.PUT(key, value)</code>。</p>
+     *
+     * @param key 缓存键
+     * @param value 缓存值
+     */
     @Override
     public void put(K key, V value) {
         CacheResult result = jetCache.PUT(key, value);
@@ -109,7 +138,13 @@ public class JetCacheAdapter<K, V> implements Cache<K, V> {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 批量设置缓存值。
+     *
+     * <p>此实现调用 <code>jetCache.PUT_ALL(map)</code>。</p>
+     *
+     * @param map 缓存键值对
+     */
     @Override
     public void putAll(Map<K, V> map) {
         CacheResult result = jetCache.PUT_ALL(map);
@@ -118,7 +153,13 @@ public class JetCacheAdapter<K, V> implements Cache<K, V> {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 使指定键的缓存条目失效。
+     *
+     * <p>此实现调用 <code>jetCache.REMOVE(key)</code>。</p>
+     *
+     * @param key 缓存键
+     */
     @Override
     public void invalidate(K key) {
         CacheResult result = jetCache.REMOVE(key);
@@ -127,14 +168,26 @@ public class JetCacheAdapter<K, V> implements Cache<K, V> {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 刷新当前实现所持有的数据或状态。
+     *
+     * <p>此实现调用 <code>jetCache.REMOVE(key)</code>。</p>
+     *
+     * @param key 缓存键
+     */
     @Override
     public void refresh(K key) {
         // JetCache 支持配置 RefreshPolicy 时自动刷新；手动刷新通过 remove + 下次 get 触发
         jetCache.REMOVE(key);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 使当前缓存中的全部条目失效。
+     *
+     * <p>此实现调用 <code>keyList.isEmpty()</code>。</p>
+     *
+     * @param keys 缓存键集合
+     */
     @Override
     public void invalidateAll(Iterable<K> keys) {
         List<K> keyList = new ArrayList<>();
@@ -175,7 +228,11 @@ public class JetCacheAdapter<K, V> implements Cache<K, V> {
         return -1;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 返回当前缓存实现记录的统计信息。
+     *
+     * @return 此实现返回<code>null</code>
+     */
     @Override
     public CacheStats stats() {
         // JetCache 统计通过 DefaultCacheMonitor 收集，适配器层暂不映射

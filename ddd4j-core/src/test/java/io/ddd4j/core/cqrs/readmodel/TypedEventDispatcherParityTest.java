@@ -70,7 +70,11 @@ class TypedEventDispatcherParityTest {
 
     /** \u5b9e\u73b0 <code>TypedEvent</code>\uff0c\u4f9b\u6d4b\u8bd5\u8c03\u7528 <code>getEventType()</code> \u5e76\u89c2\u5bdf\u7ed3\u679c\u3002 */
     private static final class CreatedEvent implements TypedEvent {
-        /** {@inheritDoc} */
+        /**
+         * 返回用于识别此领域事件的事件类型。
+         *
+         * @return 实际返回<code>"created"</code>，供调用方取得当前值
+         */
         @Override
         public String getEventType() {
             return "created";
@@ -79,7 +83,11 @@ class TypedEventDispatcherParityTest {
 
     /** \u5b9e\u73b0 <code>TypedEvent</code>\uff0c\u4f9b\u6d4b\u8bd5\u8c03\u7528 <code>getEventType()</code> \u5e76\u89c2\u5bdf\u7ed3\u679c\u3002 */
     private static final class UnknownEvent implements TypedEvent {
-        /** {@inheritDoc} */
+        /**
+         * 返回用于识别此领域事件的事件类型。
+         *
+         * @return 实际返回<code>"unknown"</code>，供调用方取得当前值
+         */
         @Override
         public String getEventType() {
             return "unknown";
@@ -111,19 +119,33 @@ class TypedEventDispatcherParityTest {
             this.eventType = eventType;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回用于识别此领域事件的事件类型。
+         *
+         * @return 实际返回<code>eventType</code>，供调用方取得当前值
+         */
         @Override
         public String getEventType() {
             return eventType;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回当前监听器可以消费的事件类型。
+         *
+         * @return 实际返回<code>CreatedEvent.class</code>，供调用方取得当前值
+         */
         @Override
         public Class<CreatedEvent> getEventClass() {
             return CreatedEvent.class;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 处理调用方传入的消息或请求。
+         *
+         * <p>测试夹具会调用 <code>handled.incrementAndGet()</code>。</p>
+         *
+         * @param event 事件
+         */
         @Override
         public void handle(CreatedEvent event) {
             handled.incrementAndGet();

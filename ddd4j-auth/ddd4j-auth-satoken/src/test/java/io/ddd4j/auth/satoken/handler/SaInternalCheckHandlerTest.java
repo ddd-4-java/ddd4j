@@ -121,13 +121,24 @@ class SaInternalCheckHandlerTest {
             this.apiKey = apiKey;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 从当前请求或上下文中提取 API 密钥。
+         *
+         * @return 实际返回<code>apiKey</code>，供调用方取得当前值
+         */
         @Override
         protected String readApiKey() {
             return apiKey;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 验证请求提交的 API 密钥。
+         *
+         * <p>测试夹具会调用 <code>Arrays.copyOf(scopes, scopes.length)</code>。</p>
+         *
+         * @param apiKey API Key to validate
+         * @param scopes required scopes
+         */
         @Override
         protected void checkApiKey(String apiKey, String[] scopes) {
             this.checkedApiKey = apiKey;

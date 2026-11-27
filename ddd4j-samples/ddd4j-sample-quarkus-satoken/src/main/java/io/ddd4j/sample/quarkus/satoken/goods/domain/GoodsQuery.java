@@ -106,7 +106,13 @@ public class GoodsQuery extends Query<Goods> {
         orderByAsc(property);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 返回当前用例依赖的仓储。
+     *
+     * <p>此实现调用 <code>RepositoryRegistry.repository(Goods.class)</code>。</p>
+     *
+     * @return 实际返回<code>RepositoryRegistry.repository(Goods.class)</code>
+     */
     @Override
     public Repository<Goods, Long> repository() {
         return RepositoryRegistry.repository(Goods.class);

@@ -122,7 +122,14 @@ public class LettuceCache<V> implements Cache<String, V> {
         return keyPrefix + key;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 读取现有缓存值。
+     *
+     * <p>Lettuce 实现调用 <code>commands.get(key(key))</code>。</p>
+     *
+     * @param key 缓存键
+     * @return 根据执行路径返回<code>null</code>、<code>(V)json</code>、<code>objectMapper.readValue(json, valueType)</code>
+     */
     @Override
     @SuppressWarnings("unchecked")
     public V getIfPresent(String key) {
@@ -140,7 +147,15 @@ public class LettuceCache<V> implements Cache<String, V> {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 读取调用指定的当前值。
+     *
+     * <p>Lettuce 实现调用 <code>getIfPresent(key)</code>。</p>
+     *
+     * @param key 缓存键
+     * @param mappingFunction 值加载函数
+     * @return 实际返回<code>value</code>
+     */
     @Override
     public V get(String key, Function<String, V> mappingFunction) {
         V value = getIfPresent(key);
@@ -153,7 +168,14 @@ public class LettuceCache<V> implements Cache<String, V> {
         return value;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 将给定数据写入当前存储。
+     *
+     * <p>Lettuce 实现调用 <code>objectMapper.writeValueAsString(value)</code>。</p>
+     *
+     * @param key 缓存键
+     * @param value 缓存值
+     */
     @Override
     public void put(String key, V value) {
         try {
@@ -168,7 +190,13 @@ public class LettuceCache<V> implements Cache<String, V> {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 使指定键的缓存条目失效。
+     *
+     * <p>Lettuce 实现调用 <code>commands.del(key(key))</code>。</p>
+     *
+     * @param key 缓存键
+     */
     @Override
     public void invalidate(String key) {
         try {
@@ -195,13 +223,26 @@ public class LettuceCache<V> implements Cache<String, V> {
 
     // ==================== CAS SPI 实现（基于 Redis Lua 脚本原子操作）====================
 
-    /** {@inheritDoc} */
+    /**
+     * 返回当前缓存实现记录的统计信息。
+     *
+     * @return 此实现返回<code>null</code>
+     */
     @Override
     public CacheStats stats() {
         return null;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 比较缓存中的现值或版本并尝试原子修改。
+     *
+     * <p>Lettuce 实现调用 <code>key(key)</code>。</p>
+     *
+     * @param key 缓存键
+     * @param expireSeconds 过期时间（秒），0 表示不修改 TTL
+     * @param operation CAS 操作回调（基于当前值计算新值）
+     * @return 根据执行路径返回<code>null</code>、<code>newValue</code>
+     */
     @Override
     public V compareAndSet(String key, long expireSeconds, CASOperation<V, V> operation) {
         String cachedKey = key(key);
@@ -240,7 +281,16 @@ public class LettuceCache<V> implements Cache<String, V> {
         return null;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 比较缓存中的现值或版本并尝试原子修改。
+     *
+     * <p>Lettuce 实现调用 <code>key(key)</code>。</p>
+     *
+     * @param key 缓存键
+     * @param expectedOldValue 期望的旧值（null 表示仅当 key 不存在时写入 = putIfAbsent）
+     * @param newValue 新值
+     * @return 实际返回<code>"1".equals(result)</code>
+     */
     @Override
     public boolean compareAndSet(String key, V expectedOldValue, V newValue) {
         String cachedKey = key(key);

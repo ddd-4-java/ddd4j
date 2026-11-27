@@ -94,7 +94,11 @@ public class Page<T> implements Iterable<T> {
         return new Page<>(new ArrayList<>(), 0L, 0L, 0L, Collections.emptyMap());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 通过<code>this.records.isEmpty()</code>、<code>this.records.iterator()</code>处理当前调用。
+     *
+     * @return 此操作产生的<code>Iterator&lt;T&gt;</code>结果
+     */
     @Override
     public Iterator<T> iterator() {
         return Objects.nonNull(this.records) && !this.records.isEmpty() ? this.records.iterator() : Collections.emptyIterator();

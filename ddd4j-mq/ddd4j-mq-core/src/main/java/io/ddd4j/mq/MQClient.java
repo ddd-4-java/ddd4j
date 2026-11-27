@@ -259,7 +259,11 @@ public interface MQClient extends AutoCloseable {
         return MQStartupStatus.unmanaged();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 结束当前组件持有的资源。
+     *
+     * <p>此实现调用 <code>logger().info("Shutting down MQClient [{}]", impl())</code>。</p>
+     */
     @Override
     default void close() {
         logger().info("Shutting down MQClient [{}]", impl());

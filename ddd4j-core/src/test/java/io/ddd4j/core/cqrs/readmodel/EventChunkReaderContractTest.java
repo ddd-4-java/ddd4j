@@ -132,7 +132,17 @@ class EventChunkReaderContractTest {
             events.addLast(new Numbered(number, payload));
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 读取调用指定的数据或事件流。
+         *
+         * <p>测试夹具会调用 <code>picked.add(n.payload)</code>、<code>picked.isEmpty()</code>。</p>
+         *
+         * @param streamId 投影流 ID
+         * @param fromEventNumber 起始事件号，包含该位置
+         * @param chunkSize 本次最大读取数量
+         * @param eventTypes 需要读取的事件类型；为空表示由实现自行决定
+         * @return 事件块
+         */
         @Override
         public EventChunk<String> read(String streamId, long fromEventNumber, int chunkSize,
                                        Collection<String> eventTypes) {
@@ -197,7 +207,14 @@ class EventChunkReaderContractTest {
                 return payload;
             }
 
-            /** {@inheritDoc} */
+            /**
+             * 根据<code>payload</code>、<code>number</code>比较对象的值是否相等。
+             *
+             * <p>只比较运行时类型相同的对象。</p>
+             *
+             * @param obj 用来比较或转换的输入对象
+             * @return 对象满足此实现的相等条件时为真
+             */
             @Override
             public boolean equals(Object obj) {
                 if (this == obj) {
@@ -210,7 +227,11 @@ class EventChunkReaderContractTest {
                 return this.number == other.number && Objects.equals(this.payload, other.payload);
             }
 
-            /** {@inheritDoc} */
+            /**
+             * 计算与对象相等条件一致的哈希值。
+             *
+             * @return 由参与相等比较的状态计算出的哈希值
+             */
             @Override
             public int hashCode() {
                 int result = 0;
@@ -219,7 +240,11 @@ class EventChunkReaderContractTest {
                 return result;
             }
 
-            /** {@inheritDoc} */
+            /**
+             * 生成用于调试和日志的对象描述，包含<code>number</code>、<code>payload</code>。
+             *
+             * @return 表示当前对象状态的字符串
+             */
             @Override
             public String toString() {
                 return "Numbered[number=" + number + ", payload=" + payload + "]";

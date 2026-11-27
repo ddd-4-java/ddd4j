@@ -98,7 +98,11 @@ public final class Ddd4jMicronautRuntime implements AutoCloseable {
         return readinessRegistry;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 结束当前组件持有的资源。
+     *
+     * <p>Micronaut 实现调用 <code>subjectRegistration.close()</code>。</p>
+     */
     @Override
     @PreDestroy
     public void close() {

@@ -211,13 +211,29 @@ class NativeQuerySqlTest {
          */
         TestRepository(EntryMapper mapper) { super(mapper, Entry.class, Entry.class); }
 
-        /** {@inheritDoc} */
+        /**
+         * 查询符合条件的持久化记录。
+         *
+         * <p>测试夹具会调用 <code>baseMapper.selectQuery(minimumId(query), offset, limit)</code>、<code>minimumId(query)</code>。</p>
+         *
+         * @param query 领域查询，null 表示无额外条件
+         * @param offset 从零开始的偏移量
+         * @param limit 最大行数，负数表示不分页
+         * @return 实际返回<code>baseMapper.selectQuery(minimumId(query), offset, limit)</code>
+         */
         @Override
         protected List<Entry> selectRows(Query<Entry> query, long offset, long limit) {
             return baseMapper.selectQuery(minimumId(query), offset, limit);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 统计符合条件的持久化记录数。
+         *
+         * <p>测试夹具会调用 <code>baseMapper.countQuery(minimumId(query))</code>、<code>minimumId(query)</code>。</p>
+         *
+         * @param query 领域查询，null 表示无额外条件
+         * @return 实际返回<code>baseMapper.countQuery(minimumId(query))</code>
+         */
         @Override
         protected long countRows(Query<Entry> query) {
             return baseMapper.countQuery(minimumId(query));
@@ -233,7 +249,14 @@ class NativeQuerySqlTest {
             return baseMapper.deleteById(id);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 删除符合条件的持久化记录。
+         *
+         * <p>测试夹具会调用 <code>baseMapper.deleteByIds(ids)</code>。</p>
+         *
+         * @param ids 非空主键集合
+         * @return 实际返回<code>baseMapper.deleteByIds(ids)</code>
+         */
         @Override
         protected int deleteRows(Collection<Integer> ids) {
             return baseMapper.deleteByIds(ids);

@@ -293,25 +293,42 @@ class R2dbcAsyncEventStoreTest {
             this.value = value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 此操作产生的<code>EntityType</code>结果
+         */
         @Override
         public EntityType getType() {
             return new StringEntityType(TYPE_NAME);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 实际返回<code>value</code>，供调用方取得当前值
+         */
         @Override
         public String asString() {
             return value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * @return 实际返回<code>TYPE_NAME + ":" + value</code>，供调用方取得当前值
+         */
         @Override
         public String asTypedString() {
             return TYPE_NAME + ":" + value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 比较两个对象的值是否相等。
+         *
+         * @param object 用于此操作的 <code>object</code>（<code>Object</code>）
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object object) {
             if (!(object instanceof TestOrderId)) {
@@ -321,13 +338,21 @@ class R2dbcAsyncEventStoreTest {
             return value.equals(other.value);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             return value.hashCode();
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 生成用于调试和日志的对象描述。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return asTypedString();

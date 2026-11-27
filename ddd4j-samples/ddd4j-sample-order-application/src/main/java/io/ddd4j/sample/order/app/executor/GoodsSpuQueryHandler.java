@@ -12,13 +12,24 @@ public final class GoodsSpuQueryHandler implements QueryHandler<GoodsSpuQuery, G
     /** \u67e5\u8be2\u5546\u54c1\u805a\u5408\u7684\u5e94\u7528\u670d\u52a1\u3002 */
     private final CatalogService service;
 
-    /** {@inheritDoc} */
+    /**
+     * 声明当前查询处理器接受的查询类型。
+     *
+     * @return 本处理器接受的查询类型
+     */
     @Override
     public Class<GoodsSpuQuery> queryType() {
         return GoodsSpuQuery.class;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 处理调用方传入的消息或请求。
+     *
+     * <p>此实现调用 <code>service.goods(query)</code>。</p>
+     *
+     * @param query 查询对象
+     * @return 实际返回<code>service.goods(query)</code>
+     */
     @Override
     public GoodsSpu handle(GoodsSpuQuery query) {
         return service.goods(query);

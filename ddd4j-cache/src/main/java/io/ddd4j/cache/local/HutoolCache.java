@@ -67,13 +67,28 @@ public class HutoolCache<K, V> implements Cache<K, V> {
         return new HutoolCache<>(timed);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 读取现有缓存值。
+     *
+     * <p>此实现调用 <code>cache.get(key)</code>。</p>
+     *
+     * @param key 缓存键
+     * @return 实际返回<code>cache.get(key)</code>
+     */
     @Override
     public V getIfPresent(K key) {
         return cache.get(key);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 读取调用指定的当前值。
+     *
+     * <p>此实现调用 <code>cache.get(key)</code>。</p>
+     *
+     * @param key 缓存键
+     * @param mappingFunction 值加载函数
+     * @return 实际返回<code>value</code>
+     */
     @Override
     public V get(K key, Function<K, V> mappingFunction) {
         V value = cache.get(key);
@@ -86,43 +101,78 @@ public class HutoolCache<K, V> implements Cache<K, V> {
         return value;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 将给定数据写入当前存储。
+     *
+     * <p>此实现调用 <code>cache.put(key, value)</code>。</p>
+     *
+     * @param key 缓存键
+     * @param value 缓存值
+     */
     @Override
     public void put(K key, V value) {
         cache.put(key, value);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 批量设置缓存值。
+     *
+     * @param map 缓存键值对
+     */
     @Override
     public void putAll(Map<K, V> map) {
         map.forEach(this::put);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 使指定键的缓存条目失效。
+     *
+     * <p>此实现调用 <code>cache.remove(key)</code>。</p>
+     *
+     * @param key 缓存键
+     */
     @Override
     public void invalidate(K key) {
         cache.remove(key);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 使当前缓存中的全部条目失效。
+     *
+     * <p>此实现调用 <code>cache.clear()</code>。</p>
+     */
     @Override
     public void invalidateAll() {
         cache.clear();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 使当前缓存中的全部条目失效。
+     *
+     * @param keys 缓存键集合
+     */
     @Override
     public void invalidateAll(Iterable<K> keys) {
         keys.forEach(this::invalidate);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 返回当前缓存条目规模的估算值。
+     *
+     * <p>此实现调用 <code>cache.size()</code>。</p>
+     *
+     * @return 实际返回<code>cache.size()</code>
+     */
     @Override
     public long estimatedSize() {
         return cache.size();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 返回当前缓存实现记录的统计信息。
+     *
+     * @return 此实现返回<code>null</code>
+     */
     @Override
     public CacheStats stats() {
         return null;

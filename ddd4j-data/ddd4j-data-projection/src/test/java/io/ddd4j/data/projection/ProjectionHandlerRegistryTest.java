@@ -233,7 +233,11 @@ class ProjectionHandlerRegistryTest {
             return name;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回此处理器接受的事件类型。
+         *
+         * @return 实际返回<code>eventTypes</code>，供调用方取得当前值
+         */
         @Override
         public Collection<Class<? extends DomainEvent<?>>> eventTypes() {
             return eventTypes;

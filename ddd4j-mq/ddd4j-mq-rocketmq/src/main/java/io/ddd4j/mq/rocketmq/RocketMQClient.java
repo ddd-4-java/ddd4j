@@ -167,31 +167,54 @@ public class RocketMQClient implements MQClient {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 返回此消息适配器在 DDD4J 中登记的实现名。
+     *
+     * @return 实际返回<code>"rocket"</code>，供调用方取得当前值
+     */
     @Override
     public String impl() {
         return "rocket";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Broker 默认拼接符（各 broker 决定，建议子类覆写）。
+     *
+     * @return 实际返回<code>"_"</code>，供调用方取得当前值
+     */
     @Override
     public String defaultConcat() {
         return "_";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 返回管理连接、生产者和消费者资源的生命周期对象。
+     *
+     * @return 当前消息适配器用于登记和关闭资源的生命周期对象
+     */
     @Override
     public MQClientLifecycle lifecycle() {
         return lifecycle;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 返回消息客户端当前记录的启动状态。
+     *
+     * @return 当前消息适配器记录的启动状态
+     */
     @Override
     public MQStartupStatus startupStatus() {
         return startupStatus;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 准备消息生产者并返回可发布事件的入口。
+     *
+     * <p>RocketMQ 实现调用 <code>this.properties.getUsername()</code>。</p>
+     *
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 此实现返回<code>null</code>
+     */
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         try {
@@ -288,7 +311,16 @@ public class RocketMQClient implements MQClient {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 为监听器建立消息消费所需的订阅和客户端资源。
+     *
+     * <p>RocketMQ 实现调用 <code>this.properties.newConsumer(listener.getGroup())</code>。</p>
+     *
+     * @param listener 监听器定义
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 此实现返回<code>true</code>
+     * @throws Exception 当前框架、存储或底层客户端无法完成此操作时
+     */
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         DefaultMQPushConsumer consumer;

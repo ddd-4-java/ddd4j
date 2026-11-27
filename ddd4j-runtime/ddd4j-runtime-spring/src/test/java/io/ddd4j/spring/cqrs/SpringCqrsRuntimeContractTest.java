@@ -48,7 +48,11 @@ import java.util.concurrent.Executors;
  */
 class SpringCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
 
-    /** {@inheritDoc} */
+    /**
+     * 创建测试中用于操作当前框架的契约适配器。
+     *
+     * @return CQRS 运行时契约
+     */
     @Override
     protected CqrsRuntimeContract createContract() {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SpringCqrsTestConfig.class);

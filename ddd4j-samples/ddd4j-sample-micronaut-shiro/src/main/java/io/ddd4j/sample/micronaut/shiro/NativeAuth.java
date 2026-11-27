@@ -48,13 +48,27 @@ public final class NativeAuth {
  @PreDestroy public void close() { owned.destroy(); }
  /** \u6839\u636e\u793a\u4f8b\u7528\u6237\u53ca\u8ba2\u5355\u6743\u9650\u6267\u884c\u539f\u751f Shiro \u8ba4\u8bc1\u4e0e\u6388\u6743\u3002 */
  private static final class SampleRealm extends AuthorizingRealm {
-  /** {@inheritDoc} */
+  /**
+   * 根据登录凭据查找供 Shiro 校验的身份信息。
+   *
+   * <p>此实现调用 <code>String.valueOf(token.getPrincipal())</code>。</p>
+   *
+   * @param token 待校验或用于定位会话的令牌
+   * @return 此操作产生的<code>AuthenticationInfo</code>结果
+   */
   @Override protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) {
    String user = String.valueOf(token.getPrincipal());
    if (!ImmutableSet.of("alice","reader").contains(user)) { throw new UnknownAccountException("unknown sample account"); }
    return new SimpleAuthenticationInfo(user,"sample-password",getName());
   }
-  /** {@inheritDoc} */
+  /**
+   * 加载 Shiro 用于权限和角色判定的信息。
+   *
+   * <p>此实现调用 <code>"alice".equals(principals.getPrimaryPrincipal())</code>。</p>
+   *
+   * @param principals 传给 <code>"alice".equals(principals.getPrimaryPrincipal())</code>
+   * @return 实际返回<code>result</code>
+   */
   @Override protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
    SimpleAuthorizationInfo result = new SimpleAuthorizationInfo();
    result.setStringPermissions("alice".equals(principals.getPrimaryPrincipal()) ? ImmutableSet.of("order:read","order:write") : ImmutableSet.of("order:read"));

@@ -150,13 +150,28 @@ class BaiduRegionHttpContractTest {
         /** \u6d4b\u8bd5\u5b58\u50a8\u4f7f\u7528\u6216\u8bb0\u5f55\u7684\u5230\u671f\u65f6\u957f\u3002 */
         private Duration ttl;
 
-        /** {@inheritDoc} */
+        /**
+         * 读取缓存字符串。
+         *
+         * <p>测试夹具会调用 <code>value.get()</code>。</p>
+         *
+         * @param key 缓存键
+         * @return 实际返回<code>value.get()</code>
+         */
         @Override
         public String getString(String key) {
             return value.get();
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 写入带有效期的缓存字符串。
+         *
+         * <p>测试夹具会调用 <code>value.set(stored)</code>。</p>
+         *
+         * @param key 缓存键
+         * @param stored 传给 <code>value.set(stored)</code>
+         * @param duration 用于此操作的 <code>duration</code>（<code>Duration</code>）
+         */
         @Override
         public void set(String key, String stored, Duration duration) {
             value.set(stored);

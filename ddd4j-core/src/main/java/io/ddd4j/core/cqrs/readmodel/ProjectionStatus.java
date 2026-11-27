@@ -212,7 +212,14 @@ public final class ProjectionStatus {
         return lastError;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 根据<code>streamId</code>、<code>lastRunAt</code>、<code>lastError</code>、<code>nextEventNumber</code>、<code>running</code>、<code>lastEventCount</code>比较对象的值是否相等。
+     *
+     * <p>只比较运行时类型相同的对象。</p>
+     *
+     * @param obj 用来比较或转换的输入对象
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -225,7 +232,11 @@ public final class ProjectionStatus {
         return Objects.equals(this.streamId, other.streamId) && this.nextEventNumber == other.nextEventNumber && this.running == other.running && Objects.equals(this.lastRunAt, other.lastRunAt) && this.lastEventCount == other.lastEventCount && Objects.equals(this.lastError, other.lastError);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         int result = 0;
@@ -238,7 +249,11 @@ public final class ProjectionStatus {
         return result;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>streamId</code>、<code>nextEventNumber</code>、<code>running</code>、<code>lastRunAt</code>、<code>lastEventCount</code>、<code>lastError</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "ProjectionStatus[streamId=" + streamId + ", nextEventNumber=" + nextEventNumber + ", running=" + running + ", lastRunAt=" + lastRunAt + ", lastEventCount=" + lastEventCount + ", lastError=" + lastError + "]";

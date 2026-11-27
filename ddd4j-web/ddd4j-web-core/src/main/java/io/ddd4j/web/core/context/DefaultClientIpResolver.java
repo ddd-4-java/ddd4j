@@ -32,7 +32,16 @@ public final class DefaultClientIpResolver implements ClientIpResolver {
         this.trustForwardedHeaders = trustForwardedHeaders;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 结合代理头与远端地址解析客户端 IP。
+     *
+     * <p>此实现调用 <code>firstForwardedAddress(forwardedFor)</code>。</p>
+     *
+     * @param forwardedFor 代理转发地址
+     * @param realIp 真实 IP 请求头
+     * @param remoteAddress 连接远端地址
+     * @return 根据执行路径返回<code>forwardedAddress</code>、<code>realIp.trim()</code>、<code>StrKit.isBlank(remoteAddress) ? null : remoteAddress.trim()</code>
+     */
     @Override
     public String resolve(String forwardedFor, String realIp, String remoteAddress) {
         if (trustForwardedHeaders) {

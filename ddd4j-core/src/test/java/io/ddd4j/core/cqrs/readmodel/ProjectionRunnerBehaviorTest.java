@@ -94,37 +94,63 @@ class ProjectionRunnerBehaviorTest {
             this.eventTypes = eventTypes;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回当前配置、视图或处理器的名称。
+         *
+         * @return 实际返回<code>name</code>，供调用方取得当前值
+         */
         @Override
         public String getName() {
             return name;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回当前投影绑定的事件流标识。
+         *
+         * @return 实际返回<code>Objects.nonNull(streamId) ? streamId : name</code>，供调用方取得当前值
+         */
         @Override
         public String getStreamId() {
             return Objects.nonNull(streamId) ? streamId : name;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回投影视图配置的调度表达式。
+         *
+         * @return 实际返回<code>"0/5 * * * * ?"</code>，供调用方取得当前值
+         */
         @Override
         public String getCron() {
             return "0/5 * * * * ?";
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回投影单次读取事件的最大条数。
+         *
+         * @return 实际返回<code>chunkSize</code>，供调用方取得当前值
+         */
         @Override
         public int getChunkSize() {
             return chunkSize;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回投影或处理器关心的事件类型。
+         *
+         * @return 实际返回<code>eventTypes</code>，供调用方取得当前值
+         */
         @Override
         public Collection<String> getEventTypes() {
             return eventTypes;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 处理本批投影事件。
+         *
+         * <p>测试夹具会调用 <code>handled.addAll(events)</code>。</p>
+         *
+         * @param events 事件列表
+         */
         @Override
         public void handleEvents(Collection<String> events) {
             handled.addAll(events);

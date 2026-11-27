@@ -28,7 +28,13 @@ final class MQPublisherRegistration implements Consumer<MQEvent> {
         this.delegate = Objects.requireNonNull(delegate, "delegate");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 接收调用方提交的记录。
+     *
+     * <p>此实现调用 <code>delegate.accept(event)</code>。</p>
+     *
+     * @param event 当前发布、消费或处理的事件
+     */
     @Override
     public void accept(MQEvent event) {
         delegate.accept(event);

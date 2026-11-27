@@ -174,7 +174,14 @@ public class AntPathMatcher implements PathMatcher {
     }
 
 
-    /** {@inheritDoc} */
+    /**
+     * Does the given {@code path} represent a pattern that can be matched。
+     *
+     * <p>此实现调用 <code>path.length()</code>。</p>
+     *
+     * @param path the path to check
+     * @return 根据执行路径返回<code>false</code>、<code>true</code>
+     */
     @Override
     public boolean isPattern(String path) {
         if (Objects.isNull(path)) {
@@ -197,13 +204,29 @@ public class AntPathMatcher implements PathMatcher {
         return false;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Match the given {@code path} against the given {@code pattern},。
+     *
+     * <p>此实现调用 <code>doMatch(pattern, path, true, null)</code>。</p>
+     *
+     * @param pattern the pattern to match against
+     * @param path the path to test
+     * @return 实际返回<code>doMatch(pattern, path, true, null)</code>
+     */
     @Override
     public boolean match(String pattern, String path) {
         return doMatch(pattern, path, true, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Match the given {@code path} against the corresponding part of the given。
+     *
+     * <p>此实现调用 <code>doMatch(pattern, path, false, null)</code>。</p>
+     *
+     * @param pattern the pattern to match against
+     * @param path the path to test
+     * @return 实际返回<code>doMatch(pattern, path, false, null)</code>
+     */
     @Override
     public boolean matchStart(String pattern, String path) {
         return doMatch(pattern, path, false, null);
@@ -556,7 +579,15 @@ public class AntPathMatcher implements PathMatcher {
         return builder.toString();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 提取实际路径与 URI 模板匹配得到的变量。
+     *
+     * <p>此实现调用 <code>doMatch(pattern, path, true, variables)</code>。</p>
+     *
+     * @param pattern the path pattern, possibly containing URI templates
+     * @param path the full path to extract template variables from
+     * @return 实际返回<code>variables</code>
+     */
     @Override
     public Map<String, String> extractUriTemplateVariables(String pattern, String path) {
         Map<String, String> variables = new LinkedHashMap<>();

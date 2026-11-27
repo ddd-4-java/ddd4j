@@ -40,13 +40,22 @@ public class InMemorySubjectProvider implements SubjectProvider {
         this.subject = Objects.requireNonNull(subject, "subject must not be null");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 取得当前请求使用的认证主体接口。
+     *
+     * @return 本次调用使用的认证主体接口
+     */
     @Override
     public Subject getSubject() {
         return subject;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 取得当前请求使用的认证主体接口。
+     *
+     * @param realm 账号体系标识（如 sa-token 的 "admin"/"user"）
+     * @return 本次调用使用的认证主体接口
+     */
     @Override
     public Subject getSubject(String realm) {
         return subject;

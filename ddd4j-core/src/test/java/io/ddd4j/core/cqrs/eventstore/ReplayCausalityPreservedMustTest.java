@@ -103,19 +103,31 @@ class ReplayCausalityPreservedMustTest {
             this.value = Objects.requireNonNull(value, "value must not be null");
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 此操作产生的<code>EntityType</code>结果
+         */
         @Override
         public EntityType getType() {
             return new StringEntityType("Order");
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 实际返回<code>value</code>，供调用方取得当前值
+         */
         @Override
         public String asString() {
             return value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * @return 实际返回<code>"Order:" + value</code>，供调用方取得当前值
+         */
         @Override
         public String asTypedString() {
             return "Order:" + value;

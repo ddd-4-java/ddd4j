@@ -128,7 +128,12 @@ public final class MQDeliveryPolicy {
         return jitterFactor;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 根据<code>jitterFactor</code>、<code>maxAttempts</code>比较对象的值是否相等。
+     *
+     * @param o 用来比较的另一个对象，允许为空
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -145,7 +150,11 @@ public final class MQDeliveryPolicy {
                 && maxBackoff.equals(that.maxBackoff);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         int result = leaseDuration.hashCode();
@@ -156,7 +165,11 @@ public final class MQDeliveryPolicy {
         return result;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>leaseDuration</code>、<code>maxAttempts</code>、<code>initialBackoff</code>、<code>maxBackoff</code>、<code>jitterFactor</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "MQDeliveryPolicy[leaseDuration=" + leaseDuration + ", maxAttempts=" + maxAttempts

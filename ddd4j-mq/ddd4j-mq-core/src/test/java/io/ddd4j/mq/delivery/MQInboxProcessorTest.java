@@ -84,7 +84,16 @@ class MQInboxProcessorTest {
         /** \u6700\u8fd1\u4e00\u6b21\u56de\u8c03\u8bb0\u5f55\u7684\u4e1a\u52a1\u6216\u6620\u5c04\u952e\u3002 */
         private String lastKey;
 
-        /** {@inheritDoc} */
+        /**
+         * 在收件箱中首次登记消息处理记录。
+         *
+         * <p>测试夹具会调用 <code>records.add(lastKey)</code>。</p>
+         *
+         * @param consumerId 稳定消费者标识
+         * @param messageId 生产端传入的稳定消息标识
+         * @param processedAt 处理开始时间
+         * @return 实际返回<code>records.add(lastKey)</code>
+         */
         @Override
         public boolean recordIfAbsent(String consumerId, String messageId, Instant processedAt) {
             lastKey = consumerId + ':' + messageId;
@@ -98,19 +107,40 @@ class MQInboxProcessorTest {
         /** \u8bb0\u5f55\u6536\u4ef6\u7bb1\u5904\u7406\u89c2\u5bdf\u5668\u62a5\u544a\u7684\u5404\u6b21\u7ed3\u679c\u3002 */
         private final List<String> inboxOutcomes = new ArrayList<>();
 
-        /** {@inheritDoc} */
+        /**
+         * Inbox 首次成功处理消息。
+         *
+         * <p>测试夹具会调用 <code>inboxOutcomes.add("processed")</code>。</p>
+         *
+         * @param consumerId 消费者标识
+         * @param messageId 稳定消息标识
+         */
         @Override
         public void onInboxProcessed(String consumerId, String messageId) {
             inboxOutcomes.add("processed");
         }
 
-        /** {@inheritDoc} */
+        /**
+         * Inbox 识别到已处理的重复消息。
+         *
+         * <p>测试夹具会调用 <code>inboxOutcomes.add("duplicate")</code>。</p>
+         *
+         * @param consumerId 消费者标识
+         * @param messageId 稳定消息标识
+         */
         @Override
         public void onInboxDuplicate(String consumerId, String messageId) {
             inboxOutcomes.add("duplicate");
         }
 
-        /** {@inheritDoc} */
+        /**
+         * Inbox 记录或业务处理失败，调用方应保持不 ACK 以触发重投。
+         *
+         * <p>测试夹具会调用 <code>inboxOutcomes.add("failed")</code>。</p>
+         *
+         * @param consumerId 消费者标识
+         * @param messageId 稳定消息标识
+         */
         @Override
         public void onInboxFailed(String consumerId, String messageId) {
             inboxOutcomes.add("failed");

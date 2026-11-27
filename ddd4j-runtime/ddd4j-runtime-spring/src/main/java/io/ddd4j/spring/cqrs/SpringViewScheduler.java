@@ -45,7 +45,16 @@ public class SpringViewScheduler implements ViewScheduler {
         this.taskScheduler = taskScheduler;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 按给定时间规则安排任务。
+     *
+     * <p>Spring 实现调用 <code>taskScheduler.schedule(task, new CronTrigger(cron))</code>。</p>
+     *
+     * @param viewName 视图名称（用于日志 / 调试）
+     * @param cron CRON 表达式
+     * @param task 要执行的任务
+     * @return 任务句柄，可用于取消
+     */
     @Override
     public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
         ScheduledFuture<?> future = taskScheduler.schedule(task, new CronTrigger(cron));
@@ -68,13 +77,23 @@ public class SpringViewScheduler implements ViewScheduler {
             this.future = future;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 撤销当前任务句柄允许撤销的操作。
+         *
+         * <p>Spring 实现调用 <code>future.cancel(false)</code>。</p>
+         */
         @Override
         public void cancel() {
             future.cancel(false);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 检查当前句柄是否仍处于有效状态。
+         *
+         * <p>Spring 实现调用 <code>future.isCancelled()</code>。</p>
+         *
+         * @return 实际返回<code>!future.isCancelled() &amp;&amp; !future.isDone()</code>
+         */
         @Override
         public boolean isActive() {
             return !future.isCancelled() && !future.isDone();

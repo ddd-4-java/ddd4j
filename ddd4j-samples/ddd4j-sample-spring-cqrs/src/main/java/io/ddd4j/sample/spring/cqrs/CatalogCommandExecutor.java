@@ -39,7 +39,13 @@ public class CatalogCommandExecutor implements CommandExecutor<Command> {
         return api;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 声明当前处理器可以接收的命令类型。
+     *
+     * <p>此实现调用 <code>delegate.supportedCommands()</code>。</p>
+     *
+     * @return 当前处理器声明可接收的命令类型集合
+     */
     @Override
     public Set<Class<? extends Command>> supportedCommands() {
         return delegate.supportedCommands();

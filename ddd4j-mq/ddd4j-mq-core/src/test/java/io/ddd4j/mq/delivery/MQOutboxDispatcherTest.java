@@ -197,19 +197,42 @@ class MQOutboxDispatcherTest {
             this.claimed = claimed;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 提供测试替身回调，调用时保持夹具状态。
+         *
+         * @param record 待发布消息
+         */
         @Override
         public void append(MQOutboxRecord record) {
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 原子领取当前可投递的消息，并写入发布实例的短期租约。
+         *
+         * <p>此实现更新<code>this.leaseOwner = leaseOwner</code>。</p>
+         *
+         * @param leaseOwner 当前发布实例标识
+         * @param now 当前时间
+         * @param limit 最多领取数量
+         * @param policy 投递策略
+         * @return 实际返回<code>claimed</code>，供调用方取得当前值
+         */
         @Override
         public List<MQOutboxRecord> claim(String leaseOwner, Instant now, int limit, MQDeliveryPolicy policy) {
             this.leaseOwner = leaseOwner;
             return claimed;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 将指定发件箱记录标记为已发布。
+         *
+         * <p>测试夹具会调用 <code>published.add(messageId)</code>。</p>
+         *
+         * @param messageId 消息标识
+         * @param leaseOwner 租约持有者
+         * @param publishedAt 发布确认时间
+         * @return 实际返回<code>publishConfirmed</code>
+         */
         @Override
         public boolean markPublished(String messageId, String leaseOwner, Instant publishedAt) {
             published.add(messageId);
@@ -219,7 +242,18 @@ class MQOutboxDispatcherTest {
             return publishConfirmed;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 为失败的发件箱记录安排下一次发布。
+         *
+         * <p>满足 <code>rescheduleFailure</code> 时抛出 <code>IllegalStateException</code>。 测试夹具会调用 <code>rescheduled.add(messageId)</code>。</p>
+         *
+         * @param messageId 消息标识
+         * @param leaseOwner 租约持有者
+         * @param failedAt 失败时间
+         * @param lastError 可诊断失败原因
+         * @param policy 投递策略
+         * @return 此实现返回<code>true</code>
+         */
         @Override
         public boolean reschedule(String messageId, String leaseOwner, Instant failedAt, String lastError,
                                   MQDeliveryPolicy policy) {
@@ -230,7 +264,13 @@ class MQOutboxDispatcherTest {
             return true;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 将死信显式重放为待投递状态。
+         *
+         * @param messageId 消息标识
+         * @param availableAt 重放可投递时间
+         * @return 此实现返回<code>false</code>
+         */
         @Override
         public boolean replay(String messageId, Instant availableAt) {
             return false;
@@ -243,25 +283,49 @@ class MQOutboxDispatcherTest {
         /** \u8bb0\u5f55\u53d1\u4ef6\u7bb1\u89c2\u5bdf\u5668\u62a5\u544a\u7684\u5404\u6b21\u6295\u9012\u7ed3\u679c\u3002 */
         private final List<String> outboxOutcomes = new ArrayList<>();
 
-        /** {@inheritDoc} */
+        /**
+         * Outbox 消息已由持有租约的实例确认发布。
+         *
+         * <p>测试夹具会调用 <code>outboxOutcomes.add("published")</code>。</p>
+         *
+         * @param record 已发布记录
+         */
         @Override
         public void onOutboxPublished(MQOutboxRecord record) {
             outboxOutcomes.add("published");
         }
 
-        /** {@inheritDoc} */
+        /**
+         * Outbox 消息已安排后续重试。
+         *
+         * <p>测试夹具会调用 <code>outboxOutcomes.add("retry")</code>。</p>
+         *
+         * @param record 投递失败记录
+         */
         @Override
         public void onOutboxRetry(MQOutboxRecord record) {
             outboxOutcomes.add("retry");
         }
 
-        /** {@inheritDoc} */
+        /**
+         * Outbox 消息已超过重试上限并进入死信状态。
+         *
+         * <p>测试夹具会调用 <code>outboxOutcomes.add("dead")</code>。</p>
+         *
+         * @param record 死信记录
+         */
         @Override
         public void onOutboxDead(MQOutboxRecord record) {
             outboxOutcomes.add("dead");
         }
 
-        /** {@inheritDoc} */
+        /**
+         * Outbox 发送或状态确认失败，最终状态尚未确定。
+         *
+         * <p>测试夹具会调用 <code>outboxOutcomes.add("failed")</code>。</p>
+         *
+         * @param record 投递状态不确定的记录
+         */
         @Override
         public void onOutboxFailed(MQOutboxRecord record) {
             outboxOutcomes.add("failed");

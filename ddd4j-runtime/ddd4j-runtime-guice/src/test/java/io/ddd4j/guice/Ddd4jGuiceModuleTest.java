@@ -409,13 +409,26 @@ class Ddd4jGuiceModuleTest {
     /** \u63a5\u6536\u6d4b\u8bd5\u547d\u4ee4\u5e76\u8fd4\u56de\u53ef\u65ad\u8a00\u7ed3\u679c\u7684\u6267\u884c\u5668\u66ff\u8eab\u3002 */
     public static class ExecutorStub implements io.ddd4j.core.cqrs.command.CommandExecutor<io.ddd4j.core.cqrs.command.Command> {
 
-        /** {@inheritDoc} */
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>java.util.Collections.emptySet()</code>。</p>
+         *
+         * @return 实际返回<code>java.util.Collections.emptySet()</code>
+         */
         @Override
         public java.util.Set<Class<? extends io.ddd4j.core.cqrs.command.Command>> supportedCommands() {
             return java.util.Collections.emptySet();
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>io.ddd4j.core.cqrs.command.Result.ok()</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>io.ddd4j.core.cqrs.command.Result.ok()</code>
+         */
         @Override
         public io.ddd4j.core.cqrs.command.Result execute(io.ddd4j.core.cqrs.command.Command command) {
             return io.ddd4j.core.cqrs.command.Result.ok();

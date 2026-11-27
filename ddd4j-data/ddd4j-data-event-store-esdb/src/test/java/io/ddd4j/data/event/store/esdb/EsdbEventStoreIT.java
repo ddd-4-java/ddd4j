@@ -178,13 +178,21 @@ class EsdbEventStoreIT {
             return this == o || (o instanceof TestId && java.util.Objects.equals(value, ((TestId) o).value));
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             return java.util.Objects.hashCode(value);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 生成用于调试和日志的对象描述。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "TestId{" + value + "}";

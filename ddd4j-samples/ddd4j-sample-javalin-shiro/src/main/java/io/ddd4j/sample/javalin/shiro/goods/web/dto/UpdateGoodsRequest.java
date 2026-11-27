@@ -120,7 +120,12 @@ public class UpdateGoodsRequest {
         return other instanceof UpdateGoodsRequest;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 比较两个对象的值是否相等。
+     *
+     * @param o 用来比较的另一个对象，允许为空
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -136,7 +141,11 @@ public class UpdateGoodsRequest {
         return Objects.equals(this.getName(), other.getName()) && Objects.equals(this.getPrice(), other.getPrice());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         int result = 1;
@@ -145,7 +154,11 @@ public class UpdateGoodsRequest {
         return result;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>name</code>、<code>price</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "UpdateGoodsRequest[name=" + name + ", price=" + price + "]";

@@ -77,7 +77,7 @@ public interface RedisStreamOperations extends AutoCloseable {
      */
     Object nativeClient();
 
-    /** {@inheritDoc} */
+    /** 接收<code>close</code>回调，当前实现无需在此步骤更新状态。 */
     @Override
     default void close() {
     }

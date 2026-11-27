@@ -24,7 +24,11 @@ import java.util.Objects;
  */
 public final class StartsWithFunction implements NamedQLFunction {
 
-    /** {@inheritDoc} */
+    /**
+     * 返回注册或识别当前实现的名称。
+     *
+     * @return 实际返回<code>"startsWith"</code>，供调用方取得当前值
+     */
     @Override
     public String name() {
         return "startsWith";

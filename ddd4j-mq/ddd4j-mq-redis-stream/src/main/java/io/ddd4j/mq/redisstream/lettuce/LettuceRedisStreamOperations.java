@@ -99,13 +99,28 @@ public class LettuceRedisStreamOperations implements RedisStreamOperations {
         return RedisClient.create(redisUrl);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 向 Redis Stream 添加消息。
+     *
+     * <p>Lettuce 实现调用 <code>commands.xadd(stream, new XAddArgs().id("*"), fields)</code>。</p>
+     *
+     * @param stream Stream 名称
+     * @param fields 消息字段
+     * @return 实际返回<code>commands.xadd(stream, new XAddArgs().id("*"), fields)</code>
+     */
     @Override
     public String add(String stream, Map<String, String> fields) {
         return commands.xadd(stream, new XAddArgs().id("*"), fields);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 创建 Redis Stream 消费者组。
+     *
+     * <p>Lettuce 实现调用 <code>commands.xgroupCreate(StreamOffset.from(stream, "$"), group, new XGroupCreateArgs().mkstream(true))</code>。</p>
+     *
+     * @param stream Stream 名称
+     * @param group 消费者组名
+     */
     @Override
     public void createGroup(String stream, String group) {
         try {
@@ -120,7 +135,18 @@ public class LettuceRedisStreamOperations implements RedisStreamOperations {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 以指定消费者组和消费者身份读取 Redis Stream 消息。
+     *
+     * <p>Lettuce 实现调用 <code>streams.stream()</code>。</p>
+     *
+     * @param group 消费者组名
+     * @param consumer 消费者名称
+     * @param count 每次读取的最大条数
+     * @param blockMillis 阻塞等待毫秒数
+     * @param streams 要读取的 Stream 集合
+     * @return 实际返回<code>result</code>
+     */
     @Override
     @SuppressWarnings("unchecked")
     public Map<String, List<RedisStreamRecord>> readGroup(
@@ -145,13 +171,25 @@ public class LettuceRedisStreamOperations implements RedisStreamOperations {
         return result;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 确认本次投递或将已处理的位置通知 broker。
+     *
+     * <p>Lettuce 实现调用 <code>commands.xack(stream, group, entryId)</code>。</p>
+     *
+     * @param stream Stream 名称
+     * @param group 消费者组名
+     * @param entryId 消息条目 ID
+     */
     @Override
     public void ack(String stream, String group, String entryId) {
         commands.xack(stream, group, entryId);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 返回此适配器持有的原生客户端。
+     *
+     * @return 底层客户端实例
+     */
     @Override
     public Object nativeClient() {
         return nativeClient;

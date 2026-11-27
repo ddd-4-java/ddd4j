@@ -44,13 +44,25 @@ public class LogWebInterceptor extends BaseWebInterceptor {
     @Autowired
     BaseWebProperties baseWebProperties;
 
-    /** {@inheritDoc} */
+    /**
+     * 获取拦截的请求路径模式。
+     *
+     * <p>此实现调用 <code>baseWebProperties.getLog().getIncludes().split(",")</code>。</p>
+     *
+     * @return 实际返回<code>baseWebProperties.getLog().getIncludes().split(",")</code>
+     */
     @Override
     public String[] pathPatterns() {
         return baseWebProperties.getLog().getIncludes().split(",");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 获取不拦截的请求路径模式。
+     *
+     * <p>此实现调用 <code>baseWebProperties.getLog().getExcludes().split(",")</code>。</p>
+     *
+     * @return 实际返回<code>baseWebProperties.getLog().getExcludes().split(",")</code>
+     */
     @Override
     public String[] excludePathPatterns() {
         return baseWebProperties.getLog().getExcludes().split(",");

@@ -141,19 +141,41 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
         return Double.parseDouble(val.toString());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 读取现有缓存值。
+     *
+     * <p>Caffeine 实现调用 <code>cache.getIfPresent(key)</code>。</p>
+     *
+     * @param key 当前操作使用的键
+     * @return 实际返回<code>cache.getIfPresent(key)</code>
+     */
     @Override
     public V getIfPresent(K key) {
         return cache.getIfPresent(key);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 读取调用指定的当前值。
+     *
+     * <p>Caffeine 实现调用 <code>cache.get(key, mappingFunction)</code>。</p>
+     *
+     * @param key 当前操作使用的键
+     * @param mappingFunction 传给 <code>cache.get(key, mappingFunction)</code>
+     * @return 实际返回<code>cache.get(key, mappingFunction)</code>
+     */
     @Override
     public V get(K key, Function<K, V> mappingFunction) {
         return cache.get(key, mappingFunction);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 读取调用指定的当前值。
+     *
+     * <p>Caffeine 实现调用 <code>((LoadingCache&lt;K, V&gt;)cache).get(key)</code>。</p>
+     *
+     * @param key 当前操作使用的键
+     * @return 根据执行路径返回<code>((LoadingCache&lt;K, V&gt;)cache).get(key)</code>、<code>cache.getIfPresent(key)</code>
+     */
     @Override
     public V get(K key) {
         // 自动加载缓存（LoadingCache）时自动加载；否则等价于 getIfPresent
@@ -163,25 +185,48 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
         return cache.getIfPresent(key);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 将给定数据写入当前存储。
+     *
+     * <p>Caffeine 实现调用 <code>cache.put(key, value)</code>。</p>
+     *
+     * @param key 当前操作使用的键
+     * @param value 要写入或作为比较条件传入的值
+     */
     @Override
     public void put(K key, V value) {
         cache.put(key, value);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 通过<code>cache.putAll(map)</code>处理当前调用。
+     *
+     * @param map 传给 <code>cache.putAll(map)</code>
+     */
     @Override
     public void putAll(Map<K, V> map) {
         cache.putAll(map);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 使指定键的缓存条目失效。
+     *
+     * <p>Caffeine 实现调用 <code>cache.invalidate(key)</code>。</p>
+     *
+     * @param key 当前操作使用的键
+     */
     @Override
     public void invalidate(K key) {
         cache.invalidate(key);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 刷新当前实现所持有的数据或状态。
+     *
+     * <p>Caffeine 实现调用 <code>((LoadingCache&lt;K, V&gt;)cache).refresh(key)</code>。</p>
+     *
+     * @param key 当前操作使用的键
+     */
     @Override
     public void refresh(K key) {
         if (cache instanceof LoadingCache) {
@@ -191,19 +236,35 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 使当前缓存中的全部条目失效。
+     *
+     * <p>Caffeine 实现调用 <code>cache.invalidateAll(keys)</code>。</p>
+     *
+     * @param keys 传给 <code>cache.invalidateAll(keys)</code>
+     */
     @Override
     public void invalidateAll(Iterable<K> keys) {
         cache.invalidateAll(keys);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 使当前缓存中的全部条目失效。
+     *
+     * <p>Caffeine 实现调用 <code>cache.invalidateAll()</code>。</p>
+     */
     @Override
     public void invalidateAll() {
         cache.invalidateAll();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 返回当前缓存条目规模的估算值。
+     *
+     * <p>Caffeine 实现调用 <code>cache.estimatedSize()</code>。</p>
+     *
+     * @return 实际返回<code>cache.estimatedSize()</code>
+     */
     @Override
     public long estimatedSize() {
         return cache.estimatedSize();
@@ -211,7 +272,13 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
 
     // ==================== CasCache 实现（基于 ConcurrentMap 原子操作） ====================
 
-    /** {@inheritDoc} */
+    /**
+     * 返回当前缓存实现记录的统计信息。
+     *
+     * <p>Caffeine 实现调用 <code>cache.stats()</code>。</p>
+     *
+     * @return 此操作产生的<code>CacheStats</code>结果
+     */
     @Override
     public CacheStats stats() {
         com.github.benmanes.caffeine.cache.stats.CacheStats caffeineStats = cache.stats();
@@ -252,7 +319,15 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
         return cache;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 在键尚无缓存值时写入给定值。
+     *
+     * <p>Caffeine 实现调用 <code>cache.asMap().putIfAbsent(key, value)</code>。</p>
+     *
+     * @param key 缓存键
+     * @param value 缓存值
+     * @return 实际返回<code>Objects.isNull(cache.asMap().putIfAbsent(key, value))</code>
+     */
     @Override
     public boolean putIfAbsent(K key, V value) {
         return Objects.isNull(cache.asMap().putIfAbsent(key, value));
@@ -260,7 +335,16 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
 
     // ==================== AtomicCache 实现（基于 ConcurrentMap.merge 原子操作） ====================
 
-    /** {@inheritDoc} */
+    /**
+     * 使用给定的新值更新数据。
+     *
+     * <p>Caffeine 实现调用 <code>cache.asMap().putIfAbsent(key, newValue)</code>。</p>
+     *
+     * @param key 缓存键
+     * @param expected 期望的旧值（null 表示期望 key 不存在）
+     * @param newValue 新值
+     * @return 根据执行路径返回<code>Objects.isNull(cache.asMap().putIfAbsent(key, newValue))</code>、<code>cache.asMap().replace(key, expected, newValue)</code>
+     */
     @Override
     public boolean replace(K key, V expected, V newValue) {
         if (Objects.isNull(expected)) {
@@ -270,13 +354,29 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
         return cache.asMap().replace(key, expected, newValue);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 在缓存值符合预期时删除该键。
+     *
+     * <p>Caffeine 实现调用 <code>cache.asMap().remove(key, expected)</code>。</p>
+     *
+     * @param key 缓存键
+     * @param expected 期望的旧值
+     * @return 实际返回<code>cache.asMap().remove(key, expected)</code>
+     */
     @Override
     public boolean removeIf(K key, V expected) {
         return cache.asMap().remove(key, expected);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 对当前计数或数值执行增加操作。
+     *
+     * <p>满足 <code>delta &lt; 0</code> 时抛出 <code>IllegalArgumentException</code>。 Caffeine 实现调用 <code>cache.asMap()</code>。</p>
+     *
+     * @param key 缓存键
+     * @param delta 增量（必须 不小于零）
+     * @return 实际返回<code>toLong(newVal)</code>
+     */
     @Override
     @SuppressWarnings("unchecked")
     public long increment(K key, long delta) {
@@ -288,7 +388,15 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
         return toLong(newVal);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 对当前计数或数值执行减少操作。
+     *
+     * <p>满足 <code>delta &lt; 0</code> 时抛出 <code>IllegalArgumentException</code>。 Caffeine 实现调用 <code>cache.asMap()</code>。</p>
+     *
+     * @param key 缓存键
+     * @param delta 减量（必须 不小于零）
+     * @return 实际返回<code>toLong(newVal)</code>
+     */
     @Override
     @SuppressWarnings("unchecked")
     public long decrement(K key, long delta) {
@@ -300,7 +408,15 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
         return toLong(newVal);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 对键对应的数值执行浮点加法。
+     *
+     * <p>满足 <code>delta &lt; 0</code> 时抛出 <code>IllegalArgumentException</code>。 Caffeine 实现调用 <code>cache.asMap()</code>。</p>
+     *
+     * @param key 缓存键
+     * @param delta 增量（必须 不小于零）
+     * @return 实际返回<code>toDouble(newVal)</code>
+     */
     @Override
     @SuppressWarnings("unchecked")
     public double incrementFloat(K key, double delta) {
@@ -312,7 +428,15 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
         return toDouble(newVal);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 对键对应的数值执行浮点减法。
+     *
+     * <p>满足 <code>delta &lt; 0</code> 时抛出 <code>IllegalArgumentException</code>。 Caffeine 实现调用 <code>cache.asMap()</code>。</p>
+     *
+     * @param key 缓存键
+     * @param delta 减量（必须 不小于零）
+     * @return 实际返回<code>toDouble(newVal)</code>
+     */
     @Override
     @SuppressWarnings("unchecked")
     public double decrementFloat(K key, double delta) {
@@ -326,7 +450,15 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
 
     // ==================== TTL 管理 ====================
 
-    /** {@inheritDoc} */
+    /**
+     * 尝试扣减键对应的库存。
+     *
+     * <p>Caffeine 实现调用 <code>cache.asMap()</code>。</p>
+     *
+     * @param key 缓存键
+     * @param quantity 扣减数量（必须 大于零）
+     * @return 根据执行路径返回<code>AtomicCache.STOCK_ILLEGAL_ARG</code>、<code>(Long)holder[0]</code>
+     */
     @Override
     public long stockDecrement(K key, long quantity) {
         if (quantity <= 0) {
@@ -356,7 +488,15 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
         return (Long) holder[0];
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 增加键对应的库存。
+     *
+     * <p>Caffeine 实现调用 <code>cache.asMap()</code>。</p>
+     *
+     * @param key 缓存键
+     * @param quantity 回补数量（必须 大于零）
+     * @return 根据执行路径返回<code>AtomicCache.STOCK_ILLEGAL_ARG</code>、<code>toLong(val)</code>
+     */
     @Override
     @SuppressWarnings("unchecked")
     public long stockIncrement(K key, long quantity) {
@@ -368,7 +508,13 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
         return toLong(val);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 为指定键更新失效时间。
+     *
+     * @param key 当前操作使用的键
+     * @param seconds 用于此操作的 <code>seconds</code>（<code>long</code>）
+     * @return 此实现返回<code>false</code>
+     */
     @Override
     public boolean expire(K key, long seconds) {
         // Caffeine 不支持单 key 动态设置过期时间，需通过 expireAfter 策略在构建时配置
@@ -378,14 +524,24 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
 
     // ==================== 内部工具 ====================
 
-    /** {@inheritDoc} */
+    /**
+     * 查询键的剩余有效时间。
+     *
+     * @param key 当前操作使用的键
+     * @return 实际返回<code>-3L</code>，供调用方取得当前值
+     */
     @Override
     public long getExpire(K key) {
         // Caffeine 不暴露单 key 的剩余过期时间
         return -3L;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 移除指定键上的到期限制。
+     *
+     * @param key 当前操作使用的键
+     * @return 此实现返回<code>false</code>
+     */
     @Override
     public boolean persist(K key) {
         return false;
@@ -393,7 +549,16 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
 
     // ==================== CAS SPI 实现（基于 asMap().compute 原子回调）====================
 
-    /** {@inheritDoc} */
+    /**
+     * 比较缓存中的现值或版本并尝试原子修改。
+     *
+     * <p>Caffeine 实现调用 <code>cache.asMap()</code>。</p>
+     *
+     * @param key 当前操作使用的键
+     * @param expireSeconds 用于此操作的 <code>expireSeconds</code>（<code>long</code>）
+     * @param operation 用于此操作的 <code>operation</code>（<code>CASOperation&lt;V, V&gt;</code>）
+     * @return 此操作产生的<code>V</code>结果
+     */
     @Override
     public V compareAndSet(K key, long expireSeconds, CASOperation<V, V> operation) {
         // Caffeine 的 asMap().compute 是 JVM 内原子回调，天然等价于 CASOperation
@@ -420,7 +585,16 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
         });
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 比较缓存中的现值或版本并尝试原子修改。
+     *
+     * <p>Caffeine 实现调用 <code>cache.asMap().putIfAbsent(key, newValue)</code>。</p>
+     *
+     * @param key 当前操作使用的键
+     * @param expectedOldValue 传给 <code>cache.asMap().replace(key, expectedOldValue, newValue)</code>
+     * @param newValue 传给 <code>cache.asMap().putIfAbsent(key, newValue)</code>
+     * @return 根据执行路径返回<code>Objects.isNull(cache.asMap().putIfAbsent(key, newValue))</code>、<code>cache.asMap().replace(key, expectedOldValue, newValue)</code>
+     */
     @Override
     public boolean compareAndSet(K key, V expectedOldValue, V newValue) {
         if (Objects.isNull(expectedOldValue)) {

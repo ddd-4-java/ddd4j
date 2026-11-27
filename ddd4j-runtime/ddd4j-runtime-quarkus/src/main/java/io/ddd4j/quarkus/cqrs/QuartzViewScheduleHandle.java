@@ -57,7 +57,11 @@ class QuartzViewScheduleHandle implements ViewScheduler.ViewScheduleHandle {
         this.identity = identity;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 撤销当前任务句柄允许撤销的操作。
+     *
+     * <p>此实现调用 <code>active.compareAndSet(true, false)</code>。</p>
+     */
     @Override
     public void cancel() {
         if (active.compareAndSet(true, false)) {
@@ -71,7 +75,13 @@ class QuartzViewScheduleHandle implements ViewScheduler.ViewScheduleHandle {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 检查当前句柄是否仍处于有效状态。
+     *
+     * <p>此实现调用 <code>active.get()</code>。</p>
+     *
+     * @return 实际返回<code>active.get()</code>
+     */
     @Override
     public boolean isActive() {
         return active.get();

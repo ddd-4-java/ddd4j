@@ -85,7 +85,14 @@ public class InMemorySubject implements Subject {
         clearCurrentToken();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 读取当前会话的认证主体。
+     *
+     * <p>此实现调用 <code>currentToken()</code>。</p>
+     *
+     * @param <T> AuthPrincipal 子类型
+     * @return 当前会话绑定的主体
+     */
     @Override
     public <T extends AuthPrincipal> T getPrincipal() {
         String token = currentToken();
@@ -95,19 +102,42 @@ public class InMemorySubject implements Subject {
         return (T) principalByToken(token);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 查询指定登录标识关联的认证主体。
+     *
+     * <p>此实现调用 <code>principalByLoginId(loginId)</code>。</p>
+     *
+     * @param <T> AuthPrincipal 子类型
+     * @param loginId 登录账号 ID
+     * @return 给定登录标识关联的主体
+     */
     @Override
     public <T extends AuthPrincipal> T getPrincipalByLoginId(Object loginId) {
         return (T) principalByLoginId(loginId);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 查询指定令牌关联的认证主体。
+     *
+     * <p>此实现调用 <code>principalByToken(tokenValue)</code>。</p>
+     *
+     * @param <T> AuthPrincipal 子类型
+     * @param tokenValue 会话凭证（Token / SessionId）
+     * @return 给定令牌关联的主体
+     */
     @Override
     public <T extends AuthPrincipal> T getPrincipalByToken(String tokenValue) {
         return (T) principalByToken(tokenValue);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 以传入的凭据启动认证会话。
+     *
+     * <p>此实现调用 <code>validate(request)</code>。</p>
+     *
+     * @param request 登录请求（loginId + 密码 + 扩展信息 + 有效期）
+     * @return 实际返回<code>token</code>
+     */
     @Override
     public String login(AuthRequest request) {
         try {
@@ -126,7 +156,11 @@ public class InMemorySubject implements Subject {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 结束由当前调用指定的认证会话。
+     *
+     * <p>此实现调用 <code>currentToken()</code>。</p>
+     */
     @Override
     public void logout() {
         String token = currentToken();
@@ -142,7 +176,13 @@ public class InMemorySubject implements Subject {
         clearCurrentToken();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 结束由当前调用指定的认证会话。
+     *
+     * <p>此实现调用 <code>cacheKey(loginId)</code>。</p>
+     *
+     * @param loginId 账号 ID
+     */
     @Override
     public void logout(Object loginId) {
         String loginIdKey = cacheKey(loginId);
@@ -157,13 +197,25 @@ public class InMemorySubject implements Subject {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 强制结束指定身份关联的登录会话。
+     *
+     * <p>此实现调用 <code>logout(loginId)</code>。</p>
+     *
+     * @param loginId 账号 ID
+     */
     @Override
     public void kickout(Object loginId) {
         logout(loginId);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 刷新当前实现所持有的数据或状态。
+     *
+     * <p>此实现调用 <code>getPrincipal()</code>。</p>
+     *
+     * @return 根据执行路径返回<code>null</code>、<code>newToken</code>
+     */
     @Override
     public String refresh() {
         AuthPrincipal principal = getPrincipal();
@@ -179,37 +231,82 @@ public class InMemorySubject implements Subject {
         return newToken;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 校验当前调用传入的数据或凭据。
+     *
+     * <p>此实现调用 <code>getPrincipalByToken(token)</code>。</p>
+     *
+     * @param <T> AuthPrincipal 子类型
+     * @param token 会话凭证
+     * @return 实际返回<code>getPrincipalByToken(token)</code>
+     */
     @Override
     public <T extends AuthPrincipal> T verify(String token) {
         return getPrincipalByToken(token);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 检查身份是否拥有指定权限。
+     *
+     * <p>此实现调用 <code>hasPermission(getPrincipal(), permission)</code>。</p>
+     *
+     * @param permission 权限标识（如 {@code "order:create"}）
+     * @return 请求的权限被授予时为真
+     */
     @Override
     public boolean isPermitted(String permission) {
         return hasPermission(getPrincipal(), permission);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 检查身份是否拥有指定权限。
+     *
+     * <p>此实现调用 <code>hasPermission(getPrincipalByLoginId(loginId), permission)</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @param permission 权限标识
+     * @return 请求的权限被授予时为真
+     */
     @Override
     public boolean isPermitted(Object loginId, String permission) {
         return hasPermission(getPrincipalByLoginId(loginId), permission);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 检查身份是否拥有指定权限。
+     *
+     * <p>此实现调用 <code>permissionChecks(getPrincipal(), permissions)</code>。</p>
+     *
+     * @param permissions 权限标识列表
+     * @return 请求的权限被授予时为真
+     */
     @Override
     public boolean[] isPermitted(String... permissions) {
         return permissionChecks(getPrincipal(), permissions);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 检查身份是否拥有指定权限。
+     *
+     * <p>此实现调用 <code>permissionChecks(getPrincipalByLoginId(loginId), permissions)</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @param permissions 权限标识列表
+     * @return 请求的权限被授予时为真
+     */
     @Override
     public boolean[] isPermitted(Object loginId, String... permissions) {
         return permissionChecks(getPrincipalByLoginId(loginId), permissions);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 检查身份是否具有给定权限中的任意一项。
+     *
+     * <p>此实现调用 <code>isPermitted(permissions)</code>。</p>
+     *
+     * @param permissions 权限标识列表
+     * @return 至少有一项请求权限被授予时为真
+     */
     @Override
     public boolean isPermittedAny(String... permissions) {
         for (boolean permitted : isPermitted(permissions)) {
@@ -220,7 +317,15 @@ public class InMemorySubject implements Subject {
         return false;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 检查身份是否具有给定权限中的任意一项。
+     *
+     * <p>此实现调用 <code>isPermitted(loginId, permissions)</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @param permissions 权限标识列表
+     * @return 至少有一项请求权限被授予时为真
+     */
     @Override
     public boolean isPermittedAny(Object loginId, String... permissions) {
         for (boolean permitted : isPermitted(loginId, permissions)) {
@@ -231,13 +336,28 @@ public class InMemorySubject implements Subject {
         return false;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 检查身份是否具有全部给定权限。
+     *
+     * <p>此实现调用 <code>allTrue(isPermitted(permissions))</code>。</p>
+     *
+     * @param permissions 权限标识列表
+     * @return 所有请求权限都被授予时为真
+     */
     @Override
     public boolean isPermittedAll(String... permissions) {
         return allTrue(isPermitted(permissions));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 检查身份是否具有全部给定权限。
+     *
+     * <p>此实现调用 <code>allTrue(isPermitted(loginId, permissions))</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @param permissions 权限标识列表
+     * @return 所有请求权限都被授予时为真
+     */
     @Override
     public boolean isPermittedAll(Object loginId, String... permissions) {
         return allTrue(isPermitted(loginId, permissions));
@@ -264,19 +384,41 @@ public class InMemorySubject implements Subject {
         return hasRole(getPrincipalByLoginId(loginId), roleIdentifier);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 按输入顺序逐项判断身份的角色归属。
+     *
+     * <p>此实现调用 <code>roleChecks(getPrincipal(), roleIdentifiers)</code>。</p>
+     *
+     * @param roleIdentifiers 角色标识列表
+     * @return 实际返回<code>roleChecks(getPrincipal(), roleIdentifiers)</code>
+     */
     @Override
     public boolean[] hasRoles(String... roleIdentifiers) {
         return roleChecks(getPrincipal(), roleIdentifiers);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 按输入顺序逐项判断身份的角色归属。
+     *
+     * <p>此实现调用 <code>roleChecks(getPrincipalByLoginId(loginId), roleIdentifiers)</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @param roleIdentifiers 角色标识列表
+     * @return 实际返回<code>roleChecks(getPrincipalByLoginId(loginId), roleIdentifiers)</code>
+     */
     @Override
     public boolean[] hasRoles(Object loginId, String... roleIdentifiers) {
         return roleChecks(getPrincipalByLoginId(loginId), roleIdentifiers);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 检查身份是否具有给定角色中的任意一个。
+     *
+     * <p>此实现调用 <code>hasRoles(roleIdentifiers)</code>。</p>
+     *
+     * @param roleIdentifiers 角色标识列表
+     * @return 至少具有一个指定角色时为真
+     */
     @Override
     public boolean hasAnyRole(String... roleIdentifiers) {
         for (boolean hasRole : hasRoles(roleIdentifiers)) {
@@ -287,7 +429,15 @@ public class InMemorySubject implements Subject {
         return false;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 检查身份是否具有给定角色中的任意一个。
+     *
+     * <p>此实现调用 <code>hasRoles(loginId, roleIdentifiers)</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @param roleIdentifiers 角色标识列表
+     * @return 至少具有一个指定角色时为真
+     */
     @Override
     public boolean hasAnyRole(Object loginId, String... roleIdentifiers) {
         for (boolean hasRole : hasRoles(loginId, roleIdentifiers)) {
@@ -298,58 +448,119 @@ public class InMemorySubject implements Subject {
         return false;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 检查身份是否具有全部给定角色。
+     *
+     * <p>此实现调用 <code>allTrue(hasRoles(roleIdentifiers))</code>。</p>
+     *
+     * @param roleIdentifiers 角色标识列表
+     * @return 具有全部指定角色时为真
+     */
     @Override
     public boolean hasAllRole(String... roleIdentifiers) {
         return allTrue(hasRoles(roleIdentifiers));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 检查身份是否具有全部给定角色。
+     *
+     * <p>此实现调用 <code>allTrue(hasRoles(loginId, roleIdentifiers))</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @param roleIdentifiers 角色标识列表
+     * @return 具有全部指定角色时为真
+     */
     @Override
     public boolean hasAllRole(Object loginId, String... roleIdentifiers) {
         return allTrue(hasRoles(loginId, roleIdentifiers));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 检查当前会话是否已经认证。
+     *
+     * <p>此实现调用 <code>getPrincipal()</code>。</p>
+     *
+     * @return 当前会话通过身份认证时为真
+     */
     @Override
     public boolean isAuthenticated() {
         return Objects.nonNull(getPrincipal());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 检查当前会话是否已经认证。
+     *
+     * <p>此实现调用 <code>principalByLoginId(loginId)</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @return 当前会话通过身份认证时为真
+     */
     @Override
     public boolean isAuthenticated(Object loginId) {
         return Objects.nonNull(principalByLoginId(loginId));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 判断当前身份是否由记住登录状态恢复。
+     *
+     * @return 此实现返回<code>false</code>
+     */
     @Override
     public boolean isRemembered() {
         return false;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 检查当前认证实现是否将给定设备识别为受信设备。
+     *
+     * <p>此实现调用 <code>getPrincipal()</code>。</p>
+     *
+     * @param deviceId 设备标识
+     * @return 实际返回<code>Objects.nonNull(principal) &amp;&amp; Objects.equals(principal.getDeviceId(), deviceId)</code>
+     */
     @Override
     public boolean isTrustDeviceId(String deviceId) {
         AuthPrincipal principal = getPrincipal();
         return Objects.nonNull(principal) && Objects.equals(principal.getDeviceId(), deviceId);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 检查当前认证实现是否将给定设备识别为受信设备。
+     *
+     * <p>此实现调用 <code>getPrincipalByLoginId(userId)</code>。</p>
+     *
+     * @param userId 用户 ID
+     * @param deviceId 设备标识
+     * @return 实际返回<code>Objects.nonNull(principal) &amp;&amp; Objects.equals(principal.getDeviceId(), deviceId)</code>
+     */
     @Override
     public boolean isTrustDeviceId(Object userId, String deviceId) {
         AuthPrincipal principal = getPrincipalByLoginId(userId);
         return Objects.nonNull(principal) && Objects.equals(principal.getDeviceId(), deviceId);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 封禁账号，被封禁的账号在封禁期内无法登录。
+     *
+     * <p>此实现调用 <code>Instant.now().plusSeconds(timeout).getEpochSecond()</code>。</p>
+     *
+     * @param loginId 账号 ID
+     * @param timeout 封禁时长（秒），{@code -1} 代表永久封禁
+     */
     @Override
     public void disable(Object loginId, long timeout) {
         long disabledUntil = timeout < 0 ? PERMANENT_DISABLE : Instant.now().plusSeconds(timeout).getEpochSecond();
         CacheKit.put(DISABLED_UNTIL_CACHE, cacheKey(loginId), disabledUntil);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 判断当前限制是否禁止指定身份执行相应操作。
+     *
+     * <p>此实现调用 <code>CacheKit.get(DISABLED_UNTIL_CACHE, cacheKey(loginId))</code>。</p>
+     *
+     * @param loginId 账号 ID
+     * @return 根据执行路径返回<code>false</code>、<code>true</code>、<code>disabled</code>
+     */
     @Override
     public boolean isDisabled(Object loginId) {
         Long disabledUntil = CacheKit.get(DISABLED_UNTIL_CACHE, cacheKey(loginId));
@@ -366,7 +577,13 @@ public class InMemorySubject implements Subject {
         return disabled;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 解除指定身份的禁用限制。
+     *
+     * <p>此实现调用 <code>CacheKit.invalidate(DISABLED_UNTIL_CACHE, cacheKey(loginId))</code>。</p>
+     *
+     * @param loginId 账号 ID
+     */
     @Override
     public void untieDisable(Object loginId) {
         CacheKit.invalidate(DISABLED_UNTIL_CACHE, cacheKey(loginId));

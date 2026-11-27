@@ -75,7 +75,14 @@ public class InMemoryRoleRepository implements RoleRepository {
         return Optional.ofNullable(rows.get(id)).map(InMemoryRoleRepository::toModel);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 按角色编码查询角色。
+     *
+     * <p>此实现调用 <code>StrKit.isBlank(roleCode)</code>。</p>
+     *
+     * @param roleCode 角色编码
+     * @return 实际返回<code>Optional.empty()</code>
+     */
     @Override
     public Optional<Role> findByRoleCode(String roleCode) {
         if (StrKit.isBlank(roleCode)) {
@@ -87,7 +94,13 @@ public class InMemoryRoleRepository implements RoleRepository {
                 .map(InMemoryRoleRepository::toModel);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 查询存储中符合条件的记录。
+     *
+     * <p>此实现调用 <code>rows.values().stream()</code>。</p>
+     *
+     * @return 满足条件的结果列表
+     */
     @Override
     public List<Role> findAll() {
         return rows.values().stream()
@@ -95,7 +108,14 @@ public class InMemoryRoleRepository implements RoleRepository {
                 .collect(java.util.stream.Collectors.toList());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 写入或更新给定的领域对象或存储记录。
+     *
+     * <p>此实现调用 <code>rows.put(aggregate.id(), toRow(aggregate))</code>。</p>
+     *
+     * @param aggregate 传给 <code>rows.put(aggregate.id(), toRow(aggregate))</code>
+     * @return 实际返回<code>aggregate</code>
+     */
     @Override
     public Role save(Role aggregate) {
         Objects.requireNonNull(aggregate, "aggregate must not be null");

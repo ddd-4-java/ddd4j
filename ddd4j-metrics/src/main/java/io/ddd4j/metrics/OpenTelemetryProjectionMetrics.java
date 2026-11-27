@@ -120,13 +120,28 @@ public class OpenTelemetryProjectionMetrics implements ProjectionMetrics {
                 .getMeter(Objects.requireNonNull(instrumentationScope, "instrumentationScope must not be null")));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 投影运行开始回调。
+     *
+     * <p>此实现调用 <code>runCounter.add(1, Attributes.of(STREAM_ID, streamId))</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     */
     @Override
     public void onRunStarted(String streamId) {
         runCounter.add(1, Attributes.of(STREAM_ID, streamId));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 投影运行成功回调。
+     *
+     * <p>此实现调用 <code>Attributes.of(STREAM_ID, streamId)</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     * @param eventCount 本次处理的事件数量
+     * @param durationNanos 本次运行耗时（纳秒）
+     * @param positionAdvance 本次位置推进量（nextEventNumber - previousEventNumber）
+     */
     @Override
     public void onRunCompleted(String streamId, int eventCount, long durationNanos, long positionAdvance) {
         Attributes attrs = Attributes.of(STREAM_ID, streamId);
@@ -134,7 +149,14 @@ public class OpenTelemetryProjectionMetrics implements ProjectionMetrics {
         durationHistogram.record(durationNanos / 1_000_000.0, attrs);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 投影运行失败回调。
+     *
+     * <p>此实现调用 <code>errorCounter.add(1, Attributes.of(STREAM_ID, streamId))</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     * @param error 导致失败的异常
+     */
     @Override
     public void onRunFailed(String streamId, Throwable error) {
         errorCounter.add(1, Attributes.of(STREAM_ID, streamId));

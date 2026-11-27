@@ -42,7 +42,13 @@ import java.util.Arrays;
  */
 class GuiceCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
 
-    /** {@inheritDoc} */
+    /**
+     * 创建测试中用于操作当前框架的契约适配器。
+     *
+     * <p>测试夹具会调用 <code>Arrays.asList(executorA, executorB)</code>。</p>
+     *
+     * @return CQRS 运行时契约
+     */
     @Override
     protected CqrsRuntimeContract createContract() {
         StubExecutorA executorA = new StubExecutorA();

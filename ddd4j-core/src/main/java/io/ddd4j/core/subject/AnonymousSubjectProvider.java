@@ -36,7 +36,11 @@ public class AnonymousSubjectProvider implements SubjectProvider {
      */
     public static final AnonymousSubjectProvider INSTANCE = new AnonymousSubjectProvider();
 
-    /** {@inheritDoc} */
+    /**
+     * 取得当前请求使用的认证主体接口。
+     *
+     * @return 此实现返回<code>null</code>
+     */
     @Override
     public Subject getSubject() {
         return null; // 匿名：未登录

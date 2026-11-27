@@ -94,7 +94,15 @@ public class JetCacheCacheManager implements CacheManager {
         this.cacheArea = Objects.nonNull(cacheArea) ? cacheArea : DEFAULT_AREA;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 取得指定配置的缓存，必要时创建。
+     *
+     * @param <K> 缓存键类型
+     * @param <V> 缓存值类型
+     * @param name 缓存名称（业务标识）
+     * @param config 缓存配置
+     * @return 缓存实例
+     */
     @Override
     public <K, V> Cache<K, V> getOrCreateCache(String name, CacheConfig config) {
         return (Cache<K, V>) caches.computeIfAbsent(name, key -> {
@@ -105,19 +113,43 @@ public class JetCacheCacheManager implements CacheManager {
         });
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 获取已注册的缓存实例（不创建）。
+     *
+     * <p>此实现调用 <code>caches.get(name)</code>。</p>
+     *
+     * @param <K> 缓存键类型
+     * @param <V> 缓存值类型
+     * @param name 缓存名称
+     * @return 实际返回<code>(Cache&lt;K, V&gt;)caches.get(name)</code>
+     */
     @Override
     public <K, V> Cache<K, V> getCache(String name) {
         return (Cache<K, V>) caches.get(name);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 返回缓存管理器当前维护的缓存名称。
+     *
+     * <p>此实现调用 <code>caches.keySet()</code>。</p>
+     *
+     * @return 当前已登记的缓存名称
+     */
     @Override
     public Set<String> getCacheNames() {
         return caches.keySet();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 取得具有数据加载逻辑的缓存。
+     *
+     * @param <K> 缓存键类型
+     * @param <V> 缓存值类型
+     * @param name 缓存名称
+     * @param config 缓存配置
+     * @param loader 缓存加载器
+     * @return 自动加载缓存实例
+     */
     @Override
     public <K, V> Cache<K, V> getOrCreateLoadingCache(String name, CacheConfig config, Function<K, V> loader) {
         return (Cache<K, V>) caches.computeIfAbsent(name, key -> {

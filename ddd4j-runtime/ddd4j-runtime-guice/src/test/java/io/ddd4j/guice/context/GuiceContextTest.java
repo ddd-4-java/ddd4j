@@ -177,7 +177,7 @@ class GuiceContextTest {
     /** \u5728\u5f53\u524d\u7528\u4f8b\u6240\u9009\u7ebf\u7a0b\u4e0a\u6267\u884c\u53ef\u89c2\u5bdf\u7684\u4efb\u52a1\u3002 */
     public static final class CountingRunnable implements Runnable {
 
-        /** {@inheritDoc} */
+        /** 提供测试替身回调，调用时保持夹具状态。 */
         @Override
         public void run() {
         }
@@ -191,7 +191,7 @@ class GuiceContextTest {
             throw new IllegalStateException("cannot create");
         }
 
-        /** {@inheritDoc} */
+        /** 提供测试替身回调，调用时保持夹具状态。 */
         @Override
         public void run() {
         }

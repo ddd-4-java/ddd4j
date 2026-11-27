@@ -179,19 +179,31 @@ class R2dbcEventStorePostgresIT {
             this.value = value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 实际返回<code>TYPE</code>，供调用方取得当前值
+         */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 实际返回<code>value</code>，供调用方取得当前值
+         */
         @Override
         public String asString() {
             return value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * @return 实际返回<code>TYPE_NAME + ":" + value</code>，供调用方取得当前值
+         */
         @Override
         public String asTypedString() {
             return TYPE_NAME + ":" + value;
@@ -212,7 +224,11 @@ class R2dbcEventStorePostgresIT {
             return value.equals(other.value);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             return value.hashCode();

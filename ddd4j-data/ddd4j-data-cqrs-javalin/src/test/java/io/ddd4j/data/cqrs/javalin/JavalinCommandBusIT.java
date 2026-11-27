@@ -160,13 +160,26 @@ class JavalinCommandBusIT {
      */
     static class OverlappingMultiTypeHandler implements CommandExecutor<Command> {
 
-        /** {@inheritDoc} */
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>Arrays.asList(SampleCommand.class, CompanionCommand.class)</code>。</p>
+         *
+         * @return 支持的命令类型集合
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(SampleCommand.class, CompanionCommand.class)));
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>Result.ok()</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>Result.ok()</code>
+         */
         @Override
         public Result execute(Command command) {
             return Result.ok();

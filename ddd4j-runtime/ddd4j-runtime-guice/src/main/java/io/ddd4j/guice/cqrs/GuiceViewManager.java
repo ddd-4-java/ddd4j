@@ -112,7 +112,11 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
         this.projectionMetrics = projectionMetrics;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 启动当前组件并准备其运行资源。
+     *
+     * <p>此实现调用 <code>running.compareAndSet(false, true)</code>。</p>
+     */
     @Override
     public void start() {
         if (running.compareAndSet(false, true)) {
@@ -125,7 +129,11 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 停止当前组件并清理已登记的运行资源。
+     *
+     * <p>此实现调用 <code>running.compareAndSet(true, false)</code>。</p>
+     */
     @Override
     public void stop() {
         if (running.compareAndSet(true, false)) {
@@ -145,19 +153,33 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 结束当前组件持有的资源。
+     *
+     * <p>此实现调用 <code>stop()</code>。</p>
+     */
     @Override
     public void close() {
         stop();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 检查当前组件是否仍处于运行状态。
+     *
+     * <p>此实现调用 <code>running.get()</code>。</p>
+     *
+     * @return 实际返回<code>running.get()</code>
+     */
     @Override
     public boolean isRunning() {
         return running.get();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 请求立即执行指定投影视图的一轮更新。
+     *
+     * <p>此实现调用 <code>log.info("triggerOnce() should be implemented by concrete view logic")</code>。</p>
+     */
     @Override
     public void triggerOnce() {
         log.info("triggerOnce() should be implemented by concrete view logic");
@@ -190,7 +212,16 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
         return new ProjectionStatus(streamId, nextEventNumber, isRunning(), null, 0, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 按给定时间规则安排任务。
+     *
+     * <p>此实现调用 <code>ensureStarted()</code>。</p>
+     *
+     * @param viewName 视图名称（用于日志 / 调试）
+     * @param cron CRON 表达式
+     * @param task 要执行的任务
+     * @return 实际返回<code>scheduleAtFixedRate(viewName, period, task)</code>
+     */
     @Override
     public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
         ensureStarted();
@@ -287,13 +318,23 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
             this.future = future;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 撤销当前任务句柄允许撤销的操作。
+         *
+         * <p>此实现调用 <code>future.cancel(false)</code>。</p>
+         */
         @Override
         public void cancel() {
             future.cancel(false);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 检查当前句柄是否仍处于有效状态。
+         *
+         * <p>此实现调用 <code>future.isCancelled()</code>。</p>
+         *
+         * @return 实际返回<code>!future.isCancelled() &amp;&amp; !future.isDone()</code>
+         */
         @Override
         public boolean isActive() {
             return !future.isCancelled() && !future.isDone();

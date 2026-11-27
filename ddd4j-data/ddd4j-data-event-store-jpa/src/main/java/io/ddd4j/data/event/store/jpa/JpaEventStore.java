@@ -206,27 +206,34 @@ public class JpaEventStore implements EventStore {
     }
 
     /**
-     * {@inheritDoc}
+     * 向指定聚合的事件流追加这一批领域事件。
      *
-     *  <p>\u4e50\u89c2\u9501\uff1a\u5148\u67e5\u8be2\u5f53\u524d\u6d41\u6700\u5927\u7248\u672c\uff0c\u4e0e {@code expectedVersion} \u4e0d\u4e00\u81f4\u5373\u629b
-     *  {@link IllegalStateException}\u3002\u540c\u4e00\u805a\u5408\u7684 append \u64cd\u4f5c\u5728\u540c\u4e00\u4e8b\u52a1\u5185\u5b8c\u6210\uff0c
-     *  \u51b2\u7a81\u65f6\u6574\u4f53\u56de\u6eda\uff0c\u4e0d\u7559\u534a\u622a\u6d41\u3002
+     * <p>\u4e50\u89c2\u9501\uff1a\u5148\u67e5\u8be2\u5f53\u524d\u6d41\u6700\u5927\u7248\u672c\uff0c\u4e0e {@code expectedVersion} \u4e0d\u4e00\u81f4\u5373\u629b
+     *   {@link IllegalStateException}\u3002\u540c\u4e00\u805a\u5408\u7684 append \u64cd\u4f5c\u5728\u540c\u4e00\u4e8b\u52a1\u5185\u5b8c\u6210\uff0c
+     *   \u51b2\u7a81\u65f6\u6574\u4f53\u56de\u6eda\uff0c\u4e0d\u7559\u534a\u622a\u6d41\u3002
      *
-     *  <p>\u4e8b\u52a1\u8fb9\u754c\uff1a\u9ed8\u8ba4\u6a21\u5f0f\u5728\u672c\u65b9\u6cd5\u5185\u5f00\u542f\u7f16\u7a0b\u5f0f\u4e8b\u52a1\uff1b\u663e\u5f0f\u53c2\u4e0e\u6a21\u5f0f\u590d\u7528\u8c03\u7528\u65b9\u4e8b\u52a1\u3002
+     *   <p>\u4e8b\u52a1\u8fb9\u754c\uff1a\u9ed8\u8ba4\u6a21\u5f0f\u5728\u672c\u65b9\u6cd5\u5185\u5f00\u542f\u7f16\u7a0b\u5f0f\u4e8b\u52a1\uff1b\u663e\u5f0f\u53c2\u4e0e\u6a21\u5f0f\u590d\u7528\u8c03\u7528\u65b9\u4e8b\u52a1\u3002
      *
-     *  <p><b>\u6279\u91cf\u63d2\u5165</b></p>
-     *  <p>\u5faa\u73af\u6784\u9020 entity \u540e\uff0c\u5148 {@link EntityManager#flush()} \u89e6\u53d1 Hibernate \u6279\u91cf INSERT\uff1b
-     *  \u4ec5\u9ed8\u8ba4\u72ec\u7acb\u6a21\u5f0f\u518d\u901a\u8fc7 {@link EntityManager#clear()} \u6e05\u7a7a persistence context\u3002
-     *  \u9ed8\u8ba4\u72ec\u7acb\u6a21\u5f0f\u7684\u987a\u5e8f\u5f88\u5173\u952e\uff1a\u5148 flush \u518d clear \u624d\u80fd\u8ba9 Hibernate \u628a\u6240\u6709 INSERT \u5408\u5e76\u4e3a\u6279\u91cf SQL\u3002
+     *   <p><b>\u6279\u91cf\u63d2\u5165</b></p>
+     *   <p>\u5faa\u73af\u6784\u9020 entity \u540e\uff0c\u5148 {@link EntityManager#flush()} \u89e6\u53d1 Hibernate \u6279\u91cf INSERT\uff1b
+     *   \u4ec5\u9ed8\u8ba4\u72ec\u7acb\u6a21\u5f0f\u518d\u901a\u8fc7 {@link EntityManager#clear()} \u6e05\u7a7a persistence context\u3002
+     *   \u9ed8\u8ba4\u72ec\u7acb\u6a21\u5f0f\u7684\u987a\u5e8f\u5f88\u5173\u952e\uff1a\u5148 flush \u518d clear \u624d\u80fd\u8ba9 Hibernate \u628a\u6240\u6709 INSERT \u5408\u5e76\u4e3a\u6279\u91cf SQL\u3002
      *
-     *  <p>\u6279\u91cf\u63d2\u5165\u9700\u914d\u5408 Hibernate \u914d\u7f6e\u751f\u6548\uff1a
-     *  <pre>{@code
-     *  spring.jpa.properties.hibernate.jdbc.batch_size=50
-     *  spring.jpa.properties.hibernate.order_inserts=true
-     *  spring.jpa.properties.hibernate.order_updates=true
-     *  }</pre>
+     *   <p>\u6279\u91cf\u63d2\u5165\u9700\u914d\u5408 Hibernate \u914d\u7f6e\u751f\u6548\uff1a
+     *   <pre>{@code
+     *   spring.jpa.properties.hibernate.jdbc.batch_size=50
+     *   spring.jpa.properties.hibernate.order_inserts=true
+     *   spring.jpa.properties.hibernate.order_updates=true
+     *   }</pre>
      *
-     *  <p>\u672a\u914d\u7f6e batch_size \u65f6\uff0c\u6bcf\u6b21 flush \u4ecd\u4f1a\u53d1\u51fa\u5355\u6761 INSERT\uff08\u884c\u4e3a\u6b63\u786e\uff0c\u4f46\u65e0\u6027\u80fd\u63d0\u5347\uff09\u3002
+     *   <p>\u672a\u914d\u7f6e batch_size \u65f6\uff0c\u6bcf\u6b21 flush \u4ecd\u4f1a\u53d1\u51fa\u5355\u6761 INSERT\uff08\u884c\u4e3a\u6b63\u786e\uff0c\u4f46\u65e0\u6027\u80fd\u63d0\u5347\uff09\u3002
+     *
+     * <p>JPA 实现调用 <code>events.isEmpty()</code>。</p>
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId 聚合 ID
+     * @param events 要追加的事件（非空列表）
+     * @param expectedVersion 期望的当前版本号（乐观锁，空流为 0）
      */
     @Override
     public void append(String aggregateType, AggregateRootId aggregateId,
@@ -276,10 +283,14 @@ public class JpaEventStore implements EventStore {
     }
 
     /**
-     * {@inheritDoc}
+     * 按聚合查询其事件流并还原已存储的事件。
      *
-     *  <p>\u6309\u7248\u672c\u5347\u5e8f\u8bfb\u53d6\u6307\u5b9a\u805a\u5408\u7684\u5168\u90e8\u4e8b\u4ef6\u3002
-     *  \u4e8b\u4ef6\u8f7d\u8377\u901a\u8fc7 {@link EventPayloadSerializer} \u53cd\u5e8f\u5217\u5316\uff0c\u4e8b\u4ef6\u7c7b\u4e0d\u5b58\u5728\u65f6\u629b\u51fa\u5f02\u5e38\u3002
+     * <p>\u6309\u7248\u672c\u5347\u5e8f\u8bfb\u53d6\u6307\u5b9a\u805a\u5408\u7684\u5168\u90e8\u4e8b\u4ef6\u3002
+     *   \u4e8b\u4ef6\u8f7d\u8377\u901a\u8fc7 {@link EventPayloadSerializer} \u53cd\u5e8f\u5217\u5316\uff0c\u4e8b\u4ef6\u7c7b\u4e0d\u5b58\u5728\u65f6\u629b\u51fa\u5f02\u5e38\u3002
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId 聚合 ID
+     * @return 按版本升序的持久化事件；无事件时为空列表
      */
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId) {
@@ -292,7 +303,15 @@ public class JpaEventStore implements EventStore {
                 .collect(java.util.stream.Collectors.toList()));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 按聚合查询其事件流并还原已存储的事件。
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId 聚合 ID
+     * @param fromVersion 起始版本号（含）
+     * @param toVersion 结束版本号（含）
+     * @return 版本区间内的持久化事件，按版本升序
+     */
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId,
                                   long fromVersion, long toVersion) {
@@ -305,9 +324,15 @@ public class JpaEventStore implements EventStore {
     }
 
     /**
-     * {@inheritDoc}
+     * 按全局位置读取用于投影或重放的存储事件。
      *
-     *  <p>\u6309\u5168\u5c40 position \u5347\u5e8f\u5206\u9875\u8bfb\u53d6\u4e8b\u4ef6\u3002
+     * <p>\u6309\u5168\u5c40 position \u5347\u5e8f\u5206\u9875\u8bfb\u53d6\u4e8b\u4ef6\u3002
+     *
+     * <p>满足 <code>limit &lt;= 0</code> 时抛出 <code>IllegalArgumentException</code>。</p>
+     *
+     * @param fromPosition 起始 position（含）
+     * @param limit 最大读取数量
+     * @return position 升序的持久化事件
      */
     @Override
     public List<StoredEvent> readAll(long fromPosition, int limit) {
@@ -490,13 +515,21 @@ public class JpaEventStore implements EventStore {
             this.value = value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 实际返回<code>TYPE</code>，供调用方取得当前值
+         */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 不含类型标记的业务标识
+         */
         @Override
         @JsonValue
         public String asString() {
@@ -512,13 +545,26 @@ public class JpaEventStore implements EventStore {
             return value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * <p>此实现调用 <code>TYPE.asString()</code>。</p>
+         *
+         * @return 包含类型标记的标识
+         */
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 根据<code>value</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -531,7 +577,11 @@ public class JpaEventStore implements EventStore {
             return Objects.equals(value, other.value);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 0;
@@ -539,7 +589,11 @@ public class JpaEventStore implements EventStore {
             return result;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>value</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "StringAggregateRootId[value=" + value + "]";

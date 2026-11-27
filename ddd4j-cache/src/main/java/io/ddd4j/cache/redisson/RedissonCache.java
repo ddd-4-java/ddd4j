@@ -146,7 +146,14 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         return keyPrefix + key;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 读取现有缓存值。
+     *
+     * <p>Redisson 实现调用 <code>redissonClient.getBucket(key(key))</code>。</p>
+     *
+     * @param key 当前操作使用的键
+     * @return 根据执行路径返回<code>null</code>、<code>objectMapper.readValue(json, valueType)</code>
+     */
     @Override
     public V getIfPresent(String key) {
         try {
@@ -161,7 +168,15 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 读取调用指定的当前值。
+     *
+     * <p>Redisson 实现调用 <code>getIfPresent(key)</code>。</p>
+     *
+     * @param key 当前操作使用的键
+     * @param mappingFunction 传给 <code>mappingFunction.apply(key)</code>
+     * @return 实际返回<code>value</code>
+     */
     @Override
     public V get(String key, Function<String, V> mappingFunction) {
         V value = getIfPresent(key);
@@ -174,7 +189,14 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         return value;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 将给定数据写入当前存储。
+     *
+     * <p>Redisson 实现调用 <code>objectMapper.writeValueAsString(value)</code>。</p>
+     *
+     * @param key 当前操作使用的键
+     * @param value 要写入或作为比较条件传入的值
+     */
     @Override
     public void put(String key, V value) {
         try {
@@ -190,7 +212,13 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 使指定键的缓存条目失效。
+     *
+     * <p>Redisson 实现调用 <code>redissonClient.getBucket(key(key)).delete()</code>。</p>
+     *
+     * @param key 当前操作使用的键
+     */
     @Override
     public void invalidate(String key) {
         try {
@@ -217,13 +245,26 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         return -1;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 返回当前缓存实现记录的统计信息。
+     *
+     * @return 此实现返回<code>null</code>
+     */
     @Override
     public CacheStats stats() {
         return null;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 尝试获取分布式锁。
+     *
+     * <p>Redisson 实现调用 <code>redissonClient.getLock(keyPrefix + "lock:" + key).tryLock(waitSeconds, leaseSeconds, TimeUnit.SECONDS)</code>。</p>
+     *
+     * @param key 锁键
+     * @param waitSeconds 最多等待时间（秒），0 表示不等待
+     * @param leaseSeconds 持有时间（秒），超过自动释放（防死锁）
+     * @return 根据执行路径返回<code>redissonClient.getLock(keyPrefix + "lock:" + key).tryLock(waitSeconds, leaseSeconds, TimeUnit.SECONDS)</code>、<code>false</code>
+     */
     @Override
     public boolean tryLock(String key, long waitSeconds, long leaseSeconds) {
         try {
@@ -237,7 +278,13 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
 
     // ==================== CasCache 实现（基于 Redisson RBucket CAS） ====================
 
-    /** {@inheritDoc} */
+    /**
+     * 释放锁。
+     *
+     * <p>Redisson 实现调用 <code>redissonClient.getLock(keyPrefix + "lock:" + key).unlock()</code>。</p>
+     *
+     * @param key 锁键
+     */
     @Override
     public void unlock(String key) {
         try {
@@ -257,7 +304,15 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         return redissonClient.getLock(keyPrefix + "lock:" + key);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 在键尚无缓存值时写入给定值。
+     *
+     * <p>Redisson 实现调用 <code>objectMapper.writeValueAsString(value)</code>。</p>
+     *
+     * @param key 缓存键
+     * @param value 缓存值
+     * @return 根据执行路径返回<code>bucket.setIfAbsent(json, Duration.ofSeconds(expireSeconds))</code>、<code>bucket.setIfAbsent(json)</code>、<code>false</code>
+     */
     @Override
     public boolean putIfAbsent(String key, V value) {
         try {
@@ -274,7 +329,16 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
 
     // ==================== AtomicCache 实现（基于 Redisson RAtomicLong + Lua 库存脚本） ====================
 
-    /** {@inheritDoc} */
+    /**
+     * 使用给定的新值更新数据。
+     *
+     * <p>Redisson 实现调用 <code>objectMapper.writeValueAsString(expected)</code>。</p>
+     *
+     * @param key 缓存键
+     * @param expected 期望的旧值（null 表示期望 key 不存在）
+     * @param newValue 新值
+     * @return 根据执行路径返回<code>bucket.setIfAbsent(newJson)</code>、<code>bucket.compareAndSet(expectedJson, newJson)</code>、<code>false</code>
+     */
     @Override
     public boolean replace(String key, V expected, V newValue) {
         try {
@@ -290,7 +354,15 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 在缓存值符合预期时删除该键。
+     *
+     * <p>Redisson 实现调用 <code>objectMapper.writeValueAsString(expected)</code>。</p>
+     *
+     * @param key 缓存键
+     * @param expected 期望的旧值
+     * @return 根据执行路径返回<code>bucket.compareAndSet(expectedJson, null)</code>、<code>false</code>
+     */
     @Override
     public boolean removeIf(String key, V expected) {
         try {
@@ -302,7 +374,15 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 对当前计数或数值执行增加操作。
+     *
+     * <p>满足 <code>delta &lt; 0</code> 时抛出 <code>IllegalArgumentException</code>。 Redisson 实现调用 <code>redissonClient.getAtomicLong(key(key)).addAndGet(delta)</code>。</p>
+     *
+     * @param key 缓存键
+     * @param delta 增量（必须 不小于零）
+     * @return 实际返回<code>redissonClient.getAtomicLong(key(key)).addAndGet(delta)</code>
+     */
     @Override
     public long increment(String key, long delta) {
         if (delta < 0) {
@@ -311,7 +391,16 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         return redissonClient.getAtomicLong(key(key)).addAndGet(delta);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 对当前计数或数值执行增加操作。
+     *
+     * <p>Redisson 实现调用 <code>increment(key, delta)</code>。</p>
+     *
+     * @param key 缓存键
+     * @param delta 增量（必须 不小于零）
+     * @param seconds 过期时间（秒），仅对首次创建有效
+     * @return 实际返回<code>result</code>
+     */
     @Override
     public long increment(String key, long delta, long seconds) {
         long result = increment(key, delta);
@@ -320,7 +409,15 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         return result;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 对当前计数或数值执行减少操作。
+     *
+     * <p>满足 <code>delta &lt; 0</code> 时抛出 <code>IllegalArgumentException</code>。 Redisson 实现调用 <code>redissonClient.getAtomicLong(key(key)).addAndGet(-delta)</code>。</p>
+     *
+     * @param key 缓存键
+     * @param delta 减量（必须 不小于零）
+     * @return 实际返回<code>redissonClient.getAtomicLong(key(key)).addAndGet(-delta)</code>
+     */
     @Override
     public long decrement(String key, long delta) {
         if (delta < 0) {
@@ -329,7 +426,15 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         return redissonClient.getAtomicLong(key(key)).addAndGet(-delta);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 对键对应的数值执行浮点加法。
+     *
+     * <p>满足 <code>delta &lt; 0</code> 时抛出 <code>IllegalArgumentException</code>。 Redisson 实现调用 <code>redissonClient.getScript()</code>。</p>
+     *
+     * @param key 缓存键
+     * @param delta 增量（必须 不小于零）
+     * @return 递增后的值
+     */
     @Override
     public double incrementFloat(String key, double delta) {
         if (delta < 0) {
@@ -344,7 +449,15 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
                 String.valueOf(delta));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 对键对应的数值执行浮点减法。
+     *
+     * <p>满足 <code>delta &lt; 0</code> 时抛出 <code>IllegalArgumentException</code>。 Redisson 实现调用 <code>incrementFloat(key, -delta)</code>。</p>
+     *
+     * @param key 缓存键
+     * @param delta 减量（必须 不小于零）
+     * @return 实际返回<code>incrementFloat(key, -delta)</code>
+     */
     @Override
     public double decrementFloat(String key, double delta) {
         if (delta < 0) {
@@ -353,7 +466,15 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         return incrementFloat(key, -delta);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 尝试扣减键对应的库存。
+     *
+     * <p>Redisson 实现调用 <code>redissonClient.getScript()</code>。</p>
+     *
+     * @param key 缓存键
+     * @param quantity 扣减数量（必须 大于零）
+     * @return {@code >= 0} 剩余库存；负数表示失败（见返回值约定）
+     */
     @Override
     public long stockDecrement(String key, long quantity) {
         org.redisson.api.RScript script = redissonClient.getScript();
@@ -362,7 +483,15 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
                 java.util.Collections.singletonList(key(key)), quantity);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 增加键对应的库存。
+     *
+     * <p>Redisson 实现调用 <code>redissonClient.getScript()</code>。</p>
+     *
+     * @param key 缓存键
+     * @param quantity 回补数量（必须 大于零）
+     * @return {@code >= 0} 回补后的库存；负数表示失败
+     */
     @Override
     public long stockIncrement(String key, long quantity) {
         org.redisson.api.RScript script = redissonClient.getScript();
@@ -373,20 +502,42 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
 
     // ==================== TTL 管理 ====================
 
-    /** {@inheritDoc} */
+    /**
+     * 为指定键更新失效时间。
+     *
+     * <p>Redisson 实现调用 <code>redissonClient.getBucket(key(key)).expire(Duration.ofSeconds(seconds))</code>。</p>
+     *
+     * @param key 当前操作使用的键
+     * @param seconds 传给 <code>redissonClient.getBucket(key(key)).expire(Duration.ofSeconds(seconds))</code>
+     * @return 实际返回<code>redissonClient.getBucket(key(key)).expire(Duration.ofSeconds(seconds))</code>
+     */
     @Override
     public boolean expire(String key, long seconds) {
         return redissonClient.getBucket(key(key)).expire(Duration.ofSeconds(seconds));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 查询键的剩余有效时间。
+     *
+     * <p>Redisson 实现调用 <code>redissonClient.getBucket(key(key)).remainTimeToLive()</code>。</p>
+     *
+     * @param key 当前操作使用的键
+     * @return 实际返回<code>ttl &lt; 0 ? ttl : ttl / 1000</code>
+     */
     @Override
     public long getExpire(String key) {
         long ttl = redissonClient.getBucket(key(key)).remainTimeToLive();
         return ttl < 0 ? ttl : ttl / 1000;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 移除指定键上的到期限制。
+     *
+     * <p>Redisson 实现调用 <code>redissonClient.getBucket(key(key)).clearExpire()</code>。</p>
+     *
+     * @param key 当前操作使用的键
+     * @return 实际返回<code>redissonClient.getBucket(key(key)).clearExpire()</code>
+     */
     @Override
     public boolean persist(String key) {
         return redissonClient.getBucket(key(key)).clearExpire();
@@ -403,7 +554,16 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
 
     // ==================== CAS SPI 实现（基于 RBucket.compareAndSet 值比较 + 重试）====================
 
-    /** {@inheritDoc} */
+    /**
+     * 比较缓存中的现值或版本并尝试原子修改。
+     *
+     * <p>Redisson 实现调用 <code>key(key)</code>。</p>
+     *
+     * @param key 当前操作使用的键
+     * @param expireSeconds 传给 <code>bucket.expire(Duration.ofSeconds(expireSeconds))</code>
+     * @param operation 传给 <code>operation.maxRetries()</code>
+     * @return 根据执行路径返回<code>null</code>、<code>newValue</code>
+     */
     @Override
     @SuppressWarnings("unchecked")
     public V compareAndSet(String key, long expireSeconds, CASOperation<V, V> operation) {
@@ -456,7 +616,16 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         return null;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 比较缓存中的现值或版本并尝试原子修改。
+     *
+     * <p>Redisson 实现调用 <code>key(key)</code>。</p>
+     *
+     * @param key 当前操作使用的键
+     * @param expectedOldValue 传给 <code>serialize(expectedOldValue)</code>
+     * @param newValue 传给 <code>serialize(newValue)</code>
+     * @return 根据执行路径返回<code>bucket.setIfAbsent(newJson)</code>、<code>bucket.compareAndSet(expectedJson, newJson)</code>
+     */
     @Override
     public boolean compareAndSet(String key, V expectedOldValue, V newValue) {
         String cachedKey = key(key);

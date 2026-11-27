@@ -67,7 +67,11 @@ public final class SpiRegistrationScope implements AutoCloseable {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 结束当前组件持有的资源。
+     *
+     * <p>此实现调用 <code>rollback()</code>。</p>
+     */
     @Override
     public synchronized void close() {
         rollback();

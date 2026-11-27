@@ -267,7 +267,14 @@ public final class RegionEnum implements Comparable<RegionEnum> {
         return cname;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 比较当前对象与输入对象的顺序。
+     *
+     * <p>此实现调用 <code>name.compareTo(other.name)</code>。</p>
+     *
+     * @param other 与当前对象比较的对象
+     * @return 实际返回<code>name.compareTo(other.name)</code>
+     */
     @Override
     public int compareTo(RegionEnum other) {
         return name.compareTo(other.name);

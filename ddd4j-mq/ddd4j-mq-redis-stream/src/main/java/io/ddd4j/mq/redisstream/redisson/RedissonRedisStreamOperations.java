@@ -90,13 +90,28 @@ public class RedissonRedisStreamOperations implements RedisStreamOperations {
         return new StreamMessageId(id0, id1);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 向 Redis Stream 添加消息。
+     *
+     * <p>Redisson 实现调用 <code>stream(stream).add(StreamAddArgs.entries(fields)).toString()</code>。</p>
+     *
+     * @param stream Stream 名称
+     * @param fields 消息字段
+     * @return 实际返回<code>stream(stream).add(StreamAddArgs.entries(fields)).toString()</code>
+     */
     @Override
     public String add(String stream, Map<String, String> fields) {
         return stream(stream).add(StreamAddArgs.entries(fields)).toString();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 创建 Redis Stream 消费者组。
+     *
+     * <p>Redisson 实现调用 <code>stream(stream).createGroup(StreamCreateGroupArgs.name(group).id(StreamMessageId.NEWEST).makeStream())</code>。</p>
+     *
+     * @param stream Stream 名称
+     * @param group 消费者组名
+     */
     @Override
     public void createGroup(String stream, String group) {
         try {
@@ -110,7 +125,18 @@ public class RedissonRedisStreamOperations implements RedisStreamOperations {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 以指定消费者组和消费者身份读取 Redis Stream 消息。
+     *
+     * <p>Redisson 实现调用 <code>stream(stream)</code>。</p>
+     *
+     * @param group 消费者组名
+     * @param consumer 消费者名称
+     * @param count 每次读取的最大条数
+     * @param blockMillis 阻塞等待毫秒数
+     * @param streams 要读取的 Stream 集合
+     * @return 实际返回<code>result</code>
+     */
     @Override
     public Map<String, List<RedisStreamRecord>> readGroup(
             String group,
@@ -136,13 +162,25 @@ public class RedissonRedisStreamOperations implements RedisStreamOperations {
         return result;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 确认本次投递或将已处理的位置通知 broker。
+     *
+     * <p>Redisson 实现调用 <code>stream(stream).ack(group, messageId(entryId))</code>。</p>
+     *
+     * @param stream Stream 名称
+     * @param group 消费者组名
+     * @param entryId 消息条目 ID
+     */
     @Override
     public void ack(String stream, String group, String entryId) {
         stream(stream).ack(group, messageId(entryId));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 返回此适配器持有的原生客户端。
+     *
+     * @return 底层客户端实例
+     */
     @Override
     public Object nativeClient() {
         return redisson;

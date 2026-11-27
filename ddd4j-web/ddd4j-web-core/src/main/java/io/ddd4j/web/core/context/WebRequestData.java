@@ -288,7 +288,14 @@ public final class WebRequestData {
         return path;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 根据<code>requestId</code>、<code>traceId</code>、<code>tenantId</code>、<code>authorization</code>、<code>locale</code>、<code>forwardedFor</code>比较对象的值是否相等。
+     *
+     * <p>只比较运行时类型相同的对象。</p>
+     *
+     * @param obj 用来比较或转换的输入对象
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -301,7 +308,11 @@ public final class WebRequestData {
         return Objects.equals(this.requestId, other.requestId) && Objects.equals(this.traceId, other.traceId) && Objects.equals(this.tenantId, other.tenantId) && Objects.equals(this.authorization, other.authorization) && Objects.equals(this.locale, other.locale) && Objects.equals(this.forwardedFor, other.forwardedFor) && Objects.equals(this.realIp, other.realIp) && Objects.equals(this.remoteAddress, other.remoteAddress) && Objects.equals(this.method, other.method) && Objects.equals(this.path, other.path);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         int result = 0;
@@ -318,7 +329,11 @@ public final class WebRequestData {
         return result;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>requestId</code>、<code>traceId</code>、<code>tenantId</code>、<code>authorization</code>、<code>locale</code>、<code>forwardedFor</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "WebRequestData[requestId=" + requestId + ", traceId=" + traceId + ", tenantId=" + tenantId + ", authorization=" + authorization + ", locale=" + locale + ", forwardedFor=" + forwardedFor + ", realIp=" + realIp + ", remoteAddress=" + remoteAddress + ", method=" + method + ", path=" + path + "]";

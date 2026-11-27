@@ -77,7 +77,14 @@ public class StoredEventEntityId implements Serializable {
         return version;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 根据<code>aggregateType</code>、<code>aggregateId</code>、<code>version</code>比较对象的值是否相等。
+     *
+     * <p>只比较运行时类型相同的对象。</p>
+     *
+     * @param o 用来比较的另一个对象，允许为空
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -88,7 +95,11 @@ public class StoredEventEntityId implements Serializable {
                 && Objects.equals(aggregateId, that.aggregateId);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 用<code>aggregateType</code>、<code>aggregateId</code>、<code>version</code>计算哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         return Objects.hash(aggregateType, aggregateId, version);

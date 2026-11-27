@@ -147,13 +147,26 @@ class SpringCommandBusIT {
     /** \u63a5\u6536\u6d4b\u8bd5\u547d\u4ee4\u5e76\u8fd4\u56de\u53ef\u65ad\u8a00\u7ed3\u679c\u7684\u6267\u884c\u5668\u66ff\u8eab\u3002 */
     static class ExclusiveConflictHandler implements CommandExecutor<ConflictCommand> {
 
-        /** {@inheritDoc} */
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>Collections.&lt;Class&lt;? extends Command&gt;&gt;singleton(ConflictCommand.class)</code>。</p>
+         *
+         * @return 实际返回<code>Collections.&lt;Class&lt;? extends Command&gt;&gt;singleton(ConflictCommand.class)</code>
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.<Class<? extends Command>>singleton(ConflictCommand.class);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>Result.ok()</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>Result.ok()</code>
+         */
         @Override
         public Result execute(ConflictCommand command) {
             return Result.ok();
@@ -167,13 +180,26 @@ class SpringCommandBusIT {
      */
     static class OverlappingMultiTypeHandler implements CommandExecutor<Command> {
 
-        /** {@inheritDoc} */
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>Arrays.asList(ConflictCommand.class, CompanionCommand.class)</code>。</p>
+         *
+         * @return 支持的命令类型集合
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return new HashSet<Class<? extends Command>>(Arrays.asList(ConflictCommand.class, CompanionCommand.class));
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>Result.ok()</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>Result.ok()</code>
+         */
         @Override
         public Result execute(Command command) {
             return Result.ok();

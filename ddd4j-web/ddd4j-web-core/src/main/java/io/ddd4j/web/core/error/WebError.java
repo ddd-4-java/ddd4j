@@ -149,7 +149,14 @@ public final class WebError {
         return data;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 根据<code>code</code>、<code>message</code>、<code>data</code>、<code>status</code>比较对象的值是否相等。
+     *
+     * <p>只比较运行时类型相同的对象。</p>
+     *
+     * @param obj 用来比较或转换的输入对象
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -162,7 +169,11 @@ public final class WebError {
         return this.status == other.status && Objects.equals(this.code, other.code) && Objects.equals(this.message, other.message) && Objects.equals(this.data, other.data);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         int result = 0;
@@ -173,7 +184,11 @@ public final class WebError {
         return result;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>status</code>、<code>code</code>、<code>message</code>、<code>data</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "WebError[status=" + status + ", code=" + code + ", message=" + message + ", data=" + data + "]";

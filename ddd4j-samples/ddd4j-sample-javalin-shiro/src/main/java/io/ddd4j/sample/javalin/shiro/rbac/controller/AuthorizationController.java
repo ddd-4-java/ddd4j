@@ -764,7 +764,14 @@ public class AuthorizationController {
             return permissions;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 根据<code>loginId</code>、<code>displayName</code>、<code>roles</code>、<code>permissions</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -777,7 +784,11 @@ public class AuthorizationController {
             return Objects.equals(this.loginId, other.loginId) && Objects.equals(this.displayName, other.displayName) && Objects.equals(this.roles, other.roles) && Objects.equals(this.permissions, other.permissions);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 1;
@@ -788,7 +799,11 @@ public class AuthorizationController {
             return result;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>loginId</code>、<code>displayName</code>、<code>roles</code>、<code>permissions</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "AuthorizationController.UserView(loginId=" + loginId + ", displayName=" + displayName + ", roles=" + roles + ", permissions=" + permissions + ")";
@@ -877,7 +892,14 @@ public class AuthorizationController {
             return permissions;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 根据<code>code</code>、<code>name</code>、<code>permissions</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -890,7 +912,11 @@ public class AuthorizationController {
             return Objects.equals(this.code, other.code) && Objects.equals(this.name, other.name) && Objects.equals(this.permissions, other.permissions);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 1;
@@ -900,7 +926,11 @@ public class AuthorizationController {
             return result;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>code</code>、<code>name</code>、<code>permissions</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "AuthorizationController.RoleView(code=" + code + ", name=" + name + ", permissions=" + permissions + ")";
@@ -967,7 +997,14 @@ public class AuthorizationController {
             return description;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 根据<code>code</code>、<code>description</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -980,7 +1017,11 @@ public class AuthorizationController {
             return Objects.equals(this.code, other.code) && Objects.equals(this.description, other.description);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 1;
@@ -989,7 +1030,11 @@ public class AuthorizationController {
             return result;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>code</code>、<code>description</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "AuthorizationController.PermissionView(code=" + code + ", description=" + description + ")";

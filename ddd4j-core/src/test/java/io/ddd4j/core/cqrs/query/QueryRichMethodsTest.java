@@ -468,7 +468,11 @@ class QueryRichMethodsTest {
             this.repo = repo;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回当前用例依赖的仓储。
+         *
+         * @return 实际返回<code>repo</code>，供调用方取得当前值
+         */
         @Override
         public Repository<TestAggregate, String> repository() {
             return repo;

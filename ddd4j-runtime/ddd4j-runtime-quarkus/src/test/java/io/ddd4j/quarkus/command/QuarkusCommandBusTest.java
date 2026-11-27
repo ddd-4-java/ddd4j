@@ -149,7 +149,14 @@ class QuarkusCommandBusTest {
             return payload;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 根据<code>payload</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -162,7 +169,11 @@ class QuarkusCommandBusTest {
             return Objects.equals(this.payload, other.payload);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 0;
@@ -170,7 +181,11 @@ class QuarkusCommandBusTest {
             return result;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>payload</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "TestCommand[payload=" + payload + "]";
@@ -190,7 +205,14 @@ class QuarkusCommandBusTest {
         UnregisteredCommand() {
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 比较两个对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -203,14 +225,22 @@ class QuarkusCommandBusTest {
             return true;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 0;
             return result;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 生成用于调试和日志的对象描述。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "UnregisteredCommand[]";
@@ -230,7 +260,14 @@ class QuarkusCommandBusTest {
         FailCommand() {
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 比较两个对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -243,14 +280,22 @@ class QuarkusCommandBusTest {
             return true;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 0;
             return result;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 生成用于调试和日志的对象描述。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "FailCommand[]";
@@ -262,13 +307,26 @@ class QuarkusCommandBusTest {
      */
     static class TestCommandExecutor implements CommandExecutor<TestCommand> {
 
-        /** {@inheritDoc} */
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>Result.ok("executed: " + command.payload())</code>、<code>command.payload()</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>Result.ok("executed: " + command.payload())</code>
+         */
         @Override
         public Result<String> execute(TestCommand command) {
             return Result.ok("executed: " + command.payload());
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>Collections.&lt;Class&lt;? extends Command&gt;&gt;singleton(TestCommand.class)</code>。</p>
+         *
+         * @return 实际返回<code>Collections.&lt;Class&lt;? extends Command&gt;&gt;singleton(TestCommand.class)</code>
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.<Class<? extends Command>>singleton(TestCommand.class);
@@ -280,13 +338,26 @@ class QuarkusCommandBusTest {
      */
     static class FailCommandExecutor implements CommandExecutor<FailCommand> {
 
-        /** {@inheritDoc} */
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>Result.fail("intentional failure")</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>Result.fail("intentional failure")</code>
+         */
         @Override
         public Result<String> execute(FailCommand command) {
             return Result.fail("intentional failure");
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>Collections.&lt;Class&lt;? extends Command&gt;&gt;singleton(FailCommand.class)</code>。</p>
+         *
+         * @return 实际返回<code>Collections.&lt;Class&lt;? extends Command&gt;&gt;singleton(FailCommand.class)</code>
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.<Class<? extends Command>>singleton(FailCommand.class);

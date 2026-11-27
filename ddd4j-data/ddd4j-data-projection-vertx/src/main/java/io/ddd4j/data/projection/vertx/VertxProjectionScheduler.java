@@ -102,7 +102,16 @@ public class VertxProjectionScheduler implements ViewScheduler {
         executor.shutdownNow();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 按给定时间规则安排任务。
+     *
+     * <p>Vert.x 实现调用 <code>CronExpression.parse(cron)</code>。</p>
+     *
+     * @param viewName 视图名称（用于日志 / 调试）
+     * @param cron CRON 表达式
+     * @param task 要执行的任务
+     * @return 实际返回<code>handle</code>
+     */
     @Override
     public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
         Objects.requireNonNull(viewName, "viewName must not be null");

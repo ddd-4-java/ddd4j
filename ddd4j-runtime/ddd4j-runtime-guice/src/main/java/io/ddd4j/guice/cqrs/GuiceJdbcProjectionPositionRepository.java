@@ -93,7 +93,14 @@ public class GuiceJdbcProjectionPositionRepository implements ProjectionPosition
         ensureTable();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 查询指定事件流的投影检查点。
+     *
+     * <p>此实现调用 <code>dataSource.getConnection()</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     * @return 与给定流标识对应的投影检查点
+     */
     @Override
     public Optional<ProjectionPosition> findByStreamId(String streamId) {
         try (Connection conn = dataSource.getConnection();
@@ -110,7 +117,13 @@ public class GuiceJdbcProjectionPositionRepository implements ProjectionPosition
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 查询存储中符合条件的记录。
+     *
+     * <p>此实现调用 <code>dataSource.getConnection()</code>。</p>
+     *
+     * @return 满足条件的结果列表
+     */
     @Override
     public List<ProjectionPosition> findAll() {
         try (Connection conn = dataSource.getConnection();
@@ -126,7 +139,14 @@ public class GuiceJdbcProjectionPositionRepository implements ProjectionPosition
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 在持久化存储中写入指定事件流的投影检查点。
+     *
+     * <p>此实现调用 <code>position.getStreamId()</code>。</p>
+     *
+     * @param position 投影位置
+     * @return 根据执行路径返回<code>position</code>、<code>save(position)</code>
+     */
     @Override
     public ProjectionPosition save(ProjectionPosition position) {
         Objects.requireNonNull(position, "position must not be null");
@@ -176,7 +196,13 @@ public class GuiceJdbcProjectionPositionRepository implements ProjectionPosition
         return "23505".equals(e.getSQLState()) || e.getErrorCode() == 1062;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 删除指定事件流的投影检查点。
+     *
+     * <p>此实现调用 <code>dataSource.getConnection()</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     */
     @Override
     public void deleteByStreamId(String streamId) {
         try (Connection conn = dataSource.getConnection();
@@ -189,7 +215,13 @@ public class GuiceJdbcProjectionPositionRepository implements ProjectionPosition
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 将指定流的投影检查点重置为零。
+     *
+     * <p>此实现调用 <code>save(DefaultProjectionPosition.zero(streamId))</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     */
     @Override
     public void resetToZero(String streamId) {
         save(DefaultProjectionPosition.zero(streamId));

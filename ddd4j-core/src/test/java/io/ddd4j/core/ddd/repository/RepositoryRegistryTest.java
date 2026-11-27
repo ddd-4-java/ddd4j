@@ -225,13 +225,22 @@ class RepositoryRegistryTest {
             return Optional.of(new Order(String.valueOf(id)));
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 写入或更新给定的领域对象或存储记录。
+         *
+         * @param aggregate 待处理聚合根
+         * @return 实际返回<code>aggregate</code>，供调用方取得当前值
+         */
         @Override
         public Order save(Order aggregate) {
             return aggregate;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 提供测试替身回调，调用时保持夹具状态。
+         *
+         * @param aggregate 待处理聚合根
+         */
         @Override
         public void delete(Order aggregate) {
             // no-op
@@ -289,7 +298,14 @@ class RepositoryRegistryTest {
             return Optional.ofNullable(values.get(id));
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 写入或更新给定的领域对象或存储记录。
+         *
+         * <p>测试夹具会调用 <code>values.put(aggregate.id(), aggregate)</code>、<code>aggregate.id()</code>。</p>
+         *
+         * @param aggregate 待处理聚合根
+         * @return 实际返回<code>aggregate</code>
+         */
         @Override
         public TestAggregate save(TestAggregate aggregate) {
             values.put(aggregate.id(), aggregate);

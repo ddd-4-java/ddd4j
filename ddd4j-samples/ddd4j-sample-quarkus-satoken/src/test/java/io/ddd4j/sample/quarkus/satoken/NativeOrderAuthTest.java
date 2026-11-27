@@ -237,19 +237,40 @@ class NativeOrderAuthTest {
             return response;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 以传入的凭据启动认证会话。
+         *
+         * <p>测试夹具会调用 <code>ImmutableMap.of("username", user, "password", password)</code>。</p>
+         *
+         * @param user 传给 <code>call("POST", "/auth/login", null, ImmutableMap.of("username", user, "password", password))</code>
+         * @param password 已配置密码
+         * @return 实际登录响应中的令牌
+         */
         @Override
         public String login(String user, String password) {
             return call("POST", "/auth/login", null, ImmutableMap.of("username", user, "password", password)).path("token");
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 通过已认证请求探测服务端识别出的登录主体。
+         *
+         * @param token 令牌
+         * @return 实际受保护入口返回的主体；未登录/失效令牌抛 SecurityException
+         */
         @Override
         public String authenticatedPrincipal(String token) {
             return call("GET", "/auth/me", token, null).path("data.userId");
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 访问当前鉴权契约中受权限约束的资源。
+         *
+         * <p>测试夹具会调用 <code>"order:cancel".equals(permission)</code>、<code>call("POST", ORDERS + orderId + "/cancel", token, null)</code>。</p>
+         *
+         * @param token 令牌
+         * @param permission 权限
+         * @return 根据执行路径返回<code>"unexpected"</code>、<code>response.path("orderState")</code>
+         */
         @Override
         public String authorizedResource(String token, String permission) {
             if ("order:cancel".equals(permission)) {
@@ -266,19 +287,37 @@ class NativeOrderAuthTest {
             return response.path("orderState");
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 结束由当前调用指定的认证会话。
+         *
+         * <p>测试夹具会调用 <code>call("POST", "/auth/logout", token, null)</code>。</p>
+         *
+         * @param token 令牌；实际退出入口必须使该令牌失效
+         */
         @Override
         public void logout(String token) {
             call("POST", "/auth/logout", token, null);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 访问测试中指定会失败的请求路径。
+         *
+         * <p>测试夹具会调用 <code>ImmutableMap.of("paidAmountCent", 1)</code>。</p>
+         *
+         * @param token 令牌；调用已注入业务异常的受保护入口并保留 IllegalStateException
+         */
         @Override
         public void failingRequest(String token) {
             call("POST", ORDERS + orderId + "/payment", token, ImmutableMap.of("paidAmountCent", 1));
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 探测当前请求上下文里可读取的登录主体。
+         *
+         * <p>测试夹具会调用 <code>completed()</code>。</p>
+         *
+         * @return 实际返回<code>completed()</code>
+         */
         @Override
         public Optional<String> contextPrincipal() {
             return completed();

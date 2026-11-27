@@ -43,7 +43,11 @@ public final class DefaultLicenseMachineInfoProvider implements LicenseMachineIn
     private DefaultLicenseMachineInfoProvider() {
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 获取当前机器的 IP 地址。
+     *
+     * @return 实际返回<code>addresses</code>，供调用方取得当前值
+     */
     @Override
     public Set<String> ipAddresses() {
         Set<String> addresses = new LinkedHashSet<>();
@@ -59,7 +63,11 @@ public final class DefaultLicenseMachineInfoProvider implements LicenseMachineIn
         return addresses;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 获取当前机器的 MAC 地址。
+     *
+     * @return 实际返回<code>addresses</code>，供调用方取得当前值
+     */
     @Override
     public Set<String> macAddresses() {
         Set<String> addresses = new LinkedHashSet<>();
@@ -80,7 +88,13 @@ public final class DefaultLicenseMachineInfoProvider implements LicenseMachineIn
         return addresses;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 获取机器序列号。
+     *
+     * <p>此实现调用 <code>System.getProperty(MACHINE_SN_PROPERTY)</code>。</p>
+     *
+     * @return 实际返回<code>serialNumber.trim()</code>
+     */
     @Override
     public String serialNumber() {
         String serialNumber = System.getProperty(MACHINE_SN_PROPERTY);

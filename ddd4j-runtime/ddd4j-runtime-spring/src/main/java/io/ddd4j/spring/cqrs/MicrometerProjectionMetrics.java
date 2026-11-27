@@ -114,7 +114,14 @@ public class MicrometerProjectionMetrics implements ProjectionMetrics {
                 (old, newInfo) -> newInfo);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 读取投影最近一次运行的记录。
+     *
+     * <p>此实现调用 <code>Optional.ofNullable(runInfoMap.get(streamId))</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     * @return 最近一次运行的时间和结果等信息
+     */
     @Override
     public Optional<ProjectionRunInfo> getLastRunInfo(String streamId) {
         return Optional.ofNullable(runInfoMap.get(streamId));

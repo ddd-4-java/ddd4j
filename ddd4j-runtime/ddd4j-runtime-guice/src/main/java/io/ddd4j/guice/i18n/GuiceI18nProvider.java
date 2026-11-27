@@ -31,7 +31,15 @@ import java.util.ResourceBundle;
  */
 public class GuiceI18nProvider implements I18nProvider {
 
-    /** {@inheritDoc} */
+    /**
+     * 按提供的条件读取或解析消息文本。
+     *
+     * <p>此实现调用 <code>ResourceBundle.getBundle("i18n/messages", Locale.getDefault())</code>。</p>
+     *
+     * @param key 消息 key
+     * @param args 格式化参数
+     * @return 根据执行路径返回<code>null</code>、<code>pattern</code>、<code>String.format(pattern, args)</code>
+     */
     @Override
     public String getMessage(String key, Object... args) {
         if (Objects.isNull(key)) {

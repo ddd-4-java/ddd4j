@@ -100,7 +100,11 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
         CacheKit.unregister("javalin-contract");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 返回发送测试请求所用的客户端。
+     *
+     * @return 实际返回<code>contractClient</code>，供调用方取得当前值
+     */
     @Override
     protected WebContractClient client() {
         return contractClient;
@@ -201,7 +205,17 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
             this.port = port;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 通过当前客户端发起 HTTP 请求。
+         *
+         * <p>此实现更新<code>responseBody = ""</code>。</p>
+         *
+         * @param method HTTP 方法
+         * @param path 请求路径
+         * @param headers 请求头
+         * @param body 请求体
+         * @return 响应快照
+         */
         @Override
         public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
             try {

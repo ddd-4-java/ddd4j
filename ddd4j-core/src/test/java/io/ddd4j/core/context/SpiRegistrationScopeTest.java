@@ -85,7 +85,12 @@ class SpiRegistrationScopeTest {
             return name;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 根据<code>name</code>比较对象的值是否相等。
+         *
+         * @param o 用来比较的另一个对象，允许为空
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -94,13 +99,21 @@ class SpiRegistrationScopeTest {
             return Objects.equals(this.name, other.name);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 用<code>name</code>计算哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             return java.util.Objects.hash(name);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>name</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "Service{" + "name=" + name + "}";

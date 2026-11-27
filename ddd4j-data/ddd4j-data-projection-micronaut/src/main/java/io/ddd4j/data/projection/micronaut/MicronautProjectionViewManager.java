@@ -100,7 +100,11 @@ public class MicronautProjectionViewManager implements ViewManager {
         stop();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 启动当前组件并准备其运行资源。
+     *
+     * <p>Micronaut 实现调用 <code>view.getName()</code>。</p>
+     */
     @Override
     public void start() {
         if (!running && scheduler != null && views != null) {
@@ -113,7 +117,11 @@ public class MicronautProjectionViewManager implements ViewManager {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 停止当前组件并清理已登记的运行资源。
+     *
+     * <p>Micronaut 实现调用 <code>handles.values()</code>。</p>
+     */
     @Override
     public void stop() {
         if (running) {
@@ -123,13 +131,21 @@ public class MicronautProjectionViewManager implements ViewManager {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 检查当前组件是否仍处于运行状态。
+     *
+     * @return 实际返回<code>running</code>，作为本次判断结果
+     */
     @Override
     public boolean isRunning() {
         return running;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 请求立即执行指定投影视图的一轮更新。
+     *
+     * <p>Micronaut 实现调用 <code>((ProjectionRunner&lt;Object&gt;)runner).runOnce((ProjectionView&lt;Object&gt;)view)</code>。</p>
+     */
     @Override
     @SuppressWarnings("unchecked")
     public void triggerOnce() {

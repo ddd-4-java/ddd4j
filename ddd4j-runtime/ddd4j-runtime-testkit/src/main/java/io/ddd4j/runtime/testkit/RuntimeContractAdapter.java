@@ -57,19 +57,31 @@ public final class RuntimeContractAdapter implements RuntimeContract {
         this.readinessSupplier = Objects.requireNonNull(readinessSupplier, "readinessSupplier must not be null");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 启动当前组件并准备其运行资源。
+     *
+     * <p>此实现调用 <code>starter.run()</code>。</p>
+     */
     @Override
     public void start() {
         starter.run();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 读取<code>services</code>提供给调用方。
+     *
+     * @return 实际返回<code>services</code>，供调用方取得当前值
+     */
     @Override
     public Map<String, Class<?>> services() {
         return services;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 通过<code>readinessSupplier.get()</code>处理当前调用。
+     *
+     * @return 实际返回<code>readinessSupplier.get()</code>
+     */
     @Override
     public ReadinessReport readiness() {
         return readinessSupplier.get();

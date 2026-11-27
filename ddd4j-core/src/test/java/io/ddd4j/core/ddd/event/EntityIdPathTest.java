@@ -299,19 +299,31 @@ class EntityIdPathTest {
             this.value = value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 实体类型
+         */
         @Override
         public EntityType getType() {
             return new StringEntityType("TestOrder");
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 实际返回<code>value</code>，供调用方取得当前值
+         */
         @Override
         public String asString() {
             return value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * @return 实际返回<code>"OrderId:" + value</code>，供调用方取得当前值
+         */
         @Override
         public String asTypedString() {
             return "OrderId:" + value;
@@ -332,19 +344,31 @@ class EntityIdPathTest {
             this.value = value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 实体类型
+         */
         @Override
         public EntityType getType() {
             return new StringEntityType("TestCustomer");
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 实际返回<code>value</code>，供调用方取得当前值
+         */
         @Override
         public String asString() {
             return value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * @return 实际返回<code>"CustomerId:" + value</code>，供调用方取得当前值
+         */
         @Override
         public String asTypedString() {
             return "CustomerId:" + value;

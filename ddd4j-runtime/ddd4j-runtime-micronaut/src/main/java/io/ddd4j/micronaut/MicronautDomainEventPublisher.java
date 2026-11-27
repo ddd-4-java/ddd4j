@@ -39,13 +39,26 @@ public final class MicronautDomainEventPublisher implements DomainEventPublisher
         this.publisher = Objects.requireNonNull(publisher, "publisher must not be null");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 将传入的事件交给当前发布通道。
+     *
+     * <p>Micronaut 实现调用 <code>publish((Object)event)</code>。</p>
+     *
+     * @param <ID> 实体标识类型
+     * @param event 领域事件
+     */
     @Override
     public <ID extends EntityId> void publish(DomainEvent<ID> event) {
         publish((Object) event);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * 将传入的事件交给当前发布通道。
+     *
+     * <p>Micronaut 实现调用 <code>log.debug("Publishing Micronaut event: {}", event.getClass().getName())</code>。</p>
+     *
+     * @param event 任意事件对象
+     */
     @Override
     public void publish(Object event) {
         if (Objects.nonNull(event)) {
