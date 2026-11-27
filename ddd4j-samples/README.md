@@ -1,5 +1,8 @@
 # ddd4j 示例工程
 
+支付确认请求必须携带非空的 `Idempotency-Key`。同一次支付重试应复用原键和实付金额。缺少键返回 HTTP 400，同一租户内已确认订单收到不同金额返回 HTTP 409。支付结果保存在现有订单快照中。
+
+
 本目录提供七个运行时的 28 个订单示例，每个平台各有默认 DDD、CQRS、Sa-Token 和 Shiro 四个入口。Guice 配套 Javalin，Spring 提供 WebMVC 和 WebFlux 两种接入。28 个样例复用商品目录和订单交易模型，Spring 的四个入口沿用外部 `ddd4j-boot` 自动配置。
 
 ## 示例矩阵

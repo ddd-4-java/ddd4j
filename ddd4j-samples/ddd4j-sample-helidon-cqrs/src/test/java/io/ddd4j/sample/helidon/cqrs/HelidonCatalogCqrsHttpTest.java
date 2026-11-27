@@ -133,7 +133,7 @@ class HelidonCatalogCqrsHttpTest {
     private String request(Server server, String method, String path,
                            int status, String body) throws Exception {
         var req = HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + server.port() + "/orders/catalog" + path))
-                .header("X-Tenant-Id", tenantId).header("Content-Type", "application/json")
+                .header("X-Tenant-Id", tenantId).header("Idempotency-Key", path.endsWith("/payment") ? "checkout-confirmation" : "").header("Content-Type", "application/json")
                 .method(method, HttpRequest.BodyPublishers.ofString(body)).build();
         var response = http.send(req, HttpResponse.BodyHandlers.ofString());
         assertEquals(status, response.statusCode(), response.body());

@@ -386,24 +386,29 @@ def validate_platform_workflow_files(mappings: list[dict], roots: list[pathlib.P
 
 def java_lexical_tokens(source: str) -> tuple[str, ...] | None:
     """仅剔除 Java 注释与格式；无法安全处理的语法保持 OPEN。"""
-    # Unicode escape 在 Java 词法分析前展开，可能使注释边界发生变化。
-    if "\\u" in source or '"""' in source:
+    if '"""' in source:
         return None
+    # 仅在已识别的注释内部接受不会生成 Java 分隔符、换行或反斜线的 BMP 汉字与全角标点。
+    unsafe_comment_escape = re.compile(r"\\u(?!30[0-3][0-9a-fA-F]|[4-9aA][0-9a-fA-F]{3}|[fF]{2}[0-9a-fA-F]{2})")
     tokens = []
     index = 0
     length = len(source)
     while index < length:
         char = source[index]
+        if source.startswith("\\u", index):
+            return None
         if char.isspace():
             index += 1
             continue
         if source.startswith("//", index):
             ending = source.find("\n", index + 2)
+            if unsafe_comment_escape.search(source, index, length if ending < 0 else ending):
+                return None
             index = length if ending < 0 else ending + 1
             continue
         if source.startswith("/*", index):
             ending = source.find("*/", index + 2)
-            if ending < 0:
+            if ending < 0 or unsafe_comment_escape.search(source, index, ending):
                 return None
             index = ending + 2
             continue
@@ -419,6 +424,8 @@ def java_lexical_tokens(source: str) -> tuple[str, ...] | None:
                 else:
                     index += 1
             else:
+                return None
+            if "\\u" in source[start:index]:
                 return None
             tokens.append(source[start:index])
             continue
@@ -793,9 +800,17 @@ def validate_platform_cdi_resources_only_on_jdk8(items: list[dict],
                     or jdk17_evidence.as_posix() != relocated_test):
                 raise ValueError(f"invalid JDK 17 CDI evidence relocation: {jdk17_evidence}")
         tests = [roots[0] / evidence, roots[1] / jdk17_evidence, roots[2] / evidence]
+        higher_descriptors = [root / path for root in roots[1:]]
+        if source == "ddd4j-data/ddd4j-data-event-store-panache/src/main/resources/META-INF/beans.xml":
+            # Panache 随新工件分发 Jakarta CDI 4.0 annotated 描述符。
+            higher_match = all(file.is_file() and hashlib.sha256(file.read_bytes()).hexdigest()
+                               == "812e2e963ab7109d7629568a8f082780654630920faeaf4ee76f508947cb5d37"
+                               for file in higher_descriptors)
+        else:
+            higher_match = all(not file.exists() for file in higher_descriptors)
         if (not descriptor.is_file()
                 or hashlib.sha256(descriptor.read_bytes()).hexdigest() != digest
-                or any((root / path).exists() for root in roots[1:])
+                or not higher_match
                 or not all(file.is_file()
                            and hashlib.sha256(file.read_bytes()).hexdigest() == test_digests[jdk]
                            for jdk, file in zip(jdks, tests))):
@@ -879,12 +894,12 @@ def validate_platform_test_namespace_mappings(
         mappings: list[dict], roots: list[pathlib.Path]) -> dict[str, dict]:
     """仅接受已列明架构规则中精确的 Java EE/Jakarta EE 命名空间替换。"""
     allowed = {
-        "ddd4j-data/ddd4j-data-cqrs-helidon/src/test/java/"
-        "io/ddd4j/data/cqrs/helidon/arch/CqrsHelidonModuleIndependenceTest.java",
-        "ddd4j-data/ddd4j-data-projection-helidon/src/test/java/"
-        "io/ddd4j/data/projection/helidon/arch/ProjectionHelidonModuleIndependenceTest.java",
-        "ddd4j-data/ddd4j-data-cqrs-quarkus/src/test/java/"
-        "io/ddd4j/data/cqrs/quarkus/arch/CqrsQuarkusModuleIndependenceTest.java",
+        "ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/"
+        "io/ddd4j/helidon/command/arch/CqrsHelidonModuleIndependenceTest.java",
+        "ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/"
+        "io/ddd4j/helidon/cqrs/arch/ProjectionHelidonModuleIndependenceTest.java",
+        "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/"
+        "io/ddd4j/quarkus/command/arch/CqrsQuarkusModuleIndependenceTest.java",
     }
     validated = {}
     for item in mappings:
@@ -1175,7 +1190,8 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
               and platform_content_matches(path, roots, platform_content[path])):
             status = "PLATFORM_ADAPTED"
             evidence = platform_content[path]["evidence"]
-        elif (path in platform_syntax and all(value is not None for value in values)
+        elif (path in platform_syntax and (all(value is not None for value in values)
+              or ("jdk8Source" in platform_syntax[path] and values[0] is None and all(values[1:])))
               and platform_syntax_matches(path, roots, platform_syntax[path])):
             status = "PLATFORM_ADAPTED"
             evidence = platform_syntax[path]["evidence"]
@@ -1396,7 +1412,7 @@ def validate_platform_content_mappings(mappings, roots: list[pathlib.Path]) -> d
             ("ddd4j-web/ddd4j-web-webflux/src/test/java/io/ddd4j/web/webflux/ApiVersionWebFilterTest.java",
              "new GlobalErrorWebExceptionHandler(new GlobalErrorAttributes(), new ObjectMapper(),",
              "new GlobalErrorWebExceptionHandler(new GlobalErrorAttributes(), JsonMapper.builder().build(),", ("3.0.x",)),
-            ("ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/TestApp.java",
+            ("ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/projection/jpa/TestApp.java",
              "import org.springframework.boot.autoconfigure.domain.EntityScan;",
              "import org.springframework.boot.persistence.autoconfigure.EntityScan;", ("3.0.x",)),
             ("ddd4j-mq/ddd4j-mq-rabbitmq/src/test/java/io/ddd4j/mq/rabbitmq/RabbitMQContainerIntegrationTest.java",
@@ -1408,7 +1424,7 @@ def validate_platform_content_mappings(mappings, roots: list[pathlib.Path]) -> d
             ("ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunInfoValueContractTest.java",
              "ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();",
              "JsonMapper mapper = JsonMapper.builder().findAndAddModules().build();", ("3.0.x",)),
-            ("ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/arch/ProjectionJpaModuleIndependenceTest.java",
+            ("ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/projection/jpa/arch/ProjectionJpaModuleIndependenceTest.java",
              '                            "javax..",\n', "", ("2.0.x", "3.0.x")),
             ("ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/HelidonServerBootTest.java",
              "server.cdiContainer().select(RuntimeReadinessRegistry.class).get()",
@@ -1418,11 +1434,11 @@ def validate_platform_content_mappings(mappings, roots: list[pathlib.Path]) -> d
              "import org.springframework.boot.autoconfigure.domain.EntityScan;",
              "import org.springframework.boot.persistence.autoconfigure.EntityScan;",
              ("3.0.x",)),
-            ("ddd4j-data/ddd4j-data-projection-panache/src/test/java/io/ddd4j/data/projection/panache/arch/ProjectionPanacheModuleIndependenceTest.java",
+            ("ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/projection/panache/arch/ProjectionPanacheModuleIndependenceTest.java",
              '                            "javax..",',
              '                            "jakarta..",',
              ("2.0.x", "3.0.x")),
-            ("ddd4j-data/ddd4j-data-projection-quarkus/src/test/java/io/ddd4j/data/projection/quarkus/arch/ProjectionQuarkusModuleIndependenceTest.java",
+            ("ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/arch/ProjectionQuarkusModuleIndependenceTest.java",
              '                            "javax..",',
              '                            "jakarta..",',
              ("2.0.x", "3.0.x")),
@@ -1691,11 +1707,23 @@ def validate_platform_syntax_mappings(mappings, roots: list[pathlib.Path]) -> di
                              and all(isinstance(value, str)
                                      and re.fullmatch(r"[0-9a-f]{64}", value)
                                      for value in test_hashes.values()))
+        low_source = mapping.get("jdk8Source", source)
+        if low_source != source:
+            expected_sources = {
+                f"ddd4j-samples/ddd4j-sample-micronaut-{auth}/src/main/java/"
+                f"io/ddd4j/sample/micronaut/{auth}/NativeAuthFilter.java"
+                for auth in ("satoken", "shiro")
+            }
+            if (source not in expected_sources
+                    or low_source != source.removesuffix("Filter.java") + "Interceptor.java"
+                    or (roots[0] / source).exists() or any((root / low_source).exists() for root in roots[1:])):
+                raise ValueError(f"invalid JDK 8 authentication source: {low_source}")
         if (path.is_absolute() or ".." in path.parts or "*" in source
                 or "/src/main/java/" not in source or source in by_path
                 or evidence.is_absolute() or ".." in evidence.parts or "*" in test
                 or "/src/test/java/" not in test
-                or not all((root / path).is_file() and (root / evidence).is_file() for root in roots)
+                or not all((root / (low_source if index == 0 else path)).is_file() and (root / evidence).is_file()
+                           for index, root in enumerate(roots))
                 or not isinstance(hashes, list) or len(hashes) != 3
                 or not all(isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value)
                            for value in hashes)
@@ -1726,7 +1754,7 @@ def platform_syntax_matches(path: str, roots: list[pathlib.Path], mapping: dict)
     expected = mapping["sourceSha256"]
     evidence = mapping["evidence"]
     test_hashes = mapping.get("testSha256ByJdk")
-    return (all(hashlib.sha256((root / path).read_bytes()).hexdigest() == expected[index]
+    return (all(hashlib.sha256((root / (mapping.get("jdk8Source", path) if index == 0 else path)).read_bytes()).hexdigest() == expected[index]
                 for index, root in enumerate(roots))
             and all(hashlib.sha256((root / evidence).read_bytes()).hexdigest()
                     == (test_hashes[str(jdk)] if test_hashes else mapping["testSha256"])

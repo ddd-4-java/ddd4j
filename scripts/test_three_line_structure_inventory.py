@@ -950,8 +950,8 @@ class ThreeLineInventoryTest(unittest.TestCase):
         self.assertNotEqual(0, result.returncode)
 
     def test_helidon_arch_namespace_mapping_rejects_changed_rule(self):
-        path = ("ddd4j-data/ddd4j-data-cqrs-helidon/src/test/java/"
-                "io/ddd4j/data/cqrs/helidon/arch/CqrsHelidonModuleIndependenceTest.java")
+        path = ("ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/"
+                "io/ddd4j/helidon/command/arch/CqrsHelidonModuleIndependenceTest.java")
         contents = (
             '@since 1.0.x\n@ArchTest "javax.." Javax API\n',
             '@since 2.0.x\n@ArchTest "jakarta.." Jakarta API\n',
@@ -992,8 +992,8 @@ class ThreeLineInventoryTest(unittest.TestCase):
         self.assertIn("invalid platform test namespace mapping", result.stderr)
 
     def test_quarkus_arch_namespace_mapping_requires_both_persistence_packages(self):
-        path = ("ddd4j-data/ddd4j-data-cqrs-quarkus/src/test/java/"
-                "io/ddd4j/data/cqrs/quarkus/arch/CqrsQuarkusModuleIndependenceTest.java")
+        path = ("ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/"
+                "io/ddd4j/quarkus/command/arch/CqrsQuarkusModuleIndependenceTest.java")
         contents = (
             '@since 1.0.x\n@ArchTest "javax.." Javax API\n'
             '"jakarta.persistence.."\n"javax.persistence.."\n',
@@ -1409,7 +1409,7 @@ class ThreeLineInventoryTest(unittest.TestCase):
 
     def test_exact_platform_test_adaptations_keep_other_test_content_identical(self):
         cases = [
-            ("ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/arch/ProjectionJpaModuleIndependenceTest.java",
+            ("ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/projection/jpa/arch/ProjectionJpaModuleIndependenceTest.java",
              '                            "javax..",\n', "", ["2.0.x", "3.0.x"]),
             ("ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/HelidonServerBootTest.java",
              "server.cdiContainer().select(RuntimeReadinessRegistry.class).get()",
@@ -1419,7 +1419,7 @@ class ThreeLineInventoryTest(unittest.TestCase):
              "import org.springframework.boot.autoconfigure.domain.EntityScan;",
              "import org.springframework.boot.persistence.autoconfigure.EntityScan;",
              ["3.0.x"]),
-            ("ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/TestApp.java",
+            ("ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/projection/jpa/TestApp.java",
              "import org.springframework.boot.autoconfigure.domain.EntityScan;",
              "import org.springframework.boot.persistence.autoconfigure.EntityScan;",
              ["3.0.x"]),
@@ -1949,6 +1949,44 @@ class ThreeLineInventoryTest(unittest.TestCase):
         rows = json.loads((output / "inventory.json").read_text())["differences"]
         row = next(item for item in rows if item["path"] == path and item["category"] == "test")
         self.assertEqual("OPEN", row["status"])
+
+
+    def test_micronaut_interceptor_mapping_rejects_unreviewed_paths_and_source_drift(self):
+        spec = importlib.util.spec_from_file_location("parity_auth_path", SCRIPT)
+        checker = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(checker)
+        base = ("ddd4j-samples/ddd4j-sample-micronaut-satoken/src/main/java/"
+                "io/ddd4j/sample/micronaut/satoken/NativeAuth")
+        modern, legacy = base + "Filter.java", base + "Interceptor.java"
+        evidence = "demo/src/test/java/example/HttpTest.java"
+        for index, root in enumerate(self.roots):
+            self.write(root, legacy if index == 0 else modern, str(index))
+            self.write(root, evidence, "locked test")
+        digest = lambda value: hashlib.sha256(value.encode()).hexdigest()
+        row = {"path": modern, "jdk8Source": legacy, "evidence": evidence,
+               "sourceSha256": [digest(str(index)) for index in range(3)],
+               "testSha256": digest("locked test"), "reason": "native HTTP authentication"}
+        checker.validate_platform_syntax_mappings([row], self.roots)
+        self.assertTrue(checker.platform_syntax_matches(modern, self.roots, row))
+        self.write(self.roots[0], legacy, "changed")
+        self.assertFalse(checker.platform_syntax_matches(modern, self.roots, row))
+        with self.assertRaisesRegex(ValueError, "invalid JDK 8 authentication source"):
+            checker.validate_platform_syntax_mappings([dict(row, jdk8Source="../Other.java")], self.roots)
+        self.write(self.roots[1], legacy, "unexpected duplicate")
+        with self.assertRaisesRegex(ValueError, "invalid JDK 8 authentication source"):
+            checker.validate_platform_syntax_mappings([row], self.roots)
+
+    def test_unicode_documentation_preserves_tokens_without_accepting_delimiter_escapes(self):
+        spec = importlib.util.spec_from_file_location("parity_lexical", SCRIPT)
+        checker = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(checker)
+        tokens = checker.java_lexical_tokens
+        self.assertEqual(tokens("int value;"), tokens(r"/** \u4fdd\u5b58\uff0c\u3002 */ int value;"))
+        for source in (r"// \u000a return false;", r"/* \u002a\u002f return true; */",
+                       r"/* \u005c */ int value;", r'int \u4fdd;', r'String s = "\u4fdd";'):
+            with self.subTest(source=source):
+                self.assertIsNone(tokens(source))
+
     def test_java_comment_and_formatting_only_change_is_token_equivalent(self):
         path = "ddd4j-core/src/main/java/example/Foo.java"
         common = 'package example; public class Foo { public String value() { return "same"; } }'

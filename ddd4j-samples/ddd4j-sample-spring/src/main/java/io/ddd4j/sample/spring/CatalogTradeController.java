@@ -83,6 +83,7 @@ public class CatalogTradeController {
 
     /**
      * \u5411\u8ba2\u5355\u7528\u4f8b\u63d0\u4ea4\u5b9e\u4ed8\u91d1\u989d\u5e76\u8fd4\u56de\u786e\u8ba4\u7ed3\u679c\u3002
+     * @param idempotencyKey 支付请求幂等键
      * @param tenant \u8bf7\u6c42\u5934\u63d0\u4f9b\u7684\u79df\u6237\u6807\u8bc6
      * @param orderNo \u79df\u6237\u5185\u4e1a\u52a1\u8ba2\u5355\u53f7
      * @param body \u5e26\u4eba\u6c11\u5e01\u5206\u503c\u7684\u652f\u4ed8\u786e\u8ba4\u6570\u636e
@@ -90,9 +91,10 @@ public class CatalogTradeController {
      */
     @RawResponse
     @PostMapping("/orders/{orderNo}/payment")
-    public ResponseEntity<JsonNode> confirmPayment(@RequestHeader("X-Tenant-Id") String tenant,
+    public ResponseEntity<JsonNode> confirmPayment(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyKey,
+            @RequestHeader("X-Tenant-Id") String tenant,
             @PathVariable("orderNo") String orderNo, @RequestBody JsonNode body) {
-        return respond(api.confirmPayment(tenant, orderNo, body.toString()));
+        return respond(api.confirmPayment(idempotencyKey, tenant, orderNo, body.toString()));
     }
 
     /**

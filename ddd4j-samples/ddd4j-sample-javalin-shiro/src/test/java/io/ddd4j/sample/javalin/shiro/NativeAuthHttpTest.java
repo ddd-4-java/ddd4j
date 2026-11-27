@@ -496,7 +496,7 @@ class NativeAuthHttpTest {
             actualHeaders.putAll(headers);
             try {
                 var response = SampleHttpTransport.request(base + path, method, actualHeaders,
-                        Map.of("X-Tenant-Id", TENANT), Objects.isNull(body) ? null : json.writeValueAsString(body));
+                        Map.of("X-Tenant-Id", TENANT, "Idempotency-Key", path.endsWith("/payment") ? "checkout-confirmation" : ""), Objects.isNull(body) ? null : json.writeValueAsString(body));
                 if (response.statusCode() == 401 || response.statusCode() == 403) {
                     throw new SecurityException("HTTP " + response.statusCode());
                 }

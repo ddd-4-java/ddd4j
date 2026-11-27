@@ -151,7 +151,7 @@ public class JavalinSaTokenApplication {
                         ctx.status(reply.getStatus()).contentType("application/json").result(reply.getBody());
                     });
                     ApiBuilder.post("/orders/catalog/orders/{orderNo}/payment", ctx -> {
-                        var reply = catalog.confirmPayment(ctx.header("X-Tenant-Id"), ctx.pathParam("orderNo"), ctx.body());
+                        var reply = catalog.confirmPayment(ctx.header("Idempotency-Key"), ctx.header("X-Tenant-Id"), ctx.pathParam("orderNo"), ctx.body());
                         ctx.status(reply.getStatus()).contentType("application/json").result(reply.getBody());
                     });
                     ApiBuilder.post("/orders/catalog/orders/{orderNo}/cancel", ctx -> {

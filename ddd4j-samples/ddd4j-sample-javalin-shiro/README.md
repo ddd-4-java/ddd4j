@@ -10,7 +10,7 @@ module=ddd4j-samples/ddd4j-sample-javalin-shiro
 java -cp "$module/target/ddd4j-sample-javalin-shiro-<version>.jar:$(cat "$module/target/runtime-classpath.txt")" io.ddd4j.sample.javalin.shiro.JavalinShiroApplication
 ```
 
-业务请求携带 `X-Tenant-Id`。商品地址为 `/orders/catalog/goods/{spuCode}`，订单地址为 `/orders/catalog/orders/{orderNo}`。支付、取消和履约分别使用订单子路径 `/payment`、`/cancel`、`/fulfill`。
+业务请求携带 `X-Tenant-Id`。商品地址为 `/orders/catalog/goods/{spuCode}`，订单地址为 `/orders/catalog/orders/{orderNo}`。支付、取消和履约分别使用订单子路径 `/payment`、`/cancel`、`/fulfill`。支付请求必须提供非空 `Idempotency-Key`，重试时复用原键和实付金额。
 
 本地演示登录使用 `POST /auth/login`，请求体为 `{"loginId":"zhangsan","password":"pass123"}`。将令牌放入 `ddd4j-token: <token>` 请求头。
 
