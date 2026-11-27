@@ -17,6 +17,12 @@
     <dependencies>
         <dependency>
             <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-ddd-rules-cola</artifactId>
+            <version>${revision}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-sample-order-adapter</artifactId>
             <version>${revision}</version>
         </dependency>

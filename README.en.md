@@ -105,7 +105,7 @@ ddd4j evolves along **three active lines** in parallel; HEADs always push the sa
 | `ddd4j-bom`          | BOM version manager                | unified version for downstream projects                                                                                                                 |
 | `ddd4j-dependencies` | third-party dependency coordinator | Spring 6.x · Jackson 2.22 · Reactor                                                                                                                     |
 | `ddd4j-annotation`   | DDD annotations + API annotations  | `@DomainEntity` `@DomainService` `@ApplicationService` `@DomainRepository`                                                                              |
-| `ddd4j-core`         | **pure-Java contract layer**       | `AggregateRoot` · `Repository<M,P,ID>` · `Query<T>` (lambda-rich query) · `Page` · `R` · `DomainEvent` · `DddAggregateRoot` · `SFunction` · `LambdaKit` |
+| `ddd4j-core`         | **pure-Java contract layer**       | `AggregateRoot` · `Repository<M,ID>` · `Query<T>` (lambda-rich query) · `Page` · `R` · `DomainEvent` · `EventSourcingRepository` · `SFunction` · `LambdaKit` |
 | `ddd4j-kit`          | toolbox                            | Hutool-style utilities for cache / lang / web                                                                                                           |
 | `ddd4j-ddd-rules`    | DDD architecture rules             | `CleanDDDLayerRules` · `ColaDDDLayerRules` (ArchUnit)                                                                                                   |
 | `ddd4j-data`         | data abstractions                  | three ORM tracks + crypto / data-permission / external-service / logging                                                                                |
@@ -136,7 +136,7 @@ directly. See the [sample guide](ddd4j-samples/README.md) for each framework.
 
 ## 6. ArchUnit boundary enforcement
 
-9 ArchUnit rules enforced at CI compile time:
+CI tests enforce the core boundaries below. The catalog sample also applies the COLA dependency rules to its compiled business classes and tests that a reversed dependency is rejected.
 
 | Rule                             | Description                                                        |
 |:---------------------------------|:-------------------------------------------------------------------|
@@ -195,105 +195,15 @@ directly. See the [sample guide](ddd4j-samples/README.md) for each framework.
 </dependencies>
 ```
 
-### 7.2 Anemic vs. rich-model separation
+### 7.2 Run the catalog and trade example
 
-The plain DDD path **does not require** domain models to extend `com.baomidou.mybatisplus.Model`, nor any fixed prefix /
-parent class. Domain layer only depends on `ddd4j-core`; the infrastructure layer adapts MyBatis-Plus via
-`ddd4j-data-mybatis`.
+Use the [sample run instructions](ddd4j-samples/README.md#启动默认订单示例) to select a runtime and configure a dedicated MySQL database. Startup initializes the four business tables. The documented HTTP check covers product registration, order placement, payment validation, fulfillment, and tenant isolation.
 
-```java
-public class Order extends AggregateRoot<Long> {
-    private final Long id;
-    private String buyerName;
+Start with an application service and explicit domain repositories. Add command routing through the runtime's `CommandBus` and `CommandExecutor` when needed. Commands return `R<T>`. A plain input object is enough for `QueryHandler` and `QueryBus`.
 
-    public Order(Long id, String buyerName) {
-        this.id = id;
-        renameBuyer(buyerName);
-    }
+### 7.3 Select persistence capabilities
 
-    @Override
-    public Long id() {
-        return id;
-    }
-
-    public void renameBuyer(String buyerName) {
-        if (StrKit.isBlank(buyerName)) {
-            throw new IllegalArgumentException("buyerName must not be blank");
-        }
-        this.buyerName = buyerName;
-    }
-
-    public String buyerName() {
-        return buyerName;
-    }
-}
-```
-
-```java
-public interface OrderRepository extends Repository<Order, OrderPO, Long> {
-    Optional<Order> findByOrderNo(String orderNo);
-}
-```
-
-```java
-public class MybatisOrderRepository extends MybatisAggregateRepository<Order, OrderPO, Long>
-        implements OrderRepository {
-
-    public MybatisOrderRepository(BaseMapper<OrderPO> mapper) {
-        super(mapper);
-    }
-
-    @Override
-    public Optional<Order> findByOrderNo(String orderNo) {
-        return Optional.ofNullable(lambdaQuery()
-                        .eq(OrderPO::getOrderNo, orderNo)
-                        .one())
-                .map(this::toModel);
-    }
-
-    @Override
-    public Order toModel(OrderPO po) {
-        return new Order(po.getId(), po.getBuyerName());
-    }
-
-    @Override
-    public OrderPO toPersistenceObject(Order model) {
-        OrderPO po = new OrderPO();
-        po.setId(model.id());
-        po.setBuyerName(model.buyerName());
-        return po;
-    }
-}
-```
-
-### 7.3 Lambda-rich queries
-
-```java
-Page<Order> page = new OrderQuery()
-        .eq(Order::getStatus, "PAID")
-        .like(Order::getOrderNo, "2024")
-        .ge(Order::getCreateTime, startTime)
-        .page();
-
-Page<OrderPO> po = new OrderQuery()
-        .withPO(OrderPO.class)
-        .eq(OrderPO::getStatus, "PAID")
-        .orderByDesc(OrderPO::getCreateTime)
-        .current(1).size(20)
-        .page();
-```
-
-`Repository<M, P, ID>` aligns with `BaseMapper`:
-
-```
-Repository<M, P, ID>
-├── single CRUD:    findById / save / updateById / insertOrUpdate / delete / deleteById
-├── batch ops:      findByIds / deleteByIds / saveBatch / updateBatchById / insertOrUpdateBatch
-├── unconditioned:  findFirst / findAll / count / exists
-├── conditional:     findFirst(Query<M>) / findList / page / count / maps / exists
-├── conditional ops: update(M, Query<M>) / deleteByQuery(Query<M>)
-└── aggregation:    fill(Query<M>, M) / fill(Query<M>, List<M>)
-```
+`Repository<M, ID>` requires `findById` and `save`. Concrete adapters define support for paging, batch operations, and conditional writes. Use the persistence `Query<M>` DSL when the application needs dynamic conditions. Use `EventStore` and `EventSourcingRepository` for event replay. Declare Reactor explicitly when using `AsyncEventStore` or reactive projection APIs. The R2DBC adapter already declares it.
 
 ## 8. Recommended project layout (COLA V5)
 

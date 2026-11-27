@@ -16,8 +16,9 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>org.mybatis</groupId>
-            <artifactId>mybatis</artifactId>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-data-mybatis</artifactId>
+            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>com.mysql</groupId>

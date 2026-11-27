@@ -45,11 +45,11 @@ public final class ActivemqKit {
      * @return 物理目的地名称
      */
     public static String resolvePhysical(String namespace, String topic, String tag) {
-        String base = hasText(topic) ? topic : "ddd4j.default.topic";
-        if (hasText(namespace)) {
+        String base = StrKit.hasText(topic) ? topic : "ddd4j.default.topic";
+        if (StrKit.hasText(namespace)) {
             base = namespace + "." + base;
         }
-        return hasText(tag) ? base + "." + tag : base;
+        return StrKit.hasText(tag) ? base + "." + tag : base;
     }
 
     /**
@@ -148,13 +148,4 @@ public final class ActivemqKit {
         }
     }
 
-    /**
-     * 检查输入是否存在非空白字符。
-     *
-     * @param s 待检查的字符串
-     * @return 含有效文本时返回 true
-     */
-    private static boolean hasText(String s) {
-        return StrKit.isNotEmpty(s);
-    }
 }

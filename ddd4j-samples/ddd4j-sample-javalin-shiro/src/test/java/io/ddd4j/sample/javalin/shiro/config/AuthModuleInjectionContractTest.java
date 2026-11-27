@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class AuthModuleInjectionContractTest {
 
     /**
-     * 验证<code>users.count()</code> 等于 <code>3</code>，<code>roles.count()</code> 等于 <code>2</code>，<code>subjectData.getPermissionList(principal)</code> 等于 <code>Collections.singletonList(permissionCode)</code>。
+     * 验证仓储注入、现有账号的角色和权限，以及商品交易只读账号的权限边界。
      */
     @Test
     void bindsSeededRepositoriesServiceAndSubjectDataProvider() {
@@ -34,8 +34,12 @@ class AuthModuleInjectionContractTest {
         SubjectDataProvider subjectData = injector.getInstance(SubjectDataProvider.class);
         AuthPrincipal principal = new AuthPrincipal().setLoginId("lisi");
 
-        assertEquals(3, users.count());
-        assertEquals(2, roles.count());
+        assertEquals(4, users.count());
+        assertEquals(3, roles.count());
+        assertTrue(users.findByLoginId("reader").isPresent());
+        AuthPrincipal reader = new AuthPrincipal().setLoginId("reader");
+        assertEquals(Collections.singletonList("reader"), subjectData.getRoleList(reader));
+        assertEquals(Collections.singletonList("order:read"), subjectData.getPermissionList(reader));
         assertSame(rbac.findUser("lisi"), users.findByLoginId("lisi").orElseThrow(AssertionError::new));
         assertSame(rbac.findRole("user"), roles.findByCode("user").orElseThrow(AssertionError::new));
         assertEquals(Collections.singletonList("user"), subjectData.getRoleList(principal));

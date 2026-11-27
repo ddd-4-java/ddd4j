@@ -18,7 +18,7 @@ R14 记录。
 | Vert.x     | Vert.x          | [默认](ddd4j-sample-vertx/README.md)      | [CQRS](ddd4j-sample-vertx-cqrs/README.md)      | [Sa-Token](ddd4j-sample-vertx-satoken/README.md)      | [Shiro](ddd4j-sample-vertx-shiro/README.md)      | S06 / R11 已验收 |
 | Dropwizard | Dropwizard      | [默认](ddd4j-sample-dropwizard/README.md) | [CQRS](ddd4j-sample-dropwizard-cqrs/README.md) | [Sa-Token](ddd4j-sample-dropwizard-satoken/README.md) | [Shiro](ddd4j-sample-dropwizard-shiro/README.md) | S07 / R12 已验收 |
 
-表中的验收状态对应各平台任务。三条发布线的整体验收见 [R14 实施清单](../docs/superpowers/plans/2026-10-10-three-line-product-convergence.md#r14三线存储和多平台完整验收)
+表中的 R/S 编号对应历史平台任务。当前版本以本页商品交易启动说明和该提交的运行证据为准。三条发布线的整体验收见 [R14 实施清单](../docs/superpowers/plans/2026-10-10-three-line-product-convergence.md#r14三线存储和多平台完整验收)
 。Java 8 的 Spring 默认示例已通过 WebMVC 和显式启用的 WebFlux HTTP 验收。直接调用旧 Easy4J ReactiveRequestContextHolder
 的应用仍需兼容的外部构件，详见 [Spring 默认示例说明](ddd4j-sample-spring/README.md)。
 
@@ -72,6 +72,7 @@ java -jar ddd4j-samples/ddd4j-sample-quarkus/target/quarkus-app/quarkus-run.jar
 ```
 
 Spring 先按[本线依赖说明](ddd4j-sample-spring/README.md#源码依赖与构建)准备 Boot 装配依赖，再使用同一个 Maven 本地仓库打包。
+JDK 17 的 WebFlux 模式还需要同版 Easy4J Spring 扩展通过 `Mono.contextWrite` 写入上下文。旧的同版本 SNAPSHOT 可能仍调用 `Mono.subscriberContext`，请按依赖说明使用独立仓库准备兼容构件。
 
 ```bash
 ./mvnw -Dmaven.repo.local="$DDD4J_MAVEN_REPO" \
@@ -112,8 +113,7 @@ Dropwizard 在主类名后加 `server ddd4j-samples/ddd4j-sample-dropwizard/src/
 
 ## 普通 DDD 示例
 
-COLA 包分布在已有的共享模块中。HTTP 适配器把输入转换成 Cmd 和 Query。应用服务通过领域仓储接口完成业务，MyBatis
-在同一事务读写商品、规格、订单和明细。
+COLA 包分布在已有的共享模块中。HTTP 适配器把输入转换成 Cmd 和 Query。应用服务通过领域仓储接口完成业务，共享装配使用 DDD4J 的 MyBatis 增强链和租户作用域。Mapper SQL 显式绑定租户并保留锁定子句，在同一事务读写商品、规格、订单和明细。
 
 `domain.model.GoodsSpu`、`GoodsSku`、`TradeOrder`、`TradeOrderItem` 分别对应 `goods_spu`、`goods_sku`、`trade_order`、
 `trade_order_item`。四个模型使用表字段的业务名称，商品和订单额外携带各自的子项集合。 商品和订单继承 DDD4J 的

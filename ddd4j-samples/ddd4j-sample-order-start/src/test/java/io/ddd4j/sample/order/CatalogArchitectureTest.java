@@ -1,10 +1,19 @@
 package io.ddd4j.sample.order;
 
+import com.tngtech.archunit.core.importer.ClassFileImporter;
+import com.tngtech.archunit.core.importer.ImportOption;
+import io.ddd4j.ddd.cola.rules.ColaDDDLayerRules;
 import io.ddd4j.sample.order.adapter.http.CatalogApi;
+import io.ddd4j.sample.order.app.CatalogService;
 import io.ddd4j.sample.order.app.projection.CatalogOrderView;
 import io.ddd4j.sample.order.app.projection.ProjectedTradeOrderQuery;
 import io.ddd4j.sample.order.client.query.TradeOrderQuery;
-import io.ddd4j.sample.order.domain.model.*;
+import io.ddd4j.sample.order.domain.InvalidDomainDependency;
+import io.ddd4j.sample.order.domain.model.GoodsSku;
+import io.ddd4j.sample.order.domain.model.GoodsSkuOffer;
+import io.ddd4j.sample.order.domain.model.GoodsSpu;
+import io.ddd4j.sample.order.domain.model.TradeOrder;
+import io.ddd4j.sample.order.domain.model.TradeOrderItem;
 import io.ddd4j.sample.order.infrastructure.CatalogDatabase;
 import org.junit.jupiter.api.Test;
 
@@ -23,6 +32,34 @@ import static org.junit.jupiter.api.Assertions.*;
  * 验证商品交易示例的层间制品边界、聚合约束和投影并发顺序。
  */
 class CatalogArchitectureTest {
+    /**
+     * 验证真实商品交易类满足 COLA 依赖规则。
+     */
+    @Test
+    void catalogProductionClassesRespectColaBoundaries() {
+        var classes = new ClassFileImporter()
+                .withImportOption(new ImportOption.DoNotIncludeTests())
+                .importPackages("io.ddd4j.sample.order");
+        assertTrue(classes.contain(TradeOrder.class));
+        assertTrue(classes.contain(CatalogApi.class));
+        assertTrue(classes.contain(CatalogDatabase.class));
+        assertTrue(classes.contain(CatalogService.class));
+        ColaDDDLayerRules.DOMAIN_NOT_DEPEND_ON_ADAPTER.check(classes);
+        ColaDDDLayerRules.DOMAIN_NOT_DEPEND_ON_APPLICATION.check(classes);
+        ColaDDDLayerRules.DOMAIN_NOT_DEPEND_ON_FRAMEWORK.check(classes);
+    }
+
+    /**
+     * 验证真实的 app 包名同样会触发领域反向依赖违规。
+     */
+    @Test
+    void domainDependingOnAppIsRejected() {
+        var classes = new ClassFileImporter()
+                .importClasses(InvalidDomainDependency.class);
+        var result = ColaDDDLayerRules.DOMAIN_NOT_DEPEND_ON_APPLICATION.evaluate(classes);
+        assertTrue(result.hasViolation());
+    }
+
     /**
      * 构造架构测试所用的单行订单明细。
      *

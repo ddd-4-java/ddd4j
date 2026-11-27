@@ -88,15 +88,15 @@ Boot）、[ddd4j-quarkus](https://github.com/ddd-4-java/ddd4j-quarkus)、[ddd4j-
 
 - ✅ **框架无关**：核心契约层零 Spring / MyBatis / Servlet import，可同时被 Spring Boot / Quarkus / Javalin / Micronaut /
   Vert.x / Helidon / Dropwizard / Guice 复用
-- ✅ **DDD 战术模式**：提供普通充血模型 `AggregateRoot` / `Repository<M, P, ID>`（对齐 MyBatis-Plus `BaseMapper`），并由
-  `ddd4j-core` 自研提供 ES 轨道 `DddAggregateRoot` / `DddDomainEvent` / `DddEventStoreRepository`
+- ✅ **DDD 战术模式**：提供普通充血模型 `AggregateRoot` / `Repository<M, ID>`（对齐 MyBatis-Plus `BaseMapper`），并由
+  `ddd4j-core` 自研提供 ES 轨道 `EventSourcingRepository` / `DomainEvent` / `EventStore`
 - ✅ **CQRS 命令查询分离**：基于 `ddd4j-core` 自研抽象，提供 `Command` / `View` / `ProjectionPosition` 等 SPI
 - ✅ **事件溯源（ES）**：聚合根状态通过事件流重建，支持时间旅行和完整审计
 - ✅ **三轨 DDD 模型**：兼容轻量 `PO / Query` 快速 CRUD 轨道 + `AggregateRoot / Repository` 普通充血模型轨道 +
   `ddd4j-core` 自研 CQRS / ES 轨道
 - ✅ **Lambda 充血查询**：`Query<T>` 支持 Lambda 类型安全条件构建（`eq` / `like` / `in` / `between` / `orderByDesc` 等），三
   ORM 模块各自实现
-- ✅ **三组核心 SPI**：`DomainEventPublisher`（进程内事件）· `MQEventPublisher`（跨进程消息）· `Repository<M, P, ID>`
+- ✅ **三组核心 SPI**：`DomainEventPublisher`（进程内事件）· `MQEventPublisher`（跨进程消息）· `Repository<M, ID>`
   （统一领域仓储，对齐 BaseMapper）
 - ✅ **MQ 统一抽象**：保留 `ddd4j-mq-core` 纯 Java SPI + `ddd4j-mq-spring` 桥接，以及 Kafka / RabbitMQ / RocketMQ / Redis
   Stream / NATS / Pulsar / ActiveMQ / MQTT / ONS / SQS / TDMQ / Disruptor 等 12 个实现
@@ -110,13 +110,13 @@ Boot）、[ddd4j-quarkus](https://github.com/ddd-4-java/ddd4j-quarkus)、[ddd4j-
 
 ## 4. 三轨版本策略
 
-ddd4j 当前 **三条主线并行演化**，HEAD 同步最新同语义提交：
+ddd4j 维护 **三条 JDK 发布线**。跨线一致性以各分支当前提交的验证结果为准。
 
-| 主线              |  JDK   |     Maven      |            Jackson            |          JPA 命名空间           | 当前 HEAD                | 角色                       |
-|:------------------|:------:|:--------------:|:-----------------------------:|:-------------------------------:|:-------------------------|:---------------------------|
-| **feature/1.0.x** | **8**  |   **3.9.16**   |           Jackson 2           |       `javax.persistence`       | `41f690b7`（2026-09-15） | 生产在用 + 三线治理中枢    |
-| **feature/2.0.x** | **17** |   **3.9.16**   |           Jackson 2           | `jakarta.persistence`（迁移中） | `e3ceb44e`（2026-09-15） | 生产主力线                 |
-| **feature/3.0.x** | **21** | **4.0.0-rc-6** | **Jackson 3 / tools.jackson** |          完全 jakarta           | `d21e90a4`（2026-09-15） | 前瞻线（JDK 21 + Maven 4） |
+| 主线              |  JDK   |     Maven      |            Jackson            |          JPA 命名空间           | 角色                       |
+|:------------------|:------:|:--------------:|:-----------------------------:|:-------------------------------:|:---------------------------|
+| **feature/1.0.x** | **8**  |   **3.9.16**   |           Jackson 2           |       `javax.persistence`       | 生产在用 + 三线治理中枢    |
+| **feature/2.0.x** | **17** |   **3.9.16**   |           Jackson 2           | `jakarta.persistence`（迁移中） | 生产主力线                 |
+| **feature/3.0.x** | **21** | **4.0.0-rc-6** | **Jackson 3 / tools.jackson** |          完全 jakarta           | 前瞻线（JDK 21 + Maven 4） |
 
 > **三线对齐约束**：2.0.x ↔ 3.0.x 在 2026-09-09 严格结构 / Class / 公开 API / CodeGraph 签名门禁中 **全部 0 差异**
 > ；1.0.x ↔ 2.0.x 因 JDK8 字节码 / Helidon 缺失保留 19 处公开 API 差异 + 231 处方法体差异（详见 [
@@ -129,7 +129,7 @@ ddd4j 当前 **三条主线并行演化**，HEAD 同步最新同语义提交：
 | `ddd4j-bom`          | BOM 版本管理        | 外部项目引用统一版本                                                                                                                  |
 | `ddd4j-dependencies` | 第三方依赖集中管理  | Spring 6.x / Jackson 2.22 / Reactor 等                                                                                                |
 | `ddd4j-annotation`   | DDD 注解 + API 注解 | `@DomainEntity` `@DomainService` `@ApplicationService` `@DomainRepository`                                                            |
-| `ddd4j-core`         | **纯 Java 契约层**  | `AggregateRoot` `Repository<M,P,ID>` `Query<T>`（Lambda 充血查询）`Page` `R` `DomainEvent` `DddAggregateRoot` `SFunction` `LambdaKit` |
+| `ddd4j-core`         | **纯 Java 契约层**  | `AggregateRoot` `Repository<M,ID>` `Query<T>`（Lambda 充血查询）`Page` `R` `DomainEvent` `EventSourcingRepository` `SFunction` `LambdaKit` |
 | `ddd4j-kit`          | 工具箱              | 继承式增强 Hutool，Cache / Lang / Web 工具                                                                                            |
 | `ddd4j-ddd-rules`    | DDD 架构规范检查    | `CleanDDDLayerRules` `ColaDDDLayerRules`（ArchUnit）                                                                                  |
 | `ddd4j-data`         | 数据层抽象          | 三 ORM 轨道 + 加密 / 数据权限 / 外部服务 / 日志                                                                                       |
@@ -202,7 +202,7 @@ ddd4j 当前 **三条主线并行演化**，HEAD 同步最新同语义提交：
 
 ## 8. ArchUnit 架构边界守护
 
-ddd4j 内置 9 条 ArchUnit 规则，在 CI 阶段强制执行架构纪律：
+ddd4j 在 CI 测试阶段验证核心边界。商品交易示例还对编译后的业务类执行 COLA 规则，并用反向依赖夹具验证拦截。
 
 | 规则                             | 说明                                                     |
 |:---------------------------------|:---------------------------------------------------------|
@@ -259,140 +259,17 @@ ddd4j 内置 9 条 ArchUnit 规则，在 CI 阶段强制执行架构纪律：
 </dependencies>
 ```
 
-### 9.2 普通充血模型与 PO 分离
+### 9.2 运行四表商品交易
 
-ddd4j 的普通 DDD 主路径 **不要求**领域模型继承 MyBatis-Plus 的 `Model`，也不要求通过固定前缀或固定父类识别模型。领域层只依赖
-`ddd4j-core`，基础设施层再用 `ddd4j-data-mybatisplus` 适配 MyBatis-Plus。
+从 [示例启动说明](ddd4j-samples/README.md#启动默认订单示例) 选择框架，准备专用 MySQL 库和三个 `CATALOG_*` 环境变量。示例自动初始化商品与订单四表。按启动说明执行 HTTP 验证，可检查建档、下单、金额校验、履约和租户隔离。
 
-```java
-import io.ddd4j.core.ddd.model.AggregateRoot;
-import io.ddd4j.kit.lang.StrKit;
-import java.util.Objects;
+新业务从商品交易主链开始。应用服务显式使用领域仓储，在一个事务内写入聚合与明细。需要命令路由时，使用 `CommandExecutor` 和各框架提供的 `CommandBus`，返回值统一为 `R<T>`。读用例以普通查询对象交给 `QueryHandler` 或 `QueryBus`。参见 [商品交易应用代码](ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/app/CatalogService.java)。
 
-public class Order extends AggregateRoot<Long> {
+### 9.3 选择持久化能力
 
-    private final Long id;
-    private String buyerName;
+`Repository<M, ID>` 要求实现 `findById` 和 `save`。批量、分页和条件写入由具体实现决定。业务端口只声明用例需要的方法。需要动态 Lambda 条件时再使用持久化 `Query<M>`，需要访问 PO 字段时限定在 `withPO(...)` 作用域。Active Record 入口与仓储注册表适用于明确选择该用法的项目。
 
-    public Order(Long id, String buyerName) {
-        this.id = Objects.requireNonNull(id, "id must not be null");
-        renameBuyer(buyerName);
-    }
-
-    @Override
-    public Long id() {
-        return id;
-    }
-
-    public void renameBuyer(String buyerName) {
-        if (StrKit.isBlank(buyerName)) {
-            throw new IllegalArgumentException("buyerName must not be blank");
-        }
-        this.buyerName = buyerName;
-    }
-
-    public String buyerName() {
-        return buyerName;
-    }
-}
-```
-
-```java
-import io.ddd4j.core.ddd.repository.Repository;
-
-import java.util.Optional;
-
-public interface OrderRepository extends Repository<Order, Long> {
-    Optional<Order> findByOrderNo(String orderNo);
-}
-```
-
-```java
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import io.ddd4j.data.mybatis.repository.MybatisAggregateRepository;
-import io.ddd4j.kit.lang.StrKit;
-
-import java.util.Optional;
-
-interface OrderMapper extends BaseMapper<OrderPO> { }
-class OrderQuery extends io.ddd4j.core.cqrs.query.Query<Order> { }
-
-public class MybatisOrderRepository extends MybatisAggregateRepository<Order, Long>
-        implements OrderRepository {
-
-    public MybatisOrderRepository(OrderMapper mapper) {
-        super(mapper);
-    }
-
-    @Override
-    public Optional<Order> findByOrderNo(String orderNo) {
-        if (StrKit.isBlank(orderNo)) {
-            return Optional.empty();
-        }
-        return Optional.ofNullable(getBaseMapper().selectOne(lambdaQueryWrapper()
-                        .eq(OrderPO::getOrderNo, orderNo)))
-                .map(this::toModel);
-    }
-
-    @Override
-    public Order toModel(OrderPO po) {
-        return new Order(po.getId(), po.getBuyerName());
-    }
-
-    @Override
-    public OrderPO toPersistenceObject(Order model) {
-        OrderPO po = new OrderPO();
-        po.setId(model.id());
-        po.setBuyerName(model.buyerName());
-        return po;
-    }
-}
-```
-
-### 9.3 Lambda 充血查询
-
-```java
-// 定义 ORM 无关的充血 Query
-public class OrderQuery extends Query<Order> {
-    @Override
-    public Repository repository() {
-        return RepositoryRegistry.repository(Order.class);
-    }
-}
-
-// 业务层默认使用领域模型属性
-Page<Order> page = new OrderQuery()
-    .eq(Order::getStatus, "PAID")
-    .like(Order::getOrderNo, "2024")
-    .ge(Order::getCreateTime, startTime)
-    .page();
-
-// 基础设施层必须显式进入 PO 属性作用域
-Page<OrderPO> persistencePage = new OrderQuery()
-    .withPO(OrderPO.class)
-    .eq(OrderPO::getStatus, "PAID")
-    .orderByDesc(OrderPO::getCreateTime)
-    .current(1).size(20)
-    .page();
-
-// 条件重载（消除 if-else 样板）
-List<Order> list = new OrderQuery()
-    .eq(StrKit.isNotBlank(status), Order::getStatus, status)
-    .like(StrKit.isNotBlank(keyword), Order::getOrderNo, keyword)
-    .list();
-```
-
-`Repository<M, P, ID>` 统一仓储接口对齐 MyBatis-Plus `BaseMapper` 全部常用方法：
-
-```
-Repository<M, P, ID>
-├── 单条 CRUD:    findById / save / updateById / insertOrUpdate / delete / deleteById
-├── 批量操作:      findByIds / deleteByIds / saveBatch / updateBatchById / insertOrUpdateBatch
-├── 无条件查询:    findFirst / findAll / count / exists
-├── 条件查询:      findFirst(Query<M>) / findList(Query<M>) / page(Query<M>) / count(Query<M>) / maps(Query<M>) / exists(Query<M>)
-├── 条件操作:      update(M, Query<M>) / deleteByQuery(Query<M>)
-└── 聚合填充:      fill(Query<M>, M) / fill(Query<M>, List<M>)
-```
+事件重放使用 `EventStore` 和 `EventSourcingRepository`。使用 `AsyncEventStore` 或响应式投影方法时，请显式引入 Reactor，R2DBC 适配器已经声明该依赖。商品交易的示例投影从订单快照重建，ESDB 重放和 MQ 投递分别由组件测试验收。
 
 ### 9.4 业务项目继承父 POM
 
@@ -450,4 +327,4 @@ order-service/
 
 ---
 
-**文档版本**：V1.0.0 · **最后更新**：2026-09-18 · **文档状态**：✅ 待评审 · **对齐代码 HEAD**：`41f690b7`
+**文档版本**：V1.0.0 · **最后更新**：2026-09-18 · **文档状态**：✅ 待评审

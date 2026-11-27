@@ -51,12 +51,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- ======== API 文档 ======== -->
-        <!-- Swagger 注解（@Schema，用于 ApiRestResponse 等） -->
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-annotations-jakarta</artifactId>
-        </dependency>
         <!-- Commons Lang3（字符串/对象工具） -->
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -78,6 +72,7 @@
         <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-core</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 

@@ -1,6 +1,9 @@
 package io.ddd4j.sample.order;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.ddd4j.core.constant.ContextConstants;
+import io.ddd4j.core.context.ThreadContext;
+import io.ddd4j.data.mybatis.context.Ddd4jTenantContext;
 import io.ddd4j.core.cqrs.command.DefaultCommandBus;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
@@ -29,6 +32,28 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Testcontainers
 class CatalogTradeTest {
+    /**
+     * 验证 MyBatis 事务把业务租户传给 DDD4J，并在异常后恢复请求租户。
+     */
+    @Test
+    void catalogTransactionScopesAndRestoresTenant() {
+        var source = new UnpooledDataSource(MYSQL.getDriverClassName(), MYSQL.getJdbcUrl(), MYSQL.getUsername(), MYSQL.getPassword());
+        var transactions = CatalogDatabase.open(source);
+        var context = new Ddd4jTenantContext();
+        try (var request = ThreadContext.open(); var ignored = context.open("request-tenant")) {
+            ThreadContext.set(ContextConstants.PREPARING_SQL, "caller-sql");
+            var failure = assertThrows(IllegalStateException.class, () -> transactions.execute("trade-tenant", session -> {
+                assertEquals("trade-tenant", context.getCurrentTenantId());
+                assertTrue(session.goods().findById(Long.MAX_VALUE).isEmpty());
+                assertNotEquals("caller-sql", ThreadContext.get(ContextConstants.PREPARING_SQL));
+                throw new IllegalStateException("rollback");
+            }));
+            assertEquals("rollback", failure.getMessage());
+            assertEquals("request-tenant", context.getCurrentTenantId());
+            assertEquals("caller-sql", ThreadContext.get(ContextConstants.PREPARING_SQL));
+        }
+    }
+
     /**
      * 为商品交易集成测试提供隔离数据库的 MySQL 容器。
      */

@@ -150,6 +150,14 @@ class WorkflowLineBaselineTest(unittest.TestCase):
         self.assertNotIn("SAMPLE_EXCLUSIONS", workflow)
         self.assertNotIn("QUARKUS_TEST_EXCLUSIONS", workflow)
 
+    def test_integration_workflows_select_existing_maven_modules(self):
+        for filename in ("verify.yml", "release-candidate.yml"):
+            workflow = (ROOT / ".github/workflows" / filename).read_text(encoding="utf-8")
+            for selectors in re.findall(r"-pl\s+(ddd4j-[a-z0-9/,\-]+)", workflow):
+                for selector in selectors.split(","):
+                    with self.subTest(workflow=filename, module=selector):
+                        self.assertTrue((ROOT / selector / "pom.xml").is_file())
+
     def test_infrastructure_job_runs_native_broker_adapters(self):
         workflow = (ROOT / ".github/workflows/verify.yml").read_text(encoding="utf-8")
         job = re.search(

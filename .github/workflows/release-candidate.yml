@@ -72,7 +72,7 @@ jobs:
       - name: Run Testcontainers integration suite
         run: >-
           ./mvnw -B -ntp
-          -pl ddd4j-cache,ddd4j-data/ddd4j-data-mybatisplus,ddd4j-mq/ddd4j-mq-kafka,ddd4j-samples/ddd4j-sample-order-jdbc,ddd4j-samples/ddd4j-sample-order-kafka,ddd4j-samples/ddd4j-sample-order-redis
+          -pl ddd4j-cache,ddd4j-data/ddd4j-data-mybatisplus,ddd4j-mq/ddd4j-mq-kafka,ddd4j-samples/ddd4j-sample-order-start,ddd4j-data/ddd4j-data-event-store-esdb,ddd4j-mq/ddd4j-mq-redis-stream
           -am test
       - name: Enforce keyless CVE gate
         env:

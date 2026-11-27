@@ -30,7 +30,10 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * 充血查询模型（Lambda 类型安全条件构建 + 充血查询执行）。
+ * 持久化查询 DSL，支持 Lambda 条件、分页和使用仓储执行查询。
+ *
+ * <p>业务查询输入可直接交给 {@link QueryHandler}，无需继承此类。
+ * 只有构造动态持久化条件或使用仓储查询便利方法时才使用这个 DSL。
  *
  * <p>业务方继承此类后，直接通过 Lambda 引用领域模型字段构建查询条件：
  * <pre>{@code

@@ -22,38 +22,11 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * 统一的领域仓储接口（对齐 MyBatis-Plus {@code BaseMapper} 全部常用方法）。
+ * 聚合仓储与持久化适配器的公共契约。
  *
- * <p>合并了旧 {@code Repository}（基础 CRUD）和 {@code RichRepository}（充血查询），
- * 因为 Lambda 改造后 {@link Query} 已绑定 PO 类型，无需区分两个接口。
- *
- * <p><b>方法对照 BaseMapper</b></p>
- * <table border="1">
- *   <caption>BaseMapper 与 Repository 的方法映射</caption>
- *   <tr><th>BaseMapper</th><th>Repository</th><th>说明</th></tr>
- *   <tr><td colspan="3"><b>单条 CRUD</b></td></tr>
- *   <tr><td>selectById(id)</td><td>findById(ID)</td><td>按 ID 查询</td></tr>
- *   <tr><td>insert(T)</td><td>save(M)</td><td>插入</td></tr>
- *   <tr><td>updateById(T)</td><td>updateById(M)</td><td>按 ID 更新</td></tr>
- *   <tr><td>insertOrUpdate(T)</td><td>insertOrUpdate(M)</td><td>存在更新否插入</td></tr>
- *   <tr><td>deleteById(id)</td><td>deleteById(ID)</td><td>按 ID 删除</td></tr>
- *   <tr><td>deleteById(T)</td><td>delete(M)</td><td>按实体删除</td></tr>
- *   <tr><td colspan="3"><b>批量操作</b></td></tr>
- *   <tr><td>selectByIds(Collection)</td><td>findByIds(Collection&lt;ID&gt;)</td><td>批量查询</td></tr>
- *   <tr><td>deleteByIds(Collection)</td><td>deleteByIds(Collection&lt;ID&gt;)</td><td>批量删除</td></tr>
- *   <tr><td>insert(Collection)</td><td>saveBatch(Collection&lt;M&gt;)</td><td>批量插入</td></tr>
- *   <tr><td>updateById(Collection)</td><td>updateBatchById(Collection&lt;M&gt;)</td><td>批量更新</td></tr>
- *   <tr><td>insertOrUpdate(Collection)</td><td>insertOrUpdateBatch(Collection&lt;M&gt;)</td><td>批量保存或更新</td></tr>
- *   <tr><td colspan="3"><b>条件查询（Query&lt;P&gt; 替代 Wrapper）</b></td></tr>
- *   <tr><td>selectOne(Wrapper)</td><td>findFirst(Query)</td><td>查询单条</td></tr>
- *   <tr><td>selectList(Wrapper)</td><td>findList(Query)</td><td>查询列表</td></tr>
- *   <tr><td>selectCount(Wrapper)</td><td>count(Query)</td><td>条件计数</td></tr>
- *   <tr><td>selectPage(page, Wrapper)</td><td>page(Query)</td><td>分页查询</td></tr>
- *   <tr><td>selectMaps(Wrapper)</td><td>maps(Query)</td><td>查询 Map 列表</td></tr>
- *   <tr><td>exists(Wrapper)</td><td>exists(Query)</td><td>条件存在判断</td></tr>
- *   <tr><td>update(T, Wrapper)</td><td>update(M, Query)</td><td>条件更新</td></tr>
- *   <tr><td>delete(Wrapper)</td><td>deleteByQuery(Query)</td><td>条件删除</td></tr>
- * </table>
+ * <p>实现必须提供按标识读取和保存。业务层应通过具体聚合的仓储端口表达业务查询及事务要求。
+ * 分页、批量和条件操作属于适配器能力，直接使用前须确认实现支持。缺省抛出
+ * {@link UnsupportedOperationException} 的方法不属于最小实现契约。
  *
  * @param <M>  聚合根类型
  * @param <ID> 聚合根标识类型
@@ -74,7 +47,7 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
     Optional<M> findById(ID id);
 
     /**
-     * 保存聚合根（新建或更新，对应 {@code insert} + {@code updateById}）。
+     * 保存聚合根，由具体实现定义新建和更新的语义。
      *
      * @param aggregate 待处理聚合根
      * @return 保存后的聚合根（包含自增字段）

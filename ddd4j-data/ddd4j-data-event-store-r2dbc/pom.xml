@@ -18,6 +18,10 @@
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
+        </dependency>
         <!-- For DDD4j -->
         <dependency>
             <groupId>io.ddd4j</groupId>
