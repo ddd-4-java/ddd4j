@@ -187,6 +187,97 @@ class GuiceViewManagerTest {
 
     // --- getProjectionStatus tests ---
 
+    /**
+     * 验证<code>first.isActive()</code>为假，<code>second.isActive()</code>为真，<code>second.isActive()</code>为假。
+     */
+    @Test
+    void stopCancelsOutstandingHandlesAndSupportsFreshRestart() {
+        ViewScheduleHandle first = manager.scheduleAtFixedRate("owned", 3600, () -> {
+        });
+        manager.stop();
+        assertFalse(first.isActive());
+        ViewScheduleHandle second = manager.scheduleAtFixedRate("owned", 3600, () -> {
+        });
+        assertTrue(second.isActive());
+        manager.close();
+        assertFalse(second.isActive());
+    }
+
+    /**
+     * 验证被测调用 抛出 <code>LinkageError.class</code>，<code>scheduled.get()</code>非空，<code>managed.isRunning()</code>为假。
+     */
+    @Test
+    void startupLinkageErrorCancelsOwnedTasksAndResetsRunningState() {
+        LinkageError failure = new LinkageError("view wiring failed");
+        AtomicReference<ViewScheduleHandle> scheduled = new AtomicReference<>();
+        AtomicReference<ViewScheduleHandle> owned = new AtomicReference<>();
+        GuiceInMemoryProjectionPositionRepository repo = new GuiceInMemoryProjectionPositionRepository();
+        ProjectionRunner<Object> runner = emptyRunner(repo);
+
+        try (GuiceViewManager managed = new GuiceViewManager(1, repo, runner,
+                Arrays.asList(view("first"), view("second"))) {
+            @Override
+            public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
+                if ("second".equals(viewName)) {
+                    throw failure;
+                }
+                ViewScheduleHandle first = super.schedule(viewName, cron, task);
+                scheduled.set(first);
+                owned.set(scheduleAtFixedRate("local", 3600, () -> {
+                }));
+                return first;
+            }
+        }) {
+            assertSame(failure, assertThrows(LinkageError.class, managed::start));
+            assertNotNull(scheduled.get());
+            assertNotNull(owned.get());
+            assertFalse(scheduled.get().isActive());
+            assertFalse(owned.get().isActive());
+            assertFalse(managed.isRunning());
+        }
+    }
+
+    /**
+     * 验证被测调用 抛出 <code>LinkageError.class</code>，<code>managed.isRunning()</code>为假，<code>cancellationAttempts.get()</code> 等于 <code>2</code>。
+     */
+    @Test
+    void stopLinkageErrorStillCancelsOwnedTasksAndRetriesExternalHandle() {
+        LinkageError failure = new LinkageError("first cancellation failed");
+        AtomicInteger cancellationAttempts = new AtomicInteger();
+        GuiceInMemoryProjectionPositionRepository repo = new GuiceInMemoryProjectionPositionRepository();
+        ProjectionRunner<Object> runner = emptyRunner(repo);
+
+        try (GuiceViewManager managed = new GuiceViewManager(1, repo, runner, Collections.singletonList(view("external"))) {
+            @Override
+            public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
+                return new ViewScheduleHandle() {
+                    @Override
+                    public void cancel() {
+                        if (cancellationAttempts.incrementAndGet() == 1) {
+                            throw failure;
+                        }
+                    }
+
+                    @Override
+                    public boolean isActive() {
+                        return cancellationAttempts.get() < 2;
+                    }
+                };
+            }
+        }) {
+            managed.start();
+            ViewScheduleHandle owned = managed.scheduleAtFixedRate("local", 3600, () -> {
+            });
+
+            assertSame(failure, assertThrows(LinkageError.class, managed::stop));
+            assertFalse(managed.isRunning());
+            assertFalse(owned.isActive());
+            assertEquals(1, cancellationAttempts.get());
+            managed.close();
+            assertEquals(2, cancellationAttempts.get());
+        }
+    }
+
     /** \u9a8c\u8bc1<code>status.streamId()</code> \u7b49\u4e8e <code>"orders"</code>\uff0c<code>status.nextEventNumber()</code> \u7b49\u4e8e <code>0L</code>\uff0c<code>status.lastError()</code>\u4e3a\u7a7a\u3002 */
     @Test
     void getProjectionStatus_withoutRepository_returnsBaseline() {
@@ -310,94 +401,4 @@ class GuiceViewManagerTest {
         };
     }
 
-    /**
-     * 验证<code>first.isActive()</code>为假，<code>second.isActive()</code>为真，<code>second.isActive()</code>为假。
-     */
-    @Test
-    void stopCancelsOutstandingHandlesAndSupportsFreshRestart() {
-        ViewScheduleHandle first = manager.scheduleAtFixedRate("owned", 3600, () -> {
-        });
-        manager.stop();
-        assertFalse(first.isActive());
-        ViewScheduleHandle second = manager.scheduleAtFixedRate("owned", 3600, () -> {
-        });
-        assertTrue(second.isActive());
-        manager.close();
-        assertFalse(second.isActive());
-    }
-
-    /**
-     * 验证被测调用 抛出 <code>LinkageError.class</code>，<code>scheduled.get()</code>非空，<code>managed.isRunning()</code>为假。
-     */
-    @Test
-    void startupLinkageErrorCancelsOwnedTasksAndResetsRunningState() {
-        LinkageError failure = new LinkageError("view wiring failed");
-        AtomicReference<ViewScheduleHandle> scheduled = new AtomicReference<>();
-        AtomicReference<ViewScheduleHandle> owned = new AtomicReference<>();
-        GuiceInMemoryProjectionPositionRepository repo = new GuiceInMemoryProjectionPositionRepository();
-        ProjectionRunner<Object> runner = emptyRunner(repo);
-
-        try (GuiceViewManager managed = new GuiceViewManager(1, repo, runner,
-                Arrays.asList(view("first"), view("second"))) {
-            @Override
-            public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
-                if ("second".equals(viewName)) {
-                    throw failure;
-                }
-                ViewScheduleHandle first = super.schedule(viewName, cron, task);
-                scheduled.set(first);
-                owned.set(scheduleAtFixedRate("local", 3600, () -> {
-                }));
-                return first;
-            }
-        }) {
-            assertSame(failure, assertThrows(LinkageError.class, managed::start));
-            assertNotNull(scheduled.get());
-            assertNotNull(owned.get());
-            assertFalse(scheduled.get().isActive());
-            assertFalse(owned.get().isActive());
-            assertFalse(managed.isRunning());
-        }
-    }
-
-    /**
-     * 验证被测调用 抛出 <code>LinkageError.class</code>，<code>managed.isRunning()</code>为假，<code>cancellationAttempts.get()</code> 等于 <code>2</code>。
-     */
-    @Test
-    void stopLinkageErrorStillCancelsOwnedTasksAndRetriesExternalHandle() {
-        LinkageError failure = new LinkageError("first cancellation failed");
-        AtomicInteger cancellationAttempts = new AtomicInteger();
-        GuiceInMemoryProjectionPositionRepository repo = new GuiceInMemoryProjectionPositionRepository();
-        ProjectionRunner<Object> runner = emptyRunner(repo);
-
-        try (GuiceViewManager managed = new GuiceViewManager(1, repo, runner, Collections.singletonList(view("external"))) {
-            @Override
-            public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
-                return new ViewScheduleHandle() {
-                    @Override
-                    public void cancel() {
-                        if (cancellationAttempts.incrementAndGet() == 1) {
-                            throw failure;
-                        }
-                    }
-
-                    @Override
-                    public boolean isActive() {
-                        return cancellationAttempts.get() < 2;
-                    }
-                };
-            }
-        }) {
-            managed.start();
-            ViewScheduleHandle owned = managed.scheduleAtFixedRate("local", 3600, () -> {
-            });
-
-            assertSame(failure, assertThrows(LinkageError.class, managed::stop));
-            assertFalse(managed.isRunning());
-            assertFalse(owned.isActive());
-            assertEquals(1, cancellationAttempts.get());
-            managed.close();
-            assertEquals(2, cancellationAttempts.get());
-        }
-    }
 }
