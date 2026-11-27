@@ -27,6 +27,7 @@
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-core</artifactId>
+            <version>${vertx.version}</version>
         </dependency>
         <dependency>
             <groupId>io.ddd4j</groupId>
@@ -37,7 +38,7 @@
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-junit5</artifactId>
-            <version>${vertx-compat4.version}</version>
+            <version>${vertx.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

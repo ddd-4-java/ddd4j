@@ -429,11 +429,11 @@ class UniformContract(unittest.TestCase):
                 [value for key, value in versions.items()
                  if key[0] == 'ddd4j-dependencies/pom.xml' and key[1] == coordinate],
                 ['4.5.35'])
-        for module in ('ddd4j-data-cqrs-vertx', 'ddd4j-data-projection-vertx'):
-            self.assertEqual(
-                [value for key, value in versions.items()
-                 if key[0] == f'ddd4j-data/{module}/pom.xml' and key[1] == 'io.vertx:vertx-core'],
-                ['${vertx.version}'])
+        # The command bus and projection scheduler now ship in a single native runtime.
+        runtime = 'ddd4j-runtime/ddd4j-runtime-vertx/pom.xml'
+        for coordinate in ('io.vertx:vertx-core', 'io.vertx:vertx-junit5'):
+            self.assertEqual([value for key, value in versions.items()
+                              if key[0] == runtime and key[1] == coordinate], ['${vertx.version}'])
         self.assertEqual(
             [value for key, value in versions.items()
              if key[0] == 'ddd4j-dependencies/pom.xml' and key[1] == '#vertx.version'],
