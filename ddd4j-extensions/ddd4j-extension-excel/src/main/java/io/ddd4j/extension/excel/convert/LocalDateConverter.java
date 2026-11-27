@@ -55,6 +55,9 @@ public class LocalDateConverter implements Converter<LocalDate> {
      */
     public static final String DEFAULT_PATTERN = "yyyy-MM-dd";
 
+    /**
+     * 单元格文本与 Java 时间类型之间转换使用的格式器。
+     */
     private final DateTimeFormatter formatter;
 
     /**
@@ -73,16 +76,34 @@ public class LocalDateConverter implements Converter<LocalDate> {
         this.formatter = DateTimeFormatter.ofPattern(pattern);
     }
 
+    /**
+     * 声明转换器处理的 Java 类型。
+     *
+     * @return LocalDate 的类型标记
+     */
     @Override
     public Class<?> supportJavaTypeKey() {
         return LocalDate.class;
     }
 
+    /**
+     * 声明转换器处理的 Excel 单元格类型。
+     *
+     * @return 字符串型单元格类型
+     */
     @Override
     public CellDataTypeEnum supportExcelTypeKey() {
         return CellDataTypeEnum.STRING;
     }
 
+    /**
+     * 使用配置的格式解析日期文本。
+     *
+     * @param cellData            当前读取的文本单元格
+     * @param contentProperty     当前字段的 Excel 列元数据
+     * @param globalConfiguration 工作簿级转换配置
+     * @return 解析后的日期，空单元格返回空
+     */
     @Override
     public LocalDate convertToJavaData(ReadCellData<?> cellData,
                                        ExcelContentProperty contentProperty,
@@ -93,6 +114,14 @@ public class LocalDateConverter implements Converter<LocalDate> {
         return LocalDate.parse(cellData.getStringValue(), formatter);
     }
 
+    /**
+     * 使用配置的格式写出日期文本。
+     *
+     * @param value               待导出的值
+     * @param contentProperty     当前字段的 Excel 列元数据
+     * @param globalConfiguration 工作簿级转换配置
+     * @return 字符串型写入单元格，空引用写为空文本
+     */
     @Override
     public WriteCellData<?> convertToExcelData(LocalDate value,
                                                ExcelContentProperty contentProperty,

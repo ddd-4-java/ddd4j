@@ -44,16 +44,38 @@ public class DefaultApiOperationLogProvider implements ApiOperationLogProvider {
      */
     private static final Marker ACCESS_MARKER = MarkerFactory.getMarker(Constants.ACCESS_MARKER);
 
+    /**
+     * 在被拦截操作执行前保留扩展钩子。
+     *
+     * @param joinPoint    当前 API 调用连接点
+     * @param apiOperation 被拦截方法声明的操作说明
+     */
     @Override
     public void doBefore(JoinPoint joinPoint, Operation apiOperation) {
 
     }
 
+    /**
+     * 用执行结果和计时记录成功结束的 API 调用。
+     *
+     * @param joinPoint    当前 API 调用连接点
+     * @param apiOperation 被拦截方法声明的操作说明
+     * @param rt           业务方法返回值
+     * @param stopWatch    记录本次操作耗时的计时器
+     */
     @Override
     public void afterReturing(JoinPoint joinPoint, Operation apiOperation, Object rt, com.google.common.base.Stopwatch stopWatch) {
         this.doApiOperationLog(joinPoint, apiOperation, rt, null, stopWatch);
     }
 
+    /**
+     * 用原始异常和计时记录异常结束的 API 调用。
+     *
+     * @param joinPoint    当前 API 调用连接点
+     * @param apiOperation 被拦截方法声明的操作说明
+     * @param ex           业务方法抛出的异常
+     * @param stopWatch    记录本次操作耗时的计时器
+     */
     @Override
     public void afterThrowing(JoinPoint joinPoint, Operation apiOperation, Throwable ex, com.google.common.base.Stopwatch stopWatch) {
         this.doApiOperationLog(joinPoint, apiOperation, null, ex, stopWatch);

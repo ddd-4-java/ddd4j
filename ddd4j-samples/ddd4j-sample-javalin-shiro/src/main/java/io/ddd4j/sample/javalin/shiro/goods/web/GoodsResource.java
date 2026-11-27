@@ -35,6 +35,9 @@ import static io.javalin.apibuilder.ApiBuilder.*;
  */
 public class GoodsResource {
 
+    /**
+     * 处理商品创建、维护和查询操作的应用服务。
+     */
     private final GoodsApplicationService applicationService;
 
     /**

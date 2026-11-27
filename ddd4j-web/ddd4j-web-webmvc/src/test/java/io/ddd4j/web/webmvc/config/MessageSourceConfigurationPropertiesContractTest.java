@@ -27,6 +27,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class MessageSourceConfigurationPropertiesContractTest {
 
+    /**
+     * 验证<code>first.getBasename()</code> 等于 <code>Arrays.asList("messages")</code>，<code>first.getEncoding()</code> 等于 <code>StandardCharsets.UTF_8</code>，<code>second.getBasename()</code> 等于 <code>Arrays.asList("messages")</code>。
+     */
     @Test
     void defaultsAreIndependentAndMutablePerInstance() {
         MessageSourceConfigurationProperties first = new MessageSourceConfigurationProperties();
@@ -44,6 +47,9 @@ class MessageSourceConfigurationPropertiesContractTest {
         assertEquals(Arrays.asList("messages"), second.getBasename());
     }
 
+    /**
+     * 验证<code>properties.getBasename()</code> 等于 <code>Arrays.asList("custom")</code>，<code>properties.getCacheDuration()</code> 等于 <code>Duration.ofMinutes(2)</code>，<code>properties.isUseCodeAsDefaultMessage()</code>为真。
+     */
     @Test
     void settersReplaceConfiguredValues() {
         MessageSourceConfigurationProperties properties = new MessageSourceConfigurationProperties();

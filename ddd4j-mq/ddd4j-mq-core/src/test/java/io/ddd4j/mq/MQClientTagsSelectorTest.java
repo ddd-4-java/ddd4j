@@ -33,6 +33,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  */
 class MQClientTagsSelectorTest {
 
+    /**
+     * 测试调用的命令客户端或命令行入口。
+     */
     private final MQClient cli = new MQClient() {
         @Override
         public String impl() {
@@ -50,6 +53,9 @@ class MQClientTagsSelectorTest {
         }
     };
 
+    /**
+     * 验证<code>cli.tagsToSelector("*")</code>为空，<code>cli.tagsToSelector("")</code>为空，<code>cli.tagsToSelector(" * ")</code>为空。
+     */
     @Test
     void wildcardShouldReturnNull() {
         assertNull(cli.tagsToSelector("*"));
@@ -58,23 +64,35 @@ class MQClientTagsSelectorTest {
         assertNull(cli.tagsToSelector("  *  "));
     }
 
+    /**
+     * 验证<code>cli.tagsToSelector("paid")</code> 等于 <code>"(ddd4jTag = 'paid' OR ddd4jTag IS NULL)"</code>。
+     */
     @Test
     void singleTagShouldEqualMatch() {
         assertEquals("(ddd4jTag = 'paid' OR ddd4jTag IS NULL)", cli.tagsToSelector("paid"));
     }
 
+    /**
+     * 验证<code>cli.tagsToSelector("paid || shipped")</code> 等于 <code>"(ddd4jTag = 'paid' OR ddd4jTag = 'shipped' OR ddd4jTag IS NULL)"</code>。
+     */
     @Test
     void orExpressionShouldGenerateOrChain() {
         assertEquals("(ddd4jTag = 'paid' OR ddd4jTag = 'shipped' OR ddd4jTag IS NULL)",
                 cli.tagsToSelector("paid || shipped"));
     }
 
+    /**
+     * 验证<code>cli.tagsToSelector("* -cancelled")</code> 等于 <code>"(1=1 AND (ddd4jTag &lt;&gt; 'cancelled' OR ddd4jTag IS NULL))"</code>。
+     */
     @Test
     void wildcardExcludeShouldGenerateNotEqual() {
         assertEquals("(1=1 AND (ddd4jTag <> 'cancelled' OR ddd4jTag IS NULL))",
                 cli.tagsToSelector("* -cancelled"));
     }
 
+    /**
+     * 验证<code>cli.tagsToSelector("paid -cancelled")</code> 等于 <code>"((ddd4jTag = 'paid' OR ddd4jTag IS NULL) AND (ddd4jTag &lt;&gt; 'cancelled' OR ddd4jTag IS NULL))"</code>。
+     */
     @Test
     void singleExcludeShouldEqualMatchAndExclude() {
         assertEquals(
@@ -82,6 +100,9 @@ class MQClientTagsSelectorTest {
                 cli.tagsToSelector("paid -cancelled"));
     }
 
+    /**
+     * 在测试框架中执行 <code>cli.tagsToSelector()</code>，验证该场景。
+     */
     @Test
     void orExpressionWithExclude() {
         assertEquals(
@@ -90,6 +111,9 @@ class MQClientTagsSelectorTest {
                 cli.tagsToSelector("paid || shipped -cancelled"));
     }
 
+    /**
+     * 验证<code>result</code> 等于 <code>"(ddd4jTag = 'a''b' OR ddd4jTag IS NULL)"</code>。
+     */
     @Test
     void singleQuoteShouldBeEscaped() {
         // 防止 tags 内单引号破坏 selector 解析
@@ -98,6 +122,9 @@ class MQClientTagsSelectorTest {
         assertEquals("(ddd4jTag = 'a''b' OR ddd4jTag IS NULL)", result);
     }
 
+    /**
+     * 验证<code>cli.tagHeaderKey().contains(".")</code>为假。
+     */
     @Test
     void tagHeaderKeyShouldDefaultToNoDot() {
         // 必须无 .，否则 JMS selector 当 SQL identifier 会拒绝

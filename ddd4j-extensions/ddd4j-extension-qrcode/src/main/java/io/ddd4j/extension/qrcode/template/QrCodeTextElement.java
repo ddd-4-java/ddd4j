@@ -22,12 +22,32 @@ import lombok.Getter;
 @Getter
 public final class QrCodeTextElement extends QrCodeFrameElement {
 
+    /**
+     * 模板画布上显示的文本，可在渲染前绑定变量。
+     */
     private final String text;
+    /**
+     * 用于绘制文本元素的字体名称。
+     */
     private final String fontName;
+    /**
+     * 绘制文本元素时使用的字号。
+     */
     private final int fontSize;
+    /**
+     * 是否以粗体绘制文本元素。
+     */
     private final boolean bold;
+    /**
+     * 绘制文本元素所用的颜色。
+     */
     private final String color;
 
+    /**
+     * 保存模板文本元素的边界、层级、文本与字体样式。
+     *
+     * @param builder 提供文本和绘制参数的构建器
+     */
     private QrCodeTextElement(Builder builder) {
         super(builder.x, builder.y, builder.width, builder.height, builder.zIndex);
         this.text = builder.text;
@@ -53,17 +73,52 @@ public final class QrCodeTextElement extends QrCodeFrameElement {
      * <p>设置文本边界、字体与颜色后构建不可变元素。
      */
     public static final class Builder {
+        /**
+         * 要解码或绘制的二维码模板文本内容。
+         */
         private final String text;
+        /**
+         * 元素在模板画布中的横向像素坐标。
+         */
         private int x;
+        /**
+         * 元素在模板画布中的纵向像素坐标。
+         */
         private int y;
+        /**
+         * 在编码或绘制时使用的像素宽度。
+         */
         private int width;
+        /**
+         * 在编码或绘制时使用的像素高度。
+         */
         private int height;
+        /**
+         * 重叠元素在画布中的叠放顺序。
+         */
         private int zIndex;
+        /**
+         * 用于绘制文本元素的字体名称。
+         */
         private String fontName = "SansSerif";
+        /**
+         * 绘制文本元素时使用的字号。
+         */
         private int fontSize = 16;
+        /**
+         * 是否以粗体绘制文本元素。
+         */
         private boolean bold;
+        /**
+         * 绘制文本元素所用的颜色。
+         */
         private String color = "#000000";
 
+        /**
+         * 用指定文本初始化可进一步配置位置和字体的构建器。
+         *
+         * @param text 要绘制的文本
+         */
         private Builder(String text) {
             this.text = text;
         }

@@ -41,22 +41,49 @@ public final class QLExpressExecutionOptions {
      */
     public static final int DEFAULT_MAX_ARRAY_LENGTH = 10000;
 
+    /**
+     * 是否启用高精度数值运算。
+     */
     @Builder.Default
     private final boolean precise = false;
+    /**
+     * 是否把表达式产生的变量修改写回用户上下文。
+     */
     @Builder.Default
     private final boolean polluteUserContext = false;
+    /**
+     * 单次表达式执行的超时时间，单位为毫秒。
+     */
     @Builder.Default
     private final long timeoutMillis = DEFAULT_TIMEOUT_MILLIS;
+    /**
+     * 随当前执行下发到引擎上下文的额外对象。
+     */
     @Builder.Default
     private final Map<String, Object> attachments = Collections.emptyMap();
+    /**
+     * 是否复用已解析的表达式结果。
+     */
     @Builder.Default
     private final boolean cache = true;
+    /**
+     * 是否启用表达式执行器的空引用保护。
+     */
     @Builder.Default
     private final boolean avoidNullPointer = false;
+    /**
+     * 表达式可创建或处理的数组长度限制。
+     */
     @Builder.Default
     private final int maxArrayLength = DEFAULT_MAX_ARRAY_LENGTH;
+    /**
+     * 当前表达式执行是否收集跟踪信息。
+     */
     @Builder.Default
     private final boolean traceExpression = false;
+    /**
+     * 是否关闭布尔运算的短路求值。
+     */
     @Builder.Default
     private final boolean shortCircuitDisabled = false;
 

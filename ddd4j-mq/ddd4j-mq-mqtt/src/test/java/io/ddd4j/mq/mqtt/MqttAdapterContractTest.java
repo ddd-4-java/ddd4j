@@ -35,13 +35,22 @@ import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
+/**
+ * 验证 <code>MqttAdapterContract</code> 在 <code>shouldRejectUnsupportedOperations</code>、<code>shouldLeaveQosMessageUnacknowledged</code> 等场景中的行为。
+ */
 class MqttAdapterContractTest {
 
+    /**
+     * 测试结束后执行 <code>BaseContext.clear()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void clearContext() {
         BaseContext.clear();
     }
 
+    /**
+     * 验证<code>acknowledgment.nack(true)</code> 抛出 <code>UnsupportedOperationException.class</code>，<code>acknowledgment.isAcknowledged()</code>为假，<code>acknowledgment.isAcknowledged()</code>为真。
+     */
     @Test
     void shouldRejectUnsupportedOperationsWithoutAcknowledgingAndAllowAck() {
         MqttMessage message = new MqttMessage("body".getBytes());
@@ -58,6 +67,11 @@ class MqttAdapterContractTest {
         assertTrue(acknowledgment.isAcknowledged());
     }
 
+    /**
+     * 在测试框架中执行 <code>mock()</code>、<code>properties.setEnabled()</code>、<code>properties.setBroker()</code>，验证该场景。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void shouldLeaveQosMessageUnacknowledgedWhenHandlerFails() throws Exception {
         MqttClient mqttClient = mock(MqttClient.class);
@@ -99,7 +113,15 @@ class MqttAdapterContractTest {
         verify(mqttClient, never()).close();
     }
 
+    /**
+     * 提供 <code>handle()</code> 等供当前测试使用的独立操作。
+     */
     public static final class FailingHandler {
+        /**
+         * 构造 <code>IllegalStateException</code> 作为当前测试的输入或结果。
+         *
+         * @param event 交给被测入口处理的测试领域事件
+         */
         @MQEventListener(topic = "orders", tags = "*")
         public void handle(MQEvent event) {
             throw new IllegalStateException("handler failed");

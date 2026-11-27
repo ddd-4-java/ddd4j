@@ -28,11 +28,17 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class RedisStreamNativeCausalityIT {
 
+    /**
+     * 测试结束后执行 <code>BaseContext.clear()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void clearContext() {
         BaseContext.clear();
     }
 
+    /**
+     * 验证<code>url != null &amp;&amp; url.startsWith("redis://")</code>为真，<code>entries.size()</code> 等于 <code>3</code>，<code>third.get(MQDeliveryHeaders.CAUSATION_ID)</code> 等于 <code>"causation-2"</code>。
+     */
     @Test
     @SuppressWarnings("unchecked")
     void nativeStreamFieldsCoverAbsentSingleAndBothCausalityIds() {
@@ -87,12 +93,23 @@ class RedisStreamNativeCausalityIT {
         }
     }
 
+    /**
+     * 读取 <code>event</code> 供当前测试使用。
+     *
+     * @param topic 传给 <code>event.setTopic()</code> 的 <code>String</code> 输入
+     * @return 当前测试使用的结果，取自 <code>event</code>
+     */
     private MQEvent event(String topic) {
         MQEvent event = new MQEvent();
         event.setTopic(topic);
         return event;
     }
 
+    /**
+     * 验证<code>url != null &amp;&amp; url.startsWith("redis://")</code>为真，<code>handler.received.await(15, TimeUnit.SECONDS)</code>为真，<code>client.acknowledgment.get().correlationId()</code> 等于 <code>"correlation-from-header"</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     @SuppressWarnings("unchecked")
     void nativeConsumerRestoresCausalityFromStreamFields() throws Exception {
@@ -139,6 +156,11 @@ class RedisStreamNativeCausalityIT {
         }
     }
 
+    /**
+     * 验证<code>url != null &amp;&amp; url.startsWith("redis://")</code>为真，<code>handler.succeeded.await(15, TimeUnit.SECONDS)</code>为真，<code>handler.attempts.get()</code> 等于 <code>2</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     @SuppressWarnings("unchecked")
     void failedDeliveryRemainsPendingUntilSuccessfulRetry() throws Exception {
@@ -191,6 +213,11 @@ class RedisStreamNativeCausalityIT {
         }
     }
 
+    /**
+     * 验证<code>url != null &amp;&amp; url.startsWith("redis://")</code>为真，<code>found</code>为真。
+     *
+     * @throws Exception 准备或释放被测运行资源时失败
+     */
     @Test
     @SuppressWarnings("unchecked")
     void configuredConsumerNameIsVisibleInNativeConsumerGroup() throws Exception {
@@ -242,6 +269,11 @@ class RedisStreamNativeCausalityIT {
         }
     }
 
+    /**
+     * 验证<code>url != null &amp;&amp; url.startsWith("redis://")</code>为真，<code>firstHandler.delivered.await(5, TimeUnit.SECONDS)</code>为真，<code>observer.xpending(streamKey, secondListener.getGroup()).getTotal()</code> 等于 <code>0</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     @SuppressWarnings("unchecked")
     void anotherConsumerCanClaimIdlePendingDelivery() throws Exception {
@@ -318,20 +350,48 @@ class RedisStreamNativeCausalityIT {
         }
     }
 
+    /**
+     * 将 <code>received</code>、<code>event</code> 等状态一起传入当前测试，供调用或结果断言使用。
+     */
     public static final class Handler {
+        /**
+         * 等待数据到达的同步门闩。
+         */
         private final CountDownLatch received = new CountDownLatch(1);
+        /**
+         * 供测试线程安全保存当前观察结果的引用。
+         */
         private final AtomicReference<MQEvent> event = new AtomicReference<>();
 
+        /**
+         * 调用 <code>event.set()</code>、<code>received.countDown()</code> 执行当前夹具操作。
+         *
+         * @param value 当前用例传入的值
+         */
         public void handle(MQEvent value) {
             event.set(value);
             received.countDown();
         }
     }
 
+    /**
+     * 将 <code>succeeded</code>、<code>attempts</code> 等状态一起传入当前测试，供调用或结果断言使用。
+     */
     public static final class RetryHandler {
+        /**
+         * 协调测试线程在指定执行阶段等待或继续的门闩。
+         */
         private final CountDownLatch succeeded = new CountDownLatch(1);
+        /**
+         * 跟踪测试操作的调用或重试次数。
+         */
         private final AtomicInteger attempts = new AtomicInteger();
 
+        /**
+         * 调用 <code>attempts.incrementAndGet()</code>、<code>succeeded.countDown()</code> 执行当前夹具操作。
+         *
+         * @param value 当前用例传入的值
+         */
         public void handle(MQEvent value) {
             if (attempts.incrementAndGet() == 1) {
                 throw new IllegalStateException("fail first delivery");
@@ -340,22 +400,52 @@ class RedisStreamNativeCausalityIT {
         }
     }
 
+    /**
+     * 将 <code>delivered</code> 等状态一起传入当前测试，供调用或结果断言使用。
+     */
     public static final class AlwaysFailHandler {
+        /**
+         * 协调测试线程在指定执行阶段等待或继续的门闩。
+         */
         private final CountDownLatch delivered = new CountDownLatch(1);
 
+        /**
+         * 调用 <code>delivered.countDown()</code> 执行当前夹具操作。
+         *
+         * @param value 当前用例传入的值
+         */
         public void handle(MQEvent value) {
             delivered.countDown();
             throw new IllegalStateException("leave delivery pending");
         }
     }
 
+    /**
+     * 实现 <code>RedisStreamMQClient</code>，供测试调用 <code>consume()</code> 并观察结果。
+     */
     private static final class AckCapturingClient extends RedisStreamMQClient {
+        /**
+         * 供测试线程安全保存当前观察结果的引用。
+         */
         private final AtomicReference<Acknowledgment> acknowledgment = new AtomicReference<>();
 
+        /**
+         * 使用 <code>super()</code> 初始化 <code>AckCapturingClient</code> 测试夹具。
+         *
+         * @param properties 用于构建当前测试运行环境的属性
+         */
         private AckCapturingClient(RedisStreamMQProperties properties) {
             super(properties);
         }
 
+        /**
+         * 通过<code>acknowledgment.set(ack)</code>、<code>listener.getMethod().invoke(listener.getBean(), event)</code>处理当前调用。
+         *
+         * @param listener 供当前客户端注册的消息监听器
+         * @param event    当前发布、消费或处理的事件
+         * @param ack      传给 <code>acknowledgment.set(ack)</code>
+         * @throws Throwable 反射访问被测成员时失败
+         */
         @Override
         public void consume(MQListener listener, MQEvent event, Acknowledgment ack) throws Throwable {
             acknowledgment.set(ack);

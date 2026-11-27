@@ -118,6 +118,9 @@ public class FeishuClient {
 
     /**
      * 拼接完整 URL：若设置了签名密钥，则追加 query；否则原样返回。
+     *
+     * @return 补充签名查询参数后的请求 URL
+     * @throws Exception Webhook 签名计算失败
      */
     private String buildUrl() throws Exception {
         if (StrKit.isEmpty(secret)) {

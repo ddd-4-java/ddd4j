@@ -26,6 +26,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class ReadinessReportTest {
 
+    /**
+     * 验证<code>report.ready()</code>为真，<code>report.results()</code> 的大小为 <code>2</code>。
+     */
     @Test
     void check_shouldReportReadyWhenAllContributorsAreReady() {
         ReadinessReport report = ReadinessReport.check(Arrays.asList(
@@ -36,6 +39,9 @@ class ReadinessReportTest {
         assertThat(report.results()).hasSize(2);
     }
 
+    /**
+     * 验证<code>report.ready()</code>为假，<code>report.results()</code> 的大小为 <code>2</code>，<code>result.details()</code> 含对应条目 <code>"reason"</code>、<code>"check failed"</code>。
+     */
     @Test
     void check_shouldFailClosedWhenContributorThrows() {
         ReadinessReport report = ReadinessReport.check(Arrays.asList(
@@ -54,6 +60,9 @@ class ReadinessReportTest {
     }
 
 
+    /**
+     * 验证<code>report.ready()</code>为假，<code>report.results()</code> 按顺序仅包含 <code>ReadinessResult.unavailable("ReadinessContributor", "check failed")</code>、<code>ReadinessResult.unavailable("ReadinessContributor", "empty result")</code>、<code>ReadinessResult.ready("cache")</code>。
+     */
     @Test
     void check_shouldReportAnonymousContributorFailuresWithoutInterruptingOtherChecks() {
         ReadinessContributor rejected = new ReadinessContributor() {
@@ -79,6 +88,9 @@ class ReadinessReportTest {
                 ReadinessResult.ready("cache"));
     }
 
+    /**
+     * 验证<code>result.details()</code> 含对应条目 <code>"reason"</code>、<code>"initial"</code>，<code>result.details().put("extra", "value")</code> 抛出 <code>UnsupportedOperationException.class</code>，<code>report.results().clear()</code> 抛出 <code>UnsupportedOperationException.class</code>。
+     */
     @Test
     void resultAndReport_shouldKeepImmutableSnapshots() {
         Map<String, String> details = new HashMap<>();
@@ -98,6 +110,9 @@ class ReadinessReportTest {
                 .isInstanceOf(UnsupportedOperationException.class);
     }
 
+    /**
+     * 验证<code>report.ready()</code>为假，<code>report.results()</code> 的大小为 <code>2</code>，<code>report.results().get(1).details()</code> 含对应条目 <code>"reason"</code>、<code>"empty result"</code>。
+     */
     @Test
     void check_shouldIgnoreNullContributorAndFailClosedOnEmptyResult() {
         ReadinessReport report = ReadinessReport.check(Arrays.asList(
@@ -112,6 +127,9 @@ class ReadinessReportTest {
         assertThat(report.results().get(1).details()).containsEntry("reason", "empty result");
     }
 
+    /**
+     * 验证<code>result.toString()</code> 等于 <code>"ReadinessResult[name=database, ready=false, details={Aa=first, BB=second, AaAa=third, BBBB=fourth}]"</code>。
+     */
     @Test
     void result_shouldKeepDiagnosticTextInInputOrder() {
         Map<String, String> details = new LinkedHashMap<>();
@@ -127,6 +145,9 @@ class ReadinessReportTest {
                 "ReadinessResult[name=database, ready=false, details={Aa=first, BB=second, AaAa=third, BBBB=fourth}]");
     }
 
+    /**
+     * 验证被测调用 抛出 <code>NullPointerException.class</code>。
+     */
     @Test
     void result_shouldRejectNullDiagnosticEntries() {
         Map<String, String> nullKey = new HashMap<>();

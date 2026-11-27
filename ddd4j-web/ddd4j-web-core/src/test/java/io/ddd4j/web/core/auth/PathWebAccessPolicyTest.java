@@ -29,11 +29,20 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  */
 class PathWebAccessPolicyTest {
 
+    /**
+     * 创建 <code>new WebRequestContext</code> 供当前测试路径调用。
+     *
+     * @param path 测试请求的资源路径或待访问文件路径
+     * @return 当前测试使用的结果，取自 <code>new WebRequestContext("r-1", "t-1", "tenant-a", null, Locale.CHINA, "127.0.0.1", "GET", path)</code>
+     */
     private static WebRequestContext request(String path) {
         return new WebRequestContext("r-1", "t-1", "tenant-a", null,
                 Locale.CHINA, "127.0.0.1", "GET", path);
     }
 
+    /**
+     * 验证<code>policy.authenticationMode(request("/health"))</code> 等于 <code>AuthenticationMode.DISABLED</code>，<code>policy.authenticationMode(request("/health/details"))</code> 等于 <code>AuthenticationMode.REQUIRED</code>，<code>policy.authenticationMode(request("/api"))</code> 等于 <code>AuthenticationMode.REQUIRED</code>。
+     */
     @Test
     void exactPatternMatchesOnlyExactPath() {
         PathWebAccessPolicy policy = new PathWebAccessPolicy(Collections.singletonList("/health"), AuthenticationMode.REQUIRED);
@@ -43,6 +52,9 @@ class PathWebAccessPolicyTest {
         assertEquals(AuthenticationMode.REQUIRED, policy.authenticationMode(request("/api")));
     }
 
+    /**
+     * 验证<code>policy.authenticationMode(request("/health"))</code> 等于 <code>AuthenticationMode.DISABLED</code>，<code>policy.authenticationMode(request("/health/readiness"))</code> 等于 <code>AuthenticationMode.DISABLED</code>，<code>policy.authenticationMode(request("/healthz"))</code> 等于 <code>AuthenticationMode.REQUIRED</code>。
+     */
     @Test
     void prefixPatternMatchesPrefixAndSubPaths() {
         PathWebAccessPolicy policy = new PathWebAccessPolicy(Collections.singletonList("/health/**"), AuthenticationMode.REQUIRED);
@@ -53,6 +65,9 @@ class PathWebAccessPolicyTest {
         assertEquals(AuthenticationMode.REQUIRED, policy.authenticationMode(request("/healthz")));
     }
 
+    /**
+     * 验证<code>policy.authenticationMode(request("/api"))</code> 等于 <code>AuthenticationMode.DISABLED</code>，<code>policy.authenticationMode(request("/admin/users"))</code> 等于 <code>AuthenticationMode.DISABLED</code>，<code>policy.authenticationMode(request("/other"))</code> 等于 <code>AuthenticationMode.OPTIONAL</code>。
+     */
     @Test
     void constructorFiltersBlankTrimsAndDeduplicates() {
         PathWebAccessPolicy policy = new PathWebAccessPolicy(
@@ -63,6 +78,9 @@ class PathWebAccessPolicyTest {
         assertEquals(AuthenticationMode.OPTIONAL, policy.authenticationMode(request("/other")));
     }
 
+    /**
+     * 验证被测调用 抛出 <code>NullPointerException.class</code>。
+     */
     @Test
     void constructorRejectsNull() {
         assertThrows(NullPointerException.class, () -> new PathWebAccessPolicy(null, AuthenticationMode.REQUIRED));
@@ -70,6 +88,9 @@ class PathWebAccessPolicyTest {
                 () -> new PathWebAccessPolicy(Collections.singletonList("/health"), null));
     }
 
+    /**
+     * 验证<code>policy.authenticationMode(request("/anything"))</code> 等于 <code>AuthenticationMode.DISABLED</code>。
+     */
     @Test
     void emptyPatternsDisableNothing() {
         PathWebAccessPolicy policy = new PathWebAccessPolicy(Arrays.asList(), AuthenticationMode.DISABLED);

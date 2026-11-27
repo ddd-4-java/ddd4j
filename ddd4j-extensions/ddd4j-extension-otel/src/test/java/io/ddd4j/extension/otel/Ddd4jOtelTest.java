@@ -35,6 +35,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class Ddd4jOtelTest {
 
+    /**
+     * 调用 <code>Ddd4jOtel.class.getDeclaredField()</code>、<code>field.setAccessible()</code>、<code>field.get()</code> 执行当前夹具操作。
+     */
     private static void resetTracerCache() {
         try {
             Field field = Ddd4jOtel.class.getDeclaredField("TRACER_CACHE");
@@ -45,12 +48,18 @@ class Ddd4jOtelTest {
         }
     }
 
+    /**
+     * 测试执行前执行 <code>ThreadContext.clear()</code>、<code>resetTracerCache()</code> 完成资源准备。
+     */
     @BeforeEach
     void setUp() {
         ThreadContext.clear();
         resetTracerCache();
     }
 
+    /**
+     * 测试结束后执行 <code>ThreadContext.clear()</code>、<code>OpenTelemetrySdkSetter.set()</code>、<code>OpenTelemetry.noop()</code>、<code>resetTracerCache()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void tearDown() {
         ThreadContext.clear();
@@ -58,12 +67,18 @@ class Ddd4jOtelTest {
         resetTracerCache();
     }
 
+    /**
+     * 验证<code>tracer</code>非空。
+     */
     @Test
     void tracer_shouldReturnNonNullTracer() {
         Tracer tracer = Ddd4jOtel.tracer();
         assertThat(tracer).isNotNull();
     }
 
+    /**
+     * 验证<code>t1</code> 指向同一实例 <code>t2</code>。
+     */
     @Test
     void tracer_shouldReturnSameInstanceOnRepeatedCalls() {
         Tracer t1 = Ddd4jOtel.tracer();
@@ -71,6 +86,9 @@ class Ddd4jOtelTest {
         assertThat(t1).isSameAs(t2);
     }
 
+    /**
+     * 验证<code>Ddd4jOtel.isAvailable()</code> 等于 <code>available</code>。
+     */
     @Test
     void isAvailable_shouldReturnBoolean() {
         // 仅验证返回 boolean 类型（不关心具体值，因为依赖 OTel 状态）
@@ -79,6 +97,9 @@ class Ddd4jOtelTest {
         assertThat(Ddd4jOtel.isAvailable()).isEqualTo(available);
     }
 
+    /**
+     * 验证<code>attrs.get(Ddd4jOtel.ATTR_TENANT_ID)</code> 等于 <code>"tenant-XYZ"</code>。
+     */
     @Test
     void businessContextAttributes_shouldIncludeTenantWhenSet() {
         ThreadContext.set(ContextConstants.TENANT_ID, "tenant-XYZ");
@@ -87,12 +108,18 @@ class Ddd4jOtelTest {
         assertThat(attrs.get(Ddd4jOtel.ATTR_TENANT_ID)).isEqualTo("tenant-XYZ");
     }
 
+    /**
+     * 验证<code>attrs.get(Ddd4jOtel.ATTR_TENANT_ID)</code>为空。
+     */
     @Test
     void businessContextAttributes_shouldBeEmptyWhenNoContext() {
         Attributes attrs = Ddd4jOtel.businessContextAttributes();
         assertThat(attrs.get(Ddd4jOtel.ATTR_TENANT_ID)).isNull();
     }
 
+    /**
+     * 验证<code>Ddd4jOtel.ATTR_TENANT_ID.getKey()</code> 等于 <code>"ddd4j.tenant.id"</code>，<code>Ddd4jOtel.ATTR_USER_ID.getKey()</code> 等于 <code>"ddd4j.user.id"</code>，<code>Ddd4jOtel.ATTR_DOMAIN_EVENT_TYPE.getKey()</code> 等于 <code>"ddd4j.event.type"</code>。
+     */
     @Test
     void standardAttributeKeys_shouldHaveCorrectNames() {
         assertThat(Ddd4jOtel.ATTR_TENANT_ID.getKey()).isEqualTo("ddd4j.tenant.id");
@@ -110,6 +137,9 @@ class Ddd4jOtelTest {
         assertThat(Ddd4jOtel.ATTR_DOMAIN_EVENT_TYPE.getKey()).isEqualTo("ddd4j.event.type");
     }
 
+    /**
+     * 验证<code>true</code>为真。
+     */
     @Test
     void enrichWithBusinessContext_withNullSpan_shouldNotThrow() {
         ThreadContext.set(ContextConstants.TENANT_ID, "tenant-001");
@@ -118,11 +148,17 @@ class Ddd4jOtelTest {
         assertThat(true).isTrue();
     }
 
+    /**
+     * 验证<code>Ddd4jOtel.TRACER_NAME</code> 等于 <code>"io.ddd4j"</code>。
+     */
     @Test
     void tracerName_shouldBeDdd4j() {
         assertThat(Ddd4jOtel.TRACER_NAME).isEqualTo("io.ddd4j");
     }
 
+    /**
+     * 验证<code>Ddd4jOtel.ATTR_TENANT_ID</code> 的类型为 <code>AttributeKey.class</code>，<code>Ddd4jOtel.ATTR_USER_ID</code> 的类型为 <code>AttributeKey.class</code>。
+     */
     @Test
     void businessContextAttributes_shouldBeAttributeKey() {
         assertThat(Ddd4jOtel.ATTR_TENANT_ID).isInstanceOf(AttributeKey.class);

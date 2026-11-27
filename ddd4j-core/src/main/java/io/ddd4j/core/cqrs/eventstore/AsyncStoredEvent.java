@@ -42,14 +42,41 @@ import java.util.Objects;
  */
 public final class AsyncStoredEvent {
 
+    /**
+     * 领域事件标识。
+     */
     private final EventId eventId;
+    /**
+     * 用于区分聚合类型的逻辑名称。
+     */
     private final String aggregateType;
+    /**
+     * 事件所属聚合根的标识。
+     */
     private final AggregateRootId aggregateId;
+    /**
+     * 事件所属聚合流中的版本。
+     */
     private final long version;
+    /**
+     * 事件在全局流中的位置。
+     */
     private final long position;
+    /**
+     * 事件发生时间。
+     */
     private final ZonedDateTime timestamp;
+    /**
+     * 存储中的领域事件负载。
+     */
     private final DomainEvent<?> payload;
+    /**
+     * 用于关联同一次操作产生的事件或消息的标识。
+     */
     private final EventId correlationId;
+    /**
+     * 触发该领域事件产生的上游事件标识。
+     */
     private final EventId causationId;
 
     /**

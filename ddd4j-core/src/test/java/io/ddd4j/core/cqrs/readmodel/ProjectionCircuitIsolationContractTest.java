@@ -24,8 +24,19 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * 通过 <code>Collections.singletonList()</code>、<code>view()</code>、<code>runner.runAllIsolated()</code> 验证 <code>ProjectionCircuitIsolationContract</code> 的运行行为。
+ */
 class ProjectionCircuitIsolationContractTest {
 
+    /**
+     * 构造 <code>ProjectionView&lt;String&gt;</code> 作为当前测试的输入或结果。
+     *
+     * @param name      当前测试指定的对象或属性名称
+     * @param fail      用于构造本次返回结果的 <code>boolean</code> 输入
+     * @param completed 用于构造本次返回结果的 <code>AtomicInteger</code> 输入
+     * @return 提供给后续契约断言的 <code>ProjectionView&lt;String&gt;</code> 结果
+     */
     private static ProjectionView<String> view(String name, boolean fail, AtomicInteger completed) {
         return new ProjectionView<String>() {
             @Override
@@ -53,6 +64,9 @@ class ProjectionCircuitIsolationContractTest {
         };
     }
 
+    /**
+     * 验证<code>alerts.get()</code> 等于 <code>1</code>，<code>completed.get()</code> 等于 <code>ProjectionRunner.CONSECUTIVE_FAILURE_THRESHOLD</code>，<code>service.readProjectionPosition("failing")</code> 等于 <code>0L</code>。
+     */
     @Test
     void circuitCallbackFailureMustNotStopOtherViews() {
         ProjectionService service = new DefaultProjectionService(new InMemoryProjectionPositionRepository());

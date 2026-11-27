@@ -24,9 +24,18 @@ import java.util.StringJoiner;
  */
 public final class RegionCacheKeys {
 
+    /**
+     * 地区查询缓存键的固定前缀。
+     */
     private static final String REDIS_PREFIX = "rds";
+    /**
+     * 拼接缓存键各段时使用的分隔符。
+     */
     private static final String DELIMITER = ":";
 
+    /**
+     * 限制调用方直接创建 <code>RegionCacheKeys</code> 实例。
+     */
     private RegionCacheKeys() {
     }
 
@@ -70,6 +79,12 @@ public final class RegionCacheKeys {
         return key("pconline:ip:location", ip);
     }
 
+    /**
+     * 拼接缓存前缀和非空白的键段。
+     *
+     * @param parts 按照缓存识别顺序提供的键段
+     * @return 地区查询使用的完整缓存键
+     */
     private static String key(Object... parts) {
         StringJoiner joiner = new StringJoiner(DELIMITER);
         joiner.add(REDIS_PREFIX);

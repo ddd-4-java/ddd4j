@@ -54,6 +54,13 @@ public class GlobalResponseRAdvice implements ResponseBodyAdvice<Object> {
     @Autowired
     BaseWebProperties baseWebProperties;
 
+    /**
+     * 检查当前配置和控制器声明是否允许统一响应包装。
+     *
+     * @param returnType 当前控制器方法的返回类型信息
+     * @param aClass     当前消息体所使用的消息转换器类型
+     * @return 当前方法应使用统一包装时返回 true
+     */
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> aClass) {
         return baseWebProperties.getMvc().getEnableRResponse()
@@ -61,6 +68,17 @@ public class GlobalResponseRAdvice implements ResponseBodyAdvice<Object> {
                 && !returnType.hasMethodAnnotation(RawResponse.class);
     }
 
+    /**
+     * 根据返回值及方法声明保留已有响应结构或应用统一包装。
+     *
+     * @param data               当前准备交给 HTTP 转换器的响应体值
+     * @param returnType         当前控制器方法的返回类型信息
+     * @param mediaType          已协商的响应媒体类型
+     * @param aClass             当前消息体所使用的消息转换器类型
+     * @param serverHttpRequest  当前 Spring 服务端请求
+     * @param serverHttpResponse 当前 Spring 服务端响应
+     * @return 最终写入 HTTP 响应体的对象
+     */
     @Override
     public Object beforeBodyWrite(Object data, MethodParameter returnType, MediaType mediaType,
                                   Class<? extends HttpMessageConverter<?>> aClass,

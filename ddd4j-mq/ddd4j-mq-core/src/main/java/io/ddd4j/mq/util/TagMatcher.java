@@ -30,9 +30,18 @@ import java.util.stream.Stream;
  */
 public final class TagMatcher {
 
+    /**
+     * 标签表达式中的或分隔符。
+     */
     private static final String OR = "||";
+    /**
+     * 可匹配任意标签的订阅标记。
+     */
     private static final String WILDCARD = "*";
 
+    /**
+     * 限制调用方直接创建 <code>TagMatcher</code> 实例。
+     */
     private TagMatcher() {
     }
 
@@ -93,6 +102,12 @@ public final class TagMatcher {
         return includes;
     }
 
+    /**
+     * 将标签表达式拆成可用于匹配的标签集合。
+     *
+     * @param expression 代理订阅使用的标签表达式
+     * @return 解析出的标签，空白或全匹配表达式返回空列表
+     */
     private static List<String> tokens(String expression) {
         if (Objects.isNull(expression) || io.ddd4j.kit.lang.StrKit.isBlank(expression) || Objects.equals(WILDCARD, expression.trim())) {
             return java.util.Collections.emptyList();
@@ -104,6 +119,12 @@ public final class TagMatcher {
                 .collect(java.util.stream.Collectors.toList());
     }
 
+    /**
+     * 清除标签的首尾空白，把空白值归一为空引用。
+     *
+     * @param s 待归一化的标签文本
+     * @return 去掉首尾空白的标签，空白值返回空
+     */
     private static String trimToNull(String s) {
         if (Objects.isNull(s) || io.ddd4j.kit.lang.StrKit.isBlank(s)) {
             return null;

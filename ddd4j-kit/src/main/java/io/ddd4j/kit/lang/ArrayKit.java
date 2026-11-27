@@ -62,6 +62,14 @@ public class ArrayKit extends ArrayUtil {
         return new ArrayList<>(Arrays.asList(array));
     }
 
+    /**
+     * 保留原数组元素顺序并把给定元素追加到末尾。
+     *
+     * @param <T>   数组元素类型
+     * @param array 要扩充的原数组
+     * @param e     要追加的元素
+     * @return 包含原始和新增元素的数组
+     */
     public <T> T[] append(T[] array, T... e) {
         return ArrayUtil.append(array, e);
     }
@@ -79,10 +87,24 @@ public class ArrayKit extends ArrayUtil {
         array = CollKit.convert(CollKit.convert(array).stream().sorted().collect(Collectors.toList()));
     }
 
+    /**
+     * 判断数组是否存在并含有元素。
+     *
+     * @param <T>   数组元素类型
+     * @param array 待检查的数组
+     * @return 数组引用非空且长度大于零时返回 true
+     */
     public <T> boolean isNotEmpty(T[] array) {
         return Objects.nonNull(array) && array.length != 0;
     }
 
+    /**
+     * 判断数组是否为空引用或零长度。
+     *
+     * @param <T>   数组元素类型
+     * @param array 待检查的数组
+     * @return 数组引用为空或长度为零时返回 true
+     */
     public <T> boolean isEmpty(T[] array) {
         return Objects.isNull(array) || array.length == 0;
     }

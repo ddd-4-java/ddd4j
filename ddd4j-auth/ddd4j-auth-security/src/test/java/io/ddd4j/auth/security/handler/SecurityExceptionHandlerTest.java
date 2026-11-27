@@ -29,15 +29,27 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * 验证 <code>SecurityExceptionHandler</code> 在<code>authenticationException</code>、<code>lockedException</code>、<code>accessDenied</code>等操作中的行为契约。
+ */
 class SecurityExceptionHandlerTest {
 
+    /**
+     * 当前用例实际调用或配置行为的处理器。
+     */
     private final SecurityExceptionHandler handler = new SecurityExceptionHandler();
 
+    /**
+     * 测试后依次清除上下文<code>SecurityContextHolder</code>。
+     */
     @AfterEach
     void tearDown() {
         SecurityContextHolder.clearContext();
     }
 
+    /**
+     * 验证<code>response.getStatusCode()</code> 等于 <code>HttpStatus.UNAUTHORIZED</code>，<code>response.getBody().getCode()</code> 等于 <code>Integer.valueOf(401)</code>。
+     */
     @Test
     void authenticationExceptionReturns401() {
         ResponseEntity<R<String>> response =
@@ -47,6 +59,9 @@ class SecurityExceptionHandlerTest {
         assertEquals(Integer.valueOf(401), response.getBody().getCode());
     }
 
+    /**
+     * 验证<code>response.getStatusCode()</code> 等于 <code>HttpStatus.FORBIDDEN</code>，<code>response.getBody().getCode()</code> 等于 <code>Integer.valueOf(403)</code>。
+     */
     @Test
     void lockedExceptionReturns403() {
         ResponseEntity<R<String>> response =
@@ -56,6 +71,9 @@ class SecurityExceptionHandlerTest {
         assertEquals(Integer.valueOf(403), response.getBody().getCode());
     }
 
+    /**
+     * 验证<code>response.getStatusCode()</code> 等于 <code>HttpStatus.UNAUTHORIZED</code>。
+     */
     @Test
     void accessDeniedWithoutAuthenticationReturns401() {
         ResponseEntity<R<String>> response =
@@ -64,6 +82,9 @@ class SecurityExceptionHandlerTest {
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     }
 
+    /**
+     * 验证<code>response.getStatusCode()</code> 等于 <code>HttpStatus.FORBIDDEN</code>，<code>response.getBody().getCode()</code> 等于 <code>Integer.valueOf(403)</code>。
+     */
     @Test
     void accessDeniedWithAuthenticatedUserReturns403() {
         SecurityContextHolder.getContext().setAuthentication(

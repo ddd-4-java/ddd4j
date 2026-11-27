@@ -98,6 +98,9 @@ public final class HttpSpan {
      * Span 属性键 {@code ddd4j.tenant.id}。
      */
     public static final AttributeKey<String> ATTR_DDD4J_TENANT_ID = AttributeKey.stringKey("ddd4j.tenant.id");
+    /**
+     * 将跟踪上下文写入 HTTP 或消息传输头的传播适配器。
+     */
     private static final TextMapSetter<Map<String, String>> SETTER = new TextMapSetter<Map<String, String>>() {
         @Override
         public void set(Map<String, String> carrier, String key, String value) {
@@ -106,6 +109,9 @@ public final class HttpSpan {
             }
         }
     };
+    /**
+     * 从 HTTP 或消息传输头读取跟踪上下文的传播适配器。
+     */
     private static final TextMapGetter<Map<String, String>> GETTER = new TextMapGetter<Map<String, String>>() {
         @Override
         public Iterable<String> keys(Map<String, String> carrier) {
@@ -129,6 +135,9 @@ public final class HttpSpan {
         }
     };
 
+    /**
+     * 限制调用方直接创建 <code>HttpSpan</code> 实例。
+     */
     private HttpSpan() {
     }
 

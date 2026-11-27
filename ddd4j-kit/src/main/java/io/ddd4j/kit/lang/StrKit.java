@@ -33,15 +33,36 @@ public class StrKit extends StrUtil {
      * 无法匹配首字母时使用的占位字符。
      */
     public static final char unknowChar = '*';
+    /**
+     * 路径规范化采用的斜杠分隔符。
+     */
     private static final String FOLDER_SEPARATOR = "/";
+    /**
+     * Windows 路径中的反斜杠分隔符。
+     */
     private static final String WINDOWS_FOLDER_SEPARATOR = "\\";
+    /**
+     * 表示路径回到父目录的标记。
+     */
     private static final String TOP_PATH = "..";
+    /**
+     * 表示路径留在当前目录的标记。
+     */
     private static final String CURRENT_PATH = ".";
+    /**
+     * 文件名和扩展名之间的点号分隔符。
+     */
     private static final char EXTENSION_SEPARATOR = '.';
+    /**
+     * GB2312 汉字区段及其首字母对应关系的边界。
+     */
     private static final int[] allChineseScope = {1601, 1637, 1833, 2078,
             2274, 2302, 2433, 2594, 2787, 3106, 3212, 3472, 3635, 3722, 3730,
             3858, 4027, 4086, 4390, 4558, 4684, 4925, 5249, 5600,
             Integer.MAX_VALUE};
+    /**
+     * 按汉字区段映射使用的英文字母和未知字符标记。
+     */
     private static final char[] allEnglishLetter = {'A', 'B', 'C', 'D', 'E',
             'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
             'T', 'W', 'X', 'Y', 'Z', unknowChar};
@@ -708,6 +729,13 @@ public class StrKit extends StrUtil {
         return changeFirstCharacterCase(str, false);
     }
 
+    /**
+     * 转换字符串首字符的大小写，其余字符保持原样。
+     *
+     * @param str        要转换的字符串
+     * @param capitalize 是否把首字符转成大写
+     * @return 转换结果，空字符串或空引用原样返回
+     */
     private static String changeFirstCharacterCase(String str, boolean capitalize) {
         if (Objects.isNull(str) || str.length() == 0) {
             return str;
@@ -953,6 +981,12 @@ public class StrKit extends StrUtil {
         return (language.length() > 0 ? new Locale(language, country, variant) : null);
     }
 
+    /**
+     * 要求区域代码片段仅含字母、数字、下划线或空格。
+     *
+     * @param localePart 待检查的区域代码片段
+     * @throws IllegalArgumentException 片段含有不支持的字符
+     */
     private static void validateLocalePart(String localePart) {
         for (int i = 0; i < localePart.length(); i++) {
             char ch = localePart.charAt(i);

@@ -38,6 +38,9 @@ public interface RuntimeContract extends AutoCloseable {
      */
     ReadinessReport readiness();
 
+    /**
+     * 结束当前组件持有的资源。
+     */
     @Override
     void close();
 }

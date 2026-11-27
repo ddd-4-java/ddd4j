@@ -21,8 +21,14 @@ import java.util.Locale;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+/**
+ * 通过 <code>first.hashCode()</code>、<code>same.hashCode()</code>、<code>data.getRequestId()</code> 验证 <code>WebRequestValueObjects</code> 的运行行为。
+ */
 class WebRequestValueObjectsTest {
 
+    /**
+     * 验证<code>same</code> 等于 <code>first</code>，<code>same.hashCode()</code> 等于 <code>first.hashCode()</code>，<code>otherPath</code> 不等于 <code>first</code>。
+     */
     @Test
     void webRequestDataValueEqualityIncludesTenantAndRequestPath() {
         WebRequestData first = new WebRequestData("request-1", "trace-1", "tenant-a", "Bearer token",
@@ -40,6 +46,9 @@ class WebRequestValueObjectsTest {
         assertNotEquals(first, otherPath);
     }
 
+    /**
+     * 验证<code>data.getRequestId()</code> 等于 <code>"request-1"</code>，<code>data.getTraceId()</code> 等于 <code>"trace-1"</code>，<code>data.getPath()</code> 等于 <code>"/orders"</code>。
+     */
     @Test
     void webRequestDataExposesJavaBeanAccessors() {
         WebRequestData data = new WebRequestData("request-1", "trace-1", "tenant-1", "Bearer token",
@@ -57,6 +66,9 @@ class WebRequestValueObjectsTest {
         assertEquals("/orders", data.getPath());
     }
 
+    /**
+     * 验证<code>context.getRequestId()</code> 等于 <code>"request-1"</code>，<code>context.getTraceId()</code> 等于 <code>"request-1"</code>，<code>context.getPath()</code> 等于 <code>"/orders"</code>。
+     */
     @Test
     void webRequestContextExposesNormalizedJavaBeanAccessors() {
         WebRequestContext context = new WebRequestContext("request-1", null, "tenant-1", "Bearer token",

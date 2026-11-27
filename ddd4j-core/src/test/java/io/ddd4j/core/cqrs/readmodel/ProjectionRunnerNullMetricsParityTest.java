@@ -7,8 +7,14 @@ import java.util.Collections;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
+/**
+ * 通过 <code>mock()</code>、<code>view.getName()</code>、<code>view.getStreamId()</code> 验证 <code>ProjectionRunnerNullMetricsParity</code> 的运行行为。
+ */
 class ProjectionRunnerNullMetricsParityTest {
 
+    /**
+     * 验证<code>runner.runOnce(view)</code> 等于 <code>chunk</code>。
+     */
     @Test
     void nullMetricsUsesNoopWhileProjectionStillAdvances() {
         ProjectionService service = mock(ProjectionService.class);

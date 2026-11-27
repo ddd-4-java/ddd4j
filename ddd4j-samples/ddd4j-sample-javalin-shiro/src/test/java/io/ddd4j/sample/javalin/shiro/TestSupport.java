@@ -56,9 +56,17 @@ import java.util.Objects;
  */
 public final class TestSupport {
 
+    /**
+     * 限制调用方直接创建 <code>TestSupport</code> 实例。
+     */
     private TestSupport() {
     }
 
+    /**
+     * 读取 <code>app</code> 供当前测试使用。
+     *
+     * @return 当前测试使用的结果，取自 <code>app</code>
+     */
     public static Javalin start() {
         // 0) 注入 SPI
         BaseContext.inject(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, new NoopDomainEventPublisher());
@@ -191,13 +199,32 @@ public final class TestSupport {
         return app;
     }
 
+    /**
+     * 把领域事件交给可检查的测试替身。
+     */
     private static final class NoopDomainEventPublisher implements DomainEventPublisher {
+        /**
+         * 提供测试替身回调，调用时保持夹具状态。
+         *
+         * @param <ID>  实体标识类型
+         * @param event 领域事件
+         */
         @Override
         public <ID extends EntityId> void publish(io.ddd4j.core.ddd.event.DomainEvent<ID> event) {
         }
     }
 
+    /**
+     * 返回用于校验本地化入口的固定消息。
+     */
     private static final class NoopI18nProvider implements I18nProvider {
+        /**
+         * 按提供的条件读取或解析消息文本。
+         *
+         * @param key  消息 key
+         * @param args 格式化参数
+         * @return 实际返回<code>key</code>，供调用方取得当前值
+         */
         @Override
         public String getMessage(String key, Object... args) {
             return key;

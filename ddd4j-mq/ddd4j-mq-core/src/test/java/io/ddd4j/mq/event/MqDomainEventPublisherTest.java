@@ -42,12 +42,27 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class MqDomainEventPublisherTest {
 
+    /**
+     * 构造本组测试输入时复用的固定标识或名称。
+     */
     private static final String ENTITY_ID = "order-001";
 
+    /**
+     * 测试运行时用于接收待发布消息或领域事件的发布器。
+     */
     private final MqDomainEventPublisher publisher = new MqDomainEventPublisher();
+    /**
+     * 事件发布器实际收到的事件，供后续断言使用。
+     */
     private final List<MQEvent> publishedEvents = new ArrayList<>();
+    /**
+     * 测试期间的代理发布器注册表。
+     */
     private final Map<String, Consumer<MQEvent>> publisherMap = new ConcurrentHashMap<>();
 
+    /**
+     * 测试前依次清除<code>publisherMap</code>、清除<code>publishedEvents</code>。
+     */
     @BeforeEach
     void setUp() {
         publisherMap.clear();
@@ -57,6 +72,9 @@ class MqDomainEventPublisherTest {
         BaseContext.inject(MQEvent.MQ_PROPERTIES, new MQProperties());
     }
 
+    /**
+     * 测试后依次移除<code>BaseContext</code>。
+     */
     @AfterEach
     void tearDown() {
         BaseContext.remove(MQEvent.MQ_EVENT_PUBLISHER);
@@ -65,6 +83,9 @@ class MqDomainEventPublisherTest {
 
     // ========================= publish(DomainEvent) =========================
 
+    /**
+     * 验证<code>publishedEvents.size()</code> 等于 <code>1</code>，<code>mqEvent.getTopic()</code> 等于 <code>"TestDomainEvent"</code>。
+     */
     @Test
     void publishDomainEvent_shouldConvertToMqEventWithCorrectTopic() {
         TestDomainEvent domainEvent = new TestDomainEvent(ENTITY_ID);
@@ -76,6 +97,9 @@ class MqDomainEventPublisherTest {
         assertEquals("TestDomainEvent", mqEvent.getTopic());
     }
 
+    /**
+     * 验证<code>mqEvent.getTag()</code> 等于 <code>MqDomainEventPublisher.DOMAIN_EVENT_TAG</code>。
+     */
     @Test
     void publishDomainEvent_shouldSetDomainEventTag() {
         TestDomainEvent domainEvent = new TestDomainEvent(ENTITY_ID);
@@ -86,6 +110,9 @@ class MqDomainEventPublisherTest {
         assertEquals(MqDomainEventPublisher.DOMAIN_EVENT_TAG, mqEvent.getTag());
     }
 
+    /**
+     * 验证<code>carrier.getPayload()</code> 等于 <code>"payload:" + ENTITY_ID</code>。
+     */
     @Test
     void publishDomainEvent_shouldSerializePayloadAsJson() {
         TestDomainEvent domainEvent = new TestDomainEvent(ENTITY_ID);
@@ -112,6 +139,9 @@ class MqDomainEventPublisherTest {
         assertEquals("payload:" + ENTITY_ID, carrier.getPayload());
     }
 
+    /**
+     * 验证<code>carrier.getDomainEventType()</code> 等于 <code>TestDomainEvent.class.getName()</code>。
+     */
     @Test
     void publishDomainEvent_shouldCarryDomainEventTypeClassName() {
         TestDomainEvent domainEvent = new TestDomainEvent(ENTITY_ID);
@@ -122,6 +152,9 @@ class MqDomainEventPublisherTest {
         assertEquals(TestDomainEvent.class.getName(), carrier.getDomainEventType());
     }
 
+    /**
+     * 验证<code>domainEvent.getEventId()</code>非空，<code>mqEvent.getMsgId()</code> 等于 <code>domainEvent.getEventId().asString()</code>。
+     */
     @Test
     void publishDomainEvent_shouldUseEventIdAsMsgId() {
         TestDomainEvent domainEvent = new TestDomainEvent(ENTITY_ID);
@@ -133,6 +166,9 @@ class MqDomainEventPublisherTest {
         assertEquals(domainEvent.getEventId().asString(), mqEvent.getMsgId());
     }
 
+    /**
+     * 验证<code>mqEvent.getTenantId()</code> 等于 <code>"tenant-abc"</code>。
+     */
     @Test
     void publishDomainEvent_shouldPreserveTenantId() {
         io.ddd4j.core.context.ThreadContext.set(
@@ -151,6 +187,9 @@ class MqDomainEventPublisherTest {
 
     // ========================= publish(Object) =========================
 
+    /**
+     * 验证<code>publishedEvents.size()</code> 等于 <code>1</code>，<code>publishedEvents.get(0).getTopic()</code> 等于 <code>"TestDomainEvent"</code>。
+     */
     @Test
     void publishObject_withDomainEvent_shouldDelegateToPublishDomainEvent() {
         TestDomainEvent domainEvent = new TestDomainEvent(ENTITY_ID);
@@ -161,6 +200,9 @@ class MqDomainEventPublisherTest {
         assertEquals("TestDomainEvent", publishedEvents.get(0).getTopic());
     }
 
+    /**
+     * 验证<code>publishedEvents.isEmpty()</code>为真。
+     */
     @Test
     void publishObject_withNonDomainEvent_shouldNotSendToMq() {
         publisher.publish("not a domain event");
@@ -169,6 +211,9 @@ class MqDomainEventPublisherTest {
                 "非 DomainEvent 对象不应发送到 MQ");
     }
 
+    /**
+     * 验证<code>publishedEvents.isEmpty()</code>为真。
+     */
     @Test
     void publishObject_withNull_shouldNotThrowAndNotSend() {
         assertDoesNotThrow(() -> publisher.publish((Object) null));
@@ -177,6 +222,9 @@ class MqDomainEventPublisherTest {
 
     // ========================= publish(null DomainEvent) =========================
 
+    /**
+     * 验证<code>publishedEvents.isEmpty()</code>为真。
+     */
     @Test
     void publishDomainEvent_withNull_shouldNotThrowAndNotSend() {
         assertDoesNotThrow(() -> publisher.publish((DomainEvent<?>) null));
@@ -185,6 +233,9 @@ class MqDomainEventPublisherTest {
 
     // ========================= publishAll =========================
 
+    /**
+     * 验证<code>publishedEvents.size()</code> 等于 <code>2</code>。
+     */
     @Test
     void publishAll_shouldPublishEachEvent() {
         TestDomainEvent event1 = new TestDomainEvent("order-001");
@@ -195,6 +246,9 @@ class MqDomainEventPublisherTest {
         assertEquals(2, publishedEvents.size());
     }
 
+    /**
+     * 验证<code>publishedEvents.isEmpty()</code>为真。
+     */
     @Test
     void publishAll_withNull_shouldNotThrow() {
         assertDoesNotThrow(() -> publisher.publishAll(null));
@@ -203,6 +257,9 @@ class MqDomainEventPublisherTest {
 
     // ========================= toCarrier（直接验证转换） =========================
 
+    /**
+     * 验证<code>carrier.getTopic()</code> 等于 <code>"TestDomainEvent"</code>。
+     */
     @Test
     void toCarrier_shouldMapEventTypeToTopic() {
         TestDomainEvent domainEvent = new TestDomainEvent(ENTITY_ID);
@@ -212,6 +269,9 @@ class MqDomainEventPublisherTest {
         assertEquals("TestDomainEvent", carrier.getTopic());
     }
 
+    /**
+     * 验证<code>carrier.getTag()</code> 等于 <code>MqDomainEventPublisher.DOMAIN_EVENT_TAG</code>。
+     */
     @Test
     void toCarrier_shouldSetDomainEventTag() {
         DomainEventCarrier carrier = publisher.toCarrier(new TestDomainEvent(ENTITY_ID));
@@ -219,6 +279,9 @@ class MqDomainEventPublisherTest {
         assertEquals(MqDomainEventPublisher.DOMAIN_EVENT_TAG, carrier.getTag());
     }
 
+    /**
+     * 验证<code>carrier.getCorrelationId()</code> 等于 <code>causing.getEventId().asString()</code>，<code>carrier.getCausationId()</code> 等于 <code>causing.getEventId().asString()</code>。
+     */
     @Test
     void toCarrier_shouldPreserveCorrelationAndCausationIds() {
         TestDomainEvent causing = new TestDomainEvent(ENTITY_ID);
@@ -237,10 +300,21 @@ class MqDomainEventPublisherTest {
      */
     static class TestDomainEvent extends DomainEvent<StringEntityId> {
 
+        /**
+         * 使用 <code>super()</code> 初始化 <code>TestDomainEvent</code> 测试夹具。
+         *
+         * @param entityId 用于初始化 <code>TestDomainEvent</code> 的 <code>String</code> 值
+         */
         TestDomainEvent(String entityId) {
             super(entityId);
         }
 
+        /**
+         * 使用 <code>super()</code> 初始化 <code>TestDomainEvent</code> 测试夹具。
+         *
+         * @param entityId 用于初始化 <code>TestDomainEvent</code> 的 <code>String</code> 值
+         * @param causing  用于初始化 <code>TestDomainEvent</code> 的 <code>DomainEvent&lt;?&gt;</code> 值
+         */
         TestDomainEvent(String entityId, DomainEvent<?> causing) {
             super(new EntityIdPath(new StringEntityId(entityId)), causing);
         }

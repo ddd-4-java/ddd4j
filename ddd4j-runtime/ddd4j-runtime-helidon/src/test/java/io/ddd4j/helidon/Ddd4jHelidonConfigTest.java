@@ -26,12 +26,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
+/**
+ * 验证 <code>Ddd4jHelidonConfig</code> 在<code>value</code>、<code>constructor</code>等操作中的行为契约。
+ */
 @ExtendWith(MockitoExtension.class)
 class Ddd4jHelidonConfigTest {
 
+    /**
+     * 用于隔离 <code>Config</code> 调用并记录交互的测试替身。
+     */
     @Mock
     private Config config;
 
+    /**
+     * 验证<code>ddd4jConfig.value("ddd4j.test", String.class)</code> 等于 <code>Optional.of("configured")</code>。
+     */
     @Test
     void valueReturnsConfiguredValue() {
         when(config.getOptionalValue("ddd4j.test", String.class))
@@ -42,6 +51,9 @@ class Ddd4jHelidonConfigTest {
         assertEquals(Optional.of("configured"), ddd4jConfig.value("ddd4j.test", String.class));
     }
 
+    /**
+     * 验证<code>ddd4jConfig.value("missing", Integer.class)</code> 等于 <code>Optional.empty()</code>。
+     */
     @Test
     void valueReturnsEmptyWhenAbsent() {
         when(config.getOptionalValue("missing", Integer.class))
@@ -52,6 +64,9 @@ class Ddd4jHelidonConfigTest {
         assertEquals(Optional.empty(), ddd4jConfig.value("missing", Integer.class));
     }
 
+    /**
+     * 验证被测调用 抛出 <code>NullPointerException.class</code>。
+     */
     @Test
     void constructorRejectsNullConfig() {
         assertThrows(NullPointerException.class, () -> new Ddd4jHelidonConfig(null));

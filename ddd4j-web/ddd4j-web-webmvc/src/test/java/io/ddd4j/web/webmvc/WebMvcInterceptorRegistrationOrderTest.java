@@ -33,8 +33,14 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
+/**
+ * 验证 <code>WebMvcInterceptorRegistrationOrder</code> 在 <code>versionRunsBeforeContextEven</code> 等场景中的行为。
+ */
 class WebMvcInterceptorRegistrationOrderTest {
 
+    /**
+     * 验证<code>interceptors.size()</code> 等于 <code>3</code>，<code>((MappedInterceptor) interceptors.get(0)).getInterceptor()</code> 与…为同一实例 <code>version</code>，<code>((MappedInterceptor) interceptors.get(2)).getInterceptor()</code> 与…为同一实例 <code>locale</code>。
+     */
     @Test
     void versionRunsBeforeContextEvenWhenRegisteredLater() {
         ApiVersionWebInterceptor version = versionInterceptor(true);
@@ -52,6 +58,9 @@ class WebMvcInterceptorRegistrationOrderTest {
         assertSame(locale, ((MappedInterceptor) interceptors.get(2)).getInterceptor());
     }
 
+    /**
+     * 验证<code>interceptors.size()</code> 等于 <code>2</code>，<code>((MappedInterceptor) interceptors.get(0)).getInterceptor()</code> 与…为同一实例 <code>context</code>，<code>((MappedInterceptor) interceptors.get(1)).getInterceptor()</code> 与…为同一实例 <code>locale</code>。
+     */
     @Test
     void disabledVersionLeavesContextBeforeLocale() {
         ApiVersionWebInterceptor version = versionInterceptor(false);
@@ -68,23 +77,48 @@ class WebMvcInterceptorRegistrationOrderTest {
         assertSame(locale, ((MappedInterceptor) interceptors.get(1)).getInterceptor());
     }
 
+    /**
+     * 创建 <code>new ApiVersionWebMvcConfiguration</code> 供当前测试路径调用。
+     *
+     * @param interceptor 传给 <code>factory.addBean()</code> 的 <code>ApiVersionWebInterceptor</code> 输入
+     * @return 当前测试使用的结果，取自 <code>new ApiVersionWebMvcConfiguration(factory.getBeanProvider(ApiVersionWebInterceptor.class))</code>
+     */
     private ApiVersionWebMvcConfiguration versionConfiguration(ApiVersionWebInterceptor interceptor) {
         StaticListableBeanFactory factory = new StaticListableBeanFactory();
         factory.addBean("apiVersionInterceptor", interceptor);
         return new ApiVersionWebMvcConfiguration(factory.getBeanProvider(ApiVersionWebInterceptor.class));
     }
 
+    /**
+     * 创建 <code>new ApiVersionWebInterceptor</code> 供当前测试路径调用。
+     *
+     * @param enabled 是否开启当前测试使用的功能
+     * @return 当前测试使用的结果，取自 <code>new ApiVersionWebInterceptor(resolver, enabled)</code>
+     */
     private ApiVersionWebInterceptor versionInterceptor(boolean enabled) {
         ApiVersionResolver resolver = new ApiVersionResolver(ApiVersion.parse("1.0.0"), ApiVersionMode.FALLBACK);
         return new ApiVersionWebInterceptor(resolver, enabled);
     }
 
+    /**
+     * 调用 <code>WebAccessPolicy.disabled()</code> 执行当前夹具操作。
+     *
+     * @return 提供给后续契约断言的 <code>Ddd4jWebMvcInterceptor</code> 结果
+     */
     private Ddd4jWebMvcInterceptor contextInterceptor() {
         return new Ddd4jWebMvcInterceptor(new WebRequestContextFactory(),
                 new WebRequestLifecycle(new BearerSubjectAuthenticator(), WebAccessPolicy.disabled()), null);
     }
 
+    /**
+     * 实现 <code>InterceptorRegistry</code>，供测试调用 <code>entries()</code> 并观察结果。
+     */
     private static class RecordingRegistry extends InterceptorRegistry {
+        /**
+         * 通过 <code>getInterceptors()</code> 取得当前测试需要的结果。
+         *
+         * @return 当前测试使用的结果，取自 <code>getInterceptors()</code>
+         */
         List<Object> entries() {
             return getInterceptors();
         }

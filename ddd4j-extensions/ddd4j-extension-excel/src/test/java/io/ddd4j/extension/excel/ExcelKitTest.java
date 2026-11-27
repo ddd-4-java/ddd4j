@@ -38,6 +38,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class ExcelKitTest {
 
+    /**
+     * 验证<code>bytes</code>非空，<code>read</code> 的大小为 <code>5</code>，<code>read.get(4).getId()</code> 等于 <code>5L</code>。
+     */
     @Test
     void export_then_read_should_return_same_data() {
         // given
@@ -61,6 +64,9 @@ class ExcelKitTest {
         assertThat(read.get(4).getId()).isEqualTo(5L);
     }
 
+    /**
+     * 验证<code>bytes</code>非空，<code>read</code> 的大小为 <code>10</code>。
+     */
     @Test
     void export_with_options_should_apply_freeze_and_zebra() {
         // given
@@ -82,6 +88,9 @@ class ExcelKitTest {
         assertThat(read).hasSize(10);
     }
 
+    /**
+     * 验证<code>result.getData()</code> 的大小为 <code>3</code>，<code>result.hasErrors()</code>为假。
+     */
     @Test
     void importExcel_should_collect_data_and_errors() {
         // given：写一份正常数据
@@ -100,6 +109,9 @@ class ExcelKitTest {
         assertThat(result.hasErrors()).isFalse();
     }
 
+    /**
+     * 验证<code>bytes</code>非空。
+     */
     @Test
     void exportError_should_return_non_empty_bytes() {
         // given
@@ -112,6 +124,9 @@ class ExcelKitTest {
         assertThat(bytes).isNotEmpty();
     }
 
+    /**
+     * 验证<code>read</code>为空。
+     */
     @Test
     void exportEmptyTemplate_should_have_only_header() {
         // when
@@ -123,6 +138,9 @@ class ExcelKitTest {
         assertThat(read).isEmpty();
     }
 
+    /**
+     * 验证<code>result</code>非空。
+     */
     @Test
     void errorCollectingListener_should_not_throw_on_parse_error() {
         // given：构造一个故意混入错误数据的 Excel。
@@ -155,21 +173,45 @@ class ExcelKitTest {
         Assertions.assertThat(result).isNotNull();
     }
 
+    /**
+     * 将 <code>d</code> 等状态一起传入当前测试，供调用或结果断言使用。
+     */
     public static class DateVO {
+        /**
+         * 保存供 Excel 日期列往返转换的日期值。
+         */
         @com.alibaba.excel.annotation.ExcelProperty("日期")
         private java.util.Date d;
 
+        /**
+         * 创建字段使用默认初始值的 <code>DateVO</code> 测试对象。
+         */
         public DateVO() {
         }
 
+        /**
+         * 设置 <code>d</code>，用于构造 <code>DateVO</code> 测试实例。
+         *
+         * @param d 用于初始化 <code>DateVO</code> 的 <code>java.util.Date</code> 值
+         */
         public DateVO(java.util.Date d) {
             this.d = d;
         }
 
+        /**
+         * 读取<code>d</code> 字段。
+         *
+         * @return <code>d</code> 字段
+         */
         public java.util.Date getD() {
             return d;
         }
 
+        /**
+         * 设置<code>d</code> 字段。
+         *
+         * @param d 要写入的值
+         */
         public void setD(java.util.Date d) {
             this.d = d;
         }

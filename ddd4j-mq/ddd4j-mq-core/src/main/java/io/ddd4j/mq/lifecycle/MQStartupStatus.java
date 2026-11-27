@@ -16,11 +16,26 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public final class MQStartupStatus {
 
+    /**
+     * 保存消息组件当前启动结果的状态对象。
+     */
     private static final MQStartupStatus UNMANAGED = new MQStartupStatus("unmanaged", false);
 
+    /**
+     * 当前启动状态所描述的代理名称。
+     */
     private final String broker;
+    /**
+     * 当前生命周期是否启用了受管启动与停止。
+     */
     private final boolean managed;
+    /**
+     * 记录当前启动或注册流程所处的状态。
+     */
     private final AtomicReference<MQStartupState> state = new AtomicReference<>(MQStartupState.NEW);
+    /**
+     * 截至当前启动轮次已记录的监听器初始化失败。
+     */
     private final List<MQListenerInitializationFailure> failures = new CopyOnWriteArrayList<>();
 
     /**
@@ -32,6 +47,12 @@ public final class MQStartupStatus {
         this(broker, true);
     }
 
+    /**
+     * 初始化指定代理的启动状态。
+     *
+     * @param broker  当前代理名称
+     * @param managed 当前代理是否采用受管生命周期
+     */
     private MQStartupStatus(String broker, boolean managed) {
         this.broker = Objects.requireNonNull(broker, "broker must not be null");
         this.managed = managed;
@@ -111,10 +132,26 @@ public final class MQStartupStatus {
      * 不可变启动状态快照。
      */
     public static final class Snapshot {
+        /**
+         * 生成快照时记录的代理名称。
+         */
         private final String broker;
+        /**
+         * 生成快照时记录的启动状态。
+         */
         private final MQStartupState state;
+        /**
+         * 生成快照时复制的监听器初始化失败列表。
+         */
         private final List<MQListenerInitializationFailure> failures;
 
+        /**
+         * 创建不可变的代理启动快照并复制失败列表。
+         *
+         * @param broker   当前代理名称
+         * @param state    快照所记录的启动状态
+         * @param failures 截至生成快照时的监听器初始化失败
+         */
         private Snapshot(String broker, MQStartupState state,
                          List<MQListenerInitializationFailure> failures) {
             this.broker = broker;

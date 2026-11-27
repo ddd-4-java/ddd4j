@@ -35,13 +35,22 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @DisplayName("InMemoryProjectionPositionRepository")
 class InMemoryProjectionPositionRepositoryTest {
 
+    /**
+     * 用于当前读取或写入断言的测试仓储。
+     */
     private InMemoryProjectionPositionRepository repository;
 
+    /**
+     * 根据本次调用更新 <code>repository = new InMemoryProjectionPositionRepository()</code>，用于后续测试步骤。
+     */
     @BeforeEach
     void setUp() {
         repository = new InMemoryProjectionPositionRepository();
     }
 
+    /**
+     * 验证<code>found</code>为空。
+     */
     @Test
     void findByStreamId_未保存过_应返回Optional空() {
         Optional<ProjectionPosition> found = repository.findByStreamId("person-list");
@@ -49,6 +58,9 @@ class InMemoryProjectionPositionRepositoryTest {
         assertThat(found).isEmpty();
     }
 
+    /**
+     * 验证<code>saved</code> 指向同一实例 <code>position</code>。
+     */
     @Test
     void save_新位置_应持久化并可按streamId查回() {
         ProjectionPosition position = new DefaultProjectionPosition("person-list", 5);
@@ -62,6 +74,9 @@ class InMemoryProjectionPositionRepositoryTest {
                 .isEqualTo(5L);
     }
 
+    /**
+     * 验证<code>repository.findByStreamId("person-list")</code>中由 <code>ProjectionPosition::getNextEventNumber</code> 读取的属性等于 <code>12L</code>。
+     */
     @Test
     void save_同streamId再次保存_应覆盖原值() {
         repository.save(new DefaultProjectionPosition("person-list", 5));
@@ -74,6 +89,9 @@ class InMemoryProjectionPositionRepositoryTest {
                 .isEqualTo(12L);
     }
 
+    /**
+     * 验证<code>repository.findByStreamId("person-list")</code>为空。
+     */
     @Test
     void deleteByStreamId_已存在_应删除并使后续查找返回空() {
         repository.save(new DefaultProjectionPosition("person-list", 5));
@@ -83,6 +101,9 @@ class InMemoryProjectionPositionRepositoryTest {
         assertThat(repository.findByStreamId("person-list")).isEmpty();
     }
 
+    /**
+     * 验证<code>repository.size()</code>为零。
+     */
     @Test
     void deleteByStreamId_不存在_应静默不抛异常() {
         repository.deleteByStreamId("not-exist");
@@ -90,6 +111,9 @@ class InMemoryProjectionPositionRepositoryTest {
         assertThat(repository.size()).isZero();
     }
 
+    /**
+     * 验证<code>repository.findByStreamId("person-list")</code>中由 <code>ProjectionPosition::getNextEventNumber</code> 读取的属性等于 <code>0L</code>。
+     */
     @Test
     void resetToZero_已存在位置_应将nextEventNumber置零() {
         repository.save(new DefaultProjectionPosition("person-list", 12));
@@ -102,6 +126,9 @@ class InMemoryProjectionPositionRepositoryTest {
                 .isEqualTo(0L);
     }
 
+    /**
+     * 验证<code>repository.findByStreamId("person-list")</code>中由 <code>ProjectionPosition::getNextEventNumber</code> 读取的属性等于 <code>0L</code>。
+     */
     @Test
     void resetToZero_不存在位置_应创建nextEventNumber为零的新记录() {
         repository.resetToZero("person-list");
@@ -112,6 +139,9 @@ class InMemoryProjectionPositionRepositoryTest {
                 .isEqualTo(0L);
     }
 
+    /**
+     * 验证<code>all</code> 的大小为 <code>2</code>，<code>all.add(new DefaultProjectionPosition("c", 3))</code> 抛出 <code>UnsupportedOperationException.class</code>。
+     */
     @Test
     void findAll_多条记录_应返回全部且为不可变副本() {
         repository.save(new DefaultProjectionPosition("a", 1));
@@ -126,6 +156,9 @@ class InMemoryProjectionPositionRepositoryTest {
                 .isInstanceOf(UnsupportedOperationException.class);
     }
 
+    /**
+     * 验证<code>snapshot</code> 的大小为 <code>1</code>，<code>snapshot.put("c", new DefaultProjectionPosition("c", 3))</code> 抛出 <code>UnsupportedOperationException.class</code>。
+     */
     @Test
     void snapshot_应返回当前存储的不可变副本() {
         repository.save(new DefaultProjectionPosition("a", 1));
@@ -139,6 +172,9 @@ class InMemoryProjectionPositionRepositoryTest {
                 .isInstanceOf(UnsupportedOperationException.class);
     }
 
+    /**
+     * 验证<code>repository.size()</code>为零，<code>repository.findAll()</code>为空。
+     */
     @Test
     void clear_应清空所有记录() {
         repository.save(new DefaultProjectionPosition("a", 1));
@@ -150,6 +186,9 @@ class InMemoryProjectionPositionRepositoryTest {
         assertThat(repository.findAll()).isEmpty();
     }
 
+    /**
+     * 验证<code>repository.size()</code> 等于 <code>2</code>。
+     */
     @Test
     void size_应返回当前存储条目数() {
         repository.save(new DefaultProjectionPosition("a", 1));

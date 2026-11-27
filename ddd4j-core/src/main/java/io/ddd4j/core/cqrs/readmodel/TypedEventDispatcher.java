@@ -29,6 +29,9 @@ import java.util.*;
  */
 public class TypedEventDispatcher {
 
+    /**
+     * 按事件类型标识查找的强类型处理器。
+     */
     private final Map<String, TypedEventHandler<?>> handlers;
 
     /**
@@ -98,6 +101,12 @@ public class TypedEventDispatcher {
         return handlers.size();
     }
 
+    /**
+     * 按处理器声明的事件类型建立分发查找表。
+     *
+     * @param eventHandlers 候选事件处理器集合
+     * @return 按事件类型索引的处理器映射
+     */
     private Map<String, TypedEventHandler<?>> indexHandlers(Collection<? extends TypedEventHandler<?>> eventHandlers) {
         if (CollKit.isEmpty(eventHandlers)) {
             return Collections.emptyMap();
@@ -113,6 +122,14 @@ public class TypedEventDispatcher {
         return Collections.unmodifiableMap(indexedHandlers);
     }
 
+    /**
+     * 校验运行时事件类型并调用匹配的处理器。
+     *
+     * @param <E>     处理器接受的事件类型
+     * @param handler 负责该事件的强类型处理器
+     * @param event   从分发入口收到的事件对象
+     * @throws IllegalArgumentException 事件不是处理器声明的类型
+     */
     private <E> void invoke(TypedEventHandler<E> handler, Object event) {
         if (!handler.getEventClass().isInstance(event)) {
             throw new IllegalArgumentException("event type mismatch: " + event.getClass().getName());

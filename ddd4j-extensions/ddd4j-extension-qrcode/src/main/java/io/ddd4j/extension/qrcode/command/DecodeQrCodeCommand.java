@@ -25,6 +25,12 @@ import lombok.Getter;
 @Builder
 public final class DecodeQrCodeCommand {
 
+    /**
+     * 用于关联同一次操作产生的事件或消息的标识。
+     */
     private final String correlationId;
+    /**
+     * 当前命令携带的二维码输入数据。
+     */
     private final QrCodeDecodeRequest request;
 }

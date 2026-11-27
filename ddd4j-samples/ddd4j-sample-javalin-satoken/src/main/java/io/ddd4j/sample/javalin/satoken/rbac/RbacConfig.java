@@ -44,6 +44,9 @@ import java.util.HashSet;
  */
 public final class RbacConfig {
 
+    /**
+     * 限制调用方直接创建 <code>RbacConfig</code> 实例。
+     */
     private RbacConfig() {
     }
 

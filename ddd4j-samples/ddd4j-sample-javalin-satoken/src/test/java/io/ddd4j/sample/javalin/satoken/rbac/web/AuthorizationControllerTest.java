@@ -49,10 +49,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @org.junit.jupiter.api.parallel.Execution(org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD)
 class AuthorizationControllerTest {
 
+    /**
+     * 由当前测试启动和关闭的应用实例。
+     */
     private static Javalin app;
+    /**
+     * 用于发送 HTTP 请求的客户端。
+     */
     private static HttpClient httpClient;
+    /**
+     * 当前服务的 HTTP 基础地址。
+     */
     private static String baseUrl;
 
+    /**
+     * 测试执行前执行 <code>TestSupport.start()</code>、<code>app.port()</code>、<code>HttpClient.newBuilder()</code>、<code>Duration.ofSeconds()</code> 完成资源准备。
+     */
     @BeforeAll
     void startServer() {
         app = TestSupport.start();
@@ -60,6 +72,9 @@ class AuthorizationControllerTest {
         httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
     }
 
+    /**
+     * 测试结束后执行 <code>app.stop()</code> 完成资源回收或状态恢复。
+     */
     @AfterAll
     void stopServer() {
         if (Objects.nonNull(app)) {
@@ -67,6 +82,9 @@ class AuthorizationControllerTest {
         }
     }
 
+    /**
+     * 测试执行前执行 <code>app.stop()</code>、<code>TestSupport.start()</code>、<code>app.port()</code>、<code>HttpClient.newBuilder()</code> 完成资源准备。
+     */
     @BeforeEach
     void resetServerState() {
         app.stop();
@@ -78,6 +96,14 @@ class AuthorizationControllerTest {
 
     // ------------------- HTTP 助手 -------------------
 
+    /**
+     * 读取 <code>response</code> 供当前测试使用。
+     *
+     * @param path 测试请求的资源路径或待访问文件路径
+     * @param body 当前请求或响应中要读取的正文
+     * @return 当前测试使用的结果，取自 <code>response</code>
+     * @throws Exception 发起测试请求时失败
+     */
     private HttpResponse<String> postJson(String path, String body) throws Exception {
         HttpResponse<String> response = httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
                         .header("Content-Type", "application/json")
@@ -87,6 +113,14 @@ class AuthorizationControllerTest {
         return response;
     }
 
+    /**
+     * 读取 <code>response</code> 供当前测试使用。
+     *
+     * @param path 测试请求的资源路径或待访问文件路径
+     * @param body 当前请求或响应中要读取的正文
+     * @return 当前测试使用的结果，取自 <code>response</code>
+     * @throws Exception 发起测试请求时失败
+     */
     private HttpResponse<String> putJson(String path, String body) throws Exception {
         HttpResponse<String> response = httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
                         .header("Content-Type", "application/json")
@@ -96,6 +130,13 @@ class AuthorizationControllerTest {
         return response;
     }
 
+    /**
+     * 读取 <code>response</code> 供当前测试使用。
+     *
+     * @param path 测试请求的资源路径或待访问文件路径
+     * @return 当前测试使用的结果，取自 <code>response</code>
+     * @throws Exception 发起测试请求时失败
+     */
     private HttpResponse<String> delete(String path) throws Exception {
         HttpResponse<String> response = httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).DELETE().build(),
                 HttpResponse.BodyHandlers.ofString());
@@ -103,6 +144,13 @@ class AuthorizationControllerTest {
         return response;
     }
 
+    /**
+     * 读取 <code>response</code> 供当前测试使用。
+     *
+     * @param path 测试请求的资源路径或待访问文件路径
+     * @return 当前测试使用的结果，取自 <code>response</code>
+     * @throws Exception 发起测试请求时失败
+     */
     private HttpResponse<String> get(String path) throws Exception {
         HttpResponse<String> response = httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).GET().build(),
                 HttpResponse.BodyHandlers.ofString());
@@ -110,6 +158,12 @@ class AuthorizationControllerTest {
         return response;
     }
 
+    /**
+     * 调用 <code>response.uri()</code>、<code>response.statusCode()</code>、<code>response.version()</code> 执行当前夹具操作。
+     *
+     * @param method   发给被测服务的 HTTP 方法
+     * @param response 当前请求已收到的响应
+     */
     private void recordResponse(String method, HttpResponse<String> response) {
         log.info("RBAC HTTP diagnostic method={} uri={} status={} version={} headers={} body={} serverPort={}",
                 method, response.uri(), response.statusCode(), response.version(), response.headers().map(),
@@ -118,6 +172,11 @@ class AuthorizationControllerTest {
 
     // =================== 用户管理 ===================
 
+    /**
+     * 请求 <code>POST /rbac/admin/users</code>，确认 HTTP 响应状态为 201。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void createUser_shouldReturn201() throws Exception {
         HttpResponse<String> r = postJson("/rbac/admin/users",
@@ -126,6 +185,11 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("30001"));
     }
 
+    /**
+     * 请求 <code>POST /rbac/admin/users</code>，确认 HTTP 响应状态为 201。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void createUser_withDuplicateId_shouldFail() throws Exception {
         // 创建一个用户
@@ -138,6 +202,11 @@ class AuthorizationControllerTest {
         assertEquals(201, r.statusCode());
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("admin")</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void listUsers_shouldReturnSeedUsers() throws Exception {
         HttpResponse<String> r = get("/rbac/admin/users");
@@ -146,6 +215,11 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("user"));
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("admin")</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void getUser_byId_shouldReturnUser() throws Exception {
         HttpResponse<String> r = get("/rbac/admin/users/10001");
@@ -153,6 +227,11 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("admin"));
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("null") || r.body().contains("{}")</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void getUser_nonExistent_shouldReturnNull() throws Exception {
         HttpResponse<String> r = get("/rbac/admin/users/99999");
@@ -161,6 +240,11 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("null") || r.body().contains("{}"));
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("10001")</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void updateUser_shouldReturn200() throws Exception {
         HttpResponse<String> r = putJson("/rbac/admin/users/10001",
@@ -169,6 +253,11 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("10001"));
     }
 
+    /**
+     * 验证<code>r.statusCode() &gt;= 400</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void updateUser_nonExistent_shouldFail() throws Exception {
         HttpResponse<String> r = putJson("/rbac/admin/users/99999",
@@ -176,6 +265,11 @@ class AuthorizationControllerTest {
         assertTrue(r.statusCode() >= 400, "Expected error status but got: " + r.statusCode());
     }
 
+    /**
+     * 请求 <code>POST /rbac/admin/users</code>，确认 HTTP 响应状态为 200。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void deleteUser_shouldReturn200() throws Exception {
         // 先创建
@@ -188,6 +282,11 @@ class AuthorizationControllerTest {
 
     // =================== 用户角色分配 ===================
 
+    /**
+     * 请求 <code>POST /rbac/admin/users/10002/roles</code>，确认 HTTP 响应状态为 200。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void assignRolesToUser_shouldReturn200() throws Exception {
         HttpResponse<String> r = postJson("/rbac/admin/users/10002/roles",
@@ -196,6 +295,11 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("10002"));
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("userId")</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void getUserPermissions_shouldReturnPermissions() throws Exception {
         HttpResponse<String> r = get("/rbac/admin/users/10001/permissions");
@@ -205,6 +309,11 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("permissions"));
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("[]") || r.body().contains("null")</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void getUserPermissions_nonExistent_shouldReturnEmpty() throws Exception {
         HttpResponse<String> r = get("/rbac/admin/users/99999/permissions");
@@ -215,6 +324,11 @@ class AuthorizationControllerTest {
 
     // =================== 角色管理 ===================
 
+    /**
+     * 请求 <code>POST /rbac/admin/roles</code>，确认 HTTP 响应状态为 201。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void createRole_shouldReturn201() throws Exception {
         HttpResponse<String> r = postJson("/rbac/admin/roles",
@@ -223,6 +337,11 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("R200"));
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("admin")</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void listRoles_shouldReturnSeedRoles() throws Exception {
         HttpResponse<String> r = get("/rbac/admin/roles");
@@ -232,6 +351,11 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("manager"));
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("admin")</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void getRole_byId_shouldReturnRole() throws Exception {
         HttpResponse<String> r = get("/rbac/admin/roles/R001");
@@ -239,6 +363,11 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("admin"));
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("null") || r.body().contains("{}")</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void getRole_nonExistent_shouldReturnNull() throws Exception {
         HttpResponse<String> r = get("/rbac/admin/roles/R999");
@@ -246,6 +375,11 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("null") || r.body().contains("{}"));
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("R001")</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void updateRole_shouldReturn200() throws Exception {
         HttpResponse<String> r = putJson("/rbac/admin/roles/R001",
@@ -254,6 +388,11 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("R001"));
     }
 
+    /**
+     * 请求 <code>POST /rbac/admin/roles</code>，确认 HTTP 响应状态为 200。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void deleteRole_shouldReturn200() throws Exception {
         // 先创建
@@ -266,6 +405,11 @@ class AuthorizationControllerTest {
 
     // =================== 角色权限分配 ===================
 
+    /**
+     * 请求 <code>POST /rbac/admin/roles/R002/permissions</code>，确认 HTTP 响应状态为 200。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void assignPermissionsToRole_shouldReturn200() throws Exception {
         HttpResponse<String> r = postJson("/rbac/admin/roles/R002/permissions",
@@ -274,6 +418,11 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("R002"));
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("roleId")</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void getRolePermissions_shouldReturnPermissions() throws Exception {
         HttpResponse<String> r = get("/rbac/admin/roles/R001/permissions");
@@ -284,6 +433,11 @@ class AuthorizationControllerTest {
 
     // =================== 权限管理 ===================
 
+    /**
+     * 请求 <code>POST /rbac/admin/permissions</code>，确认 HTTP 响应状态为 201。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void createPermission_shouldReturn201() throws Exception {
         HttpResponse<String> r = postJson("/rbac/admin/permissions",
@@ -292,6 +446,11 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("P200"));
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("user:add")</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void listPermissions_shouldReturnSeedPermissions() throws Exception {
         HttpResponse<String> r = get("/rbac/admin/permissions");
@@ -301,6 +460,11 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("order:pay"));
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("user:add")</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void getPermission_byId_shouldReturnPermission() throws Exception {
         HttpResponse<String> r = get("/rbac/admin/permissions/P001");
@@ -308,6 +472,11 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("user:add"));
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("null") || r.body().contains("{}")</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void getPermission_nonExistent_shouldReturnNull() throws Exception {
         HttpResponse<String> r = get("/rbac/admin/permissions/P999");
@@ -315,6 +484,11 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("null") || r.body().contains("{}"));
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("P001")</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void updatePermission_shouldReturn200() throws Exception {
         HttpResponse<String> r = putJson("/rbac/admin/permissions/P001",
@@ -323,6 +497,11 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("P001"));
     }
 
+    /**
+     * 请求 <code>POST /rbac/admin/permissions</code>，确认 HTTP 响应状态为 200。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void deletePermission_shouldReturn200() throws Exception {
         // 先创建
@@ -335,6 +514,11 @@ class AuthorizationControllerTest {
 
     // =================== 边界情况 ===================
 
+    /**
+     * 验证<code>r.statusCode() &gt;= 400</code>为真。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void createUser_withNullFields_shouldFail() throws Exception {
         HttpResponse<String> r = postJson("/rbac/admin/users",
@@ -342,6 +526,11 @@ class AuthorizationControllerTest {
         assertTrue(r.statusCode() >= 400, "Expected error status but got: " + r.statusCode());
     }
 
+    /**
+     * 验证<code>r.statusCode() &gt;= 200 &amp;&amp; r.statusCode() &lt; 600</code>为真。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void createRole_withEmptyCode_shouldFail() throws Exception {
         HttpResponse<String> r = postJson("/rbac/admin/roles",
@@ -351,6 +540,11 @@ class AuthorizationControllerTest {
         assertTrue(r.statusCode() >= 200 && r.statusCode() < 600);
     }
 
+    /**
+     * 请求 <code>POST /rbac/admin/users/10001/roles</code>，确认 HTTP 响应状态为 200。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void assignRoles_withEmptyList_shouldSucceed() throws Exception {
         HttpResponse<String> r = postJson("/rbac/admin/users/10001/roles",
@@ -358,6 +552,11 @@ class AuthorizationControllerTest {
         assertEquals(200, r.statusCode());
     }
 
+    /**
+     * 请求 <code>POST /rbac/admin/roles/R001/permissions</code>，确认 HTTP 响应状态为 200。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void assignPermissions_withEmptyList_shouldSucceed() throws Exception {
         HttpResponse<String> r = postJson("/rbac/admin/roles/R001/permissions",

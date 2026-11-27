@@ -30,9 +30,18 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
  */
 class SaTokenSecurityConfigurerTest {
 
+    /**
+     * 进入测试场景前注册的配置。
+     */
     private SaTokenConfig originalConfig;
+    /**
+     * 进入测试场景前注册的认证逻辑。
+     */
     private StpLogic originalLogic;
 
+    /**
+     * 测试前依次恢复或安装配置<code>SaManager</code>。
+     */
     @BeforeEach
     void setUp() {
         originalConfig = SaManager.getConfig();
@@ -40,12 +49,18 @@ class SaTokenSecurityConfigurerTest {
         SaManager.setConfig(new SaTokenConfig().setIsPrint(false).setIsLog(false));
     }
 
+    /**
+     * 测试后依次恢复或安装登录逻辑<code>StpUtil</code>、恢复或安装配置<code>SaManager</code>。
+     */
     @AfterEach
     void tearDown() {
         StpUtil.setStpLogic(originalLogic);
         SaManager.setConfig(originalConfig);
     }
 
+    /**
+     * 验证<code>SaManager.getConfig().getTokenName()</code> 等于 <code>"orders-token"</code>，<code>SaManager.getConfig().getTimeout()</code> 等于 <code>300L</code>，<code>SaManager.getConfig().getTokenSessionCheckLogin()</code>为真。
+     */
     @Test
     void configure_shouldInstallNamespacedSessionConfiguration() {
         SaTokenSecurityProperties properties = new SaTokenSecurityProperties();
@@ -63,6 +78,9 @@ class SaTokenSecurityConfigurerTest {
         assertThat(SaManager.getConfig().getTokenSessionCheckLogin()).isTrue();
     }
 
+    /**
+     * 验证<code>((Ddd4jStpLogicJwtForSimple) logic).jwtSecretKey()</code> 等于 <code>secret</code>。
+     */
     @Test
     void configureBindsValidatedSecretToSigningLogic() {
         String secret = "a-dedicated-test-signing-secret-of-32-bytes";
@@ -77,6 +95,9 @@ class SaTokenSecurityConfigurerTest {
         assertThat(((Ddd4jStpLogicJwtForSimple) logic).jwtSecretKey()).isEqualTo(secret);
     }
 
+    /**
+     * 验证<code>SaTokenSecurityConfigurer.configure(properties)</code> 抛出 <code>IllegalArgumentException</code>。
+     */
     @Test
     void configure_shouldRejectJwtWithoutProductionSecret() {
         SaTokenSecurityProperties properties = new SaTokenSecurityProperties();
@@ -89,6 +110,9 @@ class SaTokenSecurityConfigurerTest {
                 .withMessageContaining("jwtSecretKey");
     }
 
+    /**
+     * 验证<code>SaTokenSecurityConfigurer.configure(properties)</code> 抛出 <code>IllegalArgumentException</code>。
+     */
     @Test
     void configure_shouldRejectJwtWithoutIssuerOrAudience() {
         SaTokenSecurityProperties properties = new SaTokenSecurityProperties();

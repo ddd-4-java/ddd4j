@@ -26,6 +26,9 @@ import java.util.Objects;
 @Getter
 public final class QrCodeDecodeRequest {
 
+    /**
+     * 待解析的二维码图像数据。
+     */
     private final byte[] bytes;
 
     /**

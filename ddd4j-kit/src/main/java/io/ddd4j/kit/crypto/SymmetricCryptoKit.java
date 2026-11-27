@@ -40,7 +40,13 @@ import java.util.concurrent.ConcurrentHashMap;
 @UtilityClass
 public class SymmetricCryptoKit {
 
+    /**
+     * 按配置键复用对称加密对象。
+     */
     private final Map<String, SymmetricCrypto> SYMMETRIC_CRYPTO_CACHE = new ConcurrentHashMap<>();
+    /**
+     * 按配置键复用消息认证码运算对象。
+     */
     private final Map<String, HMac> HMAC_CACHE = new ConcurrentHashMap<>();
 
     /**

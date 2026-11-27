@@ -59,6 +59,9 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
      * 远程服务端口
      */
     private final String port;
+    /**
+     * 访问 FLKSEC 服务使用的 HTTP 或 HTTPS 协议。
+     */
     private final String scheme;
 
     /**
@@ -73,6 +76,15 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
         this(objectMapper, httpClient, address, port, "https");
     }
 
+    /**
+     * 用给定值初始化 <code>FlksecCryptoStrategy</code> 实例。
+     *
+     * @param objectMapper JSON 对象映射器
+     * @param httpClient   HTTP 客户端
+     * @param address      远程服务地址
+     * @param port         远程服务端口
+     * @param scheme       <code>scheme</code> 字段
+     */
     private FlksecCryptoStrategy(ObjectMapper objectMapper, HttpClient httpClient, String address, String port, String scheme) {
         this.objectMapper = objectMapper;
         this.httpClient = httpClient;
@@ -92,6 +104,14 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
         this(objectMapper, HttpClient.newHttpClient(), address, port);
     }
 
+    /**
+     * 以默认 HTTP 客户端连接指定的 FLKSEC 服务。
+     *
+     * @param objectMapper 编码密码服务请求和响应的 JSON 映射器
+     * @param address      密码服务地址
+     * @param port         密码服务端口
+     * @param scheme       请求协议
+     */
     FlksecCryptoStrategy(ObjectMapper objectMapper, String address, String port, String scheme) {
         this(objectMapper, HttpClient.newHttpClient(), address, port, scheme);
     }
@@ -108,6 +128,16 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
 
     /**
      * 字段加密（远程调用弗兰科信息加密服务）
+     *
+     * @param value         待加密数据
+     * @param algorithmType 加密算法类型
+     * @param encMode       分组加密工作模式
+     * @param padMode       分组加密填充方式
+     * @param key           运算所用密钥
+     * @param iv            初始化向量
+     * @param plainIsEncode 明文是否以编码形式传入或返回
+     * @param <T>           待加密数据的类型
+     * @return 编码后的密文
      */
     @Override
     public <T> String encrypt(T value, SymmetricAlgorithmType algorithmType, String encMode, String padMode, String key, String iv, boolean plainIsEncode) {
@@ -158,6 +188,17 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
 
     /**
      * 字段解密（远程调用弗兰科信息解密服务）
+     *
+     * @param value         待解密的密文
+     * @param algorithmType 加密算法类型
+     * @param encMode       分组加密工作模式
+     * @param padMode       分组加密填充方式
+     * @param key           运算所用密钥
+     * @param iv            初始化向量
+     * @param plainIsEncode 明文是否以编码形式传入或返回
+     * @param rtType        解密后转换到的 Java 类型
+     * @param <T>           解密结果的类型
+     * @return 指定目标类型的明文
      */
     @Override
     public <T> T decrypt(String value, SymmetricAlgorithmType algorithmType, String encMode, String padMode, String key, String iv, boolean plainIsEncode, Class<T> rtType) {
@@ -203,6 +244,14 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
 
     /**
      * HMAC 签名（远程调用弗兰科信息签名服务）
+     *
+     * @param value         待计算消息认证码的数据
+     * @param hmacAlgorithm 消息认证码算法
+     * @param key           运算所用密钥
+     * @param iv            初始化向量
+     * @param plainIsEncode 明文是否以编码形式传入或返回
+     * @param <T>           待计算消息认证码的数据类型
+     * @return 消息认证码的编码结果
      */
     @Override
     public <T> String hmac(T value, HmacAlgorithm hmacAlgorithm, String key, String iv, boolean plainIsEncode) {

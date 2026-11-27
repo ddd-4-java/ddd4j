@@ -23,18 +23,32 @@ import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * 验证 <code>WebContextScope</code> 在<code>open</code>等操作中的行为契约。
+ */
 class WebContextScopeTest {
 
+    /**
+     * 创建 <code>new WebRequestContext</code> 供当前测试路径调用。
+     *
+     * @return 当前测试使用的结果，取自 <code>new WebRequestContext("r-1", "t-1", "tenant-a", "Bearer token", Locale.CHINA, "127.0.0.1", "GET", "/api")</code>
+     */
     private static WebRequestContext request() {
         return new WebRequestContext("r-1", "t-1", "tenant-a", "Bearer token",
                 Locale.CHINA, "127.0.0.1", "GET", "/api");
     }
 
+    /**
+     * 测试结束后执行 <code>MDC.clear()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void tearDown() {
         MDC.clear();
     }
 
+    /**
+     * 在测试框架中执行 <code>WebContextScope.open()</code>、<code>request()</code>、<code>scope.close()</code>，验证该场景。
+     */
     @Test
     void openAndCloseIsIdempotent() {
         WebContextScope scope = WebContextScope.open(request());
@@ -42,11 +56,17 @@ class WebContextScopeTest {
         assertDoesNotThrow(scope::close);
     }
 
+    /**
+     * 验证<code>WebContextScope.open(null)</code> 抛出 <code>NullPointerException.class</code>。
+     */
     @Test
     void openRejectsNullContext() {
         assertThrows(NullPointerException.class, () -> WebContextScope.open(null));
     }
 
+    /**
+     * 验证<code>MDC.get("existing")</code> 等于 <code>"before"</code>。
+     */
     @Test
     void closeRestoresPreviousMdcContext() {
         MDC.put("existing", "before");
@@ -56,6 +76,9 @@ class WebContextScopeTest {
         assertEquals("before", MDC.get("existing"));
     }
 
+    /**
+     * 验证<code>MDC.get(ContextConstants.TENANT_ID)</code>为空，<code>MDC.get(ContextConstants.TENANT_ID)</code> 等于 <code>"stale"</code>。
+     */
     @Test
     void openWithBlankValuesRemovesMdcKeys() {
         WebRequestContext blank = new WebRequestContext("r-1", null, null, null,

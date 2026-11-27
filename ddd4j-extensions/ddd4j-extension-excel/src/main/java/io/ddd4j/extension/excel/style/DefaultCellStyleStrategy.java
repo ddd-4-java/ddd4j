@@ -66,6 +66,12 @@ public class DefaultCellStyleStrategy extends HorizontalCellStyleStrategy {
         super(headCellStyle, contentCellStyle);
     }
 
+    /**
+     * 按模板颜色构建带边框、居中字体和填充色的表头样式。
+     *
+     * @param t 提供表头颜色的样式模板
+     * @return 表头可复用的单元格样式
+     */
     private static WriteCellStyle buildHeadStyle(ExcelStyleTemplate t) {
         WriteCellStyle style = new WriteCellStyle();
         style.setFillForegroundColor(t.headerColor());
@@ -81,6 +87,12 @@ public class DefaultCellStyleStrategy extends HorizontalCellStyleStrategy {
         return style;
     }
 
+    /**
+     * 按模板内容对齐方式构建带边框的正文样式。
+     *
+     * @param t 提供正文对齐方式的样式模板
+     * @return 正文可复用的单元格样式
+     */
     private static WriteCellStyle buildContentStyle(ExcelStyleTemplate t) {
         WriteCellStyle style = new WriteCellStyle();
         style.setHorizontalAlignment(t.contentAlign());
@@ -93,6 +105,11 @@ public class DefaultCellStyleStrategy extends HorizontalCellStyleStrategy {
         return style;
     }
 
+    /**
+     * 给单元格四边设置细线边框。
+     *
+     * @param style 待更新的单元格样式
+     */
     private static void applyBorder(WriteCellStyle style) {
         style.setBorderTop(BorderStyle.THIN);
         style.setBorderBottom(BorderStyle.THIN);

@@ -55,10 +55,26 @@ public enum ExcelStyleTemplate {
      */
     ZEBRA(IndexedColors.ROYAL_BLUE.getIndex(), HorizontalAlignment.CENTER, true);
 
+    /**
+     * 表头使用的调色板颜色索引。
+     */
     private final short headerColor;
+    /**
+     * 内容单元格的水平对齐方式。
+     */
     private final HorizontalAlignment contentAlign;
+    /**
+     * 是否为内容区域启用交替底色。
+     */
     private final boolean zebraRow;
 
+    /**
+     * 保存表头填充色、正文对齐和交替底色开关。
+     *
+     * @param headerColor  表头颜色索引
+     * @param contentAlign 内容的水平对齐方式
+     * @param zebraRow     是否为正文启用交替底色
+     */
     ExcelStyleTemplate(short headerColor, HorizontalAlignment contentAlign, boolean zebraRow) {
         this.headerColor = headerColor;
         this.contentAlign = contentAlign;

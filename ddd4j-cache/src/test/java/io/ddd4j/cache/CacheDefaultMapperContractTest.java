@@ -14,8 +14,18 @@ import java.lang.reflect.Proxy;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * 验证缓存适配器的默认 JSON 映射器省略空属性。
+ */
 class CacheDefaultMapperContractTest {
 
+    /**
+     * 创建指定接口的动态代理供缓存适配器构造使用。
+     *
+     * @param <T>  客户端接口类型
+     * @param type 代理实现的客户端接口
+     * @return 无需实际网络连接的客户端代理
+     */
     @SuppressWarnings("unchecked")
     private static <T> T client(Class<T> type) {
         return (T) Proxy.newProxyInstance(type.getClassLoader(), new Class<?>[]{type},
@@ -24,6 +34,11 @@ class CacheDefaultMapperContractTest {
                 });
     }
 
+    /**
+     * 验证<code>json</code> 包含 <code>"present"</code>。
+     *
+     * @throws Exception 反射访问被测成员、处理测试数据的序列化时失败
+     */
     @Test
     void adapterDefaultMappersOmitNullProperties() throws Exception {
         CacheConfig config = CacheConfig.builder("mapper-contract").build();
@@ -44,12 +59,25 @@ class CacheDefaultMapperContractTest {
         }
     }
 
+    /**
+     * 同时提供有值属性和缺失属性的序列化测试样本。
+     */
     public static final class NullableValue {
 
+        /**
+         * 为当前用例提供固定的 <code>getPresent</code> 返回值。
+         *
+         * @return <code>"value"</code>
+         */
         public String getPresent() {
             return "value";
         }
 
+        /**
+         * 为当前用例提供固定的 <code>getMissing</code> 返回值。
+         *
+         * @return <code>null</code>
+         */
         public String getMissing() {
             return null;
         }

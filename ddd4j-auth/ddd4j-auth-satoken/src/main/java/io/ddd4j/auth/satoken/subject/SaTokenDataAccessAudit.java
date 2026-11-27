@@ -30,13 +30,36 @@ import java.util.function.Consumer;
 @Slf4j
 public final class SaTokenDataAccessAudit {
 
+    /**
+     * 标识一次数据访问审计的请求属性键。
+     */
     private static final Marker ACCESS_MARKER = MarkerFactory.getMarker(Constants.ACCESS_MARKER);
 
+    /**
+     * 当前访问已经通过认证的数据身份。
+     */
     private final SaTokenDataIdentity identity;
+    /**
+     * 本次审计记录的 HTTP 方法。
+     */
     private final String method;
+    /**
+     * 用于描述当前数据访问用途的操作标识。
+     */
     private final String operation;
+    /**
+     * 本次数据访问结束时的响应状态码。
+     */
     private final int status;
 
+    /**
+     * 保存一次数据范围访问的认证身份、操作和状态。
+     *
+     * @param identity  当前已经验证的租户、应用和用户身份
+     * @param method    当前访问使用的 HTTP 请求方法
+     * @param operation 当前访问对应的业务操作标识
+     * @param status    当前访问的 HTTP 响应状态码
+     */
     private SaTokenDataAccessAudit(SaTokenDataIdentity identity, String method, String operation, int status) {
         this.identity = identity;
         this.method = method;

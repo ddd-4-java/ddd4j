@@ -31,28 +31,49 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
+/**
+ * 验证 <code>CacheIdempotencyGuard</code> 在<code>acquire</code>、<code>acquireCompleteAndRelease</code>、<code>acquireLeaseCompleteAndRelease</code>、<code>lease</code>等操作中的行为契约。
+ */
 @ExtendWith(MockitoExtension.class)
 class CacheIdempotencyGuardTest {
 
+    /**
+     * 当前用例创建或查询的缓存名称。
+     */
     private static final String TEST_CACHE = "web-core-guard-test";
 
+    /**
+     * 用于隔离 <code>Cache&lt;String, Object&gt;</code> 调用并记录交互的测试替身。
+     */
     @Mock
     private Cache<String, Object> plainCache;
 
+    /**
+     * 用于隔离 <code>CasCache&lt;String, Object&gt;</code> 调用并记录交互的测试替身。
+     */
     @Mock
     private CasCache<String, Object> casCache;
 
+    /**
+     * 测试结束后执行 <code>CacheKit.unregister()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void tearDown() {
         CacheKit.unregister(TEST_CACHE);
     }
 
+    /**
+     * 验证默认和自定义缓存配置都能够构建幂等保护组件。
+     */
     @Test
     void defaultAndCustomConstruction() {
         assertDoesNotThrow(() -> new CacheIdempotencyGuard());
         assertDoesNotThrow(() -> new CacheIdempotencyGuard("custom-cache"));
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void rejectsBlankCacheName() {
         assertThrows(IllegalArgumentException.class, () -> new CacheIdempotencyGuard(""));
@@ -60,18 +81,27 @@ class CacheIdempotencyGuardTest {
         assertThrows(IllegalArgumentException.class, () -> new CacheIdempotencyGuard(null));
     }
 
+    /**
+     * 验证<code>guard.acquire(null, Duration.ofMinutes(1))</code> 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void acquireRejectsNullKey() {
         CacheIdempotencyGuard guard = new CacheIdempotencyGuard();
         assertThrows(IllegalArgumentException.class, () -> guard.acquire(null, Duration.ofMinutes(1)));
     }
 
+    /**
+     * 验证<code>guard.acquire("key", Duration.ofMinutes(1))</code> 抛出 <code>IllegalStateException.class</code>。
+     */
     @Test
     void acquireRejectsUnregisteredCache() {
         CacheIdempotencyGuard guard = new CacheIdempotencyGuard("never-registered-cache");
         assertThrows(IllegalStateException.class, () -> guard.acquire("key", Duration.ofMinutes(1)));
     }
 
+    /**
+     * 验证<code>guard.acquire("key", Duration.ofMinutes(1))</code> 抛出 <code>IllegalStateException.class</code>，<code>guard.acquireLease("key", Duration.ofMinutes(1))</code> 抛出 <code>IllegalStateException.class</code>。
+     */
     @Test
     void acquireRejectsCacheWithoutCasSupport() {
         CacheKit.register(TEST_CACHE, plainCache);
@@ -81,6 +111,9 @@ class CacheIdempotencyGuardTest {
                 () -> guard.acquireLease("key", Duration.ofMinutes(1)));
     }
 
+    /**
+     * 验证<code>guard.acquire("key-1", Duration.ofMinutes(5))</code>为真，<code>guard.acquire("key-1", Duration.ofMinutes(5))</code>为假，<code>guard.acquire("key-2", Duration.ofMinutes(5))</code>为真。
+     */
     @Test
     void acquireCompleteAndReleaseWithRegisteredCasCache() {
         CacheKit.build(TEST_CACHE, 300L);
@@ -99,6 +132,9 @@ class CacheIdempotencyGuardTest {
         guard.release("key-2");
     }
 
+    /**
+     * 验证<code>lease.isPresent()</code>为真，<code>guard.acquireLease("key-3", Duration.ofMinutes(5)).isPresent()</code>为假，<code>reacquired.isPresent()</code>为真。
+     */
     @Test
     void acquireLeaseCompleteAndReleaseWithOwnerToken() {
         CacheKit.build(TEST_CACHE, 300L);
@@ -119,6 +155,9 @@ class CacheIdempotencyGuardTest {
         guard.release(reacquired.get());
     }
 
+    /**
+     * 验证<code>guard.acquire("key-5", Duration.ofMinutes(5))</code>为真，<code>guard.acquire("key-5", Duration.ofMinutes(5))</code>为假，<code>guard.acquire("key-6", Duration.ofMinutes(5))</code>为真。
+     */
     @Test
     void leaseWithoutOwnerTokenDelegatesToKeyMethods() {
         CacheKit.build(TEST_CACHE, 300L);
@@ -135,6 +174,9 @@ class CacheIdempotencyGuardTest {
         guard.release("key-6");
     }
 
+    /**
+     * 验证<code>guard.acquire("key", null)</code> 抛出 <code>NullPointerException.class</code>，<code>guard.acquire("key", Duration.ZERO)</code> 抛出 <code>IllegalArgumentException.class</code>，<code>guard.release("")</code> 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void validatesTtlAndKeyArguments() {
         CacheKit.build(TEST_CACHE, 300L);
@@ -149,6 +191,9 @@ class CacheIdempotencyGuardTest {
         assertThrows(IllegalArgumentException.class, () -> guard.release(""));
     }
 
+    /**
+     * 验证<code>lease.isPresent()</code>为真，<code>lease.get().ttl()</code> 等于 <code>Duration.ofMinutes(7)</code>。
+     */
     @Test
     void leaseTtlIsPreserved() {
         CacheKit.build(TEST_CACHE, 300L);
@@ -160,6 +205,9 @@ class CacheIdempotencyGuardTest {
         guard.release(lease.get());
     }
 
+    /**
+     * 验证<code>guard.acquire("short", Duration.ofMillis(500))</code>为真。
+     */
     @Test
     void positiveFractionalSecondTtlNeverExpiresAtZeroSeconds() {
         CacheKit.register(TEST_CACHE, casCache);

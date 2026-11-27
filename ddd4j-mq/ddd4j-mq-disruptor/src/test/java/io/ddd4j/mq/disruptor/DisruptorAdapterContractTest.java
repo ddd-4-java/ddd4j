@@ -28,8 +28,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * 验证 <code>DisruptorAdapterContract</code> 在 <code>shouldDeliverRawTopicExactlyOnce</code>、<code>shouldDeliverUsingConfiguredNamespace</code>、<code>shouldRetainStableMessageId</code> 等场景中的行为。
+ */
 class DisruptorAdapterContractTest {
 
+    /**
+     * 验证<code>target.delivered.await(5, TimeUnit.SECONDS)</code>为真，<code>queued.getTopic()</code> 等于 <code>"orders"</code>，<code>target.received.getMsgId()</code> 等于 <code>"stable-route-id"</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void shouldDeliverRawTopicExactlyOnceWithoutComposingRouteTwice() throws Exception {
         DisruptorMQProperties properties = new DisruptorMQProperties();
@@ -70,6 +78,11 @@ class DisruptorAdapterContractTest {
         assertEquals("stable-route-id", target.received.getMsgId());
     }
 
+    /**
+     * 验证<code>target.delivered.await(5, TimeUnit.SECONDS)</code>为真，<code>queued.getNamespace()</code> 等于 <code>"production"</code>，<code>target.received.getMsgId()</code> 等于 <code>"configured-namespace-id"</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void shouldDeliverUsingConfiguredNamespaceWhenEventNamespaceIsAbsent() throws Exception {
         DisruptorMQProperties properties = new DisruptorMQProperties();
@@ -107,6 +120,11 @@ class DisruptorAdapterContractTest {
         assertEquals("configured-namespace-id", target.received.getMsgId());
     }
 
+    /**
+     * 验证<code>target.delivered.await(5, TimeUnit.SECONDS)</code>为真，<code>queued.getRouteExpression()</code> 等于 <code>"production.orders"</code>，<code>target.received.getMsgId()</code> 等于 <code>"global-namespace-id"</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void shouldDeliverUsingConfiguredNamespaceWhenListenerAndEventNamespacesAreEmpty() throws Exception {
         DisruptorMQProperties properties = new DisruptorMQProperties();
@@ -144,6 +162,9 @@ class DisruptorAdapterContractTest {
         assertEquals("global-namespace-id", target.received.getMsgId());
     }
 
+    /**
+     * 验证<code>acknowledgment.isAcknowledged()</code>为真，<code>ringBuffer.get(ringBuffer.getCursor()).getMessageId()</code> 等于 <code>"stable-id"</code>，<code>ringBuffer.getCursor()</code> 等于 <code>republishedSequence</code>。
+     */
     @Test
     void shouldRetainStableMessageIdWhenNackRequeuesLocally() {
         DisruptorEvent event = new DisruptorEvent();
@@ -164,6 +185,9 @@ class DisruptorAdapterContractTest {
         assertEquals(republishedSequence, ringBuffer.getCursor());
     }
 
+    /**
+     * 在测试框架中执行 <code>client.close()</code>，验证该场景。
+     */
     @Test
     void shouldCloseOwnedDisruptorOnlyOnce() {
         DisruptorMQClient client = new DisruptorMQClient(new DisruptorMQProperties());
@@ -175,10 +199,24 @@ class DisruptorAdapterContractTest {
      * 记录真实消费者反序列化后的事件。
      */
     public static class RecordingListener {
+        /**
+         * 协调测试线程在指定执行阶段等待或继续的门闩。
+         */
         private final CountDownLatch delivered = new CountDownLatch(1);
+        /**
+         * 记录被测入口实际触发的调用。
+         */
         private final AtomicInteger calls = new AtomicInteger();
+        /**
+         * 当前测试接收的数据，供断言核对投递内容或次数。
+         */
         private MQEvent received;
 
+        /**
+         * 根据本次调用更新 <code>received = event</code>，用于后续测试步骤。
+         *
+         * @param event 交给被测入口处理的测试领域事件
+         */
         public void onEvent(MQEvent event) {
             received = event;
             calls.incrementAndGet();

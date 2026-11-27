@@ -20,6 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class SpringI18nProviderWiringTest {
 
+    /**
+     * 验证<code>context.getBean(SpringI18nProvider.class).getMessage("welcome")</code> 等于 <code>"欢迎"</code>。
+     */
     @Test
     void injectsExtensionMessageSourceIntoSpringI18nProvider() {
         try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext()) {
@@ -32,6 +35,9 @@ class SpringI18nProviderWiringTest {
         }
     }
 
+    /**
+     * 验证<code>context.getBean(SpringI18nProvider.class).getMessage("welcome", "DDD")</code> 等于 <code>"Bonjour DDD"</code>。
+     */
     @Test
     void resolvesRegisteredSpringExtensionMessageSource() {
         LocaleContext previous = LocaleContextHolder.getLocaleContext();
@@ -49,6 +55,9 @@ class SpringI18nProviderWiringTest {
         }
     }
 
+    /**
+     * 验证<code>properties.getBasename()</code> 等于 <code>Collections.singletonList("messages")</code>，<code>properties.getBasename()</code> 等于 <code>Arrays.asList("messages", "orders")</code>。
+     */
     @Test
     void usesAMutableDefaultBasenameListPerConfiguration() {
         MessageSourceConfigurationProperties properties = new MessageSourceConfigurationProperties();

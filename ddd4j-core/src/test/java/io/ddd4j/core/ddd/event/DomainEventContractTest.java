@@ -16,6 +16,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class DomainEventContractTest {
 
+    /**
+     * 验证<code>first.getEventType().asString()</code> 等于 <code>"TestEvent"</code>，<code>second.getEventType()</code> 与…为同一实例 <code>first.getEventType()</code>，<code>first.getCausationId()</code>为空。
+     */
     @Test
     void eventTypeAndSourceAreDerivedFromTheEventClassAndPath() {
         TestEvent first = new TestEvent("order-1");
@@ -31,6 +34,9 @@ class DomainEventContractTest {
         assertNull(first.getCausationId());
     }
 
+    /**
+     * 验证<code>child.getCorrelationId()</code> 等于 <code>original.getEventId()</code>，<code>child.getCausationId()</code> 等于 <code>original.getEventId()</code>，<code>grandchild.getCausationId()</code> 等于 <code>child.getEventId()</code>。
+     */
     @Test
     void chainedEventKeepsTheOriginalCorrelationAndImmediateCause() {
         TestEvent original = new TestEvent("order-1");
@@ -43,6 +49,9 @@ class DomainEventContractTest {
         assertEquals(child.getEventId(), grandchild.getCausationId());
     }
 
+    /**
+     * 验证<code>event.supports("paid")</code>为假，<code>event.supports("created", "paid")</code>为真，<code>event.supports()</code>为假。
+     */
     @Test
     void strategyKeysRequireAnIntersection() {
         TestEvent event = new TestEvent("order-1");
@@ -55,12 +64,26 @@ class DomainEventContractTest {
         assertFalse(event.supports());
     }
 
+    /**
+     * 测试专用领域事件，用于控制事件类型和负载。
+     */
     private static final class TestEvent extends DomainEvent<StringEntityId> {
 
+        /**
+         * 使用 <code>super()</code> 初始化 <code>TestEvent</code> 测试夹具。
+         *
+         * @param entityId 用于初始化 <code>TestEvent</code> 的 <code>String</code> 值
+         */
         private TestEvent(String entityId) {
             super(entityId);
         }
 
+        /**
+         * 使用 <code>super()</code> 初始化 <code>TestEvent</code> 测试夹具。
+         *
+         * @param entityId  用于初始化 <code>TestEvent</code> 的 <code>String</code> 值
+         * @param respondTo 用于初始化 <code>TestEvent</code> 的 <code>Event</code> 值
+         */
         private TestEvent(String entityId, Event respondTo) {
             super(new EntityIdPath(new StringEntityId(entityId)), respondTo);
         }

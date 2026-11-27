@@ -43,6 +43,9 @@ public final class DataScopeSpan {
      */
     public static final AttributeKey<String> ATTR_DATA_SCOPE_DECISION = AttributeKey.stringKey("ddd4j.datascope.decision");
 
+    /**
+     * 限制调用方直接创建 <code>DataScopeSpan</code> 实例。
+     */
     private DataScopeSpan() {
     }
 

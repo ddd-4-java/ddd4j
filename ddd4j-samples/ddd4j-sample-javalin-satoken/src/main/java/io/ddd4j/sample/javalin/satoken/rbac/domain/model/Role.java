@@ -34,6 +34,9 @@ import java.util.Set;
 @Getter
 public class Role extends AggregateRoot<String> {
 
+    /**
+     * Java 序列化版本标识。
+     */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -150,6 +153,11 @@ public class Role extends AggregateRoot<String> {
         this.permissionIds.remove(permissionId);
     }
 
+    /**
+     * 读取角色 ID。
+     *
+     * @return 角色 ID
+     */
     @Override
     public String id() {
         return roleId;

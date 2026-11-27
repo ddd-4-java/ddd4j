@@ -38,6 +38,9 @@ import java.util.Objects;
 @Slf4j
 public class LicenseCreator {
 
+    /**
+     * 创建许可证时使用的签发参数。
+     */
     private final LicenseCreatorParam param;
 
     /**
@@ -93,6 +96,11 @@ public class LicenseCreator {
         }
     }
 
+    /**
+     * 根据签发参数组装将被签名的许可证负载。
+     *
+     * @return 含有效期和消费约束的许可证信息
+     */
     private LicenseInfo createLicenseInfo() {
         return LicenseInfo.builder()
                 .subject(param.getSubject())
@@ -105,6 +113,12 @@ public class LicenseCreator {
                 .build();
     }
 
+    /**
+     * 从签发密钥库加载配置别名下的私钥。
+     *
+     * @return 用于签名许可证负载的私钥
+     * @throws Exception 密钥库读取、口令校验或私钥查找失败
+     */
     private PrivateKey loadPrivateKey() throws Exception {
         KeyStore keyStore = KeyStore.getInstance("JKS");
         try (var inputStream = Files.newInputStream(Paths.get(param.getPrivateKeysStorePath()))) {
@@ -117,6 +131,9 @@ public class LicenseCreator {
         return privateKey;
     }
 
+    /**
+     * 验证许可证签发配置及有效日期等输入约束。
+     */
     private void validateParam() {
         Objects.requireNonNull(param, "LicenseCreatorParam 不能为空");
         requireText(param.getSubject(), "subject");
@@ -138,12 +155,26 @@ public class LicenseCreator {
         }
     }
 
+    /**
+     * 检查许可证配置中的必填文本。
+     *
+     * @param value 待检查的配置值
+     * @param field 用于诊断的配置字段名称
+     * @throws IllegalStateException 配置未提供有效文本
+     */
     private void requireText(String value, String field) {
         if (StrKit.isBlank(value)) {
             throw new IllegalStateException("生成证书缺少必填参数: " + field);
         }
     }
 
+    /**
+     * 用生成的临时文件替换许可证目标，文件系统不支持原子移动时执行普通替换。
+     *
+     * @param source 保存已生成许可证的临时文件
+     * @param target 最终许可证文件路径
+     * @throws Exception 文件无法移到目标位置
+     */
     private void moveAtomically(Path source, Path target) throws Exception {
         try {
             Files.move(source, target, java.nio.file.StandardCopyOption.ATOMIC_MOVE,
@@ -153,6 +184,13 @@ public class LicenseCreator {
         }
     }
 
+    /**
+     * 为 RSA、EC 或 DSA 私钥选择 SHA-256 签名算法。
+     *
+     * @param keyAlgorithm 签发私钥的算法标识
+     * @return 交给 Java Signature 实例使用的算法名
+     * @throws IllegalStateException 私钥算法不受支持
+     */
     private String signatureAlgorithm(String keyAlgorithm) {
         if ("EC".equalsIgnoreCase(keyAlgorithm)) {
             return "SHA256withECDSA";

@@ -39,6 +39,9 @@ import java.util.Objects;
  */
 public class EventPayloadSerializer {
 
+    /**
+     * 用于读写 JSON 数据的 Jackson 映射器。
+     */
     private final ObjectMapper objectMapper;
 
     /**

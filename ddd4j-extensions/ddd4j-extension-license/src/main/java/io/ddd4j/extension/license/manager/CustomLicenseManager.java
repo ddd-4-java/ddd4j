@@ -34,6 +34,9 @@ import java.util.function.Function;
  */
 public class CustomLicenseManager {
 
+    /**
+     * 读取本机网络地址及硬件标识的提供器。
+     */
     private final LicenseMachineInfoProvider machineInfoProvider;
 
     /**
@@ -83,6 +86,14 @@ public class CustomLicenseManager {
         }
     }
 
+    /**
+     * 按配置的分隔符提取期望值，规范化后检查是否命中实际信息。
+     *
+     * @param expectedValues 许可证中允许的配置值
+     * @param actualValues   从当前机器取得的实际值集合
+     * @param normalizer     归一化标识的函数
+     * @return 未配置限制或至少有一项匹配时返回 true
+     */
     private boolean matchesAny(String expectedValues, Set<String> actualValues, Function<String, String> normalizer) {
         if (Objects.isNull(expectedValues)) {
             return true;
@@ -104,6 +115,12 @@ public class CustomLicenseManager {
         return false;
     }
 
+    /**
+     * 将非空标识去掉首尾空格并按固定区域转为小写。
+     *
+     * @param value 待归一化的环境标识
+     * @return 归一化结果，空引用原样返回
+     */
     private String normalizeText(String value) {
         if (Objects.isNull(value)) {
             return null;
@@ -111,6 +128,12 @@ public class CustomLicenseManager {
         return value.trim().toLowerCase(Locale.ROOT);
     }
 
+    /**
+     * 规范化 MAC 地址大小写并去除冒号和连字符。
+     *
+     * @param value 待比较的 MAC 地址
+     * @return 无分隔符的小写地址，空引用原样返回
+     */
     private String normalizeMac(String value) {
         String normalized = normalizeText(value);
         if (Objects.isNull(normalized)) {

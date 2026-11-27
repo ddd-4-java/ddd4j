@@ -35,8 +35,14 @@ public final class WebErrorResponseBuilder {
     public static final String INTERNAL_ERROR_FALLBACK_JSON =
             "{\"code\":500,\"msg\":\"Internal Server Error\",\"data\":null}";
 
+    /**
+     * 供各框架共用的错误响应构造器实例。
+     */
     private static final WebErrorResponseBuilder INSTANCE = new WebErrorResponseBuilder();
 
+    /**
+     * 限制调用方直接创建 <code>WebErrorResponseBuilder</code> 实例。
+     */
     private WebErrorResponseBuilder() {
     }
 

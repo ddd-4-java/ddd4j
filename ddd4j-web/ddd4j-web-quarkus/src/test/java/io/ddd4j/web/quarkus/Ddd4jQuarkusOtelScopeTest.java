@@ -49,8 +49,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
+/**
+ * 通过 <code>resetOpenTelemetry()</code>、<code>SdkTracerProvider.builder()</code>、<code>SimpleSpanProcessor.create()</code> 验证 <code>Ddd4jQuarkusOtelScope</code> 的运行行为。
+ */
 class Ddd4jQuarkusOtelScopeTest {
 
+    /**
+     * 调用 <code>mock()</code>、<code>headers.put()</code>、<code>request.getMethod()</code> 执行当前夹具操作。
+     *
+     * @return 根据测试条件返回的可能值，包括 <code>null</code>、<code>request</code>
+     */
     private static ContainerRequestContext request() {
         ContainerRequestContext request = mock(ContainerRequestContext.class);
         UriInfo uriInfo = mock(UriInfo.class);
@@ -76,6 +84,11 @@ class Ddd4jQuarkusOtelScopeTest {
         return request;
     }
 
+    /**
+     * 读取 <code>response</code> 供当前测试使用。
+     *
+     * @return 当前测试使用的结果，取自 <code>response</code>
+     */
     private static ContainerResponseContext response() {
         ContainerResponseContext response = mock(ContainerResponseContext.class);
         when(response.getStatus()).thenReturn(200);
@@ -83,6 +96,11 @@ class Ddd4jQuarkusOtelScopeTest {
         return response;
     }
 
+    /**
+     * 调用 <code>GlobalOpenTelemetry.resetForTest()</code>、<code>Ddd4jOtel.class.getDeclaredField()</code>、<code>field.setAccessible()</code> 执行当前夹具操作。
+     *
+     * @throws Exception 反射访问被测成员时失败
+     */
     private static void resetOpenTelemetry() throws Exception {
         GlobalOpenTelemetry.resetForTest();
         for (String fieldName : new String[]{"TRACER_CACHE", "METER_CACHE"}) {
@@ -95,6 +113,11 @@ class Ddd4jQuarkusOtelScopeTest {
         available.setBoolean(null, false);
     }
 
+    /**
+     * 验证<code>observed[0]</code>为真，<code>observed[1]</code>为假。
+     *
+     * @throws Exception 发起测试请求时失败
+     */
     @Test
     void idempotencyCompletionFailureMustStillCloseRequestScopes() throws Exception {
         resetOpenTelemetry();
@@ -144,6 +167,11 @@ class Ddd4jQuarkusOtelScopeTest {
         }
     }
 
+    /**
+     * 验证<code>observed[0]</code>为真，<code>observed[1]</code>为假。
+     *
+     * @throws Exception 发起测试请求时失败
+     */
     @Test
     void authenticationFailureMustCloseRequestOtelScopeImmediately() throws Exception {
         resetOpenTelemetry();

@@ -32,28 +32,43 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class WebOtelIntegrationTest {
 
+    /**
+     * 测试执行前执行 <code>OpenTelemetrySdkSetter.set()</code>、<code>OpenTelemetry.noop()</code> 完成资源准备。
+     */
     @BeforeEach
     void setUp() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
     }
 
+    /**
+     * 测试结束后执行 <code>OpenTelemetrySdkSetter.set()</code>、<code>OpenTelemetry.noop()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void tearDown() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
     }
 
+    /**
+     * 验证<code>span</code>非空。
+     */
     @Test
     void startServerSpan_shouldReturnSpan() {
         Span span = WebOtelIntegration.startServerSpan("GET", "/api/users", new HashMap<>());
         assertThat(span).isNotNull();
     }
 
+    /**
+     * 验证<code>span</code>非空。
+     */
     @Test
     void startServerSpan_withNullHeaders_shouldReturnSpan() {
         Span span = WebOtelIntegration.startServerSpan("POST", "/api/orders", null);
         assertThat(span).isNotNull();
     }
 
+    /**
+     * 验证<code>span</code>非空。
+     */
     @Test
     void startServerSpan_withTraceparent_shouldNotThrow() {
         Map<String, String> headers = new HashMap<>();
@@ -63,6 +78,9 @@ class WebOtelIntegrationTest {
         assertThat(span).isNotNull();
     }
 
+    /**
+     * 验证<code>scope</code>非空。
+     */
     @Test
     void activate_shouldReturnNonNullScope() {
         Span span = WebOtelIntegration.startServerSpan("GET", "/api", new HashMap<>());
@@ -74,24 +92,36 @@ class WebOtelIntegrationTest {
         }
     }
 
+    /**
+     * 验证<code>true</code>为真。
+     */
     @Test
     void recordError_withNull_shouldNotThrow() {
         WebOtelIntegration.recordError(null, null);
         assertThat(true).isTrue();
     }
 
+    /**
+     * 验证<code>true</code>为真。
+     */
     @Test
     void endServerSpan_shouldNotThrowWithNull() {
         WebOtelIntegration.endServerSpan(null, 500);
         assertThat(true).isTrue();
     }
 
+    /**
+     * 验证<code>true</code>为真。
+     */
     @Test
     void injectResponseContext_shouldNotThrowWithNull() {
         WebOtelIntegration.injectResponseContext(null);
         assertThat(true).isTrue();
     }
 
+    /**
+     * 验证<code>headers</code>非空。
+     */
     @Test
     void injectResponseContext_withEmptyHeaders_shouldNotThrow() {
         Map<String, String> headers = new HashMap<>();
@@ -99,12 +129,18 @@ class WebOtelIntegrationTest {
         assertThat(headers).isNotNull();
     }
 
+    /**
+     * 验证<code>result</code>为空。
+     */
     @Test
     void asHeaders_withNull_shouldReturnEmptyMap() {
         Map<String, String> result = WebOtelIntegration.asHeaders(null);
         assertThat(result).isEmpty();
     }
 
+    /**
+     * 验证<code>result</code> 含对应条目 <code>"X-Foo"</code>、<code>"bar"</code>。
+     */
     @Test
     void asHeaders_withMap_shouldReturnCopy() {
         Map<String, String> source = new HashMap<>();
@@ -113,6 +149,9 @@ class WebOtelIntegrationTest {
         assertThat(result).containsEntry("X-Foo", "bar");
     }
 
+    /**
+     * 验证<code>true</code>为真。
+     */
     @Test
     void fullLifecycle_shouldWorkWithoutException() {
         Map<String, String> reqHeaders = new HashMap<>();
@@ -133,6 +172,9 @@ class WebOtelIntegrationTest {
         assertThat(true).isTrue();
     }
 
+    /**
+     * 验证<code>true</code>为真。
+     */
     @Test
     void fullLifecycle_withError_shouldNotThrow() {
         Span span = WebOtelIntegration.startServerSpan("POST", "/api/orders", new HashMap<>());
@@ -146,6 +188,9 @@ class WebOtelIntegrationTest {
         assertThat(true).isTrue();
     }
 
+    /**
+     * 验证<code>span</code>非空。
+     */
     @Test
     void supportsAllHttpMethods() {
         for (String method : new String[]{"GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"}) {

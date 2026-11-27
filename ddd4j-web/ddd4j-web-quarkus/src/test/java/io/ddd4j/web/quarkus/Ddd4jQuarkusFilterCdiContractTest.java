@@ -20,9 +20,15 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * 通过 <code>Arc.container()</code> 验证 <code>Ddd4jQuarkusFilterCdiContract</code> 的运行行为。
+ */
 @QuarkusTest
 class Ddd4jQuarkusFilterCdiContractTest {
 
+    /**
+     * 验证<code>Arc.container().instance(Ddd4jQuarkusWebFilter.class).isAvailable()</code>为真。
+     */
     @Test
     void filterIsDiscoveredByCdi() {
         assertTrue(Arc.container().instance(Ddd4jQuarkusWebFilter.class).isAvailable());

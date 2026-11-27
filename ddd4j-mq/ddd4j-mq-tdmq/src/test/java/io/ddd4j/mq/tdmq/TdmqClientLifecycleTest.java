@@ -15,8 +15,14 @@ import java.util.function.Consumer;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+/**
+ * 验证 <code>TdmqClientLifecycle</code> 在 <code>closedAdapter</code>、<code>producerHandle</code> 等场景中的行为。
+ */
 class TdmqClientLifecycleTest {
 
+    /**
+     * 验证<code>client.initProducer(new MQProperties())</code> 抛出 <code>IllegalStateException.class</code>。
+     */
     @Test
     void closedAdapterRejectsProducerInitialization() {
         TdmqMQClient client = new TdmqMQClient(new TdmqProperties());
@@ -25,6 +31,9 @@ class TdmqClientLifecycleTest {
         assertThrows(IllegalStateException.class, () -> client.initProducer(new MQProperties()));
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，<code>subscriptions.get()</code> 等于 <code>0</code>。
+     */
     @Test
     void closedAdapterRejectsConsumerWithoutSubscribing() {
         AtomicInteger subscriptions = new AtomicInteger();
@@ -42,6 +51,9 @@ class TdmqClientLifecycleTest {
         assertEquals(0, subscriptions.get());
     }
 
+    /**
+     * 验证<code>publisher.accept(new MQEvent())</code> 抛出 <code>IllegalStateException.class</code>，<code>failure.getMessage()</code> 等于 <code>"TDMQ client is closed"</code>。
+     */
     @Test
     void producerHandleRejectsPublishAfterClose() {
         TdmqMQClient client = new TdmqMQClient(new TdmqProperties());

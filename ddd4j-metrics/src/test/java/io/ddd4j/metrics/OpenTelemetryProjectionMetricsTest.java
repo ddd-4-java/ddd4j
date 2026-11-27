@@ -41,11 +41,26 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @DisplayName("OpenTelemetryProjectionMetrics")
 class OpenTelemetryProjectionMetricsTest {
 
+    /**
+     * 读取测试期间产生的指标快照。
+     */
     private InMemoryMetricReader metricReader;
+    /**
+     * 绑定内存指标读取器的 OpenTelemetry SDK 提供器。
+     */
     private SdkMeterProvider meterProvider;
+    /**
+     * 供被测投影指标适配器注册指标的 Meter。
+     */
     private Meter meter;
+    /**
+     * 当前用例使用的 OpenTelemetry 投影指标适配器。
+     */
     private OpenTelemetryProjectionMetrics metrics;
 
+    /**
+     * 创建隔离的 Meter 提供器、指标读取器和投影指标适配器。
+     */
     @BeforeEach
     void setUp() {
         metricReader = InMemoryMetricReader.create();
@@ -56,6 +71,9 @@ class OpenTelemetryProjectionMetricsTest {
         metrics = new OpenTelemetryProjectionMetrics(meter);
     }
 
+    /**
+     * 构造：null Meter 应抛 NPE。
+     */
     @Test
     @DisplayName("构造：null Meter 应抛 NPE")
     void constructor_nullMeter_shouldThrowNPE() {
@@ -63,6 +81,9 @@ class OpenTelemetryProjectionMetricsTest {
                 .isInstanceOf(NullPointerException.class);
     }
 
+    /**
+     * 便捷构造：null OpenTelemetry 应抛 NPE。
+     */
     @Test
     @DisplayName("便捷构造：null OpenTelemetry 应抛 NPE")
     void convenienceConstructor_nullOpenTelemetry_shouldThrowNPE() {
@@ -70,6 +91,9 @@ class OpenTelemetryProjectionMetricsTest {
                 .isInstanceOf(NullPointerException.class);
     }
 
+    /**
+     * 便捷构造：null instrumentationScope 应抛 NPE。
+     */
     @Test
     @DisplayName("便捷构造：null instrumentationScope 应抛 NPE")
     void convenienceConstructor_nullScope_shouldThrowNPE() {
@@ -79,6 +103,9 @@ class OpenTelemetryProjectionMetricsTest {
 
     /**
      * 按指标名称收集 MetricData。
+     *
+     * @param metricName 要筛选的指标名称
+     * @return 同名指标的采集结果
      */
     private List<MetricData> collectMetricsByName(String metricName) {
         return metricReader.collectAllMetrics().stream()
@@ -86,10 +113,16 @@ class OpenTelemetryProjectionMetricsTest {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 验证投影启动计数、重复调用累加和事件流间隔离。
+     */
     @Nested
     @DisplayName("onRunStarted")
     class OnRunStartedTests {
 
+        /**
+         * 应记录运行次数计数器。
+         */
         @Test
         @DisplayName("应记录运行次数计数器")
         void shouldRecordRunCounter() {
@@ -106,6 +139,9 @@ class OpenTelemetryProjectionMetricsTest {
                     });
         }
 
+        /**
+         * 多次调用应累加。
+         */
         @Test
         @DisplayName("多次调用应累加")
         void multipleCalls_shouldAccumulate() {
@@ -118,6 +154,9 @@ class OpenTelemetryProjectionMetricsTest {
                     .satisfies(point -> assertThat(point.getValue()).isEqualTo(2));
         }
 
+        /**
+         * 不同 streamId 应独立计数。
+         */
         @Test
         @DisplayName("不同 streamId 应独立计数")
         void differentStreamIds_shouldBeIndependent() {
@@ -132,10 +171,16 @@ class OpenTelemetryProjectionMetricsTest {
         }
     }
 
+    /**
+     * 验证投影完成时的事件计数与处理耗时。
+     */
     @Nested
     @DisplayName("onRunCompleted")
     class OnRunCompletedTests {
 
+        /**
+         * 应记录事件计数器和运行耗时。
+         */
         @Test
         @DisplayName("应记录事件计数器和运行耗时")
         void shouldRecordEventCounterAndDuration() {
@@ -162,6 +207,9 @@ class OpenTelemetryProjectionMetricsTest {
                     });
         }
 
+        /**
+         * 多次调用应累加。
+         */
         @Test
         @DisplayName("多次调用应累加")
         void multipleCalls_shouldAccumulate() {
@@ -180,10 +228,16 @@ class OpenTelemetryProjectionMetricsTest {
         }
     }
 
+    /**
+     * 验证投影错误计数以及多次失败的累计结果。
+     */
     @Nested
     @DisplayName("onRunFailed")
     class OnRunFailedTests {
 
+        /**
+         * 应记录错误计数器。
+         */
         @Test
         @DisplayName("应记录错误计数器")
         void shouldRecordErrorCounter() {
@@ -199,6 +253,9 @@ class OpenTelemetryProjectionMetricsTest {
                     });
         }
 
+        /**
+         * 多次失败应累加。
+         */
         @Test
         @DisplayName("多次失败应累加")
         void multipleFailures_shouldAccumulate() {

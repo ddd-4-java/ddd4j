@@ -30,6 +30,11 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class TdmqAcknowledgmentContractTest {
 
+    /**
+     * 验证<code>entered.await(5, TimeUnit.SECONDS)</code>为真，<code>acknowledgment.nack(true)</code> 抛出 <code>IllegalStateException.class</code>，<code>acknowledgment.isAcknowledged()</code>为真。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void concurrentAckAndNackInvokeProtocolOnlyOnce() throws Exception {
         CountDownLatch entered = new CountDownLatch(1);
@@ -69,6 +74,9 @@ class TdmqAcknowledgmentContractTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，<code>acknowledgment.isAcknowledged()</code>为假，<code>acknowledgment.isAcknowledged()</code>为真。
+     */
     @Test
     void failedCallbackLeavesAcknowledgmentRetryable() {
         AtomicInteger calls = new AtomicInteger();
@@ -85,6 +93,9 @@ class TdmqAcknowledgmentContractTest {
         assertTrue(acknowledgment.isAcknowledged());
     }
 
+    /**
+     * 验证<code>requeue.get()</code> 等于 <code>Boolean.TRUE</code>，<code>acknowledgment.isAcknowledged()</code>为真。
+     */
     @Test
     void shouldForwardRequeueIntentToProtocolAdapter() {
         AtomicReference<Boolean> requeue = new AtomicReference<>();

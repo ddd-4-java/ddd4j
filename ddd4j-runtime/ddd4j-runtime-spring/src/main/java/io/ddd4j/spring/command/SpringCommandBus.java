@@ -59,6 +59,9 @@ public class SpringCommandBus implements CommandBus, SmartInitializingSingleton 
      */
     private final ApplicationContext applicationContext;
     // 只在完整发现成功后发布快照；路由和执行完全归共享内核。
+    /**
+     * 已从 Spring 容器发现的命令执行器及路由类型快照。
+     */
     private volatile DiscoveredCommands discovered;
 
     /**
@@ -130,10 +133,25 @@ public class SpringCommandBus implements CommandBus, SmartInitializingSingleton 
         return snapshot.delegate.execute(command);
     }
 
+    /**
+     * 保存已装配的 Spring 命令总线及其支持命令类型的发现结果。
+     */
     private static final class DiscoveredCommands {
+        /**
+         * 使用已发现执行器完成命令分发的共享总线。
+         */
         private final DefaultCommandBus delegate;
+        /**
+         * 当前从 Spring 容器发现的受支持命令类型集合。
+         */
         private final Set<Class<? extends Command>> types;
 
+        /**
+         * 将容器已发现的命令类型与同一轮装配的总线一起保存。
+         *
+         * @param delegate 当前发现轮次组装的共享命令总线
+         * @param types    该总线支持的命令类型
+         */
         private DiscoveredCommands(DefaultCommandBus delegate, Set<Class<? extends Command>> types) {
             this.delegate = delegate;
             this.types = Set.copyOf(types);

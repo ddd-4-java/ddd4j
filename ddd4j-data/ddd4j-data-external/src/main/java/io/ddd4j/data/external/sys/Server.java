@@ -40,6 +40,9 @@ import java.util.Properties;
 @Slf4j
 public class Server {
 
+    /**
+     * 采集 CPU 使用率时两次样本之间的等待秒数。
+     */
     private static final int OSHI_WAIT_SECOND = 1000;
 
     /**
@@ -98,6 +101,8 @@ public class Server {
 
     /**
      * 设置CPU信息
+     *
+     * @param processor 提供处理器信息的系统探针
      */
     private void setCpuInfo(CentralProcessor processor) {
         // CPU信息
@@ -123,6 +128,8 @@ public class Server {
 
     /**
      * 设置内存信息
+     *
+     * @param memory 提供内存信息的系统探针
      */
     private void setMemInfo(GlobalMemory memory) {
         mem.setTotal(memory.getTotal());
@@ -156,6 +163,8 @@ public class Server {
 
     /**
      * 设置磁盘信息
+     *
+     * @param os 提供文件系统信息的操作系统探针
      */
     private void setSysFiles(OperatingSystem os) {
         FileSystem fileSystem = os.getFileSystem();

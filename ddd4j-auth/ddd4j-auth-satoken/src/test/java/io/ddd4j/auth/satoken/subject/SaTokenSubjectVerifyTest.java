@@ -46,11 +46,26 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class SaTokenSubjectVerifyTest {
 
+    /**
+     * 进入测试场景前注册的配置。
+     */
     private SaTokenConfig originalConfig;
+    /**
+     * 进入测试场景前注册的会话存储。
+     */
     private SaTokenDao originalDao;
+    /**
+     * 进入测试场景前注册的认证逻辑。
+     */
     private StpLogic originalLogic;
+    /**
+     * 进入当前执行范围前保存的组件，退出时用于恢复 <code>SubjectDataProvider</code>。
+     */
     private SubjectDataProvider originalDataProvider;
 
+    /**
+     * 测试前依次恢复或安装配置<code>SaManager</code>、恢复或安装原生存储<code>SaManager</code>。
+     */
     @BeforeEach
     void setUp() {
         originalConfig = SaManager.getConfig();
@@ -64,6 +79,9 @@ class SaTokenSubjectVerifyTest {
         SaManager.setSaTokenDao(new SaTokenDaoDefaultImpl());
     }
 
+    /**
+     * 测试后依次恢复或安装登录逻辑<code>StpUtil</code>、恢复或安装原生存储<code>SaManager</code>、恢复或安装配置<code>SaManager</code>。
+     */
     @AfterEach
     void tearDown() {
         StpUtil.setStpLogic(originalLogic);
@@ -72,6 +90,9 @@ class SaTokenSubjectVerifyTest {
         SubjectKit.setDataProvider(originalDataProvider);
     }
 
+    /**
+     * 验证<code>verified</code> 指向同一实例 <code>principal</code>。
+     */
     @Test
     void verify_shouldResolveActiveSessionToken() {
         StpLogic logic = new StpLogic(StpUtil.TYPE);
@@ -84,6 +105,9 @@ class SaTokenSubjectVerifyTest {
         assertThat(verified).isSameAs(principal);
     }
 
+    /**
+     * 验证<code>verified</code> 指向同一实例 <code>principal</code>。
+     */
     @Test
     void verify_shouldResolveSignedJwtSimpleToken() {
         Ddd4jStpLogicJwtForSimple logic = installJwtSecurity();
@@ -96,6 +120,9 @@ class SaTokenSubjectVerifyTest {
         assertThat(verified).isSameAs(principal);
     }
 
+    /**
+     * 验证<code>verified</code>为空。
+     */
     @Test
     void verify_shouldRejectTamperedJwtSimpleToken() {
         Ddd4jStpLogicJwtForSimple logic = installJwtSecurity();
@@ -107,6 +134,9 @@ class SaTokenSubjectVerifyTest {
         assertThat(verified).isNull();
     }
 
+    /**
+     * 验证<code>verified</code>为空。
+     */
     @Test
     void verify_shouldRejectJwtSimpleWithoutDdd4jSecurityContract() {
         StpLogicJwtForSimple logic = new StpLogicJwtForSimple();
@@ -118,6 +148,9 @@ class SaTokenSubjectVerifyTest {
         assertThat(verified).isNull();
     }
 
+    /**
+     * 验证<code>verified</code>为空。
+     */
     @Test
     void verify_shouldRejectRevokedJwtSimpleToken() {
         Ddd4jStpLogicJwtForSimple logic = installJwtSecurity();
@@ -131,6 +164,9 @@ class SaTokenSubjectVerifyTest {
         assertThat(verified).isNull();
     }
 
+    /**
+     * 验证<code>verified</code>为空。
+     */
     @Test
     void verify_shouldRejectExpiredSessionToken() {
         StpLogic logic = new StpLogic(StpUtil.TYPE);
@@ -143,6 +179,9 @@ class SaTokenSubjectVerifyTest {
         assertThat(verified).isNull();
     }
 
+    /**
+     * 验证<code>verified</code>为空。
+     */
     @Test
     void verify_shouldRejectExpiredJwtSimpleToken() {
         Ddd4jStpLogicJwtForSimple logic = installJwtSecurity();
@@ -155,6 +194,9 @@ class SaTokenSubjectVerifyTest {
         assertThat(verified).isNull();
     }
 
+    /**
+     * 验证<code>verified</code>为空。
+     */
     @Test
     void verify_shouldRejectKickedOutSessionToken() {
         StpLogic logic = new StpLogic(StpUtil.TYPE);
@@ -167,6 +209,9 @@ class SaTokenSubjectVerifyTest {
         assertThat(verified).isNull();
     }
 
+    /**
+     * 验证<code>verified</code>为空。
+     */
     @Test
     void verify_shouldRejectJwtWithUnexpectedAudienceEvenWhenMapped() {
         Ddd4jStpLogicJwtForSimple logic = installJwtSecurity();
@@ -186,6 +231,9 @@ class SaTokenSubjectVerifyTest {
         assertThat(verified).isNull();
     }
 
+    /**
+     * 验证<code>subject.isPermitted(principal.getLoginId(), "order:read")</code>为真，<code>subject.isPermitted(principal.getLoginId(), "order:read")</code>为假，<code>subject.isPermitted(principal.getLoginId(), "order:write")</code>为真。
+     */
     @Test
     void permissions_shouldReflectCurrentDataProviderState() {
         StpLogic logic = new StpLogic(StpUtil.TYPE);
@@ -207,11 +255,22 @@ class SaTokenSubjectVerifyTest {
         assertThat(subject.isPermitted(principal.getLoginId(), "order:write")).isTrue();
     }
 
+    /**
+     * 创建 <code>new SaTokenSubject</code> 供当前测试路径调用。
+     *
+     * @param logic 传给 <code>StpUtil.setStpLogic()</code> 的 <code>StpLogic</code> 输入
+     * @return 当前测试使用的结果，取自 <code>new SaTokenSubject()</code>
+     */
     private SaTokenSubject install(StpLogic logic) {
         StpUtil.setStpLogic(logic);
         return new SaTokenSubject();
     }
 
+    /**
+     * 调用 <code>properties.setAuthenticationMode()</code>、<code>properties.setJwtSecretKey()</code>、<code>properties.setJwtIssuer()</code> 执行当前夹具操作。
+     *
+     * @return 当前测试使用的结果，取自 <code>(Ddd4jStpLogicJwtForSimple)SaTokenSecurityConfigurer.configure(properties)</code>
+     */
     private Ddd4jStpLogicJwtForSimple installJwtSecurity() {
         SaTokenSecurityProperties properties = new SaTokenSecurityProperties();
         properties.setAuthenticationMode(SaTokenAuthenticationMode.JWT_SIMPLE);
@@ -221,6 +280,13 @@ class SaTokenSubjectVerifyTest {
         return (Ddd4jStpLogicJwtForSimple) SaTokenSecurityConfigurer.configure(properties);
     }
 
+    /**
+     * 读取 <code>token</code> 供当前测试使用。
+     *
+     * @param logic     传给 <code>logic.createLoginSession()</code> 的 <code>StpLogic</code> 输入
+     * @param principal 传给 <code>String.valueOf()</code> 的 <code>AuthPrincipal</code> 输入
+     * @return 当前测试使用的结果，取自 <code>token</code>
+     */
     private String login(StpLogic logic, AuthPrincipal principal) {
         String loginId = String.valueOf(principal.getLoginId());
         String token = logic.createLoginSession(loginId, new SaLoginParameter().setTimeout(60));
@@ -228,6 +294,12 @@ class SaTokenSubjectVerifyTest {
         return token;
     }
 
+    /**
+     * 创建 <code>new AuthPrincipal</code> 供当前测试路径调用。
+     *
+     * @param loginId 测试会话使用的账号标识
+     * @return 当前测试使用的结果，取自 <code>new AuthPrincipal().setLoginId(loginId).setUserId("user-" + loginId)</code>
+     */
     private AuthPrincipal principal(String loginId) {
         return new AuthPrincipal().setLoginId(loginId).setUserId("user-" + loginId);
     }

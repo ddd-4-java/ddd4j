@@ -114,6 +114,13 @@ public class HelidonCommandBus extends DefaultCommandBus {
         return new HelidonCommandBus(HelidonServiceLoader.create(services), registry);
     }
 
+    /**
+     * 从运行容器中收集命令执行器并登记共享命令路由。
+     *
+     * @param executors 当前框架容器提供的命令执行器
+     * @param registry  接收命令执行器的共享注册表
+     * @return 构造完成的共享命令执行组件
+     */
     private static Collection<CommandExecutor<?>> collect(
             HelidonServiceLoader<? extends CommandExecutor<?>> executors, CommandRegistry registry) {
         Objects.requireNonNull(executors, "executors must not be null");

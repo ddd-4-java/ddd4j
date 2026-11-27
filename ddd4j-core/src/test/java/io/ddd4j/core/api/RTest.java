@@ -34,6 +34,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class RTest {
 
+    /**
+     * 验证<code>response.getMsg()</code> 等于 <code>"quota exceeded"</code>，<code>response.getData()</code>为空，<code>response.getCode()</code> 等于 <code>ApiCode.FAIL.getCode()</code>。
+     */
     @Test
     void fail_withString_shouldTreatArgumentAsMessage() {
         R<Object> response = R.fail("quota exceeded");
@@ -42,6 +45,9 @@ class RTest {
         assertThat(response.getCode()).isEqualTo(ApiCode.FAIL.getCode());
     }
 
+    /**
+     * 验证<code>response.getData()</code>为空，<code>response.getCode()</code> 等于 <code>ApiCode.FAIL.getCode()</code>，<code>response.getMsg()</code> 等于 <code>ApiCode.FAIL.getDesc()</code>。
+     */
     @Test
     void fail_withNullObject_shouldKeepFailureMetadata() {
         R<Object> response = ApiCode.FAIL.toResponse((Object) null);
@@ -50,6 +56,9 @@ class RTest {
         assertThat(response.getMsg()).isEqualTo(ApiCode.FAIL.getDesc());
     }
 
+    /**
+     * 验证<code>response.getData()</code> 指向同一实例 <code>payload</code>，<code>response.getCode()</code> 等于 <code>ApiCode.FAIL.getCode()</code>，<code>response.isOk()</code>为假。
+     */
     @Test
     void fail_withObjectData_shouldPreservePayload() {
         Map<String, String> payload = Collections.singletonMap("reason", "quota");
@@ -60,6 +69,9 @@ class RTest {
         assertThat(response.isOk()).isFalse();
     }
 
+    /**
+     * 验证<code>r.getCode()</code> 等于 <code>ApiCode.OK.getCode()</code>，<code>r.getMsg()</code> 等于 <code>ApiCode.OK.getDesc()</code>，<code>r.isEmpty()</code>为真。
+     */
     @Test
     void ok_shouldReturnSuccessCodeAndNullData() {
         R<String> r = R.ok();
@@ -71,6 +83,9 @@ class RTest {
         assertThat(r.isEmpty()).isTrue();
     }
 
+    /**
+     * 验证<code>r.getCode()</code> 等于 <code>ApiCode.OK.getCode()</code>，<code>r.getData()</code> 等于 <code>"hello"</code>，<code>r.isEmpty()</code>为假。
+     */
     @Test
     void ok_withData_shouldCarryPayload() {
         R<String> r = R.ok("hello");
@@ -81,6 +96,9 @@ class RTest {
         assertThat(r.isEmpty()).isFalse();
     }
 
+    /**
+     * 验证<code>r.getMsg()</code> 等于 <code>"custom-msg"</code>，<code>r.getData()</code> 等于 <code>"data"</code>，<code>r.isOk()</code>为真。
+     */
     @Test
     void ok_withMsgAndData_shouldUseProvidedMessage() {
         R<String> r = R.ok("custom-msg", "data");
@@ -90,6 +108,9 @@ class RTest {
         assertThat(r.isOk()).isTrue();
     }
 
+    /**
+     * 验证<code>r.getCode()</code> 等于 <code>ApiCode.FAIL.getCode()</code>，<code>r.isOk()</code>为假。
+     */
     @Test
     void fail_shouldReturnFailCode() {
         R<String> r = R.fail();
@@ -98,6 +119,9 @@ class RTest {
         assertThat(r.isOk()).isFalse();
     }
 
+    /**
+     * 验证<code>r.getCode()</code> 等于 <code>ApiCode.FAIL.getCode()</code>，<code>r.getMsg()</code> 等于 <code>"boom"</code>，<code>r.isOk()</code>为假。
+     */
     @Test
     void fail_withMsg_shouldCarryMessage() {
         R<String> r = R.fail("boom");
@@ -107,6 +131,9 @@ class RTest {
         assertThat(r.isOk()).isFalse();
     }
 
+    /**
+     * 验证<code>r.getCode()</code> 等于 <code>403</code>，<code>r.getMsg()</code> 等于 <code>"forbidden"</code>，<code>r.isOk()</code>为假。
+     */
     @Test
     void fail_withCodeAndMsg_shouldCarryBoth() {
         R<String> r = R.of(403, "forbidden");
@@ -116,6 +143,9 @@ class RTest {
         assertThat(r.isOk()).isFalse();
     }
 
+    /**
+     * 验证<code>response.getCode()</code> 等于 <code>409</code>，<code>response.getMsg()</code> 等于 <code>ApiCode.FAIL.getDesc()</code>，<code>response.getData()</code>为空。
+     */
     @Test
     void fail_withSerializableCode_shouldPreserveCodeAndDefaultMessage() {
         R<Object> response = R.fail((Serializable) 409);
@@ -124,6 +154,9 @@ class RTest {
         assertThat(response.getData()).isNull();
     }
 
+    /**
+     * 验证<code>r.isOk()</code>为真。
+     */
     @Test
     void isOk_shouldAcceptSuccessCodeToo() {
         R<String> r = new R<>(ApiCode.SUCCESS.getCode(), ApiCode.SUCCESS.getDesc(), "data");
@@ -131,6 +164,9 @@ class RTest {
         assertThat(r.isOk()).isTrue();
     }
 
+    /**
+     * 验证<code>R.empty(null)</code>为真，<code>R.empty(R.ok())</code>为真，<code>R.empty(R.ok("data"))</code>为假。
+     */
     @Test
     void empty_shouldDetectNullDataOrNullResponse() {
         assertThat(R.empty(null)).isTrue();
@@ -138,6 +174,9 @@ class RTest {
         assertThat(R.empty(R.ok("data"))).isFalse();
     }
 
+    /**
+     * 验证<code>target.getCode()</code> 等于 <code>source.getCode()</code>，<code>target.getMsg()</code> 等于 <code>source.getMsg()</code>，<code>target.getData()</code>为空。
+     */
     @Test
     void transform_shouldCopyCodeAndMsg() {
         R<String> source = R.fail("error");
@@ -149,6 +188,9 @@ class RTest {
         assertThat(target.getData()).isNull();
     }
 
+    /**
+     * 验证<code>response.getCode()</code> 等于 <code>200</code>，<code>response.getMsg()</code> 等于 <code>"created"</code>，<code>response.getData()</code>为空。
+     */
     @Test
     void success_withString_shouldPreserveCustomMessage() {
         R<Object> response = R.success("created");
@@ -157,6 +199,9 @@ class RTest {
         assertThat(response.getData()).isNull();
     }
 
+    /**
+     * 验证<code>response.getCode()</code> 等于 <code>ApiCode.SUCCESS.getCode()</code>，<code>response.getMsg()</code> 等于 <code>ApiCode.SUCCESS.getReason()</code>，<code>response.getData()</code> 等于 <code>"payload"</code>。
+     */
     @Test
     void success_withObjectString_shouldPreservePayload() {
         R<Object> response = R.success((Object) "payload");
@@ -165,6 +210,9 @@ class RTest {
         assertThat(response.getData()).isEqualTo("payload");
     }
 
+    /**
+     * 验证<code>response.getCode()</code> 等于 <code>"404"</code>，<code>response.getMsg()</code> 等于 <code>"missing"</code>，<code>response.getData()</code>为空。
+     */
     @Test
     void of_withStringCode_shouldPreserveExplicitSerializableCode() {
         R<Object> response = R.of((Serializable) "404", "missing");
@@ -173,6 +221,11 @@ class RTest {
         assertThat(response.getData()).isNull();
     }
 
+    /**
+     * 验证<code>json.get("code").asInt()</code> 等于 <code>400</code>，<code>json.get("msg").asText()</code> 等于 <code>"invalid input"</code>，<code>okJson.has("error")</code>为假。
+     *
+     * @throws Exception 处理测试数据的序列化时失败
+     */
     @Test
     void jackson_shouldPreserveResponseFieldsAndValidationErrors() throws Exception {
         Map<String, String> error = new HashMap<>();
@@ -192,6 +245,9 @@ class RTest {
         assertThat(okJson.has("error")).isFalse();
     }
 
+    /**
+     * 验证<code>response.getCode()</code> 等于 <code>42001</code>，<code>response.getMsg()</code> 等于 <code>"retry later"</code>，<code>response.isOk()</code>为假。
+     */
     @Test
     void customApiCode_shouldBuildResponseWithMessageAndPayload() {
         CustomApiCode customCode = new CustomApiCode() {
@@ -214,6 +270,9 @@ class RTest {
         assertThat(response.isOk()).isFalse();
     }
 
+    /**
+     * 验证<code>exception.getCode()</code> 等于 <code>400</code>，<code>exception.getMessage()</code> 等于 <code>"invalid input"</code>。
+     */
     @Test
     void validationFailure_shouldUseUnifiedBadRequestCode() {
         ValidateException exception = new ValidateException("invalid input");

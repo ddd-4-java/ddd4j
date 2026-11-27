@@ -32,13 +32,22 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * 通过 <code>commandBuses.isResolvable()</code>、<code>commandBuses.get()</code>、<code>result.getMessage()</code> 验证 <code>QuarkusCommandBusOverride</code> 的运行行为。
+ */
 @QuarkusTest
 @TestProfile(QuarkusCommandBusOverrideTest.BusinessProfile.class)
 class QuarkusCommandBusOverrideTest {
 
+    /**
+     * 保存测试需要比较的命令总线实例。
+     */
     @Inject
     Instance<CommandBus> commandBuses;
 
+    /**
+     * 验证<code>commandBuses.isResolvable()</code>为真，<code>result.getMessage()</code> 等于 <code>"Business command bus"</code>。
+     */
     @Test
     void businessCommandBusOverridesRuntimeDefault() {
         assertTrue(commandBuses.isResolvable());
@@ -46,16 +55,36 @@ class QuarkusCommandBusOverrideTest {
         assertEquals("Business command bus", result.getMessage());
     }
 
+    /**
+     * 实现 <code>QuarkusTestProfile</code>，供测试调用 <code>getConfigOverrides()</code> 并观察结果。
+     */
     public static class BusinessProfile implements QuarkusTestProfile {
+        /**
+         * 通过 <code>Collections.singletonMap()</code> 取得当前测试需要的结果。
+         *
+         * @return 当前测试使用的结果，取自 <code>Collections.singletonMap("ddd4j.test.business-command-bus", "true")</code>
+         */
         @Override
         public Map<String, String> getConfigOverrides() {
             return Collections.singletonMap("ddd4j.test.business-command-bus", "true");
         }
     }
 
+    /**
+     * 向测试容器注册 <code>execute()</code> 等测试入口或组件。
+     */
     @ApplicationScoped
     @IfBuildProperty(name = "ddd4j.test.business-command-bus", stringValue = "true")
     public static class BusinessCommandBus implements CommandBus {
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>Result.fail("Business command bus")</code>。</p>
+         *
+         * @param <R>     命令结果数据类型
+         * @param command 待执行命令
+         * @return 实际返回<code>Result.fail("Business command bus")</code>
+         */
         @Override
         public <R> Result<R> execute(Command command) {
             return Result.fail("Business command bus");

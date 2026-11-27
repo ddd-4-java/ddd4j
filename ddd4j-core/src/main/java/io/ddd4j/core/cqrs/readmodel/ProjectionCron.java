@@ -12,8 +12,16 @@ import java.util.Objects;
  * 不创建线程、不选择默认时区，平台按其既有时区传入 ZonedDateTime。
  */
 public final class ProjectionCron {
+    /**
+     * 各 Cron 字段允许取值的位集合。
+     */
     private final BitSet[] fields;
 
+    /**
+     * 以各字段已经解析出的位集合创建 Cron 计划。
+     *
+     * @param fields 各字段允许匹配的取值集合
+     */
     private ProjectionCron(BitSet[] fields) {
         this.fields = fields;
     }
@@ -46,6 +54,14 @@ public final class ProjectionCron {
         return new ProjectionCron(fields);
     }
 
+    /**
+     * 解析 Cron 字段中的单值、范围、步长和逗号分隔项。
+     *
+     * @param field Cron 表达式中的单个字段
+     * @param min   字段允许的最小值
+     * @param max   字段允许的最大值
+     * @return 记录允许取值的位集合
+     */
     private static BitSet parseField(String field, int min, int max) {
         BitSet values = new BitSet(max + 1);
         for (String item : field.split(",", -1)) {

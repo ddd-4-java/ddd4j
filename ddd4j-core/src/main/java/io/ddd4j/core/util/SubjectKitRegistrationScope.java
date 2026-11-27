@@ -27,8 +27,17 @@ import java.util.Objects;
  */
 public final class SubjectKitRegistrationScope implements AutoCloseable {
 
+    /**
+     * 根据当前调用范围提供认证主体的组件。
+     */
     private final SubjectProvider subjectProvider;
+    /**
+     * 当前注册作用域启动前的认证主体提供器。
+     */
     private SubjectProvider previousSubjectProvider;
+    /**
+     * 当前主体注册是否已经安装。
+     */
     private boolean started;
 
     /**

@@ -31,6 +31,12 @@ import jakarta.ws.rs.ext.Provider;
 @Priority(Priorities.USER)
 public final class Ddd4jHelidonResponseFilter implements ContainerResponseFilter {
 
+    /**
+     * 写入响应关联头，并完成 Helidon 请求跟踪与作用域清理。
+     *
+     * @param request  当前进入调用链的 HTTP 请求
+     * @param response 当前准备写出的 HTTP 响应
+     */
     @Override
     public void filter(ContainerRequestContext request, ContainerResponseContext response) {
         Object contextValue = request.getProperty(Ddd4jHelidonRequestFilter.CONTEXT_PROPERTY);

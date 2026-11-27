@@ -29,6 +29,8 @@ public interface PermissionRepository extends Repository<Permission, String> {
 
     /**
      * 查询全部权限。
+     *
+     * @return 仓储中已有的权限集合
      */
     List<Permission> findAll();
 

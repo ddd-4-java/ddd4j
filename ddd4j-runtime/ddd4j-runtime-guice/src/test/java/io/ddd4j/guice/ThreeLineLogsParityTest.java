@@ -42,6 +42,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * 检查实际 Guice 默认日志回调，不以非空 Bean 代替日志行为。
  */
 class ThreeLineLogsParityTest {
+    /**
+     * 在测试框架中执行 <code>Guice.createInjector()</code>、<code>LogManager.getLogger()</code>、<code>logger.getLevel()</code>，验证该场景。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void guiceDefaultProviderEmitsSuccessAndFailureAccessLogs() throws Exception {
         ApiOperationLogProvider provider = Guice.createInjector(new Ddd4jLogsGuiceModule())
@@ -102,7 +107,16 @@ class ThreeLineLogsParityTest {
         }
     }
 
+    /**
+     * 提供 <code>handle()</code> 等供当前测试使用的独立操作。
+     */
     public static class Endpoint {
+        /**
+         * 读取 <code>value</code> 供当前测试使用。
+         *
+         * @param value 当前用例传入的值
+         * @return 当前测试使用的结果，取自 <code>value</code>
+         */
         @Operation(summary = "parity")
         public String handle(String value) {
             return value;

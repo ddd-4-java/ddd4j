@@ -34,6 +34,9 @@ import java.util.Set;
 @Getter
 public class User extends AggregateRoot<String> {
 
+    /**
+     * Java 序列化版本标识。
+     */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -158,6 +161,11 @@ public class User extends AggregateRoot<String> {
         this.roleIds.remove(roleId);
     }
 
+    /**
+     * 读取用户 ID。
+     *
+     * @return 用户 ID
+     */
     @Override
     public String id() {
         return userId;

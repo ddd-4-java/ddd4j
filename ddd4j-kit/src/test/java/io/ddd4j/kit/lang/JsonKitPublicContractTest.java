@@ -17,6 +17,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class JsonKitPublicContractTest {
 
+    /**
+     * 验证<code>result.get("name")</code> 等于 <code>"order"</code>，<code>result.get("count")</code> 等于 <code>2</code>，<code>result.get("items")</code> 等于 <code>Arrays.asList("first", 3, Collections.singletonMap("code", 9))</code>。
+     */
     @Test
     void nestedObjectsAndArraysKeepScalarTypes() {
         Map<String, Object> result = JsonKit.toMap("{\"name\":\"order\",\"count\":2,\"active\":true,"
@@ -31,6 +34,9 @@ class JsonKitPublicContractTest {
                 JsonKit.toMapList("[{\"id\":1},{\"id\":2}]"));
     }
 
+    /**
+     * 验证<code>JsonKit.toJson(null)</code>为空，<code>JsonKit.toJson("raw")</code> 等于 <code>"raw"</code>，<code>JsonKit.toMap("invalid")</code> 等于 <code>Collections.emptyMap()</code>。
+     */
     @Test
     void nullBlankAndExistingValuesKeepTheirDocumentedResults() {
         assertNull(JsonKit.toJson(null));
@@ -50,6 +56,11 @@ class JsonKitPublicContractTest {
         assertEquals(Collections.emptyMap(), JsonKit.toMap("invalid"));
     }
 
+    /**
+     * 验证<code>bean.getName()</code> 等于 <code>"after"</code>，<code>date</code> 等于 <code>"\"19/10/2026\""</code>，<code>time</code> 等于 <code>"\"03:04:05\""</code>。
+     *
+     * @throws Exception 处理测试数据的序列化时失败
+     */
     @Test
     void updatesExistingBeanAndUsesCustomTimeFormats() throws Exception {
         MutableValue bean = new MutableValue();
@@ -70,13 +81,29 @@ class JsonKitPublicContractTest {
                 .contains("\"name\""));
     }
 
+    /**
+     * 用于验证 Jackson 读写普通可变 Java Bean 的样本。
+     */
     public static class MutableValue {
+        /**
+         * 用于验证 JSON 读写往返的可修改属性。
+         */
         private String name;
 
+        /**
+         * 读取<code>name</code> 字段。
+         *
+         * @return <code>name</code> 字段
+         */
         public String getName() {
             return name;
         }
 
+        /**
+         * 设置<code>name</code> 字段。
+         *
+         * @param name 要写入的值
+         */
         public void setName(String name) {
             this.name = name;
         }

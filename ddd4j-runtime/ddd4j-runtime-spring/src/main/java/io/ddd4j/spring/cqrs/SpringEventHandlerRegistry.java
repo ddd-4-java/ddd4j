@@ -64,6 +64,9 @@ public class SpringEventHandlerRegistry implements SmartInitializingSingleton {
         this.applicationContext = applicationContext;
     }
 
+    /**
+     * 在单例 Bean 完成初始化后扫描并注册事件处理器。
+     */
     @Override
     public void afterSingletonsInstantiated() {
         Map<String, View> viewBeans = applicationContext.getBeansOfType(View.class);
@@ -76,6 +79,8 @@ public class SpringEventHandlerRegistry implements SmartInitializingSingleton {
 
     /**
      * 扫描指定类的所有方法，注册 @CreateEvent / @UpdateEvent / @DeleteEvent 处理器。
+     *
+     * @param viewClass 声明事件处理方法的视图类
      */
     private void registerHandlers(Class<?> viewClass) {
         for (Method method : viewClass.getDeclaredMethods()) {
@@ -85,6 +90,12 @@ public class SpringEventHandlerRegistry implements SmartInitializingSingleton {
         }
     }
 
+    /**
+     * 仅在方法带当前注解时解析并登记事件处理路由。
+     *
+     * @param method         待检查注解并登记的反射方法
+     * @param annotationType 当前要识别的注解类型
+     */
     private void registerIfAnnotated(Method method, Class<? extends java.lang.annotation.Annotation> annotationType) {
         if (method.isAnnotationPresent(annotationType)) {
             java.lang.annotation.Annotation annotation = method.getAnnotation(annotationType);
@@ -100,6 +111,9 @@ public class SpringEventHandlerRegistry implements SmartInitializingSingleton {
 
     /**
      * 从注解 {@code value()} 提取事件类型。
+     *
+     * @param annotation 声明事件处理规则的注解
+     * @return 注解声明的事件类型
      */
     private Class<?> extractEventType(java.lang.annotation.Annotation annotation) {
         try {

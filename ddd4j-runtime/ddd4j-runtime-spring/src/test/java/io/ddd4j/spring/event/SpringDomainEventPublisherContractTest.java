@@ -11,8 +11,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * 通过 <code>Proxy.newProxyInstance()</code>、<code>ApplicationEventPublisher.class.getClassLoader()</code>、<code>method.getName()</code> 验证 <code>SpringDomainEventPublisherContract</code> 的运行行为。
+ */
 class SpringDomainEventPublisherContractTest {
 
+    /**
+     * 验证<code>published.size()</code> 等于 <code>2</code>，<code>published.get(0)</code> 与…为同一实例 <code>event</code>，<code>published.get(1)</code> 与…为同一实例 <code>event</code>。
+     */
     @Test
     void publishesDomainEventsThroughBothOverloadsAndIgnoresOtherObjects() {
         List<Object> published = new ArrayList<>();
@@ -41,6 +47,9 @@ class SpringDomainEventPublisherContractTest {
         assertSame(event, published.get(1));
     }
 
+    /**
+     * 验证被测调用 抛出 <code>NullPointerException.class</code>。
+     */
     @Test
     void requiresSpringPublisher() {
         assertThrows(NullPointerException.class, () -> new SpringDomainEventPublisher(null));

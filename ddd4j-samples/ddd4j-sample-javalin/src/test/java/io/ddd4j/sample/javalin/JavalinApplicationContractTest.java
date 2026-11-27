@@ -11,6 +11,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class JavalinApplicationContractTest {
 
+    /**
+     * 验证<code>right</code> 等于 <code>left</code>，<code>right.hashCode()</code> 等于 <code>left.hashCode()</code>，<code>different</code> 不等于 <code>left</code>。
+     */
     @Test
     void sameRuntimeReferencesAndTokenHaveSameValue() {
         Javalin app = Javalin.create();
@@ -24,6 +27,9 @@ class JavalinApplicationContractTest {
         assertNotEquals(left, different);
     }
 
+    /**
+     * 验证<code>application.toString().contains("secret-token-123")</code>为假。
+     */
     @Test
     void stringRepresentationDoesNotRevealToken() {
         JavalinSample.JavalinApplication application = new JavalinSample.JavalinApplication(

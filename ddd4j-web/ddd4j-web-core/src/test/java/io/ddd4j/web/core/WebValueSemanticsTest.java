@@ -29,8 +29,14 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * 通过 <code>requests.put()</code>、<code>first.hashCode()</code>、<code>equivalent.hashCode()</code> 验证 <code>WebValueSemantics</code> 的运行行为。
+ */
 class WebValueSemanticsTest {
 
+    /**
+     * 验证<code>equivalent</code> 等于 <code>first</code>，<code>equivalent.hashCode()</code> 等于 <code>first.hashCode()</code>，<code>first.toString().startsWith("WebRequestData[")</code>为真。
+     */
     @Test
     void equivalentRequestDataCanFindTheSameRequestEntry() {
         WebRequestData first = new WebRequestData("request-1", "trace-1", "tenant-1", "Bearer token",
@@ -50,6 +56,9 @@ class WebValueSemanticsTest {
         assertTrue(first.toString().startsWith("WebRequestData["));
     }
 
+    /**
+     * 验证<code>equivalent</code> 等于 <code>first</code>，<code>equivalent.hashCode()</code> 等于 <code>first.hashCode()</code>，<code>first.toString().startsWith("WebRequestContext[")</code>为真。
+     */
     @Test
     void normalizedRequestContextHasStableValueIdentity() {
         WebRequestContext first = new WebRequestContext("request-1", null, "tenant-1", "Bearer token",
@@ -66,6 +75,9 @@ class WebValueSemanticsTest {
         assertTrue(first.toString().startsWith("WebRequestContext["));
     }
 
+    /**
+     * 验证<code>equivalent</code> 等于 <code>first</code>，<code>equivalent.hashCode()</code> 等于 <code>first.hashCode()</code>，<code>first.toString().startsWith("WebRequestFailure[")</code>为真。
+     */
     @Test
     void requestFailuresRetainTheOriginalCauseAsPartOfIdentity() {
         IllegalStateException cause = new IllegalStateException("downstream failed");
@@ -81,6 +93,9 @@ class WebValueSemanticsTest {
         assertTrue(first.toString().startsWith("WebRequestFailure["));
     }
 
+    /**
+     * 验证<code>equivalent</code> 等于 <code>first</code>，<code>equivalent.hashCode()</code> 等于 <code>first.hashCode()</code>，<code>first.toString().contains("VALIDATION")</code>为真。
+     */
     @Test
     void errorValueDistinguishesHttpStatus() {
         WebError first = new WebError(422, "VALIDATION", "bad order", "detail");
@@ -93,6 +108,9 @@ class WebValueSemanticsTest {
         assertTrue(first.toString().contains("VALIDATION"));
     }
 
+    /**
+     * 验证<code>equivalent</code> 等于 <code>first</code>，<code>equivalent.hashCode()</code> 等于 <code>first.hashCode()</code>，<code>first.toString().startsWith("IdempotencyLease[")</code>为真。
+     */
     @Test
     void leaseOwnerIsPartOfIdempotencyIdentity() {
         IdempotencyLease first = new IdempotencyLease("payment-1", "owner-1", Duration.ofMinutes(1));
@@ -109,6 +127,9 @@ class WebValueSemanticsTest {
         assertTrue(first.toString().startsWith("IdempotencyLease["));
     }
 
+    /**
+     * 验证<code>equivalent</code> 等于 <code>ready</code>，<code>equivalent.hashCode()</code> 等于 <code>ready.hashCode()</code>，<code>ready.toString().contains("ready=true")</code>为真。
+     */
     @Test
     void readinessValueDistinguishesHealthyAndUnhealthyResponses() {
         ReadinessResponse ready = new ReadinessResponse(true);

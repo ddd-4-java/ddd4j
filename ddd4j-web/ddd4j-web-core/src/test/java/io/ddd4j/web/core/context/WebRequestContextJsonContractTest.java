@@ -27,6 +27,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class WebRequestContextJsonContractTest {
 
+    /**
+     * 验证<code>restored</code> 等于 <code>context</code>，<code>restored.getTraceId()</code> 等于 <code>"request-1"</code>，<code>restored.getApiVersion()</code> 等于 <code>ApiVersion.parse("2.1.0")</code>。
+     *
+     * @throws Exception 处理测试数据的序列化时失败
+     */
     @Test
     void roundTripKeepsNormalizedFieldsAndApiVersion() throws Exception {
         WebRequestContext context = new WebRequestContext(

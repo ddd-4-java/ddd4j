@@ -30,6 +30,9 @@ import java.lang.reflect.Method;
  */
 public class CglibProxy implements MethodInterceptor {
 
+    /**
+     * 拦截方法调用后实际接收调用的目标实例。
+     */
     private Object target;//需要代理的目标对象
 
     /**

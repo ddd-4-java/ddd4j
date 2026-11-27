@@ -53,20 +53,38 @@ class ProjectionPositionJpaIT {
      */
     private static final String ORDER_SUMMARY = "order-summary";
 
+    /**
+     * 供库存事件或状态恢复用例使用的快照样本。
+     */
     private static final String INVENTORY_SNAPSHOT = "inventory-snapshot";
 
+    /**
+     * 测试使用或记录的多条投影位点。
+     */
     @Autowired
     private JpaProjectionPositionRepository positions;
 
+    /**
+     * 用于当前读取或写入断言的测试仓储。
+     */
     @Autowired
     private SpringDataProjectionPositionRepository repository;
 
+    /**
+     * 执行 JPA 查询和持久化操作的实体管理器。
+     */
     @PersistenceContext
     private EntityManager entityManager;
 
+    /**
+     * 当前测试使用的框架上下文或请求作用域。
+     */
     @Autowired
     private org.springframework.context.ApplicationContext context;
 
+    /**
+     * 验证<code>context.getBean("jpaProjectionPositionRepository")</code> 指向同一实例 <code>positions</code>，<code>entityManager.getMetamodel().getEntities()</code> 的大小为 <code>1</code>，<code>ProjectionPositionEntity.class.getAnnotation(jakarta.persistence.Table.class).name()</code> 等于 <code>"ddd4j_projection_position"</code>。
+     */
     @Test
     void preservesLegacyBeanNameAndSinglePositionProvider() {
         assertThat(context.getBean("jpaProjectionPositionRepository")).isSameAs(positions);
@@ -79,11 +97,17 @@ class ProjectionPositionJpaIT {
                 .isEqualTo("ddd4j_projection_position");
     }
 
+    /**
+     * 测试执行前执行 <code>repository.deleteAll()</code> 完成资源准备。
+     */
     @BeforeEach
     void cleanPositions() {
         repository.deleteAll();
     }
 
+    /**
+     * 验证<code>snapshot</code> 的大小为 <code>1</code>，<code>snapshot.clear()</code> 抛出 <code>UnsupportedOperationException.class</code>，<code>positions.findAll()</code> 的大小为 <code>1</code>。
+     */
     @Test
     void findAllReturnsAnImmutablePositionSnapshot() {
         positions.save(DefaultProjectionPosition.zero(ORDER_SUMMARY));
@@ -95,6 +119,9 @@ class ProjectionPositionJpaIT {
         assertThat(positions.findAll()).hasSize(1);
     }
 
+    /**
+     * 验证<code>position.getNextEventNumber()</code>为零，<code>positions.incrementBy(ORDER_SUMMARY, 0L)</code> 等于 <code>5L</code>，<code>position.getNextEventNumber()</code> 等于 <code>5L</code>。
+     */
     @Test
     void saveIncrReload_完整循环_应跨持久化上下文读回最终位置() {
         // 先落零位行（dispatcher 冷启动路径）
@@ -117,6 +144,9 @@ class ProjectionPositionJpaIT {
                 });
     }
 
+    /**
+     * 验证<code>position.getNextEventNumber()</code> 等于 <code>5L</code>，<code>position.getNextEventNumber()</code>为零。
+     */
     @Test
     void resetToZero_推进后重置_应回退到0() {
         positions.save(DefaultProjectionPosition.zero(ORDER_SUMMARY));
@@ -131,6 +161,9 @@ class ProjectionPositionJpaIT {
                 .hasValueSatisfying(position -> assertThat(position.getNextEventNumber()).isZero());
     }
 
+    /**
+     * 验证<code>position.getNextEventNumber()</code>为零。
+     */
     @Test
     void resetToZero_流不存在_应插入零位行() {
         // 与 core InMemoryProjectionPositionRepository 同款语义：缺行 reset 后可读到 0
@@ -141,6 +174,9 @@ class ProjectionPositionJpaIT {
                 .hasValueSatisfying(position -> assertThat(position.getNextEventNumber()).isZero());
     }
 
+    /**
+     * 验证<code>position.getNextEventNumber()</code> 等于 <code>3L</code>，<code>position.getNextEventNumber()</code>为零，<code>positions.findAll()</code> 的大小为 <code>2</code>。
+     */
     @Test
     void 两个handler命名空间_分别save后独立递增_互不串扰() {
         positions.save(DefaultProjectionPosition.zero(ORDER_SUMMARY));
@@ -160,6 +196,9 @@ class ProjectionPositionJpaIT {
                 .containsExactlyInAnyOrder(ORDER_SUMMARY, INVENTORY_SNAPSHOT);
     }
 
+    /**
+     * 验证<code>positions.findByStreamId(ORDER_SUMMARY)</code>为空，<code>saved.getStreamId()</code> 等于 <code>ORDER_SUMMARY</code>，<code>positions.findAll()</code>为空。
+     */
     @Test
     void save不存在则插入存在则更新_delete后不可见() {
         // save（缺行）→ 插入（dispatcher 首次推进路径依赖的 upsert 语义）

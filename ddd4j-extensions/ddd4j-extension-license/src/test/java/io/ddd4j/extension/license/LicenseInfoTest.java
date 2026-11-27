@@ -31,6 +31,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class LicenseInfoTest {
 
+    /**
+     * 验证<code>roundtrip.getSubject()</code> 等于 <code>"ioserver"</code>，<code>roundtrip.getConsumerAmount()</code> 等于 <code>5</code>，<code>roundtrip.getExtra().getIp()</code> 等于 <code>"10.0.0.1"</code>。
+     *
+     * @throws Exception 准备或读取夹具文件时失败
+     */
     @Test
     void shouldBeSerializableForRemoteCache() throws Exception {
         LicenseExtraModel extra = new LicenseExtraModel();
@@ -62,6 +67,9 @@ class LicenseInfoTest {
         }
     }
 
+    /**
+     * 验证<code>future.isValidNow()</code>为假，<code>expired.isValidNow()</code>为假，<code>boundary.isValidAt(now)</code>为假。
+     */
     @Test
     void shouldEvaluateValidity() {
         Date now = new Date();
@@ -87,6 +95,9 @@ class LicenseInfoTest {
         assertThat(boundary.isValidAt(now)).isFalse();
     }
 
+    /**
+     * 验证<code>empty.hasAnyConstraint()</code>为假，<code>withIp.hasAnyConstraint()</code>为真。
+     */
     @Test
     void extraModelShouldDetectConstraints() {
         LicenseExtraModel empty = new LicenseExtraModel();

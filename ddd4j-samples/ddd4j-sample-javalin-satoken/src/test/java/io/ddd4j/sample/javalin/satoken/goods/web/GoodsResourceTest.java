@@ -39,12 +39,27 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @org.junit.jupiter.api.parallel.Execution(org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD)
 class GoodsResourceTest {
 
+    /**
+     * 用于构造本组用例请求地址或标识的公共前缀。
+     */
     private static final String PREFIX = "/api/goods";
 
+    /**
+     * 由当前测试启动和关闭的应用实例。
+     */
     private static Javalin app;
+    /**
+     * 用于发送 HTTP 请求的客户端。
+     */
     private static HttpClient httpClient;
+    /**
+     * 当前服务的 HTTP 基础地址。
+     */
     private static String baseUrl;
 
+    /**
+     * 测试执行前执行 <code>TestSupport.start()</code>、<code>app.port()</code>、<code>HttpClient.newBuilder()</code>、<code>Duration.ofSeconds()</code> 完成资源准备。
+     */
     @BeforeAll
     static void startApp() {
         app = TestSupport.start();
@@ -52,6 +67,9 @@ class GoodsResourceTest {
         httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
     }
 
+    /**
+     * 测试结束后执行 <code>app.stop()</code> 完成资源回收或状态恢复。
+     */
     @AfterAll
     static void stopApp() {
         if (Objects.nonNull(app)) {
@@ -59,6 +77,12 @@ class GoodsResourceTest {
         }
     }
 
+    /**
+     * 通过 <code>body.substring()</code> 取得当前测试需要的结果。
+     *
+     * @param body 当前请求或响应中要读取的正文
+     * @return 当前测试使用的结果，取自 <code>body.substring(start, end)</code>
+     */
     private static String extractId(String body) {
         // body: {"code":0,"message":"ok","data":{"id":123,...}}
         int idx = body.indexOf("\"id\":");
@@ -88,6 +112,14 @@ class GoodsResourceTest {
         httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
     }
 
+    /**
+     * 调用 <code>httpClient.send()</code>、<code>HttpRequest.newBuilder()</code>、<code>URI.create()</code> 执行当前夹具操作。
+     *
+     * @param path 测试请求的资源路径或待访问文件路径
+     * @param body 当前请求或响应中要读取的正文
+     * @return 提供给后续契约断言的 <code>HttpResponse&lt;String&gt;</code> 结果
+     * @throws Exception 发起测试请求时失败
+     */
     private HttpResponse<String> postJson(String path, String body) throws Exception {
         return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
                         .header("Content-Type", "application/json")
@@ -95,6 +127,14 @@ class GoodsResourceTest {
                 HttpResponse.BodyHandlers.ofString());
     }
 
+    /**
+     * 调用 <code>httpClient.send()</code>、<code>HttpRequest.newBuilder()</code>、<code>URI.create()</code> 执行当前夹具操作。
+     *
+     * @param path 测试请求的资源路径或待访问文件路径
+     * @param body 当前请求或响应中要读取的正文
+     * @return 提供给后续契约断言的 <code>HttpResponse&lt;String&gt;</code> 结果
+     * @throws Exception 发起测试请求时失败
+     */
     private HttpResponse<String> putJson(String path, String body) throws Exception {
         return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
                         .header("Content-Type", "application/json")
@@ -102,17 +142,38 @@ class GoodsResourceTest {
                 HttpResponse.BodyHandlers.ofString());
     }
 
+    /**
+     * 调用 <code>httpClient.send()</code>、<code>HttpRequest.newBuilder()</code>、<code>URI.create()</code> 执行当前夹具操作。
+     *
+     * @param path 测试请求的资源路径或待访问文件路径
+     * @return 提供给后续契约断言的 <code>HttpResponse&lt;String&gt;</code> 结果
+     * @throws Exception 发起测试请求时失败
+     */
     private HttpResponse<String> put(String path) throws Exception {
         return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
                         .PUT(HttpRequest.BodyPublishers.noBody()).build(),
                 HttpResponse.BodyHandlers.ofString());
     }
 
+    /**
+     * 通过 <code>httpClient.send()</code> 取得当前测试需要的结果。
+     *
+     * @param path 测试请求的资源路径或待访问文件路径
+     * @return 当前测试使用的结果，取自 <code>httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).DELETE().build(), HttpResponse.BodyHandlers.ofString())</code>
+     * @throws Exception 发起测试请求时失败
+     */
     private HttpResponse<String> delete(String path) throws Exception {
         return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).DELETE().build(),
                 HttpResponse.BodyHandlers.ofString());
     }
 
+    /**
+     * 通过 <code>httpClient.send()</code> 取得当前测试需要的结果。
+     *
+     * @param path 测试请求的资源路径或待访问文件路径
+     * @return 当前测试使用的结果，取自 <code>httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).GET().build(), HttpResponse.BodyHandlers.ofString())</code>
+     * @throws Exception 发起测试请求时失败
+     */
     private HttpResponse<String> get(String path) throws Exception {
         return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).GET().build(),
                 HttpResponse.BodyHandlers.ofString());
@@ -120,6 +181,11 @@ class GoodsResourceTest {
 
     // =================== 1) create ====================
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>201</code>，<code>r.body().contains("SKU-1")</code>为真。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void create_shouldReturn201() throws Exception {
         HttpResponse<String> r = postJson(PREFIX, "{\"code\":\"SKU-1\",\"name\":\"Phone\",\"price\":999.00,\"stock\":10}");
@@ -127,12 +193,22 @@ class GoodsResourceTest {
         assertTrue(r.body().contains("SKU-1"));
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>201</code>。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void create_zeroStock_shouldReturn201() throws Exception {
         HttpResponse<String> r = postJson(PREFIX, "{\"code\":\"SKU-2\",\"name\":\"Zero\",\"price\":1.00,\"stock\":0}");
         assertEquals(201, r.statusCode());
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>201</code>。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void multipleCreates_allShouldSucceed() throws Exception {
         for (int i = 0; i < 3; i++) {
@@ -144,6 +220,11 @@ class GoodsResourceTest {
 
     // =================== 2) update ====================
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("updated")</code>为真。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void update_shouldReturn200() throws Exception {
         HttpResponse<String> create = postJson(PREFIX,
@@ -155,6 +236,11 @@ class GoodsResourceTest {
         assertTrue(r.body().contains("updated"));
     }
 
+    /**
+     * 验证<code>r.statusCode() &gt;= 400</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void update_unknownId_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> r = putJson(PREFIX + "/999999999",
@@ -162,6 +248,11 @@ class GoodsResourceTest {
         assertTrue(r.statusCode() >= 400);
     }
 
+    /**
+     * 验证<code>r.statusCode() &gt;= 400</code>为真。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void update_blankName_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> create = postJson(PREFIX,
@@ -174,6 +265,11 @@ class GoodsResourceTest {
 
     // =================== 3) changeStatus ====================
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("ON_SALE")</code>为真。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void changeStatus_toOnSale_shouldReturn200() throws Exception {
         HttpResponse<String> create = postJson(PREFIX,
@@ -184,6 +280,11 @@ class GoodsResourceTest {
         assertTrue(r.body().contains("ON_SALE"));
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("OFF_SALE")</code>为真。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void changeStatus_offSale_shouldReturn200() throws Exception {
         HttpResponse<String> create = postJson(PREFIX,
@@ -195,6 +296,11 @@ class GoodsResourceTest {
         assertTrue(r.body().contains("OFF_SALE"));
     }
 
+    /**
+     * 验证<code>r.statusCode() &gt;= 400</code>为真。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void changeStatus_invalidStatus_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> create = postJson(PREFIX,
@@ -204,6 +310,11 @@ class GoodsResourceTest {
         assertTrue(r.statusCode() >= 400);
     }
 
+    /**
+     * 验证<code>r.statusCode() &gt;= 400</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void changeStatus_unknownId_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> r = put(PREFIX + "/999999999/status?status=ON_SALE");
@@ -212,6 +323,11 @@ class GoodsResourceTest {
 
     // =================== 4) delete ====================
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void delete_shouldReturn200() throws Exception {
         HttpResponse<String> create = postJson(PREFIX,
@@ -221,6 +337,11 @@ class GoodsResourceTest {
         assertEquals(200, r.statusCode());
     }
 
+    /**
+     * 验证<code>r.statusCode() &gt;= 400</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void delete_unknownId_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> r = delete(PREFIX + "/999999999");
@@ -229,6 +350,11 @@ class GoodsResourceTest {
 
     // =================== 5) getById ====================
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("SKU-G1")</code>为真。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void getById_shouldReturnGoods() throws Exception {
         HttpResponse<String> create = postJson(PREFIX,
@@ -239,6 +365,11 @@ class GoodsResourceTest {
         assertTrue(r.body().contains("SKU-G1"));
     }
 
+    /**
+     * 验证<code>r.statusCode() &gt;= 400</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void getById_unknownId_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> r = get(PREFIX + "/999999999");
@@ -247,6 +378,11 @@ class GoodsResourceTest {
 
     // =================== 6) getByCode ====================
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("SKU-BC1")</code>为真。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void getByCode_shouldReturnGoods() throws Exception {
         postJson(PREFIX, "{\"code\":\"SKU-BC1\",\"name\":\"x\",\"price\":1.00,\"stock\":1}");
@@ -257,12 +393,22 @@ class GoodsResourceTest {
 
     // =================== 7) pageQuery / listQuery / countQuery (在 queryResource 中) ========
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void pageQuery_defaultPage_shouldReturn200() throws Exception {
         HttpResponse<String> r = get(PREFIX + "/page?current=1&size=10");
         assertEquals(200, r.statusCode());
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("SKU-PS1")</code>为真。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void pageQuery_byStatus_shouldReturnMatchingGoods() throws Exception {
         HttpResponse<String> create = postJson(PREFIX,
@@ -275,6 +421,11 @@ class GoodsResourceTest {
         assertTrue(r.body().contains("SKU-PS1"));
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("SKU-PR1")</code>为真。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void pageQuery_byPriceRange_shouldReturnMatchingGoods() throws Exception {
         postJson(PREFIX, "{\"code\":\"SKU-PR1\",\"name\":\"x\",\"price\":50.00,\"stock\":1}");
@@ -283,6 +434,11 @@ class GoodsResourceTest {
         assertTrue(r.body().contains("SKU-PR1"));
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("SKU-NL1")</code>为真。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void pageQuery_byNameLike_shouldReturnMatchingGoods() throws Exception {
         postJson(PREFIX, "{\"code\":\"SKU-NL1\",\"name\":\"iPhoneX\",\"price\":1.00,\"stock\":1}");
@@ -291,6 +447,11 @@ class GoodsResourceTest {
         assertTrue(r.body().contains("SKU-NL1"));
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("SKU-EX1")</code>为真。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void pageQuery_byCode_shouldReturnMatchingGoods() throws Exception {
         postJson(PREFIX, "{\"code\":\"SKU-EX1\",\"name\":\"x\",\"price\":1.00,\"stock\":1}");
@@ -299,6 +460,11 @@ class GoodsResourceTest {
         assertTrue(r.body().contains("SKU-EX1"));
     }
 
+    /**
+     * 验证<code>p1.statusCode()</code> 等于 <code>200</code>，<code>p3.statusCode()</code> 等于 <code>200</code>。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void pageQuery_withPagination_shouldReturn200() throws Exception {
         for (int i = 0; i < 15; i++) {
@@ -310,30 +476,55 @@ class GoodsResourceTest {
         assertEquals(200, p3.statusCode());
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void pageQuery_withOrderBys_shouldReturn200() throws Exception {
         HttpResponse<String> r = get(PREFIX + "/page?orderBys=price_DESC&current=1&size=10");
         assertEquals(200, r.statusCode());
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void listQuery_shouldReturn200() throws Exception {
         HttpResponse<String> r = get(PREFIX + "/list");
         assertEquals(200, r.statusCode());
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void listQuery_byStatus_shouldReturn200() throws Exception {
         HttpResponse<String> r = get(PREFIX + "/list?status=ON_SALE");
         assertEquals(200, r.statusCode());
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void countQuery_shouldReturn200() throws Exception {
         HttpResponse<String> r = get(PREFIX + "/count");
         assertEquals(200, r.statusCode());
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void countQuery_byStatus_shouldReturn200() throws Exception {
         HttpResponse<String> r = get(PREFIX + "/count?status=DRAFT");
@@ -342,6 +533,11 @@ class GoodsResourceTest {
 
     // =================== 综合 ====================
 
+    /**
+     * 验证<code>upd.statusCode()</code> 等于 <code>200</code>，<code>del.statusCode()</code> 等于 <code>200</code>。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void fullCrudLifecycle() throws Exception {
         HttpResponse<String> create = postJson(PREFIX,
@@ -363,6 +559,11 @@ class GoodsResourceTest {
         assertEquals(200, del.statusCode());
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("DELETED")</code>为真。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void deleteGoods_getByIdReturnsDeletedStatus() throws Exception {
         HttpResponse<String> create = postJson(PREFIX,
@@ -374,6 +575,11 @@ class GoodsResourceTest {
         assertTrue(r.body().contains("DELETED"));
     }
 
+    /**
+     * 验证<code>r.statusCode() &gt;= 400</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void pageQuery_invalidStatusEnum_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> r = get(PREFIX + "/page?status=BAD&current=1&size=10");

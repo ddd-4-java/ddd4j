@@ -76,8 +76,14 @@ public final class AuthSpan {
      */
     public static final AttributeKey<String> ATTR_AUTH_PERMISSION = AttributeKey.stringKey("auth.permission");
 
+    /**
+     * 认证跟踪字段缺少框架标识时使用的默认名称。
+     */
     private static final String DEFAULT_FRAMEWORK = "ddd4j";
 
+    /**
+     * 限制调用方直接创建 <code>AuthSpan</code> 实例。
+     */
     private AuthSpan() {
     }
 
@@ -327,6 +333,11 @@ public final class AuthSpan {
         }
     }
 
+    /**
+     * 把当前会话的登录标识补到认证跟踪 Span。
+     *
+     * @param span 接收当前跟踪属性的 Span
+     */
     private static void attachCurrentLoginId(Span span) {
         try {
             AuthPrincipal principal = SubjectKit.getPrincipal();

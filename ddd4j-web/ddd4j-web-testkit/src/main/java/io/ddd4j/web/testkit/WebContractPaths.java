@@ -76,6 +76,9 @@ public final class WebContractPaths {
      */
     public static final String INTERNAL_SERVER_ERROR = "/contract/errors/internal-server-error";
 
+    /**
+     * 限制调用方直接创建 <code>WebContractPaths</code> 实例。
+     */
     private WebContractPaths() {
     }
 }

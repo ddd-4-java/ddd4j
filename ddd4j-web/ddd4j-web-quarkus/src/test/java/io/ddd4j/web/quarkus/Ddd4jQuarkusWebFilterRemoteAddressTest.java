@@ -29,6 +29,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class Ddd4jQuarkusWebFilterRemoteAddressTest {
 
+    /**
+     * 通过 <code>(String)method.invoke(filter)</code> 取得当前测试需要的结果。
+     *
+     * @param host 传给 <code>SocketAddress.inetSocketAddress()</code> 的 <code>String</code> 输入
+     * @return 当前测试使用的结果，取自 <code>(String)method.invoke(filter)</code>
+     * @throws Exception 反射访问被测成员时失败
+     */
     private static String remoteAddress(String host) throws Exception {
         Ddd4jQuarkusWebFilter filter = new Ddd4jQuarkusWebFilter(new Ddd4jQuarkusWebConfiguration());
         SocketAddress address = SocketAddress.inetSocketAddress(8123, host);
@@ -45,11 +52,21 @@ class Ddd4jQuarkusWebFilterRemoteAddressTest {
         return (String) method.invoke(filter);
     }
 
+    /**
+     * 验证<code>remoteAddress("localhost")</code> 等于 <code>"localhost"</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void preservesUnresolvedPeerHost() throws Exception {
         assertEquals("localhost", remoteAddress("localhost"));
     }
 
+    /**
+     * 验证<code>remoteAddress("192.0.2.10")</code> 等于 <code>"192.0.2.10"</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void preservesPeerIpAddress() throws Exception {
         assertEquals("192.0.2.10", remoteAddress("192.0.2.10"));

@@ -57,6 +57,11 @@ public class QuarkusEventHandlerRegistry {
     @Inject
     BeanManager beanManager;
 
+    /**
+     * 扫描 CDI Bean，登记带投影处理注解的方法。
+     *
+     * @param event 当前框架生命周期或容器启动事件
+     */
     void onStart(@Observes StartupEvent event) {
         Set<Bean<?>> beans = beanManager.getBeans(Object.class);
         for (Bean<?> bean : beans) {
@@ -69,6 +74,11 @@ public class QuarkusEventHandlerRegistry {
         log.info("CQRS event handler registry initialized: {} event types registered", handlerTable.size());
     }
 
+    /**
+     * 查找视图类的处理方法并注册其事件路由。
+     *
+     * @param viewClass 声明投影处理方法的视图类
+     */
     private void registerHandlers(Class<?> viewClass) {
         for (Method method : viewClass.getDeclaredMethods()) {
             registerIfAnnotated(method, CreateEvent.class);
@@ -77,6 +87,12 @@ public class QuarkusEventHandlerRegistry {
         }
     }
 
+    /**
+     * 仅在方法带当前注解时解析并登记事件处理路由。
+     *
+     * @param method         待检查注解并登记的反射方法
+     * @param annotationType 当前要识别的注解类型
+     */
     private void registerIfAnnotated(Method method, Class<? extends Annotation> annotationType) {
         if (method.isAnnotationPresent(annotationType)) {
             Annotation annotation = method.getAnnotation(annotationType);
@@ -90,6 +106,12 @@ public class QuarkusEventHandlerRegistry {
         }
     }
 
+    /**
+     * 从处理方法的注解中读取事件类型。
+     *
+     * @param annotation 提供处理事件类型的注解实例
+     * @return 该注解绑定的事件类型
+     */
     private Class<?> extractEventType(Annotation annotation) {
         try {
             return (Class<?>) annotation.annotationType().getMethod("value").invoke(annotation);

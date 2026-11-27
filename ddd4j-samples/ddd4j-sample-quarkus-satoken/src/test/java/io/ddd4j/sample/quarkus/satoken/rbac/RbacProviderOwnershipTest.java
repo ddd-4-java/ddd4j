@@ -27,9 +27,19 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 @TestProfile(RbacProviderOwnershipTest.OwnershipProfile.class)
 class RbacProviderOwnershipTest {
 
+    /**
+     * 当前示例用来解析角色编辑和权限分配的配置。
+     */
     @Inject
     RbacConfig rbac;
 
+    /**
+     * 调用 <code>CDI.current()</code>、<code>observer.getBeanClass()</code>、<code>event.getClass()</code> 执行当前夹具操作。
+     *
+     * @param <T>   当前契约测试所使用的 Java 类型
+     * @param event 交给被测入口处理的测试领域事件
+     * @return 提供给后续契约断言的 <code>ObserverMethod&lt;? super T&gt;</code> 结果
+     */
     private static <T> ObserverMethod<? super T> observer(T event) {
         return CDI.current().getBeanManager().resolveObserverMethods(event).stream()
                 .filter(observer -> observer.getBeanClass() == RbacConfig.class)
@@ -38,6 +48,13 @@ class RbacProviderOwnershipTest {
                         + event.getClass().getSimpleName() + " lifecycle observer"));
     }
 
+    /**
+     * 调用 <code>observer.notify()</code> 执行当前夹具操作。
+     *
+     * @param <T>      当前契约测试所使用的 Java 类型
+     * @param observer 接收测试状态或清理结果的观察回调
+     * @param event    交给被测入口处理的测试领域事件
+     */
     private static <T> void notifyObserver(ObserverMethod<T> observer, T event) {
         observer.notify(new EventContext<T>() {
             @Override
@@ -52,6 +69,9 @@ class RbacProviderOwnershipTest {
         });
     }
 
+    /**
+     * 验证<code>SubjectKit.dataProvider</code> 与…为不同的实例 <code>caller</code>，<code>SubjectKit.dataProvider</code> 与…为同一实例 <code>caller</code>，<code>SubjectKit.dataProvider</code> 与…为同一实例 <code>replacement</code>。
+     */
     @Test
     void shutdownRestoresPreviousProviderAndPreservesAReplacement() {
         StartupEvent startup = new StartupEvent();
@@ -86,6 +106,9 @@ class RbacProviderOwnershipTest {
         }
     }
 
+    /**
+     * 启用资源所有权与上下文清理合同所需的 Quarkus 测试配置。
+     */
     public static final class OwnershipProfile implements QuarkusTestProfile {
     }
 }

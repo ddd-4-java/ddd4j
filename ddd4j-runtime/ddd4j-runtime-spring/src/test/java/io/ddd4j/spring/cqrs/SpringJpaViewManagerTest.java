@@ -38,15 +38,27 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class SpringJpaViewManagerTest {
 
+    /**
+     * 用于隔离 <code>ViewScheduler</code> 调用并记录交互的测试替身。
+     */
     @Mock
     private ViewScheduler scheduler;
 
+    /**
+     * 用于隔离 <code>ProjectionPositionRepository</code> 调用并记录交互的测试替身。
+     */
     @Mock
     private ProjectionPositionRepository positionRepository;
 
+    /**
+     * 用于隔离 <code>ProjectionMetrics</code> 调用并记录交互的测试替身。
+     */
     @Mock
     private ProjectionMetrics projectionMetrics;
 
+    /**
+     * 验证<code>manager.isRunning()</code>为真，<code>triggered.get()</code> 等于 <code>1</code>，<code>cancelled.get()</code>为真。
+     */
     @Test
     void contextCloseCancelsManualSchedulesAndKeepsSubclassTrigger() {
         java.util.concurrent.atomic.AtomicBoolean cancelled = new java.util.concurrent.atomic.AtomicBoolean();
@@ -80,6 +92,9 @@ class SpringJpaViewManagerTest {
     }
 
 
+    /**
+     * 验证<code>manager.isRunning()</code>为假。
+     */
     @Test
     void stopCancelsHandleRegisteredBeforeStart() {
         ViewScheduler.ViewScheduleHandle handle = mock(ViewScheduler.ViewScheduleHandle.class);
@@ -96,6 +111,9 @@ class SpringJpaViewManagerTest {
         assertThat(manager.isRunning()).isFalse();
     }
 
+    /**
+     * 验证<code>manager.isRunning()</code>为假。
+     */
     @Test
     void stopCleansOtherHandlesAndCanRetryFailedCancellation() {
         ViewScheduler.ViewScheduleHandle bad = mock(ViewScheduler.ViewScheduleHandle.class);
@@ -130,6 +148,9 @@ class SpringJpaViewManagerTest {
     @DisplayName("getProjectionStatus")
     class GetProjectionStatusTests {
 
+        /**
+         * 验证<code>status.streamId()</code> 等于 <code>"orders"</code>，<code>status.nextEventNumber()</code> 等于 <code>42L</code>，<code>status.lastError()</code> 等于 <code>"last failure"</code>。
+         */
         @Test
         void withMetricsIncludesLatestRunInfo() {
             Instant lastRunAt = Instant.parse("2026-10-18T00:00:00Z");
@@ -149,6 +170,9 @@ class SpringJpaViewManagerTest {
             assertThat(status.lastError()).isEqualTo("last failure");
         }
 
+        /**
+         * 无位置仓储时应返回基线状态。
+         */
         @Test
         @DisplayName("无位置仓储时应返回基线状态")
         void withoutRepository_shouldReturnBaseline() {
@@ -165,6 +189,9 @@ class SpringJpaViewManagerTest {
             assertThat(status.lastError()).isNull();
         }
 
+        /**
+         * 有位置仓储且位置存在时应返回真实位置。
+         */
         @Test
         @DisplayName("有位置仓储且位置存在时应返回真实位置")
         void withRepositoryAndPositionExists_shouldReturnRealPosition() {
@@ -184,6 +211,9 @@ class SpringJpaViewManagerTest {
             assertThat(status.lastError()).isNull();
         }
 
+        /**
+         * 有位置仓储但位置不存在时应返回 nextEventNumber=0。
+         */
         @Test
         @DisplayName("有位置仓储但位置不存在时应返回 nextEventNumber=0")
         void withRepositoryButNoPosition_shouldReturnZeroPosition() {
@@ -200,6 +230,9 @@ class SpringJpaViewManagerTest {
             assertThat(status.running()).isTrue();
         }
 
+        /**
+         * 管理器停止时 running 应为 false。
+         */
         @Test
         @DisplayName("管理器停止时 running 应为 false")
         void whenStopped_runningShouldBeFalse() {

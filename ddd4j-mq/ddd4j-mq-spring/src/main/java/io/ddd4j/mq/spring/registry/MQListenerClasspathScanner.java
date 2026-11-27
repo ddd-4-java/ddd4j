@@ -38,6 +38,9 @@ import java.util.function.Function;
  */
 public final class MQListenerClasspathScanner {
 
+    /**
+     * 限制调用方直接创建 <code>MQListenerClasspathScanner</code> 实例。
+     */
     private MQListenerClasspathScanner() {
     }
 
@@ -116,6 +119,12 @@ public final class MQListenerClasspathScanner {
         }
     }
 
+    /**
+     * 检查 Bean 类型是否属于应跳过业务监听扫描的基础设施。
+     *
+     * @param clazz 待判断是否为基础设施的 Bean 类型
+     * @return 不应扫描该类的监听方法时返回 true
+     */
     private static boolean isInfrastructureClass(Class<?> clazz) {
         String name = clazz.getName();
         return name.startsWith("org.springframework")

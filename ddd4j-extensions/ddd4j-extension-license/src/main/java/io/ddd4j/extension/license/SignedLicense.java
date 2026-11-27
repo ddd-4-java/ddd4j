@@ -28,11 +28,26 @@ import java.util.Objects;
  */
 public final class SignedLicense {
 
+    /**
+     * 签名许可证信封中用于识别格式版本的标记。
+     */
     private static final String FORMAT = "DDD4J-LICENSE-1";
+    /**
+     * 解析签名许可证信封时预期的字段数。
+     */
     private static final int FIELD_COUNT = 4;
 
+    /**
+     * 签名时使用且在验证时复用的算法名称。
+     */
     private final String algorithm;
+    /**
+     * 经过签名保护的许可证原始数据。
+     */
     private final byte[] payload;
+    /**
+     * 对许可证负载生成的签名字节。
+     */
     private final byte[] signature;
 
     /**

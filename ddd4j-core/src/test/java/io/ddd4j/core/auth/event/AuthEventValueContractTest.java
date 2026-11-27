@@ -23,6 +23,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class AuthEventValueContractTest {
 
+    /**
+     * 验证<code>event.hashCode()</code> 等于 <code>0</code>，<code>event.toString()</code> 等于 <code>"AuthFailedEvent[request=null, reason=null, occurredAt=null]"</code>。
+     */
     @Test
     void failedEvent_shouldMatchRecordValueSemanticsForNullComponents() {
         AuthFailedEvent event = new AuthFailedEvent(null, null, null);
@@ -33,6 +36,9 @@ class AuthEventValueContractTest {
         assertEquals("AuthFailedEvent[request=null, reason=null, occurredAt=null]", event.toString());
     }
 
+    /**
+     * 验证<code>event.hashCode()</code> 等于 <code>0</code>，<code>event.toString()</code> 等于 <code>"AuthSucceededEvent[request=null, principal=null, token=null, occurredAt=null]"</code>。
+     */
     @Test
     void succeededEvent_shouldMatchRecordValueSemanticsForNullComponents() {
         AuthSucceededEvent event = new AuthSucceededEvent(null, null, null, null);
@@ -43,6 +49,11 @@ class AuthEventValueContractTest {
         assertEquals("AuthSucceededEvent[request=null, principal=null, token=null, occurredAt=null]", event.toString());
     }
 
+    /**
+     * 验证<code>event.getRequest()</code> 等于 <code>event.request()</code>，<code>event.getReason()</code> 等于 <code>event.reason()</code>，<code>AuthFailedEvent.class.getMethod("reason") .getAnnotation(JsonProperty.class).value()</code> 等于 <code>"reason"</code>。
+     *
+     * @throws Exception 发起测试请求时失败
+     */
     @Test
     void failedEvent_shouldExposeBeanAndJsonConstructionContract() throws Exception {
         AuthFailedEvent event = new AuthFailedEvent(null, "invalid-token", Instant.EPOCH);
@@ -56,6 +67,11 @@ class AuthEventValueContractTest {
                 .getAnnotation(JsonProperty.class).value());
     }
 
+    /**
+     * 验证<code>event.getRequest()</code> 等于 <code>event.request()</code>，<code>event.getPrincipal()</code> 等于 <code>event.principal()</code>，<code>AuthSucceededEvent.class.getMethod("token") .getAnnotation(JsonProperty.class).value()</code> 等于 <code>"token"</code>。
+     *
+     * @throws Exception 发起测试请求时失败
+     */
     @Test
     void succeededEvent_shouldExposeBeanAndJsonConstructionContract() throws Exception {
         AuthSucceededEvent event = new AuthSucceededEvent(null, null, "valid-token", Instant.EPOCH);
@@ -71,6 +87,11 @@ class AuthEventValueContractTest {
                 .getAnnotation(JsonProperty.class).value());
     }
 
+    /**
+     * 验证<code>mapper.readValue(failedJson, AuthFailedEvent.class)</code> 等于 <code>failed</code>，<code>mapper.readValue(succeededJson, AuthSucceededEvent.class)</code> 等于 <code>succeeded</code>。
+     *
+     * @throws Exception 处理测试数据的序列化时失败
+     */
     @Test
     void authEvents_shouldRoundTripThroughJsonWithStableFieldNames() throws Exception {
         ObjectMapper mapper = new ObjectMapper();

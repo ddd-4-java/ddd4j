@@ -21,6 +21,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class QueryBusMustTest {
 
+    /**
+     * 验证<code>count</code> 等于 <code>3</code>，<code>found</code> 等于 <code>"order:order-2"</code>。
+     */
     @Test
     void askMustRouteByQueryTypeAndReturnHandlerResult() {
         List<String> readModel = Arrays.asList("order-1", "order-2", "order-3");
@@ -55,6 +58,9 @@ class QueryBusMustTest {
         assertThat(found).isEqualTo("order:order-2");
     }
 
+    /**
+     * 验证<code>count</code> 等于 <code>3</code>，<code>readModel</code> 的大小为 <code>3</code>。
+     */
     @Test
     void askMustNotMutateReadModelAcrossRepeatedQueries() {
         List<String> readModel = new ArrayList<>(Arrays.asList("order-1", "order-2", "order-3"));
@@ -78,6 +84,9 @@ class QueryBusMustTest {
         assertThat(readModel).hasSize(3).containsExactly("order-1", "order-2", "order-3");
     }
 
+    /**
+     * 验证<code>bus.ask(new FindOrderQuery("order-9"))</code> 抛出 <code>IllegalStateException.class</code>，<code>readModel</code> 的大小为 <code>1</code>。
+     */
     @Test
     void unknownQueryTypeMustBeRejectedWithoutSideEffects() {
         List<String> readModel = new ArrayList<>(Arrays.asList("order-1"));
@@ -111,12 +120,25 @@ class QueryBusMustTest {
      * 只读查询对象：订单明细。
      */
     static final class FindOrderQuery {
+        /**
+         * 订单标识。
+         */
         private final String orderId;
 
+        /**
+         * 用给定值初始化 <code>FindOrderQuery</code> 实例。
+         *
+         * @param orderId 订单标识
+         */
         FindOrderQuery(String orderId) {
             this.orderId = orderId;
         }
 
+        /**
+         * 读取订单标识。
+         *
+         * @return 订单标识
+         */
         String orderId() {
             return orderId;
         }

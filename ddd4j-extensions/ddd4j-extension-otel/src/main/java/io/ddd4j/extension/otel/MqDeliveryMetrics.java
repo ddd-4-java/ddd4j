@@ -49,16 +49,43 @@ public final class MqDeliveryMetrics {
     public static final AttributeKey<String> ATTR_DELIVERY_OUTCOME =
             AttributeKey.stringKey("ddd4j.delivery.outcome");
 
+    /**
+     * 记录 Outbox 成功发布的指标结果标签。
+     */
     private static final String OUTCOME_PUBLISHED = "published";
+    /**
+     * 记录 Outbox 重新安排重试的指标结果标签。
+     */
     private static final String OUTCOME_RETRY = "retry";
+    /**
+     * 记录 Outbox 停止投递的指标结果标签。
+     */
     private static final String OUTCOME_DEAD = "dead";
+    /**
+     * 记录 Inbox 消费成功的指标结果标签。
+     */
     private static final String OUTCOME_PROCESSED = "processed";
+    /**
+     * 记录 Inbox 忽略重复消费的指标结果标签。
+     */
     private static final String OUTCOME_DUPLICATE = "duplicate";
+    /**
+     * 记录消息处理失败的指标结果标签。
+     */
     private static final String OUTCOME_FAILED = "failed";
 
+    /**
+     * 缓存当前 OpenTelemetry Meter 的 Outbox 计数句柄。
+     */
     private static final AtomicReference<CounterHandle> OUTBOX_COUNTER = new AtomicReference<>();
+    /**
+     * 缓存当前 OpenTelemetry Meter 的 Inbox 计数句柄。
+     */
     private static final AtomicReference<CounterHandle> INBOX_COUNTER = new AtomicReference<>();
 
+    /**
+     * 限制调用方直接创建 <code>MqDeliveryMetrics</code> 实例。
+     */
     private MqDeliveryMetrics() {
     }
 
@@ -125,16 +152,36 @@ public final class MqDeliveryMetrics {
         recordInbox(broker, OUTCOME_FAILED);
     }
 
+    /**
+     * 将带代理和处理结果标签的 Outbox 计数加一。
+     *
+     * @param broker  当前投递对应的消息代理
+     * @param outcome 本次投递或消费的结果标签
+     */
     private static void recordOutbox(String broker, String outcome) {
         counter(OUTBOX_COUNTER, OUTBOX_DELIVERY_METRIC, "Count of ddd4j outbox delivery outcomes")
                 .add(1, attributes(broker, outcome));
     }
 
+    /**
+     * 将带代理和处理结果标签的 Inbox 计数加一。
+     *
+     * @param broker  当前投递对应的消息代理
+     * @param outcome 本次投递或消费的结果标签
+     */
     private static void recordInbox(String broker, String outcome) {
         counter(INBOX_COUNTER, INBOX_DELIVERY_METRIC, "Count of ddd4j inbox delivery outcomes")
                 .add(1, attributes(broker, outcome));
     }
 
+    /**
+     * 取得当前 Meter 的计数器句柄，Meter 更新时创建新计数器。
+     *
+     * @param cache       缓存与当前 Meter 对应的计数器句柄
+     * @param name        当前组件、指标、任务或 Bean 使用的名称
+     * @param description 用于指标采集端理解计数语义的说明
+     * @return 对应当前 Meter 的消息计数器
+     */
     private static LongCounter counter(AtomicReference<CounterHandle> cache, String name, String description) {
         Meter meter = Ddd4jOtel.meter();
         CounterHandle cached = cache.get();
@@ -152,6 +199,13 @@ public final class MqDeliveryMetrics {
         return created.counter;
     }
 
+    /**
+     * 组装计数事件使用的代理和结果标签。
+     *
+     * @param broker  当前投递对应的消息代理
+     * @param outcome 本次投递或消费的结果标签
+     * @return OpenTelemetry 消息投递属性
+     */
     private static Attributes attributes(String broker, String outcome) {
         return Attributes.of(
                 Ddd4jOtel.ATTR_MESSAGING_SYSTEM,
@@ -161,10 +215,25 @@ public final class MqDeliveryMetrics {
         );
     }
 
+    /**
+     * 保存投递计数器及创建它的 Meter，以便按 Meter 复用指标。
+     */
     private static final class CounterHandle {
+        /**
+         * 创建计数器时使用且应与缓存匹配的 Meter 实例。
+         */
         private final Meter meter;
+        /**
+         * 当前 Meter 注册的消息投递计数器。
+         */
         private final LongCounter counter;
 
+        /**
+         * 将计数器绑定到创建它的 Meter。
+         *
+         * @param meter   用于注册指标的 OpenTelemetry Meter
+         * @param counter 已注册的计数器
+         */
         CounterHandle(Meter meter, LongCounter counter) {
             this.meter = meter;
             this.counter = counter;

@@ -30,17 +30,29 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
+/**
+ * 验证 <code>BearerSubjectAuthenticator</code> 在<code>authenticate</code>等操作中的行为契约。
+ */
 @ExtendWith(MockitoExtension.class)
 class BearerSubjectAuthenticatorTest {
 
+    /**
+     * 用于隔离 <code>Subject</code> 调用并记录交互的测试替身。
+     */
     @Mock
     private Subject subject;
 
+    /**
+     * 测试结束后执行 <code>BaseContext.clear()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void tearDown() {
         BaseContext.clear();
     }
 
+    /**
+     * 验证<code>result</code> 与…为同一实例 <code>principal</code>。
+     */
     @Test
     void authenticateReturnsPrincipalOfVerifiedSubject() {
         AuthPrincipal principal = new AuthPrincipal().setUserId("user-1");
@@ -52,6 +64,9 @@ class BearerSubjectAuthenticatorTest {
         assertSame(principal, result);
     }
 
+    /**
+     * 验证被测调用 抛出 <code>WebStatusException.class</code>。
+     */
     @Test
     void authenticateRejectsInvalidToken() {
         BaseContext.inject(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, provider(subject));
@@ -60,12 +75,21 @@ class BearerSubjectAuthenticatorTest {
                 () -> new BearerSubjectAuthenticator().authenticate("Bearer invalid"));
     }
 
+    /**
+     * 验证被测调用 抛出 <code>WebStatusException.class</code>。
+     */
     @Test
     void authenticateRejectsMissingProvider() {
         assertThrows(WebStatusException.class,
                 () -> new BearerSubjectAuthenticator().authenticate("Bearer valid-token"));
     }
 
+    /**
+     * 创建 <code>new SubjectProvider</code> 供当前测试路径调用。
+     *
+     * @param subject 用于隔离 <code>Subject</code> 调用并记录交互的测试替身
+     * @return 当前测试使用的结果，取自 <code>new SubjectProvider(){ &#64;Override public Subject getSubject() { return subject; } }</code>
+     */
     private SubjectProvider provider(Subject subject) {
         return new SubjectProvider() {
             @Override

@@ -47,16 +47,35 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @RequiredArgsConstructor
 public class MQListenerBeanPostProcessor implements BeanPostProcessor, Ordered, EnvironmentAware {
 
+    /**
+     * 交给消息客户端订阅和调用的监听器集合。
+     */
     private final List<MQListener> listeners = new CopyOnWriteArrayList<>();
+    /**
+     * 当前消息代理客户端使用的连接和订阅配置。
+     */
     private final MQProperties properties;
 
+    /**
+     * 从 Spring 环境确定的默认消费者组前缀。
+     */
     private String defaultGroupPrefix = "application";
 
+    /**
+     * 从 Spring 配置环境提取默认消费者组名称配置。
+     *
+     * @param environment Spring 容器提供的配置环境
+     */
     @Override
     public void setEnvironment(Environment environment) {
         this.defaultGroupPrefix = environment.getProperty("spring.application.name", "application");
     }
 
+    /**
+     * 声明消息监听器 Bean 后处理器的执行优先级。
+     *
+     * @return Spring 最低优先级
+     */
     @Override
     public int getOrder() {
         return Ordered.LOWEST_PRECEDENCE;
@@ -64,6 +83,11 @@ public class MQListenerBeanPostProcessor implements BeanPostProcessor, Ordered, 
 
     /**
      * Bean 初始化完成后扫描 {@link MQEventListener} 方法。
+     *
+     * @param bean     Spring 初始化后的 Bean 实例
+     * @param beanName Bean 在容器中的名称
+     * @return 交还给 Spring 的原 Bean 实例
+     * @throws BeansException 处理已初始化的监听 Bean 失败
      */
     @Override
     public Object postProcessAfterInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
@@ -94,6 +118,9 @@ public class MQListenerBeanPostProcessor implements BeanPostProcessor, Ordered, 
 
     /**
      * 过滤 Spring 基础设施类，避免误扫描。
+     *
+     * @param clazz 待检查的类
+     * @return 基础设施类需要跳过监听器扫描时返回 true
      */
     private boolean isInfrastructureClass(Class<?> clazz) {
         return clazz.getName().startsWith("org.springframework")
@@ -103,6 +130,12 @@ public class MQListenerBeanPostProcessor implements BeanPostProcessor, Ordered, 
 
     /**
      * 从注解与方法元数据构建监听器定义，补齐 group / namespace 默认值。
+     *
+     * @param bean       Spring 初始化后的 Bean 实例
+     * @param beanName   Bean 在容器中的名称
+     * @param method     监听注解标记的方法
+     * @param annotation 从消费方法读取的监听注解
+     * @return 根据方法和注解构造的消息监听器
      */
     private MQListener buildListener(Object bean, String beanName, Method method, MQEventListener annotation) {
         String group = StringUtils.hasText(annotation.group())

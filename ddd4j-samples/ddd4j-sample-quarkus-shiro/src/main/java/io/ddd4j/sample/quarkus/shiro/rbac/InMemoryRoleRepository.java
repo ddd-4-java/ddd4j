@@ -29,6 +29,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @ApplicationScoped
 public class InMemoryRoleRepository {
 
+    /**
+     * 按业务标识保存当前仓储中的记录。
+     */
     private final ConcurrentHashMap<String, Role> store = new ConcurrentHashMap<>();
 
     /**

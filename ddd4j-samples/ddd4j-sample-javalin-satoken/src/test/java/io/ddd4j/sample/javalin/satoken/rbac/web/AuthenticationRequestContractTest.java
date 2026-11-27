@@ -6,8 +6,16 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+/**
+ * 验证 <code>AuthenticationRequestContract</code> 在 <code>loginRequestKeepsMutableBeanContract</code> 等场景中的行为。
+ */
 class AuthenticationRequestContractTest {
 
+    /**
+     * 验证<code>request.username()</code> 等于 <code>"alice"</code>，<code>request.password()</code> 等于 <code>"secret-123"</code>，<code>request.toString().contains("secret-123")</code>为假。
+     *
+     * @throws Exception 处理测试数据的序列化时失败
+     */
     @Test
     void loginRequestRetainsJsonFieldContract() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
@@ -21,6 +29,9 @@ class AuthenticationRequestContractTest {
         assertFalse(request.toString().contains("secret-123"));
     }
 
+    /**
+     * 验证<code>request.getUsername()</code> 等于 <code>"alice"</code>，<code>request.username()</code> 等于 <code>request.getUsername()</code>，<code>request.toString().contains("secret-123")</code>为假。
+     */
     @Test
     void loginRequestKeepsMutableBeanContractWithoutPrintingPassword() {
         AuthenticationController.LoginRequest request = new AuthenticationController.LoginRequest();
@@ -37,6 +48,9 @@ class AuthenticationRequestContractTest {
         assertFalse(request.toString().contains("secret-123"));
     }
 
+    /**
+     * 验证<code>kickout.userId()</code> 等于 <code>kickout.getUserId()</code>，<code>role.role()</code> 等于 <code>role.getRole()</code>，<code>permission.permission()</code> 等于 <code>permission.getPermission()</code>。
+     */
     @Test
     void authorizationChecksKeepMutableBeanAndValueContract() {
         AuthenticationController.KickoutRequest kickout = new AuthenticationController.KickoutRequest();

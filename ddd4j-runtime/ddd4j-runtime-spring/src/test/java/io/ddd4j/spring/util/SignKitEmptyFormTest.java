@@ -15,6 +15,11 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
  */
 class SignKitEmptyFormTest {
 
+    /**
+     * 在测试框架中执行 <code>SignKit.signOrigin()</code>、<code>empty.add()</code>，验证该场景。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void multiValueMapTreatsNullAsEmpty() throws Exception {
         MultiValueMap<String, String> empty = new LinkedMultiValueMap<>();
@@ -24,6 +29,11 @@ class SignKitEmptyFormTest {
         assertNotEquals(expected, SignKit.signOrigin("token", empty, "body", "salt"));
     }
 
+    /**
+     * 在测试框架中执行 <code>Collections.emptyMap()</code>、<code>SignKit.signOrigin()</code>、<code>Collections.singletonMap()</code>，验证该场景。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void arrayMapTreatsNullAsEmpty() throws Exception {
         Map<String, String[]> empty = Collections.emptyMap();

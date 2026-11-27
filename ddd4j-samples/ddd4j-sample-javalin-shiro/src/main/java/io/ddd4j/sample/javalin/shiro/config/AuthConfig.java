@@ -49,6 +49,9 @@ import java.util.Set;
 @Slf4j
 public final class AuthConfig {
 
+    /**
+     * 限制调用方直接创建 <code>AuthConfig</code> 实例。
+     */
     private AuthConfig() {
     }
 
@@ -109,8 +112,17 @@ public final class AuthConfig {
      */
     public static class RbacRealm extends AuthorizingRealm {
 
+        /**
+         * 读取和保存用户的仓储。
+         */
         private final InMemoryUserRepository userRepository;
+        /**
+         * 读取和保存角色的仓储。
+         */
         private final InMemoryRoleRepository roleRepository;
+        /**
+         * 执行基于角色的授权与分配操作的应用服务。
+         */
         private final RbacService rbacService;
 
         /**
@@ -130,6 +142,13 @@ public final class AuthConfig {
             setCredentialsMatcher(new SimpleCredentialsMatcher());
         }
 
+        /**
+         * 根据提交的凭据创建 Shiro 可校验的认证信息。
+         *
+         * @param token 由 Shiro 传入用于认证的原生登录令牌
+         * @return 与示例账号对应的认证信息
+         * @throws AuthenticationException 装配示例或处理当前 HTTP 请求失败
+         */
         @Override
         protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
             UsernamePasswordToken upt = (UsernamePasswordToken) token;
@@ -145,6 +164,12 @@ public final class AuthConfig {
             return new SimpleAuthenticationInfo(user, user.password().toCharArray(), getName());
         }
 
+        /**
+         * 查找当前主体对应的角色和权限并返回给 Shiro。
+         *
+         * @param principals 当前 Shiro 会话中已认证的身份信息
+         * @return 用于角色和权限检查的授权信息
+         */
         @Override
         protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
             Object primary = principals.getPrimaryPrincipal();

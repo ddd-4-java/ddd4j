@@ -25,6 +25,9 @@ import java.util.Optional;
  */
 public final class Ddd4jHelidonConfig {
 
+    /**
+     * Helidon 容器提供的配置查询入口。
+     */
     private final Config config;
 
     /**

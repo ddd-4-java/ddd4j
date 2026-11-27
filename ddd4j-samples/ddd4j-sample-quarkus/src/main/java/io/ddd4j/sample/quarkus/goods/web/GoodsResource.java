@@ -64,6 +64,9 @@ import java.util.Locale;
 @ApplicationScoped
 public class GoodsResource extends TenantAwareResource {
 
+    /**
+     * 处理商品创建、维护和查询操作的应用服务。
+     */
     private final GoodsApplicationService applicationService;
 
     /**
@@ -169,6 +172,12 @@ public class GoodsResource extends TenantAwareResource {
         return ok(GoodsResponse.from(applicationService.getByCode(code)));
     }
 
+    /**
+     * 把提供的查询状态转换为商品状态枚举，空白值不限制状态。
+     *
+     * @param status 商品状态条件文本
+     * @return 解析到的商品状态，没有值时为空
+     */
     private GoodsStatus parseStatus(String status) {
         if (StrKit.isBlank(status)) {
             throw new IllegalArgumentException("status must not be blank");

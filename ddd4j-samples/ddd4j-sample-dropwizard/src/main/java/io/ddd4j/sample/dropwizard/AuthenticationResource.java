@@ -18,17 +18,32 @@ import lombok.Data;
 @Path("/api/auth")
 @Produces(MediaType.APPLICATION_JSON)
 public final class AuthenticationResource {
+    /**
+     * 为指定用户签发商品交易示例的会话令牌。
+     *
+     * @param userId 登录用户标识
+     * @return 包含会话令牌的响应
+     */
     @POST
     @Path("/tokens/{userId}")
     public R<TokenResponse> issueToken(@PathParam("userId") String userId) {
         return R.ok(new TokenResponse(SubjectKit.getSubject().login(AuthRequest.of(userId))));
     }
 
+    /**
+     * 封装签发给示例客户端的会话令牌。
+     */
     @Data
     public static class TokenResponse {
 
+        /**
+         * Java 序列化版本标识。
+         */
         private static final long serialVersionUID = 0L;
 
+        /**
+         * 当前示例签发或返回客户端的会话令牌。
+         */
         private String token;
 
         /**

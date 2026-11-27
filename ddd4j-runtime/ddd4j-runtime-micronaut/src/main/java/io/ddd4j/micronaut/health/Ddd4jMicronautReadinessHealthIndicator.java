@@ -34,6 +34,9 @@ import java.util.Objects;
 @Requires(beans = RuntimeReadinessRegistry.class)
 public class Ddd4jMicronautReadinessHealthIndicator implements HealthIndicator {
 
+    /**
+     * 汇总当前组件就绪状态的注册表。
+     */
     private final RuntimeReadinessRegistry readinessRegistry;
 
     /**
@@ -46,6 +49,11 @@ public class Ddd4jMicronautReadinessHealthIndicator implements HealthIndicator {
                 "readinessRegistry must not be null");
     }
 
+    /**
+     * 计算应用就绪状态并通过 Micronaut 指标入口发布。
+     *
+     * @return 发出当前运行时健康状态的响应式结果
+     */
     @Override
     public Publisher<HealthResult> getResult() {
         ReadinessReport report = readinessRegistry.readiness();

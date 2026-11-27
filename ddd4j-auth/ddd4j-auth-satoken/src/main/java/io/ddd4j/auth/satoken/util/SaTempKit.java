@@ -31,6 +31,9 @@ import java.util.Objects;
  */
 public class SaTempKit {
 
+    /**
+     * 限制调用方直接创建 <code>SaTempKit</code> 实例。
+     */
     private SaTempKit() {
     }
 

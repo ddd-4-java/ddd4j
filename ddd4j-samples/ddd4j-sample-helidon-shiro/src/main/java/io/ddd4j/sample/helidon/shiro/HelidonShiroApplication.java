@@ -17,12 +17,23 @@ import java.util.Set;
  */
 @ApplicationPath("/")
 public class HelidonShiroApplication extends Application {
+    /**
+     * 当前 HTTP 示例使用的共用商品交易入口。
+     */
     private final CatalogTradeResource catalog;
 
+    /**
+     * 从运行配置装配商品交易资源和 Shiro 演示。
+     */
     public HelidonShiroApplication() {
         this(CatalogRuntime.start());
     }
 
+    /**
+     * 保存当前 JAX-RS 示例需注册的商品交易资源。
+     *
+     * @param endpoints 已装配的共用商品交易 HTTP 操作
+     */
     HelidonShiroApplication(CatalogEndpoints endpoints) {
         this.catalog = new CatalogTradeResource(endpoints);
     }
@@ -43,11 +54,21 @@ public class HelidonShiroApplication extends Application {
         Runtime.getRuntime().addShutdownHook(new Thread(server::stop));
     }
 
+    /**
+     * 暴露当前应用已装配好的商品交易资源实例。
+     *
+     * @return 当前应用传入 JAX-RS 的单例资源
+     */
     @Override
     public Set<Object> getSingletons() {
         return Set.of(catalog);
     }
 
+    /**
+     * 声明由 JAX-RS 框架创建的资源、过滤器或异常映射器。
+     *
+     * @return 当前应用的 JAX-RS 组件类型
+     */
     @Override
     public Set<Class<?>> getClasses() {
         return Set.of(AuthenticationResource.class, NativeAuthFilter.class,

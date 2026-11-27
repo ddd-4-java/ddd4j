@@ -22,12 +22,32 @@ import java.util.Objects;
 @ApplicationScoped
 public class SaTokenRuntimeConfig {
 
+    /**
+     * 装配示例之前存在的原生权限接口。
+     */
     private StpInterface previousPermissions;
+    /**
+     * 由当前示例登记的权限接口实现。
+     */
     private StpInterface ownedPermissions;
+    /**
+     * 组件装配前保存的配置，供退出时恢复。
+     */
     private SaTokenConfig previousConfig;
+    /**
+     * 由当前示例安装并在退出时恢复的 Sa-Token 配置。
+     */
     private SaTokenConfig ownedConfig;
+    /**
+     * 由当前示例登记并关闭的会话数据访问组件。
+     */
     private SaTokenDao ownedDao;
 
+    /**
+     * 依次执行原生配置恢复操作，并保留最初的恢复异常。
+     *
+     * @param restorations 要依次执行的认证组件恢复动作
+     */
     private static void restoreComponents(Runnable... restorations) {
         Throwable failure = null;
         for (Runnable restoration : restorations) {
@@ -50,16 +70,31 @@ public class SaTokenRuntimeConfig {
     }
 
     // 1.45.0 的公开 getter 会初始化组件，按原值保存或比较可空槽位。
+    /**
+     * 读取已安装的原生权限组件，保留尚未安装的状态。
+     *
+     * @return 当前 Sa-Token 权限组件
+     */
     private static StpInterface currentPermissions() {
         return (StpInterface) ReflectUtil.getStaticFieldValue(Objects.requireNonNull(
                 ReflectUtil.getField(SaManager.class, "stpInterface")));
     }
 
+    /**
+     * 读取已安装的原生会话存储，避免为查询创建默认存储。
+     *
+     * @return 当前 Sa-Token 会话存储
+     */
     private static SaTokenDao currentDao() {
         return (SaTokenDao) ReflectUtil.getStaticFieldValue(Objects.requireNonNull(
                 ReflectUtil.getField(SaManager.class, "saTokenDao")));
     }
 
+    /**
+     * 在 Quarkus 启动期间安装示例的 Sa-Token 组件。
+     *
+     * @param event 启动、停止或请求处理期间的框架事件
+     */
     void start(@Observes @Priority(1) StartupEvent event) {
         previousPermissions = currentPermissions();
         previousConfig = SaManager.config;
@@ -85,10 +120,18 @@ public class SaTokenRuntimeConfig {
         }
     }
 
+    /**
+     * 在 Quarkus 应用关闭时恢复启动之前的原生组件。
+     *
+     * @param event 启动、停止或请求处理期间的框架事件
+     */
     void stop(@Observes ShutdownEvent event) {
         destroy();
     }
 
+    /**
+     * 撤销示例持有的 Sa-Token 组件注册并恢复原状态。
+     */
     @PreDestroy
     void destroy() {
         StpInterface permissions = ownedPermissions;

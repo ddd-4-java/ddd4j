@@ -33,6 +33,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class SenderTest {
 
+    /**
+     * 验证<code>json</code>非空，<code>json2</code> 等于 <code>Sender.renderMessage(m)</code>。
+     */
     @Test
     void sendMarkdownTitleAndTextShouldProduceValidJson() {
         AtomicReference<String> captured = new AtomicReference<>();
@@ -54,6 +57,9 @@ class SenderTest {
         assertThat(json2).isEqualTo(Sender.renderMessage(m));
     }
 
+    /**
+     * 在测试框架中执行 <code>mobiles.add()</code>、<code>sender.sendMarkdown()</code>、<code>captured.get()</code>，验证该场景。
+     */
     @Test
     void sendMarkdownWithAtMobilesShouldHonorList() {
         AtomicReference<String> captured = new AtomicReference<>();
@@ -72,6 +78,9 @@ class SenderTest {
                 .contains("\"text\":\"重要通知\"");
     }
 
+    /**
+     * 验证<code>json</code> 包含 <code>"\"at\":"</code>。
+     */
     @Test
     void sendMarkdownWithEmptyAtMobilesShouldEmptiedAtField() {
         AtomicReference<String> captured = new AtomicReference<>();
@@ -86,6 +95,9 @@ class SenderTest {
                 .doesNotContain("\"atMobiles\"");
     }
 
+    /**
+     * 验证<code>json</code> 以…开头 <code>"{"</code>。
+     */
     @Test
     void renderMessageShouldBeJsonString() {
         Message m = Message.markdown("title", "body", null);

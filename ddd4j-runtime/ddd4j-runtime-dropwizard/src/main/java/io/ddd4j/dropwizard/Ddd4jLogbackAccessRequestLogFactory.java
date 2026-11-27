@@ -48,6 +48,12 @@ public final class Ddd4jLogbackAccessRequestLogFactory extends LogbackAccessRequ
         }
     }
 
+    /**
+     * 创建当前 Dropwizard 应用使用的 HTTP 访问日志。
+     *
+     * @param name 当前组件、指标、任务或 Bean 使用的名称
+     * @return 可为框架记录访问事件的请求日志
+     */
     @Override
     public RequestLog build(String name) {
         Logger logger = (Logger) LoggerFactory.getLogger("http.request");

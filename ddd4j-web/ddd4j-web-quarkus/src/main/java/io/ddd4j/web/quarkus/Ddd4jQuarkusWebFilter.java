@@ -39,15 +39,39 @@ import java.util.*;
  */
 public class Ddd4jQuarkusWebFilter {
 
+    /**
+     * 请求属性中保存会话或认证上下文的键。
+     */
     static final String SESSION_PROPERTY = Ddd4jQuarkusWebFilter.class.getName() + ".session";
+    /**
+     * 请求属性中保存 DDD4J 上下文作用域的键。
+     */
     static final String CONTEXT_PROPERTY = Ddd4jQuarkusWebFilter.class.getName() + ".context";
+    /**
+     * 请求属性中保存 OpenTelemetry 跟踪 Span 的键。
+     */
     static final String OTEL_SPAN_PROPERTY = Ddd4jQuarkusWebFilter.class.getName() + ".otelSpan";
+    /**
+     * 请求属性中保存 OpenTelemetry 上下文作用域的键。
+     */
     static final String OTEL_SCOPE_PROPERTY = Ddd4jQuarkusWebFilter.class.getName() + ".otelScope";
 
+    /**
+     * 根据框架请求元数据装配共用 Web 请求上下文。
+     */
     private final WebRequestContextFactory contextFactory;
+    /**
+     * 开启和关闭当前 Web 请求上下文的组件。
+     */
     private final WebRequestLifecycle requestLifecycle;
+    /**
+     * 在请求处理阶段获取及释放幂等保护的组件。
+     */
     private final WebIdempotencyLifecycle idempotencyLifecycle;
 
+    /**
+     * 当前 Vert.x 或 Quarkus HTTP 路由上下文。
+     */
     @Inject
     RoutingContext routingContext;
 
@@ -75,6 +99,13 @@ public class Ddd4jQuarkusWebFilter {
                 config.getIdempotencyTtl()) : null;
     }
 
+    /**
+     * 用给定值初始化 <code>Ddd4jQuarkusWebFilter</code> 实例。
+     *
+     * @param contextFactory       <code>contextFactory</code> 字段
+     * @param requestLifecycle     开启和关闭当前 Web 请求上下文的组件
+     * @param idempotencyLifecycle 在请求处理阶段获取及释放幂等保护的组件
+     */
     Ddd4jQuarkusWebFilter(WebRequestContextFactory contextFactory,
                           WebRequestLifecycle requestLifecycle,
                           WebIdempotencyLifecycle idempotencyLifecycle) {
@@ -83,6 +114,11 @@ public class Ddd4jQuarkusWebFilter {
         this.idempotencyLifecycle = idempotencyLifecycle;
     }
 
+    /**
+     * 尝试关闭请求作用域，清理故障不打断响应处理。
+     *
+     * @param scope 需要在当前请求结束后关闭的作用域
+     */
     private static void closeScope(Object scope) {
         if (scope instanceof AutoCloseable) {
             try {
@@ -92,6 +128,12 @@ public class Ddd4jQuarkusWebFilter {
         }
     }
 
+    /**
+     * 收集 HTTP 请求中可用的头名称及其值。
+     *
+     * @param request 当前框架 HTTP 请求或交换上下文
+     * @return 供请求上下文读取的请求头映射
+     */
     private static Map<String, String> extractRequestHeaders(ContainerRequestContext request) {
         Map<String, String> headers = new HashMap<>();
         for (Map.Entry<String, List<String>> entry : request.getHeaders().entrySet()) {
@@ -181,6 +223,12 @@ public class Ddd4jQuarkusWebFilter {
         }
     }
 
+    /**
+     * 从框架请求提取租户、跟踪标识、认证和路由信息，组装共用上下文。
+     *
+     * @param request 当前框架 HTTP 请求
+     * @return 供上下文和认证处理链使用的请求上下文
+     */
     private WebRequestContext createContext(ContainerRequestContext request) {
         return contextFactory.create(new WebRequestData(
                 request.getHeaderString(WebHeaders.REQUEST_ID),
@@ -195,6 +243,11 @@ public class Ddd4jQuarkusWebFilter {
                 request.getUriInfo().getRequestUri().getPath()));
     }
 
+    /**
+     * 从底层 HTTP 连接读取对端地址，未取得连接信息时返回空。
+     *
+     * @return 框架报告的对端地址
+     */
     private String remoteAddress() {
         if (Objects.isNull(routingContext)) {
             return null;

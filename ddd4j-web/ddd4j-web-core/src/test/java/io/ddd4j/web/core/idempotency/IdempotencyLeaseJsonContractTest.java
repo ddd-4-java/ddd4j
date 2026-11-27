@@ -21,8 +21,14 @@ import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * 通过 <code>Duration.ofSeconds()</code>、<code>JsonKit.toJson()</code>、<code>json.contains()</code> 验证 <code>IdempotencyLeaseJsonContract</code> 的运行行为。
+ */
 class IdempotencyLeaseJsonContractTest {
 
+    /**
+     * 验证<code>restored</code>非空，<code>restored</code> 等于 <code>original</code>，<code>restored.ttl()</code> 等于 <code>Duration.ofSeconds(30)</code>。
+     */
     @Test
     void ownerTokenAndTtlSurviveJsonRoundTrip() {
         IdempotencyLease original = new IdempotencyLease("request-1", "owner-1", Duration.ofSeconds(30));

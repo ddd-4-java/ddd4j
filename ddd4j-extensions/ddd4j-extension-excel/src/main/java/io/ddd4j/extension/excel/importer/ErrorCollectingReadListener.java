@@ -51,9 +51,15 @@ import java.util.function.Consumer;
  */
 public class ErrorCollectingReadListener<T> extends AnalysisEventListener<T> {
 
+    /**
+     * 已成功解析并通过行校验的数据。
+     */
     @Getter
     private final List<T> successData = new ArrayList<>();
 
+    /**
+     * 导入时发生的逐行读取或校验错误。
+     */
     @Getter
     private final List<ImportError> errors = new ArrayList<>();
 
@@ -78,6 +84,12 @@ public class ErrorCollectingReadListener<T> extends AnalysisEventListener<T> {
         this.rowValidator = rowValidator;
     }
 
+    /**
+     * 校验当前行，把数据或校验错误保存到对应的导入结果列表。
+     *
+     * @param data    当前解析的行
+     * @param context 提供工作表及行号的读取上下文
+     */
     @Override
     public void invoke(T data, AnalysisContext context) {
         if (Objects.nonNull(rowValidator)) {
@@ -91,11 +103,22 @@ public class ErrorCollectingReadListener<T> extends AnalysisEventListener<T> {
         successData.add(data);
     }
 
+    /**
+     * 完成读取，已收集的数据和错误可通过结果方法获取。
+     *
+     * @param context 提供工作表及行号的读取上下文
+     */
     @Override
     public void doAfterAllAnalysed(AnalysisContext context) {
         // 无需后续动作；调用方通过 toResult() 取数
     }
 
+    /**
+     * 按当前行号收集转换异常，保留其他行的读取机会。
+     *
+     * @param exception 当前单元格或整行的转换异常
+     * @param context   提供工作表及行号的读取上下文
+     */
     @Override
     public void onException(Exception exception, AnalysisContext context) {
         // 关键：不抛出，转为 ImportError 收集

@@ -38,6 +38,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class DefaultQueryBus implements QueryBus {
 
+    /**
+     * 按查询运行时类型索引的处理器。
+     */
     private final Map<Class<?>, QueryHandler<?, ?>> handlers = new ConcurrentHashMap<>();
 
     /**
@@ -50,6 +53,15 @@ public class DefaultQueryBus implements QueryBus {
         Objects.requireNonNull(queryHandlers, "queryHandlers must not be null").forEach(this::register);
     }
 
+    /**
+     * 将给定查询交给查询总线处理。
+     *
+     * <p>此实现调用 <code>handlers.get(actual.getClass())</code>。</p>
+     *
+     * @param <R>   此操作处理的值或结果的 Java 类型
+     * @param query 交给查询处理器或仓储的查询条件
+     * @return 实际返回<code>(R)handler.handle(actual)</code>
+     */
     @Override
     public <R> R ask(Object query) {
         Object actual = Objects.requireNonNull(query, "query must not be null");
@@ -60,6 +72,11 @@ public class DefaultQueryBus implements QueryBus {
         return (R) handler.handle(actual);
     }
 
+    /**
+     * 根据声明的查询类型注册处理器，重复类型会在装配时失败。
+     *
+     * @param handler 待绑定的查询处理器
+     */
     private void register(QueryHandler<?, ?> handler) {
         QueryHandler<?, ?> actual = Objects.requireNonNull(handler, "handler must not be null");
         Object previous = handlers.putIfAbsent(actual.queryType(), actual);

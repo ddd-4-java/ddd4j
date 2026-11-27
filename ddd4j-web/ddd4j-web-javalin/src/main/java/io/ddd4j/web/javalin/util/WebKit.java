@@ -24,12 +24,18 @@ import java.util.Objects;
  */
 public final class WebKit {
 
+    /**
+     * 读取客户端地址时考虑的转发请求头候选。
+     */
     private static final String[] IP_HEADER_CANDIDATES = {
             "X-Forwarded-For", "Proxy-Client-IP", "WL-Proxy-Client-IP", "HTTP_X_FORWARDED_FOR",
             "HTTP_X_FORWARDED", "HTTP_X_CLUSTER_CLIENT_IP", "HTTP_CLIENT_IP", "HTTP_FORWARDED_FOR",
             "HTTP_FORWARDED", "HTTP_VIA", "REMOTE_ADDR"
     };
 
+    /**
+     * 限制调用方直接创建 <code>WebKit</code> 实例。
+     */
     private WebKit() {
     }
 

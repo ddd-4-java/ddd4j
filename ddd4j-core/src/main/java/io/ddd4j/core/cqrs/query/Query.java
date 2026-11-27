@@ -1193,10 +1193,30 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
 
     // ========================= 内部方法 =========================
 
+    /**
+     * 在条件开启且操作数符合运算符要求时写入筛选条件。
+     *
+     * @param <Q>       当前查询的返回类型
+     * @param condition 是否追加筛选条件
+     * @param column    要筛选的属性引用或领域访问器
+     * @param operator  条件运算符
+     * @param value     用于比较的筛选值
+     * @return 支持链式调用的当前查询
+     */
     private <Q extends Query<M>> Q addCondition(boolean condition, SFunction<M, ?> column, String operator, Object value) {
         return addCondition(condition, PropertyRef.domain(column), operator, value);
     }
 
+    /**
+     * 在条件开启且操作数符合运算符要求时写入筛选条件。
+     *
+     * @param <Q>         当前查询的返回类型
+     * @param condition   是否追加筛选条件
+     * @param propertyRef 要筛选的属性引用或领域访问器
+     * @param operator    条件运算符
+     * @param value       用于比较的筛选值
+     * @return 支持链式调用的当前查询
+     */
     <Q extends Query<M>> Q addCondition(boolean condition, PropertyRef propertyRef, String operator, Object value) {
         boolean valueOptional = Objects.equals("IS_NULL", operator) || Objects.equals("IS_NOT_NULL", operator);
         if (condition && (Objects.nonNull(value) || valueOptional)) {
@@ -1208,6 +1228,12 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
         return (Q) this;
     }
 
+    /**
+     * 追加一项按指定属性排序的配置。
+     *
+     * @param property  排序使用的属性引用
+     * @param direction 升序或降序的排序方向
+     */
     void addOrderBy(PropertyRef property, String direction) {
         if (Objects.isNull(this.orderByConditions)) {
             this.orderByConditions = new ArrayList<>();
@@ -1215,6 +1241,13 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
         this.orderByConditions.add(new LambdaCondition(property, direction, null));
     }
 
+    /**
+     * 追加用于更新持久化数据的赋值操作。
+     *
+     * @param property 要更新的属性
+     * @param operator 赋值操作符
+     * @param value    待写入的值
+     */
     private void addSetOperation(PropertyRef property, String operator, Object value) {
         if (Objects.isNull(this.setOperations)) {
             this.setOperations = new ArrayList<>();

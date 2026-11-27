@@ -15,8 +15,16 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * 通过 <code>AuthcExtensionPoint.class.getMethod()</code>、<code>AuthcExtensionPointAdapter.class.getMethod()</code>、<code>ParamSignatureExtensionPoint.class.getMethod()</code> 验证 <code>Pf4jServletContract</code> 的运行行为。
+ */
 class Pf4jServletContractTest {
 
+    /**
+     * 验证<code>AuthcExtensionPoint.class .getMethod("getToken", HttpServletRequest.class, Map.class).getReturnType()</code> 等于 <code>String.class</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void pluginExtensionPointsUseThisLinesServletApi() throws Exception {
         assertEquals(String.class, AuthcExtensionPoint.class

@@ -30,6 +30,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @UtilityClass
 public class SM3Kit {
 
+    /**
+     * 按盐值查找和复用 SM3 摘要对象。
+     */
     private final Map<String, SM3> sm3Map = new ConcurrentHashMap<>();
 
     /**

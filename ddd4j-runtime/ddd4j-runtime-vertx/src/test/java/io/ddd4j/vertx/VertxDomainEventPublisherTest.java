@@ -24,8 +24,16 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * 验证 <code>VertxDomainEventPublisher</code> 在<code>shouldPublishLocalEvent</code>等操作中的行为契约。
+ */
 class VertxDomainEventPublisherTest {
 
+    /**
+     * 验证<code>received.await(5, TimeUnit.SECONDS)</code>为真，<code>body.get()</code> 指向同一实例 <code>event</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void shouldPublishLocalEventWithoutRequiringWireCodec() throws Exception {
         Vertx vertx = Vertx.vertx();
@@ -47,13 +55,29 @@ class VertxDomainEventPublisherTest {
         }
     }
 
+    /**
+     * 将 <code>name</code> 等状态一起传入当前测试，供调用或结果断言使用。
+     */
     private static final class LocalEvent {
+        /**
+         * 当前测试模型用于展示和断言的名称。
+         */
         private final String name;
 
+        /**
+         * 设置 <code>name</code>，用于构造 <code>LocalEvent</code> 测试实例。
+         *
+         * @param name 当前测试指定的对象或属性名称
+         */
         LocalEvent(String name) {
             this.name = name;
         }
 
+        /**
+         * 读取<code>name</code> 字段。
+         *
+         * @return <code>name</code> 字段
+         */
         String name() {
             return name;
         }

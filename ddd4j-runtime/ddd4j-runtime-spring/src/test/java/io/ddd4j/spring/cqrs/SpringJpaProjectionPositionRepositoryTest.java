@@ -21,12 +21,21 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+/**
+ * 验证 <code>SpringJpaProjectionPositionRepository</code> 在<code>findAll</code>等操作中的行为契约。
+ */
 @ExtendWith(MockitoExtension.class)
 class SpringJpaProjectionPositionRepositoryTest {
 
+    /**
+     * 用于隔离 <code>JpaRepository&lt;SpringJpaProjectionPosition, String&gt;</code> 调用并记录交互的测试替身。
+     */
     @Mock
     private JpaRepository<SpringJpaProjectionPosition, String> jpaRepository;
 
+    /**
+     * 验证<code>positions.add(positions.get(0))</code> 抛出 <code>UnsupportedOperationException.class</code>。
+     */
     @Test
     void findAllReturnsImmutablePositionListInRepositoryOrder() {
         when(jpaRepository.findAll()).thenReturn(Arrays.asList(
@@ -42,6 +51,9 @@ class SpringJpaProjectionPositionRepositoryTest {
                 .isInstanceOf(UnsupportedOperationException.class);
     }
 
+    /**
+     * 验证<code>saved.getValue().getStreamId()</code> 等于 <code>"orders"</code>，<code>saved.getValue().getNextEventNumber()</code>为零。
+     */
     @Test
     void resetExistingPositionMustPersistZero() {
         when(jpaRepository.findById("orders"))
@@ -56,6 +68,9 @@ class SpringJpaProjectionPositionRepositoryTest {
         assertThat(saved.getValue().getNextEventNumber()).isZero();
     }
 
+    /**
+     * 验证<code>saved.getValue().getStreamId()</code> 等于 <code>"missing"</code>，<code>saved.getValue().getNextEventNumber()</code>为零。
+     */
     @Test
     void resetMissingPositionMustCreateZero() {
         when(jpaRepository.findById("missing")).thenReturn(Optional.empty());

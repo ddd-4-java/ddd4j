@@ -93,6 +93,11 @@ public final class CacheConfig {
      */
     private final transient Consumer<String> removalListener;
 
+    /**
+     * 用给定值初始化 <code>CacheConfig</code> 实例。
+     *
+     * @param builder 移除监听器（键级回调）
+     */
     private CacheConfig(Builder builder) {
         this.name = builder.name;
         this.maximumSize = builder.maximumSize;
@@ -235,16 +240,49 @@ public final class CacheConfig {
      */
     public static final class Builder {
 
+        /**
+         * 构建后用于注册缓存的名称。
+         */
         private final String name;
+        /**
+         * 缓存允许保留的最大条目数。
+         */
         private long maximumSize = DEFAULT_MAXIMUM_SIZE;
+        /**
+         * 自最后一次写入起的过期秒数。
+         */
         private long expireAfterWriteSeconds = 0L;
+        /**
+         * 自最后一次访问起的过期秒数。
+         */
         private long expireAfterAccessSeconds = 0L;
+        /**
+         * 自写入起允许自动刷新缓存值的秒数。
+         */
         private long refreshAfterWriteSeconds = 0L;
+        /**
+         * 缓存构建后预留的初始条目容量。
+         */
         private int initialCapacity = 0;
+        /**
+         * 是否启用命中、加载等缓存统计。
+         */
         private boolean recordStats = false;
+        /**
+         * 由缓存管理器选择的缓存实现类型。
+         */
         private CacheType cacheType = CacheType.LOCAL;
+        /**
+         * 多级缓存的本地层允许保留的最大条目数。
+         */
         private int localLimit = 100;
+        /**
+         * 是否将远端更新同步到本地缓存。
+         */
         private boolean syncLocal = false;
+        /**
+         * 条目从缓存中移除后接收通知的监听器。
+         */
         private Consumer<String> removalListener = null;
 
         /**

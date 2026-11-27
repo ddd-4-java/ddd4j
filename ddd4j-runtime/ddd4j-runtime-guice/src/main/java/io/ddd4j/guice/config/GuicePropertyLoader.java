@@ -62,6 +62,9 @@ public class GuicePropertyLoader extends AbstractModule {
         this.configFiles = configFiles;
     }
 
+    /**
+     * 为 Guice 应用加载并绑定配置属性。
+     */
     @Override
     protected void configure() {
         Properties merged = new Properties();
@@ -78,6 +81,12 @@ public class GuicePropertyLoader extends AbstractModule {
         }
     }
 
+    /**
+     * 从配置资源加载待注入的属性。
+     *
+     * @param resourcePath 要加载的类路径属性文件
+     * @return 资源中的配置属性
+     */
     private Properties loadProperties(String resourcePath) {
         try (InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath)) {
             if (Objects.isNull(is)) {

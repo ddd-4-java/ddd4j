@@ -38,17 +38,32 @@ import java.util.*;
 @ApplicationScoped
 public class RbacService {
 
+    /**
+     * 读取和保存用户的仓储。
+     */
     @Inject
     InMemoryUserRepository userRepository;
 
+    /**
+     * 读取和保存角色的仓储。
+     */
     @Inject
     InMemoryRoleRepository roleRepository;
 
+    /**
+     * 查询和维护权限定义的仓储。
+     */
     @Inject
     InMemoryPermissionRepository permissionRepository;
 
     // ============ 认证 ============
 
+    /**
+     * 用诊断原因构造当前示例的访问拒绝结果。
+     *
+     * @param reason 用于响应拒绝原因的说明
+     * @return 拒绝当前请求时返回的业务或 HTTP 错误
+     */
     private static WebApplicationException forbidden(String reason) {
         return new WebApplicationException(Response.status(Response.Status.FORBIDDEN)
                 .entity(R.of(403, reason)).build());
@@ -405,6 +420,12 @@ public class RbacService {
         return permissionRepository.deleteByCode(code);
     }
 
+    /**
+     * 根据角色编码查找角色并构造认证主体所需的角色信息。
+     *
+     * @param roleCodes 当前账号拥有的角色编码集合
+     * @return 用于权限计算的角色信息列表
+     */
     private List<AuthPrincipal.RolePair> buildRolePairs(Set<String> roleCodes) {
         if (CollKit.isEmpty(roleCodes)) {
             return Collections.emptyList();
@@ -423,6 +444,12 @@ public class RbacService {
 
     // ============ Shiro 鉴权封装（手工调用，等价于 Sa-Token 注解） ============
 
+    /**
+     * 查找已有角色并合并角色关联的权限编码。
+     *
+     * @param roleCodes 当前账号拥有的角色编码集合
+     * @return 去重后的权限编码集合
+     */
     private Set<String> aggregatePermissions(Set<String> roleCodes) {
         if (CollKit.isEmpty(roleCodes)) {
             return Collections.emptySet();

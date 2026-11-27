@@ -49,12 +49,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Testcontainers(disabledWithoutDocker = true)
 class KafkaMQClientRoundTripTest {
 
+    /**
+     * 为当前集成测试提供独立 Kafka 服务的容器。
+     */
     @Container
     private static final KafkaContainer KAFKA = new KafkaContainer(
             DockerImageName.parse("apache/kafka:3.9.1"))
             .withTmpFs(Map.of("/tmp/kafka-logs", "rw,size=512m,uid=1000,gid=1000",
                     "/opt/kafka/logs", "rw,size=128m,uid=1000,gid=1000"));
 
+    /**
+     * 生产/消费往返：事件经 Kafka broker 送达监听器且负载完整。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     @DisplayName("生产/消费往返：事件经 Kafka broker 送达监听器且负载完整")
     void produceConsumeRoundTrip() throws Exception {
@@ -121,7 +129,13 @@ class KafkaMQClientRoundTripTest {
      * 测试事件：订单已支付（Jackson 需要无参构造 + 公共字段/访问器）。
      */
     public static class OrderPaidEvent extends MQEvent {
+        /**
+         * 订单标识。
+         */
         public String orderId;
+        /**
+         * 测试交易使用的数量或金额。
+         */
         public Long amount;
     }
 
@@ -129,9 +143,20 @@ class KafkaMQClientRoundTripTest {
      * 监听 Bean：@MQEventListener 注解驱动，收到事件后放行 latch。
      */
     public static class OrderListenerBean {
+        /**
+         * 协调测试线程在指定执行阶段等待或继续的门闩。
+         */
         final CountDownLatch latch = new CountDownLatch(1);
+        /**
+         * 当前测试接收的数据，供断言核对投递内容或次数。
+         */
         final AtomicReference<OrderPaidEvent> received = new AtomicReference<>();
 
+        /**
+         * 调用 <code>received.set()</code>、<code>latch.countDown()</code> 执行当前夹具操作。
+         *
+         * @param event 交给被测入口处理的测试领域事件
+         */
         @MQEventListener(topic = "ORDER", tags = "paid")
         public void onPaid(OrderPaidEvent event) {
             received.set(event);

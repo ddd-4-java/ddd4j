@@ -7,8 +7,14 @@ import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * 验证 <code>UpdateGoodsRequest</code> 在<code>supportsBeanAndComponentAccessors</code>等操作中的行为契约。
+ */
 class UpdateGoodsRequestContractTest {
 
+    /**
+     * 验证<code>Modifier.isFinal(UpdateGoodsRequest.class.getModifiers())</code>为假，<code>request.name()</code> 等于 <code>"Coffee"</code>，<code>request.toString()</code> 等于 <code>"UpdateGoodsRequest[name=Coffee, price=12.50]"</code>。
+     */
     @Test
     void supportsBeanAndComponentAccessorsWithStableValueBehavior() {
         assertFalse(Modifier.isFinal(UpdateGoodsRequest.class.getModifiers()));
@@ -31,6 +37,9 @@ class UpdateGoodsRequestContractTest {
         assertEquals("UpdateGoodsRequest[name=Coffee, price=12.50]", request.toString());
     }
 
+    /**
+     * 验证<code>changed</code> 不等于 <code>base</code>，<code>base</code> 不等于 <code>changed</code>，<code>changed.hashCode()</code> 不等于 <code>base.hashCode()</code>。
+     */
     @Test
     void usesOverriddenBeanAccessorForValueComparison() {
         UpdateGoodsRequest base = new UpdateGoodsRequest("Coffee", new BigDecimal("12.50"));

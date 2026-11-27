@@ -28,6 +28,9 @@ import java.io.Serial;
  */
 public class AuthorizationException extends BizRuntimeException {
 
+    /**
+     * Java 序列化版本标识。
+     */
     @Serial
     private static final long serialVersionUID = 1L;
 

@@ -49,6 +49,9 @@ import java.util.function.Function;
  */
 public final class EntityIdRegistry {
 
+    /**
+     * 从文本恢复指定实体标识类型的工厂映射。
+     */
     private static final Map<String, Function<String, EntityId>> FACTORIES = new ConcurrentHashMap<>();
 
     /**
@@ -61,6 +64,9 @@ public final class EntityIdRegistry {
         FACTORIES.put(STRING_ENTITY_TYPE, StringEntityId::new);
     }
 
+    /**
+     * 限制调用方直接创建 <code>EntityIdRegistry</code> 实例。
+     */
     private EntityIdRegistry() {
     }
 

@@ -28,6 +28,9 @@ import static org.mockito.Mockito.when;
  */
 class JpaEncryptFieldListenerContractTest {
 
+    /**
+     * 验证<code>entity.secret</code> 等于 <code>"cipher"</code>，<code>entity.plain</code> 等于 <code>"plain"</code>，<code>entity.secret</code> 等于 <code>"secret"</code>。
+     */
     @Test
     void lifecycleEncryptsAndDecryptsInheritedFieldOnly() {
         Ddd4jFieldCryptoHandler handler = mock(Ddd4jFieldCryptoHandler.class);
@@ -50,6 +53,9 @@ class JpaEncryptFieldListenerContractTest {
         assertEquals("cipher", entity.secret);
     }
 
+    /**
+     * 验证<code>entity.secret</code>为空，<code>entity.secret</code> 等于 <code>""</code>。
+     */
     @Test
     void emptyAndNullFieldsStayUnchanged() {
         JpaEncryptFieldListener listener = new JpaEncryptFieldListener(mock(Ddd4jFieldCryptoHandler.class));
@@ -64,6 +70,9 @@ class JpaEncryptFieldListenerContractTest {
         assertEquals("", entity.secret);
     }
 
+    /**
+     * 验证<code>entity.secret</code> 等于 <code>"secret"</code>。
+     */
     @Test
     void missingHandlerLeavesEncryptedFieldUntouched() {
         JpaEncryptFieldListener listener = new JpaEncryptFieldListener((Ddd4jFieldCryptoHandler) null);
@@ -76,12 +85,24 @@ class JpaEncryptFieldListenerContractTest {
         assertEquals("secret", entity.secret);
     }
 
+    /**
+     * 将 <code>secret</code> 等状态一起传入当前测试，供调用或结果断言使用。
+     */
     static class BaseEntity {
+        /**
+         * 当前签名、加密或令牌校验测试使用的密钥样本。
+         */
         @EncryptField
         String secret;
     }
 
+    /**
+     * 将 <code>plain</code> 等状态一起传入当前测试，供调用或结果断言使用。
+     */
     static final class TestEntity extends BaseEntity {
+        /**
+         * 用于加解密往返断言的明文样本。
+         */
         private String plain;
     }
 }

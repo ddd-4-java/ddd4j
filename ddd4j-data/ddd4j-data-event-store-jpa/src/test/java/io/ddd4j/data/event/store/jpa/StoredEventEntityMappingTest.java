@@ -11,8 +11,16 @@ import java.lang.reflect.Field;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * 通过 <code>StoredEventEntity.class.getAnnotation()</code>、<code>entity.name()</code>、<code>StoredEventEntity.class.getSimpleName()</code> 验证 <code>StoredEventEntityMapping</code> 的运行行为。
+ */
 class StoredEventEntityMappingTest {
 
+    /**
+     * 验证<code>entity</code>非空，<code>entity.name().isEmpty() ? StoredEventEntity.class.getSimpleName() : entity.name()</code> 等于 <code>"StoredEventEntity"</code>，<code>constraint.columnNames()[0]</code> 等于 <code>EventStoreConstants.COLUMN_POSITION</code>。
+     *
+     * @throws NoSuchFieldException 反射定位被测字段失败
+     */
     @Test
     void mapsSharedEventStoreIdentityAndPositionConstraint() throws NoSuchFieldException {
         Entity entity = StoredEventEntity.class.getAnnotation(Entity.class);

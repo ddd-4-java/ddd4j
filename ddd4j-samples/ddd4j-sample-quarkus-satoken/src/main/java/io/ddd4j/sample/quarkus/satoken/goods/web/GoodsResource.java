@@ -43,7 +43,13 @@ import java.util.List;
 @io.quarkus.arc.properties.IfBuildProperty(name = "sample.goods.standalone", stringValue = "true")
 public class GoodsResource {
 
+    /**
+     * 处理商品创建、维护和查询操作的应用服务。
+     */
     private final GoodsApplicationService applicationService;
+    /**
+     * 负责将商品查询条件转换为结果的资源组件。
+     */
     private final GoodsQueryResource queryResource;
 
     /**

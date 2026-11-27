@@ -46,6 +46,9 @@ import java.util.Objects;
 @Slf4j
 public class Ddd4jCommandGuiceModule extends AbstractModule {
 
+    /**
+     * 在 Guice 中绑定共享命令注册及总线装配。
+     */
     @Override
     protected void configure() {
         // CommandBus binding is provided via @Provides method below
@@ -78,6 +81,13 @@ public class Ddd4jCommandGuiceModule extends AbstractModule {
         return new GuiceCommandBus(executors);
     }
 
+    /**
+     * 解析 Guice 绑定下的命令执行器。
+     *
+     * @param injector 当前 Guice 应用注入器
+     * @param key      容器绑定键或待查找的消息键
+     * @return 容器解析出的命令执行器
+     */
     @SuppressWarnings("unchecked")
     private CommandExecutor<?> resolveExecutor(Injector injector, Key<?> key) {
         Object instance = injector.getInstance((Key<Object>) key);

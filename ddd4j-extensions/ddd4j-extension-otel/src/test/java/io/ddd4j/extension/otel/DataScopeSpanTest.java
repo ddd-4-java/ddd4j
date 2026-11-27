@@ -33,16 +33,25 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class DataScopeSpanTest {
 
+    /**
+     * 测试执行前执行 <code>OpenTelemetrySdkSetter.set()</code>、<code>OpenTelemetry.noop()</code> 完成资源准备。
+     */
     @BeforeEach
     void setUp() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
     }
 
+    /**
+     * 测试结束后执行 <code>OpenTelemetrySdkSetter.set()</code>、<code>OpenTelemetry.noop()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void tearDown() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
     }
 
+    /**
+     * 验证<code>result</code>为真。
+     */
     @Test
     void evaluate_shouldReturnProviderResult() {
         DataScopeProvider provider = (dataType, data) -> true;
@@ -50,6 +59,9 @@ class DataScopeSpanTest {
         assertThat(result).isTrue();
     }
 
+    /**
+     * 验证<code>result</code>为假。
+     */
     @Test
     void evaluate_denyCase_shouldReturnFalse() {
         DataScopeProvider provider = (dataType, data) -> false;
@@ -57,6 +69,9 @@ class DataScopeSpanTest {
         assertThat(result).isFalse();
     }
 
+    /**
+     * 验证<code>result</code>为真，<code>nullResult</code>为假。
+     */
     @Test
     void evaluate_shouldRespectApplicationPolicyForNullData() {
         DataScopeProvider provider = (type, data) -> Objects.nonNull(data);
@@ -67,6 +82,9 @@ class DataScopeSpanTest {
         assertThat(nullResult).isFalse();
     }
 
+    /**
+     * 验证<code>called</code>为真。
+     */
     @Test
     void evaluate_shouldCallProvider() {
         AtomicBoolean called = new AtomicBoolean(false);
@@ -79,6 +97,9 @@ class DataScopeSpanTest {
         assertThat(called).isTrue();
     }
 
+    /**
+     * 验证<code>result</code>为真，<code>called</code>为真。
+     */
     @Test
     void evaluate_whenOtelNotAvailable_shouldStillCallProvider() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -93,6 +114,9 @@ class DataScopeSpanTest {
         assertThat(called).isTrue();
     }
 
+    /**
+     * 验证<code>DataScopeSpan.evaluate("Type", "value", throwing)</code> 抛出 <code>IllegalStateException.class</code>。
+     */
     @Test
     void evaluate_propagateException() {
         DataScopeProvider throwing = (dataType, data) -> {
@@ -104,6 +128,9 @@ class DataScopeSpanTest {
                 .hasMessage("scope evaluation failed");
     }
 
+    /**
+     * 验证<code>DataScopeSpan.ATTR_DATA_SCOPE_TYPE.getKey()</code> 等于 <code>"ddd4j.datascope.type"</code>，<code>DataScopeSpan.ATTR_DATA_SCOPE_DECISION.getKey()</code> 等于 <code>"ddd4j.datascope.decision"</code>。
+     */
     @Test
     void evaluate_attributeKeys_shouldHaveCorrectNames() {
         assertThat(DataScopeSpan.ATTR_DATA_SCOPE_TYPE.getKey()).isEqualTo("ddd4j.datascope.type");

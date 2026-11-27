@@ -44,12 +44,21 @@ import java.util.*;
 @ApplicationScoped
 public class RbacConfig {
 
+    /**
+     * 读取和保存用户的仓储。
+     */
     @Inject
     InMemoryUserRepository userRepository;
 
+    /**
+     * 读取和保存角色的仓储。
+     */
     @Inject
     InMemoryRoleRepository roleRepository;
 
+    /**
+     * 查询和维护权限定义的仓储。
+     */
     @Inject
     InMemoryPermissionRepository permissionRepository;
 
@@ -57,8 +66,16 @@ public class RbacConfig {
      * 应用启动时初始化演示数据。
      */
     private SubjectDataProvider previousData;
+    /**
+     * 为认证主体提供角色、权限等业务数据的组件。
+     */
     private SubjectDataProvider ownedData;
 
+    /**
+     * 在示例应用启动后装配 RBAC 角色和权限组件。
+     *
+     * @param event 启动、停止或请求处理期间的框架事件
+     */
     void onStart(@Observes StartupEvent event) {
         previousData = SubjectKit.dataProvider;
         reset();
@@ -101,6 +118,11 @@ public class RbacConfig {
         SubjectKit.setDataProvider(ownedData);
     }
 
+    /**
+     * 在示例应用停止时释放当前 RBAC 装配拥有的组件。
+     *
+     * @param event 启动、停止或请求处理期间的框架事件
+     */
     void onStop(@Observes io.quarkus.runtime.ShutdownEvent event) {
         if (SubjectKit.dataProvider == ownedData) {
             SubjectKit.setDataProvider(previousData);
@@ -142,6 +164,9 @@ public class RbacConfig {
 
     /**
      * 聚合多角色下的全部权限编码（去重）。
+     *
+     * @param roleCodes 待查找或校验的角色编码
+     * @return 所有匹配角色拥有的权限集合
      */
     private List<String> aggregatePermissions(Set<String> roleCodes) {
         if (CollKit.isEmpty(roleCodes)) {

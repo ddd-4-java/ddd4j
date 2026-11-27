@@ -20,8 +20,14 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+/**
+ * 验证 <code>MessageHeaders</code> 在<code>messageIdHeader</code>等操作中的行为契约。
+ */
 class MessageHeadersTest {
 
+    /**
+     * 验证<code>MessageHeaders.HEADER_MESSAGE_ID</code> 等于 <code>MQDeliveryHeaders.MESSAGE_ID</code>，<code>MessageHeaders.HEADER_MESSAGE_ID</code> 不等于 <code>MessageHeaders.LEGACY_HEADER_MESSAGE_ID</code>。
+     */
     @Test
     void messageIdHeader_shouldUseTheStableDeliveryContract() {
         assertEquals(MQDeliveryHeaders.MESSAGE_ID, MessageHeaders.HEADER_MESSAGE_ID);

@@ -51,12 +51,30 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class SaTokenSubjectLifecycleTest {
 
+    /**
+     * 进入测试场景前注册的配置。
+     */
     private SaTokenConfig originalConfig;
+    /**
+     * 进入测试场景前注册的会话存储。
+     */
     private SaTokenDao originalDao;
+    /**
+     * 进入测试场景前注册的认证逻辑。
+     */
     private StpLogic originalLogic;
+    /**
+     * 进入当前执行范围前保存的组件，退出时用于恢复 <code>SubjectDataProvider</code>。
+     */
     private SubjectDataProvider originalDataProvider;
+    /**
+     * 用例修改前注册的服务提供器，供用例结束时恢复。
+     */
     private SubjectProvider originalProvider;
 
+    /**
+     * 测试前依次恢复或安装配置<code>SaManager</code>、恢复或安装原生存储<code>SaManager</code>。
+     */
     @BeforeEach
     void setUp() {
         originalConfig = SaManager.getConfig();
@@ -72,6 +90,9 @@ class SaTokenSubjectLifecycleTest {
         cn.dev33.satoken.context.mock.SaTokenContextMockUtil.setMockContext();
     }
 
+    /**
+     * 测试后依次清除上下文<code>cn.dev33.satoken.context.mock.SaTokenContextMockUtil</code>、恢复或安装登录逻辑<code>StpUtil</code>、恢复或安装原生存储<code>SaManager</code>、恢复或安装配置<code>SaManager</code>、注册<code>SubjectKit</code>。
+     */
     @AfterEach
     void tearDown() {
         cn.dev33.satoken.context.mock.SaTokenContextMockUtil.clearContext();
@@ -82,19 +103,39 @@ class SaTokenSubjectLifecycleTest {
         SubjectKit.register(originalProvider);
     }
 
+    /**
+     * 创建 <code>new SaTokenSubject</code> 供当前测试路径调用。
+     *
+     * @return 当前测试使用的结果，取自 <code>new SaTokenSubject()</code>
+     */
     private SaTokenSubject subject() {
         return new SaTokenSubject();
     }
 
+    /**
+     * 创建 <code>new AuthPrincipal</code> 供当前测试路径调用。
+     *
+     * @param loginId 测试会话使用的账号标识
+     * @return 当前测试使用的结果，取自 <code>new AuthPrincipal().setLoginId(loginId).setUserId("user-" + loginId).setOrgId("org-1").setRoleId("role-1")</code>
+     */
     private AuthPrincipal principal(String loginId) {
         return new AuthPrincipal().setLoginId(loginId).setUserId("user-" + loginId)
                 .setOrgId("org-1").setRoleId("role-1");
     }
 
+    /**
+     * 通过 <code>subject()</code> 取得当前测试需要的结果。
+     *
+     * @param loginId 测试会话使用的账号标识
+     * @return 当前测试使用的结果，取自 <code>subject().login(AuthRequest.of(loginId).setPrincipal(principal(loginId)))</code>
+     */
     private String login(String loginId) {
         return subject().login(AuthRequest.of(loginId).setPrincipal(principal(loginId)));
     }
 
+    /**
+     * 验证<code>token</code> 等于 <code>"preset-token-1"</code>，<code>SaManager.getSaTokenDao().getSession(StpUtil.stpLogic.splicingKeyTokenSession(token))</code>非空，<code>subject().getPrincipalByLoginId(1001L).getUserId()</code> 等于 <code>"user-1001"</code>。
+     */
     @Test
     void loginBuildsFullSessionFromConfig() {
         AuthSessionConfig sessionConfig = new AuthSessionConfig();
@@ -128,6 +169,9 @@ class SaTokenSubjectLifecycleTest {
         assertEquals("user-1001", subject().getPrincipalByLoginId(1001L).getUserId());
     }
 
+    /**
+     * 验证<code>StpUtil.stpLogic.getTerminalInfoByToken(token).getDeviceId()</code> 等于 <code>deviceId</code>，<code>subject().isTrustDeviceId(loginId, deviceId)</code>为真，<code>subject().isTrustDeviceId(loginId, "different-installation")</code>为假。
+     */
     @Test
     void loginRegistersConfiguredDeviceId() {
         String loginId = "registered-device-account";
@@ -141,6 +185,9 @@ class SaTokenSubjectLifecycleTest {
         assertFalse(subject().isTrustDeviceId(loginId, "different-installation"));
     }
 
+    /**
+     * 验证<code>dao.getSession(logic.splicingKeySession("lazy-token-session"))</code>非空，<code>dao.getSession(logic.splicingKeySession("eager-token-session"))</code>非空，<code>dao.getSession(logic.splicingKeyTokenSession(eagerToken))</code>非空。
+     */
     @Test
     void loginCreatesTokenSessionOnlyForEagerLogin() {
         StpLogic logic = StpUtil.stpLogic;
@@ -155,6 +202,9 @@ class SaTokenSubjectLifecycleTest {
         assertNotNull(dao.getSession(logic.splicingKeyTokenSession(eagerToken)));
     }
 
+    /**
+     * 验证<code>subject().verify(desktopToken)</code>非空，<code>subject().verify(oldMobileToken)</code>为空，<code>subject().verify(newMobileToken)</code>非空。
+     */
     @Test
     void loginReplacesOnlyCurrentDeviceTypeByDefault() {
         String loginId = "replace-current-device-type";
@@ -173,6 +223,9 @@ class SaTokenSubjectLifecycleTest {
         assertNotNull(subject().verify(newMobileToken));
     }
 
+    /**
+     * 验证<code>token</code>非空，<code>StpUtil.isLogin("user-2")</code>为真。
+     */
     @Test
     void loginWithoutSessionConfigUsesDefaults() {
         String token = subject().login(new AuthRequest("user-2"));
@@ -181,6 +234,9 @@ class SaTokenSubjectLifecycleTest {
         assertTrue(StpUtil.isLogin("user-2"));
     }
 
+    /**
+     * 验证<code>saSubject.login(AuthRequest.of("banned"))</code> 抛出 <code>AccountDisabledException.class</code>。
+     */
     @Test
     void loginMapsDisabledAccountToAccountDisabledException() {
         SaTokenSubject saSubject = new SaTokenSubject() {
@@ -199,6 +255,9 @@ class SaTokenSubjectLifecycleTest {
         assertThrows(AccountDisabledException.class, () -> saSubject.login(AuthRequest.of("banned")));
     }
 
+    /**
+     * 验证<code>saSubject.login(AuthRequest.of("ghost"))</code> 抛出 <code>NotLoggedInException.class</code>。
+     */
     @Test
     void loginMapsNotLoginFailureToNotLoggedInException() {
         SaTokenSubject saSubject = new SaTokenSubject() {
@@ -217,6 +276,9 @@ class SaTokenSubjectLifecycleTest {
         assertThrows(NotLoggedInException.class, () -> saSubject.login(AuthRequest.of("ghost")));
     }
 
+    /**
+     * 验证<code>saSubject.login(AuthRequest.of("ghost"))</code> 抛出 <code>NotLoggedInException.class</code>。
+     */
     @Test
     void loginMapsGenericFailureToNotLoggedInException() {
         SaTokenSubject saSubject = new SaTokenSubject() {
@@ -234,6 +296,9 @@ class SaTokenSubjectLifecycleTest {
         assertThrows(NotLoggedInException.class, () -> saSubject.login(AuthRequest.of("ghost")));
     }
 
+    /**
+     * 验证<code>principal.getUserId()</code> 等于 <code>"user-user-3"</code>。
+     */
     @Test
     void getPrincipalResolvesActiveSession() {
         login("user-3");
@@ -243,16 +308,25 @@ class SaTokenSubjectLifecycleTest {
         assertEquals("user-user-3", principal.getUserId());
     }
 
+    /**
+     * 验证<code>subject().getPrincipal()</code>为空。
+     */
     @Test
     void getPrincipalReturnsNullWhenNotLoggedIn() {
         assertNull(subject().getPrincipal());
     }
 
+    /**
+     * 验证<code>subject().getPrincipalByLoginId("nobody")</code>为空。
+     */
     @Test
     void getPrincipalByLoginIdReturnsNullForUnknownAccount() {
         assertNull(subject().getPrincipalByLoginId("nobody"));
     }
 
+    /**
+     * 验证<code>principal.getUserId()</code> 等于 <code>"user-user-4"</code>。
+     */
     @Test
     void getPrincipalByTokenDelegatesToVerify() {
         String token = login("user-4");
@@ -262,6 +336,9 @@ class SaTokenSubjectLifecycleTest {
         assertEquals("user-user-4", principal.getUserId());
     }
 
+    /**
+     * 验证<code>StpUtil.isLogin()</code>为真，<code>StpUtil.isLogin()</code>为假。
+     */
     @Test
     void logoutTerminatesCurrentSession() {
         login("user-5");
@@ -272,6 +349,9 @@ class SaTokenSubjectLifecycleTest {
         assertFalse(StpUtil.isLogin());
     }
 
+    /**
+     * 验证<code>StpUtil.isLogin("user-6")</code>为真，<code>StpUtil.isLogin("user-6")</code>为假，<code>StpUtil.isLogin("user-7")</code>为假。
+     */
     @Test
     void logoutAndKickoutByLoginId() {
         login("user-6");
@@ -285,6 +365,9 @@ class SaTokenSubjectLifecycleTest {
         assertFalse(StpUtil.isLogin("user-7"));
     }
 
+    /**
+     * 验证<code>initialTimeout &gt; 0 &amp;&amp; initialTimeout &lt;= 30</code>为真，<code>refreshed</code> 等于 <code>token</code>，<code>SaManager.getSaTokenDao().getTimeout( StpUtil.stpLogic.splicingKeyTokenValue(token)) &gt;= 60</code>为真。
+     */
     @Test
     void refreshRenewsActiveSessionTimeout() {
         String token = login("user-8");
@@ -299,6 +382,9 @@ class SaTokenSubjectLifecycleTest {
                 StpUtil.stpLogic.splicingKeyTokenValue(token)) >= 60);
     }
 
+    /**
+     * 验证<code>ttl &gt; 0 &amp;&amp; ttl &lt;= 300</code>为真。
+     */
     @Test
     void defaultSessionInheritsConfiguredTokenTtl() {
         SaManager.getConfig().setTimeout(300);
@@ -308,6 +394,9 @@ class SaTokenSubjectLifecycleTest {
         assertTrue(ttl > 0 && ttl <= 300, "Expected configured finite TTL, got " + ttl);
     }
 
+    /**
+     * 验证<code>StpUtil.stpLogic.getTokenTimeout(token)</code> 等于 <code>SaTokenDao.NEVER_EXPIRE</code>。
+     */
     @Test
     void explicitPermanentSessionRetainsItsMeaning() {
         SaManager.getConfig().setTimeout(300);
@@ -317,6 +406,9 @@ class SaTokenSubjectLifecycleTest {
         assertEquals(SaTokenDao.NEVER_EXPIRE, StpUtil.stpLogic.getTokenTimeout(token));
     }
 
+    /**
+     * 验证<code>subject().refresh()</code> 抛出 <code>NotLoggedInException.class</code>。
+     */
     @Test
     void refreshRejectsRevokedToken() {
         String token = login("refresh-revoked");
@@ -325,6 +417,9 @@ class SaTokenSubjectLifecycleTest {
         assertThrows(NotLoggedInException.class, () -> subject().refresh());
     }
 
+    /**
+     * 验证<code>admin.verify(adminToken).getUserId()</code> 等于 <code>"admin"</code>，<code>user.verify(userToken).getUserId()</code> 等于 <code>"user"</code>，<code>user.verify(userToken)</code>非空。
+     */
     @Test
     void providerKeepsSameLoginIdInTwoRealmsIsolated() {
         SaTokenSubjectProvider provider = new SaTokenSubjectProvider();
@@ -355,6 +450,9 @@ class SaTokenSubjectLifecycleTest {
         assertNotNull(user.verify(userToken));
     }
 
+    /**
+     * 验证<code>subject().verify(oldToken)</code>为空，<code>subject().verify(newToken)</code>非空。
+     */
     @Test
     void loginAppliesReplacementAcrossDeviceTypes() {
         AuthSessionConfig oldDevice = new AuthSessionConfig().setDeviceType("desktop");
@@ -371,6 +469,9 @@ class SaTokenSubjectLifecycleTest {
         assertNotNull(subject().verify(newToken));
     }
 
+    /**
+     * 验证<code>subject().refresh()</code> 抛出 <code>NotLoggedInException.class</code>，<code>subject().getPrincipalByLoginId("refresh-missing-terminal")</code>为空。
+     */
     @Test
     void refreshRejectsMissingTerminalWithoutCreatingSession() {
         login("refresh-missing-terminal");
@@ -380,6 +481,9 @@ class SaTokenSubjectLifecycleTest {
         assertNull(subject().getPrincipalByLoginId("refresh-missing-terminal"));
     }
 
+    /**
+     * 验证<code>subject().refresh()</code> 抛出 <code>NotLoggedInException.class</code>，<code>SaManager.getSaTokenDao().get(StpUtil.stpLogic.splicingKeyTokenValue(token))</code>为空，<code>SaManager.getSaTokenDao().get(activityKey)</code>为空。
+     */
     @Test
     void frozenTokenCannotRefreshAndCanStillBeRevoked() {
         SaManager.getConfig().setActiveTimeout(60);
@@ -393,12 +497,18 @@ class SaTokenSubjectLifecycleTest {
         assertNull(SaManager.getSaTokenDao().get(activityKey));
     }
 
+    /**
+     * 验证<code>subject().verify("")</code>为空，<code>subject().verify(null)</code>为空。
+     */
     @Test
     void verifyRejectsBlankToken() {
         assertNull(subject().verify(""));
         assertNull(subject().verify(null));
     }
 
+    /**
+     * 验证<code>saSubject.isPermitted("order:read")</code>为真，<code>saSubject.isPermitted("order:delete")</code>为假，<code>saSubject.isPermittedAll("order:read", "order:delete")</code>为假。
+     */
     @Test
     void permissionMatrixReflectsDataProvider() {
         login("user-9");
@@ -427,6 +537,9 @@ class SaTokenSubjectLifecycleTest {
         assertTrue(saSubject.isPermittedAll("user-9", new String[]{"order:read", "user:write"}));
     }
 
+    /**
+     * 验证<code>saSubject.isPermitted("anything")</code>为假，<code>saSubject.isPermitted("nobody", "anything")</code>为假，<code>saSubject.isPermittedAll("user-9")</code>为假。
+     */
     @Test
     void permissionChecksReturnDefaultsWhenNotLoggedInOrEmpty() {
         SaTokenSubject saSubject = subject();
@@ -441,6 +554,9 @@ class SaTokenSubjectLifecycleTest {
         assertFalse(saSubject.isPermittedAll("user-9"));
     }
 
+    /**
+     * 验证<code>saSubject.hasRole("admin")</code>为真，<code>saSubject.hasRole("viewer")</code>为假，<code>saSubject.hasAllRole("admin", "viewer")</code>为假。
+     */
     @Test
     void roleMatrixReflectsDataProvider() {
         login("user-10");
@@ -468,6 +584,9 @@ class SaTokenSubjectLifecycleTest {
         assertTrue(saSubject.hasAllRole("user-10", new String[]{"admin", "editor"}));
     }
 
+    /**
+     * 验证<code>saSubject.hasRole("admin")</code>为假，<code>saSubject.hasRole("nobody", "admin")</code>为假，<code>saSubject.hasAllRole("user-10")</code>为假。
+     */
     @Test
     void roleChecksReturnDefaultsWhenNotLoggedInOrEmpty() {
         SaTokenSubject saSubject = subject();
@@ -482,6 +601,9 @@ class SaTokenSubjectLifecycleTest {
         assertFalse(saSubject.hasAllRole("user-10"));
     }
 
+    /**
+     * 验证<code>saSubject.isAuthenticated()</code>为真，<code>saSubject.isAuthenticated("user-11")</code>为真，<code>saSubject.getRoleId()</code> 等于 <code>"role-1"</code>。
+     */
     @Test
     void stateChecksReflectSession() {
         login("user-11");
@@ -497,6 +619,9 @@ class SaTokenSubjectLifecycleTest {
         assertEquals("role-1", saSubject.getRoleId());
     }
 
+    /**
+     * 验证<code>saSubject.isAuthenticated()</code>为假，<code>saSubject.isAuthenticated("nobody")</code>为假，<code>saSubject.getRoleId()</code>为空。
+     */
     @Test
     void stateChecksReturnNullWhenNotLoggedIn() {
         SaTokenSubject saSubject = subject();
@@ -509,6 +634,9 @@ class SaTokenSubjectLifecycleTest {
         assertNull(saSubject.getRoleId());
     }
 
+    /**
+     * 验证<code>subject().getExtra(token, "channel")</code> 等于 <code>"mobile"</code>。
+     */
     @Test
     void getExtraReadsTokenExtraData() {
         SaTokenSecurityProperties properties = new SaTokenSecurityProperties();
@@ -525,6 +653,9 @@ class SaTokenSubjectLifecycleTest {
         assertEquals("mobile", subject().getExtra(token, "channel"));
     }
 
+    /**
+     * 验证<code>saSubject.isDisabled("user-13")</code>为假，<code>saSubject.isDisabled("user-13")</code>为真。
+     */
     @Test
     void disableLifecycleDelegatesToSaToken() {
         SaTokenSubject saSubject = subject();
@@ -536,6 +667,9 @@ class SaTokenSubjectLifecycleTest {
         assertFalse(saSubject.isDisabled("user-13"));
     }
 
+    /**
+     * 验证<code>token</code>非空，<code>SaManager.getStpLogic("admin").isLogin("admin-1")</code>为真。
+     */
     @Test
     void loginToCustomRealmResolvesStpLogic() {
         SaTokenSubject saSubject = subject();
@@ -548,6 +682,9 @@ class SaTokenSubjectLifecycleTest {
         assertTrue(SaManager.getStpLogic("admin").isLogin("admin-1"));
     }
 
+    /**
+     * 验证<code>token</code>非空。
+     */
     @Test
     void toSaLogoutModeMapsNullToLogout() {
         // 通过 overflowLogoutMode=null 触发 toSaLogoutMode(null) 分支
@@ -561,6 +698,9 @@ class SaTokenSubjectLifecycleTest {
         assertNotNull(token);
     }
 
+    /**
+     * 验证<code>subject().verify("no-such-token")</code>为空。
+     */
     @Test
     void verifyHandlesSessionAndJwtMismatchSafely() {
         login("user-15");
@@ -571,6 +711,9 @@ class SaTokenSubjectLifecycleTest {
         assertNull(subject().verify("no-such-token"));
     }
 
+    /**
+     * 验证<code>token</code>非空。
+     */
     @Test
     void loginMapsReplacedOverflowMode() {
         AuthSessionConfig sessionConfig = new AuthSessionConfig();
@@ -583,6 +726,9 @@ class SaTokenSubjectLifecycleTest {
         assertNotNull(token);
     }
 
+    /**
+     * 验证<code>token</code>非空。
+     */
     @Test
     void loginAcceptsNullSessionConfig() {
         AuthRequest request = AuthRequest.of("user-17").setPrincipal(principal("user-17"));
@@ -593,6 +739,9 @@ class SaTokenSubjectLifecycleTest {
         assertNotNull(token);
     }
 
+    /**
+     * 验证<code>subject().getPrincipal()</code>为空。
+     */
     @Test
     void getPrincipalReturnsNullWhenSessionVanished() {
         String loginId = "user-18";
@@ -602,6 +751,9 @@ class SaTokenSubjectLifecycleTest {
         assertNull(subject().getPrincipal());
     }
 
+    /**
+     * 验证<code>saSubject.isPermitted("nobody", new String[]{"order:read"}).length</code> 等于 <code>0</code>，<code>saSubject.isPermitted("nobody", (String[]) null).length</code> 等于 <code>0</code>，<code>saSubject.hasAllRole("nobody", (String[]) null)</code>为假。
+     */
     @Test
     void loginIdVariantChecksReturnDefaultsForUnknownAccount() {
         SaTokenSubject saSubject = subject();
@@ -620,6 +772,9 @@ class SaTokenSubjectLifecycleTest {
         assertFalse(saSubject.hasAllRole("nobody", (String[]) null));
     }
 
+    /**
+     * 验证<code>saSubject.isTrustDeviceId("device-9")</code>为假，<code>saSubject.isTrustDeviceId(1001L, "device-9")</code>为假。
+     */
     @Test
     void isTrustDeviceIdDelegatesWithJwtContext() {
         SaTokenSecurityProperties properties = new SaTokenSecurityProperties();

@@ -38,6 +38,9 @@ import java.nio.charset.StandardCharsets;
  */
 public class CustomHttpMessageConverter extends AbstractGenericHttpMessageConverter<Object> {
 
+    /**
+     * 用于读写 JSON 数据的 Jackson 映射器。
+     */
     private final ObjectMapper objectMapper;
 
     /**
@@ -50,6 +53,15 @@ public class CustomHttpMessageConverter extends AbstractGenericHttpMessageConver
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * 将 Java 对象序列化并写入 HTTP 输出消息。
+     *
+     * @param object        待写入或格式化的 Java 对象
+     * @param type          目标 Java 类型或声明的泛型类型
+     * @param outputMessage 即将写出响应体的 Spring HTTP 输出对象
+     * @throws IOException                     当前框架请求处理、消息读写或参数转换失败
+     * @throws HttpMessageNotWritableException 当前框架请求处理、消息读写或参数转换失败
+     */
     @Override
     protected void writeInternal(Object object, @Nullable Type type, HttpOutputMessage outputMessage)
             throws IOException, HttpMessageNotWritableException {
@@ -58,6 +70,15 @@ public class CustomHttpMessageConverter extends AbstractGenericHttpMessageConver
                 new OutputStreamWriter(outputMessage.getBody(), charset), object);
     }
 
+    /**
+     * 把 Spring HTTP 正文读取成指定的 Java 类。
+     *
+     * @param clazz        目标对象的运行时 Java 类型
+     * @param inputMessage 从中读取正文的 Spring HTTP 输入对象
+     * @return 转换后的 Java 对象
+     * @throws IOException                     当前框架请求处理、消息读写或参数转换失败
+     * @throws HttpMessageNotReadableException 当前框架请求处理、消息读写或参数转换失败
+     */
     @Override
     protected Object readInternal(Class<?> clazz, HttpInputMessage inputMessage)
             throws IOException, HttpMessageNotReadableException {
@@ -66,6 +87,16 @@ public class CustomHttpMessageConverter extends AbstractGenericHttpMessageConver
                 new InputStreamReader(inputMessage.getBody(), charset), clazz);
     }
 
+    /**
+     * 结合上下文和目标泛型类型反序列化 HTTP 正文。
+     *
+     * @param type         目标 Java 类型或声明的泛型类型
+     * @param contextClass 为泛型转换提供上下文的 Java 类型
+     * @param inputMessage 从中读取正文的 Spring HTTP 输入对象
+     * @return 转换后的目标 Java 对象
+     * @throws IOException                     当前框架请求处理、消息读写或参数转换失败
+     * @throws HttpMessageNotReadableException 当前框架请求处理、消息读写或参数转换失败
+     */
     @Override
     public Object read(Type type, @Nullable Class<?> contextClass, HttpInputMessage inputMessage)
             throws IOException, HttpMessageNotReadableException {
@@ -75,6 +106,12 @@ public class CustomHttpMessageConverter extends AbstractGenericHttpMessageConver
                 objectMapper.constructType(type));
     }
 
+    /**
+     * 读取媒体类型声明的字符集，未声明时用 UTF-8。
+     *
+     * @param contentType 需要检查字符编码的 HTTP 媒体类型
+     * @return HTTP 正文编码使用的字符集
+     */
     private Charset getContentTypeCharset(@Nullable MediaType contentType) {
         if (contentType != null && contentType.getCharset() != null) {
             return contentType.getCharset();

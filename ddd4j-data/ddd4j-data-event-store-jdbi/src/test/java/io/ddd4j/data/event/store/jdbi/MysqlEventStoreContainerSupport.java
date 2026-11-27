@@ -43,6 +43,9 @@ final class MysqlEventStoreContainerSupport {
         }
     }
 
+    /**
+     * 限制调用方直接创建 <code>MysqlEventStoreContainerSupport</code> 实例。
+     */
     private MysqlEventStoreContainerSupport() {
     }
 }

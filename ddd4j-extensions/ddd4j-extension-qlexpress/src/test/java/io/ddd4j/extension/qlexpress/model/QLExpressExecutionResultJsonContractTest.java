@@ -5,8 +5,14 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * 通过 <code>QLExpressExecutionResult.success()</code>、<code>QLExpressExecutionResult.failure()</code>、<code>JsonKit.toObject()</code> 验证 <code>QLExpressExecutionResultJsonContract</code> 的运行行为。
+ */
 class QLExpressExecutionResultJsonContractTest {
 
+    /**
+     * 验证<code>JsonKit.toObject(JsonKit.toJson(success), QLExpressExecutionResult.class)</code> 等于 <code>success</code>，<code>JsonKit.toObject(JsonKit.toJson(failure), QLExpressExecutionResult.class)</code> 等于 <code>failure</code>。
+     */
     @Test
     void successAndFailureRoundTripThroughJson() {
         QLExpressExecutionResult<String> success = QLExpressExecutionResult.success("accepted", 7L);

@@ -31,12 +31,18 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class Ddd4jJavalinOtelIntegrationTest {
 
+    /**
+     * 验证<code>span</code>非空。
+     */
     @Test
     void javalinModuleCanUseWebOtelIntegration() {
         Object span = WebOtelIntegration.startServerSpan("GET", "/api/test", new HashMap<>());
         assertThat(span).isNotNull();
     }
 
+    /**
+     * 验证<code>span</code>非空。
+     */
     @Test
     void javalinModuleCanUseWebOtelIntegration_withTraceparent() {
         Map<String, String> headers = new HashMap<>();
@@ -45,16 +51,25 @@ class Ddd4jJavalinOtelIntegrationTest {
         assertThat(span).isNotNull();
     }
 
+    /**
+     * 验证<code>HttpSpan.ATTR_HTTP_METHOD.getKey()</code> 等于 <code>"http.request.method"</code>。
+     */
     @Test
     void javalinModuleCanUseHttpSpanDirectly() {
         assertThat(HttpSpan.ATTR_HTTP_METHOD.getKey()).isEqualTo("http.request.method");
     }
 
+    /**
+     * 验证<code>Ddd4jOtel.TRACER_NAME</code> 等于 <code>"io.ddd4j"</code>。
+     */
     @Test
     void javalinModuleCanUseDdd4jOtel() {
         assertThat(Ddd4jOtel.TRACER_NAME).isEqualTo("io.ddd4j");
     }
 
+    /**
+     * 验证<code>span</code>非空。
+     */
     @Test
     void javalinModuleCanHandleAllHttpMethods() {
         for (String method : new String[]{"GET", "POST", "PUT", "DELETE", "PATCH"}) {

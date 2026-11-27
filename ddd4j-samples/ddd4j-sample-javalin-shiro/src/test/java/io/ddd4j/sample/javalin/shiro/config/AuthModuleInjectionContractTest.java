@@ -16,8 +16,14 @@ import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * 通过 <code>Guice.createInjector()</code>、<code>injector.getInstance()</code>、<code>users.count()</code> 验证 <code>AuthModuleInjectionContract</code> 的运行行为。
+ */
 class AuthModuleInjectionContractTest {
 
+    /**
+     * 验证<code>users.count()</code> 等于 <code>3</code>，<code>roles.count()</code> 等于 <code>2</code>，<code>subjectData.getPermissionList(principal)</code> 等于 <code>Collections.singletonList(permissionCode)</code>。
+     */
     @Test
     void bindsSeededRepositoriesServiceAndSubjectDataProvider() {
         Injector injector = Guice.createInjector(new AuthModule());
@@ -43,6 +49,9 @@ class AuthModuleInjectionContractTest {
         assertEquals(Collections.singletonList(permissionCode), subjectData.getPermissionList(principal));
     }
 
+    /**
+     * 验证<code>second.getInstance(InMemoryUserRepository.class)</code> 与…为不同的实例 <code>first.getInstance(InMemoryUserRepository.class)</code>，<code>second.getInstance(InMemoryRoleRepository.class)</code> 与…为不同的实例 <code>first.getInstance(InMemoryRoleRepository.class)</code>，<code>reinstalled.getInstance(InMemoryRoleRepository.class).findByCode("user").isPresent()</code>为假。
+     */
     @Test
     void isolatesStandaloneModulesAndDoesNotReseedOnReinstallation() {
         AuthModule firstModule = new AuthModule();
@@ -65,6 +74,9 @@ class AuthModuleInjectionContractTest {
         assertFalse(reinstalled.getInstance(InMemoryRoleRepository.class).findByCode("user").isPresent());
     }
 
+    /**
+     * 验证<code>injector.getInstance(GoodsApplicationService.class)</code>非空，<code>injector.getInstance(InMemoryUserRepository.class)</code> 与…为同一实例 <code>users</code>，<code>roles.count()</code> 等于 <code>0</code>。
+     */
     @Test
     void bindsGoodsAndRbacApplicationServices() {
         InMemoryUserRepository users = new InMemoryUserRepository();
@@ -81,6 +93,9 @@ class AuthModuleInjectionContractTest {
         assertEquals(0, roles.count());
     }
 
+    /**
+     * 验证被测调用 抛出 <code>NullPointerException.class</code>。
+     */
     @Test
     void rejectsMissingExternallyOwnedRbacService() {
         InMemoryUserRepository users = new InMemoryUserRepository();

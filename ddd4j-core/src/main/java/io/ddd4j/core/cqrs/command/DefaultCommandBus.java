@@ -42,6 +42,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class DefaultCommandBus implements CommandBus {
 
+    /**
+     * 按命令运行时类型选择执行器的索引。
+     */
     private final Map<Class<? extends Command>, CommandExecutor<?>> executors = new ConcurrentHashMap<>();
 
     /**
@@ -53,6 +56,15 @@ public class DefaultCommandBus implements CommandBus {
         Objects.requireNonNull(commandExecutors, "commandExecutors must not be null").forEach(this::register);
     }
 
+    /**
+     * 用当前处理器执行传入命令或操作。
+     *
+     * <p>此实现调用 <code>executors.get(actual.getClass())</code>。</p>
+     *
+     * @param <R>     此操作处理的值或结果的 Java 类型
+     * @param command 交由命令总线或执行器处理的命令
+     * @return 实际返回<code>(Result&lt;R&gt;)executor.execute(actual)</code>
+     */
     @Override
     public <R> Result<R> execute(Command command) {
         Command actual = Objects.requireNonNull(command, "command must not be null");
@@ -83,6 +95,11 @@ public class DefaultCommandBus implements CommandBus {
         return null;
     }
 
+    /**
+     * 绑定执行器声明支持的每一种命令类型。
+     *
+     * @param executor 声明支持命令类型的执行器
+     */
     private void register(CommandExecutor<?> executor) {
         CommandExecutor<?> actual = Objects.requireNonNull(executor, "executor must not be null");
         for (Class<? extends Command> commandType : actual.supportedCommands()) {

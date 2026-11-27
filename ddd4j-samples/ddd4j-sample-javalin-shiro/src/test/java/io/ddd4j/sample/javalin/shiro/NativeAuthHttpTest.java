@@ -42,14 +42,35 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Testcontainers
 class NativeAuthHttpTest {
+    /**
+     * 为当前集成测试提供独立 MySQL 服务的容器。
+     */
     @Container
     static final MySQLContainer<?> MYSQL = new MySQLContainer<>("mysql:8.0.36");
+    /**
+     * 用于区分订单路由、消息主题或投影事件流的测试名称。
+     */
     private static final String ORDERS = "/orders/catalog/orders/";
+    /**
+     * 商品测试所使用的路由或业务编码。
+     */
     private static final String GOODS = "/orders/catalog/goods/";
+    /**
+     * 用例查询或写入数据时使用的租户标识。
+     */
     private static final String TENANT = "javalin-auth";
+    /**
+     * 当前合同或仓储操作所使用的订单样本。
+     */
     private static final Map<String, Object> ORDER = Map.of("shopId", 7,
             "items", List.of(Map.of("skuCode", "SKU-1", "quantity", 2)));
 
+    /**
+     * 读取 <code>api</code> 供当前测试使用。
+     *
+     * @param database 传给 <code>CatalogRuntime.start()</code> 的 <code>MySQLContainer&lt;?&gt;</code> 输入
+     * @return 当前测试使用的结果，取自 <code>api</code>
+     */
     static CatalogEndpoints catalog(MySQLContainer<?> database) {
         var api = CatalogRuntime.start(new UnpooledDataSource(database.getDriverClassName(),
                 database.getJdbcUrl(), database.getUsername(), database.getPassword()));
@@ -60,23 +81,56 @@ class NativeAuthHttpTest {
         return api;
     }
 
+    /**
+     * 通过 <code>start()</code> 取得当前测试需要的结果。
+     *
+     * @param port 测试服务监听的本地端口
+     * @return 当前测试使用的结果，取自 <code>start(port, (ignored)-&gt;{ })</code>
+     */
     private static JavalinShiroApplication.Application start(int port) {
         return start(port, ignored -> {
         });
     }
 
+    /**
+     * 通过 <code>start()</code> 取得当前测试需要的结果。
+     *
+     * @param port     测试服务监听的本地端口
+     * @param observer 接收测试状态或清理结果的观察回调
+     * @return 当前测试使用的结果，取自 <code>start(port, observer, (config)-&gt;{ })</code>
+     */
     private static JavalinShiroApplication.Application start(int port,
                                                              java.util.function.Consumer<Optional<String>> observer) {
         return start(port, observer, config -> {
         });
     }
 
+    /**
+     * 通过 <code>JavalinShiroApplication.start()</code> 取得当前测试需要的结果。
+     *
+     * @param port      测试服务监听的本地端口
+     * @param observer  接收测试状态或清理结果的观察回调
+     * @param configure 传给 <code>JavalinShiroApplication.start()</code> 的 <code>java.util.function.Consumer&lt;io.javalin.config.JavalinConfig&gt;</code> 输入
+     * @return 当前测试使用的结果，取自 <code>JavalinShiroApplication.start(port, observer, configure, catalog(MYSQL))</code>
+     */
     private static JavalinShiroApplication.Application start(int port,
                                                              java.util.function.Consumer<Optional<String>> observer,
                                                              java.util.function.Consumer<io.javalin.config.JavalinConfig> configure) {
         return JavalinShiroApplication.start(port, observer, configure, catalog(MYSQL));
     }
 
+    /**
+     * 核对<code>response.statusCode()</code> 等于 <code>code</code>，<code>mapper.readTree(response.body())</code> 等于 <code>expected</code>。
+     *
+     * @param base    传给 <code>HttpRequest.newBuilder()</code> 的 <code>String</code> 输入
+     * @param path    测试请求的资源路径或待访问文件路径
+     * @param headers 当前测试请求携带的头字段
+     * @param body    当前请求或响应中要读取的正文
+     * @param code    用于定位目标测试记录的业务编码
+     * @param message 测试传递或用于诊断的消息
+     * @param mapper  当前测试登记或使用的持久化映射组件
+     * @throws Exception 处理测试数据的序列化、发起测试请求时失败
+     */
     private static void assertOrderDenial(String base, String path, Map<String, String> headers, String body,
                                           int code, String message, ObjectMapper mapper) throws Exception {
         HttpRequest.Builder request = HttpRequest.newBuilder(URI.create(base + path)).timeout(Duration.ofSeconds(10));
@@ -95,6 +149,16 @@ class NativeAuthHttpTest {
         assertEquals(expected, mapper.readTree(response.body()), path);
     }
 
+    /**
+     * 核对<code>response.statusCode()</code> 等于 <code>404</code>，<code>mapper.readTree(response.body())</code> 等于 <code>expected</code>。
+     *
+     * @param base     传给 <code>SampleHttpTransport.request()</code> 的 <code>String</code> 输入
+     * @param path     测试请求的资源路径或待访问文件路径
+     * @param headers  当前测试请求携带的头字段
+     * @param mapper   当前测试登记或使用的持久化映射组件
+     * @param expected 当前用例设定的期望值
+     * @throws IOException 读取或写入测试数据时发生 I/O 错误
+     */
     private static void assertMissingOrder(String base, String path, Map<String, String> headers,
                                            ObjectMapper mapper, JsonNode expected) throws IOException {
         SampleHttpTransport.Response response = SampleHttpTransport.request(
@@ -103,6 +167,11 @@ class NativeAuthHttpTest {
         assertEquals(expected, mapper.readTree(response.body()), path);
     }
 
+    /**
+     * 验证<code>StrKit.hasText(writer)</code>为真，<code>http.request("GET", ORDERS + id, null, headers).path("orderState").asText()</code> 等于 <code>"AWAITING_PAYMENT"</code>。
+     *
+     * @throws Exception 处理测试数据的序列化、发起测试请求时失败
+     */
     @Test
     void orderAuthorizationDenialsUseTheOrderEnvelope() throws Exception {
         try (JavalinShiroApplication.Application application = start(0)) {
@@ -125,6 +194,11 @@ class NativeAuthHttpTest {
         }
     }
 
+    /**
+     * 验证<code>token.isEmpty()</code>为假。
+     *
+     * @throws IOException 读取或写入测试数据时发生 I/O 错误
+     */
     @Test
     void missingSharedOrderReturnsTheOrderDiagnostic() throws IOException {
         try (JavalinShiroApplication.Application application = start(0)) {
@@ -140,6 +214,11 @@ class NativeAuthHttpTest {
         }
     }
 
+    /**
+     * 验证<code>completed.poll(10, TimeUnit.SECONDS)</code> 等于 <code>Optional.empty()</code>，<code>http.request("POST", ORDERS + id + suffix, null, headers)</code> 抛出 <code>SecurityException.class</code>，<code>http.request("GET", ORDERS + id, null, allowedHeaders).path("orderState").asText()</code> 等于 <code>"CANCELLED"</code>。
+     *
+     * @throws Exception 发起测试请求时失败
+     */
     @Test
     void cancellationAuthorizationUsesMatchedRouteForBothSlashForms() throws Exception {
         LinkedBlockingQueue<Optional<String>> completed = new LinkedBlockingQueue<>();
@@ -176,6 +255,11 @@ class NativeAuthHttpTest {
         }
     }
 
+    /**
+     * 验证<code>value</code>非空，<code>value.isEmpty()</code>为真。
+     *
+     * @throws Exception 发起测试请求时失败
+     */
     @Test
     void nativeAuthenticationAndBusinessCleanup() throws Exception {
         LinkedBlockingQueue<Optional<String>> completed = new LinkedBlockingQueue<>();
@@ -242,6 +326,9 @@ class NativeAuthHttpTest {
         }
     }
 
+    /**
+     * 验证<code>paid.path("orderState").asText()</code> 等于 <code>"CONFIRMED"</code>，<code>driver.request("GET", ORDERS + id, null, Map.of()).path("paidAmountCent").asLong()</code> 等于 <code>1000</code>，<code>anonymous.create("NOAUTH", Map.of())</code> 抛出 <code>SecurityException.class</code>。
+     */
     @Test
     void originalOrderRoutesUseSharedOrderAndMutateBusiness() {
         try (var application = start(0)) {
@@ -258,6 +345,11 @@ class NativeAuthHttpTest {
         }
     }
 
+    /**
+     * 验证<code>release.await(10, TimeUnit.SECONDS)</code>为真，<code>finished.poll(10, TimeUnit.SECONDS).isEmpty()</code>为真，<code>observed.isEmpty()</code>为真。
+     *
+     * @throws Exception 等待并发操作、发起测试请求时失败
+     */
     @Test
     void clientCancellationStillClosesNativeWorkerScope() throws Exception {
         var entered = new java.util.concurrent.CountDownLatch(1);
@@ -293,6 +385,9 @@ class NativeAuthHttpTest {
         }
     }
 
+    /**
+     * 验证<code>start(live.app().port())</code> 抛出 <code>RuntimeException.class</code>，<code>io.ddd4j.core.util.SubjectKit.subjectProvider</code> 与…为同一实例 <code>owner</code>，<code>io.ddd4j.core.util.SubjectKit.subjectProvider</code> 与…为同一实例 <code>previous</code>。
+     */
     @Test
     void failedStartRestoresLiveApplicationAndClosingRestoresPriorSpi() {
         var previous = io.ddd4j.core.util.SubjectKit.subjectProvider;
@@ -309,6 +404,11 @@ class NativeAuthHttpTest {
         assertSame(previous, io.ddd4j.core.util.SubjectKit.subjectProvider);
     }
 
+    /**
+     * 验证被测调用 抛出 <code>AssertionError.class</code>，<code>GuiceContext.getInjector()</code> 与…为不同的实例 <code>caller</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void startupFailureKeepsItsCauseWhenServerCleanupAlsoFails() throws Exception {
         Injector previousInjector = GuiceContext.isInitialized() ? GuiceContext.getInjector() : null;
@@ -367,6 +467,9 @@ class NativeAuthHttpTest {
         }
     }
 
+    /**
+     * 验证<code>io.ddd4j.core.context.ThreadContext.getResources()</code> 等于 <code>expected</code>，<code>io.ddd4j.core.context.ThreadContext.getValues()</code> 等于 <code>expected</code>。
+     */
     @Test
     void closePreservesCallingThreadsCompleteContext() {
         try (var original = io.ddd4j.core.context.ThreadContext.open()) {
@@ -379,20 +482,54 @@ class NativeAuthHttpTest {
         }
     }
 
+    /**
+     * 将 <code>json</code>、<code>base</code>、<code>credentials</code> 等状态一起传入当前测试，供调用或结果断言使用。
+     */
     private static final class Driver {
+        /**
+         * 负责转换测试或协议正文中 JSON 数据的 Jackson 映射器。
+         */
         private final ObjectMapper json = new ObjectMapper();
+        /**
+         * 本地测试服务的基础地址。
+         */
         private final String base;
+        /**
+         * 认证请求样本携带的账号凭据。
+         */
         private final Map<String, String> credentials;
 
+        /**
+         * 用给定值初始化 <code>Driver</code> 实例。
+         *
+         * @param base        本地测试服务的基础地址
+         * @param credentials <code>credentials</code> 字段
+         */
         Driver(String base, Map<String, String> credentials) {
             this.base = base;
             this.credentials = credentials;
         }
 
+        /**
+         * 通过 <code>request()</code> 取得当前测试需要的结果。
+         *
+         * @param id      当前要查找的测试记录标识
+         * @param headers 当前测试请求携带的头字段
+         * @return 当前测试使用的结果，取自 <code>request("POST", ORDERS + id, ORDER, headers).path("orderNo").asText()</code>
+         */
         String create(String id, Map<String, String> headers) {
             return request("POST", ORDERS + id, ORDER, headers).path("orderNo").asText();
         }
 
+        /**
+         * 通过 <code>result.has()</code> 取得当前测试需要的结果。
+         *
+         * @param method  发给被测服务的 HTTP 方法
+         * @param path    测试请求的资源路径或待访问文件路径
+         * @param body    当前请求或响应中要读取的正文
+         * @param headers 当前测试请求携带的头字段
+         * @return 当前测试使用的结果，取自 <code>result.has("data") ? result.path("data") : result</code>
+         */
         JsonNode request(String method, String path, Object body, Map<String, String> headers) {
             var actualHeaders = new java.util.HashMap<>(credentials);
             actualHeaders.putAll(headers);

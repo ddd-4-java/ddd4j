@@ -51,6 +51,9 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class LicenseKeyStoreGenerator {
 
+    /**
+     * 等待 keytool 进程结束的最长秒数。
+     */
     private static final long KEYTOOL_TIMEOUT_SECONDS = 60L;
 
     /**
@@ -100,6 +103,9 @@ public class LicenseKeyStoreGenerator {
 
     /**
      * 构造 keytool -genkeypair 命令（生成私钥 + 自签证书）。
+     *
+     * @param param 密钥库生成配置
+     * @return 生成密钥对的 keytool 参数列表
      */
     private List<String> keytoolGenkeyCommand(LicenseKeyStoreParam param) {
         List<String> cmd = new ArrayList<>();
@@ -130,6 +136,10 @@ public class LicenseKeyStoreGenerator {
 
     /**
      * 构造 keytool -exportcert 命令（导出证书）。
+     *
+     * @param param    密钥库生成配置
+     * @param certPath 导入或导出的证书文件路径
+     * @return 导出证书的 keytool 参数列表
      */
     private List<String> keytoolExportCommand(LicenseKeyStoreParam param, String certPath) {
         List<String> cmd = new ArrayList<>();
@@ -149,6 +159,10 @@ public class LicenseKeyStoreGenerator {
 
     /**
      * 构造 keytool -importcert 命令（导入证书到公钥库）。
+     *
+     * @param param    密钥库生成配置
+     * @param certPath 导入或导出的证书文件路径
+     * @return 导入证书的 keytool 参数列表
      */
     private List<String> keytoolImportCommand(LicenseKeyStoreParam param, String certPath) {
         List<String> cmd = new ArrayList<>();
@@ -168,6 +182,9 @@ public class LicenseKeyStoreGenerator {
 
     /**
      * 执行 keytool 命令，失败时抛出异常并附带 stderr。
+     *
+     * @param command 要执行的命令和参数
+     * @throws Exception 无法启动 keytool、等待中断或命令非零退出
      */
     private void run(List<String> command) throws Exception {
         ProcessBuilder pb = new ProcessBuilder(command);
@@ -185,6 +202,11 @@ public class LicenseKeyStoreGenerator {
         }
     }
 
+    /**
+     * 在启动 keytool 前校验口令、条目名称及密钥库路径。
+     *
+     * @param param 生成签发和验证密钥库的配置
+     */
     private void validateParam(LicenseKeyStoreParam param) {
         Objects.requireNonNull(param, "LicenseKeyStoreParam 不能为空");
         requireText(param.getPrivateAlias(), "privateAlias");
@@ -210,12 +232,25 @@ public class LicenseKeyStoreGenerator {
         }
     }
 
+    /**
+     * 检查许可证配置中的必填文本。
+     *
+     * @param value 待检查的配置值
+     * @param field 用于诊断的配置字段名称
+     * @throws IllegalArgumentException 配置未提供有效文本
+     */
     private void requireText(String value, String field) {
         if (Objects.isNull(value) || StrKit.isEmpty(value.trim())) {
             throw new IllegalArgumentException(field + " 不能为空");
         }
     }
 
+    /**
+     * 复制并格式化 keytool 参数，在日志文本中隐去密钥库和密钥口令。
+     *
+     * @param command 即将运行或诊断的 keytool 参数列表
+     * @return 可以写入诊断的脱敏命令文本
+     */
     private String redactedCommand(List<String> command) {
         List<String> redacted = new ArrayList<>(command);
         for (int index = 0; index < redacted.size() - 1; index++) {
@@ -229,6 +264,8 @@ public class LicenseKeyStoreGenerator {
 
     /**
      * 解析 keytool 可执行文件路径（JAVA_HOME/bin/keytool 或 PATH 中的 keytool）。
+     *
+     * @return 当前 Java 环境可用的 keytool 执行路径
      */
     private String keytoolBinary() {
         String javaHome = System.getProperty("java.home");
@@ -241,6 +278,9 @@ public class LicenseKeyStoreGenerator {
 
     /**
      * 根据密钥算法选择签名算法。
+     *
+     * @param keyAlgorithm 密钥算法
+     * @return 指定密钥算法对应的签名算法
      */
     private String sigAlgOf(String keyAlgorithm) {
         if ("DSA".equalsIgnoreCase(keyAlgorithm)) {
@@ -251,6 +291,8 @@ public class LicenseKeyStoreGenerator {
 
     /**
      * 确保目标文件的父目录存在。
+     *
+     * @param path 待生成的文件路径
      */
     private void ensureParentDir(String path) {
         File f = new File(path);

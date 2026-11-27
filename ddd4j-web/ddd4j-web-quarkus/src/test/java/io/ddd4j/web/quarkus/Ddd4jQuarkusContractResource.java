@@ -27,28 +27,52 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+/**
+ * 为 Quarkus 通用 Web 合同暴露可请求的 JAX-RS 资源。
+ */
 @Path("/contract")
 @Produces(MediaType.APPLICATION_JSON)
 public class Ddd4jQuarkusContractResource {
 
+    /**
+     * 通过 <code>R.ok()</code> 取得当前测试需要的结果。
+     *
+     * @return 当前测试使用的结果，取自 <code>R.ok(java.util.Collections.singletonMap("result", "ok"))</code>
+     */
     @GET
     @Path("/success")
     public R<Map<String, String>> success() {
         return R.ok(java.util.Collections.singletonMap("result", "ok"));
     }
 
+    /**
+     * 通过 <code>R.ok()</code> 取得当前测试需要的结果。
+     *
+     * @return 当前测试使用的结果，取自 <code>R.ok(java.util.Collections.singletonMap("result", "ok"))</code>
+     */
     @GET
     @Path("/public")
     public R<Map<String, String>> publicEndpoint() {
         return R.ok(java.util.Collections.singletonMap("result", "ok"));
     }
 
+    /**
+     * 通过 <code>R.ok()</code> 取得当前测试需要的结果。
+     *
+     * @return 当前测试使用的结果，取自 <code>R.ok(java.util.Collections.singletonMap("result", "ok"))</code>
+     */
     @GET
     @Path("/protected")
     public R<Map<String, String>> protectedEndpoint() {
         return R.ok(java.util.Collections.singletonMap("result", "ok"));
     }
 
+    /**
+     * 通过 <code>Response.status()</code> 取得当前测试需要的结果。
+     *
+     * @param ignoredBody 本次调用使用的 <code>String</code> 参数 <code>ignoredBody</code>
+     * @return 当前测试使用的结果，取自 <code>Response.status(Response.Status.CREATED).entity(R.ok(java.util.Collections.singletonMap("result", "created"))).build()</code>
+     */
     @POST
     @Path("/created")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -57,6 +81,11 @@ public class Ddd4jQuarkusContractResource {
                 .entity(R.ok(java.util.Collections.singletonMap("result", "created"))).build();
     }
 
+    /**
+     * 通过 <code>R.ok()</code> 取得当前测试需要的结果。
+     *
+     * @return 当前测试使用的结果，取自 <code>R.ok(data)</code>
+     */
     @GET
     @Path("/context")
     public R<Map<String, Object>> context() {
@@ -67,6 +96,12 @@ public class Ddd4jQuarkusContractResource {
         return R.ok(data);
     }
 
+    /**
+     * 通过 <code>R.ok()</code> 取得当前测试需要的结果。
+     *
+     * @param ignoredBody 本次调用使用的 <code>String</code> 参数 <code>ignoredBody</code>
+     * @return 当前测试使用的结果，取自 <code>R.ok(java.util.Collections.singletonMap("result", "accepted"))</code>
+     */
     @POST
     @Path("/idempotent")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -74,6 +109,12 @@ public class Ddd4jQuarkusContractResource {
         return R.ok(java.util.Collections.singletonMap("result", "accepted"));
     }
 
+    /**
+     * 构造 <code>IllegalArgumentException</code>、<code>SecurityException</code> 作为当前测试的输入或结果。
+     *
+     * @param type 用来解析、检查或构造测试对象的 Java 类型
+     * @return 该异常路径没有正常返回结果
+     */
     @GET
     @Path("/errors/{type}")
     public R<Void> error(@PathParam("type") String type) {

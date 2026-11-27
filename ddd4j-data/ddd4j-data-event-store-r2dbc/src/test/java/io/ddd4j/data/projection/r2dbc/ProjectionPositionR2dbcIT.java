@@ -63,6 +63,9 @@ class ProjectionPositionR2dbcIT {
      */
     private static final String ORDER_SUMMARY = "order-summary";
 
+    /**
+     * 作为库存投影测试输入或比较基准的快照数据。
+     */
     private static final String INVENTORY_SNAPSHOT = "inventory-snapshot";
 
     /**
@@ -75,10 +78,19 @@ class ProjectionPositionR2dbcIT {
                     "  next_event_number bigint not null" +
                     ")";
 
+    /**
+     * 为受测 R2DBC 组件提供数据库连接的工厂。
+     */
     private static ConnectionFactory connectionFactory;
 
+    /**
+     * 测试使用或记录的多条投影位点。
+     */
     private R2dbcProjectionPositionRepository positions;
 
+    /**
+     * 测试前依次初始化<code>connectionFactory</code>。
+     */
     @BeforeAll
     static void setUpDatabase() {
         connectionFactory = ConnectionFactories.get("r2dbc:h2:mem:///projectionit;DB_CLOSE_DELAY=-1");
@@ -103,6 +115,9 @@ class ProjectionPositionR2dbcIT {
                 connection -> Mono.from(connection.close()));
     }
 
+    /**
+     * 测试前依次初始化<code>positions</code>。
+     */
     @BeforeEach
     void cleanPositions() {
         StepVerifier.create(executeUpdate("delete from ddd4j_projection_position", statement -> statement))
@@ -111,6 +126,9 @@ class ProjectionPositionR2dbcIT {
         positions = new R2dbcProjectionPositionRepository(connectionFactory);
     }
 
+    /**
+     * 验证 saveIncrReadBack 响应式完整循环 应跨仓储实例读回最终位置。
+     */
     @Test
     void saveIncrReadBack_响应式完整循环_应跨仓储实例读回最终位置() {
         // 先落零位行（dispatcher 冷启动路径），断言 save 返回持久化后的不可变位置值
@@ -147,6 +165,9 @@ class ProjectionPositionR2dbcIT {
                 .verifyComplete();
     }
 
+    /**
+     * 验证<code>streamId</code> 等于 <code>ORDER_SUMMARY</code>，<code>firstRun.runOnce(view)</code> 抛出 <code>R2dbcDataIntegrityViolationException.class</code>，<code>position.getNextEventNumber()</code> 等于 <code>17L</code>。
+     */
     @Test
     void restartsAtLastCommittedCheckpointWhenDatabaseRejectsAdvance() {
         positions.save(new DefaultProjectionPosition(ORDER_SUMMARY, 11L));
@@ -214,6 +235,9 @@ class ProjectionPositionR2dbcIT {
                 .hasValueSatisfying(position -> assertThat(position.getNextEventNumber()).isEqualTo(17L));
     }
 
+    /**
+     * 验证<code>position.getNextEventNumber()</code>为零。
+     */
     @Test
     void resetToZero_响应式推进后重置_应回退到0() {
         StepVerifier.create(positions.saveReactive(new DefaultProjectionPosition(ORDER_SUMMARY, 5L)))
@@ -229,6 +253,9 @@ class ProjectionPositionR2dbcIT {
                 .hasValueSatisfying(position -> assertThat(position.getNextEventNumber()).isZero());
     }
 
+    /**
+     * 验证 resetToZero 流不存在 应插入零位行。
+     */
     @Test
     void resetToZero_流不存在_应插入零位行() {
         // 与 core InMemoryProjectionPositionRepository 同款语义：缺行 reset 后可读到 0
@@ -240,6 +267,9 @@ class ProjectionPositionR2dbcIT {
                 .verifyComplete();
     }
 
+    /**
+     * 验证<code>position.getNextEventNumber()</code> 等于 <code>3L</code>，<code>position.getNextEventNumber()</code>为零，<code>positions.findAll()</code> 的大小为 <code>2</code>。
+     */
     @Test
     void 两个handler命名空间_同步SPI面_分别save后独立推进互不串扰() {
         positions.save(DefaultProjectionPosition.zero(ORDER_SUMMARY));
@@ -258,6 +288,9 @@ class ProjectionPositionR2dbcIT {
                 .containsExactlyInAnyOrder(ORDER_SUMMARY, INVENTORY_SNAPSHOT);
     }
 
+    /**
+     * 验证<code>positions.findByStreamId(ORDER_SUMMARY)</code>为空，<code>saved.getStreamId()</code> 等于 <code>ORDER_SUMMARY</code>，<code>positions.findAll()</code>为空。
+     */
     @Test
     void save不存在则插入存在则更新_delete后不可见() {
         // save（缺行）→ MERGE INTO 插入（dispatcher 首次推进路径依赖的 upsert 语义）

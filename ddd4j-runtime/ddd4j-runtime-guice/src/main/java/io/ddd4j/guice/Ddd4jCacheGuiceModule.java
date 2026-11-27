@@ -100,6 +100,9 @@ public class Ddd4jCacheGuiceModule extends AbstractModule {
         return this;
     }
 
+    /**
+     * 为 Guice 容器配置 DDD4J 缓存绑定。
+     */
     @Override
     protected void configure() {
         CacheKit.setDefaultType(defaultType);

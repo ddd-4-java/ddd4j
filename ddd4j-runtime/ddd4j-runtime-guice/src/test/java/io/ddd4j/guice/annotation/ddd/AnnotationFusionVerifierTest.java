@@ -19,13 +19,22 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * 通过 <code>AnnotationFusionVerifier.main()</code>、<code>service.hello()</code>、<code>service.getClass()</code> 验证 <code>AnnotationFusionVerifier</code> 的运行行为。
+ */
 class AnnotationFusionVerifierTest {
 
+    /**
+     * 验证<code>AnnotationFusionVerifier.main(new String[0])</code> 正常返回。
+     */
     @Test
     void mainVerificationPasses() {
         assertDoesNotThrow(() -> AnnotationFusionVerifier.main(new String[0]));
     }
 
+    /**
+     * 验证<code>service.hello()</code> 等于 <code>"hello"</code>，<code>service.getClass().getAnnotation(DomainService.class).annotationType()</code> 等于 <code>DomainService.class</code>。
+     */
     @Test
     void businessDomainServiceIsAnnotatedAndUsable() {
         BusinessDomainService service = new BusinessDomainService();

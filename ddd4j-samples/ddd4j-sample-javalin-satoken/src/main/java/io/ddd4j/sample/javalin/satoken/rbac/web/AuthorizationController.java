@@ -48,6 +48,9 @@ import static io.javalin.apibuilder.ApiBuilder.*;
  */
 public class AuthorizationController {
 
+    /**
+     * 执行基于角色的授权与分配操作的应用服务。
+     */
     private final RbacService rbacService;
 
     /**
@@ -197,15 +200,30 @@ public class AuthorizationController {
     @NoArgsConstructor
     public static class CreateUserRequest {
 
+        /**
+         * Java 序列化版本标识。
+         */
         private static final long serialVersionUID = 0L;
 
+        /**
+         * 账号身份或用户记录的主键。
+         */
         private String userId;
 
+        /**
+         * 当前身份凭据使用的用户名。
+         */
         private String username;
 
+        /**
+         * 当前登录或账号创建请求提供的口令。
+         */
         @ToString.Exclude
         private String password;
 
+        /**
+         * 账号资料中的真实姓名。
+         */
         private String realName;
 
         /**
@@ -273,13 +291,25 @@ public class AuthorizationController {
     @NoArgsConstructor
     public static class UpdateUserRequest {
 
+        /**
+         * Java 序列化版本标识。
+         */
         private static final long serialVersionUID = 0L;
 
+        /**
+         * 账号资料中的真实姓名。
+         */
         private String realName;
 
+        /**
+         * 当前登录或账号创建请求提供的口令。
+         */
         @ToString.Exclude
         private String password;
 
+        /**
+         * 当前商品、账号或权限记录的业务状态。
+         */
         private User.Status status;
 
         /**
@@ -335,8 +365,14 @@ public class AuthorizationController {
     @NoArgsConstructor
     public static class AssignRolesRequest {
 
+        /**
+         * Java 序列化版本标识。
+         */
         private static final long serialVersionUID = 0L;
 
+        /**
+         * 要关联到账号的角色标识列表。
+         */
         private List<String> roleIds;
 
         /**
@@ -368,14 +404,29 @@ public class AuthorizationController {
     @NoArgsConstructor
     public static class CreateRoleRequest {
 
+        /**
+         * Java 序列化版本标识。
+         */
         private static final long serialVersionUID = 0L;
 
+        /**
+         * 角色记录的主键。
+         */
         private String roleId;
 
+        /**
+         * 在主体权限检查中使用的角色业务编码。
+         */
         private String roleCode;
 
+        /**
+         * 角色展示名称。
+         */
         private String roleName;
 
+        /**
+         * 当前角色或权限定义的说明。
+         */
         private String description;
 
         /**
@@ -443,12 +494,24 @@ public class AuthorizationController {
     @NoArgsConstructor
     public static class UpdateRoleRequest {
 
+        /**
+         * Java 序列化版本标识。
+         */
         private static final long serialVersionUID = 0L;
 
+        /**
+         * 角色展示名称。
+         */
         private String roleName;
 
+        /**
+         * 当前角色或权限定义的说明。
+         */
         private String description;
 
+        /**
+         * 当前商品、账号或权限记录的业务状态。
+         */
         private Role.Status status;
 
         /**
@@ -504,8 +567,14 @@ public class AuthorizationController {
     @NoArgsConstructor
     public static class AssignPermissionsRequest {
 
+        /**
+         * Java 序列化版本标识。
+         */
         private static final long serialVersionUID = 0L;
 
+        /**
+         * 当前角色关联的权限标识列表。
+         */
         private List<String> permissionIds;
 
         /**
@@ -537,14 +606,29 @@ public class AuthorizationController {
     @NoArgsConstructor
     public static class CreatePermissionRequest {
 
+        /**
+         * Java 序列化版本标识。
+         */
         private static final long serialVersionUID = 0L;
 
+        /**
+         * 权限记录的主键。
+         */
         private String permissionId;
 
+        /**
+         * 权限检查和关联使用的业务编码。
+         */
         private String permissionCode;
 
+        /**
+         * 权限展示名称。
+         */
         private String permissionName;
 
+        /**
+         * 当前权限所属的业务模块。
+         */
         private String module;
 
         /**
@@ -612,12 +696,24 @@ public class AuthorizationController {
     @NoArgsConstructor
     public static class UpdatePermissionRequest {
 
+        /**
+         * Java 序列化版本标识。
+         */
         private static final long serialVersionUID = 0L;
 
+        /**
+         * 权限展示名称。
+         */
         private String permissionName;
 
+        /**
+         * 当前权限所属的业务模块。
+         */
         private String module;
 
+        /**
+         * 当前商品、账号或权限记录的业务状态。
+         */
         private Permission.Status status;
 
         /**

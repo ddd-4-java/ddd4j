@@ -26,8 +26,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * 验证 <code>SaTokenRuntimeRegistration</code> 在<code>emptyDaoSlotIsRestored</code>、<code>sharingTheSameJsonTemplateKeepsItsOwnerLive</code>等操作中的行为契约。
+ */
 class SaTokenRuntimeRegistrationTest {
 
+    /**
+     * 创建 <code>new ProbeDao</code> 供当前测试路径调用。
+     *
+     * @param failure 触发当前测试错误处理路径的失败
+     * @return 当前测试使用的结果，取自 <code>new ProbeDao(){ &#64;Override public void init() { super.init(); if (inits == 2) { throw failure; } } }</code>
+     */
     private static ProbeDao failsFirstRestoration(IllegalStateException failure) {
         return new ProbeDao() {
             @Override
@@ -40,10 +49,18 @@ class SaTokenRuntimeRegistrationTest {
         };
     }
 
+    /**
+     * 调用 <code>ReflectUtil.getStaticFieldValue()</code>、<code>ReflectUtil.getField()</code> 执行当前夹具操作。
+     *
+     * @return 当前测试使用的结果，取自 <code>(SaTokenDao)ReflectUtil.getStaticFieldValue(ReflectUtil.getField(SaManager.class, "saTokenDao"))</code>
+     */
     private static SaTokenDao currentDao() {
         return (SaTokenDao) ReflectUtil.getStaticFieldValue(ReflectUtil.getField(SaManager.class, "saTokenDao"));
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalArgumentException.class</code>，<code>SaManager.getConfig()</code> 与…为同一实例 <code>previousConfig</code>，<code>config.getTokenName()</code> 等于 <code>"native"</code>。
+     */
     @Test
     void sessionConfigOverridesDefaultsAndRestoresOwnedComponents() {
         SaTokenConfig previousConfig = SaManager.getConfig();
@@ -87,6 +104,9 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /**
+     * 验证<code>StpUtil.stpLogic</code> 与…为同一实例 <code>logic</code>，<code>SaManager.getStpInterface()</code> 与…为同一实例 <code>permissions</code>，<code>SaManager.getStpInterface()</code> 与…为同一实例 <code>previousPermissions</code>。
+     */
     @Test
     void customLogicAndPermissionSourceTakePrecedence() {
         StpLogic previousLogic = StpUtil.stpLogic;
@@ -120,6 +140,9 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，<code>StpUtil.stpLogic</code> 与…为同一实例 <code>shared</code>，<code>publications.get()</code> 等于 <code>2</code>。
+     */
     @Test
     void sharingTheSameCustomLogicKeepsItsOwnerLiveAndPreservesNativeNotifications() {
         String realm = "runtime-shared-logic";
@@ -157,6 +180,9 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，<code>SaManager.stpLogicMap.get(realm)</code> 与…为同一实例 <code>shared</code>，<code>SaManager.stpLogicMap.get(realm)</code> 与…为同一实例 <code>externalRealm</code>。
+     */
     @Test
     void replacingTheDefaultLogicLeavesTheOtherBorrowedRealmProtected() {
         String realm = "runtime-shared-realm";
@@ -187,6 +213,9 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /**
+     * 验证<code>SaManager.stpLogicMap.get(realm)</code> 与…为同一实例 <code>previous</code>，<code>StpUtil.stpLogic</code> 与…为同一实例 <code>expected</code>，<code>StpUtil.stpLogic</code> 与…为同一实例 <code>defaultLogic</code>。
+     */
     @Test
     void customLogicLeavesTheRealmInstalledByAnSdkListener() {
         String realm = "runtime-custom-callback";
@@ -218,6 +247,9 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /**
+     * 验证<code>SaManager.stpLogicMap.get(realm)</code> 与…为同一实例 <code>previous</code>，被测调用 抛出 <code>IllegalStateException.class</code>，<code>SaManager.stpLogicMap.get(realm)</code> 与…为同一实例 <code>external</code>。
+     */
     @Test
     void securityStartFailureLeavesTheRealmInstalledByAnSdkListener() {
         String realm = "runtime-security-callback";
@@ -253,6 +285,9 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，<code>StpUtil.stpLogic</code> 与…为同一实例 <code>defaultLogic</code>，<code>SaManager.stpLogicMap.get(realm)</code> 与…为同一实例 <code>previous</code>。
+     */
     @Test
     void failureInAnSdkListenerRestoresTheOwnedCustomLogic() {
         String realm = "runtime-owned-callback";
@@ -281,6 +316,9 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /**
+     * 验证<code>currentDao()</code> 与…为同一实例 <code>chosen</code>，<code>chosen.inits</code> 等于 <code>1</code>，<code>chosen.destroys</code> 等于 <code>1</code>。
+     */
     @Test
     void emptyDaoSlotIsRestoredWithoutInstallingAnImplicitDefault() {
         SaTokenDao original = currentDao();
@@ -300,6 +338,9 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，<code>currentDao()</code> 与…为同一实例 <code>second</code>，<code>second.destroys</code> 等于 <code>1</code>。
+     */
     @Test
     void closingDependentOuterRegistrationBeforeInnerKeepsBothLive() {
         SaTokenDao original = currentDao();
@@ -336,6 +377,9 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，<code>currentDao()</code> 与…为同一实例 <code>shared</code>，<code>shared.destroys</code> 等于 <code>1</code>。
+     */
     @Test
     void sharingTheSameDaoKeepsItsOwnerLiveUntilAllBorrowersClose() {
         SaTokenDao original = currentDao();
@@ -371,6 +415,9 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，<code>SaManager.getSaJsonTemplate()</code> 与…为同一实例 <code>shared</code>，<code>publications.get()</code> 等于 <code>1</code>。
+     */
     @Test
     void sharingTheSameJsonTemplateKeepsItsOwnerLiveWithoutRepublishing() {
         SaJsonTemplate previous = SaManager.getSaJsonTemplate();
@@ -404,6 +451,9 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /**
+     * 验证<code>currentDao()</code> 与…为同一实例 <code>external</code>，<code>shared.destroys</code> 等于 <code>1</code>，<code>external.destroys</code> 等于 <code>0</code>。
+     */
     @Test
     void externalDaoReplacementLetsTheOldOwnerCloseBeforeItsBorrower() {
         SaTokenDao original = currentDao();
@@ -428,6 +478,9 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /**
+     * 验证<code>SaManager.getSaTokenContext()</code> 与…为同一实例 <code>originalContext</code>，<code>currentDao()</code> 与…为同一实例 <code>choice</code>，<code>caller.destroys</code> 等于 <code>0</code>。
+     */
     @Test
     void disjointRegistrationAndExternallyReplacedDaoRemainUsable() {
         SaTokenDao original = currentDao();
@@ -458,6 +511,9 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，<code>currentDao()</code> 与…为同一实例 <code>caller</code>，<code>caller.inits</code> 等于 <code>2</code>。
+     */
     @Test
     void failedDaoInitRollsBackInstalledDaoAndOtherOwnedSlots() {
         SaTokenDao original = currentDao();
@@ -486,6 +542,9 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，<code>SaManager.getSaJsonTemplate()</code> 与…为同一实例 <code>originalJson</code>，<code>currentDao()</code>为空。
+     */
     @Test
     void failedDaoDestroyDoesNotSkipJsonRestoration() {
         SaTokenDao original = currentDao();
@@ -517,6 +576,9 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，<code>currentDao()</code> 与…为同一实例 <code>caller</code>，<code>installed.destroys</code> 等于 <code>1</code>。
+     */
     @Test
     void closeRetriesInitializationOfTheAlreadyPublishedPreviousDao() {
         SaTokenDao original = currentDao();
@@ -541,6 +603,9 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，<code>currentDao()</code> 与…为同一实例 <code>caller</code>，<code>external.destroys</code> 等于 <code>0</code>。
+     */
     @Test
     void closeLeavesTheExternalReplacementAfterPreviousDaoInitializationFails() {
         SaTokenDao original = currentDao();
@@ -565,6 +630,9 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，<code>initFailure.getSuppressed().length</code> 等于 <code>1</code>，<code>caller.inits</code> 等于 <code>2</code>。
+     */
     @Test
     void failedStartKeepsPrimaryFailureAndAllowsCleanupRetry() {
         SaTokenDao original = currentDao();
@@ -606,18 +674,36 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /**
+     * 替换 Sa-Token 会话存储并暴露可检查的初始化或清理行为。
+     */
     private static class ProbeDao extends SaTokenDaoDefaultImpl {
 
+        /**
+         * 跟踪底层组件初始化次数的计数器。
+         */
         int inits;
+        /**
+         * 跟踪底层组件销毁次数的计数器。
+         */
         int destroys;
+        /**
+         * 底层组件初始化时观察到的原生配置。
+         */
         SaTokenConfig configAtInit;
 
+        /**
+         * 根据本次调用更新 <code>configAtInit = SaManager.config</code>，用于后续测试步骤。
+         */
         @Override
         public void init() {
             inits++;
             configAtInit = SaManager.config;
         }
 
+        /**
+         * 增加销毁次数以供测试检查原生会话存储的清理。
+         */
         @Override
         public void destroy() {
             destroys++;

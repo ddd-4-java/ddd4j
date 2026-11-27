@@ -29,11 +29,20 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  */
 class AuthConfigContractTest {
 
+    /**
+     * 核对<code>actual</code> 等于 <code>expected</code>，<code>actual.set(0, "changed")</code> 抛出 <code>UnsupportedOperationException.class</code>。
+     *
+     * @param expected 当前用例设定的期望值
+     * @param actual   受测调用或测试环境实际产生的值
+     */
     private static void assertReadOnly(List<String> expected, List<String> actual) {
         assertEquals(expected, actual);
         assertThrows(UnsupportedOperationException.class, () -> actual.set(0, "changed"));
     }
 
+    /**
+     * 在测试框架中执行 <code>Arrays.asList()</code>、<code>provider.getPermissionList()</code>、<code>provider.getRoleList()</code>，验证该场景。
+     */
     @Test
     void permissionAndRoleSnapshotsCannotBeChangedByCallers() {
         SubjectDataProvider provider = new AuthConfig().subjectDataProvider();

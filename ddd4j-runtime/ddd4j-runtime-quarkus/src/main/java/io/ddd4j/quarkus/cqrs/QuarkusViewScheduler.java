@@ -44,6 +44,16 @@ public class QuarkusViewScheduler implements ViewScheduler {
      */
     static final String TASK_KEY = "ddd4j.task";
 
+    /**
+     * 按给定时间规则安排任务。
+     *
+     * <p>Quarkus 实现调用 <code>NativeQuartz.schedule(viewName, cron, task)</code>。</p>
+     *
+     * @param viewName 视图名称（用于日志 / 调试）
+     * @param cron     CRON 表达式
+     * @param task     要执行的任务
+     * @return 实际返回<code>NativeQuartz.schedule(viewName, cron, task)</code>
+     */
     @Override
     public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
         try {
@@ -54,7 +64,18 @@ public class QuarkusViewScheduler implements ViewScheduler {
     }
 
     // 将选装 Quartz 的链接边界放在真实 schedule 调用内，ArC 发现外层 Bean 时不加载 Quartz 类型。
+    /**
+     * 将可选的 Quarkus Quartz 调度器接入投影任务，延迟加载原生 Quartz 类型。
+     */
     private static final class NativeQuartz {
+        /**
+         * 根据视图名称和 Cron 配置注册一次持续有效的 Quartz 投影计划。
+         *
+         * @param viewName 当前被调度的视图名称
+         * @param cron     任务计划的 Cron 表达式
+         * @param task     实际执行一次投影的回调
+         * @return 可取消该计划的调度句柄
+         */
         private static ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
             Instance<io.quarkus.quartz.QuartzScheduler> schedulers = CDI.current()
                     .select(io.quarkus.quartz.QuartzScheduler.class);

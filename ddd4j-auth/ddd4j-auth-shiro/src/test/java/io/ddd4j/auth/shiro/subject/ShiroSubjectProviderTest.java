@@ -26,6 +26,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class ShiroSubjectProviderTest {
 
+    /**
+     * 验证<code>subject</code>非空。
+     */
     @Test
     void getSubject_shouldReturnNonNullSubject() {
         ShiroSubjectProvider provider = new ShiroSubjectProvider();
@@ -35,6 +38,9 @@ class ShiroSubjectProviderTest {
         assertThat(subject).isNotNull();
     }
 
+    /**
+     * 验证<code>subject</code> 的类型为 <code>ShiroSubject.class</code>。
+     */
     @Test
     void getSubject_shouldReturnShiroSubjectInstance() {
         ShiroSubjectProvider provider = new ShiroSubjectProvider();
@@ -44,6 +50,9 @@ class ShiroSubjectProviderTest {
         assertThat(subject).isInstanceOf(ShiroSubject.class);
     }
 
+    /**
+     * 验证<code>first</code> 指向不同实例 <code>second</code>。
+     */
     @Test
     void getSubject_shouldReturnNewInstanceEachCall() {
         ShiroSubjectProvider provider = new ShiroSubjectProvider();
@@ -54,6 +63,9 @@ class ShiroSubjectProviderTest {
         assertThat(first).isNotSameAs(second);
     }
 
+    /**
+     * 验证<code>subject</code>非空，<code>subject</code> 的类型为 <code>ShiroSubject.class</code>。
+     */
     @Test
     void getSubjectByRealm_shouldReturnNonNullSubject() {
         ShiroSubjectProvider provider = new ShiroSubjectProvider();
@@ -64,6 +76,9 @@ class ShiroSubjectProviderTest {
         assertThat(subject).isInstanceOf(ShiroSubject.class);
     }
 
+    /**
+     * 验证<code>subject</code>非空。
+     */
     @Test
     void getSubjectByRealm_withNullRealm_shouldStillReturnSubject() {
         ShiroSubjectProvider provider = new ShiroSubjectProvider();

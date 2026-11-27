@@ -9,8 +9,14 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * 通过 <code>Collections.singletonMap()</code>、<code>Collections.singletonList()</code>、<code>response.hashCode()</code> 验证 <code>WebContractResponseValueContract</code> 的运行行为。
+ */
 class WebContractResponseValueContractTest {
 
+    /**
+     * 验证<code>response.hashCode()</code> 等于 <code>997929782</code>，<code>response.toString()</code> 等于 <code>"WebContractResponse[status=201, headers={X-Request-Id=[req-1]}, body=ok]"</code>。
+     */
     @Test
     void responseValueHasTheSameHashAndTextOnEveryLine() {
         Map<String, List<String>> headers = Collections.singletonMap(
@@ -22,6 +28,11 @@ class WebContractResponseValueContractTest {
                 "WebContractResponse[status=201, headers={X-Request-Id=[req-1]}, body=ok]");
     }
 
+    /**
+     * 验证<code>restored</code> 等于 <code>response</code>。
+     *
+     * @throws Exception 处理测试数据的序列化时失败
+     */
     @Test
     void responseJsonRoundTripPreservesItsValue() throws Exception {
         Map<String, List<String>> headers = Collections.singletonMap(

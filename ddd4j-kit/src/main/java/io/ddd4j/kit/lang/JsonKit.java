@@ -76,7 +76,13 @@ public class JsonKit {
      */
     public static final TypeReference<Double> DOUBLE_TYPE = new TypeReference<Double>() {
     };
+    /**
+     * 只含年月日的兼容日期格式。
+     */
     private static final String DATE_PATTERN = "yyyy-MM-dd";
+    /**
+     * 含年月日及秒的兼容日期时间格式。
+     */
     private static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
     /**
      * 默认 ObjectMapper（用于普通 JSON 序列化）
@@ -463,12 +469,23 @@ public class JsonKit {
         }
     }
 
+    /**
+     * 按 JSON 数字、布尔、文本或其他节点类型取出 Java 值。
+     *
+     * @param childNode 待转换的 Jackson 树节点
+     * @return JSON 节点对应的 Java 值
+     */
     private static Object getNodeValue(JsonNode childNode) {
         return childNode.isBigDecimal() ? childNode.decimalValue() : childNode.isDouble() ? childNode.asDouble() :
                 childNode.isFloat() ? childNode.floatValue() : childNode.isLong() ? childNode.asLong() :
                         childNode.isInt() ? childNode.asInt() : childNode.isBoolean() ? childNode.asBoolean() : childNode.asText();
     }
 
+    /**
+     * 为 Jackson 模块注册 ISO 时间类型的序列化及反序列化器。
+     *
+     * @param module 接收时间类型处理器的 Jackson 模块
+     */
     private static void registerIsoTimeTypes(SimpleModule module) {
         module.addSerializer(Instant.class, new JsonSerializer<Instant>() {
             public void serialize(Instant value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
@@ -492,6 +509,12 @@ public class JsonKit {
         });
     }
 
+    /**
+     * 用给定格式输出日期的 JSON 字符串。
+     *
+     * @param formatter 序列化使用的 Java 时间格式
+     * @return 适用于该时间类型的 Jackson 序列化器
+     */
     private static JsonSerializer<LocalDate> localDateSerializer(DateTimeFormatter formatter) {
         return new JsonSerializer<LocalDate>() {
             public void serialize(LocalDate value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
@@ -500,6 +523,12 @@ public class JsonKit {
         };
     }
 
+    /**
+     * 按给定格式解析 JSON 中的日期。
+     *
+     * @param formatter 反序列化使用的 Java 时间格式
+     * @return 适用于该时间类型的 Jackson 反序列化器
+     */
     private static JsonDeserializer<LocalDate> localDateDeserializer(DateTimeFormatter formatter) {
         return new JsonDeserializer<LocalDate>() {
             public LocalDate deserialize(JsonParser parser, DeserializationContext ctxt) throws IOException {
@@ -508,6 +537,12 @@ public class JsonKit {
         };
     }
 
+    /**
+     * 用给定格式输出本地日期时间的 JSON 字符串。
+     *
+     * @param formatter 序列化使用的 Java 时间格式
+     * @return 适用于该时间类型的 Jackson 序列化器
+     */
     private static JsonSerializer<LocalDateTime> localDateTimeSerializer(DateTimeFormatter formatter) {
         return new JsonSerializer<LocalDateTime>() {
             public void serialize(LocalDateTime value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
@@ -516,6 +551,12 @@ public class JsonKit {
         };
     }
 
+    /**
+     * 按给定格式解析 JSON 中的本地日期时间。
+     *
+     * @param formatter 反序列化使用的 Java 时间格式
+     * @return 适用于该时间类型的 Jackson 反序列化器
+     */
     private static JsonDeserializer<LocalDateTime> localDateTimeDeserializer(DateTimeFormatter formatter) {
         return new JsonDeserializer<LocalDateTime>() {
             public LocalDateTime deserialize(JsonParser parser, DeserializationContext ctxt) throws IOException {
@@ -524,6 +565,12 @@ public class JsonKit {
         };
     }
 
+    /**
+     * 用给定格式输出本地时间的 JSON 字符串。
+     *
+     * @param formatter 序列化使用的 Java 时间格式
+     * @return 适用于该时间类型的 Jackson 序列化器
+     */
     private static JsonSerializer<LocalTime> localTimeSerializer(DateTimeFormatter formatter) {
         return new JsonSerializer<LocalTime>() {
             public void serialize(LocalTime value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
@@ -532,6 +579,12 @@ public class JsonKit {
         };
     }
 
+    /**
+     * 按给定格式解析 JSON 中的本地时间。
+     *
+     * @param formatter 反序列化使用的 Java 时间格式
+     * @return 适用于该时间类型的 Jackson 反序列化器
+     */
     private static JsonDeserializer<LocalTime> localTimeDeserializer(DateTimeFormatter formatter) {
         return new JsonDeserializer<LocalTime>() {
             public LocalTime deserialize(JsonParser parser, DeserializationContext ctxt) throws IOException {
@@ -540,11 +593,24 @@ public class JsonKit {
         };
     }
 
+    /**
+     * 解析秒级和毫秒级时间文本，缺少小数部分时补齐毫秒。
+     */
     private static class BaseSimpleDateFormat extends SimpleDateFormat {
+        /**
+         * 使用带毫秒的日期时间模式初始化格式器。
+         */
         public BaseSimpleDateFormat() {
             super("yyyy-MM-dd HH:mm:ss.SSS");
         }
 
+        /**
+         * 在缺少毫秒后缀的秒级文本上补零，再交给日期时间格式器解析。
+         *
+         * @param source 秒级或毫秒级日期时间文本
+         * @return 解析后的日期
+         * @throws ParseException 文本不能按日期时间模式解析
+         */
         public Date parse(String source) throws ParseException {
             if (source.length() == 19) {
                 source = source.concat(".000");

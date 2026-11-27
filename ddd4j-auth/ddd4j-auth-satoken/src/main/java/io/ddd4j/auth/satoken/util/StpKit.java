@@ -259,6 +259,13 @@ public class StpKit {
         return getExtraAs(SaConstants.PAYLOAD_IDENTITY_ID, FunctionKit.TO_INTEGER);
     }
 
+    /**
+     * 优先读取约定的声明键，没有值时回退到兼容字段。
+     *
+     * @param claimKey 优先读取的 JWT 声明键
+     * @param fieldKey 兼容旧数据的回退字段键
+     * @return 解析到的声明值，均缺失时返回空
+     */
     private static Object getIdClaim(String claimKey, String fieldKey) {
         Object value = StpUtil.getExtra(claimKey);
         return Objects.nonNull(value) ? value : StpUtil.getExtra(fieldKey);
