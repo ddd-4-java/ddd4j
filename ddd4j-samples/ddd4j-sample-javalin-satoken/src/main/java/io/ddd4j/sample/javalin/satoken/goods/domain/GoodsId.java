@@ -24,6 +24,7 @@ import java.util.Objects;
  */
 public class GoodsId implements Serializable {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -31,6 +32,10 @@ public class GoodsId implements Serializable {
      */
     private final Long value;
 
+    /**
+     * \u7528\u6301\u4e45\u5316\u4e3b\u952e\u521b\u5efa\u5546\u54c1\u6807\u8bc6\u3002
+     * @param value \u6784\u9020\u6807\u8bc6\u6216\u914d\u7f6e\u5bf9\u8c61\u7684\u539f\u503c
+     */
     private GoodsId(Long value) {
         if (Objects.isNull(value) || value <= 0) {
             throw new IllegalArgumentException("goodsId must be positive");
@@ -57,6 +62,7 @@ public class GoodsId implements Serializable {
         return value;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -69,11 +75,13 @@ public class GoodsId implements Serializable {
         return Objects.equals(value, that.value);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return Objects.hashCode(value);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "GoodsId{" + value + '}';

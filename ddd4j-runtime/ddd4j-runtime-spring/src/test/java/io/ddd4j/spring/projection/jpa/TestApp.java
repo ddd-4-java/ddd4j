@@ -41,6 +41,11 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EntityScan(basePackages = "io.ddd4j.data.projection.jpa")
 @EnableJpaRepositories(basePackages = "io.ddd4j.spring.projection.jpa")
 class TestApp {
+    /**
+     * \u521b\u5efa <code>new JpaProjectionPositionRepository</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+     * @param repository \u5f53\u524d\u6d4b\u8bd5\u8bbf\u95ee\u7684\u4ed3\u50a8\u5b9e\u4f8b
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new JpaProjectionPositionRepository(repository)</code>
+     */
     @Bean
     JpaProjectionPositionRepository jpaProjectionPositionRepository(SpringDataProjectionPositionRepository repository) {
         return new JpaProjectionPositionRepository(repository);

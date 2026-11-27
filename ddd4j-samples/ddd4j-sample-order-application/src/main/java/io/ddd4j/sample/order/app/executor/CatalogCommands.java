@@ -14,13 +14,16 @@ import lombok.RequiredArgsConstructor;
 /** 商品建档和下单的应用执行器，供各框架命令总线注册。 */
 @RequiredArgsConstructor
 public final class CatalogCommands implements CommandExecutor<Command> {
+    /** \u843d\u5b9e\u5546\u54c1\u4ea4\u6613\u5199\u7528\u4f8b\u7684\u5e94\u7528\u670d\u52a1\u3002 */
     private final CatalogService service;
 
+    /** {@inheritDoc} */
     @Override
     public Set<Class<? extends Command>> supportedCommands() {
         return Set.of(CreateGoodsSpuCmd.class, PlaceTradeOrderCmd.class, ConfirmTradePaymentCmd.class, ChangeTradeOrderCmd.class);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Result<Object> execute(Command command) {
         if (command instanceof CreateGoodsSpuCmd create) {

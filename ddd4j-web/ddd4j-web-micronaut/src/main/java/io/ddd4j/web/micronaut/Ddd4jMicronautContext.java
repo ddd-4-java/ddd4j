@@ -33,10 +33,13 @@ import java.util.Optional;
  */
 public final class Ddd4jMicronautContext implements ThreadPropagatedContextElement<WebContextScope> {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 0L;
 
+    /** \u5f53\u524d HTTP \u8bf7\u6c42\u89e3\u6790\u540e\u7528\u4e8e\u8de8\u5c42\u4f20\u9012\u7684\u4e0a\u4e0b\u6587\u3002 */
     private final WebRequestContext requestContext;
 
+    /** \u5f53\u524d\u8bf7\u6c42\u6240\u7ed1\u5b9a\u7684\u4e3b\u4f53\u64cd\u4f5c\u5165\u53e3\u3002 */
     private final Optional<Subject> subject;
 
     /**
@@ -62,6 +65,10 @@ public final class Ddd4jMicronautContext implements ThreadPropagatedContextEleme
         return PropagatedContext.getOrEmpty().find(Ddd4jMicronautContext.class);
     }
 
+    /**
+     * \u628a\u5f53\u524d Micronaut \u8bf7\u6c42\u4e0a\u4e0b\u6587\u4f20\u64ad\u5230\u5de5\u4f5c\u7ebf\u7a0b\u3002
+     * @return \u6062\u590d\u65e7\u7ebf\u7a0b\u72b6\u6001\u6240\u9700\u7684\u4f5c\u7528\u57df
+     */
     @Override
     public WebContextScope updateThreadContext() {
         WebContextScope scope = WebContextScope.open(requestContext);
@@ -69,6 +76,10 @@ public final class Ddd4jMicronautContext implements ThreadPropagatedContextEleme
         return scope;
     }
 
+    /**
+     * \u6062\u590d\u4f20\u64ad\u5f53\u524d\u8bf7\u6c42\u4e4b\u524d\u7684\u7ebf\u7a0b\u72b6\u6001\u3002
+     * @param oldState \u5efa\u7acb\u8bf7\u6c42\u7ed1\u5b9a\u524d\u4fdd\u5b58\u7684\u7ebf\u7a0b\u4f5c\u7528\u57df
+     */
     @Override
     public void restoreThreadContext(WebContextScope oldState) {
         oldState.close();
@@ -112,6 +123,11 @@ public final class Ddd4jMicronautContext implements ThreadPropagatedContextEleme
         return subject;
     }
 
+    /**
+     * \u53cd\u5e8f\u5217\u5316\u540e\u91cd\u5efa\u5b8c\u6574\u7684\u8ba4\u8bc1\u8bf7\u6c42\u4e0a\u4e0b\u6587\u5bf9\u8c61\u3002
+     * @return \u91cd\u5efa\u5e76\u7ecf\u8fc7\u6821\u9a8c\u7684 Micronaut \u8bf7\u6c42\u4e0a\u4e0b\u6587
+     * @throws ObjectStreamException \u53cd\u5e8f\u5217\u5316\u6570\u636e\u4e0d\u80fd\u5f62\u6210\u6709\u6548\u7684\u8bf7\u6c42\u4e0a\u4e0b\u6587
+     */
     private Object readResolve() throws ObjectStreamException {
         try {
             return new Ddd4jMicronautContext(requestContext, subject);
@@ -122,6 +138,7 @@ public final class Ddd4jMicronautContext implements ThreadPropagatedContextEleme
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -134,6 +151,7 @@ public final class Ddd4jMicronautContext implements ThreadPropagatedContextEleme
         return Objects.equals(this.requestContext, other.requestContext) && Objects.equals(this.subject, other.subject);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int result = 0;
@@ -142,6 +160,7 @@ public final class Ddd4jMicronautContext implements ThreadPropagatedContextEleme
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "Ddd4jMicronautContext[requestContext=" + requestContext + ", subject=" + subject + "]";

@@ -25,6 +25,7 @@ import java.util.Objects;
 @Getter
 public final class QrCodeOutput {
 
+    /** \u751f\u6210\u7684\u4e8c\u7ef4\u7801\u56fe\u50cf\u5b57\u8282\u3002 */
     private final byte[] bytes;
 
     /**

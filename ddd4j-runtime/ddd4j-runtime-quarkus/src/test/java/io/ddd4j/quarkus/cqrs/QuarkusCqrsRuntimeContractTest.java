@@ -45,6 +45,7 @@ import java.lang.reflect.Field;
  */
 class QuarkusCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
 
+    /** {@inheritDoc} */
     @Override
     protected CqrsRuntimeContract createContract() {
         QuarkusCommandBus commandBus = new QuarkusCommandBus();
@@ -88,7 +89,10 @@ class QuarkusCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
     }
 
     /**
-     * 通过反射注入 CDI Instance，绕过 CDI Instance 依赖。
+     * \u901a\u8fc7\u53cd\u5c04\u6ce8\u5165 CDI Instance\uff0c\u7ed5\u8fc7 CDI Instance \u4f9d\u8d56\u3002
+     *
+     * @param commandBus \u5f85\u6ce8\u5165\u6a21\u62df CDI \u6267\u884c\u5668\u7684\u547d\u4ee4\u603b\u7ebf
+     * @param executors \u5f85\u6ce8\u5165\u547d\u4ee4\u603b\u7ebf\u7684\u547d\u4ee4\u6267\u884c\u5668
      */
     @SuppressWarnings("unchecked")
     private void injectExecutors(QuarkusCommandBus commandBus, CommandExecutor<?>... executors) {
@@ -109,6 +113,7 @@ class QuarkusCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
      */
     private static class NoopViewScheduler implements ViewScheduler {
 
+        /** {@inheritDoc} */
         @Override
         public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
             return new ViewScheduleHandle() {

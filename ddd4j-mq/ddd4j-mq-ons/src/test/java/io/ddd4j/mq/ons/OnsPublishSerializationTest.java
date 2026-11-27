@@ -20,8 +20,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+/** \u901a\u8fc7 <code>mock()</code>\u3001<code>event.setTopic()</code>\u3001<code>event.setMsgId()</code> \u9a8c\u8bc1 <code>OnsPublishSerialization</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
 class OnsPublishSerializationTest {
 
+    /** \u9a8c\u8bc1<code>publishFailure</code>\u4e3a\u7a7a\uff0c<code>serializations.get()</code> \u7b49\u4e8e <code>1</code>\u3002 */
     @Test
     void successfulNativeSendUsesOneSerializationForPayloadAndLog() {
         Producer producer = mock(Producer.class);

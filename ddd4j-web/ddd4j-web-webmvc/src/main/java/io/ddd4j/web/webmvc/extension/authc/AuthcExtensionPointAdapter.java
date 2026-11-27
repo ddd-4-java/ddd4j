@@ -44,6 +44,7 @@ public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
     /** Bearer 令牌前缀。 */
     public static final String BEARER_PREFIX = "Bearer ";
 
+    /** {@inheritDoc} */
     @Override
     public String getToken(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException {
         if (Objects.isNull(request)) {
@@ -60,6 +61,7 @@ public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
         return null;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void handleHeader(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException {
         if (Objects.isNull(request) || Objects.isNull(params)) {
@@ -74,6 +76,7 @@ public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void handleRequest(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException {
         if (Objects.isNull(request) || Objects.isNull(params)) {
@@ -90,6 +93,7 @@ public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public Object handleResult(Object res) throws PluginRuntimeException {
         return res;

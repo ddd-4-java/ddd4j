@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /** 验证空策略支持列表和显式配置的监听契约。 */
 class MQListenerSupportsContractTest {
 
+    /** \u9a8c\u8bc1<code>supports.isEmpty()</code>\u4e3a\u771f\uff0c<code>supports.contains("kafka")</code>\u4e3a\u5047\uff0c<code>supports.add("kafka")</code> \u629b\u51fa <code>UnsupportedOperationException.class</code>\u3002 */
     @Test
     void absentSupportsReturnsAnImmutableEmptyListThatMatchesNoStrategy() {
         List<String> supports = MQListener.builder().build().supports();
@@ -37,6 +38,7 @@ class MQListenerSupportsContractTest {
         assertThrows(UnsupportedOperationException.class, () -> supports.add("kafka"));
     }
 
+    /** \u9a8c\u8bc1<code>MQListener.builder().supports(declared).build().supports()</code> \u7b49\u4e8e <code>declared</code>\u3002 */
     @Test
     void configuredSupportsKeepsTheDeclaredStrategies() {
         List<String> declared = Collections.singletonList("kafka");

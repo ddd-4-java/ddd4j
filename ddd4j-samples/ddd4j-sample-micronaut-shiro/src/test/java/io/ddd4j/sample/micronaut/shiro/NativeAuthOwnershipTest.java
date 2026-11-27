@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * 验证 Shiro 请求引擎和调用方引擎的所有权边界。
  */
 class NativeAuthOwnershipTest {
+    /** \u9a8c\u8bc1<code>SecurityUtils.getSecurityManager()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>caller</code>\u3002 */
     @Test
     void applicationKeepsCallerVmManager() {
         SecurityManager previous = (SecurityManager) ReflectUtil.getStaticFieldValue(
@@ -36,6 +37,7 @@ class NativeAuthOwnershipTest {
         }
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>SecurityUtils.getSubject()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>request</code>\uff0c<code>ThreadContext.getSecurityManager()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>caller</code>\u3002 */
     @Test
     void routeRestoresCallerThreadAfterFailure() {
         NativeAuth auth = new NativeAuth();

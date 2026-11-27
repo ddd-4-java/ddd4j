@@ -52,9 +52,13 @@ public class KafkaMQProperties extends MQProperties {
      * Kafka broker bootstrap servers（独立于父类 server 以遵循 Kafka 命名约定）。
      */
     private String bootstrapServers = "localhost:9092";
+    /** \u8fde\u63a5 Kafka \u5ba2\u6237\u7aef\u65f6\u4f7f\u7528\u7684\u6807\u8bc6\u3002 */
     private String clientId = "ddd4j-mq-kafka";
+    /** \u62fc\u63a5\u903b\u8f91\u6d88\u8d39\u8005\u7ec4 ID \u65f6\u4f7f\u7528\u7684\u540d\u79f0\u524d\u7f00\u3002 */
     private String groupIdPrefix = "ddd4j";
+    /** \u6bcf\u6b21 Kafka \u8f6e\u8be2\u6d88\u606f\u6240\u7528\u7684\u8d85\u65f6\u3002 */
     private Duration pollTimeout = Duration.ofSeconds(1);
+    /** \u662f\u5426\u5728\u521d\u59cb\u5316\u540e\u81ea\u52a8\u542f\u52a8 Kafka \u6d88\u8d39\u5faa\u73af\u3002 */
     private boolean autoStartConsumers = true;
 
     /**

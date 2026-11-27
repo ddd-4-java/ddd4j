@@ -31,6 +31,7 @@ import java.util.ResourceBundle;
  */
 public class GuiceI18nProvider implements I18nProvider {
 
+    /** {@inheritDoc} */
     @Override
     public String getMessage(String key, Object... args) {
         if (Objects.isNull(key)) {

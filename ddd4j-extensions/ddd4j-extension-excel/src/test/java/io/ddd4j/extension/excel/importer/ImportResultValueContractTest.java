@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class ImportResultValueContractTest {
 
+    /** \u9a8c\u8bc1<code>result.getData().size()</code> \u7b49\u4e8e <code>2</code>\uff0c<code>result.getData().get(0)</code> \u7b49\u4e8e <code>"first"</code>\uff0c<code>result.getErrors().clear()</code> \u629b\u51fa <code>UnsupportedOperationException.class</code>\u3002 */
     @Test
     void factoryCopiesInputsAndPreservesNullElements() {
         List<String> data = new ArrayList<>(Arrays.asList("first", null));
@@ -48,6 +49,7 @@ class ImportResultValueContractTest {
         assertThrows(UnsupportedOperationException.class, () -> result.getErrors().clear());
     }
 
+    /** \u9a8c\u8bc1<code>result.getTotalCount()</code> \u7b49\u4e8e <code>0</code>\uff0c<code>result.successRate()</code> \u7b49\u4e8e <code>0.0</code>\uff0c<code>result.hasErrors()</code> \u7b49\u4e8e <code>false</code>\u3002 */
     @Test
     void emptyResultHasNoRowsOrErrors() {
         ImportResult<String> result = ImportResult.empty();

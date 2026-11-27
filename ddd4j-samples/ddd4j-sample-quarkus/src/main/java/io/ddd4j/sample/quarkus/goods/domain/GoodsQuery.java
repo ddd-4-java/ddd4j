@@ -63,6 +63,7 @@ import java.math.BigDecimal;
  */
 public class GoodsQuery extends Query<Goods> {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -102,6 +103,10 @@ public class GoodsQuery extends Query<Goods> {
         return this;
     }
 
+    /**
+     * \u5c06\u6392\u5e8f\u8868\u8fbe\u5f0f\u89e3\u6790\u4e3a\u5546\u54c1\u67e5\u8be2\u652f\u6301\u7684\u5b57\u6bb5\u53ca\u65b9\u5411\u3002
+     * @param orderBy \u8bf7\u6c42\u4e2d\u4f20\u5165\u7684\u6392\u5e8f\u8868\u8fbe\u5f0f
+     */
     private void applyOrderBy(String orderBy) {
         String[] tokens = orderBy.trim().split("_");
         if (tokens.length != 2) {
@@ -126,6 +131,11 @@ public class GoodsQuery extends Query<Goods> {
         }
     }
 
+    /**
+     * \u6309\u65b9\u5411\u4e3a\u5546\u54c1\u67e5\u8be2\u8ffd\u52a0\u9886\u57df\u5c5e\u6027\u6392\u5e8f\u6761\u4ef6\u3002
+     * @param descending \u662f\u5426\u6309\u964d\u5e8f\u6392\u5217
+     * @param property \u5546\u54c1\u6392\u5e8f\u6240\u4f7f\u7528\u7684\u9886\u57df\u5c5e\u6027\u5f15\u7528
+     */
     private void applyOrder(boolean descending, SFunction<Goods, ?> property) {
         if (descending) {
             orderByDesc(property);

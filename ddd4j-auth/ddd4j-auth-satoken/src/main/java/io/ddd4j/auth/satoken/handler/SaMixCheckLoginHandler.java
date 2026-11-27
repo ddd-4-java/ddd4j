@@ -51,6 +51,11 @@ public class SaMixCheckLoginHandler implements SaAnnotationHandlerInterface<SaMi
         return SaMixCheckLogin.class;
     }
 
+    /**
+     * \u6309\u6ce8\u89e3\u8981\u6c42\u9a8c\u8bc1\u8bf7\u6c42\u4e34\u65f6\u4ee4\u724c\u6216\u5df2\u767b\u5f55\u4f1a\u8bdd\u3002
+     * @param at \u58f0\u660e\u5f53\u524d\u5165\u53e3\u8ba4\u8bc1\u8981\u6c42\u7684\u6ce8\u89e3
+     * @param element \u89e6\u53d1\u8ba4\u8bc1\u68c0\u67e5\u7684\u6ce8\u89e3\u5143\u7d20
+     */
     @Override
     public void checkMethod(SaMixCheckLogin at, AnnotatedElement element) {
         // 获取前端请求提交的临时验证码
@@ -106,10 +111,11 @@ public class SaMixCheckLoginHandler implements SaAnnotationHandlerInterface<SaMi
     }
 
     /**
-     * 从临时 Token 中提取 Token 载荷（JWT 扩展信息）。
+     * \u4ece\u4e34\u65f6 Token \u4e2d\u63d0\u53d6 Token \u8f7d\u8377\uff08JWT \u6269\u5c55\u4fe1\u606f\uff09\u3002
+     * @param value \u4e34\u65f6 Token \u5bf9\u8c61
+     * @return Token \u6269\u5c55\u6570\u636e Map
      *
-     * @param value 临时 Token 对象
-     * @return Token 扩展数据 Map
+     * @throws SaTokenException \u539f\u751f\u4ee4\u724c\u8f7d\u8377\u65e0\u6cd5\u8bfb\u53d6
      */
     public Map<String, Object> getTokenPayload(SaTempToken value) throws SaTokenException {
         return new HashMap<String, Object>() {{
@@ -120,10 +126,11 @@ public class SaMixCheckLoginHandler implements SaAnnotationHandlerInterface<SaMi
     }
 
     /**
-     * 从临时 Token 中提取终端载荷（设备信息）。
+     * \u4ece\u4e34\u65f6 Token \u4e2d\u63d0\u53d6\u7ec8\u7aef\u8f7d\u8377\uff08\u8bbe\u5907\u4fe1\u606f\uff09\u3002
+     * @param value \u4e34\u65f6 Token \u5bf9\u8c61
+     * @return \u7ec8\u7aef\u6269\u5c55\u6570\u636e Map
      *
-     * @param value 临时 Token 对象
-     * @return 终端扩展数据 Map
+     * @throws SaTokenException \u5f53\u524d\u767b\u5f55\u7ec8\u7aef\u8f7d\u8377\u65e0\u6cd5\u8bfb\u53d6
      */
     public Map<String, Object> getTerminalPayload(SaTempToken value) throws SaTokenException {
         return new HashMap<String, Object>() {{

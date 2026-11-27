@@ -52,6 +52,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class CommandRegistry {
 
+    /** \u6309\u547d\u4ee4\u7c7b\u578b\u8bb0\u5f55\u7684\u5df2\u6ce8\u518c\u547d\u4ee4\u6267\u884c\u5668\u3002 */
     private final Map<Class<? extends Command>, CommandExecutor<?>> executors = new ConcurrentHashMap<>();
 
     /**

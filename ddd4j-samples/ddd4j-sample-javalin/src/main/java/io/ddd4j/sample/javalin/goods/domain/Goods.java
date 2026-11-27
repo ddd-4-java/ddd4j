@@ -43,6 +43,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 public class Goods extends AggregateRoot<Long> implements Serializable {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -78,6 +79,10 @@ public class Goods extends AggregateRoot<Long> implements Serializable {
      */
     private LocalDateTime updateTime;
 
+    /**
+     * \u8bfb\u53d6\u5546\u54c1\u4e3b\u952e ID\u3002
+     * @return \u5546\u54c1\u4e3b\u952e ID
+     */
     @Override
     public Long id() {
         return id;

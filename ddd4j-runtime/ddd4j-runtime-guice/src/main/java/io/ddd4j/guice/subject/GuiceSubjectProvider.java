@@ -39,6 +39,7 @@ public class GuiceSubjectProvider implements SubjectProvider {
     @Inject
     private Injector injector;
 
+    /** {@inheritDoc} */
     @Override
     public Subject getSubject() {
         Optional<Subject> subject = Optional.ofNullable(injector).map(inj -> {

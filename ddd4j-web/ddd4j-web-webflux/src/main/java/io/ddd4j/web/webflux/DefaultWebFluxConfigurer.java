@@ -32,9 +32,12 @@ import java.util.Map.Entry;
  */
 public class DefaultWebFluxConfigurer implements WebFluxConfigurer {
 
+    /** \u7ea6\u5b9a\u9759\u6001 Web \u8d44\u6e90\u7684 classpath \u4f4d\u7f6e\u3002 */
     private final String META_INF_RESOURCES = "classpath:/META-INF/resources/";
+    /** WebJars \u9759\u6001\u8d44\u6e90\u7684 classpath \u4f4d\u7f6e\u3002 */
     private final String META_INF_WEBJAR_RESOURCES = META_INF_RESOURCES + "webjars/";
 
+    /** \u914d\u7f6e\u672c\u5730\u76ee\u5f55\u548c\u9759\u6001\u8d44\u6e90\u8bbf\u95ee\u8def\u5f84\u7684\u5c5e\u6027\u3002 */
     private LocalResourceProperteis localResourceProperteis;
 
     /**

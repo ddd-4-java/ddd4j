@@ -34,8 +34,11 @@ public final class CacheIdempotencyGuard implements IdempotencyGuard {
 
     /** 常量值 {@code "ddd4j-web-idempotency"}。 */
     public static final String DEFAULT_CACHE_NAME = "ddd4j-web-idempotency";
+    /** \u5e42\u7b49\u8bb0\u5f55\u8868\u793a\u8bf7\u6c42\u5c1a\u5728\u6267\u884c\u4e2d\u7684\u72b6\u6001\u3002 */
     private static final String PROCESSING = "PROCESSING";
+    /** \u5e42\u7b49\u8bb0\u5f55\u8868\u793a\u8bf7\u6c42\u5df2\u7ecf\u6210\u529f\u5b8c\u6210\u7684\u72b6\u6001\u3002 */
     private static final String COMPLETED = "COMPLETED";
+    /** \u7528\u4e8e\u6ce8\u518c\u6216\u5b9a\u4f4d\u7f13\u5b58\u5b9e\u4f8b\u7684\u540d\u79f0\u3002 */
     private final String cacheName;
 
     /** 使用默认缓存业务名创建幂等守卫。 */
@@ -55,6 +58,7 @@ public final class CacheIdempotencyGuard implements IdempotencyGuard {
         this.cacheName = cacheName;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean acquire(String key, Duration ttl) {
         requireKey(key);
@@ -67,6 +71,7 @@ public final class CacheIdempotencyGuard implements IdempotencyGuard {
         return acquired;
     }
 
+    /** {@inheritDoc} */
     @Override
     public Optional<IdempotencyLease> acquireLease(String key, Duration ttl) {
         requireKey(key);
@@ -80,12 +85,14 @@ public final class CacheIdempotencyGuard implements IdempotencyGuard {
         return Optional.of(new IdempotencyLease(key, ownerToken, ttl));
     }
 
+    /** {@inheritDoc} */
     @Override
     public void complete(String key) {
         requireKey(key);
         CacheKit.replace(cacheName, key, PROCESSING, COMPLETED);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void complete(IdempotencyLease lease) {
         IdempotencyLease effectiveLease = Objects.requireNonNull(lease, "lease must not be null");
@@ -99,12 +106,14 @@ public final class CacheIdempotencyGuard implements IdempotencyGuard {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void release(String key) {
         requireKey(key);
         CacheKit.removeIf(cacheName, key, PROCESSING);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void release(IdempotencyLease lease) {
         IdempotencyLease effectiveLease = Objects.requireNonNull(lease, "lease must not be null");
@@ -115,6 +124,7 @@ public final class CacheIdempotencyGuard implements IdempotencyGuard {
         CacheKit.removeIf(cacheName, effectiveLease.key(), effectiveLease.ownerToken());
     }
 
+    /** \u53d6\u5f97\u652f\u6301\u539f\u5b50\u66f4\u65b0\u7684\u5e42\u7b49\u7f13\u5b58\u3002 */
     private void requireCasCapableCache() {
         Cache<String, Object> cache = CacheKit.getCache(cacheName);
         if (Objects.isNull(cache)) {
@@ -125,6 +135,12 @@ public final class CacheIdempotencyGuard implements IdempotencyGuard {
         }
     }
 
+    /**
+     * \u8981\u6c42\u79df\u7ea6\u65f6\u957f\u4e3a\u6b63\uff0c\u5e76\u628a\u4e0d\u8db3\u4e00\u79d2\u7684\u90e8\u5206\u5411\u4e0a\u53d6\u6574\u3002
+     * @param ttl \u8bf7\u6c42\u7684\u5e42\u7b49\u8bb0\u5f55\u4fdd\u7559\u65f6\u95f4
+     * @return \u7f13\u5b58\u4f7f\u7528\u7684\u8d85\u65f6\u79d2\u6570
+     * @throws IllegalArgumentException \u79df\u7ea6\u65f6\u957f\u4e3a\u96f6\u6216\u8d1f\u6570
+     */
     private static long expirySeconds(Duration ttl) {
         Duration effectiveTtl = Objects.requireNonNull(ttl, "ttl must not be null");
         if (effectiveTtl.isZero() || effectiveTtl.isNegative()) {
@@ -137,6 +153,11 @@ public final class CacheIdempotencyGuard implements IdempotencyGuard {
         return seconds;
     }
 
+    /**
+     * \u8981\u6c42\u5e42\u7b49\u952e\u5305\u542b\u6709\u6548\u6587\u672c\u3002
+     * @param key \u5f53\u524d\u5199\u5165\u7684\u4e0a\u4e0b\u6587\u952e\u3001\u5e42\u7b49\u952e\u6216\u5c5e\u6027\u540d
+     * @throws IllegalArgumentException \u5e42\u7b49\u952e\u4e3a\u7a7a\u767d
+     */
     private void requireKey(String key) {
         if (StrKit.isBlank(key)) {
             throw new IllegalArgumentException("idempotency key must not be blank");

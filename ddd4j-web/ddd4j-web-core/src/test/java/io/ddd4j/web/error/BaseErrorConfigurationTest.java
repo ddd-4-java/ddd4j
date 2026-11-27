@@ -24,8 +24,10 @@ import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/** \u9a8c\u8bc1 <code>BaseErrorConfiguration</code> \u5728<code>toResponse</code>\u3001<code>httpStatusErrorFallsBack</code>\u7b49\u64cd\u4f5c\u4e2d\u7684\u884c\u4e3a\u5951\u7ea6\u3002 */
 class BaseErrorConfigurationTest {
 
+    /** \u9a8c\u8bc1<code>error.status()</code> \u7b49\u4e8e <code>400</code>\uff0c<code>error.message()</code> \u7b49\u4e8e <code>"bad"</code>\u3002 */
     @Test
     void defaultConstructorUsesDefaultTranslator() {
         BaseErrorConfiguration configuration = new PassThroughConfiguration();
@@ -36,6 +38,7 @@ class BaseErrorConfigurationTest {
         assertEquals("bad", error.message());
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>NullPointerException.class</code>\u3002 */
     @Test
     void rejectsNullTranslatorAndBuilder() {
         assertThrows(NullPointerException.class,
@@ -44,6 +47,7 @@ class BaseErrorConfigurationTest {
                 () -> new StubErrorConfiguration(null, new DefaultWebExceptionTranslator(), null));
     }
 
+    /** \u9a8c\u8bc1<code>configuration.translate(new RuntimeException("ignored"))</code> \u7b49\u4e8e <code>stubbed</code>\u3002 */
     @Test
     void doTranslateOverrideShortCircuitsTranslator() {
         WebError stubbed = new WebError(418, "TEAPOT", "short circuited", null);
@@ -52,6 +56,7 @@ class BaseErrorConfigurationTest {
         assertEquals(stubbed, configuration.translate(new RuntimeException("ignored")));
     }
 
+    /** \u9a8c\u8bc1<code>response.getCode()</code> \u7b49\u4e8e <code>"VALIDATION"</code>\uff0c<code>response.getMsg()</code> \u7b49\u4e8e <code>"bad input"</code>\uff0c<code>response.getData()</code> \u7b49\u4e8e <code>"detail"</code>\u3002 */
     @Test
     void toResponseDelegatesToWebError() {
         WebError error = new WebError(422, "VALIDATION", "bad input", "detail");
@@ -64,6 +69,7 @@ class BaseErrorConfigurationTest {
         assertEquals("detail", response.getData());
     }
 
+    /** \u9a8c\u8bc1<code>configuration.toResponse(null)</code> \u629b\u51fa <code>NullPointerException.class</code>\u3002 */
     @Test
     void toResponseRejectsNullError() {
         BaseErrorConfiguration configuration = new StubErrorConfiguration(null);
@@ -71,6 +77,7 @@ class BaseErrorConfigurationTest {
         assertThrows(NullPointerException.class, () -> configuration.toResponse(null));
     }
 
+    /** \u9a8c\u8bc1<code>configuration.isServerError(new WebError(499, 499, "client", null))</code>\u4e3a\u5047\uff0c<code>configuration.isServerError(new WebError(500, 500, "server", null))</code>\u4e3a\u771f\u3002 */
     @Test
     void isServerErrorUsesThreshold500() {
         BaseErrorConfiguration configuration = new StubErrorConfiguration(null);
@@ -79,6 +86,7 @@ class BaseErrorConfigurationTest {
         assertTrue(configuration.isServerError(new WebError(500, 500, "server", null)));
     }
 
+    /** \u9a8c\u8bc1<code>configuration</code>\u975e\u7a7a\u3002 */
     @Test
     void logUnhandledToleratesClientAndServerErrors() {
         BaseErrorConfiguration configuration = new StubErrorConfiguration(null);
@@ -89,6 +97,7 @@ class BaseErrorConfigurationTest {
         assertNotNull(configuration);
     }
 
+    /** \u9a8c\u8bc1<code>error.status()</code> \u7b49\u4e8e <code>404</code>\uff0c<code>error.code()</code> \u7b49\u4e8e <code>404</code>\uff0c<code>error.message()</code> \u7b49\u4e8e <code>"Not Found"</code>\u3002 */
     @Test
     void httpStatusErrorFallsBackWhenMessageBlank() {
         WebError error = BaseErrorConfiguration.httpStatusError(404, "Not Found", "  ");
@@ -98,6 +107,7 @@ class BaseErrorConfigurationTest {
         assertEquals("Not Found", error.message());
     }
 
+    /** \u9a8c\u8bc1<code>error.message()</code> \u7b49\u4e8e <code>"duplicate order"</code>\u3002 */
     @Test
     void httpStatusErrorKeepsGivenMessage() {
         WebError error = BaseErrorConfiguration.httpStatusError(409, "Conflict", "duplicate order");
@@ -105,6 +115,7 @@ class BaseErrorConfigurationTest {
         assertEquals("duplicate order", error.message());
     }
 
+    /** \u9a8c\u8bc1<code>builder.fallbackBody()</code> \u4e0e\u2026\u7684\u5143\u7d20\u9010\u9879\u76f8\u540c <code>WebErrorResponseBuilder.INTERNAL_ERROR_FALLBACK_JSON.getBytes(StandardCharsets.UTF_8)</code>\uff0c<code>builder.toResponse(new WebError(500, 500, "boom", null)).getCode()</code> \u7b49\u4e8e <code>500</code>\uff0c<code>builder.isServerError(new WebError(404, 404, "missing", null))</code>\u4e3a\u5047\u3002 */
     @Test
     void builderBuildsFallbackBodyAndResponses() {
         WebErrorResponseBuilder builder = WebErrorResponseBuilder.defaults();
@@ -121,23 +132,36 @@ class BaseErrorConfigurationTest {
      */
     private static final class StubErrorConfiguration extends BaseErrorConfiguration {
 
+        /** \u8bb0\u5f55\u6d4b\u8bd5\u66ff\u8eab\u5df2\u51c6\u5907\u7684\u54cd\u5e94\u6216\u5176\u72b6\u6001\u3002 */
         private final WebError stubbed;
 
+        /**
+         * \u4f7f\u7528 <code>super()</code> \u521d\u59cb\u5316 <code>StubErrorConfiguration</code> \u6d4b\u8bd5\u5939\u5177\u3002
+         * @param stubbed \u7528\u4e8e\u521d\u59cb\u5316 <code>StubErrorConfiguration</code> \u7684 <code>WebError</code> \u503c
+         * @param translator \u7528\u4e8e\u521d\u59cb\u5316 <code>StubErrorConfiguration</code> \u7684 <code>WebExceptionTranslator</code> \u503c
+         * @param responseBuilder \u7528\u4e8e\u521d\u59cb\u5316 <code>StubErrorConfiguration</code> \u7684 <code>WebErrorResponseBuilder</code> \u503c
+         */
         StubErrorConfiguration(WebError stubbed, WebExceptionTranslator translator,
                                WebErrorResponseBuilder responseBuilder) {
             super(translator, responseBuilder);
             this.stubbed = stubbed;
         }
 
+        /**
+         * \u4f7f\u7528 <code>this()</code> \u521d\u59cb\u5316 <code>StubErrorConfiguration</code> \u6d4b\u8bd5\u5939\u5177\u3002
+         * @param stubbed \u7528\u4e8e\u521d\u59cb\u5316 <code>StubErrorConfiguration</code> \u7684 <code>WebError</code> \u503c
+         */
         StubErrorConfiguration(WebError stubbed) {
             this(stubbed, new DefaultWebExceptionTranslator(), WebErrorResponseBuilder.defaults());
         }
 
+        /** {@inheritDoc} */
         @Override
         protected String frameworkName() {
             return "Stub";
         }
 
+        /** {@inheritDoc} */
         @Override
         protected WebError doTranslate(Throwable throwable) {
             return stubbed;
@@ -149,10 +173,12 @@ class BaseErrorConfigurationTest {
      */
     private static final class PassThroughConfiguration extends BaseErrorConfiguration {
 
+        /** \u4f7f\u7528 <code>super()</code> \u521d\u59cb\u5316 <code>PassThroughConfiguration</code> \u6d4b\u8bd5\u5939\u5177\u3002 */
         PassThroughConfiguration() {
             super();
         }
 
+        /** {@inheritDoc} */
         @Override
         protected String frameworkName() {
             return "Stub";

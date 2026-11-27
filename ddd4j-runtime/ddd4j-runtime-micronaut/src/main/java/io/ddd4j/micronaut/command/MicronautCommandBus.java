@@ -92,6 +92,12 @@ public class MicronautCommandBus extends DefaultCommandBus {
         super(collect(context, registry));
     }
 
+    /**
+     * \u4ece\u8fd0\u884c\u5bb9\u5668\u4e2d\u6536\u96c6\u547d\u4ee4\u6267\u884c\u5668\u5e76\u767b\u8bb0\u5171\u4eab\u547d\u4ee4\u8def\u7531\u3002
+     * @param context \u5f53\u524d\u6846\u67b6\u4f20\u5165\u7684\u6267\u884c\u6216\u5bb9\u5668\u4e0a\u4e0b\u6587
+     * @param registry \u63a5\u6536\u547d\u4ee4\u6267\u884c\u5668\u7684\u5171\u4eab\u6ce8\u518c\u8868
+     * @return \u6784\u9020\u5b8c\u6210\u7684\u5171\u4eab\u547d\u4ee4\u6267\u884c\u7ec4\u4ef6
+     */
     private static Collection<CommandExecutor<?>> collect(BeanContext context, CommandRegistry registry) {
         Objects.requireNonNull(context, "context must not be null");
         Objects.requireNonNull(registry, "registry must not be null");

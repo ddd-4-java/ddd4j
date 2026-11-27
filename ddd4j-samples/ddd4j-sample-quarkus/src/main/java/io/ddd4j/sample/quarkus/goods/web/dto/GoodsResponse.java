@@ -28,22 +28,31 @@ import java.util.Objects;
  */
 public final class GoodsResponse {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 0L;
 
+    /** \u793a\u4f8b\u5546\u54c1\u7684\u4e3b\u952e\u3002 */
     private final Long id;
 
+    /** \u5f53\u524d\u8bf7\u6c42\u6216\u7ed3\u679c\u4f7f\u7528\u7684\u4e1a\u52a1\u7f16\u7801\u3002 */
     private final String code;
 
+    /** \u5f53\u524d\u8bf7\u6c42\u6216\u7ed3\u679c\u4f7f\u7528\u7684\u663e\u793a\u540d\u79f0\u3002 */
     private final String name;
 
+    /** \u5546\u54c1\u793a\u4f8b\u4f7f\u7528\u7684\u9500\u552e\u4ef7\u683c\u3002 */
     private final BigDecimal price;
 
+    /** \u793a\u4f8b\u5546\u54c1\u53ef\u7528\u7684\u5e93\u5b58\u6570\u91cf\u3002 */
     private final Integer stock;
 
+    /** \u5f53\u524d\u5546\u54c1\u3001\u8d26\u53f7\u6216\u6743\u9650\u8bb0\u5f55\u7684\u4e1a\u52a1\u72b6\u6001\u3002 */
     private final GoodsStatus status;
 
+    /** \u5546\u54c1\u521b\u5efa\u65f6\u95f4\u3002 */
     private final LocalDateTime createTime;
 
+    /** \u6700\u8fd1\u4e00\u6b21\u66f4\u65b0\u793a\u4f8b\u5546\u54c1\u7684\u65f6\u95f4\u3002 */
     private final LocalDateTime updateTime;
 
     /**
@@ -141,6 +150,7 @@ public final class GoodsResponse {
         return updateTime;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -153,6 +163,7 @@ public final class GoodsResponse {
         return Objects.equals(this.id, other.id) && Objects.equals(this.code, other.code) && Objects.equals(this.name, other.name) && Objects.equals(this.price, other.price) && Objects.equals(this.stock, other.stock) && Objects.equals(this.status, other.status) && Objects.equals(this.createTime, other.createTime) && Objects.equals(this.updateTime, other.updateTime);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int result = 0;
@@ -167,6 +178,7 @@ public final class GoodsResponse {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "GoodsResponse[id=" + id + ", code=" + code + ", name=" + name + ", price=" + price + ", stock=" + stock + ", status=" + status + ", createTime=" + createTime + ", updateTime=" + updateTime + "]";

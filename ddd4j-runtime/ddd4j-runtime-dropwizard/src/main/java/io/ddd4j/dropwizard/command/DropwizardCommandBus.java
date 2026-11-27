@@ -21,6 +21,11 @@ public class DropwizardCommandBus extends DefaultCommandBus {
         super(registered(executors));
     }
 
+    /**
+     * \u4ece\u663e\u5f0f\u4f20\u5165\u7684\u6267\u884c\u5668\u5efa\u7acb\u5df2\u6ce8\u518c\u7684\u547d\u4ee4\u603b\u7ebf\u3002
+     * @param executors \u5f53\u524d\u6846\u67b6\u5bb9\u5668\u63d0\u4f9b\u7684\u547d\u4ee4\u6267\u884c\u5668
+     * @return \u5b8c\u6210\u6267\u884c\u5668\u767b\u8bb0\u7684 Dropwizard \u547d\u4ee4\u603b\u7ebf
+     */
     private static Collection<CommandExecutor<?>> registered(Collection<? extends CommandExecutor<?>> executors) {
         Objects.requireNonNull(executors, "executors must not be null");
         CommandRegistry registry = new CommandRegistry();

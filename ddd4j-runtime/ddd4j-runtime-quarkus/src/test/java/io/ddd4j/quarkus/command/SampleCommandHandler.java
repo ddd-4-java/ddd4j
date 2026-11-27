@@ -40,6 +40,7 @@ class SampleCommandHandler implements CommandExecutor<SampleCommand> {
      */
     static final String HANDLED = "handled-by-quarkus-handler";
 
+    /** {@inheritDoc} */
     @Override
     public Set<Class<? extends Command>> supportedCommands() {
         return java.util.Collections.singleton(SampleCommand.class);

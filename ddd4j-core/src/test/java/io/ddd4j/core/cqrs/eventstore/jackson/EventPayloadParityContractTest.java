@@ -28,6 +28,11 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class EventPayloadParityContractTest {
 
+    /**
+     * \u901a\u8fc7 <code>(EventPayloadSerializer)constructor.newInstance(mapper)</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>(EventPayloadSerializer)constructor.newInstance(mapper)</code>
+     * @throws Exception \u53cd\u5c04\u8bbf\u95ee\u88ab\u6d4b\u6210\u5458\u65f6\u5931\u8d25
+     */
     private static EventPayloadSerializer serializerForCurrentJacksonLine() throws Exception {
         Object mapper = JsonKit.defaultObjectMapper();
         try {
@@ -39,6 +44,10 @@ class EventPayloadParityContractTest {
         return (EventPayloadSerializer) constructor.newInstance(mapper);
     }
 
+    /**
+     * \u9a8c\u8bc1<code>json.contains("\"&#64;class\"")</code>\u4e3a\u5047\uff0c<code>restored instanceof SampleEvent</code>\u4e3a\u771f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void explicitEventTypeIgnoresUnknownAndUntrustedClassMarkers() throws Exception {
         EventPayloadSerializer serializer = serializerForCurrentJacksonLine();
@@ -55,6 +64,10 @@ class EventPayloadParityContractTest {
         assertEquals(original.getEventId(), restored.getEventId());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>serializer.deserialize("{\"fact\":", SampleEvent.class)</code> \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>failure.getMessage()</code> \u7b49\u4e8e <code>"Failed to deserialize event"</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void malformedPayloadKeepsTheOriginalCause() throws Exception {
         EventPayloadSerializer serializer = serializerForCurrentJacksonLine();
@@ -68,21 +81,35 @@ class EventPayloadParityContractTest {
      * 可通过 Jackson 无参构造器恢复的领域事件。
      */
     public static final class SampleEvent extends DomainEvent<StringEntityId> {
+        /** \u5f53\u524d\u6d4b\u8bd5\u6301\u4e45\u5316\u6216\u8bfb\u53d6\u7684\u4e1a\u52a1\u4e8b\u5b9e\u6837\u672c\u3002 */
         private String fact;
 
+        /** \u4f7f\u7528 <code>super()</code> \u521d\u59cb\u5316 <code>SampleEvent</code> \u6d4b\u8bd5\u5939\u5177\u3002 */
         public SampleEvent() {
             super();
         }
 
+        /**
+         * \u8bbe\u7f6e <code>fact</code>\uff0c\u7528\u4e8e\u6784\u9020 <code>SampleEvent</code> \u6d4b\u8bd5\u5b9e\u4f8b\u3002
+         * @param fact \u7528\u4e8e\u521d\u59cb\u5316 <code>SampleEvent</code> \u7684 <code>String</code> \u503c
+         */
         private SampleEvent(String fact) {
             super("order-1");
             this.fact = fact;
         }
 
+        /**
+         * \u8bfb\u53d6<code>fact</code> \u5b57\u6bb5\u3002
+         * @return <code>fact</code> \u5b57\u6bb5
+         */
         public String getFact() {
             return fact;
         }
 
+        /**
+         * \u8bbe\u7f6e<code>fact</code> \u5b57\u6bb5\u3002
+         * @param fact \u8981\u5199\u5165\u7684\u503c
+         */
         public void setFact(String fact) {
             this.fact = fact;
         }

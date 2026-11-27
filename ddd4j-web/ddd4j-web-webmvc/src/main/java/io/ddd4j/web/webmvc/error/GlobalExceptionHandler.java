@@ -79,10 +79,12 @@ import java.util.*;
 @Slf4j
 public class GlobalExceptionHandler {
 
+    /** \u89e3\u6790 Spring MVC \u9519\u8bef\u6d88\u606f\u4f7f\u7528\u7684\u56fd\u9645\u5316\u8d44\u6e90\u3002 */
     @Getter
     @Autowired
     private NestedMessageSource messageSource;
 
+    /** \u4e3a\u670d\u52a1\u7aef\u5f02\u5e38\u54cd\u5e94\u9009\u62e9\u8bed\u8a00\u7684\u914d\u7f6e\u3002 */
     @Autowired
     private ServerI18nProperties serverI18NProperties;
 

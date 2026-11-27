@@ -64,6 +64,7 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
      * scheduler thread pool
      */
     private ScheduledExecutorService executor;
+    /** \u7ba1\u7406 Guice \u6ce8\u518c\u89c6\u56fe\u53ca\u5176\u8c03\u5ea6\u53e5\u67c4\u7684\u5171\u4eab\u7ba1\u7406\u5668\u3002 */
     private DefaultViewManager<Object> delegate;
 
     /**
@@ -128,6 +129,7 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
         delegate = new DefaultViewManager<>(this, runner, views);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void start() {
         if (running.compareAndSet(false, true)) {
@@ -154,6 +156,7 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void stop() {
         boolean wasRunning = running.compareAndSet(true, false);
@@ -181,6 +184,7 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
         }
     }
 
+    /** \u5173\u95ed\u7531\u5f53\u524d\u7ba1\u7406\u5668\u6301\u6709\u7684\u8c03\u5ea6\u6267\u884c\u5668\u3002 */
     private void stopOwnedExecutor() {
         handles.values().forEach(handle -> handle.cancel(false));
         if (Objects.nonNull(executor)) {
@@ -198,16 +202,19 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
         log.info("GuiceViewManager stopped");
     }
 
+    /** {@inheritDoc} */
     @Override
     public void close() {
         stop();
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isRunning() {
         return running.get();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void triggerOnce() {
         if (Objects.nonNull(delegate)) {
@@ -245,6 +252,7 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
         return new ProjectionStatus(streamId, nextEventNumber, isRunning(), null, 0, null);
     }
 
+    /** {@inheritDoc} */
     @Override
     public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
         ensureStarted();
@@ -273,6 +281,7 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
         return new GuiceViewScheduleHandle(future);
     }
 
+    /** \u8981\u6c42\u5f53\u524d\u89c6\u56fe\u7ba1\u7406\u5668\u5df2\u5b8c\u6210\u542f\u52a8\u3002 */
     private void ensureStarted() {
         if (!isRunning()) {
             start();
@@ -281,6 +290,11 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
 
     // Parse cron expression to period seconds.
     // Supported formats: 0/N, */N (every N seconds), N * * * * (every N minutes), * * * * * (every 60 seconds)
+    /**
+     * \u4ece\u517c\u5bb9 Cron \u914d\u7f6e\u8f6c\u6362\u4e3a\u5b9a\u65f6\u5668\u6240\u7528\u7684\u79d2\u6570\u3002
+     * @param cron \u4efb\u52a1\u8ba1\u5212\u7684 Cron \u8868\u8fbe\u5f0f
+     * @return \u517c\u5bb9\u8c03\u5ea6\u4f7f\u7528\u7684\u5468\u671f\u79d2\u6570
+     */
     private long parseCronToPeriodSeconds(String cron) {
         if (StrKit.isEmpty(cron)) {
             throw new IllegalArgumentException("Cron expression must not be empty");
@@ -321,19 +335,27 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
                 + ". Supported formats: '0/N', '*/N', 'N * * * *', '* * * * *'");
     }
 
+    /** \u4fdd\u5b58 Guice \u6295\u5f71\u4efb\u52a1\u7684\u5b9a\u65f6 Future\uff0c\u5e76\u63d0\u4f9b\u53d6\u6d88\u5165\u53e3\u3002 */
     private static class GuiceViewScheduleHandle implements ViewScheduleHandle {
 
+        /** \u7528\u4e8e\u8ddf\u8e2a\u548c\u53d6\u6d88\u540e\u53f0\u8c03\u5ea6\u4efb\u52a1\u7684\u53e5\u67c4\u3002 */
         private final ScheduledFuture<?> future;
 
+        /**
+         * \u7528\u7ed9\u5b9a\u503c\u521d\u59cb\u5316 <code>GuiceViewScheduleHandle</code> \u5b9e\u4f8b\u3002
+         * @param future \u7528\u4e8e\u8ddf\u8e2a\u548c\u53d6\u6d88\u540e\u53f0\u8c03\u5ea6\u4efb\u52a1\u7684\u53e5\u67c4
+         */
         GuiceViewScheduleHandle(ScheduledFuture<?> future) {
             this.future = future;
         }
 
+        /** {@inheritDoc} */
         @Override
         public void cancel() {
             future.cancel(false);
         }
 
+        /** {@inheritDoc} */
         @Override
         public boolean isActive() {
             return !future.isCancelled() && !future.isDone();

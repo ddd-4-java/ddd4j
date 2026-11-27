@@ -13,8 +13,13 @@ import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 
+/** \u9a8c\u8bc1 <code>ShiroRuntimeOwnership</code> \u5728 <code>restoresProcessManager</code> \u7b49\u573a\u666f\u4e2d\u7684\u884c\u4e3a\u3002 */
 class ShiroRuntimeOwnershipTest {
 
+    /**
+     * \u8bfb\u53d6 <code>runtime</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>runtime</code>
+     */
     private static ShiroRuntimeConfig runtime() {
         ShiroRuntimeConfig runtime = new ShiroRuntimeConfig();
         runtime.userRepository = new InMemoryUserRepository();
@@ -22,6 +27,10 @@ class ShiroRuntimeOwnershipTest {
         return runtime;
     }
 
+    /**
+     * \u8c03\u7528 <code>SecurityUtils.getSecurityManager()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @return \u6839\u636e\u6d4b\u8bd5\u6761\u4ef6\u8fd4\u56de\u7684\u53ef\u80fd\u503c\uff0c\u5305\u62ec <code>SecurityUtils.getSecurityManager()</code>\u3001<code>null</code>
+     */
     private static SecurityManager processManager() {
         try {
             return SecurityUtils.getSecurityManager();
@@ -30,6 +39,7 @@ class ShiroRuntimeOwnershipTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>ThreadContext.getSecurityManager()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>threadOwner</code>\uff0c<code>ThreadContext.unbindSecurityManager()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>threadOwner</code>\uff0c<code>processManager()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>previous</code>\u3002 */
     @Test
     void restoresProcessManagerWithAnUnrelatedThreadBinding() {
         SecurityManager originalThread = ThreadContext.unbindSecurityManager();
@@ -57,6 +67,7 @@ class ShiroRuntimeOwnershipTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>ThreadContext.unbindSecurityManager()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>sampleManager</code>\uff0c<code>processManager()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>replacement</code>\u3002 */
     @Test
     void leavesReplacementProcessManagerInPlaceWhileThreadRetainsSampleManager() {
         SecurityManager originalThread = ThreadContext.unbindSecurityManager();

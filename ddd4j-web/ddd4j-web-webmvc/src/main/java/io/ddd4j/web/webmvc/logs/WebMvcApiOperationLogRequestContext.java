@@ -13,6 +13,7 @@ import java.util.Objects;
 
 /** 兼容仅绑定 RequestContextHolder 的旧调用方，HTTP 采集由 WebMVC 接入层承担。 */
 public final class WebMvcApiOperationLogRequestContext implements ApiOperationLogRequestContext {
+    /** {@inheritDoc} */
     @Override
     public String requestId() {
         HttpServletRequest request = WebUtils.getHttpServletRequest();
@@ -23,18 +24,21 @@ public final class WebMvcApiOperationLogRequestContext implements ApiOperationLo
         return StrKit.hasText(parameter) ? parameter : request.getHeader(XHeaders.X_REQUEST_ID);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String requestUri() {
         HttpServletRequest request = WebUtils.getHttpServletRequest();
         return Objects.nonNull(request) ? request.getRequestURI() : ApiOperationLogRequestContext.super.requestUri();
     }
 
+    /** {@inheritDoc} */
     @Override
     public String clientIp() {
         HttpServletRequest request = WebUtils.getHttpServletRequest();
         return Objects.nonNull(request) ? WebUtils.getRemoteAddr(request) : ApiOperationLogRequestContext.super.clientIp();
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean includeArgument(Object argument) {
         // 保留原日志条件：仅同时实现 ServletRequest 与 ServletResponse 的参数被排除。

@@ -60,6 +60,7 @@ import static io.javalin.apibuilder.ApiBuilder.*;
  */
 public class GoodsController {
 
+    /** \u5904\u7406\u5546\u54c1\u521b\u5efa\u3001\u7ef4\u62a4\u548c\u67e5\u8be2\u64cd\u4f5c\u7684\u5e94\u7528\u670d\u52a1\u3002 */
     private final GoodsApplicationService applicationService;
 
     /**
@@ -70,7 +71,10 @@ public class GoodsController {
     }
 
     /**
-     * 从 Javalin Context 手动绑定 {@link GoodsQuery}（Javalin 7.x 不支持自动绑定 query 字段到 JavaBean）。
+     * \u4ece Javalin Context \u624b\u52a8\u7ed1\u5b9a {@link GoodsQuery}\uff08Javalin 7.x \u4e0d\u652f\u6301\u81ea\u52a8\u7ed1\u5b9a query \u5b57\u6bb5\u5230 JavaBean\uff09\u3002
+     *
+     * @param ctx \u63d0\u4f9b\u67e5\u8be2\u53c2\u6570\u7684\u5f53\u524d\u8bf7\u6c42
+     * @return \u6839\u636e\u5f53\u524d\u8bf7\u6c42\u53c2\u6570\u7ed1\u5b9a\u7684\u5546\u54c1\u67e5\u8be2
      */
     private static GoodsQuery bindQuery(Context ctx) {
         GoodsQuery query = new GoodsQuery();
@@ -108,6 +112,11 @@ public class GoodsController {
         return query;
     }
 
+    /**
+     * \u89e3\u6790\u8bf7\u6c42\u6392\u5e8f\u8868\u8fbe\u5f0f\u5e76\u8ffd\u52a0\u5230\u5f53\u524d\u5546\u54c1\u67e5\u8be2\u3002
+     * @param query \u5f85\u5e94\u7528\u7684\u5546\u54c1\u7b5b\u9009\u548c\u6392\u5e8f\u6761\u4ef6
+     * @param orderBy \u8bf7\u6c42\u4e2d\u4f20\u5165\u7684\u6392\u5e8f\u8868\u8fbe\u5f0f
+     */
     private static void addOrderBy(GoodsQuery query, String orderBy) {
         String[] tokens = orderBy.trim().split("_");
         if (tokens.length != 2) {
@@ -224,14 +233,19 @@ public class GoodsController {
      */
     public static class CreateGoodsRequest {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u5f53\u524d\u8bf7\u6c42\u6216\u7ed3\u679c\u4f7f\u7528\u7684\u4e1a\u52a1\u7f16\u7801\u3002 */
         private String code;
 
+        /** \u5f53\u524d\u8bf7\u6c42\u6216\u7ed3\u679c\u4f7f\u7528\u7684\u663e\u793a\u540d\u79f0\u3002 */
         private String name;
 
+        /** \u5546\u54c1\u793a\u4f8b\u4f7f\u7528\u7684\u9500\u552e\u4ef7\u683c\u3002 */
         private BigDecimal price;
 
+        /** \u793a\u4f8b\u5546\u54c1\u53ef\u7528\u7684\u5e93\u5b58\u6570\u91cf\u3002 */
         private Integer stock;
 
         /**
@@ -352,6 +366,7 @@ public class GoodsController {
             return other instanceof CreateGoodsRequest;
         }
 
+        /** {@inheritDoc} */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -370,6 +385,7 @@ public class GoodsController {
                     && Objects.equals(getStock(), other.getStock());
         }
 
+        /** {@inheritDoc} */
         @Override
         public int hashCode() {
             int result = 1;
@@ -380,6 +396,7 @@ public class GoodsController {
             return result;
         }
 
+        /** {@inheritDoc} */
         @Override
         public String toString() {
             return "GoodsController.CreateGoodsRequest(code=" + getCode() + ", name=" + getName() + ", price=" + getPrice() + ", stock=" + getStock() + ")";
@@ -391,10 +408,13 @@ public class GoodsController {
      */
     public static class UpdateGoodsRequest {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u5f53\u524d\u8bf7\u6c42\u6216\u7ed3\u679c\u4f7f\u7528\u7684\u663e\u793a\u540d\u79f0\u3002 */
         private String name;
 
+        /** \u7528\u4e8e\u66ff\u6362\u5546\u54c1\u5f53\u524d\u9500\u552e\u4ef7\u7684\u8bf7\u6c42\u5b57\u6bb5\u3002 */
         private BigDecimal price;
 
         /**
@@ -467,6 +487,7 @@ public class GoodsController {
             return other instanceof UpdateGoodsRequest;
         }
 
+        /** {@inheritDoc} */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -483,6 +504,7 @@ public class GoodsController {
                     && Objects.equals(getPrice(), other.getPrice());
         }
 
+        /** {@inheritDoc} */
         @Override
         public int hashCode() {
             int result = 1;
@@ -491,6 +513,7 @@ public class GoodsController {
             return result;
         }
 
+        /** {@inheritDoc} */
         @Override
         public String toString() {
             return "GoodsController.UpdateGoodsRequest(name=" + getName() + ", price=" + getPrice() + ")";

@@ -40,6 +40,10 @@ public class Ddd4jEventStoreConfig {
     @ConfigProperty(name = "ddd4j.ddd.event-store.type", defaultValue = "mem")
     String eventStoreType;
 
+    /**
+     * \u5728 Quarkus \u542f\u52a8\u671f\u95f4\u9a8c\u8bc1\u5e76\u521d\u59cb\u5316\u9009\u5b9a\u7684\u4e8b\u4ef6\u5b58\u50a8\u3002
+     * @param event \u5f53\u524d\u6846\u67b6\u751f\u547d\u5468\u671f\u6216\u5bb9\u5668\u542f\u52a8\u4e8b\u4ef6
+     */
     void onStart(@Observes StartupEvent event) {
         log.info("ddd4j event-store mode is '{}'; applications must register an explicit event-store adapter", eventStoreType);
     }

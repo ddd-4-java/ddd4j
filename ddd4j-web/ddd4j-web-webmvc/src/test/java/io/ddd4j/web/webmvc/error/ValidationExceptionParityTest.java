@@ -23,8 +23,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class ValidationExceptionParityTest {
 
+    /** \u5f53\u524d\u7528\u4f8b\u5b9e\u9645\u8c03\u7528\u6216\u914d\u7f6e\u884c\u4e3a\u7684\u5904\u7406\u5668\u3002 */
     private GlobalExceptionHandler handler;
 
+    /** \u6d4b\u8bd5\u6267\u884c\u524d\u6267\u884c <code>properties.setEnabled()</code> \u5b8c\u6210\u8d44\u6e90\u51c6\u5907\u3002 */
     @BeforeEach
     void setUp() {
         ServerI18nProperties properties = new ServerI18nProperties();
@@ -32,6 +34,7 @@ class ValidationExceptionParityTest {
         handler = new GlobalExceptionHandler(new NestedMessageSource(), properties);
     }
 
+    /** \u9a8c\u8bc1<code>validation.getCode()</code> \u7b49\u4e8e <code>ApiCode.BAD_REQUEST.getCode()</code>\uff0c<code>validation.getMsg().contains("\u53c2\u6570\u6821\u9a8c\u5f02\u5e38")</code>\u4e3a\u771f\uff0c<code>violation.getMsg()</code> \u7b49\u4e8e <code>"invalid constraint"</code>\u3002 */
     @Test
     void validationErrorsReturnBadRequest() {
         R<String> validation = handler.validationException(new ValidationException("invalid"));
@@ -44,6 +47,7 @@ class ValidationExceptionParityTest {
         assertEquals("invalid constraint", violation.getMsg());
     }
 
+    /** \u9a8c\u8bc1<code>declaration.getCode()</code> \u7b49\u4e8e <code>ApiCode.SERVER_ERROR.getCode()</code>\uff0c<code>definition.getCode()</code> \u7b49\u4e8e <code>ApiCode.SERVER_ERROR.getCode()</code>\uff0c<code>type.getMsg().contains("\u7ea6\u675f\u9a8c\u8bc1\u5668")</code>\u4e3a\u771f\u3002 */
     @Test
     void invalidConstraintDefinitionsReturnServerError() {
         R<String> declaration = handler.constraintDeclarationException(

@@ -37,13 +37,20 @@ import java.util.*;
 @Priority(Priorities.AUTHENTICATION)
 public final class Ddd4jHelidonRequestFilter implements ContainerRequestFilter {
 
+    /** \u8bf7\u6c42\u5c5e\u6027\u4e2d\u4fdd\u5b58\u4f1a\u8bdd\u6216\u8ba4\u8bc1\u4e0a\u4e0b\u6587\u7684\u952e\u3002 */
     static final String SESSION_PROPERTY = Ddd4jHelidonRequestFilter.class.getName() + ".session";
+    /** \u8bf7\u6c42\u5c5e\u6027\u4e2d\u4fdd\u5b58 DDD4J \u4e0a\u4e0b\u6587\u4f5c\u7528\u57df\u7684\u952e\u3002 */
     static final String CONTEXT_PROPERTY = Ddd4jHelidonRequestFilter.class.getName() + ".context";
+    /** \u8bf7\u6c42\u5c5e\u6027\u4e2d\u4fdd\u5b58 OpenTelemetry \u8ddf\u8e2a Span \u7684\u952e\u3002 */
     static final String OTEL_SPAN_PROPERTY = Ddd4jHelidonRequestFilter.class.getName() + ".otelSpan";
+    /** \u8bf7\u6c42\u5c5e\u6027\u4e2d\u4fdd\u5b58 OpenTelemetry \u4e0a\u4e0b\u6587\u4f5c\u7528\u57df\u7684\u952e\u3002 */
     static final String OTEL_SCOPE_PROPERTY = Ddd4jHelidonRequestFilter.class.getName() + ".otelScope";
 
+    /** \u6839\u636e\u6846\u67b6\u8bf7\u6c42\u5143\u6570\u636e\u88c5\u914d\u5171\u7528 Web \u8bf7\u6c42\u4e0a\u4e0b\u6587\u3002 */
     private final WebRequestContextFactory contextFactory;
+    /** \u5f00\u542f\u548c\u5173\u95ed\u5f53\u524d Web \u8bf7\u6c42\u4e0a\u4e0b\u6587\u7684\u7ec4\u4ef6\u3002 */
     private final WebRequestLifecycle requestLifecycle;
+    /** \u5728\u8bf7\u6c42\u5904\u7406\u9636\u6bb5\u83b7\u53d6\u53ca\u91ca\u653e\u5e42\u7b49\u4fdd\u62a4\u7684\u7ec4\u4ef6\u3002 */
     private final WebIdempotencyLifecycle idempotencyLifecycle;
 
     /**
@@ -86,6 +93,11 @@ public final class Ddd4jHelidonRequestFilter implements ContainerRequestFilter {
         this.idempotencyLifecycle = idempotencyLifecycle;
     }
 
+    /**
+     * \u63d0\u53d6\u8bf7\u6c42\u5934\uff0c\u6bcf\u4e2a\u6709\u503c\u7684\u8bf7\u6c42\u5934\u4fdd\u7559\u7b2c\u4e00\u4e2a\u503c\u3002
+     * @param request \u5f53\u524d\u6846\u67b6 HTTP \u8bf7\u6c42\u6216\u4ea4\u6362\u4e0a\u4e0b\u6587
+     * @return \u4f9b\u8bf7\u6c42\u4e0a\u4e0b\u6587\u8bfb\u53d6\u7684\u8bf7\u6c42\u5934\u6620\u5c04
+     */
     private static Map<String, String> extractRequestHeaders(ContainerRequestContext request) {
         Map<String, String> headers = new HashMap<>();
         request.getHeaders().forEach((k, v) -> {
@@ -96,6 +108,10 @@ public final class Ddd4jHelidonRequestFilter implements ContainerRequestFilter {
         return headers;
     }
 
+    /**
+     * \u5f00\u542f Helidon \u8bf7\u6c42\u8ddf\u8e2a\uff0c\u89e3\u6790\u8bf7\u6c42\u5143\u6570\u636e\u5e76\u88c5\u914d\u8ba4\u8bc1\u53ca\u5e42\u7b49\u4fdd\u62a4\u3002
+     * @param request \u5f53\u524d\u8fdb\u5165\u8c03\u7528\u94fe\u7684 HTTP \u8bf7\u6c42
+     */
     @Override
     public void filter(ContainerRequestContext request) {
         // OTel: 提取上游 TraceContext 并开启 SERVER span
@@ -123,6 +139,11 @@ public final class Ddd4jHelidonRequestFilter implements ContainerRequestFilter {
         }
     }
 
+    /**
+     * \u4ece\u6846\u67b6\u8bf7\u6c42\u63d0\u53d6\u79df\u6237\u3001\u8ddf\u8e2a\u6807\u8bc6\u3001\u8ba4\u8bc1\u548c\u8def\u7531\u4fe1\u606f\uff0c\u7ec4\u88c5\u5171\u7528\u4e0a\u4e0b\u6587\u3002
+     * @param request \u5f53\u524d\u6846\u67b6 HTTP \u8bf7\u6c42
+     * @return \u4f9b\u4e0a\u4e0b\u6587\u548c\u8ba4\u8bc1\u5904\u7406\u94fe\u4f7f\u7528\u7684\u8bf7\u6c42\u4e0a\u4e0b\u6587
+     */
     private WebRequestContext createContext(ContainerRequestContext request) {
         return contextFactory.create(new WebRequestData(
                 request.getHeaderString(WebHeaders.REQUEST_ID),

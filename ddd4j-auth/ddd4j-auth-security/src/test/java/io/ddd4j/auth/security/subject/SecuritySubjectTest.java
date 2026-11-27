@@ -38,34 +38,51 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class SecuritySubjectTest {
 
+    /** \u8fdb\u5165\u5f53\u524d\u6267\u884c\u8303\u56f4\u524d\u4fdd\u5b58\u7684\u7ec4\u4ef6\uff0c\u9000\u51fa\u65f6\u7528\u4e8e\u6062\u590d <code>SubjectDataProvider</code>\u3002 */
     private SubjectDataProvider originalDataProvider;
 
+    /**
+     * \u521b\u5efa <code>new SecuritySubject</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new SecuritySubject()</code>
+     */
     private SecuritySubject subject() {
         return new SecuritySubject();
     }
 
+    /**
+     * \u521b\u5efa <code>new AuthPrincipal</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+     * @param loginId \u6d4b\u8bd5\u4f1a\u8bdd\u4f7f\u7528\u7684\u8d26\u53f7\u6807\u8bc6
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new AuthPrincipal().setLoginId(loginId).setUserId("user-" + loginId).setOrgId("org-1").setRoleId("role-1")</code>
+     */
     private AuthPrincipal principal(String loginId) {
         return new AuthPrincipal().setLoginId(loginId).setUserId("user-" + loginId)
                 .setOrgId("org-1").setRoleId("role-1");
     }
 
+    /** \u6d4b\u8bd5\u524d\u4f9d\u6b21\u6e05\u9664\u4e0a\u4e0b\u6587<code>org.springframework.security.core.context.SecurityContextHolder</code>\u3002 */
     @BeforeEach
     void setUp() {
         originalDataProvider = SubjectKit.dataProvider;
         org.springframework.security.core.context.SecurityContextHolder.clearContext();
     }
 
+    /** \u6d4b\u8bd5\u540e\u4f9d\u6b21\u6e05\u9664\u4e0a\u4e0b\u6587<code>org.springframework.security.core.context.SecurityContextHolder</code>\u3002 */
     @AfterEach
     void tearDown() {
         org.springframework.security.core.context.SecurityContextHolder.clearContext();
         SubjectKit.setDataProvider(originalDataProvider);
     }
 
+    /**
+     * \u8c03\u7528 <code>org.springframework.security.core.context.SecurityContextHolder.getContext()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @param auth \u4f20\u7ed9 <code>org.springframework.security.core.context.SecurityContextHolder.getContext()</code> \u7684 <code>org.springframework.security.core.Authentication</code> \u8f93\u5165
+     */
     private void authenticate(org.springframework.security.core.Authentication auth) {
         org.springframework.security.core.context.SecurityContextHolder.getContext()
                 .setAuthentication(auth);
     }
 
+    /** \u9a8c\u8bc1<code>subject.getPrincipal()</code>\u4e3a\u7a7a\uff0c<code>subject.getPrincipalByLoginId("anyone")</code>\u4e3a\u7a7a\uff0c<code>subject.isDisabled("anyone")</code>\u4e3a\u5047\u3002 */
     @Test
     void defaultsWhenNotLoggedIn() {
         SecuritySubject subject = subject();
@@ -107,6 +124,7 @@ class SecuritySubjectTest {
         subject.untieDisable("anyone");
     }
 
+    /** \u9a8c\u8bc1<code>subject.getPrincipal()</code>\u4e3a\u7a7a\uff0c<code>subject.isAuthenticated()</code>\u4e3a\u5047\uff0c<code>subject.isPermitted("anything")</code>\u4e3a\u5047\u3002 */
     @Test
     void anonymousTokenIsNotAuthenticated() {
         authenticate(new AnonymousAuthenticationToken("key", "guest",
@@ -119,6 +137,7 @@ class SecuritySubjectTest {
         assertFalse(subject.isPermitted("anything"));
     }
 
+    /** \u9a8c\u8bc1<code>result</code> \u7b49\u4e8e <code>"user-1"</code>\uff0c<code>subject.isAuthenticated()</code>\u4e3a\u771f\uff0c<code>subject.isAuthenticated("user-1")</code>\u4e3a\u771f\u3002 */
     @Test
     void loginStoresAuthPrincipalAndReturnsLoginId() {
         SecuritySubject subject = subject();
@@ -137,6 +156,7 @@ class SecuritySubjectTest {
         assertTrue(subject.isAuthenticated("user-1"));
     }
 
+    /** \u9a8c\u8bc1<code>principal</code>\u975e\u7a7a\uff0c<code>principal.getLoginId()</code> \u7b49\u4e8e <code>"user-2"</code>\uff0c<code>principal.getUserCode()</code> \u7b49\u4e8e <code>"user-2"</code>\u3002 */
     @Test
     void loginWithoutPrincipalAdaptsFromName() {
         SecuritySubject subject = subject();
@@ -150,6 +170,7 @@ class SecuritySubjectTest {
         assertEquals("user-2", principal.getUserCode());
     }
 
+    /** \u9a8c\u8bc1<code>subject().getPrincipal()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>principal</code>\u3002 */
     @Test
     void principalFromAuthUserDetailsDelegate() {
         AuthPrincipal principal = principal("user-3");
@@ -161,6 +182,7 @@ class SecuritySubjectTest {
         assertSame(principal, subject().getPrincipal());
     }
 
+    /** \u9a8c\u8bc1<code>principal.getLoginId()</code> \u7b49\u4e8e <code>"user-4"</code>\uff0c<code>principal.getRoleCode()</code> \u7b49\u4e8e <code>"admin"</code>\uff0c<code>principal.getRoles().get(1).getRoleCode()</code> \u7b49\u4e8e <code>"editor"</code>\u3002 */
     @Test
     void principalAdaptsRolesFromAuthorities() {
         authenticate(new UsernamePasswordAuthenticationToken("user-4", "pw",
@@ -176,6 +198,7 @@ class SecuritySubjectTest {
         assertEquals("editor", principal.getRoles().get(1).getRoleCode());
     }
 
+    /** \u9a8c\u8bc1<code>subject.isAuthenticated()</code>\u4e3a\u771f\uff0c<code>subject.isRemembered()</code>\u4e3a\u771f\uff0c<code>subject.getPrincipal().getLoginId()</code> \u7b49\u4e8e <code>"user-5"</code>\u3002 */
     @Test
     void rememberMeTokenIsRemembered() {
         authenticate(new RememberMeAuthenticationToken("key", principal("user-5"),
@@ -187,6 +210,7 @@ class SecuritySubjectTest {
         assertEquals("user-5", subject.getPrincipal().getLoginId());
     }
 
+    /** \u9a8c\u8bc1<code>subject.isAuthenticated()</code>\u4e3a\u771f\uff0c<code>subject.isAuthenticated()</code>\u4e3a\u5047\u3002 */
     @Test
     void logoutAndKickoutClearContext() {
         SecuritySubject subject = subject();
@@ -201,6 +225,7 @@ class SecuritySubjectTest {
         assertFalse(subject.isAuthenticated());
     }
 
+    /** \u9a8c\u8bc1<code>subject.refresh()</code> \u7b49\u4e8e <code>"user-7"</code>\u3002 */
     @Test
     void refreshReturnsCurrentName() {
         SecuritySubject subject = subject();
@@ -209,6 +234,7 @@ class SecuritySubjectTest {
         assertEquals("user-7", subject.refresh());
     }
 
+    /** \u9a8c\u8bc1<code>subject.getExtra("ignored-token", "channel")</code> \u7b49\u4e8e <code>"web"</code>\uff0c<code>subject.getExtra("ignored-token", "missing")</code>\u4e3a\u7a7a\u3002 */
     @Test
     void getExtraReadsPrincipalProfile() {
         SecuritySubject subject = subject();
@@ -220,6 +246,7 @@ class SecuritySubjectTest {
         assertNull(subject.getExtra("ignored-token", "missing"));
     }
 
+    /** \u9a8c\u8bc1<code>subject.isPermitted("order:read")</code>\u4e3a\u771f\uff0c<code>subject.isPermitted("order:delete")</code>\u4e3a\u5047\uff0c<code>subject.isPermittedAny()</code>\u4e3a\u5047\u3002 */
     @Test
     void permissionMatrixReflectsDataProvider() {
         SecuritySubject subject = subject();
@@ -251,6 +278,7 @@ class SecuritySubjectTest {
         assertFalse(subject.isPermittedAny());
     }
 
+    /** \u9a8c\u8bc1<code>subject.hasRole("admin")</code>\u4e3a\u771f\uff0c<code>subject.hasRole("viewer")</code>\u4e3a\u5047\uff0c<code>subject.hasAllRole()</code>\u4e3a\u5047\u3002 */
     @Test
     void roleMatrixReflectsDataProvider() {
         SecuritySubject subject = subject();
@@ -281,6 +309,7 @@ class SecuritySubjectTest {
         assertFalse(subject.hasAllRole());
     }
 
+    /** \u9a8c\u8bc1<code>subject.isPermitted("nobody", new String[]{"a"}).length</code> \u7b49\u4e8e <code>0</code>\uff0c<code>subject.isPermittedAny("nobody", new String[]{"a"})</code>\u4e3a\u5047\uff0c<code>subject.hasAllRole("nobody", new String[]{"admin"})</code>\u4e3a\u5047\u3002 */
     @Test
     void loginIdVariantChecksReturnDefaultsForUnknownAccount() {
         SecuritySubject subject = subject();

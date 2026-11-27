@@ -45,12 +45,19 @@ import java.util.Objects;
  */
 public final class WebOtelSupport {
 
+    /** Web \u8bf7\u6c42\u53ef\u9009 OpenTelemetry \u6865\u63a5\u7ec4\u4ef6\u7684\u7c7b\u540d\u3002 */
     private static final Class<?> OTEL_INTEGRATION_CLASS;
+    /** \u542f\u52a8\u670d\u52a1\u7aef Span \u7684\u53cd\u5c04\u65b9\u6cd5\u3002 */
     private static final Method START_SERVER_SPAN;
+    /** \u5728\u5f53\u524d\u6267\u884c\u7ebf\u7a0b\u6fc0\u6d3b Span \u7684\u53cd\u5c04\u65b9\u6cd5\u3002 */
     private static final Method ACTIVATE;
+    /** \u5411\u670d\u52a1\u7aef Span \u8bb0\u5f55\u9519\u8bef\u7684\u53cd\u5c04\u65b9\u6cd5\u3002 */
     private static final Method RECORD_ERROR;
+    /** \u4ee5\u6700\u7ec8 HTTP \u72b6\u6001\u7ed3\u675f\u670d\u52a1\u7aef Span \u7684\u53cd\u5c04\u65b9\u6cd5\u3002 */
     private static final Method END_SERVER_SPAN;
+    /** \u5c06\u8ddf\u8e2a\u4fe1\u606f\u5199\u5165 HTTP \u54cd\u5e94\u7684\u53cd\u5c04\u65b9\u6cd5\u3002 */
     private static final Method INJECT_RESPONSE_CONTEXT;
+    /** \u68c0\u67e5\u53ef\u9009 OpenTelemetry \u7ec4\u4ef6\u662f\u5426\u53ef\u7528\u7684\u53cd\u5c04\u65b9\u6cd5\u3002 */
     private static final Method IS_AVAILABLE;
 
     static {
@@ -82,6 +89,7 @@ public final class WebOtelSupport {
         IS_AVAILABLE = isAvail;
     }
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>WebOtelSupport</code> \u5b9e\u4f8b\u3002 */
     private WebOtelSupport() {
     }
 

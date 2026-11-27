@@ -44,6 +44,12 @@ public class QrCodeTemplateBinder {
         return target.build();
     }
 
+    /**
+     * \u590d\u5236\u6a21\u677f\u5143\u7d20\u53ca\u5176\u5e03\u5c40\uff0c\u5e76\u628a\u6587\u672c\u5143\u7d20\u4e2d\u7684\u5360\u4f4d\u7b26\u66ff\u6362\u4e3a\u7ed9\u5b9a\u53d8\u91cf\u3002
+     * @param element \u8981\u590d\u5236\u548c\u7ed1\u5b9a\u7684\u6a21\u677f\u5143\u7d20
+     * @param variables \u4ece\u53d8\u91cf\u540d\u5230\u66ff\u6362\u503c\u7684\u6620\u5c04
+     * @return \u7ed1\u5b9a\u540e\u7684\u6a21\u677f\u5143\u7d20
+     */
     private QrCodeFrameElement copy(QrCodeFrameElement element, Map<String, ?> variables) {
         if (element instanceof QrCodeTextElement) {
             QrCodeTextElement text = (QrCodeTextElement) element;
@@ -71,6 +77,12 @@ public class QrCodeTemplateBinder {
         return element;
     }
 
+    /**
+     * \u66ff\u6362\u6587\u672c\u4e2d\u5df2\u63d0\u4f9b\u53d8\u91cf\u5bf9\u5e94\u7684\u5360\u4f4d\u7b26\uff0c\u7a7a\u53d8\u91cf\u503c\u8f6c\u6210\u7a7a\u5b57\u7b26\u4e32\u3002
+     * @param template \u5305\u542b\u53d8\u91cf\u5360\u4f4d\u7b26\u7684\u6587\u672c
+     * @param variables \u7531\u8c03\u7528\u65b9\u63d0\u4f9b\u7684\u53d8\u91cf\u6620\u5c04
+     * @return \u66ff\u6362\u5df2\u77e5\u53d8\u91cf\u540e\u7684\u6587\u672c
+     */
     private String bindText(String template, Map<String, ?> variables) {
         String bound = template;
         for (Map.Entry<String, ?> variable : variables.entrySet()) {

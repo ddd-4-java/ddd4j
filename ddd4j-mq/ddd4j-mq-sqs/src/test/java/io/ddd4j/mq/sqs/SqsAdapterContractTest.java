@@ -40,12 +40,23 @@ import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/** \u901a\u8fc7 <code>mock()</code>\u3001<code>BaseContext.inject()</code>\u3001<code>event.setTopic()</code> \u9a8c\u8bc1 <code>SqsAdapterContract</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
 class SqsAdapterContractTest {
 
+    /**
+     * \u901a\u8fc7 <code>MessageAttributeValue.builder()</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+     * @param value \u5f53\u524d\u7528\u4f8b\u4f20\u5165\u7684\u503c
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>MessageAttributeValue.builder().dataType("String").stringValue(value).build()</code>
+     */
     private static MessageAttributeValue attribute(String value) {
         return MessageAttributeValue.builder().dataType("String").stringValue(value).build();
     }
 
+    /**
+     * \u6784\u9020 <code>MQEventSerialization</code> \u4f5c\u4e3a\u5f53\u524d\u6d4b\u8bd5\u7684\u8f93\u5165\u6216\u7ed3\u679c\u3002
+     * @param payload \u4f20\u7ed9\u88ab\u6d4b\u64cd\u4f5c\u7684\u6d88\u606f\u8d1f\u8f7d
+     * @return \u63d0\u4f9b\u7ed9\u540e\u7eed\u5951\u7ea6\u65ad\u8a00\u7684 <code>MQEventSerialization</code> \u7ed3\u679c
+     */
     private static MQEventSerialization serialization(MQEvent payload) {
         return new MQEventSerialization() {
             @Override
@@ -62,11 +73,13 @@ class SqsAdapterContractTest {
         };
     }
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>BaseContext.clear()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterEach
     void clearContext() {
         BaseContext.clear();
     }
 
+    /** \u9a8c\u8bc1<code>serializations.get()</code> \u7b49\u4e8e <code>1</code>\u3002 */
     @Test
     void successfulNativeSendDoesNotSerializeAgainForLogging() {
         SqsClient client = mock(SqsClient.class);
@@ -99,6 +112,7 @@ class SqsAdapterContractTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>request.getValue().messageAttributes() .get(MQDeliveryHeaders.MESSAGE_ID).stringValue()</code> \u7b49\u4e8e <code>"message-1"</code>\uff0c<code>request.getValue().messageAttributes() .get(MQDeliveryHeaders.CORRELATION_ID).stringValue()</code> \u7b49\u4e8e <code>"correlation-1"</code>\uff0c<code>absent.containsKey(MQDeliveryHeaders.CAUSATION_ID)</code>\u4e3a\u5047\u3002 */
     @Test
     void shouldPublishFrozenCausalityHeadersAsNativeAttributes() {
         SqsClient client = mock(SqsClient.class);
@@ -130,6 +144,10 @@ class SqsAdapterContractTest {
         assertFalse(absent.containsKey(MQDeliveryHeaders.CAUSATION_ID));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>probe.event.getCorrelationId()</code> \u7b49\u4e8e <code>"native-correlation"</code>\uff0c<code>probe.event.getCausationId()</code> \u7b49\u4e8e <code>"native-causation"</code>\u3002
+     * @throws Exception \u53cd\u5c04\u8bbf\u95ee\u88ab\u6d4b\u6210\u5458\u65f6\u5931\u8d25
+     */
     @Test
     void shouldRestoreNativeCausalityBeforeInvokingListener() throws Exception {
         SqsClient client = mock(SqsClient.class);
@@ -158,6 +176,7 @@ class SqsAdapterContractTest {
         assertEquals("native-causation", probe.event.getCausationId());
     }
 
+    /** \u9a8c\u8bc1<code>SqsMQClient.messageId(message)</code> \u7b49\u4e8e <code>"stable-id"</code>\uff0c<code>acknowledgment.messageId()</code> \u7b49\u4e8e <code>"stable-id"</code>\uff0c<code>acknowledgment.isAcknowledged()</code>\u4e3a\u771f\u3002 */
     @Test
     void shouldPreferStableMessageIdAndResetVisibilityForRedelivery() {
         Map<String, MessageAttributeValue> attributes = new HashMap<>();
@@ -180,6 +199,7 @@ class SqsAdapterContractTest {
         assertTrue(acknowledgment.isAcknowledged());
     }
 
+    /** \u9a8c\u8bc1<code>acknowledgment.nack(true)</code> \u629b\u51fa <code>UnsupportedOperationException.class</code>\uff0c<code>acknowledgment.reject(true)</code> \u629b\u51fa <code>UnsupportedOperationException.class</code>\uff0c<code>acknowledgment.isAcknowledged()</code>\u4e3a\u771f\u3002 */
     @Test
     void disabledRequeueDoesNotDeleteRequestedRedelivery() {
         Message message = Message.builder().messageId("transport-id").receiptHandle("receipt").build();
@@ -198,6 +218,7 @@ class SqsAdapterContractTest {
         assertTrue(acknowledgment.isAcknowledged());
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>mock()</code>\u3001<code>adapter.close()</code>\u3001<code>never()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void shouldNotCloseInjectedClient() {
         SqsClient client = mock(SqsClient.class);
@@ -209,9 +230,15 @@ class SqsAdapterContractTest {
         verify(client, never()).close();
     }
 
+    /** \u5c06 <code>event</code> \u7b49\u72b6\u6001\u4e00\u8d77\u4f20\u5165\u5f53\u524d\u6d4b\u8bd5\uff0c\u4f9b\u8c03\u7528\u6216\u7ed3\u679c\u65ad\u8a00\u4f7f\u7528\u3002 */
     public static class Probe {
+        /** \u7528\u4f5c\u8f93\u5165\u6216\u7528\u4e8e\u6bd4\u8f83\u5b9e\u9645\u53d1\u5e03\u884c\u4e3a\u7684\u6d4b\u8bd5\u4e8b\u4ef6\u3002 */
         private MQEvent event;
 
+        /**
+         * \u8bbe\u7f6e<code>event</code> \u5b57\u6bb5\u3002
+         * @param event \u8981\u5199\u5165\u7684\u503c
+         */
         public void onEvent(MQEvent event) {
             this.event = event;
         }

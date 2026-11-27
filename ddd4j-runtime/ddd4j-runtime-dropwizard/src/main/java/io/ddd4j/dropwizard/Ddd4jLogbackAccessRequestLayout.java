@@ -18,6 +18,11 @@ import java.util.TimeZone;
  */
 final class Ddd4jLogbackAccessRequestLayout extends PatternLayout {
 
+    /**
+     * \u88c5\u914d Dropwizard \u8bf7\u6c42\u65e5\u5fd7\u7684\u5e03\u5c40\u548c\u65f6\u95f4\u683c\u5f0f\u3002
+     * @param context \u5f53\u524d\u6846\u67b6\u4f20\u5165\u7684\u6267\u884c\u6216\u5bb9\u5668\u4e0a\u4e0b\u6587
+     * @param timeZone \u683c\u5f0f\u5316\u8bbf\u95ee\u65f6\u95f4\u4f7f\u7528\u7684\u65f6\u533a
+     */
     Ddd4jLogbackAccessRequestLayout(LoggerContext context, TimeZone timeZone) {
         setOutputPatternAsHeader(false);
         getInstanceConverterMap().put("requestParameter", SafeRequestParameterConverter::new);

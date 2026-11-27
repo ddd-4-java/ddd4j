@@ -63,6 +63,7 @@ class ProjectionPositionR2dbcIT {
      */
     private static final String ORDER_SUMMARY = "order-summary";
 
+    /** \u4f5c\u4e3a\u5e93\u5b58\u6295\u5f71\u6d4b\u8bd5\u8f93\u5165\u6216\u6bd4\u8f83\u57fa\u51c6\u7684\u5feb\u7167\u6570\u636e\u3002 */
     private static final String INVENTORY_SNAPSHOT = "inventory-snapshot";
 
     /**
@@ -75,10 +76,13 @@ class ProjectionPositionR2dbcIT {
                     "  next_event_number bigint not null" +
                     ")";
 
+    /** \u4e3a\u53d7\u6d4b R2DBC \u7ec4\u4ef6\u63d0\u4f9b\u6570\u636e\u5e93\u8fde\u63a5\u7684\u5de5\u5382\u3002 */
     private static ConnectionFactory connectionFactory;
 
+    /** \u6d4b\u8bd5\u4f7f\u7528\u6216\u8bb0\u5f55\u7684\u591a\u6761\u6295\u5f71\u4f4d\u70b9\u3002 */
     private R2dbcProjectionPositionRepository positions;
 
+    /** \u6d4b\u8bd5\u524d\u4f9d\u6b21\u521d\u59cb\u5316<code>connectionFactory</code>\u3002 */
     @BeforeAll
     static void setUpDatabase() {
         connectionFactory = ConnectionFactories.get("r2dbc:h2:mem:///projectionit;DB_CLOSE_DELAY=-1");
@@ -103,6 +107,7 @@ class ProjectionPositionR2dbcIT {
                 connection -> Mono.from(connection.close()));
     }
 
+    /** \u6d4b\u8bd5\u524d\u4f9d\u6b21\u521d\u59cb\u5316<code>positions</code>\u3002 */
     @BeforeEach
     void cleanPositions() {
         StepVerifier.create(executeUpdate("delete from ddd4j_projection_position", statement -> statement))
@@ -111,6 +116,7 @@ class ProjectionPositionR2dbcIT {
         positions = new R2dbcProjectionPositionRepository(connectionFactory);
     }
 
+    /** \u9a8c\u8bc1 saveIncrReadBack \u54cd\u5e94\u5f0f\u5b8c\u6574\u5faa\u73af \u5e94\u8de8\u4ed3\u50a8\u5b9e\u4f8b\u8bfb\u56de\u6700\u7ec8\u4f4d\u7f6e\u3002 */
     @Test
     void saveIncrReadBack_响应式完整循环_应跨仓储实例读回最终位置() {
         // 先落零位行（dispatcher 冷启动路径），断言 save 返回持久化后的不可变位置值
@@ -147,6 +153,7 @@ class ProjectionPositionR2dbcIT {
                 .verifyComplete();
     }
 
+    /** \u9a8c\u8bc1<code>streamId</code> \u7b49\u4e8e <code>ORDER_SUMMARY</code>\uff0c<code>firstRun.runOnce(view)</code> \u629b\u51fa <code>R2dbcDataIntegrityViolationException.class</code>\uff0c<code>position.getNextEventNumber()</code> \u7b49\u4e8e <code>17L</code>\u3002 */
     @Test
     void restartsAtLastCommittedCheckpointWhenDatabaseRejectsAdvance() {
         positions.save(new DefaultProjectionPosition(ORDER_SUMMARY, 11L));
@@ -214,6 +221,7 @@ class ProjectionPositionR2dbcIT {
                 .hasValueSatisfying(position -> assertThat(position.getNextEventNumber()).isEqualTo(17L));
     }
 
+    /** \u9a8c\u8bc1<code>position.getNextEventNumber()</code>\u4e3a\u96f6\u3002 */
     @Test
     void resetToZero_响应式推进后重置_应回退到0() {
         StepVerifier.create(positions.saveReactive(new DefaultProjectionPosition(ORDER_SUMMARY, 5L)))
@@ -229,6 +237,7 @@ class ProjectionPositionR2dbcIT {
                 .hasValueSatisfying(position -> assertThat(position.getNextEventNumber()).isZero());
     }
 
+    /** \u9a8c\u8bc1 resetToZero \u6d41\u4e0d\u5b58\u5728 \u5e94\u63d2\u5165\u96f6\u4f4d\u884c\u3002 */
     @Test
     void resetToZero_流不存在_应插入零位行() {
         // 与 core InMemoryProjectionPositionRepository 同款语义：缺行 reset 后可读到 0
@@ -240,6 +249,7 @@ class ProjectionPositionR2dbcIT {
                 .verifyComplete();
     }
 
+    /** \u9a8c\u8bc1<code>position.getNextEventNumber()</code> \u7b49\u4e8e <code>3L</code>\uff0c<code>position.getNextEventNumber()</code>\u4e3a\u96f6\uff0c<code>positions.findAll()</code> \u7684\u5927\u5c0f\u4e3a <code>2</code>\u3002 */
     @Test
     void 两个handler命名空间_同步SPI面_分别save后独立推进互不串扰() {
         positions.save(DefaultProjectionPosition.zero(ORDER_SUMMARY));
@@ -258,6 +268,7 @@ class ProjectionPositionR2dbcIT {
                 .containsExactlyInAnyOrder(ORDER_SUMMARY, INVENTORY_SNAPSHOT);
     }
 
+    /** \u9a8c\u8bc1<code>positions.findByStreamId(ORDER_SUMMARY)</code>\u4e3a\u7a7a\uff0c<code>saved.getStreamId()</code> \u7b49\u4e8e <code>ORDER_SUMMARY</code>\uff0c<code>positions.findAll()</code>\u4e3a\u7a7a\u3002 */
     @Test
     void save不存在则插入存在则更新_delete后不可见() {
         // save（缺行）→ MERGE INTO 插入（dispatcher 首次推进路径依赖的 upsert 语义）

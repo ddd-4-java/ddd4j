@@ -21,8 +21,10 @@ import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/** \u901a\u8fc7 <code>Duration.ofSeconds()</code>\u3001<code>JsonKit.toJson()</code>\u3001<code>json.contains()</code> \u9a8c\u8bc1 <code>IdempotencyLeaseJsonContract</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
 class IdempotencyLeaseJsonContractTest {
 
+    /** \u9a8c\u8bc1<code>restored</code>\u975e\u7a7a\uff0c<code>restored</code> \u7b49\u4e8e <code>original</code>\uff0c<code>restored.ttl()</code> \u7b49\u4e8e <code>Duration.ofSeconds(30)</code>\u3002 */
     @Test
     void ownerTokenAndTtlSurviveJsonRoundTrip() {
         IdempotencyLease original = new IdempotencyLease("request-1", "owner-1", Duration.ofSeconds(30));

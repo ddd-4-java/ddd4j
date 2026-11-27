@@ -44,10 +44,19 @@ public final class Result<T> {
      */
     public static final int FAILURE = 1;
 
+    /** \u547d\u4ee4\u7ed3\u679c\u7684\u6570\u503c\u72b6\u6001\u7801\u3002 */
     private final int code;
+    /** \u547d\u4ee4\u6267\u884c\u7684\u8bf4\u660e\u6216\u5931\u8d25\u539f\u56e0\u3002 */
     private final String message;
+    /** \u547d\u4ee4\u6267\u884c\u8fd4\u56de\u7684\u4e1a\u52a1\u6570\u636e\u3002 */
     private final T data;
 
+    /**
+     * \u521b\u5efa\u5305\u542b\u4e1a\u52a1\u72b6\u6001\u3001\u8bf4\u660e\u548c\u53ef\u9009\u6570\u636e\u7684\u547d\u4ee4\u7ed3\u679c\u3002
+     * @param code \u4e1a\u52a1\u72b6\u6001\u7801
+     * @param message \u6267\u884c\u7ed3\u679c\u8bf4\u660e
+     * @param data \u4e1a\u52a1\u8fd4\u56de\u6570\u636e
+     */
     private Result(int code, String message, T data) {
         this.code = code;
         this.message = message;

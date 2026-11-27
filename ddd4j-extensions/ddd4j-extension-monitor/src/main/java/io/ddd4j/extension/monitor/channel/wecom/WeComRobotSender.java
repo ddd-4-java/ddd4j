@@ -23,6 +23,7 @@ import io.ddd4j.extension.monitor.Sender;
  */
 public class WeComRobotSender implements Sender {
 
+    /** \u5c06\u6d88\u606f\u8bf7\u6c42\u53d1\u9001\u5230\u4f01\u4e1a\u5fae\u4fe1\u673a\u5668\u4eba\u7684 HTTP \u5ba2\u6237\u7aef\u3002 */
     private final WeComClient client;
 
     /**
@@ -41,6 +42,7 @@ public class WeComRobotSender implements Sender {
         return client;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void send(String msg) {
         client.sendMarkdown(msg);

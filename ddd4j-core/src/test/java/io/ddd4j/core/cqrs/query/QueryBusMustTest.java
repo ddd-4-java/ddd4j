@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class QueryBusMustTest {
 
+    /** \u9a8c\u8bc1<code>count</code> \u7b49\u4e8e <code>3</code>\uff0c<code>found</code> \u7b49\u4e8e <code>"order:order-2"</code>\u3002 */
     @Test
     void askMustRouteByQueryTypeAndReturnHandlerResult() {
         List<String> readModel = Arrays.asList("order-1", "order-2", "order-3");
@@ -55,6 +56,7 @@ class QueryBusMustTest {
         assertThat(found).isEqualTo("order:order-2");
     }
 
+    /** \u9a8c\u8bc1<code>count</code> \u7b49\u4e8e <code>3</code>\uff0c<code>readModel</code> \u7684\u5927\u5c0f\u4e3a <code>3</code>\u3002 */
     @Test
     void askMustNotMutateReadModelAcrossRepeatedQueries() {
         List<String> readModel = new ArrayList<>(Arrays.asList("order-1", "order-2", "order-3"));
@@ -78,6 +80,7 @@ class QueryBusMustTest {
         assertThat(readModel).hasSize(3).containsExactly("order-1", "order-2", "order-3");
     }
 
+    /** \u9a8c\u8bc1<code>bus.ask(new FindOrderQuery("order-9"))</code> \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>readModel</code> \u7684\u5927\u5c0f\u4e3a <code>1</code>\u3002 */
     @Test
     void unknownQueryTypeMustBeRejectedWithoutSideEffects() {
         List<String> readModel = new ArrayList<>(Arrays.asList("order-1"));
@@ -111,12 +114,21 @@ class QueryBusMustTest {
      * 只读查询对象：订单明细。
      */
     static final class FindOrderQuery {
+        /** \u8ba2\u5355\u6807\u8bc6\u3002 */
         private final String orderId;
 
+        /**
+         * \u7528\u7ed9\u5b9a\u503c\u521d\u59cb\u5316 <code>FindOrderQuery</code> \u5b9e\u4f8b\u3002
+         * @param orderId \u8ba2\u5355\u6807\u8bc6
+         */
         FindOrderQuery(String orderId) {
             this.orderId = orderId;
         }
 
+        /**
+         * \u8bfb\u53d6\u8ba2\u5355\u6807\u8bc6\u3002
+         * @return \u8ba2\u5355\u6807\u8bc6
+         */
         String orderId() {
             return orderId;
         }

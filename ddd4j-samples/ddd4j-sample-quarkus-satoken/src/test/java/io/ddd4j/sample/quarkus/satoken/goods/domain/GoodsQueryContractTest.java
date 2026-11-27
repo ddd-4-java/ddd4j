@@ -27,11 +27,18 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  */
 class GoodsQueryContractTest {
 
+    /**
+     * \u6838\u5bf9<code>condition.property()</code> \u7b49\u4e8e <code>property</code>\uff0c<code>condition.getOperator()</code> \u7b49\u4e8e <code>direction</code>\u3002
+     * @param condition \u51b3\u5b9a\u672c\u6b21\u6d4b\u8bd5\u64cd\u4f5c\u6216\u65ad\u8a00\u662f\u5426\u6210\u7acb\u7684\u6761\u4ef6
+     * @param property \u4f20\u7ed9 <code>assertEquals()</code> \u7684 <code>String</code> \u8f93\u5165
+     * @param direction \u4f20\u7ed9 <code>assertEquals()</code> \u7684 <code>String</code> \u8f93\u5165
+     */
     private static void assertOrder(LambdaCondition condition, String property, String direction) {
         assertEquals(property, condition.property());
         assertEquals(direction, condition.getOperator());
     }
 
+    /** \u9a8c\u8bc1<code>query.setOrderBys( "id_ASC,createTime_DESC,updateTime_ASC,price_DESC,unknown_ASC,invalid")</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>query</code>\uff0c<code>orders.size()</code> \u7b49\u4e8e <code>4</code>\u3002 */
     @Test
     void supportsAllWhitelistedSortPropertiesAndIgnoresInvalidClauses() {
         GoodsQuery query = new GoodsQuery();
@@ -47,6 +54,7 @@ class GoodsQueryContractTest {
         assertOrder(orders.get(3), "price", "DESC");
     }
 
+    /** \u9a8c\u8bc1<code>query.setOrderBys(" ")</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>query</code>\uff0c<code>query.getOrderByConditions().size()</code> \u7b49\u4e8e <code>0</code>\u3002 */
     @Test
     void blankSortExpressionDoesNotAddConditions() {
         GoodsQuery query = new GoodsQuery();

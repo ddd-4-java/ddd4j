@@ -27,14 +27,19 @@ import java.util.Objects;
 
 public final class QLExpressExecutionResult<T> {
 
+    /** \u8868\u8fbe\u5f0f\u662f\u5426\u6b63\u5e38\u5b8c\u6210\u3002 */
     private final boolean success;
 
+    /** \u8868\u8fbe\u5f0f\u6210\u529f\u6267\u884c\u540e\u8fd4\u56de\u7684\u503c\u3002 */
     private final T value;
 
+    /** \u7a33\u5b9a\u6807\u8bc6\u6267\u884c\u5931\u8d25\u7c7b\u522b\u7684\u9519\u8bef\u7801\u3002 */
     private final String errorCode;
 
+    /** \u8868\u8fbe\u5f0f\u6267\u884c\u5931\u8d25\u65f6\u8fd4\u56de\u7684\u8bca\u65ad\u8bf4\u660e\u3002 */
     private final String errorMessage;
 
+    /** \u5355\u6b21\u6267\u884c\u4ece\u5f00\u59cb\u5230\u7ed3\u675f\u7684\u8017\u65f6\uff0c\u5355\u4f4d\u4e3a\u7eb3\u79d2\u3002 */
     private final long elapsedNanos;
 
     /**
@@ -174,6 +179,7 @@ public final class QLExpressExecutionResult<T> {
         return elapsedNanos;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -186,6 +192,7 @@ public final class QLExpressExecutionResult<T> {
         return this.success == other.success && Objects.equals(this.value, other.value) && Objects.equals(this.errorCode, other.errorCode) && Objects.equals(this.errorMessage, other.errorMessage) && this.elapsedNanos == other.elapsedNanos;
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int result = 0;
@@ -197,6 +204,7 @@ public final class QLExpressExecutionResult<T> {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "QLExpressExecutionResult[success=" + success + ", value=" + value + ", errorCode=" + errorCode + ", errorMessage=" + errorMessage + ", elapsedNanos=" + elapsedNanos + "]";

@@ -50,6 +50,7 @@ public class Ddd4jWebMvcExceptionHandler extends BaseErrorConfiguration {
         super(Objects.requireNonNull(exceptionTranslator, "exceptionTranslator must not be null"));
     }
 
+    /** {@inheritDoc} */
     @Override
     protected String frameworkName() {
         return "WebMVC";

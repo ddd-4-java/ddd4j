@@ -27,6 +27,7 @@ import java.util.Objects;
  */
 public final class ReadinessResponse {
 
+    /** \u5f53\u524d\u8fd0\u884c\u7ec4\u4ef6\u662f\u5426\u5df2\u7ecf\u8fbe\u5230\u5c31\u7eea\u6761\u4ef6\u3002 */
     private final boolean ready;
 
     /**
@@ -67,6 +68,7 @@ public final class ReadinessResponse {
         return ready;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -79,11 +81,13 @@ public final class ReadinessResponse {
         return ready == other.ready;
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return Boolean.hashCode(ready);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "ReadinessResponse[ready=" + ready + "]";

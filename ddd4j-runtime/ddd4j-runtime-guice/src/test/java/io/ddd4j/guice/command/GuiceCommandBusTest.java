@@ -30,8 +30,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/** \u9a8c\u8bc1 <code>GuiceCommandBus</code> \u5728<code>commandBus</code>\u7b49\u64cd\u4f5c\u4e2d\u7684\u884c\u4e3a\u5951\u7ea6\u3002 */
 class GuiceCommandBusTest {
 
+    /** \u9a8c\u8bc1<code>commandBus</code>\u975e\u7a7a\uff0c<code>result</code>\u975e\u7a7a\uff0c<code>executed.get()</code>\u4e3a\u771f\u3002 */
     @Test
     void commandBusRoutesToRegisteredExecutor() {
         AtomicBoolean executed = new AtomicBoolean(false);
@@ -57,6 +59,7 @@ class GuiceCommandBusTest {
         assertTrue(executed.get());
     }
 
+    /** \u9a8c\u8bc1<code>commandBus</code>\u975e\u7a7a\uff0c<code>commandBus.execute(command)</code> \u629b\u51fa <code>IllegalStateException.class</code>\u3002 */
     @Test
     void commandBusThrowsForUnregisteredCommand() {
         Injector injector = Guice.createInjector(new Ddd4jCommandGuiceModule());
@@ -67,6 +70,7 @@ class GuiceCommandBusTest {
         assertThrows(IllegalStateException.class, () -> commandBus.execute(command));
     }
 
+    /** \u9a8c\u8bc1<code>commandBus</code>\u975e\u7a7a\uff0c<code>commandBus.execute(null)</code> \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
     @Test
     void commandBusThrowsForNullCommand() {
         Injector injector = Guice.createInjector(new Ddd4jCommandGuiceModule());
@@ -76,6 +80,7 @@ class GuiceCommandBusTest {
         assertThrows(IllegalArgumentException.class, () -> commandBus.execute(null));
     }
 
+    /** \u9a8c\u8bc1<code>commandBus</code>\u975e\u7a7a\uff0c<code>testExecuted.get()</code>\u4e3a\u771f\uff0c<code>anotherExecuted.get()</code>\u4e3a\u771f\u3002 */
     @Test
     void commandBusWithMultipleExecutors() {
         AtomicBoolean testExecuted = new AtomicBoolean(false);
@@ -102,6 +107,7 @@ class GuiceCommandBusTest {
         assertTrue(anotherExecuted.get());
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\u3002 */
     @Test
     void commandBusDuplicateExecutorThrowsException() {
         TestCommandExecutor executor1 = new TestCommandExecutor(new AtomicBoolean());
@@ -111,6 +117,7 @@ class GuiceCommandBusTest {
         assertThrows(IllegalStateException.class, () -> new GuiceCommandBus(java.util.Arrays.asList(executor1, executor2)));
     }
 
+    /** \u9a8c\u8bc1<code>bus.execute(new AnotherCommand())</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>expected</code>\uff0c<code>bus.execute(new TestCommand())</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>expected</code>\u3002 */
     @Test
     void dynamicDiscoveryCachesRoutesAndPreservesResultIdentity() {
         Set<Class<? extends Command>> types = new java.util.LinkedHashSet<>();
@@ -133,11 +140,13 @@ class GuiceCommandBusTest {
         assertSame(expected, bus.execute(new TestCommand()));
     }
 
+    /** \u9a8c\u8bc1<code>io.ddd4j.core.cqrs.command.DefaultCommandBus.class.isAssignableFrom(GuiceCommandBus.class)</code>\u4e3a\u771f\u3002 */
     @Test
     void routingUsesSharedCommandEngine() {
         assertTrue(io.ddd4j.core.cqrs.command.DefaultCommandBus.class.isAssignableFrom(GuiceCommandBus.class));
     }
 
+    /** \u9a8c\u8bc1<code>bus.execute(new TestCommand())</code> \u629b\u51fa <code>IllegalStateException.class</code>\uff0c\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\u3002 */
     @Test
     void initiallyEmptyExecutorsStayUndiscoverableAndExceptionsAreUnchanged() {
         Set<Class<? extends Command>> empty = new java.util.HashSet<>();
@@ -167,6 +176,7 @@ class GuiceCommandBusTest {
                 () -> new GuiceCommandBus(java.util.List.of(throwing)).execute(new TestCommand())));
     }
 
+    /** \u9a8c\u8bc1<code>calls.get()</code> \u7b49\u4e8e <code>1</code>\uff0c<code>bus.execute(new AnotherCommand()).isSuccess()</code>\u4e3a\u771f\uff0c<code>bus.execute(new TestCommand()).isSuccess()</code>\u4e3a\u771f\u3002 */
     @Test
     void initialSupportedCommandsIsReadOnlyOnceBeforeDynamicMiss() {
         java.util.concurrent.atomic.AtomicInteger calls = new java.util.concurrent.atomic.AtomicInteger();
@@ -188,29 +198,40 @@ class GuiceCommandBusTest {
     }
 
     // Test command classes
+    /** \u4f9b\u547d\u4ee4\u603b\u7ebf\u9a8c\u8bc1\u7c7b\u578b\u5339\u914d\u548c\u5206\u53d1\u7684\u547d\u4ee4\u6837\u672c\u3002 */
     private static class TestCommand implements Command {
     }
 
+    /** \u4f9b\u547d\u4ee4\u603b\u7ebf\u9a8c\u8bc1\u7c7b\u578b\u5339\u914d\u548c\u5206\u53d1\u7684\u547d\u4ee4\u6837\u672c\u3002 */
     private static class AnotherCommand implements Command {
     }
 
+    /** \u4f9b\u547d\u4ee4\u603b\u7ebf\u9a8c\u8bc1\u7c7b\u578b\u5339\u914d\u548c\u5206\u53d1\u7684\u547d\u4ee4\u6837\u672c\u3002 */
     private static class UnregisteredCommand implements Command {
     }
 
     // Test executor classes
+    /** \u63a5\u6536\u6d4b\u8bd5\u547d\u4ee4\u5e76\u8fd4\u56de\u53ef\u65ad\u8a00\u7ed3\u679c\u7684\u6267\u884c\u5668\u66ff\u8eab\u3002 */
     private static class TestCommandExecutor implements CommandExecutor<TestCommand> {
 
+        /** \u6807\u8bb0\u6d4b\u8bd5\u56de\u8c03\u6216\u4e1a\u52a1\u64cd\u4f5c\u5df2\u7ecf\u5b9e\u9645\u6267\u884c\u3002 */
         private final AtomicBoolean executed;
 
+        /**
+         * \u8bbe\u7f6e <code>executed</code>\uff0c\u7528\u4e8e\u6784\u9020 <code>TestCommandExecutor</code> \u6d4b\u8bd5\u5b9e\u4f8b\u3002
+         * @param executed \u7528\u4e8e\u521d\u59cb\u5316 <code>TestCommandExecutor</code> \u7684 <code>AtomicBoolean</code> \u503c
+         */
         TestCommandExecutor(AtomicBoolean executed) {
             this.executed = executed;
         }
 
+        /** {@inheritDoc} */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.singleton(TestCommand.class);
         }
 
+        /** {@inheritDoc} */
         @Override
         public Result execute(TestCommand command) {
             executed.set(true);
@@ -218,19 +239,27 @@ class GuiceCommandBusTest {
         }
     }
 
+    /** \u63a5\u6536\u6d4b\u8bd5\u547d\u4ee4\u5e76\u8fd4\u56de\u53ef\u65ad\u8a00\u7ed3\u679c\u7684\u6267\u884c\u5668\u66ff\u8eab\u3002 */
     private static class AnotherCommandExecutor implements CommandExecutor<AnotherCommand> {
 
+        /** \u6807\u8bb0\u6d4b\u8bd5\u56de\u8c03\u6216\u4e1a\u52a1\u64cd\u4f5c\u5df2\u7ecf\u5b9e\u9645\u6267\u884c\u3002 */
         private final AtomicBoolean executed;
 
+        /**
+         * \u8bbe\u7f6e <code>executed</code>\uff0c\u7528\u4e8e\u6784\u9020 <code>AnotherCommandExecutor</code> \u6d4b\u8bd5\u5b9e\u4f8b\u3002
+         * @param executed \u7528\u4e8e\u521d\u59cb\u5316 <code>AnotherCommandExecutor</code> \u7684 <code>AtomicBoolean</code> \u503c
+         */
         AnotherCommandExecutor(AtomicBoolean executed) {
             this.executed = executed;
         }
 
+        /** {@inheritDoc} */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.singleton(AnotherCommand.class);
         }
 
+        /** {@inheritDoc} */
         @Override
         public Result execute(AnotherCommand command) {
             executed.set(true);

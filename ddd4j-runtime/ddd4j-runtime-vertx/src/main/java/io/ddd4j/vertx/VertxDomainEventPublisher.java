@@ -35,8 +35,11 @@ public final class VertxDomainEventPublisher implements DomainEventPublisher {
      * 本地领域事件总线地址。
      */
     public static final String ADDRESS = "ddd4j.domain.events";
+    /** \u7528\u4e8e\u547d\u540d\u672c\u5730\u4e8b\u4ef6\u603b\u7ebf\u7f16\u89e3\u7801\u5668\u7684\u524d\u7f00\u3002 */
     private static final String CODEC_PREFIX = "ddd4j.local-event.";
+    /** \u5f53\u524d\u6846\u67b6\u7ec4\u4ef6\u5171\u4eab\u7684 Vert.x \u5b9e\u4f8b\u3002 */
     private final Vertx vertx;
+    /** \u5df2\u4e3a\u672c\u5730\u4e8b\u4ef6\u7c7b\u578b\u5b89\u88c5\u7684\u7f16\u89e3\u7801\u5668\u540d\u79f0\u3002 */
     private final Map<Class<?>, String> codecNames = new ConcurrentHashMap<>();
 
     /**
@@ -48,11 +51,13 @@ public final class VertxDomainEventPublisher implements DomainEventPublisher {
         this.vertx = Objects.requireNonNull(vertx, "vertx must not be null");
     }
 
+    /** {@inheritDoc} */
     @Override
     public <ID extends EntityId> void publish(DomainEvent<ID> event) {
         publish((Object) event);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void publish(Object event) {
         if (Objects.nonNull(event)) {
@@ -62,6 +67,11 @@ public final class VertxDomainEventPublisher implements DomainEventPublisher {
         }
     }
 
+    /**
+     * \u4e3a\u8fd0\u884c\u65f6\u4e8b\u4ef6\u7c7b\u578b\u6309\u9700\u767b\u8bb0\u672c\u5730\u603b\u7ebf\u7f16\u89e3\u7801\u5668\u3002
+     * @param eventType \u5f85\u767b\u8bb0\u672c\u5730\u7f16\u89e3\u7801\u5668\u7684\u4e8b\u4ef6\u7c7b\u578b
+     * @return \u5f53\u524d\u4e8b\u4ef6\u7c7b\u578b\u53ef\u4f7f\u7528\u7684\u672c\u5730\u7f16\u89e3\u7801\u5668\u540d\u79f0
+     */
     private String registerLocalCodec(Class<?> eventType) {
         String codecName = CODEC_PREFIX + eventType.getName();
         vertx.eventBus().registerCodec(new LocalEventMessageCodec(codecName));

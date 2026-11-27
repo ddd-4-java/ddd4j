@@ -96,6 +96,7 @@ public final class AuthFailedEvent {
         return occurredAt;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -108,6 +109,7 @@ public final class AuthFailedEvent {
         return Objects.equals(request, that.request) && Objects.equals(reason, that.reason) && Objects.equals(occurredAt, that.occurredAt);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int result = Objects.hashCode(request);
@@ -116,6 +118,7 @@ public final class AuthFailedEvent {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "AuthFailedEvent[request=" + request + ", reason=" + reason + ", occurredAt=" + occurredAt + ']';

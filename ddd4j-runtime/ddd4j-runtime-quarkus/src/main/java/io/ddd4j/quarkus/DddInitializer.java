@@ -49,10 +49,17 @@ public class DddInitializer {
      */
     @Inject
     SubjectProvider subjectProvider;
+    /** \u6846\u67b6\u6269\u5c55\u662f\u5426\u5df2\u5b8c\u6210\u8fd0\u884c\u65f6\u521d\u59cb\u5316\u3002 */
     private boolean started;
+    /** \u5b89\u88c5\u6846\u67b6\u4e3b\u4f53\u63d0\u4f9b\u5668\u524d\u5df2\u5b58\u5728\u7684\u5168\u5c40\u63d0\u4f9b\u5668\u3002 */
     private SubjectProvider previousSubjectProvider;
+    /** \u5b89\u88c5\u6846\u67b6\u56fd\u9645\u5316\u7ec4\u4ef6\u524d\u5df2\u5b58\u5728\u7684\u6d88\u606f\u63d0\u4f9b\u5668\u3002 */
     private I18nProvider previousI18nProvider;
 
+    /**
+     * \u628a CDI \u5e94\u7528\u7684\u4e3b\u4f53\u53ca\u56fd\u9645\u5316\u7ec4\u4ef6\u5b89\u88c5\u5230\u5171\u4eab\u5165\u53e3\u3002
+     * @param event \u5f53\u524d\u6846\u67b6\u751f\u547d\u5468\u671f\u6216\u5bb9\u5668\u542f\u52a8\u4e8b\u4ef6
+     */
     synchronized void onStart(@Observes StartupEvent event) {
         if (started) {
             return;
@@ -67,10 +74,15 @@ public class DddInitializer {
         started = true;
     }
 
+    /**
+     * \u5728 Quarkus \u505c\u6b62\u65f6\u64a4\u9500\u5f53\u524d\u521d\u59cb\u5316\u5668\u62e5\u6709\u7684\u6ce8\u518c\u3002
+     * @param event \u5f53\u524d\u6846\u67b6\u751f\u547d\u5468\u671f\u6216\u5bb9\u5668\u542f\u52a8\u4e8b\u4ef6
+     */
     synchronized void onStop(@Observes ShutdownEvent event) {
         restoreProviders();
     }
 
+    /** \u6062\u590d\u5f53\u524d\u521d\u59cb\u5316\u5668\u66ff\u6362\u524d\u7684\u4e3b\u4f53\u548c\u56fd\u9645\u5316\u63d0\u4f9b\u5668\u3002 */
     @PreDestroy
     synchronized void restoreProviders() {
         if (!started) {

@@ -16,6 +16,7 @@ import java.util.Objects;
  */
 public final class MQReadinessContributor implements ReadinessContributor {
 
+    /** \u4fdd\u5b58\u6d88\u606f\u7ec4\u4ef6\u5f53\u524d\u542f\u52a8\u7ed3\u679c\u7684\u72b6\u6001\u5bf9\u8c61\u3002 */
     private final MQStartupStatus status;
 
     /**
@@ -27,6 +28,7 @@ public final class MQReadinessContributor implements ReadinessContributor {
         this.status = Objects.requireNonNull(status, "status must not be null");
     }
 
+    /** {@inheritDoc} */
     @Override
     public ReadinessResult check() {
         MQStartupStatus.Snapshot snapshot = status.snapshot();

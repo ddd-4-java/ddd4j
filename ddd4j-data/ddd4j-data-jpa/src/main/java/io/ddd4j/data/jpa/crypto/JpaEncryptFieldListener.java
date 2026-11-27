@@ -61,6 +61,7 @@ public class JpaEncryptFieldListener {
      */
     private static volatile Ddd4jFieldCryptoHandler cachedHandler;
 
+    /** \u5728\u5b9e\u4f53\u56de\u8c03\u4e2d\u5904\u7406\u9700\u8981\u52a0\u89e3\u5bc6\u7684\u5b57\u6bb5\u3002 */
     private final Ddd4jFieldCryptoHandler fieldCryptoHandler;
 
     /**
@@ -148,6 +149,10 @@ public class JpaEncryptFieldListener {
         decryptFields(entity);
     }
 
+    /**
+     * \u5728\u5199\u5165\u56de\u8c03\u4e2d\u52a0\u5bc6\u5b9e\u4f53\u58f0\u660e\u9700\u8981\u4fdd\u62a4\u7684\u5b57\u6bb5\u3002
+     * @param entity \u5f53\u524d JPA \u56de\u8c03\u5904\u7406\u7684\u5b9e\u4f53
+     */
     private void encryptFields(Object entity) {
         if (Objects.isNull(fieldCryptoHandler)) {
             return;
@@ -167,6 +172,10 @@ public class JpaEncryptFieldListener {
         }
     }
 
+    /**
+     * \u5728\u8bfb\u53d6\u56de\u8c03\u4e2d\u89e3\u5bc6\u5b9e\u4f53\u58f0\u660e\u9700\u8981\u4fdd\u62a4\u7684\u5b57\u6bb5\u3002
+     * @param entity \u5f53\u524d JPA \u56de\u8c03\u5904\u7406\u7684\u5b9e\u4f53
+     */
     private void decryptFields(Object entity) {
         if (Objects.isNull(fieldCryptoHandler)) {
             return;

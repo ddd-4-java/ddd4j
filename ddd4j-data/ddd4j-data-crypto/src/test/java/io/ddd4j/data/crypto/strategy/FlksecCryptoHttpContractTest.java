@@ -20,6 +20,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class FlksecCryptoHttpContractTest {
 
+    /**
+     * \u9a8c\u8bc1<code>restored</code> \u7b49\u4e8e <code>"restored"</code>\u3002
+     * @throws IOException \u8bfb\u53d6\u6216\u5199\u5165\u6d4b\u8bd5\u6570\u636e\u65f6\u53d1\u751f I/O \u9519\u8bef
+     */
     @Test
     void decryptUsesRemotePlaintextRatherThanInputCiphertext() throws IOException {
         AtomicReference<String> body = new AtomicReference<>();
@@ -37,6 +41,10 @@ class FlksecCryptoHttpContractTest {
         }
     }
 
+    /**
+     * \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>HttpServer.create()</code>\u3001<code>server.createContext()</code>\u3001<code>reply()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002
+     * @throws IOException \u8bfb\u53d6\u6216\u5199\u5165\u6d4b\u8bd5\u6570\u636e\u65f6\u53d1\u751f I/O \u9519\u8bef
+     */
     @Test
     void encryptAndHmacUseExpectedEndpointsAndRemoteResult() throws IOException {
         AtomicReference<String> encryptBody = new AtomicReference<>();
@@ -59,6 +67,10 @@ class FlksecCryptoHttpContractTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>BizRuntimeException.class</code>\uff0c<code>error.getMessage()</code> \u7b49\u4e8e <code>"invalid-key"</code>\u3002
+     * @throws IOException \u8bfb\u53d6\u6216\u5199\u5165\u6d4b\u8bd5\u6570\u636e\u65f6\u53d1\u751f I/O \u9519\u8bef
+     */
     @Test
     void remoteBusinessErrorIsPropagated() throws IOException {
         HttpServer server = server("/api/crypto/sysEncrypt",
@@ -74,6 +86,10 @@ class FlksecCryptoHttpContractTest {
         }
     }
 
+    /**
+     * \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>HttpServer.create()</code>\u3001<code>server.createContext()</code>\u3001<code>reply()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002
+     * @throws IOException \u8bfb\u53d6\u6216\u5199\u5165\u6d4b\u8bd5\u6570\u636e\u65f6\u53d1\u751f I/O \u9519\u8bef
+     */
     @Test
     void encodedInputIsSentForEncryptAndHmac() throws IOException {
         AtomicReference<String> encryptBody = new AtomicReference<>();
@@ -99,6 +115,10 @@ class FlksecCryptoHttpContractTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>BizRuntimeException.class</code>\u3002
+     * @throws IOException \u8bfb\u53d6\u6216\u5199\u5165\u6d4b\u8bd5\u6570\u636e\u65f6\u53d1\u751f I/O \u9519\u8bef
+     */
     @Test
     void nonSuccessHttpStatusIsReportedForEveryEndpoint() throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
@@ -124,11 +144,24 @@ class FlksecCryptoHttpContractTest {
         }
     }
 
+    /**
+     * \u521b\u5efa <code>new FlksecCryptoStrategy</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+     * @param server \u4f20\u7ed9 <code>String.valueOf()</code> \u7684 <code>HttpServer</code> \u8f93\u5165
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new FlksecCryptoStrategy(new ObjectMapper(), "127.0.0.1", String.valueOf(server.getAddress().getPort()), "http")</code>
+     */
     private FlksecCryptoStrategy strategy(HttpServer server) {
         return new FlksecCryptoStrategy(new ObjectMapper(), "127.0.0.1",
                 String.valueOf(server.getAddress().getPort()), "http");
     }
 
+    /**
+     * \u8bfb\u53d6 <code>server</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
+     * @param path \u6d4b\u8bd5\u8bf7\u6c42\u7684\u8d44\u6e90\u8def\u5f84\u6216\u5f85\u8bbf\u95ee\u6587\u4ef6\u8def\u5f84
+     * @param response \u5f53\u524d\u8bf7\u6c42\u5df2\u6536\u5230\u7684\u54cd\u5e94
+     * @param body \u5f53\u524d\u8bf7\u6c42\u6216\u54cd\u5e94\u4e2d\u8981\u8bfb\u53d6\u7684\u6b63\u6587
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>server</code>
+     * @throws IOException \u8bfb\u53d6\u6216\u5199\u5165\u6d4b\u8bd5\u6570\u636e\u65f6\u53d1\u751f I/O \u9519\u8bef
+     */
     private HttpServer server(String path, String response, AtomicReference<String> body) throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
         server.createContext(path, exchange -> reply(exchange, response, body));
@@ -136,10 +169,25 @@ class FlksecCryptoHttpContractTest {
         return server;
     }
 
+    /**
+     * \u8c03\u7528 <code>reply()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @param exchange \u5f53\u524d HTTP \u8bf7\u6c42\u53ca\u54cd\u5e94\u4ea4\u6362\u5bf9\u8c61
+     * @param response \u5f53\u524d\u8bf7\u6c42\u5df2\u6536\u5230\u7684\u54cd\u5e94
+     * @param body \u5f53\u524d\u8bf7\u6c42\u6216\u54cd\u5e94\u4e2d\u8981\u8bfb\u53d6\u7684\u6b63\u6587
+     * @throws IOException \u8bfb\u53d6\u6216\u5199\u5165\u6d4b\u8bd5\u6570\u636e\u65f6\u53d1\u751f I/O \u9519\u8bef
+     */
     private void reply(HttpExchange exchange, String response, AtomicReference<String> body) throws IOException {
         reply(exchange, response, body, 200);
     }
 
+    /**
+     * \u8c03\u7528 <code>exchange.getRequestBody()</code>\u3001<code>body.set()</code>\u3001<code>Math.max()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @param exchange \u5f53\u524d HTTP \u8bf7\u6c42\u53ca\u54cd\u5e94\u4ea4\u6362\u5bf9\u8c61
+     * @param response \u5f53\u524d\u8bf7\u6c42\u5df2\u6536\u5230\u7684\u54cd\u5e94
+     * @param body \u5f53\u524d\u8bf7\u6c42\u6216\u54cd\u5e94\u4e2d\u8981\u8bfb\u53d6\u7684\u6b63\u6587
+     * @param status \u5f53\u524d HTTP \u6216\u4e1a\u52a1\u6d41\u7a0b\u7684\u72b6\u6001
+     * @throws IOException \u8bfb\u53d6\u6216\u5199\u5165\u6d4b\u8bd5\u6570\u636e\u65f6\u53d1\u751f I/O \u9519\u8bef
+     */
     private void reply(HttpExchange exchange, String response, AtomicReference<String> body, int status) throws IOException {
         byte[] request = new byte[4096];
         int length = exchange.getRequestBody().read(request);

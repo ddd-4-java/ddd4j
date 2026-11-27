@@ -98,6 +98,7 @@ public final class HttpSpan {
      * Span 属性键 {@code ddd4j.tenant.id}。
      */
     public static final AttributeKey<String> ATTR_DDD4J_TENANT_ID = AttributeKey.stringKey("ddd4j.tenant.id");
+    /** \u5c06\u8ddf\u8e2a\u4e0a\u4e0b\u6587\u5199\u5165 HTTP \u6216\u6d88\u606f\u4f20\u8f93\u5934\u7684\u4f20\u64ad\u9002\u914d\u5668\u3002 */
     private static final TextMapSetter<Map<String, String>> SETTER = new TextMapSetter<Map<String, String>>() {
         @Override
         public void set(Map<String, String> carrier, String key, String value) {
@@ -106,6 +107,7 @@ public final class HttpSpan {
             }
         }
     };
+    /** \u4ece HTTP \u6216\u6d88\u606f\u4f20\u8f93\u5934\u8bfb\u53d6\u8ddf\u8e2a\u4e0a\u4e0b\u6587\u7684\u4f20\u64ad\u9002\u914d\u5668\u3002 */
     private static final TextMapGetter<Map<String, String>> GETTER = new TextMapGetter<Map<String, String>>() {
         @Override
         public Iterable<String> keys(Map<String, String> carrier) {
@@ -129,6 +131,7 @@ public final class HttpSpan {
         }
     };
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>HttpSpan</code> \u5b9e\u4f8b\u3002 */
     private HttpSpan() {
     }
 

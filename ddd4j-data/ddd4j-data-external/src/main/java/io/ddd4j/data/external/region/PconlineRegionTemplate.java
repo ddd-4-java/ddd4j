@@ -75,6 +75,7 @@ public class PconlineRegionTemplate {
      * HTTP 客户端
      */
     private final HttpClient httpClient;
+    /** \u5f53\u524d\u5730\u533a\u67e5\u8be2\u9002\u914d\u5668\u4f7f\u7528\u7684\u8bf7\u6c42\u5730\u5740\u6a21\u677f\u3002 */
     private final String urlTemplate;
     /**
      * 缓存服务
@@ -116,10 +117,21 @@ public class PconlineRegionTemplate {
         this(httpClient, regionCache, GET_COUNTRY_BY_IP_URL);
     }
 
+    /**
+     * \u88c5\u914d\u4f7f\u7528\u592a\u5e73\u6d0b\u7f51\u7edc\u63a5\u53e3\u67e5\u8be2 IP \u5f52\u5c5e\u5730\u533a\u7684\u5b9e\u73b0\u3002
+     * @param regionCache \u8bfb\u53d6\u548c\u7f13\u5b58 IP \u5730\u533a\u67e5\u8be2\u7ed3\u679c\u7684\u7ec4\u4ef6
+     * @param urlTemplate \u53ef\u66ff\u6362\u7684\u5730\u533a\u67e5\u8be2\u5730\u5740\u6a21\u677f
+     */
     PconlineRegionTemplate(RegionCache regionCache, String urlTemplate) {
         this(HttpClient.newHttpClient(), regionCache, urlTemplate);
     }
 
+    /**
+     * \u88c5\u914d\u4f7f\u7528\u592a\u5e73\u6d0b\u7f51\u7edc\u63a5\u53e3\u67e5\u8be2 IP \u5f52\u5c5e\u5730\u533a\u7684\u5b9e\u73b0\u3002
+     * @param httpClient \u53d1\u8d77\u5730\u533a\u67e5\u8be2\u7684 HTTP \u5ba2\u6237\u7aef
+     * @param regionCache \u8bfb\u53d6\u548c\u7f13\u5b58 IP \u5730\u533a\u67e5\u8be2\u7ed3\u679c\u7684\u7ec4\u4ef6
+     * @param urlTemplate \u53ef\u66ff\u6362\u7684\u5730\u533a\u67e5\u8be2\u5730\u5740\u6a21\u677f
+     */
     private PconlineRegionTemplate(HttpClient httpClient, RegionCache regionCache, String urlTemplate) {
         this.httpClient = httpClient;
         this.regionCache = Objects.isNull(regionCache) ? RegionCache.none() : regionCache;
@@ -140,6 +152,11 @@ public class PconlineRegionTemplate {
         mapLL2.ifPresent(location -> log.info("Location: {}", location.toJSONString()));
     }
 
+    /**
+     * \u6e05\u9664\u5730\u533a\u670d\u52a1\u8fd4\u56de\u503c\u7684\u9996\u5c3e\u7a7a\u767d\u5e76\u4fdd\u7559\u7a7a\u5f15\u7528\u3002
+     * @param value \u5730\u533a\u670d\u52a1\u8fd4\u56de\u7684\u5b57\u7b26\u4e32
+     * @return \u6e05\u7406\u540e\u7684\u5b57\u7b26\u4e32
+     */
     private static String trimWhitespace(String value) {
         return Objects.isNull(value) ? null : value.strip();
     }

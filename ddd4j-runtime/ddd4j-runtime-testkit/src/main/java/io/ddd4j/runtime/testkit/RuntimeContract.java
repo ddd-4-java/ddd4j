@@ -38,6 +38,7 @@ public interface RuntimeContract extends AutoCloseable {
      */
     ReadinessReport readiness();
 
+    /** {@inheritDoc} */
     @Override
     void close();
 }

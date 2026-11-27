@@ -79,6 +79,7 @@ public class MQEvent implements Serializable {
      * 用于获取 defaultTopic / namespace / broker 默认值。
      */
     public static final String MQ_PROPERTIES = "MQProperties";
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 1L;
     /**
      * 消息 ID，默认当前时间戳

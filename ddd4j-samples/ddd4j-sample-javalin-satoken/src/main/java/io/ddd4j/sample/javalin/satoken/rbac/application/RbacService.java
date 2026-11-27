@@ -46,8 +46,11 @@ import java.util.*;
  */
 public class RbacService implements SubjectDataProvider {
 
+    /** \u8bfb\u53d6\u548c\u4fdd\u5b58\u7528\u6237\u7684\u4ed3\u50a8\u3002 */
     private final UserRepository userRepository;
+    /** \u8bfb\u53d6\u548c\u4fdd\u5b58\u89d2\u8272\u7684\u4ed3\u50a8\u3002 */
     private final RoleRepository roleRepository;
+    /** \u67e5\u8be2\u548c\u7ef4\u62a4\u6743\u9650\u5b9a\u4e49\u7684\u4ed3\u50a8\u3002 */
     private final PermissionRepository permissionRepository;
 
     /**
@@ -466,6 +469,7 @@ public class RbacService implements SubjectDataProvider {
 
     // ============================ SubjectDataProvider 实现 ============================
 
+    /** {@inheritDoc} */
     @Override
     public List<String> getPermissionList(AuthPrincipal principal) {
         Objects.requireNonNull(principal, "principal must not be null");
@@ -476,6 +480,7 @@ public class RbacService implements SubjectDataProvider {
         return new ArrayList<>(listPermissionCodesOfUser(String.valueOf(userId)));
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<String> getRoleList(AuthPrincipal principal) {
         Objects.requireNonNull(principal, "principal must not be null");
@@ -488,6 +493,11 @@ public class RbacService implements SubjectDataProvider {
 
     // ============================ 私有辅助 ============================
 
+    /**
+     * \u6839\u636e\u89d2\u8272\u7f16\u7801\u67e5\u627e\u89d2\u8272\u5e76\u6784\u9020\u8ba4\u8bc1\u4e3b\u4f53\u6240\u9700\u7684\u89d2\u8272\u4fe1\u606f\u3002
+     * @param roleCodes \u5f53\u524d\u8d26\u53f7\u62e5\u6709\u7684\u89d2\u8272\u7f16\u7801\u96c6\u5408
+     * @return \u7528\u4e8e\u6743\u9650\u8ba1\u7b97\u7684\u89d2\u8272\u4fe1\u606f\u5217\u8868
+     */
     private List<AuthPrincipal.RolePair> buildRolePairs(Set<String> roleCodes) {
         List<AuthPrincipal.RolePair> pairs = new ArrayList<>();
         for (String code : roleCodes) {

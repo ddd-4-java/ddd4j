@@ -26,6 +26,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * 真实 runtime 命令/调度适配器的契约；内存仓储仅是隔离测试夹具。
  */
 class DropwizardCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
+    /**
+     * \u6784\u9020 <code>ProjectionView&lt;&gt;</code> \u4f5c\u4e3a\u5f53\u524d\u6d4b\u8bd5\u7684\u8f93\u5165\u6216\u7ed3\u679c\u3002
+     * @param name \u5f53\u524d\u6d4b\u8bd5\u6307\u5b9a\u7684\u5bf9\u8c61\u6216\u5c5e\u6027\u540d\u79f0
+     * @param cron \u7528\u4e8e\u6784\u9020\u672c\u6b21\u8fd4\u56de\u7ed3\u679c\u7684 <code>String</code> \u8f93\u5165
+     * @param handler \u5904\u7406\u5f53\u524d\u6d4b\u8bd5\u8bf7\u6c42\u6216\u4e8b\u4ef6\u7684\u7ec4\u4ef6
+     * @return \u63d0\u4f9b\u7ed9\u540e\u7eed\u5951\u7ea6\u65ad\u8a00\u7684 <code>ProjectionView&lt;Object&gt;</code> \u7ed3\u679c
+     */
     private static ProjectionView<Object> view(String name, String cron, Runnable handler) {
         return new ProjectionView<>() {
             public String getName() {
@@ -46,6 +53,7 @@ class DropwizardCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest 
         };
     }
 
+    /** {@inheritDoc} */
     @Override
     protected CqrsRuntimeContract createContract() {
         DropwizardCommandBus bus = new DropwizardCommandBus(List.of(new StubExecutorA(), new StubExecutorB()));
@@ -81,6 +89,7 @@ class DropwizardCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest 
         };
     }
 
+    /** \u9a8c\u8bc1<code>bus.execute(new CmdB(1))</code> \u629b\u51fa <code>IllegalStateException.class</code>\uff0c\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\uff0c\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
     @Test
     void commandSnapshotDuplicateAndHandlerFailure() {
         List<CommandExecutor<?>> candidates = new ArrayList<>(List.of(new StubExecutorA()));
@@ -102,6 +111,7 @@ class DropwizardCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest 
                 () -> new DropwizardCommandBus(List.of(executor)).execute(new CmdA("x"))));
     }
 
+    /** \u9a8c\u8bc1<code>manager.isRunning()</code>\u4e3a\u5047\uff0c\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalArgumentException.class</code>\uff0c<code>manager.getProjectionStatus("orders").nextEventNumber()</code> \u7b49\u4e8e <code>20</code>\u3002 */
     @Test
     void sourceCursorRetryAndOwnedRestartUseSharedRunner() {
         InMemoryProjectionPositionRepository positions = new InMemoryProjectionPositionRepository();
@@ -139,6 +149,7 @@ class DropwizardCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest 
         }
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalArgumentException.class</code>\uff0c<code>second.get()</code> \u7b49\u4e8e <code>0</code>\uff0c<code>DropwizardProjectionViewManager.create(new Environment("duplicate"), List.of(first, first), runner)</code> \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
     @Test
     void sharedManagerKeepsRunAllFailFastAndRejectsDuplicateViews() {
         AtomicInteger second = new AtomicInteger();
@@ -156,6 +167,7 @@ class DropwizardCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest 
         manager.stop();
     }
 
+    /** \u9a8c\u8bc1<code>DropwizardProjectionScheduler.CronExpression.parse("*&#47;120 * * * * *").next(from)</code> \u7b49\u4e8e <code>from.withMinute(1).withSecond(0)</code>\uff0c<code>DropwizardProjectionScheduler.CronExpression.parse("5-7,9 * * * * *").next(from)</code> \u7b49\u4e8e <code>from.withSecond(5)</code>\uff0c<code>DropwizardProjectionScheduler.CronExpression.parse(cron)</code> \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
     @Test
     void numericDialectAndMillionSecondWindowRemainCompatible() {
         LocalDateTime from = LocalDateTime.of(2026, 1, 1, 0, 0, 1);
@@ -167,6 +179,10 @@ class DropwizardCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest 
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>entered.await(3, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>interrupted.await(3, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>callback.await(3, TimeUnit.SECONDS)</code>\u4e3a\u771f\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void ownedShutdownWaitsForEnteredTaskAndBorrowedSchedulerRemainsUsable() throws Exception {
         ProjectionRunner<Object> runner = new ProjectionRunner<>(new DefaultProjectionService(new InMemoryProjectionPositionRepository()), new NoopEventChunkReader<>());
@@ -214,6 +230,10 @@ class DropwizardCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest 
         }
     }
 
+    /**
+     * \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>LinkageError.class</code>\uff0c<code>created.get()</code>\u975e\u7a7a\uff0c<code>manager.isRunning()</code>\u4e3a\u5047\u3002
+     * @throws Exception \u53cd\u5c04\u8bbf\u95ee\u88ab\u6d4b\u6210\u5458\u65f6\u5931\u8d25
+     */
     @Test
     void ownedSchedulerTerminatesAfterSecondViewThrowsLinkageError() throws Exception {
         LinkageError failure = new LinkageError("projection linkage failure");

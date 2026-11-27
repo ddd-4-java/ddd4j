@@ -44,14 +44,21 @@ import java.util.Objects;
  */
 public class WorkingShiroSubject extends ShiroSubject {
 
+    /** \u5728\u539f\u751f\u6d4b\u8bd5\u4f1a\u8bdd\u4e2d\u5b58\u50a8\u4e3b\u4f53\u4fe1\u606f\u7684\u5c5e\u6027\u952e\u3002 */
     public static final String SESSION_ATTR_PRINCIPAL = "authPrincipal";
 
+    /** \u8bfb\u53d6\u548c\u4fdd\u5b58\u7528\u6237\u7684\u4ed3\u50a8\u3002 */
     private final InMemoryUserRepository userRepository;
 
+    /**
+     * \u7528\u7ed9\u5b9a\u503c\u521d\u59cb\u5316 <code>WorkingShiroSubject</code> \u5b9e\u4f8b\u3002
+     * @param userRepository \u8bfb\u53d6\u548c\u4fdd\u5b58\u7528\u6237\u7684\u4ed3\u50a8
+     */
     public WorkingShiroSubject(InMemoryUserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String login(AuthRequest request) {
         Subject subject = SecurityUtils.getSubject();
@@ -72,6 +79,7 @@ public class WorkingShiroSubject extends ShiroSubject {
         return Objects.nonNull(subject.getSession()) ? subject.getSession().getId().toString() : null;
     }
 
+    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("unchecked")
     public <T extends AuthPrincipal> T getPrincipal() {

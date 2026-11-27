@@ -26,8 +26,10 @@ import java.util.Locale;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+/** \u9a8c\u8bc1 <code>WebPayloadJsonContract</code> \u5728 <code>requestFailureRetainsMethodAndPath</code> \u7b49\u573a\u666f\u4e2d\u7684\u884c\u4e3a\u3002 */
 class WebPayloadJsonContractTest {
 
+    /** \u9a8c\u8bc1<code>restored</code>\u975e\u7a7a\uff0c<code>restored</code> \u7b49\u4e8e <code>original</code>\uff0c<code>restored.forwardedFor()</code> \u7b49\u4e8e <code>"203.0.113.1"</code>\u3002 */
     @Test
     void requestDataRetainsCapturedMetadata() {
         WebRequestData original = new WebRequestData("request-1", "trace-1", "tenant-1", "Bearer token",
@@ -40,6 +42,7 @@ class WebPayloadJsonContractTest {
         assertEquals("203.0.113.1", restored.forwardedFor());
     }
 
+    /** \u9a8c\u8bc1<code>restored</code>\u975e\u7a7a\uff0c<code>restored</code> \u7b49\u4e8e <code>original</code>\uff0c<code>restored.path()</code> \u7b49\u4e8e <code>"/orders"</code>\u3002 */
     @Test
     void requestFailureRetainsMethodAndPathWithNullCause() {
         WebRequestFailure original = new WebRequestFailure("POST", "/orders", null);
@@ -51,6 +54,7 @@ class WebPayloadJsonContractTest {
         assertEquals("/orders", restored.path());
     }
 
+    /** \u9a8c\u8bc1<code>restored</code>\u975e\u7a7a\uff0c<code>restored</code> \u7b49\u4e8e <code>original</code>\uff0c<code>restored.status()</code> \u7b49\u4e8e <code>409</code>\u3002 */
     @Test
     void webErrorRetainsStatusCodeMessageAndData() {
         WebError original = new WebError(409, "CONFLICT", "duplicate", "order-1");
@@ -62,6 +66,7 @@ class WebPayloadJsonContractTest {
         assertEquals(409, restored.status());
     }
 
+    /** \u9a8c\u8bc1<code>restored</code>\u975e\u7a7a\uff0c<code>restored</code> \u7b49\u4e8e <code>original</code>\uff0c<code>restored.ready()</code> \u7b49\u4e8e <code>true</code>\u3002 */
     @Test
     void readinessResponseRetainsBooleanState() {
         ReadinessResponse original = new ReadinessResponse(true);

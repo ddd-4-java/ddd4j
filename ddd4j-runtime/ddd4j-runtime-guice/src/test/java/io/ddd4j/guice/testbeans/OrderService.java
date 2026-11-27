@@ -16,6 +16,7 @@ package io.ddd4j.guice.testbeans;
 
 import io.ddd4j.guice.annotation.ddd.DomainService;
 
+/** \u63a5\u6536\u6ce8\u5165\u7684\u8ba2\u5355\u4ed3\u50a8\u4ee5\u9a8c\u8bc1\u9886\u57df\u670d\u52a1\u88c5\u914d\u3002 */
 @DomainService
 public class OrderService {
 }

@@ -60,19 +60,27 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 public class AuthorizationResource {
 
+    /** \u6267\u884c\u57fa\u4e8e\u89d2\u8272\u7684\u6388\u6743\u4e0e\u5206\u914d\u64cd\u4f5c\u7684\u5e94\u7528\u670d\u52a1\u3002 */
     @Inject
     RbacService rbacService;
 
     // ============ User CRUD ============
 
     /**
-     * 静态工具：抛出 401/403 响应。
+     * \u9759\u6001\u5de5\u5177\uff1a\u629b\u51fa 401/403 \u54cd\u5e94\u3002
+     *
+     * @return \u8868\u793a\u5f53\u524d\u8bf7\u6c42\u672a\u901a\u8fc7\u8eab\u4efd\u9a8c\u8bc1\u7684\u54cd\u5e94
      */
     static WebApplicationException unauthorized() {
         return new WebApplicationException(Response.status(Response.Status.UNAUTHORIZED)
                 .entity(R.of(401, "unauthenticated")).build());
     }
 
+    /**
+     * \u7528\u8bca\u65ad\u539f\u56e0\u6784\u9020\u5f53\u524d\u793a\u4f8b\u7684\u8bbf\u95ee\u62d2\u7edd\u7ed3\u679c\u3002
+     * @param reason \u7528\u4e8e\u54cd\u5e94\u62d2\u7edd\u539f\u56e0\u7684\u8bf4\u660e
+     * @return \u62d2\u7edd\u5f53\u524d\u8bf7\u6c42\u65f6\u8fd4\u56de\u7684\u4e1a\u52a1\u6216 HTTP \u9519\u8bef
+     */
     static WebApplicationException forbidden(String reason) {
         return new WebApplicationException(Response.status(Response.Status.FORBIDDEN)
                 .entity(R.of(403, reason)).build());

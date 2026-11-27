@@ -25,7 +25,9 @@ import java.util.Objects;
 @Getter
 public final class QrCodeTemplateDefinition {
 
+    /** \u7528\u4e8e\u767b\u8bb0\u548c\u68c0\u7d22\u6a21\u677f\u5b9a\u4e49\u7684\u6807\u8bc6\u3002 */
     private final String id;
+    /** \u63cf\u8ff0\u6a21\u677f\u753b\u5e03\u548c\u53e0\u52a0\u5143\u7d20\u7684\u914d\u7f6e\u3002 */
     private final QrCodeFrame frame;
 
     /**

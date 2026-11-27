@@ -47,6 +47,7 @@ public class TxProbeCommandHandler implements CommandExecutor<TxProbeCommand> {
      */
     public static final AtomicBoolean DISPATCHED_IN_ACTIVE_TX = new AtomicBoolean(false);
 
+    /** {@inheritDoc} */
     @Override
     public Set<Class<? extends Command>> supportedCommands() {
         return Collections.<Class<? extends Command>>singleton(TxProbeCommand.class);

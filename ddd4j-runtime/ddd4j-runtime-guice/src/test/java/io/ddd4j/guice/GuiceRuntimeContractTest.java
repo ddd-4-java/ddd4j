@@ -26,6 +26,7 @@ import io.ddd4j.runtime.testkit.RuntimeFixtures;
  */
 class GuiceRuntimeContractTest extends AbstractRuntimeContractTest {
 
+    /** {@inheritDoc} */
     @Override
     protected RuntimeContract createRuntime() {
         Injector injector = Guice.createInjector(new Ddd4jGuiceModule());

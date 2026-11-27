@@ -32,7 +32,9 @@ import java.util.concurrent.Callable;
 @UtilityClass
 public class Ddd4jVertxContext {
 
+    /** \u5728\u6846\u67b6\u8bf7\u6c42\u4e2d\u4fdd\u5b58 DDD4J \u8bf7\u6c42\u4e0a\u4e0b\u6587\u7684\u952e\u3002 */
     private static final String REQUEST_CONTEXT_KEY = Ddd4jVertxContext.class.getName() + ".request";
+    /** \u5728\u6846\u67b6\u8bf7\u6c42\u4e2d\u4fdd\u5b58\u8ba4\u8bc1\u4e3b\u4f53\u7684\u952e\u3002 */
     private static final String SUBJECT_KEY = Ddd4jVertxContext.class.getName() + ".subject";
 
     /**
@@ -78,10 +80,20 @@ public class Ddd4jVertxContext {
         });
     }
 
+    /**
+     * \u5c06\u89e3\u6790\u540e\u7684 DDD4J \u8bf7\u6c42\u4e0a\u4e0b\u6587\u7ed1\u5b9a\u5230\u5f53\u524d Vert.x \u8def\u7531\u3002
+     * @param context \u5f53\u524d\u6846\u67b6\u8c03\u7528\u6240\u643a\u5e26\u7684\u8bf7\u6c42\u4e0a\u4e0b\u6587
+     * @param requestContext \u5f53\u524d HTTP \u8bf7\u6c42\u5df2\u7ecf\u89e3\u6790\u7684 DDD4J \u4e0a\u4e0b\u6587
+     */
     static void bindRequest(RoutingContext context, WebRequestContext requestContext) {
         context.put(REQUEST_CONTEXT_KEY, requestContext);
     }
 
+    /**
+     * \u5c06\u8ba4\u8bc1\u4e3b\u4f53\u7ed1\u5b9a\u5230\u5f53\u524d Vert.x \u8def\u7531\u3002
+     * @param context \u5f53\u524d\u6846\u67b6\u8c03\u7528\u6240\u643a\u5e26\u7684\u8bf7\u6c42\u4e0a\u4e0b\u6587
+     * @param subject \u5f53\u524d\u8bf7\u6c42\u8ba4\u8bc1\u540e\u7ed1\u5b9a\u7684\u4e3b\u4f53\u7ec4\u4ef6
+     */
     static void bindSubject(RoutingContext context, Subject subject) {
         context.put(SUBJECT_KEY, subject);
     }

@@ -51,9 +51,12 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class GlobalExceptionHandlerTest {
 
+    /** \u5f53\u524d\u7528\u4f8b\u5b9e\u9645\u8c03\u7528\u6216\u914d\u7f6e\u884c\u4e3a\u7684\u5904\u7406\u5668\u3002 */
     private GlobalExceptionHandler handler;
+    /** \u88c5\u914d\u9694\u79bb\u6d4b\u8bd5\u8fd0\u884c\u73af\u5883\u65f6\u4f7f\u7528\u7684\u914d\u7f6e\u5c5e\u6027\u3002 */
     private ServerI18nProperties properties;
 
+    /** \u9a8c\u8bc1<code>response.getCode()</code> \u7b49\u4e8e <code>ApiCode.METHOD_NOT_ALLOWED.getCode()</code>\uff0c<code>response.getMsg()</code> \u5305\u542b <code>"POST"</code>\u3001<code>"GET"</code>\u3002 */
     @Test
     void noArgumentConstructorHandlesUnsupportedMethodWithoutSpringInjection() {
         GlobalExceptionHandler standaloneHandler = new GlobalExceptionHandler();
@@ -68,6 +71,7 @@ class GlobalExceptionHandlerTest {
         assertThat(response.getMsg()).contains("POST", "GET");
     }
 
+    /** \u6d4b\u8bd5\u6267\u884c\u524d\u6267\u884c <code>properties.setEnabled()</code> \u5b8c\u6210\u8d44\u6e90\u51c6\u5907\u3002 */
     @BeforeEach
     void setUp() {
         properties = new ServerI18nProperties();
@@ -75,6 +79,7 @@ class GlobalExceptionHandlerTest {
         handler = new GlobalExceptionHandler(new NestedMessageSource(), properties);
     }
 
+    /** \u9a8c\u8bc1<code>context.getBean(GlobalExceptionHandler.class).getMessageSource()</code> \u6307\u5411\u540c\u4e00\u5b9e\u4f8b <code>customMessageSource</code>\u3002 */
     @Test
     void noArgumentFactoryBeanUsesTheSpringMessageSource() {
         NestedMessageSource customMessageSource = new NestedMessageSource();
@@ -90,6 +95,7 @@ class GlobalExceptionHandlerTest {
 
     // =================== 4xx 客户端错误 ===================
 
+    /** \u9a8c\u8bc1<code>response</code>\u975e\u7a7a\uff0c<code>response.getCode()</code> \u7b49\u4e8e <code>ApiCode.METHOD_NOT_ALLOWED.getCode()</code>\uff0c<code>response.getMsg()</code> \u5305\u542b <code>"POST"</code>\u3002 */
     @Test
     void httpRequestMethodNotSupportedException_shouldReturn405() {
         LinkedHashSet<String> supportedMethods = new LinkedHashSet<>();
@@ -104,6 +110,10 @@ class GlobalExceptionHandlerTest {
         assertThat(response.getMsg()).contains("POST");
     }
 
+    /**
+     * \u9a8c\u8bc1<code>mapping.value()</code> \u6309\u987a\u5e8f\u4ec5\u5305\u542b <code>JacksonException.class</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void jsonExceptionHandlerRegistersJacksonExceptionOnce() throws Exception {
         ExceptionHandler mapping = GlobalExceptionHandler.class
@@ -112,6 +122,10 @@ class GlobalExceptionHandlerTest {
         assertThat(mapping.value()).containsExactly(JacksonException.class);
     }
 
+    /**
+     * \u9a8c\u8bc1<code>response</code>\u975e\u7a7a\uff0c<code>response.getCode()</code> \u7b49\u4e8e <code>ApiCode.PARSING_ERROR.getCode()</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void jsonParseException_shouldReturnParsingError() throws Exception {
         JacksonException ex = new JsonParseException("Invalid JSON");
@@ -122,6 +136,7 @@ class GlobalExceptionHandlerTest {
         assertThat(response.getCode()).isEqualTo(ApiCode.PARSING_ERROR.getCode());
     }
 
+    /** \u9a8c\u8bc1<code>response</code>\u975e\u7a7a\uff0c<code>response.getCode()</code> \u7b49\u4e8e <code>ApiCode.METHOD_ARGUMENT_NOT_VALID.getCode()</code>\u3002 */
     @Test
     void constraintViolationException_shouldReturnMethodArgumentNotValid() {
         // 构建一个 ConstraintViolationException（需要 mock 比较复杂，这里仅验证空集合场景）
@@ -138,6 +153,7 @@ class GlobalExceptionHandlerTest {
 
     // =================== 业务异常 ===================
 
+    /** \u9a8c\u8bc1<code>response</code>\u975e\u7a7a\uff0c<code>response.getCode()</code> \u7b49\u4e8e <code>1001</code>\uff0c<code>response.getMsg()</code> \u7b49\u4e8e <code>"biz error"</code>\u3002 */
     @Test
     void bizRuntimeException_shouldReturnErrorCode() {
         BizRuntimeException ex = new BizRuntimeException(1001, "biz error");
@@ -149,6 +165,7 @@ class GlobalExceptionHandlerTest {
         assertThat(response.getMsg()).isEqualTo("biz error");
     }
 
+    /** \u9a8c\u8bc1<code>response</code>\u975e\u7a7a\uff0c<code>response.getCode()</code> \u7b49\u4e8e <code>2001</code>\uff0c<code>response.getMsg()</code> \u7b49\u4e8e <code>"checked error"</code>\u3002 */
     @Test
     void bizCheckedException_shouldReturnErrorCode() {
         BizCheckedException ex = new BizCheckedException(2001, "checked error");
@@ -160,6 +177,7 @@ class GlobalExceptionHandlerTest {
         assertThat(response.getMsg()).isEqualTo("checked error");
     }
 
+    /** \u9a8c\u8bc1<code>response</code>\u975e\u7a7a\uff0c<code>response.getCode()</code> \u7b49\u4e8e <code>3001</code>\uff0c<code>response.getMsg()</code> \u7b49\u4e8e <code>"io error"</code>\u3002 */
     @Test
     void bizIOException_shouldReturnErrorCode() {
         BizIOException ex = new BizIOException(3001, "io error");
@@ -171,6 +189,7 @@ class GlobalExceptionHandlerTest {
         assertThat(response.getMsg()).isEqualTo("io error");
     }
 
+    /** \u9a8c\u8bc1<code>response</code>\u975e\u7a7a\uff0c<code>response.getCode()</code> \u7b49\u4e8e <code>ex.getCode()</code>\uff0c<code>response.getMsg()</code> \u7b49\u4e8e <code>"request already processed"</code>\u3002 */
     @Test
     void idempotentException_shouldReturnErrorCode() {
         IdempotentException ex = new IdempotentException(4001, "request already processed");
@@ -184,6 +203,7 @@ class GlobalExceptionHandlerTest {
 
     // =================== 5xx 服务器错误 ===================
 
+    /** \u9a8c\u8bc1<code>response</code>\u975e\u7a7a\uff0c<code>response.getCode()</code> \u7b49\u4e8e <code>ApiCode.SERVER_ERROR.getCode()</code>\u3002 */
     @Test
     void nullPointerException_shouldReturnInternalServerError() {
         NullPointerException ex = new NullPointerException("null reference");
@@ -194,6 +214,7 @@ class GlobalExceptionHandlerTest {
         assertThat(response.getCode()).isEqualTo(ApiCode.SERVER_ERROR.getCode());
     }
 
+    /** \u9a8c\u8bc1<code>response</code>\u975e\u7a7a\uff0c<code>response.getCode()</code> \u7b49\u4e8e <code>ApiCode.SERVER_ERROR.getCode()</code>\u3002 */
     @Test
     void classCastException_shouldReturnInternalServerError() {
         ClassCastException ex = new ClassCastException("cannot cast");
@@ -204,6 +225,7 @@ class GlobalExceptionHandlerTest {
         assertThat(response.getCode()).isEqualTo(ApiCode.SERVER_ERROR.getCode());
     }
 
+    /** \u9a8c\u8bc1<code>response</code>\u975e\u7a7a\uff0c<code>response.getCode()</code> \u7b49\u4e8e <code>ApiCode.SERVER_ERROR.getCode()</code>\u3002 */
     @Test
     void indexOutOfBoundsException_shouldReturnInternalServerError() {
         IndexOutOfBoundsException ex = new IndexOutOfBoundsException("index out of range");
@@ -214,6 +236,7 @@ class GlobalExceptionHandlerTest {
         assertThat(response.getCode()).isEqualTo(ApiCode.SERVER_ERROR.getCode());
     }
 
+    /** \u9a8c\u8bc1<code>response</code>\u975e\u7a7a\uff0c<code>response.getCode()</code> \u7b49\u4e8e <code>ApiCode.SERVER_ERROR.getCode()</code>\u3002 */
     @Test
     void illegalArgumentException_shouldReturnInternalServerError() {
         IllegalArgumentException ex = new IllegalArgumentException("illegal argument");
@@ -226,6 +249,10 @@ class GlobalExceptionHandlerTest {
 
     // =================== 默认全局异常 ===================
 
+    /**
+     * \u9a8c\u8bc1<code>response</code>\u975e\u7a7a\uff0c<code>response.getCode()</code> \u7b49\u4e8e <code>ApiCode.SERVER_ERROR.getCode()</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void defaultExceptionHandler_shouldReturnInternalServerError() throws Exception {
         Exception ex = new Exception("unexpected error");
@@ -236,6 +263,10 @@ class GlobalExceptionHandlerTest {
         assertThat(response.getCode()).isEqualTo(ApiCode.SERVER_ERROR.getCode());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>response</code>\u975e\u7a7a\uff0c<code>response.getCode()</code> \u7b49\u4e8e <code>ApiCode.SERVER_ERROR.getCode()</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void defaultExceptionHandler_withRuntimeException_shouldHandle() throws Exception {
         RuntimeException ex = new RuntimeException("unexpected runtime");
@@ -248,6 +279,7 @@ class GlobalExceptionHandlerTest {
 
     // =================== ApiCode 验证 ===================
 
+    /** \u9a8c\u8bc1<code>ApiCode.NOT_FOUND.getCode()</code> \u7b49\u4e8e <code>HttpStatus.NOT_FOUND.value()</code>\uff0c<code>ApiCode.METHOD_NOT_ALLOWED.getCode()</code> \u7b49\u4e8e <code>HttpStatus.METHOD_NOT_ALLOWED.value()</code>\uff0c<code>ApiCode.SERVER_ERROR.getCode()</code> \u7b49\u4e8e <code>HttpStatus.INTERNAL_SERVER_ERROR.value()</code>\u3002 */
     @Test
     void apiCode_constants_shouldHaveCorrectStatusCodes() {
         assertThat(ApiCode.NOT_FOUND.getCode()).isEqualTo(HttpStatus.NOT_FOUND.value());

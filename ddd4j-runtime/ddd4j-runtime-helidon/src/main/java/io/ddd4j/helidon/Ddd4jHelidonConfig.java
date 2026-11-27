@@ -25,6 +25,7 @@ import java.util.Optional;
  */
 public final class Ddd4jHelidonConfig {
 
+    /** Helidon \u5bb9\u5668\u63d0\u4f9b\u7684\u914d\u7f6e\u67e5\u8be2\u5165\u53e3\u3002 */
     private final Config config;
 
     /**

@@ -33,15 +33,22 @@ public class StrKit extends StrUtil {
      * 无法匹配首字母时使用的占位字符。
      */
     public static final char unknowChar = '*';
+    /** \u8def\u5f84\u89c4\u8303\u5316\u91c7\u7528\u7684\u659c\u6760\u5206\u9694\u7b26\u3002 */
     private static final String FOLDER_SEPARATOR = "/";
+    /** Windows \u8def\u5f84\u4e2d\u7684\u53cd\u659c\u6760\u5206\u9694\u7b26\u3002 */
     private static final String WINDOWS_FOLDER_SEPARATOR = "\\";
+    /** \u8868\u793a\u8def\u5f84\u56de\u5230\u7236\u76ee\u5f55\u7684\u6807\u8bb0\u3002 */
     private static final String TOP_PATH = "..";
+    /** \u8868\u793a\u8def\u5f84\u7559\u5728\u5f53\u524d\u76ee\u5f55\u7684\u6807\u8bb0\u3002 */
     private static final String CURRENT_PATH = ".";
+    /** \u6587\u4ef6\u540d\u548c\u6269\u5c55\u540d\u4e4b\u95f4\u7684\u70b9\u53f7\u5206\u9694\u7b26\u3002 */
     private static final char EXTENSION_SEPARATOR = '.';
+    /** GB2312 \u6c49\u5b57\u533a\u6bb5\u53ca\u5176\u9996\u5b57\u6bcd\u5bf9\u5e94\u5173\u7cfb\u7684\u8fb9\u754c\u3002 */
     private static final int[] allChineseScope = {1601, 1637, 1833, 2078,
             2274, 2302, 2433, 2594, 2787, 3106, 3212, 3472, 3635, 3722, 3730,
             3858, 4027, 4086, 4390, 4558, 4684, 4925, 5249, 5600,
             Integer.MAX_VALUE};
+    /** \u6309\u6c49\u5b57\u533a\u6bb5\u6620\u5c04\u4f7f\u7528\u7684\u82f1\u6587\u5b57\u6bcd\u548c\u672a\u77e5\u5b57\u7b26\u6807\u8bb0\u3002 */
     private static final char[] allEnglishLetter = {'A', 'B', 'C', 'D', 'E',
             'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
             'T', 'W', 'X', 'Y', 'Z', unknowChar};
@@ -708,6 +715,12 @@ public class StrKit extends StrUtil {
         return changeFirstCharacterCase(str, false);
     }
 
+    /**
+     * \u8f6c\u6362\u5b57\u7b26\u4e32\u9996\u5b57\u7b26\u7684\u5927\u5c0f\u5199\uff0c\u5176\u4f59\u5b57\u7b26\u4fdd\u6301\u539f\u6837\u3002
+     * @param str \u8981\u8f6c\u6362\u7684\u5b57\u7b26\u4e32
+     * @param capitalize \u662f\u5426\u628a\u9996\u5b57\u7b26\u8f6c\u6210\u5927\u5199
+     * @return \u8f6c\u6362\u7ed3\u679c\uff0c\u7a7a\u5b57\u7b26\u4e32\u6216\u7a7a\u5f15\u7528\u539f\u6837\u8fd4\u56de
+     */
     private static String changeFirstCharacterCase(String str, boolean capitalize) {
         if (Objects.isNull(str) || str.length() == 0) {
             return str;
@@ -953,6 +966,11 @@ public class StrKit extends StrUtil {
         return (language.length() > 0 ? new Locale(language, country, variant) : null);
     }
 
+    /**
+     * \u8981\u6c42\u533a\u57df\u4ee3\u7801\u7247\u6bb5\u4ec5\u542b\u5b57\u6bcd\u3001\u6570\u5b57\u3001\u4e0b\u5212\u7ebf\u6216\u7a7a\u683c\u3002
+     * @param localePart \u5f85\u68c0\u67e5\u7684\u533a\u57df\u4ee3\u7801\u7247\u6bb5
+     * @throws IllegalArgumentException \u7247\u6bb5\u542b\u6709\u4e0d\u652f\u6301\u7684\u5b57\u7b26
+     */
     private static void validateLocalePart(String localePart) {
         for (int i = 0; i < localePart.length(); i++) {
             char ch = localePart.charAt(i);

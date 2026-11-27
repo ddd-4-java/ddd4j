@@ -28,6 +28,7 @@ import java.util.Objects;
 @Slf4j
 public final class HelidonDomainEventPublisher implements DomainEventPublisher {
 
+    /** \u89e3\u6790 CDI Bean \u5e76\u89e6\u53d1\u5bb9\u5668\u4e8b\u4ef6\u7684\u7ba1\u7406\u5668\u3002 */
     private final BeanManager beanManager;
 
     /**
@@ -39,11 +40,13 @@ public final class HelidonDomainEventPublisher implements DomainEventPublisher {
         this.beanManager = Objects.requireNonNull(beanManager, "beanManager must not be null");
     }
 
+    /** {@inheritDoc} */
     @Override
     public <ID extends EntityId> void publish(DomainEvent<ID> event) {
         publish((Object) event);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void publish(Object event) {
         if (Objects.nonNull(event)) {

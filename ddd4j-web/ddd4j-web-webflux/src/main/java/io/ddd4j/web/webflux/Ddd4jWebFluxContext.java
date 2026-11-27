@@ -25,7 +25,9 @@ import reactor.core.publisher.Mono;
 @UtilityClass
 public class Ddd4jWebFluxContext {
 
+    /** \u5728\u6846\u67b6\u8bf7\u6c42\u4e2d\u4fdd\u5b58 DDD4J \u8bf7\u6c42\u4e0a\u4e0b\u6587\u7684\u952e\u3002 */
     static final Class<WebRequestContext> REQUEST_CONTEXT_KEY = WebRequestContext.class;
+    /** \u5728\u6846\u67b6\u8bf7\u6c42\u4e2d\u4fdd\u5b58\u8ba4\u8bc1\u4e3b\u4f53\u7684\u952e\u3002 */
     static final Class<Subject> SUBJECT_KEY = Subject.class;
 
     /**

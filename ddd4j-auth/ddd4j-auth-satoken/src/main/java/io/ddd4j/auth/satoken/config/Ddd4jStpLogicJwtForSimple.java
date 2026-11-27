@@ -45,8 +45,11 @@ public class Ddd4jStpLogicJwtForSimple extends StpLogicJwtForSimple {
      */
     public static final String AUDIENCE_CLAIM = "aud";
 
+    /** \u7b7e\u53d1 JWT \u65f6\u4f7f\u7528\u7684\u7b7e\u540d\u5bc6\u94a5\u3002 */
     private final String signingSecret;
+    /** \u5199\u5165\u6216\u6821\u9a8c JWT \u7684\u7b7e\u53d1\u65b9\u58f0\u660e\u3002 */
     private final String issuer;
+    /** \u5199\u5165\u6216\u6821\u9a8c JWT \u7684\u53d7\u4f17\u58f0\u660e\u3002 */
     private final String audience;
 
     /**
@@ -61,11 +64,23 @@ public class Ddd4jStpLogicJwtForSimple extends StpLogicJwtForSimple {
         this.audience = properties.getJwtAudience();
     }
 
+    /**
+     * \u8bfb\u53d6<code>signingSecret</code> \u5b57\u6bb5\u3002
+     * @return <code>signingSecret</code> \u5b57\u6bb5
+     */
     @Override
     public String jwtSecretKey() {
         return signingSecret;
     }
 
+    /**
+     * \u590d\u5236\u6269\u5c55\u58f0\u660e\u5e76\u5199\u5165\u914d\u7f6e\u7684\u7b7e\u53d1\u65b9\u4e0e\u63a5\u6536\u65b9\u540e\u751f\u6210\u4ee4\u724c\u3002
+     * @param loginId \u5f53\u524d\u8ba4\u8bc1\u57df\u5185\u7684\u8d26\u53f7\u6807\u8bc6
+     * @param deviceType \u4ee4\u724c\u7b7e\u53d1\u65f6\u5173\u8054\u7684\u8bbe\u5907\u7c7b\u578b
+     * @param timeout \u539f\u751f\u4ee4\u724c\u751f\u6210\u6240\u7528\u7684\u8d85\u65f6\u65f6\u957f
+     * @param extraData \u968f\u4ee4\u724c\u4e00\u8d77\u4fdd\u5b58\u7684\u989d\u5916\u58f0\u660e
+     * @return \u5e26\u5f53\u524d\u8d26\u53f7\u8303\u56f4\u548c JWT \u58f0\u660e\u7684\u4ee4\u724c
+     */
     @Override
     public String createTokenValue(Object loginId, String deviceType, long timeout, Map<String, Object> extraData) {
         Map<String, Object> payloads = new LinkedHashMap<>();

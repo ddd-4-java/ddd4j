@@ -41,12 +41,19 @@ import java.util.function.Function;
  */
 public final class Ddd4jBundle<C extends Configuration> implements ConfiguredBundle<C> {
 
+    /** \u6846\u67b6\u5bb9\u5668\u4e2d\u9700\u8981\u767b\u8bb0\u5230\u547d\u4ee4\u603b\u7ebf\u7684\u6267\u884c\u5668\u3002 */
     private final Collection<CommandExecutor<?>> executors;
+    /** \u63a5\u6536\u8fd0\u884c\u65f6\u53d1\u5e03\u9886\u57df\u4e8b\u4ef6\u7684\u76d1\u542c\u56de\u8c03\u3002 */
     private final Collection<Consumer<Object>> listeners;
+    /** \u6839\u636e\u5f53\u524d\u8c03\u7528\u8303\u56f4\u63d0\u4f9b\u8ba4\u8bc1\u4e3b\u4f53\u7684\u7ec4\u4ef6\u3002 */
     private final SubjectProvider subjectProvider;
+    /** \u5f53\u524d\u8fd0\u884c\u6846\u67b6\u6ce8\u518c\u7684\u56fd\u9645\u5316\u6d88\u606f\u63d0\u4f9b\u5668\u3002 */
     private final I18nProvider i18nProvider;
+    /** \u53c2\u4e0e\u5e94\u7528\u5c31\u7eea\u72b6\u6001\u6c47\u603b\u7684\u8fd0\u884c\u7ec4\u4ef6\u3002 */
     private final Collection<ReadinessContributor> readinessContributors;
+    /** \u4f9d\u636e Dropwizard \u8fd0\u884c\u73af\u5883\u521b\u5efa\u6295\u5f71\u89c6\u56fe\u7ba1\u7406\u5668\u7684\u5de5\u5382\u3002 */
     private final Function<Environment, DropwizardProjectionViewManager> projectionFactory;
+    /** \u5f53\u524d\u5bb9\u5668\u88c5\u914d\u5e76\u8d1f\u8d23\u5173\u95ed\u7684 DDD4J \u8fd0\u884c\u65f6\u3002 */
     private Ddd4jDropwizardRuntime runtime;
 
     /**
@@ -84,6 +91,15 @@ public final class Ddd4jBundle<C extends Configuration> implements ConfiguredBun
         this(executors, listeners, subjectProvider, i18nProvider, readinessContributors, null);
     }
 
+    /**
+     * \u4fdd\u5b58 Dropwizard \u542f\u52a8\u65f6\u9700\u88c5\u914d\u7684\u8ba4\u8bc1\u3001\u4e8b\u4ef6\u3001\u547d\u4ee4\u53ca\u6295\u5f71\u7ec4\u4ef6\u3002
+     * @param executors \u5f53\u524d\u6846\u67b6\u5bb9\u5668\u63d0\u4f9b\u7684\u547d\u4ee4\u6267\u884c\u5668
+     * @param listeners \u63a5\u6536\u9886\u57df\u4e8b\u4ef6\u7684\u76d1\u542c\u56de\u8c03
+     * @param subjectProvider \u4ece\u5f53\u524d\u8ba4\u8bc1\u6846\u67b6\u89e3\u6790\u4e3b\u4f53\u7684\u7ec4\u4ef6
+     * @param i18nProvider \u63d0\u4f9b\u672c\u5730\u5316\u6d88\u606f\u7684\u6846\u67b6\u7ec4\u4ef6
+     * @param readinessContributors \u63d0\u4f9b\u8fd0\u884c\u65f6\u5c31\u7eea\u68c0\u67e5\u7684\u7ec4\u4ef6\u96c6\u5408
+     * @param projectionFactory \u4f9d\u636e\u8fd0\u884c\u73af\u5883\u6784\u9020\u89c6\u56fe\u7ba1\u7406\u5668\u7684\u5de5\u5382
+     */
     private Ddd4jBundle(Collection<CommandExecutor<?>> executors, Collection<Consumer<Object>> listeners,
                         SubjectProvider subjectProvider, I18nProvider i18nProvider,
                         Collection<? extends ReadinessContributor> readinessContributors,
@@ -127,6 +143,15 @@ public final class Ddd4jBundle<C extends Configuration> implements ConfiguredBun
         return projected(repository, reader, views, Objects.requireNonNull(scheduler, "scheduler must not be null"));
     }
 
+    /**
+     * \u6784\u9020\u53ef\u4ee5\u5728 Dropwizard \u751f\u547d\u5468\u671f\u5185\u8fd0\u884c\u7684\u663e\u5f0f\u6295\u5f71\u88c5\u914d\u3002
+     * @param <E> \u5f53\u524d\u5bb9\u5668\u5904\u7406\u7684\u7ec4\u4ef6\u6216\u4e8b\u4ef6\u7c7b\u578b
+     * @param repository \u4fdd\u5b58\u5e76\u8bfb\u53d6\u6295\u5f71\u68c0\u67e5\u70b9\u7684\u4ed3\u50a8
+     * @param reader \u4ece\u4e8b\u4ef6\u6e90\u6309\u4f4d\u70b9\u5206\u6279\u8bfb\u53d6\u4e8b\u4ef6\u7684\u7ec4\u4ef6
+     * @param views \u5f53\u524d\u8fd0\u884c\u65f6\u6ce8\u518c\u7684\u6295\u5f71\u89c6\u56fe\u96c6\u5408
+     * @param scheduler \u8c03\u5ea6\u6295\u5f71\u4efb\u52a1\u7684\u8fd0\u884c\u65f6\u7ec4\u4ef6
+     * @return \u542b\u6295\u5f71\u88c5\u914d\u914d\u7f6e\u7684 Dropwizard Bundle
+     */
     private <E> Ddd4jBundle<C> projected(ProjectionPositionRepository repository,
                                          EventChunkReader<E> reader, Collection<? extends ProjectionView<E>> views, ViewScheduler scheduler) {
         Objects.requireNonNull(repository, "Explicit projection requires a position repository");
@@ -150,11 +175,20 @@ public final class Ddd4jBundle<C extends Configuration> implements ConfiguredBun
         return Optional.ofNullable(runtime);
     }
 
+    /**
+     * \u6267\u884c Bundle \u7684\u5f15\u5bfc\u521d\u59cb\u5316\u5165\u53e3\u3002
+     * @param bootstrap Dropwizard \u5e94\u7528\u5f15\u5bfc\u5bf9\u8c61
+     */
     @Override
     public void initialize(Bootstrap<?> bootstrap) {
         Objects.requireNonNull(bootstrap, "bootstrap must not be null");
     }
 
+    /**
+     * \u628a DDD4J \u670d\u52a1\u548c\u5c31\u7eea\u68c0\u67e5\u88c5\u914d\u5230 Dropwizard \u5e94\u7528\u3002
+     * @param configuration \u5f53\u524d\u5e94\u7528\u5b9e\u4f8b\u52a0\u8f7d\u7684\u914d\u7f6e
+     * @param environment \u5f53\u524d Dropwizard \u6216 Spring \u5e94\u7528\u73af\u5883
+     */
     @Override
     public void run(C configuration, Environment environment) {
         Objects.requireNonNull(configuration, "configuration must not be null");

@@ -174,7 +174,9 @@ public class CleanArchitectureChecker {
     }
 
     /**
-     * 使用 ArchUnit 做类级别的依赖检查。
+     * \u4f7f\u7528 ArchUnit \u505a\u7c7b\u7ea7\u522b\u7684\u4f9d\u8d56\u68c0\u67e5\u3002
+     *
+     * @param sourceRoot \u5f85\u5bfc\u5165\u5e76\u68c0\u67e5\u7684\u6e90\u7801\u6216\u7c7b\u76ee\u5f55\u6839\u8def\u5f84
      */
     private void checkArchUnitRules(String sourceRoot) {
         // 尝试 importPath：优先用已编译的 class，否则用源文件目录

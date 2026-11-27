@@ -38,21 +38,25 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 @AnalyzeClasses(packages = "io.ddd4j.annotation", importOptions = {ImportOption.DoNotIncludeTests.class})
 class AnnotationIndependenceTest {
 
+    /** \u963b\u6b62\u6ce8\u89e3\u6a21\u5757\u4f9d\u8d56 Spring \u7c7b\u578b\u7684\u67b6\u6784\u89c4\u5219\u3002 */
     @ArchTest
     static final ArchRule no_spring =
             noClasses().that().resideInAPackage("io.ddd4j.annotation..")
                     .should().dependOnClassesThat().resideInAPackage("org.springframework..");
 
+    /** \u963b\u6b62\u6ce8\u89e3\u6a21\u5757\u4f9d\u8d56 MyBatis \u7c7b\u578b\u7684\u67b6\u6784\u89c4\u5219\u3002 */
     @ArchTest
     static final ArchRule no_mybatis =
             noClasses().that().resideInAPackage("io.ddd4j.annotation..")
                     .should().dependOnClassesThat().resideInAPackage("com.baomidou..");
 
+    /** \u963b\u6b62\u6ce8\u89e3\u6a21\u5757\u4f9d\u8d56 Servlet \u7c7b\u578b\u7684\u67b6\u6784\u89c4\u5219\u3002 */
     @ArchTest
     static final ArchRule no_servlet =
             noClasses().that().resideInAPackage("io.ddd4j.annotation..")
                     .should().dependOnClassesThat().resideInAPackage("jakarta.servlet..");
 
+    /** \u963b\u6b62\u6ce8\u89e3\u6a21\u5757\u4f9d\u8d56 CDI \u7c7b\u578b\u7684\u67b6\u6784\u89c4\u5219\u3002 */
     @ArchTest
     static final ArchRule no_cdi =
             noClasses().that().resideInAPackage("io.ddd4j.annotation..")
@@ -61,6 +65,7 @@ class AnnotationIndependenceTest {
                             "jakarta.enterprise.."
                     );
 
+    /** \u963b\u6b62\u6ce8\u89e3\u6a21\u5757\u4f9d\u8d56 Guice \u7c7b\u578b\u7684\u67b6\u6784\u89c4\u5219\u3002 */
     @ArchTest
     static final ArchRule no_guice =
             noClasses().that().resideInAPackage("io.ddd4j.annotation..")

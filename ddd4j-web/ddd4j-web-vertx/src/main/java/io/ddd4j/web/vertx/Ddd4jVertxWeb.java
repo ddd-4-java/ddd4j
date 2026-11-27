@@ -55,14 +55,22 @@ import java.util.function.Function;
 @Slf4j
 public final class Ddd4jVertxWeb {
 
+    /** \u4fdd\u5b58 Vert.x \u8bf7\u6c42\u5904\u7406\u72b6\u6001\u548c\u6e05\u7406\u53e5\u67c4\u7684\u952e\u3002 */
     private static final String STATE_KEY = Ddd4jVertxWeb.class.getName() + ".state";
+    /** \u4fdd\u5b58\u6846\u67b6\u8bf7\u6c42\u670d\u52a1\u7aef Span \u7684\u952e\u3002 */
     private static final String OTEL_SPAN_KEY = Ddd4jVertxWeb.class.getName() + ".otelSpan";
 
+    /** \u6839\u636e\u6846\u67b6\u8bf7\u6c42\u5143\u6570\u636e\u88c5\u914d\u5171\u7528 Web \u8bf7\u6c42\u4e0a\u4e0b\u6587\u3002 */
     private final WebRequestContextFactory contextFactory;
+    /** \u5f00\u542f\u548c\u5173\u95ed\u5f53\u524d Web \u8bf7\u6c42\u4e0a\u4e0b\u6587\u7684\u7ec4\u4ef6\u3002 */
     private final WebRequestLifecycle requestLifecycle;
+    /** \u5c06\u6846\u67b6\u5f02\u5e38\u6620\u5c04\u4e3a\u7edf\u4e00 WebError \u7684\u8f6c\u6362\u5668\u3002 */
     private final WebExceptionTranslator exceptionTranslator;
+    /** \u5728\u8bf7\u6c42\u5904\u7406\u9636\u6bb5\u83b7\u53d6\u53ca\u91ca\u653e\u5e42\u7b49\u4fdd\u62a4\u7684\u7ec4\u4ef6\u3002 */
     private final Optional<WebIdempotencyLifecycle> idempotencyLifecycle;
+    /** \u5c06 Vert.x \u5e94\u7528\u7ed3\u679c\u5199\u6210 HTTP JSON \u6b63\u6587\u7684\u7f16\u7801\u5668\u3002 */
     private final Function<Object, String> jsonEncoder;
+    /** \u63d0\u4f9b\u4f9d\u8d56\u5c31\u7eea\u72b6\u6001\u7684 Web \u7aef\u70b9\u3002 */
     private final ReadinessEndpoint readinessEndpoint;
 
     /**
@@ -132,6 +140,11 @@ public final class Ddd4jVertxWeb {
         this.readinessEndpoint = new ReadinessEndpoint(() -> registry.readiness().ready());
     }
 
+    /**
+     * \u6536\u96c6 HTTP \u8bf7\u6c42\u4e2d\u53ef\u7528\u7684\u5934\u540d\u79f0\u53ca\u5176\u503c\u3002
+     * @param context \u5f53\u524d\u6846\u67b6 HTTP \u8bf7\u6c42\u6216\u4ea4\u6362\u4e0a\u4e0b\u6587
+     * @return \u4f9b\u8bf7\u6c42\u4e0a\u4e0b\u6587\u8bfb\u53d6\u7684\u8bf7\u6c42\u5934\u6620\u5c04
+     */
     private static Map<String, String> extractHeaders(RoutingContext context) {
         Map<String, String> headers = new HashMap<>();
         context.request().headers().forEach(entry -> {
@@ -144,6 +157,11 @@ public final class Ddd4jVertxWeb {
         return headers;
     }
 
+    /**
+     * \u6fc0\u6d3b\u670d\u52a1\u7aef\u8ddf\u8e2a\u4e0a\u4e0b\u6587\u540e\u8fd0\u884c\u5f53\u524d\u56de\u8c03\u5e76\u91ca\u653e\u4f5c\u7528\u57df\u3002
+     * @param span \u5f53\u524d\u8bf7\u6c42\u7684\u8ddf\u8e2a Span
+     * @param action \u9700\u8981\u5728\u5df2\u6fc0\u6d3b\u8ddf\u8e2a\u4e0a\u4e0b\u6587\u4e2d\u6267\u884c\u7684\u64cd\u4f5c
+     */
     private static void runWithSpan(Object span, Runnable action) {
         AutoCloseable scope = WebOtelSupport.activate(span);
         try {
@@ -169,6 +187,10 @@ public final class Ddd4jVertxWeb {
         target.get(ReadinessEndpoint.PATH).handler(this::readiness);
     }
 
+    /**
+     * \u5c06\u5f53\u524d\u8fd0\u884c\u65f6\u5c31\u7eea\u72b6\u6001\u5199\u5165 Vert.x \u54cd\u5e94\u3002
+     * @param context \u5f53\u524d\u6846\u67b6\u8c03\u7528\u6240\u643a\u5e26\u7684\u8bf7\u6c42\u4e0a\u4e0b\u6587
+     */
     private void readiness(RoutingContext context) {
         ReadinessResponse response = readinessEndpoint.readiness();
         context.response().setStatusCode(response.httpStatus())
@@ -270,6 +292,12 @@ public final class Ddd4jVertxWeb {
         };
     }
 
+    /**
+     * \u6309\u8def\u7531\u8bbf\u95ee\u7b56\u7565\u89e3\u6790\u4e3b\u4f53\u5e76\u53d6\u5f97\u9700\u8981\u7684\u5e42\u7b49\u4fdd\u62a4\u3002
+     * @param routingContext \u5f53\u524d Vert.x \u8def\u7531\u8bf7\u6c42\u4e0a\u4e0b\u6587
+     * @param requestContext \u5f53\u524d HTTP \u8bf7\u6c42\u5df2\u7ecf\u89e3\u6790\u7684 DDD4J \u4e0a\u4e0b\u6587
+     * @return \u8ba4\u8bc1\u4e0e\u53ef\u7528\u5e42\u7b49\u4f5c\u7528\u57df\u7684\u7ec4\u5408
+     */
     private AuthenticationResult authenticate(RoutingContext routingContext, WebRequestContext requestContext) {
         Optional<BearerSubjectAuthenticator.Authentication> authentication = requestLifecycle
                 .authenticate(requestContext);
@@ -279,6 +307,11 @@ public final class Ddd4jVertxWeb {
         return new AuthenticationResult(authentication, idempotencyScope);
     }
 
+    /**
+     * \u4ece\u6846\u67b6\u8bf7\u6c42\u63d0\u53d6\u79df\u6237\u3001\u8ddf\u8e2a\u6807\u8bc6\u3001\u8ba4\u8bc1\u548c\u8def\u7531\u4fe1\u606f\uff0c\u7ec4\u88c5\u5171\u7528\u4e0a\u4e0b\u6587\u3002
+     * @param context \u5f53\u524d\u6846\u67b6 HTTP \u8bf7\u6c42
+     * @return \u4f9b\u4e0a\u4e0b\u6587\u548c\u8ba4\u8bc1\u5904\u7406\u94fe\u4f7f\u7528\u7684\u8bf7\u6c42\u4e0a\u4e0b\u6587
+     */
     private WebRequestContext createContext(RoutingContext context) {
         Locale locale = Objects.isNull(context.preferredLanguage())
                 ? Locale.getDefault() : Locale.forLanguageTag(context.preferredLanguage().tag());
@@ -295,6 +328,10 @@ public final class Ddd4jVertxWeb {
                 context.normalizedPath()));
     }
 
+    /**
+     * \u6839\u636e\u6700\u7ec8\u54cd\u5e94\u7ed3\u675f\u8ddf\u8e2a\u5e76\u6e05\u7406 Vert.x \u8bf7\u6c42\u4f5c\u7528\u57df\u3002
+     * @param context \u5f53\u524d\u6846\u67b6\u8c03\u7528\u6240\u643a\u5e26\u7684\u8bf7\u6c42\u4e0a\u4e0b\u6587
+     */
     private void finish(RoutingContext context) {
         RequestState state = context.remove(STATE_KEY);
         if (Objects.isNull(state)) {
@@ -313,42 +350,71 @@ public final class Ddd4jVertxWeb {
         }).onFailure(exception -> log.error("Unable to close Vert.x request state", exception));
     }
 
+    /** \u4fdd\u5b58 Vert.x \u5f53\u524d\u8bf7\u6c42\u7684\u8ba4\u8bc1\u7ed3\u679c\u53ca\u5df2\u53d6\u5f97\u7684\u5e42\u7b49\u4f5c\u7528\u57df\u3002 */
     private static final class AuthenticationResult {
 
+        /** \u5f53\u524d\u8bf7\u6c42\u7684\u8ba4\u8bc1\u7ed3\u679c\uff0c\u516c\u5f00\u8def\u7531\u53ef\u4ee5\u4e0d\u643a\u5e26\u4e3b\u4f53\u3002 */
         private final Optional<BearerSubjectAuthenticator.Authentication> authentication;
 
+        /** \u5f53\u524d\u8bf7\u6c42\u53d6\u5f97\u7684\u5e42\u7b49\u5904\u7406\u4f5c\u7528\u57df\u3002 */
         private final Optional<WebIdempotencyLifecycle.Scope> idempotencyScope;
 
+        /**
+         * \u5c06\u8fdb\u5165\u8def\u7531\u524d\u53d6\u5f97\u7684\u8ba4\u8bc1\u7ed3\u679c\u548c\u5e42\u7b49\u4f5c\u7528\u57df\u4e00\u8d77\u4fdd\u5b58\u3002
+         * @param authentication \u5f53\u524d\u8bf7\u6c42\u5df2\u53d6\u5f97\u7684\u8ba4\u8bc1\u7ed3\u679c
+         * @param idempotencyScope \u5f53\u524d\u8bf7\u6c42\u83b7\u53d6\u7684\u53ef\u9009\u5e42\u7b49\u4f5c\u7528\u57df
+         */
         private AuthenticationResult(Optional<BearerSubjectAuthenticator.Authentication> authentication,
                                      Optional<WebIdempotencyLifecycle.Scope> idempotencyScope) {
             this.authentication = authentication;
             this.idempotencyScope = idempotencyScope;
         }
 
+        /**
+         * \u8bfb\u53d6<code>authentication</code> \u5b57\u6bb5\u3002
+         * @return <code>authentication</code> \u5b57\u6bb5
+         */
         private Optional<BearerSubjectAuthenticator.Authentication> authentication() {
             return authentication;
         }
 
+        /**
+         * \u8bfb\u53d6<code>idempotencyScope</code> \u5b57\u6bb5\u3002
+         * @return <code>idempotencyScope</code> \u5b57\u6bb5
+         */
         private Optional<WebIdempotencyLifecycle.Scope> idempotencyScope() {
             return idempotencyScope;
         }
 
     }
 
+    /** \u5728\u4e00\u6b21 HTTP \u8bf7\u6c42\u7684\u5904\u7406\u9636\u6bb5\u4e4b\u95f4\u4fdd\u5b58\u5e42\u7b49\u72b6\u6001\u53ca\u6e05\u7406\u8fdb\u5ea6\u3002 */
     private static final class RequestState {
 
+        /** \u5f53\u524d\u8bf7\u6c42\u53d6\u5f97\u7684\u5e42\u7b49\u5904\u7406\u4f5c\u7528\u57df\u3002 */
         private WebIdempotencyLifecycle.Scope idempotencyScope;
+        /** \u5f53\u524d\u8bf7\u6c42\u5904\u7406\u94fe\u662f\u5426\u5df2\u7ecf\u62a5\u544a\u5931\u8d25\u3002 */
         private boolean failed;
+        /** \u6807\u8bb0\u5f53\u524d\u8bf7\u6c42\u7684\u5e42\u7b49\u4f5c\u7528\u57df\u662f\u5426\u5df2\u7ecf\u5173\u95ed\u3002 */
         private boolean idempotencyClosed;
 
+        /**
+         * \u8bbe\u7f6e<code>idempotencyScope</code> \u5b57\u6bb5\u3002
+         * @param scope \u8981\u5199\u5165\u7684\u503c
+         */
         private void idempotencyScope(WebIdempotencyLifecycle.Scope scope) {
             this.idempotencyScope = scope;
         }
 
+        /** \u6807\u8bb0\u5f53\u524d\u8bf7\u6c42\u4e0d\u80fd\u4ee5\u6210\u529f\u72b6\u6001\u5b8c\u6210\u5e42\u7b49\u5904\u7406\u3002 */
         private void failed() {
             failed = true;
         }
 
+        /**
+         * \u6309\u8bf7\u6c42\u6700\u7ec8\u72b6\u6001\u5173\u95ed\u5e42\u7b49\u53ca\u5176\u4ed6\u8bf7\u6c42\u4f5c\u7528\u57df\u3002
+         * @param successful \u8bf7\u6c42\u662f\u5426\u6309\u6b63\u5e38\u4e1a\u52a1\u7ed3\u679c\u5b8c\u6210
+         */
         private void close(boolean successful) {
             if (idempotencyClosed) {
                 return;

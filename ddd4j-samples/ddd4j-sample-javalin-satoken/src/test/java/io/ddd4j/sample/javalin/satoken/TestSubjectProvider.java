@@ -22,11 +22,13 @@ import io.ddd4j.core.subject.SubjectProvider;
  */
 public class TestSubjectProvider implements SubjectProvider {
 
+    /** {@inheritDoc} */
     @Override
     public Subject getSubject() {
         return new TestSubject();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Subject getSubject(String realm) {
         return new TestSubject();

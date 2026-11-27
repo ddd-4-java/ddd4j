@@ -27,6 +27,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * 真实 Javalin HTTP 到 Guice 命令路由；事务由执行器拥有。
  */
 class GuiceJavalinIntegrationTest {
+    /**
+     * \u9a8c\u8bc1<code>response.statusCode()</code> \u7b49\u4e8e <code>200</code>\uff0c<code>response.body()</code> \u7b49\u4e8e <code>"committed"</code>\uff0c<code>bus.execute(new TxCommand("throw"))</code> \u629b\u51fa <code>IllegalStateException.class</code>\u3002
+     * @throws Exception \u53d1\u8d77\u6d4b\u8bd5\u8bf7\u6c42\u65f6\u5931\u8d25
+     */
     @Test
     void httpDispatchAndExecutorOwnedTransactions() throws Exception {
         JdbcDataSource source = new JdbcDataSource();
@@ -66,8 +70,13 @@ class GuiceJavalinIntegrationTest {
      * 事务测试命令，不改变总线事务边界。
      */
     static final class TxCommand implements Command {
+        /** \u5f53\u524d\u7528\u4f8b\u7528\u4e8e\u5207\u6362\u9274\u6743\u3001\u6295\u5f71\u6216\u5904\u7406\u884c\u4e3a\u7684\u6d4b\u8bd5\u6a21\u5f0f\u3002 */
         private final String mode;
 
+        /**
+         * \u8bbe\u7f6e <code>mode</code>\uff0c\u7528\u4e8e\u6784\u9020 <code>TxCommand</code> \u6d4b\u8bd5\u5b9e\u4f8b\u3002
+         * @param mode \u7528\u4e8e\u521d\u59cb\u5316 <code>TxCommand</code> \u7684 <code>String</code> \u503c
+         */
         TxCommand(String mode) {
             this.mode = mode;
         }
@@ -77,19 +86,28 @@ class GuiceJavalinIntegrationTest {
      * 模拟应用既有事务拥有者，失败 Result 和异常均由执行器回滚。
      */
     static final class TxExecutor implements CommandExecutor<TxCommand> {
+        /** \u5f53\u524d\u8f6c\u6362\u6216\u590d\u5236\u6d4b\u8bd5\u4f7f\u7528\u7684\u8f93\u5165\u5bf9\u8c61\u3002 */
         private final JdbcDataSource source;
+        /** \u8bb0\u5f55\u53d7\u6d4b\u8c03\u7528\u6700\u7ec8\u662f\u5426\u5931\u8d25\u3002 */
         private final Result<String> failed = Result.fail("rejected");
+        /** \u5f53\u524d\u5931\u8d25\u8def\u5f84\u6240\u7528\u6216\u89c2\u5bdf\u5230\u7684\u539f\u59cb\u5f02\u5e38\u3002 */
         private final IllegalStateException failure = new IllegalStateException("executor failure");
 
+        /**
+         * \u8bbe\u7f6e <code>source</code>\uff0c\u7528\u4e8e\u6784\u9020 <code>TxExecutor</code> \u6d4b\u8bd5\u5b9e\u4f8b\u3002
+         * @param source \u6d4b\u8bd5\u4e2d\u5f85\u8f6c\u6362\u3001\u8bfb\u53d6\u6216\u4f20\u64ad\u7684\u6570\u636e\u6765\u6e90
+         */
         TxExecutor(JdbcDataSource source) {
             this.source = source;
         }
 
+        /** {@inheritDoc} */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Set.of(TxCommand.class);
         }
 
+        /** {@inheritDoc} */
         @Override
         public Result<String> execute(TxCommand command) {
             try (Connection connection = source.getConnection()) {

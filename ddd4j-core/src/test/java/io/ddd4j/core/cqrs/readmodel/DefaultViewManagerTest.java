@@ -11,7 +11,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+/** \u901a\u8fc7 <code>tasks.add()</code>\u3001<code>handles.add()</code>\u3001<code>service.updateProjectionPosition()</code> \u9a8c\u8bc1 <code>DefaultViewManager</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
 class DefaultViewManagerTest {
+    /** \u9a8c\u8bc1<code>name</code> \u7b49\u4e8e <code>"orders"</code>\uff0c<code>cron</code> \u7b49\u4e8e <code>"0/5 * * * * ?"</code>\uff0c<code>service.readProjectionPosition("orders")</code> \u7b49\u4e8e <code>30</code>\u3002 */
     @Test
     void repeatedStartStopKeepsOneHandleAndCanRestartFromSavedPosition() {
         List<Handle> handles = new ArrayList<>();
@@ -47,6 +49,7 @@ class DefaultViewManagerTest {
         manager.stop();
     }
 
+    /** \u9a8c\u8bc1<code>manager.isRunning()</code>\u4e3a\u5047\uff0c<code>handles.get(0).isActive()</code>\u4e3a\u5047\uff0c<code>manager.isRunning()</code>\u4e3a\u771f\u3002 */
     @Test
     void partialStartFailureCancelsCreatedHandlesAndAllowsRetry() {
         List<Handle> handles = new ArrayList<>();
@@ -74,6 +77,7 @@ class DefaultViewManagerTest {
         assertThat(handles).allMatch(handle -> !handle.isActive());
     }
 
+    /** \u9a8c\u8bc1<code>other.isActive()</code>\u4e3a\u5047\u3002 */
     @Test
     void cancellationFailureStillCancelsOtherHandlesAndIsRetriedBeforeRestart() {
         AtomicBoolean failCancel = new AtomicBoolean(true);
@@ -107,6 +111,7 @@ class DefaultViewManagerTest {
         manager.stop();
     }
 
+    /** \u9a8c\u8bc1<code>manager.isRunning()</code>\u4e3a\u5047\uff0c<code>first.isActive()</code>\u4e3a\u5047\uff0c<code>manager.isRunning()</code>\u4e3a\u771f\u3002 */
     @Test
     void partialStartErrorCancelsCreatedHandlesAndRethrowsOriginal() {
         LinkageError unavailableScheduler = new LinkageError("scheduler unavailable");
@@ -133,6 +138,7 @@ class DefaultViewManagerTest {
         manager.stop();
     }
 
+    /** \u9a8c\u8bc1<code>manager.isRunning()</code>\u4e3a\u5047\uff0c<code>other.isActive()</code>\u4e3a\u5047\u3002 */
     @Test
     void cancellationErrorStillCancelsOtherHandlesAndCanBeRetried() {
         LinkageError unavailableScheduler = new LinkageError("cancel unavailable");
@@ -169,14 +175,18 @@ class DefaultViewManagerTest {
         manager.stop();
     }
 
+    /** \u5b9e\u73b0 <code>ViewScheduleHandle</code>\uff0c\u4f9b\u6d4b\u8bd5\u8c03\u7528 <code>cancel()</code>\u3001<code>isActive()</code> \u5e76\u89c2\u5bdf\u7ed3\u679c\u3002 */
     private static final class Handle implements ViewScheduler.ViewScheduleHandle {
+        /** \u8bb0\u5f55\u6d4b\u8bd5\u89c2\u5bdf\u5230\u7684\u4efb\u52a1\u53d6\u6d88\u8c03\u7528\u6b21\u6570\u3002 */
         private int cancels;
 
+        /** {@inheritDoc} */
         @Override
         public void cancel() {
             cancels++;
         }
 
+        /** {@inheritDoc} */
         @Override
         public boolean isActive() {
             return cancels == 0;

@@ -193,6 +193,7 @@ public final class AuthConstants {
      */
     public static final String FIELD_STATUS = "status";
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>AuthConstants</code> \u5b9e\u4f8b\u3002 */
     private AuthConstants() {
     }
 }

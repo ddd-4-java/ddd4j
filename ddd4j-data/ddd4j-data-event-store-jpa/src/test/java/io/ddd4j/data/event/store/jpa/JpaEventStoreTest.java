@@ -34,14 +34,20 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/** \u9a8c\u8bc1 <code>JpaEventStore</code> \u5728<code>independentAppend</code>\u3001<code>appendAndRead</code>\u3001<code>reopenedStore</code>\u3001<code>repeatedReads</code>\u7b49\u64cd\u4f5c\u4e2d\u7684\u884c\u4e3a\u5951\u7ea6\u3002 */
 class JpaEventStoreTest {
 
+    /** \u6d4b\u8bd5\u4e8b\u4ef6\u6d41\u4e2d\u4f7f\u7528\u7684\u805a\u5408\u7c7b\u578b\u540d\u79f0\u3002 */
     private static final String ORDER_TYPE = "Order";
 
+    /** \u7528\u4e8e\u521b\u5efa JPA \u5b9e\u4f53\u7ba1\u7406\u5668\u7684\u5de5\u5382\u3002 */
     private static EntityManagerFactory entityManagerFactory;
+    /** \u6267\u884c JPA \u67e5\u8be2\u548c\u6301\u4e45\u5316\u64cd\u4f5c\u7684\u5b9e\u4f53\u7ba1\u7406\u5668\u3002 */
     private EntityManager entityManager;
+    /** \u8bfb\u53d6\u53ca\u8ffd\u52a0\u9886\u57df\u4e8b\u4ef6\u7684\u4e8b\u4ef6\u5b58\u50a8\u3002 */
     private EventStore eventStore;
 
+    /** \u6d4b\u8bd5\u524d\u4f9d\u6b21\u521d\u59cb\u5316<code>entityManagerFactory</code>\u3002 */
     @BeforeAll
     static void createEntityManagerFactory() {
         Configuration configuration = new Configuration();
@@ -56,6 +62,7 @@ class JpaEventStoreTest {
         entityManagerFactory = configuration.buildSessionFactory();
     }
 
+    /** \u6d4b\u8bd5\u540e\u4f9d\u6b21\u5173\u95ed<code>entityManagerFactory</code>\u3002 */
     @AfterAll
     static void closeEntityManagerFactory() {
         if (entityManagerFactory != null && entityManagerFactory.isOpen()) {
@@ -63,12 +70,14 @@ class JpaEventStoreTest {
         }
     }
 
+    /** \u6d4b\u8bd5\u524d\u4f9d\u6b21\u521d\u59cb\u5316<code>entityManager</code>\u3001\u521d\u59cb\u5316<code>eventStore</code>\u3002 */
     @BeforeEach
     void setUp() {
         entityManager = entityManagerFactory.createEntityManager();
         eventStore = new JpaEventStore(entityManager);
     }
 
+    /** \u6d4b\u8bd5\u540e\u4f9d\u6b21\u5173\u95ed<code>entityManager</code>\u3002 */
     @AfterEach
     void tearDown() {
         EntityTransaction tx = entityManager.getTransaction();
@@ -80,6 +89,7 @@ class JpaEventStoreTest {
         entityManager.close();
     }
 
+    /** \u9a8c\u8bc1<code>saved[0]</code>\u975e\u7a7a\uff0c<code>entityManager.contains(saved[0])</code>\u4e3a\u5047\u3002 */
     @Test
     void independentAppendShouldDetachPersistedEntity() {
         StoredEventEntity[] saved = new StoredEventEntity[1];
@@ -98,6 +108,7 @@ class JpaEventStoreTest {
         assertFalse(entityManager.contains(saved[0]));
     }
 
+    /** \u9a8c\u8bc1<code>events.size()</code> \u7b49\u4e8e <code>2</code>\uff0c<code>events.get(0).version()</code> \u7b49\u4e8e <code>1L</code>\uff0c<code>events.get(0).aggregateId().asString()</code> \u7b49\u4e8e <code>orderId.asString()</code>\u3002 */
     @Test
     void appendAndReadShouldRoundTripBusinessPayload() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-a");
@@ -114,6 +125,10 @@ class JpaEventStoreTest {
         assertEquals(orderId.asString(), events.get(0).aggregateId().asString());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>framework.loadClass(eventClassName)</code> \u629b\u51fa <code>ClassNotFoundException.class</code>\uff0c<code>event.getFact()</code> \u7b49\u4e8e <code>"created"</code>\u3002
+     * @throws Exception \u51c6\u5907\u6216\u91ca\u653e\u88ab\u6d4b\u8fd0\u884c\u8d44\u6e90\u65f6\u5931\u8d25
+     */
     @Test
     void reopenedStoreShouldReadHostEventFromContextClassLoader() throws Exception {
         TestAggregateRootId orderId = new TestAggregateRootId("host-event");
@@ -152,6 +167,7 @@ class JpaEventStoreTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>second</code> \u7b49\u4e8e <code>first</code>\uff0c<code>second.hashCode()</code> \u7b49\u4e8e <code>first.hashCode()</code>\u3002 */
     @Test
     void repeatedReadsShouldReconstructEqualAggregateIds() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-value-id");
@@ -164,6 +180,10 @@ class JpaEventStoreTest {
         assertEquals(first.hashCode(), second.hashCode());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>JsonMapper.builder().build().writeValueAsString(reconstructed)</code> \u7b49\u4e8e <code>"\"serialized-id\""</code>\u3002
+     * @throws Exception \u5904\u7406\u6d4b\u8bd5\u6570\u636e\u7684\u5e8f\u5217\u5316\u65f6\u5931\u8d25
+     */
     @Test
     void reconstructedAggregateIdShouldSerializeAsString() throws Exception {
         TestAggregateRootId orderId = new TestAggregateRootId("serialized-id");
@@ -175,6 +195,7 @@ class JpaEventStoreTest {
                 JsonMapper.builder().build().writeValueAsString(reconstructed));
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>AggregateVersionConflictException.class</code>\uff0c<code>conflict.expectedVersion()</code> \u7b49\u4e8e <code>0L</code>\uff0c<code>conflict.actualVersion()</code> \u7b49\u4e8e <code>1L</code>\u3002 */
     @Test
     void appendWithStaleVersionShouldReject() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-b");
@@ -188,6 +209,7 @@ class JpaEventStoreTest {
         assertEquals(1L, conflict.actualVersion());
     }
 
+    /** \u9a8c\u8bc1<code>slice.size()</code> \u7b49\u4e8e <code>2</code>\uff0c<code>slice.get(0).version()</code> \u7b49\u4e8e <code>2L</code>\uff0c<code>slice.get(1).version()</code> \u7b49\u4e8e <code>3L</code>\u3002 */
     @Test
     void readVersionRangeShouldReturnInclusiveSlice() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-c");
@@ -200,6 +222,7 @@ class JpaEventStoreTest {
         assertEquals(3L, slice.get(1).version());
     }
 
+    /** \u9a8c\u8bc1<code>events.size() &gt;= 2</code>\u4e3a\u771f\uff0c<code>events.get(events.size() - 2).aggregateId().asString()</code> \u7b49\u4e8e <code>first.asString()</code>\uff0c<code>events.get(events.size() - 2).position() &lt; events.get(events.size() - 1).position()</code>\u4e3a\u771f\u3002 */
     @Test
     void readAllShouldPreserveGlobalPositionOrderAcrossAggregates() {
         TestAggregateRootId first = new TestAggregateRootId("order-d");
@@ -216,6 +239,7 @@ class JpaEventStoreTest {
         assertTrue(events.get(events.size() - 2).position() < events.get(events.size() - 1).position());
     }
 
+    /** \u9a8c\u8bc1<code>events.get(0).correlationId()</code>\u4e3a\u7a7a\uff0c<code>events.get(1).correlationId()</code> \u7b49\u4e8e <code>cause.getEventId()</code>\uff0c<code>events.get(1).causationId()</code> \u7b49\u4e8e <code>cause.getEventId()</code>\u3002 */
     @Test
     void causalityColumnsShouldRoundTrip() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-f");
@@ -229,11 +253,13 @@ class JpaEventStoreTest {
         assertEquals(cause.getEventId(), events.get(1).causationId());
     }
 
+    /** \u9a8c\u8bc1<code>eventStore.read(ORDER_TYPE, new TestAggregateRootId("missing")).size()</code> \u7b49\u4e8e <code>0</code>\u3002 */
     @Test
     void readMissingStreamShouldReturnEmpty() {
         assertEquals(0, eventStore.read(ORDER_TYPE, new TestAggregateRootId("missing")).size());
     }
 
+    /** \u9a8c\u8bc1<code>event.getAggregateVersion()</code>\u4e3a\u7a7a\u3002 */
     @Test
     void appendMustNotMutateInputAggregateVersion() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-input");
@@ -245,6 +271,7 @@ class JpaEventStoreTest {
         assertNull(event.getAggregateVersion());
     }
 
+    /** \u9a8c\u8bc1<code>stored.size()</code> \u7b49\u4e8e <code>2</code>\uff0c<code>stored.get(0).position() &lt; stored.get(1).position()</code>\u4e3a\u771f\uff0c<code>entityManager.getFlushMode()</code> \u7b49\u4e8e <code>jakarta.persistence.FlushModeType.COMMIT</code>\u3002 */
     @Test
     void batchAppendMustWorkWithCommitFlushMode() {
         entityManager.setFlushMode(jakarta.persistence.FlushModeType.COMMIT);
@@ -258,6 +285,7 @@ class JpaEventStoreTest {
         assertEquals(jakarta.persistence.FlushModeType.COMMIT, entityManager.getFlushMode());
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>AggregateVersionConflictException.class</code>\uff0c<code>conflict.actualVersion()</code> \u7b49\u4e8e <code>7L</code>\uff0c<code>conflict.expectedVersion()</code> \u7b49\u4e8e <code>0L</code>\u3002 */
     @Test
     void customRepositoryMustControlVersionConflict() {
         JpaStoredEventRepository custom = new JpaStoredEventRepositoryImpl(entityManager) {
@@ -274,6 +302,7 @@ class JpaEventStoreTest {
         assertEquals(0L, conflict.expectedVersion());
     }
 
+    /** \u9a8c\u8bc1<code>eventStore.read(ORDER_TYPE, new TestAggregateRootId("source-stream")).isEmpty()</code>\u4e3a\u771f\uff0c<code>stored.size()</code> \u7b49\u4e8e <code>1</code>\uff0c<code>((OrderCreatedEvent) stored.get(0).payload()).getFact()</code> \u7b49\u4e8e <code>"custom-persistence"</code>\u3002 */
     @Test
     void customRepositoryMustControlPositionAndPersistence() {
         JpaStoredEventRepository custom = new JpaStoredEventRepositoryImpl(entityManager) {
@@ -300,6 +329,7 @@ class JpaEventStoreTest {
         assertEquals("custom-persistence", ((OrderCreatedEvent) stored.get(0).payload()).getFact());
     }
 
+    /** \u9a8c\u8bc1<code>eventStore.read(ORDER_TYPE, orderId).size()</code> \u7b49\u4e8e <code>1</code>\uff0c<code>customized.read(ORDER_TYPE, orderId).isEmpty()</code>\u4e3a\u771f\uff0c<code>customized.readAll(0, 10).isEmpty()</code>\u4e3a\u771f\u3002 */
     @Test
     void customRepositoryMustControlAllReadPaths() {
         TestAggregateRootId orderId = new TestAggregateRootId("filtered-stream");
@@ -332,6 +362,7 @@ class JpaEventStoreTest {
         assertEquals(1, eventStore.read(ORDER_TYPE, orderId).size());
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>RuntimeException.class</code>\uff0c<code>afterFailure.size()</code> \u7b49\u4e8e <code>1</code>\uff0c<code>recovered.get(1).version()</code> \u7b49\u4e8e <code>2L</code>\u3002 */
     @Test
     void failedBatchMustPreserveCommittedStateAndAllowNextAppend() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-rollback");
@@ -356,6 +387,7 @@ class JpaEventStoreTest {
         assertEquals(2L, recovered.get(1).version());
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>callerTransaction.isActive()</code>\u4e3a\u771f\uff0c<code>eventStore.readAll(0, 10)</code> \u629b\u51fa <code>IllegalStateException.class</code>\u3002 */
     @Test
     void rejectedNestedAppendMustNotRollbackCallerTransaction() {
         EntityTransaction callerTransaction = entityManager.getTransaction();
@@ -380,6 +412,7 @@ class JpaEventStoreTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>tx.isActive()</code>\u4e3a\u771f\uff0c<code>participating.read(ORDER_TYPE, orderId).size()</code> \u7b49\u4e8e <code>1</code>\uff0c<code>eventStore.read(ORDER_TYPE, orderId).isEmpty()</code>\u4e3a\u771f\u3002 */
     @Test
     void participatingAppendMustLeaveCommitToCaller() {
         JpaEventStore participating = JpaEventStore.participating(entityManager);
@@ -402,6 +435,7 @@ class JpaEventStoreTest {
         }
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>participating.read(ORDER_TYPE, orderId)</code> \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>participating.readAll(0, 10)</code> \u629b\u51fa <code>IllegalStateException.class</code>\u3002 */
     @Test
     void participatingOperationsMustRejectWithoutCallerTransaction() {
         JpaEventStore participating = JpaEventStore.participating(entityManager);
@@ -414,6 +448,7 @@ class JpaEventStoreTest {
         assertThrows(IllegalStateException.class, () -> participating.readAll(0, 10));
     }
 
+    /** \u9a8c\u8bc1<code>participating.append(ORDER_TYPE, new TestAggregateRootId("empty-batch"), Collections.emptyList(), 0)</code> \u629b\u51fa <code>IllegalStateException.class</code>\u3002 */
     @Test
     void participatingEmptyAppendMustRejectWithoutCallerTransaction() {
         JpaEventStore participating = JpaEventStore.participating(entityManager);
@@ -422,6 +457,7 @@ class JpaEventStoreTest {
                 new TestAggregateRootId("empty-batch"), Collections.emptyList(), 0));
     }
 
+    /** \u9a8c\u8bc1<code>tx.isActive()</code>\u4e3a\u771f\uff0c<code>stored.size()</code> \u7b49\u4e8e <code>2</code>\uff0c<code>((OrderCreatedEvent) stored.get(1).payload()).getFact()</code> \u7b49\u4e8e <code>"second"</code>\u3002 */
     @Test
     void participatingAppendsMustShareCallerTransactionAndCommitTogether() {
         JpaEventStore participating = JpaEventStore.participating(entityManager);
@@ -449,6 +485,7 @@ class JpaEventStoreTest {
         }
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>RuntimeException.class</code>\uff0c<code>tx.isActive()</code>\u4e3a\u771f\uff0c<code>tx.getRollbackOnly()</code>\u4e3a\u771f\u3002 */
     @Test
     void participatingFailedBatchMustMarkCallerTransactionRollbackOnly() {
         JpaEventStore participating = JpaEventStore.participating(entityManager);
@@ -467,6 +504,7 @@ class JpaEventStoreTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>participating.read(ORDER_TYPE, orderId).size()</code> \u7b49\u4e8e <code>2</code>\uff0c<code>entityManager.getFlushMode()</code> \u7b49\u4e8e <code>jakarta.persistence.FlushModeType.COMMIT</code>\u3002 */
     @Test
     void participatingAppendMustPreserveCommitFlushMode() {
         jakarta.persistence.FlushModeType originalFlushMode = entityManager.getFlushMode();
@@ -489,6 +527,7 @@ class JpaEventStoreTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>tx.isActive()</code>\u4e3a\u771f\uff0c<code>eventStore.read(ORDER_TYPE, new TestAggregateRootId("participating-source-stream")).isEmpty()</code>\u4e3a\u771f\uff0c<code>stored.get(0).position()</code> \u7b49\u4e8e <code>84L</code>\u3002 */
     @Test
     void participatingCustomRepositoryMustControlPositionAndPersistence() {
         JpaStoredEventRepository custom = new JpaStoredEventRepositoryImpl(entityManager) {
@@ -527,11 +566,16 @@ class JpaEventStoreTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>eventStore.readAll(0, 0)</code> \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
     @Test
     void readAllLimitMustBePositive() {
         assertThrows(IllegalArgumentException.class, () -> eventStore.readAll(0, 0));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>eventStore.read(ORDER_TYPE, orderId).get(0).timestamp().toInstant()</code> \u7b49\u4e8e <code>expected.toInstant()</code>\u3002
+     * @throws Exception \u53cd\u5c04\u8bbf\u95ee\u88ab\u6d4b\u6210\u5458\u65f6\u5931\u8d25
+     */
     @Test
     void persistedTimestampMustComeFromEvent() throws Exception {
         TestAggregateRootId orderId = new TestAggregateRootId("order-time");
@@ -546,26 +590,36 @@ class JpaEventStoreTest {
         assertEquals(expected.toInstant(), eventStore.read(ORDER_TYPE, orderId).get(0).timestamp().toInstant());
     }
 
+    /** \u6d4b\u8bd5\u4e13\u7528\u805a\u5408\u6839\u6807\u8bc6\uff0c\u4f9b\u4ed3\u50a8\u3001\u4e8b\u4ef6\u5e8f\u5217\u5316\u6216\u547d\u4ee4\u8def\u7531\u6784\u9020\u72ec\u7acb\u7684\u805a\u5408\u5b9e\u4f8b\u3002 */
     private static final class TestAggregateRootId implements AggregateRootId {
 
+        /** \u6d4b\u8bd5\u805a\u5408\u6ce8\u518c\u548c\u53cd\u5e8f\u5217\u5316\u6240\u7528\u7684\u5b9e\u4f53\u7c7b\u578b\u6807\u8bc6\u3002 */
         private static final EntityType TYPE = new StringEntityType("Order");
 
+        /** \u7528\u4e8e\u7ec4\u6210\u6d4b\u8bd5\u6807\u8bc6\u7684\u539f\u59cb\u503c\u3002 */
         private final String value;
 
+        /**
+         * \u4ee5\u7ed9\u5b9a\u72b6\u6001\u6784\u9020 <code>TestAggregateRootId</code> \u6d4b\u8bd5\u5bf9\u8c61\u3002
+         * @param value \u7528\u4e8e\u7ec4\u6210\u6d4b\u8bd5\u6807\u8bc6\u7684\u539f\u59cb\u503c
+         */
         private TestAggregateRootId(String value) {
             this.value = value;
         }
 
+        /** {@inheritDoc} */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
+        /** {@inheritDoc} */
         @Override
         public String asString() {
             return value;
         }
 
+        /** {@inheritDoc} */
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
@@ -577,26 +631,45 @@ class JpaEventStoreTest {
      */
     public static final class OrderCreatedEvent extends DomainEvent<TestAggregateRootId> {
 
+        /** \u672c\u7528\u4f8b\u5199\u5165\u6216\u8bfb\u53d6\u7684\u4e8b\u4ef6\u4e8b\u5b9e\u3002 */
         private String fact;
 
+        /** \u4f7f\u7528 <code>super()</code> \u521d\u59cb\u5316 <code>OrderCreatedEvent</code> \u6d4b\u8bd5\u5939\u5177\u3002 */
         public OrderCreatedEvent() {
             super();
         }
 
+        /**
+         * \u4ee5\u7ed9\u5b9a\u72b6\u6001\u6784\u9020 <code>OrderCreatedEvent</code> \u6d4b\u8bd5\u5bf9\u8c61\u3002
+         * @param fact \u672c\u7528\u4f8b\u5199\u5165\u6216\u8bfb\u53d6\u7684\u4e8b\u4ef6\u4e8b\u5b9e
+         */
         private OrderCreatedEvent(String fact) {
             super(new EntityIdPath(new TestAggregateRootId("order-1")));
             this.fact = fact;
         }
 
+        /**
+         * \u4f7f\u7528 <code>super()</code> \u521d\u59cb\u5316 <code>OrderCreatedEvent</code> \u6d4b\u8bd5\u5939\u5177\u3002
+         * @param fact \u672c\u7528\u4f8b\u5199\u5165\u6216\u8bfb\u53d6\u7684\u4e8b\u4ef6\u4e8b\u5b9e
+         * @param causingEvent \u7528\u4e8e\u521d\u59cb\u5316 <code>OrderCreatedEvent</code> \u7684 <code>io.ddd4j.core.ddd.event.Event</code> \u503c
+         */
         private OrderCreatedEvent(String fact, io.ddd4j.core.ddd.event.Event causingEvent) {
             super(new EntityIdPath(new TestAggregateRootId("order-1")), causingEvent);
             this.fact = fact;
         }
 
+        /**
+         * \u8bfb\u53d6<code>fact</code> \u5b57\u6bb5\u3002
+         * @return <code>fact</code> \u5b57\u6bb5
+         */
         public String getFact() {
             return fact;
         }
 
+        /**
+         * \u8bbe\u7f6e<code>fact</code> \u5b57\u6bb5\u3002
+         * @param fact \u8981\u5199\u5165\u7684\u503c
+         */
         public void setFact(String fact) {
             this.fact = fact;
         }

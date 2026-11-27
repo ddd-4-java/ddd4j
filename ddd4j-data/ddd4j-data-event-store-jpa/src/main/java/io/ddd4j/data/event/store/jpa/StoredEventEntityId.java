@@ -27,6 +27,7 @@ import java.util.Objects;
  */
 public class StoredEventEntityId implements Serializable {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -88,6 +89,7 @@ public class StoredEventEntityId implements Serializable {
         return version;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -98,6 +100,7 @@ public class StoredEventEntityId implements Serializable {
                 && Objects.equals(aggregateId, that.aggregateId);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return Objects.hash(aggregateType, aggregateId, version);

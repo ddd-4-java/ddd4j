@@ -56,12 +56,17 @@ import java.util.Objects;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/** \u5b9e\u73b0 <code>AbstractWebContractTest</code>\uff0c\u4f9b\u6d4b\u8bd5\u8c03\u7528 <code>setUp()</code>\u3001<code>tearDown()</code>\u3001<code>client()</code> \u5e76\u89c2\u5bdf\u7ed3\u679c\u3002 */
 class Ddd4jVertxWebContractTest extends AbstractWebContractTest {
 
+    /** \u7531\u5f53\u524d\u6d4b\u8bd5\u521b\u5efa\u548c\u91ca\u653e\u7684 Vert.x \u8fd0\u884c\u73af\u5883\u3002 */
     private Vertx vertx;
+    /** \u5f53\u524d\u6d4b\u8bd5\u542f\u52a8\u5e76\u8d1f\u8d23\u91ca\u653e\u7684\u672c\u5730\u670d\u52a1\u3002 */
     private HttpServer server;
+    /** \u6267\u884c\u771f\u5b9e\u8bf7\u6c42\u4f9b\u516c\u5171 HTTP \u5408\u540c\u65ad\u8a00\u4f7f\u7528\u7684\u5ba2\u6237\u7aef\u3002 */
     private WebContractClient contractClient;
 
+    /** \u6d4b\u8bd5\u6267\u884c\u524d\u6267\u884c <code>CacheKit.build()</code>\u3001<code>mock()</code>\u3001<code>BaseContext.inject()</code>\u3001<code>provider()</code> \u5b8c\u6210\u8d44\u6e90\u51c6\u5907\u3002 */
     @BeforeEach
     void setUp() {
         CacheKit.build("vertx-contract", 300L);
@@ -83,6 +88,7 @@ class Ddd4jVertxWebContractTest extends AbstractWebContractTest {
         contractClient = new VertxContractClient(HttpClient.newHttpClient(), server.actualPort());
     }
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>server.close()</code>\u3001<code>vertx.close()</code>\u3001<code>BaseContext.clear()</code>\u3001<code>CacheKit.unregister()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterEach
     void tearDown() {
         if (Objects.nonNull(server)) {
@@ -95,11 +101,16 @@ class Ddd4jVertxWebContractTest extends AbstractWebContractTest {
         CacheKit.unregister("vertx-contract");
     }
 
+    /** {@inheritDoc} */
     @Override
     protected WebContractClient client() {
         return contractClient;
     }
 
+    /**
+     * \u8c03\u7528 <code>router.get()</code>\u3001<code>context.json()</code>\u3001<code>R.ok()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @param router \u4f20\u7ed9 <code>router.get()</code> \u7684 <code>Router</code> \u8f93\u5165
+     */
     private void registerContractRoutes(Router router) {
         router.get(WebContractPaths.SUCCESS).handler(context -> context.json(R.ok(Map.of("result", "ok"))));
         router.get(WebContractPaths.PUBLIC).handler(context -> context.json(R.ok(Map.of("result", "ok"))));
@@ -122,6 +133,11 @@ class Ddd4jVertxWebContractTest extends AbstractWebContractTest {
         router.get("/contract/errors/:type").handler(context -> context.fail(error(context.pathParam("type"))));
     }
 
+    /**
+     * \u6784\u9020 <code>IllegalArgumentException</code>\u3001<code>SecurityException</code> \u4f5c\u4e3a\u5f53\u524d\u6d4b\u8bd5\u7684\u8f93\u5165\u6216\u7ed3\u679c\u3002
+     * @param type \u7528\u6765\u89e3\u6790\u3001\u68c0\u67e5\u6216\u6784\u9020\u6d4b\u8bd5\u5bf9\u8c61\u7684 Java \u7c7b\u578b
+     * @return \u63d0\u4f9b\u7ed9\u540e\u7eed\u5951\u7ea6\u65ad\u8a00\u7684 <code>Throwable</code> \u7ed3\u679c
+     */
     private Throwable error(String type) {
         return switch (type) {
             case "bad-request" -> new IllegalArgumentException("bad request");
@@ -135,6 +151,11 @@ class Ddd4jVertxWebContractTest extends AbstractWebContractTest {
         };
     }
 
+    /**
+     * \u521b\u5efa <code>new SubjectProvider</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+     * @param subject \u7528\u4e8e\u6784\u9020\u672c\u6b21\u8fd4\u56de\u7ed3\u679c\u7684 <code>Subject</code> \u8f93\u5165
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new SubjectProvider(){ &#64;Override public Subject getSubject() { return subject; } }</code>
+     */
     private SubjectProvider provider(Subject subject) {
         return new SubjectProvider() {
             @Override
@@ -144,14 +165,19 @@ class Ddd4jVertxWebContractTest extends AbstractWebContractTest {
         };
     }
 
+    /** \u5728\u5f53\u524d HTTP \u6846\u67b6\u4e2d\u6267\u884c\u5171\u7528\u5408\u540c\u7684\u5ba2\u6237\u7aef\u9002\u914d\u5668\u3002 */
     private final static class VertxContractClient implements WebContractClient {
 
+        /** Java \u5e8f\u5217\u5316\u4f7f\u7528\u7684\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u7528\u4e8e\u53d1\u9001 HTTP \u8bf7\u6c42\u7684\u5ba2\u6237\u7aef\u3002 */
         private final HttpClient httpClient;
 
+        /** \u5f53\u524d\u5939\u5177\u670d\u52a1\u7ed1\u5b9a\u7684\u672c\u5730\u7aef\u53e3\u3002 */
         private final int port;
 
+        /** {@inheritDoc} */
         @Override
         public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
             try {
@@ -168,6 +194,13 @@ class Ddd4jVertxWebContractTest extends AbstractWebContractTest {
             }
         }
 
+        /**
+         * \u901a\u8fc7 <code>httpClient.send()</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+         * @param request \u5f85\u4ea4\u7ed9\u88ab\u6d4b\u670d\u52a1\u5904\u7406\u7684\u8bf7\u6c42
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>httpClient.send(request, HttpResponse.BodyHandlers.ofString())</code>
+         * @throws IOException \u8bfb\u53d6\u6216\u5199\u5165\u6d4b\u8bd5\u6570\u636e\u65f6\u53d1\u751f I/O \u9519\u8bef
+         * @throws InterruptedException \u7b49\u5f85\u6d4b\u8bd5\u64cd\u4f5c\u65f6\u88ab\u4e2d\u65ad
+         */
         private HttpResponse<String> send(HttpRequest request) throws IOException, InterruptedException {
             try {
                 return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
@@ -176,22 +209,36 @@ class Ddd4jVertxWebContractTest extends AbstractWebContractTest {
             }
         }
 
+        /**
+         * \u7528\u7ed9\u5b9a\u503c\u521d\u59cb\u5316 <code>VertxContractClient</code> \u5b9e\u4f8b\u3002
+         * @param httpClient \u7528\u4e8e\u53d1\u9001 HTTP \u8bf7\u6c42\u7684\u5ba2\u6237\u7aef
+         * @param port <code>port</code> \u5b57\u6bb5
+         */
         @JsonCreator()
         private VertxContractClient(@JsonProperty("httpClient") HttpClient httpClient, @JsonProperty("port") int port) {
             this.httpClient = httpClient;
             this.port = port;
         }
 
+        /**
+         * \u8bfb\u53d6\u7528\u4e8e\u53d1\u9001 HTTP \u8bf7\u6c42\u7684\u5ba2\u6237\u7aef\u3002
+         * @return \u7528\u4e8e\u53d1\u9001 HTTP \u8bf7\u6c42\u7684\u5ba2\u6237\u7aef
+         */
         @JsonProperty("httpClient")
         public HttpClient httpClient() {
             return httpClient;
         }
 
+        /**
+         * \u8bfb\u53d6<code>port</code> \u5b57\u6bb5\u3002
+         * @return <code>port</code> \u5b57\u6bb5
+         */
         @JsonProperty("port")
         public int port() {
             return port;
         }
 
+        /** {@inheritDoc} */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -204,6 +251,7 @@ class Ddd4jVertxWebContractTest extends AbstractWebContractTest {
             return Objects.equals(this.httpClient, other.httpClient) && this.port == other.port;
         }
 
+        /** {@inheritDoc} */
         @Override
         public int hashCode() {
             int result = 0;
@@ -212,6 +260,7 @@ class Ddd4jVertxWebContractTest extends AbstractWebContractTest {
             return result;
         }
 
+        /** {@inheritDoc} */
         @Override
         public String toString() {
             return "VertxContractClient[httpClient=" + httpClient + ", port=" + port + "]";

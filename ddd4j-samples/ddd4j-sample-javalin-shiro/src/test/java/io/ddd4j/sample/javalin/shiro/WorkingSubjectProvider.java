@@ -23,17 +23,24 @@ import io.ddd4j.sample.javalin.shiro.rbac.repository.InMemoryUserRepository;
  */
 public class WorkingSubjectProvider implements SubjectProvider {
 
+    /** \u8bfb\u53d6\u548c\u4fdd\u5b58\u7528\u6237\u7684\u4ed3\u50a8\u3002 */
     private final InMemoryUserRepository userRepository;
 
+    /**
+     * \u7528\u7ed9\u5b9a\u503c\u521d\u59cb\u5316 <code>WorkingSubjectProvider</code> \u5b9e\u4f8b\u3002
+     * @param userRepository \u8bfb\u53d6\u548c\u4fdd\u5b58\u7528\u6237\u7684\u4ed3\u50a8
+     */
     public WorkingSubjectProvider(InMemoryUserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
+    /** {@inheritDoc} */
     @Override
     public Subject getSubject() {
         return new WorkingShiroSubject(userRepository);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Subject getSubject(String realm) {
         return new WorkingShiroSubject(userRepository);

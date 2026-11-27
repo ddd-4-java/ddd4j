@@ -46,6 +46,7 @@ public class SpringViewScheduler implements ViewScheduler {
         this.taskScheduler = taskScheduler;
     }
 
+    /** {@inheritDoc} */
     @Override
     public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
         ScheduledFuture<?> future = taskScheduler.schedule(task, new CronTrigger(cron));
@@ -57,17 +58,24 @@ public class SpringViewScheduler implements ViewScheduler {
      * Spring {@link ScheduledFuture} 适配为 ddd4j {@link ViewScheduleHandle}。
      */
     private static class SpringViewScheduleHandle implements ViewScheduleHandle {
+        /** \u7528\u4e8e\u8ddf\u8e2a\u548c\u53d6\u6d88\u540e\u53f0\u8c03\u5ea6\u4efb\u52a1\u7684\u53e5\u67c4\u3002 */
         private final ScheduledFuture<?> future;
 
+        /**
+         * \u7528\u7ed9\u5b9a\u503c\u521d\u59cb\u5316 <code>SpringViewScheduleHandle</code> \u5b9e\u4f8b\u3002
+         * @param future \u7528\u4e8e\u8ddf\u8e2a\u548c\u53d6\u6d88\u540e\u53f0\u8c03\u5ea6\u4efb\u52a1\u7684\u53e5\u67c4
+         */
         SpringViewScheduleHandle(ScheduledFuture<?> future) {
             this.future = future;
         }
 
+        /** {@inheritDoc} */
         @Override
         public void cancel() {
             future.cancel(false);
         }
 
+        /** {@inheritDoc} */
         @Override
         public boolean isActive() {
             return !future.isCancelled() && !future.isDone();

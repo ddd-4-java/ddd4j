@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class NestedRegionWhitespaceContractTest {
 
+    /** \u9a8c\u8bc1<code>template.getLocationByIp("\u20038.8.8.8\u2003")</code> \u7b49\u4e8e <code>"resolved"</code>\uff0c<code>lookupIp.get()</code> \u7b49\u4e8e <code>"8.8.8.8"</code>\u3002 */
     @Test
     void unicodeWhitespaceIsRemovedBeforeIpLookup() {
         AtomicReference<String> lookupIp = new AtomicReference<>();

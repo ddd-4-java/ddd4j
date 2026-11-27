@@ -38,8 +38,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * Micronaut 真实原生容器与共享命令、视图契约；持久恢复另以当前 JAR 探针验证。
  */
 class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
+    /** \u7528\u6765\u590d\u73b0\u542f\u52a8\u4e2d\u9014\u5931\u8d25\u6216\u672a\u5b8c\u6210\u7684\u6d4b\u8bd5\u914d\u7f6e\u3002 */
     private static final String PARTIAL_START = "r14.micronaut.partial-start";
 
+    /**
+     * \u6784\u9020 <code>ProjectionView&lt;Object&gt;</code> \u4f5c\u4e3a\u5f53\u524d\u6d4b\u8bd5\u7684\u8f93\u5165\u6216\u7ed3\u679c\u3002
+     * @param name \u5f53\u524d\u6d4b\u8bd5\u6307\u5b9a\u7684\u5bf9\u8c61\u6216\u5c5e\u6027\u540d\u79f0
+     * @return \u63d0\u4f9b\u7ed9\u540e\u7eed\u5951\u7ea6\u65ad\u8a00\u7684 <code>ProjectionView&lt;Object&gt;</code> \u7ed3\u679c
+     */
     private static ProjectionView<Object> unscheduledView(String name) {
         return new ProjectionView<Object>() {
             @Override
@@ -64,6 +70,7 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         };
     }
 
+    /** \u9a8c\u8bc1<code>context.containsBean(CommandRegistry.class)</code>\u4e3a\u771f\uff0c<code>context.getBean(CommandBus.class).getClass()</code> \u7b49\u4e8e <code>MicronautCommandBus.class</code>\uff0c<code>context.containsBean(ViewScheduler.class)</code>\u4e3a\u5047\u3002 */
     @Test
     void nativeBasicContextUsesSnapshotBusAndNoProjection() {
         try (ApplicationContext context = ApplicationContext.run()) {
@@ -76,6 +83,7 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>BaseContext.get(SpiKeys.COMMAND_BUS, CommandBus.class).orElseThrow()</code> \u7b49\u4e8e <code>context.getBean(CommandBus.class)</code>\uff0c<code>BaseContext.get(SpiKeys.COMMAND_BUS, CommandBus.class).orElseThrow()</code> \u7b49\u4e8e <code>prior</code>\u3002 */
     @Test
     void nativeContextCloseRestoresPriorSpi() {
         CommandBus prior = new DefaultCommandBus(List.of());
@@ -90,6 +98,7 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>context.getBeansOfType(CommandBus.class).size()</code> \u7b49\u4e8e <code>1</code>\uff0c<code>bus.execute(new NativeCommand()).data().orElseThrow()</code> \u7b49\u4e8e <code>"native"</code>\uff0c<code>bus.execute(new NativeCommand())</code> \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
     @Test
     void generatedHandlerDiscoveryPreservesSnapshotAndFailureIdentity() {
         try (ApplicationContext context = ApplicationContext.run(Map.of("r09.command", true))) {
@@ -118,6 +127,7 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>failure.getMessage().contains(NativeCommand.class.getName())</code>\u4e3a\u771f\u3002 */
     @Test
     void generatedHandlerDiscoveryRejectsOverlappingCommands() {
         try (ApplicationContext context = ApplicationContext.run(Map.of("r09.command", true))) {
@@ -141,6 +151,7 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>RuntimeException.class</code>\u3002 */
     @Test
     void explicitProjectionWithoutDependenciesFailsAtNativeStartup() {
         ApplicationContext context = ApplicationContext.builder()
@@ -152,6 +163,7 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>RuntimeException.class</code>\uff0c<code>failure.getMessage().contains("durable positions")</code>\u4e3a\u771f\u3002 */
     @Test
     void explicitProjectionRejectsMemoryAndNoopBeforeScheduling() {
         ApplicationContext context = ApplicationContext.builder()
@@ -166,6 +178,7 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>Throwable.class</code>\uff0c<code>failure</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>startup</code>\uff0c<code>startup.getSuppressed()[0]</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>firstCancel</code>\u3002 */
     @Test
     void nativePartialStartupRetriesCancellationAndPreservesPriorSpi() {
         CommandBus prior = new DefaultCommandBus(Collections.emptyList());
@@ -233,6 +246,7 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>MicronautProjectionScheduler.CronExpression.parse("0 0 0 1 1 *").next(from)</code> \u7b49\u4e8e <code>LocalDateTime.of(2027, 1, 1, 0, 0)</code>\uff0c<code>MicronautProjectionScheduler.CronExpression.parse("0 0 0 ? * *")</code> \u629b\u51fa <code>IllegalArgumentException.class</code>\uff0c<code>MicronautProjectionScheduler.CronExpression.parse("0/0 * * * * *")</code> \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
     @Test
     void sharedCronRetainsNumericGrammarAndFindsAnnualSchedule() {
         LocalDateTime from = LocalDateTime.of(2026, 2, 1, 0, 0);
@@ -244,6 +258,7 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
                 () -> MicronautProjectionScheduler.CronExpression.parse("0/0 * * * * *"));
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>TimeZone.getDefault()</code>\u3001<code>TimeZone.setDefault()</code>\u3001<code>TimeZone.getTimeZone()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void cronRetainsLegacyLocalWallTimeAtDstGap() {
         TimeZone original = TimeZone.getDefault();
@@ -257,6 +272,7 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     protected CqrsRuntimeContract createContract() {
         ApplicationContext context = ApplicationContext.builder().build();
@@ -303,41 +319,53 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         };
     }
 
+    /** \u5b9e\u73b0 <code>EventChunkReader</code>\uff0c\u4f9b\u6d4b\u8bd5\u8c03\u7528 <code>read()</code> \u5e76\u89c2\u5bdf\u7ed3\u679c\u3002 */
     @Singleton
     @Requires(property = PARTIAL_START, value = "true")
     static class UnusedReader implements EventChunkReader<Object> {
+        /** {@inheritDoc} */
         @Override
         public EventChunk<Object> read(String stream, long from, int size, Collection<String> types) {
             throw new AssertionError("failed startup must not read events");
         }
     }
 
+    /** \u6a21\u62df\u6295\u5f71\u4f4d\u70b9\u5b58\u50a8\u5e76\u63a7\u5236\u5199\u5165\u884c\u4e3a\u3002 */
     private static final class UnusedRepository implements ProjectionPositionRepository {
+        /** {@inheritDoc} */
         @Override
         public Optional<ProjectionPosition> findByStreamId(String streamId) {
             throw unexpectedAccess();
         }
 
+        /** {@inheritDoc} */
         @Override
         public List<ProjectionPosition> findAll() {
             throw unexpectedAccess();
         }
 
+        /** {@inheritDoc} */
         @Override
         public ProjectionPosition save(ProjectionPosition position) {
             throw unexpectedAccess();
         }
 
+        /** {@inheritDoc} */
         @Override
         public void deleteByStreamId(String streamId) {
             throw unexpectedAccess();
         }
 
+        /** {@inheritDoc} */
         @Override
         public void resetToZero(String streamId) {
             throw unexpectedAccess();
         }
 
+        /**
+         * \u521b\u5efa <code>new AssertionError</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new AssertionError("failed startup must not use projection positions")</code>
+         */
         private AssertionError unexpectedAccess() {
             return new AssertionError("failed startup must not use projection positions");
         }
@@ -361,14 +389,18 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
     @Singleton
     @Requires(property = "r09.command", value = "true")
     static class NativeExecutor implements CommandExecutor<NativeCommand> {
+        /** \u5f53\u524d\u5931\u8d25\u8def\u5f84\u6240\u7528\u6216\u89c2\u5bdf\u5230\u7684\u539f\u59cb\u5f02\u5e38\u3002 */
         final IllegalArgumentException failure = new IllegalArgumentException("handler failure");
+        /** \u4ee4\u5f53\u524d\u66ff\u8eab\u5728\u6307\u5b9a\u6d4b\u8bd5\u8def\u5f84\u4e2d\u8fd4\u56de\u5931\u8d25\u3002 */
         boolean fail;
 
+        /** {@inheritDoc} */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Set.of(NativeCommand.class);
         }
 
+        /** {@inheritDoc} */
         @Override
         public Result execute(NativeCommand command) {
             if (fail) {

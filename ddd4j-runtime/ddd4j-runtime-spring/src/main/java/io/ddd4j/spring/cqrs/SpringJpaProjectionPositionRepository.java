@@ -49,21 +49,25 @@ public class SpringJpaProjectionPositionRepository
         this.jpaRepository = jpaRepository;
     }
 
+    /** {@inheritDoc} */
     @Override
     public Optional<ProjectionPosition> findByStreamId(String streamId) {
         return jpaRepository.findById(streamId).map(p -> (ProjectionPosition) p);
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<ProjectionPosition> findAll() {
         return jpaRepository.findAll().stream().map(p -> (ProjectionPosition) p).toList();
     }
 
+    /** {@inheritDoc} */
     @Override
     public ProjectionPosition save(ProjectionPosition position) {
         return jpaRepository.save((SpringJpaProjectionPosition) position);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void deleteByStreamId(String streamId) {
         jpaRepository.deleteById(streamId);

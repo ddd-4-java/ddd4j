@@ -35,15 +35,19 @@ import java.util.Map;
  */
 public final class RuntimeFixtures {
 
+    /** \u5c06\u9886\u57df\u4e8b\u4ef6\u4ea4\u7ed9\u8fd0\u884c\u65f6\u5206\u53d1\u7684\u53d1\u5e03\u5668\u3002 */
     private final DomainEventPublisher publisher = new DomainEventPublisher() {
         @Override
         public <ID extends EntityId> void publish(DomainEvent<ID> event) {
             // Contract tests only verify registration and lifecycle.
         }
     };
+    /** \u6839\u636e\u5f53\u524d\u8c03\u7528\u8303\u56f4\u63d0\u4f9b\u8ba4\u8bc1\u4e3b\u4f53\u7684\u7ec4\u4ef6\u3002 */
     private final SubjectProvider subjectProvider = new InMemorySubjectProvider(new InMemorySubject(event -> {
     }));
+    /** \u5f53\u524d\u8fd0\u884c\u6846\u67b6\u6ce8\u518c\u7684\u56fd\u9645\u5316\u6d88\u606f\u63d0\u4f9b\u5668\u3002 */
     private final I18nProvider i18nProvider = I18nProvider.DEFAULT;
+    /** \u6839\u636e\u547d\u4ee4\u7c7b\u578b\u5206\u53d1\u5199\u64cd\u4f5c\u7684\u547d\u4ee4\u603b\u7ebf\u3002 */
     private final CommandBus commandBus = new DefaultCommandBus(List.of());
 
     /**

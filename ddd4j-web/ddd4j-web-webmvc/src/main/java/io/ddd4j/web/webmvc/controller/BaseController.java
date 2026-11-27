@@ -146,16 +146,29 @@ public class BaseController implements ApplicationEventPublisherAware, Applicati
         return R.of(ApiCode.SERVER_ERROR.getCode(), getMessage(key, args));
     }
 
+    /**
+     * \u4fdd\u5b58 Spring \u63d0\u4f9b\u7684\u5bb9\u5668\u4e0a\u4e0b\u6587\u4f9b\u63a7\u5236\u5668\u67e5\u8be2\u7ec4\u4ef6\u3002
+     * @param applicationContext Spring \u5bb9\u5668\u63d0\u4f9b\u7684\u5e94\u7528\u4e0a\u4e0b\u6587
+     * @throws BeansException \u5f53\u524d\u6846\u67b6\u8bf7\u6c42\u5904\u7406\u3001\u6d88\u606f\u8bfb\u5199\u6216\u53c2\u6570\u8f6c\u6362\u5931\u8d25
+     */
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.context = applicationContext;
     }
 
+    /**
+     * \u8bbe\u7f6e\u5e94\u7528\u4e8b\u4ef6\u53d1\u5e03\u5668\u3002
+     * @param applicationEventPublisher \u8981\u5199\u5165\u7684\u503c
+     */
     @Override
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
         this.eventPublisher = applicationEventPublisher;
     }
 
+    /**
+     * \u8bbe\u7f6e\u5d4c\u5165\u5f0f\u503c\u89e3\u6790\u5668\u3002
+     * @param resolver \u8981\u5199\u5165\u7684\u503c
+     */
     @Override
     public void setEmbeddedValueResolver(StringValueResolver resolver) {
         this.valueResolver = resolver;

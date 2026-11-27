@@ -11,9 +11,13 @@ import java.util.Objects;
 
 /** 原生 MyBatis 增强链装配，保留显式 Mapper/XML SQL 模型。 */
 public final class Ddd4jMybatisConfigurer {
+    /** ORM \u9002\u914d\u5668\u4f7f\u7528\u7684\u5b57\u6bb5\u52a0\u89e3\u5bc6\u5904\u7406\u5668\u3002 */
     private EncryptedFieldHandler crypto;
+    /** \u5bf9\u6301\u4e45\u5316\u5b57\u6bb5\u6267\u884c\u7b7e\u540d\u76f8\u5173\u5904\u7406\u7684\u7ec4\u4ef6\u3002 */
     private boolean signature;
+    /** SQL \u79df\u6237\u9694\u79bb\u4f7f\u7528\u7684\u5217\u540d\u79f0\u3002 */
     private String tenantColumn;
+    /** \u4e0d\u5e94\u7528\u79df\u6237\u9694\u79bb\u89c4\u5219\u7684\u8868\u96c6\u5408\u3002 */
     private java.util.function.Predicate<String> ignored = table -> false;
 
     /**

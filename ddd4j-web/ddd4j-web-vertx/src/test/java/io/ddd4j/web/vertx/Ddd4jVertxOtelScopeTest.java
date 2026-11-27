@@ -45,8 +45,13 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/** \u901a\u8fc7 <code>resetOpenTelemetry()</code>\u3001<code>SdkTracerProvider.builder()</code>\u3001<code>SimpleSpanProcessor.create()</code> \u9a8c\u8bc1 <code>Ddd4jVertxOtelScope</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
 class Ddd4jVertxOtelScopeTest {
 
+    /**
+     * \u8c03\u7528 <code>GlobalOpenTelemetry.resetForTest()</code>\u3001<code>Ddd4jOtel.class.getDeclaredField()</code>\u3001<code>field.setAccessible()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @throws Exception \u53cd\u5c04\u8bbf\u95ee\u88ab\u6d4b\u6210\u5458\u65f6\u5931\u8d25
+     */
     private static void resetOpenTelemetry() throws Exception {
         GlobalOpenTelemetry.resetForTest();
         for (String fieldName : new String[]{"TRACER_CACHE", "METER_CACHE"}) {
@@ -59,6 +64,10 @@ class Ddd4jVertxOtelScopeTest {
         available.setBoolean(null, false);
     }
 
+    /**
+     * \u9a8c\u8bc1<code>connection.getResponseCode()</code> \u7b49\u4e8e <code>200</code>\uff0c<code>nextTick.await(5, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>activeAfterNextEventLoopTick.get()</code>\u4e3a\u5047\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void responseEndMustCloseOtelScopeOnEventLoop() throws Exception {
         resetOpenTelemetry();

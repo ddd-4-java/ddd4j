@@ -59,6 +59,7 @@ public class SpringCommandBus implements CommandBus, SmartInitializingSingleton 
      */
     private final ApplicationContext applicationContext;
     // 只在完整发现成功后发布快照；路由和执行完全归共享内核。
+    /** \u5df2\u4ece Spring \u5bb9\u5668\u53d1\u73b0\u7684\u547d\u4ee4\u6267\u884c\u5668\u53ca\u8def\u7531\u7c7b\u578b\u5feb\u7167\u3002 */
     private volatile DiscoveredCommands discovered;
 
     /**
@@ -130,10 +131,18 @@ public class SpringCommandBus implements CommandBus, SmartInitializingSingleton 
         return snapshot.delegate.execute(command);
     }
 
+    /** \u4fdd\u5b58\u5df2\u88c5\u914d\u7684 Spring \u547d\u4ee4\u603b\u7ebf\u53ca\u5176\u652f\u6301\u547d\u4ee4\u7c7b\u578b\u7684\u53d1\u73b0\u7ed3\u679c\u3002 */
     private static final class DiscoveredCommands {
+        /** \u4f7f\u7528\u5df2\u53d1\u73b0\u6267\u884c\u5668\u5b8c\u6210\u547d\u4ee4\u5206\u53d1\u7684\u5171\u4eab\u603b\u7ebf\u3002 */
         private final DefaultCommandBus delegate;
+        /** \u5f53\u524d\u4ece Spring \u5bb9\u5668\u53d1\u73b0\u7684\u53d7\u652f\u6301\u547d\u4ee4\u7c7b\u578b\u96c6\u5408\u3002 */
         private final Set<Class<? extends Command>> types;
 
+        /**
+         * \u5c06\u5bb9\u5668\u5df2\u53d1\u73b0\u7684\u547d\u4ee4\u7c7b\u578b\u4e0e\u540c\u4e00\u8f6e\u88c5\u914d\u7684\u603b\u7ebf\u4e00\u8d77\u4fdd\u5b58\u3002
+         * @param delegate \u5f53\u524d\u53d1\u73b0\u8f6e\u6b21\u7ec4\u88c5\u7684\u5171\u4eab\u547d\u4ee4\u603b\u7ebf
+         * @param types \u8be5\u603b\u7ebf\u652f\u6301\u7684\u547d\u4ee4\u7c7b\u578b
+         */
         private DiscoveredCommands(DefaultCommandBus delegate, Set<Class<? extends Command>> types) {
             this.delegate = delegate;
             this.types = Set.copyOf(types);

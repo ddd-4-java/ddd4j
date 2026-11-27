@@ -76,9 +76,13 @@ public class OpenTelemetryProjectionMetrics implements ProjectionMetrics {
      * streamId attribute key。
      */
     private static final AttributeKey<String> STREAM_ID = AttributeKey.stringKey(ProjectionConstants.OTel_ATTR_STREAM_ID);
+    /** \u6309\u4e8b\u4ef6\u6d41\u8bb0\u5f55\u6295\u5f71\u6267\u884c\u5f00\u59cb\u7684\u6b21\u6570\u3002 */
     private final LongCounter runCounter;
+    /** \u6309\u4e8b\u4ef6\u6d41\u7d2f\u8ba1\u5df2\u5904\u7406\u4e8b\u4ef6\u7684\u6570\u91cf\u3002 */
     private final LongCounter eventCounter;
+    /** \u6309\u4e8b\u4ef6\u6d41\u8bb0\u5f55\u6295\u5f71\u6267\u884c\u8017\u65f6\u7684\u5206\u5e03\u3002 */
     private final DoubleHistogram durationHistogram;
+    /** \u6309\u4e8b\u4ef6\u6d41\u8bb0\u5f55\u6267\u884c\u5931\u8d25\u7684\u6b21\u6570\u3002 */
     private final LongCounter errorCounter;
 
     /**
@@ -116,11 +120,13 @@ public class OpenTelemetryProjectionMetrics implements ProjectionMetrics {
                 .getMeter(Objects.requireNonNull(instrumentationScope, "instrumentationScope must not be null")));
     }
 
+    /** {@inheritDoc} */
     @Override
     public void onRunStarted(String streamId) {
         runCounter.add(1, Attributes.of(STREAM_ID, streamId));
     }
 
+    /** {@inheritDoc} */
     @Override
     public void onRunCompleted(String streamId, int eventCount, long durationNanos, long positionAdvance) {
         Attributes attrs = Attributes.of(STREAM_ID, streamId);
@@ -128,6 +134,7 @@ public class OpenTelemetryProjectionMetrics implements ProjectionMetrics {
         durationHistogram.record(durationNanos / 1_000_000.0, attrs);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void onRunFailed(String streamId, Throwable error) {
         errorCounter.add(1, Attributes.of(STREAM_ID, streamId));

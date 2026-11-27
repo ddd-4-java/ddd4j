@@ -32,6 +32,7 @@ import java.util.*;
  */
 public class JedisRedisStreamOperations implements RedisStreamOperations {
 
+    /** \u6267\u884c Redis Stream \u64cd\u4f5c\u7684 Jedis \u5ba2\u6237\u7aef\u3002 */
     private final UnifiedJedis jedis;
 
     /**
@@ -43,11 +44,13 @@ public class JedisRedisStreamOperations implements RedisStreamOperations {
         this.jedis = Objects.requireNonNull(jedis, "jedis");
     }
 
+    /** {@inheritDoc} */
     @Override
     public String add(String stream, Map<String, String> fields) {
         return jedis.xadd(stream, XAddParams.xAddParams().id(StreamEntryID.NEW_ENTRY), fields).toString();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void createGroup(String stream, String group) {
         try {
@@ -59,6 +62,7 @@ public class JedisRedisStreamOperations implements RedisStreamOperations {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public Map<String, List<RedisStreamRecord>> readGroup(
             String group,
@@ -86,16 +90,19 @@ public class JedisRedisStreamOperations implements RedisStreamOperations {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void ack(String stream, String group, String entryId) {
         jedis.xack(stream, group, new StreamEntryID(entryId));
     }
 
+    /** {@inheritDoc} */
     @Override
     public Object nativeClient() {
         return jedis;
     }
 
+    /** \u5173\u95ed\u5f53\u524d\u64cd\u4f5c\u5bf9\u8c61\u4f7f\u7528\u7684 Jedis \u5ba2\u6237\u7aef\u3002 */
     @Override
     public void close() {
         jedis.close();

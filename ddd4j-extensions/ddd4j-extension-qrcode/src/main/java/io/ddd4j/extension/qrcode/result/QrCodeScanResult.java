@@ -27,7 +27,9 @@ import java.util.List;
 @Getter
 public final class QrCodeScanResult {
 
+    /** \u7528\u4e8e\u5173\u8054\u540c\u4e00\u6b21\u64cd\u4f5c\u4ea7\u751f\u7684\u4e8b\u4ef6\u6216\u6d88\u606f\u7684\u6807\u8bc6\u3002 */
     private final String correlationId;
+    /** \u4ece\u8f93\u5165\u56fe\u50cf\u8bc6\u522b\u51fa\u7684\u4e8c\u7ef4\u7801\u5185\u5bb9\u3002 */
     private final List<QrCodeDecodeResult> results;
 
     /**

@@ -48,8 +48,11 @@ public class KafkaMessageAcknowledgment implements Acknowledgment {
      */
     public static final String HEADER_KAFKA_RECORD = "ddd4j.kafka.record";
 
+    /** \u5f53\u524d\u5de5\u4f5c\u7ebf\u7a0b\u8f6e\u8be2\u3001\u6d88\u8d39\u6216\u63d0\u4ea4\u4f4d\u70b9\u65f6\u4f7f\u7528\u7684\u539f\u751f\u6d88\u8d39\u8005\u3002 */
     private final Consumer<?, ?> consumer;
+    /** \u5f53\u524d\u786e\u8ba4\u52a8\u4f5c\u5173\u8054\u7684 Kafka \u539f\u751f\u8bb0\u5f55\u3002 */
     private final ConsumerRecord<?, ?> record;
+    /** \u8bb0\u5f55\u5df2\u786e\u8ba4\u6d88\u606f\u7684\u72b6\u6001\u6216\u7ed3\u679c\u3002 */
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 
     /**
@@ -63,11 +66,13 @@ public class KafkaMessageAcknowledgment implements Acknowledgment {
         this.record = Objects.requireNonNull(record, "ConsumerRecord is required");
     }
 
+    /** {@inheritDoc} */
     @Override
     public long deliveryTag() {
         return record.offset();
     }
 
+    /** {@inheritDoc} */
     @Override
     public String messageId() {
         String header = header(MessageHeaders.HEADER_MESSAGE_ID);
@@ -77,31 +82,37 @@ public class KafkaMessageAcknowledgment implements Acknowledgment {
         return Objects.isNull(header) ? record.topic() + "-" + record.partition() + "-" + record.offset() : header;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String correlationId() {
         return header(MessageHeaders.HEADER_CORRELATION_ID);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isOpen() {
         return true;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isAcknowledged() {
         return acknowledged.get();
     }
 
+    /** {@inheritDoc} */
     @Override
     public BrokerType brokerType() {
         return BrokerType.KAFKA;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void ack() {
         ack(false);
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized void ack(boolean multiple) {
         if (!acknowledged.get()) {
@@ -113,11 +124,13 @@ public class KafkaMessageAcknowledgment implements Acknowledgment {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void nack(boolean requeue) {
         nack(false, requeue);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void nack(boolean multiple, boolean requeue) {
         if (!requeue) {
@@ -125,11 +138,13 @@ public class KafkaMessageAcknowledgment implements Acknowledgment {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void reject(boolean requeue) {
         nack(false, requeue);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void recover(boolean requeue) {
         if (!requeue) {
@@ -138,6 +153,7 @@ public class KafkaMessageAcknowledgment implements Acknowledgment {
         consumer.seek(new TopicPartition(record.topic(), record.partition()), record.offset());
     }
 
+    /** {@inheritDoc} */
     @Override
     public <T> Optional<T> unwrap(Class<T> nativeType) {
         if (Objects.isNull(nativeType)) {
@@ -152,6 +168,11 @@ public class KafkaMessageAcknowledgment implements Acknowledgment {
         return Optional.empty();
     }
 
+    /**
+     * \u8bfb\u53d6 Kafka \u8bb0\u5f55\u4e2d\u6307\u5b9a\u952e\u7684\u6d88\u606f\u5934\u3002
+     * @param key \u5f85\u67e5\u8be2\u7684\u6d88\u606f\u5934\u6216\u5c5e\u6027\u540d\u79f0
+     * @return \u89e3\u6790\u5f97\u5230\u7684\u6d88\u606f\u5934\u503c
+     */
     private String header(String key) {
         Header header = record.headers().lastHeader(key);
         if (Objects.isNull(header) || Objects.isNull(header.value())) {

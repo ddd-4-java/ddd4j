@@ -41,13 +41,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("SpringCommandBus 验收测试")
 class SpringCommandBusTest {
 
+    /** \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u6846\u67b6\u4e0a\u4e0b\u6587\u6216\u8bf7\u6c42\u4f5c\u7528\u57df\u3002 */
     private AnnotationConfigApplicationContext context;
 
+    /** \u6839\u636e\u672c\u6b21\u8c03\u7528\u66f4\u65b0 <code>context = new AnnotationConfigApplicationContext(TestConfig.class)</code>\uff0c\u7528\u4e8e\u540e\u7eed\u6d4b\u8bd5\u6b65\u9aa4\u3002 */
     @BeforeEach
     void setUp() {
         context = new AnnotationConfigApplicationContext(TestConfig.class);
     }
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>context.close()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterEach
     void tearDown() {
         if (context != null) {
@@ -55,6 +58,7 @@ class SpringCommandBusTest {
         }
     }
 
+    /** \u6ce8\u518c\uff1a\u5bb9\u5668\u5237\u65b0\u540e\u5e94\u81ea\u52a8\u53d1\u73b0\u5e76\u6ce8\u518c CommandExecutor Bean\u3002 */
     @Test
     @DisplayName("注册：容器刷新后应自动发现并注册 CommandExecutor Bean")
     void shouldRegisterExecutorsOnContextRefresh() {
@@ -62,6 +66,7 @@ class SpringCommandBusTest {
         assertNotNull(commandBus, "SpringCommandBus 应作为 Bean 注册");
     }
 
+    /** \u8def\u7531\uff1aexecute \u5e94\u6b63\u786e\u8def\u7531\u5230\u5bf9\u5e94\u6267\u884c\u5668\u3002 */
     @Test
     @DisplayName("路由：execute 应正确路由到对应执行器")
     void shouldRouteCommandToCorrectExecutor() {
@@ -71,6 +76,7 @@ class SpringCommandBusTest {
         assertEquals("executed: hello", result.getData());
     }
 
+    /** \u9632\u5fa1\uff1a\u672a\u6ce8\u518c\u7684 command \u5e94\u629b\u51fa IllegalStateException\u3002 */
     @Test
     @DisplayName("防御：未注册的 command 应抛出 IllegalStateException")
     void shouldThrowForUnregisteredCommand() {
@@ -85,6 +91,7 @@ class SpringCommandBusTest {
                 "异常消息应包含未注册命令的类名");
     }
 
+    /** \u9632\u5fa1\uff1acommand \u4e3a null \u65f6\u5e94\u629b\u51fa IllegalArgumentException\u3002 */
     @Test
     @DisplayName("防御：command 为 null 时应抛出 IllegalArgumentException")
     void shouldThrowForNullCommand() {
@@ -92,6 +99,7 @@ class SpringCommandBusTest {
         assertThrows(IllegalArgumentException.class, () -> commandBus.execute(null));
     }
 
+    /** \u8def\u7531\uff1a\u591a\u4e2a\u6267\u884c\u5668\u5e94\u5404\u81ea\u8def\u7531\u5230\u6b63\u786e\u7684\u547d\u4ee4\u7c7b\u578b\u3002 */
     @Test
     @DisplayName("路由：多个执行器应各自路由到正确的命令类型")
     void shouldRouteMultipleExecutorsCorrectly() {
@@ -102,6 +110,7 @@ class SpringCommandBusTest {
         assertEquals("another: b", r2.getData());
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>bus.execute(new TestCommand("partial"))</code> \u629b\u51fa <code>IllegalStateException.class</code>\u3002 */
     @Test
     void failedDiscoveryMustNotPublishPartialRoutes() {
         try (AnnotationConfigApplicationContext isolated = new AnnotationConfigApplicationContext()) {
@@ -114,6 +123,7 @@ class SpringCommandBusTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>bus.execute(new TestCommand("late"))</code> \u629b\u51fa <code>IllegalStateException.class</code>\u3002 */
     @Test
     void discoversAtLifecycleCallbackAndPreservesHandlerExceptionIdentity() {
         try (AnnotationConfigApplicationContext isolated = new AnnotationConfigApplicationContext()) {
@@ -135,6 +145,7 @@ class SpringCommandBusTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>isolated.getBeansOfType(io.ddd4j.core.cqrs.command.CommandBus.class).size()</code> \u7b49\u4e8e <code>1</code>\u3002 */
     @Test
     void explicitEntryReusesLegacyOrCustomBusRegardlessOfRegistrationOrder() {
         for (Class<?> existing : new Class<?>[]{LegacyConfig.class, CustomConfig.class}) {
@@ -155,6 +166,7 @@ class SpringCommandBusTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>isolated.getBeansOfType(io.ddd4j.core.cqrs.command.CommandBus.class).size()</code> \u7b49\u4e8e <code>1</code>\uff0c<code>isolated.getBean("springCommandBus").getClass()</code> \u7b49\u4e8e <code>type</code>\u3002 */
     @Test
     void eachHistoricalComponentScanWorksAlongsideExplicitEntry() {
         for (Class<?> type : new Class<?>[]{SpringCommandBus.class, io.ddd4j.data.cqrs.spring.SpringCommandBus.class}) {
@@ -173,6 +185,7 @@ class SpringCommandBusTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>creations.get()</code> \u7b49\u4e8e <code>0</code>\uff0c<code>creations.get()</code> \u7b49\u4e8e <code>1</code>\u3002 */
     @Test
     void explicitEntryReusesPrototypeAndCustomScopedBusWithoutEagerCreation() {
         for (String scope : new String[]{"prototype", "requestLike"}) {
@@ -195,18 +208,29 @@ class SpringCommandBusTest {
         }
     }
 
+    /** \u4e3a\u6d4b\u8bd5\u5bb9\u5668\u542f\u7528\u9700\u8981\u663e\u5f0f\u9009\u62e9\u7684\u6295\u5f71\u914d\u7f6e\u3002 */
     @Configuration(proxyBeanMethods = false)
     @org.springframework.context.annotation.Import(io.ddd4j.spring.config.SpringCommandConfig.class)
     static class ExplicitConfig {
     }
 
+    /** \u5411\u6d4b\u8bd5\u5bb9\u5668\u6ce8\u518c <code>executor()</code>\u3001<code>springCommandBus()</code> \u7b49\u6d4b\u8bd5\u5165\u53e3\u6216\u7ec4\u4ef6\u3002 */
     @Configuration(proxyBeanMethods = false)
     static class LegacyConfig {
+        /**
+         * \u521b\u5efa <code>new TestCommandExecutor</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new TestCommandExecutor()</code>
+         */
         @Bean
         TestCommandExecutor executor() {
             return new TestCommandExecutor();
         }
 
+        /**
+         * \u521b\u5efa <code>new io.ddd4j.data.cqrs.spring.SpringCommandBus</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+         * @param context \u5f53\u524d\u6846\u67b6\u4fdd\u5b58\u8bf7\u6c42\u6216\u8fd0\u884c\u65f6\u72b6\u6001\u7684\u4e0a\u4e0b\u6587
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new io.ddd4j.data.cqrs.spring.SpringCommandBus(context, new io.ddd4j.core.cqrs.command.CommandRegistry())</code>
+         */
         @Bean
         io.ddd4j.data.cqrs.spring.SpringCommandBus springCommandBus(org.springframework.context.ApplicationContext context) {
             return new io.ddd4j.data.cqrs.spring.SpringCommandBus(context,
@@ -214,8 +238,13 @@ class SpringCommandBusTest {
         }
     }
 
+    /** \u5411\u6d4b\u8bd5\u5bb9\u5668\u6ce8\u518c <code>customBus()</code> \u7b49\u6d4b\u8bd5\u5165\u53e3\u6216\u7ec4\u4ef6\u3002 */
     @Configuration(proxyBeanMethods = false)
     static class CustomConfig {
+        /**
+         * \u521b\u5efa <code>new io.ddd4j.core.cqrs.command.DefaultCommandBus</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new io.ddd4j.core.cqrs.command.DefaultCommandBus(java.util.List.of(new TestCommandExecutor()))</code>
+         */
         @Bean
         io.ddd4j.core.cqrs.command.CommandBus customBus() {
             return new io.ddd4j.core.cqrs.command.DefaultCommandBus(java.util.List.of(new TestCommandExecutor()));
@@ -228,12 +257,21 @@ class SpringCommandBusTest {
      * 测试命令
      */
     static class TestCommand implements Command {
+        /** \u53d1\u9001\u7ed9\u5f53\u524d\u5939\u5177\u6216\u7528\u4e8e\u65ad\u8a00\u5f80\u8fd4\u7ed3\u679c\u7684\u503c\u3002 */
         private final String value;
 
+        /**
+         * \u8bbe\u7f6e <code>value</code>\uff0c\u7528\u4e8e\u6784\u9020 <code>TestCommand</code> \u6d4b\u8bd5\u5b9e\u4f8b\u3002
+         * @param value \u5f53\u524d\u7528\u4f8b\u4f20\u5165\u7684\u503c
+         */
         TestCommand(String value) {
             this.value = value;
         }
 
+        /**
+         * \u8bfb\u53d6<code>value</code> \u5b57\u6bb5\u3002
+         * @return <code>value</code> \u5b57\u6bb5
+         */
         String getValue() {
             return value;
         }
@@ -243,12 +281,21 @@ class SpringCommandBusTest {
      * 另一个测试命令
      */
     static class AnotherCommand implements Command {
+        /** \u53d1\u9001\u7ed9\u5f53\u524d\u5939\u5177\u6216\u7528\u4e8e\u65ad\u8a00\u5f80\u8fd4\u7ed3\u679c\u7684\u503c\u3002 */
         private final String value;
 
+        /**
+         * \u8bbe\u7f6e <code>value</code>\uff0c\u7528\u4e8e\u6784\u9020 <code>AnotherCommand</code> \u6d4b\u8bd5\u5b9e\u4f8b\u3002
+         * @param value \u5f53\u524d\u7528\u4f8b\u4f20\u5165\u7684\u503c
+         */
         AnotherCommand(String value) {
             this.value = value;
         }
 
+        /**
+         * \u8bfb\u53d6<code>value</code> \u5b57\u6bb5\u3002
+         * @return <code>value</code> \u5b57\u6bb5
+         */
         String getValue() {
             return value;
         }
@@ -265,11 +312,13 @@ class SpringCommandBusTest {
      */
     static class TestCommandExecutor implements CommandExecutor<TestCommand> {
 
+        /** {@inheritDoc} */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return java.util.Collections.<Class<? extends Command>>singleton(TestCommand.class);
         }
 
+        /** {@inheritDoc} */
         @Override
         public Result execute(TestCommand command) {
             return Result.ok("executed: " + command.getValue());
@@ -281,11 +330,13 @@ class SpringCommandBusTest {
      */
     static class AnotherCommandExecutor implements CommandExecutor<AnotherCommand> {
 
+        /** {@inheritDoc} */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return java.util.Collections.<Class<? extends Command>>singleton(AnotherCommand.class);
         }
 
+        /** {@inheritDoc} */
         @Override
         public Result execute(AnotherCommand command) {
             return Result.ok("another: " + command.getValue());
@@ -298,16 +349,29 @@ class SpringCommandBusTest {
     @Configuration
     static class TestConfig {
 
+        /**
+         * \u521b\u5efa <code>new SpringCommandBus</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+         * @param context \u5f53\u524d\u6846\u67b6\u4fdd\u5b58\u8bf7\u6c42\u6216\u8fd0\u884c\u65f6\u72b6\u6001\u7684\u4e0a\u4e0b\u6587
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new SpringCommandBus(context)</code>
+         */
         @Bean
         public SpringCommandBus springCommandBus(AnnotationConfigApplicationContext context) {
             return new SpringCommandBus(context);
         }
 
+        /**
+         * \u521b\u5efa <code>new TestCommandExecutor</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new TestCommandExecutor()</code>
+         */
         @Bean
         public TestCommandExecutor testCommandExecutor() {
             return new TestCommandExecutor();
         }
 
+        /**
+         * \u521b\u5efa <code>new AnotherCommandExecutor</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new AnotherCommandExecutor()</code>
+         */
         @Bean
         public AnotherCommandExecutor anotherCommandExecutor() {
             return new AnotherCommandExecutor();

@@ -13,8 +13,11 @@ import java.util.Optional;
  * @param <E> 既有投影位置实体类型，具有 streamId 和 nextEventNumber 属性
  */
 public final class JpaProjectionPositionStore<E> {
+    /** \u6267\u884c JPA \u67e5\u8be2\u548c\u6301\u4e45\u5316\u64cd\u4f5c\u7684\u5b9e\u4f53\u7ba1\u7406\u5668\u3002 */
     private final EntityManager entityManager;
+    /** JPA \u6295\u5f71\u68c0\u67e5\u70b9\u5b9e\u4f53\u7684 Java \u7c7b\u578b\u3002 */
     private final Class<E> entityType;
+    /** JPQL \u67e5\u8be2\u4e2d\u4f7f\u7528\u7684\u68c0\u67e5\u70b9\u5b9e\u4f53\u540d\u79f0\u3002 */
     private final String entityName;
 
     /**

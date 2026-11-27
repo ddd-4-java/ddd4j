@@ -49,6 +49,7 @@ import java.util.Objects;
 @Slf4j
 public final class JavalinSample {
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>JavalinSample</code> \u5b9e\u4f8b\u3002 */
     private JavalinSample() {
     }
 
@@ -78,6 +79,13 @@ public final class JavalinSample {
         return start(port, CatalogRuntime.start(), false);
     }
 
+    /**
+     * \u88c5\u914d\u5546\u54c1\u4ea4\u6613\u8def\u7531\u5e76\u542f\u52a8 Javalin\uff0c\u53ef\u542f\u7528\u5185\u5b58\u8ba4\u8bc1\u6f14\u793a\u3002
+     * @param port \u76d1\u542c\u7aef\u53e3
+     * @param catalog \u5df2\u88c5\u914d\u7684\u5546\u54c1\u4ea4\u6613\u64cd\u4f5c
+     * @param demoAuth \u662f\u5426\u542f\u7528\u5185\u5b58\u8ba4\u8bc1\u6f14\u793a
+     * @return \u6301\u6709 HTTP \u670d\u52a1\u548c\u8fd0\u884c\u8d44\u6e90\u7684\u5e94\u7528\u5b9e\u4f8b
+     */
     public static JavalinApplication start(int port, CatalogEndpoints catalog, boolean demoAuth) {
         DomainEventPublisher eventPublisher = new GuiceDomainEventPublisher(new EventBus("catalog-trade"));
         String token = "";
@@ -117,6 +125,11 @@ public final class JavalinSample {
         }
     }
 
+    /**
+     * \u505c\u6b62 Javalin \u5e94\u7528\u5e76\u91ca\u653e\u5f53\u524d\u793a\u4f8b\u7684\u7ec4\u4ef6\u6ce8\u518c\u3002
+     * @param app \u5f53\u524d\u62e5\u6709\u8def\u7531\u7684 Javalin \u5e94\u7528
+     * @param spiScope \u6301\u6709\u5e94\u7528\u6240\u6ce8\u518c\u5e95\u5c42\u7ec4\u4ef6\u7684\u4f5c\u7528\u57df
+     */
     private static void stop(Javalin app, SpiRegistrationScope spiScope) {
         try (ThreadContext.Scope callerContext = ThreadContext.open();
              SpiRegistrationScope registrations = spiScope) {
@@ -131,10 +144,13 @@ public final class JavalinSample {
      */
     public final static class JavalinApplication implements AutoCloseable {
 
+        /** \u5f53\u524d\u793a\u4f8b\u62e5\u6709\u7684 Javalin \u5e94\u7528\u3002 */
         private final Javalin app;
 
+        /** \u5f53\u524d\u793a\u4f8b\u7b7e\u53d1\u6216\u8fd4\u56de\u5ba2\u6237\u7aef\u7684\u4f1a\u8bdd\u4ee4\u724c\u3002 */
         private final String token;
 
+        /** \u7ba1\u7406\u5f53\u524d\u793a\u4f8b\u6216\u6d4b\u8bd5\u6240\u62e5\u6709\u7684 SPI \u6ce8\u518c\u8d44\u6e90\u3002 */
         private final SpiRegistrationScope spiScope;
 
         /**
@@ -151,6 +167,7 @@ public final class JavalinSample {
             this.spiScope = spiScope;
         }
 
+        /** {@inheritDoc} */
         @Override
         public void close() {
             stop(app, spiScope);
@@ -177,6 +194,7 @@ public final class JavalinSample {
             return spiScope;
         }
 
+        /** {@inheritDoc} */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -189,6 +207,7 @@ public final class JavalinSample {
             return Objects.equals(this.app, other.app) && Objects.equals(this.token, other.token) && Objects.equals(this.spiScope, other.spiScope);
         }
 
+        /** {@inheritDoc} */
         @Override
         public int hashCode() {
             int result = 0;
@@ -198,6 +217,7 @@ public final class JavalinSample {
             return result;
         }
 
+        /** {@inheritDoc} */
         @Override
         public String toString() {
             return "JavalinApplication[app=" + app + ", token=[REDACTED], spiScope=" + spiScope + "]";

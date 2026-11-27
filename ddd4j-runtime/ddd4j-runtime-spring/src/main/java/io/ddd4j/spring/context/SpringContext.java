@@ -122,6 +122,10 @@ public class SpringContext implements ApplicationContextAware {
         return APPLICATION_CONTEXT;
     }
 
+    /**
+     * \u8bb0\u5f55\u5bb9\u5668\u63d0\u4f9b\u7684 Spring \u5e94\u7528\u4e0a\u4e0b\u6587\uff0c\u4f9b\u540e\u7eed\u67e5\u8be2 Bean\u3002
+     * @param applicationContext \u5f53\u524d Spring \u5e94\u7528\u5bb9\u5668
+     */
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         SpringContext.APPLICATION_CONTEXT = applicationContext;

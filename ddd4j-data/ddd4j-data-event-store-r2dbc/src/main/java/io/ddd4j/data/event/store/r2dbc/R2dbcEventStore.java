@@ -27,6 +27,7 @@ import java.util.Objects;
  */
 public class R2dbcEventStore implements EventStore {
 
+    /** \u63d0\u4f9b\u540c\u6b65\u9002\u914d\u5668\u5e95\u5c42\u8bfb\u5199\u884c\u4e3a\u7684\u54cd\u5e94\u5f0f\u4e8b\u4ef6\u5b58\u50a8\u3002 */
     private final R2dbcAsyncEventStore asyncEventStore;
 
     /**
@@ -38,10 +39,19 @@ public class R2dbcEventStore implements EventStore {
         this(new R2dbcAsyncEventStore(connectionFactory));
     }
 
+    /**
+     * \u4e3a\u5f02\u6b65\u4e8b\u4ef6\u5b58\u50a8\u63d0\u4f9b\u540c\u6b65\u4e8b\u4ef6\u5b58\u50a8\u5165\u53e3\u3002
+     * @param asyncEventStore \u8d1f\u8d23\u5b9e\u9645\u4e8b\u4ef6\u8bfb\u5199\u7684\u54cd\u5e94\u5f0f\u5b58\u50a8
+     */
     R2dbcEventStore(R2dbcAsyncEventStore asyncEventStore) {
         this.asyncEventStore = Objects.requireNonNull(asyncEventStore, "asyncEventStore must not be null");
     }
 
+    /**
+     * \u5c06\u54cd\u5e94\u5f0f\u4e8b\u4ef6\u8bfb\u53d6\u7ed3\u679c\u8f6c\u6210\u540c\u6b65\u4e8b\u4ef6\u5b58\u50a8\u7684\u8bb0\u5f55\u7ed3\u6784\u3002
+     * @param event \u8981\u5e8f\u5217\u5316\u6216\u8f6c\u6362\u7684\u4e8b\u4ef6
+     * @return \u5177\u6709\u76f8\u540c\u8eab\u4efd\u3001\u7248\u672c\u548c\u8d1f\u8f7d\u7684\u5b58\u50a8\u4e8b\u4ef6
+     */
     private static StoredEvent toStoredEvent(AsyncStoredEvent event) {
         return new StoredEvent(
                 event.eventId(),
@@ -56,7 +66,12 @@ public class R2dbcEventStore implements EventStore {
     }
 
     /**
-     * 在同步边界追加领域事件。
+     * \u5728\u540c\u6b65\u8fb9\u754c\u8ffd\u52a0\u9886\u57df\u4e8b\u4ef6\u3002
+     *
+     * @param aggregateType \u805a\u5408\u7c7b\u578b
+     * @param aggregateId \u805a\u5408\u6839\u6807\u8bc6
+     * @param events \u6309\u987a\u5e8f\u8ffd\u52a0\u6216\u56de\u653e\u7684\u9886\u57df\u4e8b\u4ef6
+     * @param expectedVersion \u9884\u671f\u7684\u5f53\u524d\u805a\u5408\u7248\u672c
      */
     @Override
     public void append(String aggregateType, AggregateRootId aggregateId,
@@ -66,7 +81,11 @@ public class R2dbcEventStore implements EventStore {
     }
 
     /**
-     * 在同步边界读取完整聚合流。
+     * \u5728\u540c\u6b65\u8fb9\u754c\u8bfb\u53d6\u5b8c\u6574\u805a\u5408\u6d41\u3002
+     *
+     * @param aggregateType \u805a\u5408\u7c7b\u578b
+     * @param aggregateId \u805a\u5408\u6839\u6807\u8bc6
+     * @return \u6309\u7248\u672c\u987a\u5e8f\u8fd4\u56de\u7684\u9886\u57df\u4e8b\u4ef6\u6d41
      */
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId) {
@@ -77,7 +96,13 @@ public class R2dbcEventStore implements EventStore {
     }
 
     /**
-     * 在同步边界读取闭合版本区间。
+     * \u5728\u540c\u6b65\u8fb9\u754c\u8bfb\u53d6\u95ed\u5408\u7248\u672c\u533a\u95f4\u3002
+     *
+     * @param aggregateType \u805a\u5408\u7c7b\u578b
+     * @param aggregateId \u805a\u5408\u6839\u6807\u8bc6
+     * @param fromVersion \u8bfb\u53d6\u8d77\u59cb\u7248\u672c
+     * @param toVersion \u8bfb\u53d6\u7ed3\u675f\u7248\u672c
+     * @return \u6309\u7248\u672c\u987a\u5e8f\u8fd4\u56de\u7684\u9886\u57df\u4e8b\u4ef6\u6d41
      */
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId,
@@ -89,7 +114,11 @@ public class R2dbcEventStore implements EventStore {
     }
 
     /**
-     * 在同步边界读取全局事件流分页。
+     * \u5728\u540c\u6b65\u8fb9\u754c\u8bfb\u53d6\u5168\u5c40\u4e8b\u4ef6\u6d41\u5206\u9875\u3002
+     *
+     * @param fromPosition \u8d77\u59cb\u6d41\u4f4d\u7f6e
+     * @param limit \u672c\u6b21\u6700\u591a\u8bfb\u53d6\u7684\u8bb0\u5f55\u6570
+     * @return \u6309\u5168\u5c40\u4f4d\u7f6e\u6392\u5e8f\u7684\u4e8b\u4ef6
      */
     @Override
     public List<StoredEvent> readAll(long fromPosition, int limit) {

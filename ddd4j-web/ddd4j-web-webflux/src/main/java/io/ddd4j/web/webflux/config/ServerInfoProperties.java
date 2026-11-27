@@ -41,6 +41,7 @@ public class ServerInfoProperties {
      */
     private String version;
 
+    /** {@inheritDoc} */
     @Override
     /**
      * 服务节点 UID

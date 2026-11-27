@@ -76,6 +76,7 @@ public class Permission {
         return description;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -88,11 +89,13 @@ public class Permission {
         return Objects.equals(code, that.code);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return Objects.hash(code);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "Permission{" + code + "}";

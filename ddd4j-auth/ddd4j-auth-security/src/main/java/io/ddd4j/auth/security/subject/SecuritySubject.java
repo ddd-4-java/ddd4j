@@ -65,6 +65,12 @@ public class SecuritySubject implements Subject {
         }
     }
 
+    /**
+     * \u628a\u539f\u751f\u4e3b\u4f53\u8f6c\u6362\u4e3a DDD4J \u8ba4\u8bc1\u4e3b\u4f53\u3002
+     * @param <T> \u8c03\u7528\u65b9\u671f\u671b\u7684\u8ba4\u8bc1\u4e3b\u4f53\u5b50\u7c7b\u578b
+     * @param principal \u6846\u67b6\u63d0\u4f9b\u7684\u4e3b\u4f53\u5bf9\u8c61
+     * @return \u8ba4\u8bc1\u4e3b\u4f53\uff0c\u5176\u4ed6\u5bf9\u8c61\u6216\u7a7a\u503c\u8fd4\u56de\u7a7a
+     */
     private <T extends AuthPrincipal> T castPrincipal(Object principal) {
         if (principal instanceof AuthPrincipal) {
             return (T) principal;
@@ -74,6 +80,7 @@ public class SecuritySubject implements Subject {
 
     // ==================== 身份与会话读取 ====================
 
+    /** {@inheritDoc} */
     @Override
     public <T extends AuthPrincipal> T getPrincipal() {
         Authentication auth = getAuthentication();
@@ -102,12 +109,14 @@ public class SecuritySubject implements Subject {
         return (T) adapted;
     }
 
+    /** {@inheritDoc} */
     @Override
     public <T extends AuthPrincipal> T getPrincipalByLoginId(Object loginId) {
         // Spring Security 不直接支持按 loginId 反查，返回当前 principal
         return getPrincipal();
     }
 
+    /** {@inheritDoc} */
     @Override
     public <T extends AuthPrincipal> T getPrincipalByToken(String tokenValue) {
         // Spring Security JWT 场景需业务层扩展 JwtDecoder
@@ -116,6 +125,7 @@ public class SecuritySubject implements Subject {
 
     // ==================== 会话生命周期（委托 SecurityContextHolder）====================
 
+    /** {@inheritDoc} */
     @Override
     public String login(AuthRequest request) {
         // 构建 Spring Security Authentication
@@ -153,11 +163,13 @@ public class SecuritySubject implements Subject {
         return request.getLoginIdAsString();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void logout() {
         SecurityContextHolder.clearContext();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void logout(Object loginId) {
         // Spring Security 无中心会话，JWT 场景需配合 Token 黑名单
@@ -166,11 +178,13 @@ public class SecuritySubject implements Subject {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void kickout(Object loginId) {
         logout(loginId);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String refresh() {
         // Spring Security 无状态，JWT 场景由 JwtIssuer 重签
@@ -178,6 +192,7 @@ public class SecuritySubject implements Subject {
         return Objects.nonNull(auth) ? auth.getName() : null;
     }
 
+    /** {@inheritDoc} */
     @Override
     public <T extends AuthPrincipal> T verify(String token) {
         // JWT 场景委托 JwtParser，此处返回当前 principal
@@ -186,6 +201,7 @@ public class SecuritySubject implements Subject {
 
     // ==================== 权限与角色（委托 SubjectDataProvider 数据源 SPI）====================
 
+    /** {@inheritDoc} */
     @Override
     public boolean isPermitted(String permission) {
         AuthPrincipal principal = getPrincipal();
@@ -196,6 +212,7 @@ public class SecuritySubject implements Subject {
         return SubjectKit.getStrategy().hasElement.apply(perms, permission);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isPermitted(Object loginId, String permission) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
@@ -206,6 +223,7 @@ public class SecuritySubject implements Subject {
         return SubjectKit.getStrategy().hasElement.apply(perms, permission);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean[] isPermitted(String... permissions) {
         AuthPrincipal principal = getPrincipal();
@@ -220,6 +238,7 @@ public class SecuritySubject implements Subject {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean[] isPermitted(Object loginId, String... permissions) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
@@ -234,6 +253,7 @@ public class SecuritySubject implements Subject {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isPermittedAny(String... permissions) {
         AuthPrincipal principal = getPrincipal();
@@ -249,6 +269,7 @@ public class SecuritySubject implements Subject {
         return false;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isPermittedAny(Object loginId, String... permissions) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
@@ -264,6 +285,7 @@ public class SecuritySubject implements Subject {
         return false;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isPermittedAll(String... permissions) {
         AuthPrincipal principal = getPrincipal();
@@ -279,6 +301,7 @@ public class SecuritySubject implements Subject {
         return true;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isPermittedAll(Object loginId, String... permissions) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
@@ -294,6 +317,7 @@ public class SecuritySubject implements Subject {
         return true;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean hasRole(String roleIdentifier) {
         AuthPrincipal principal = getPrincipal();
@@ -304,6 +328,7 @@ public class SecuritySubject implements Subject {
         return SubjectKit.getStrategy().hasElement.apply(roles, roleIdentifier);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean hasRole(Object loginId, String roleIdentifier) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
@@ -314,6 +339,7 @@ public class SecuritySubject implements Subject {
         return SubjectKit.getStrategy().hasElement.apply(roles, roleIdentifier);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean[] hasRoles(String... roleIdentifiers) {
         AuthPrincipal principal = getPrincipal();
@@ -328,6 +354,7 @@ public class SecuritySubject implements Subject {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean[] hasRoles(Object loginId, String... roleIdentifiers) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
@@ -342,6 +369,7 @@ public class SecuritySubject implements Subject {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean hasAnyRole(String... roleIdentifiers) {
         AuthPrincipal principal = getPrincipal();
@@ -357,6 +385,7 @@ public class SecuritySubject implements Subject {
         return false;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean hasAnyRole(Object loginId, String... roleIdentifiers) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
@@ -372,6 +401,7 @@ public class SecuritySubject implements Subject {
         return false;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean hasAllRole(String... roleIdentifiers) {
         AuthPrincipal principal = getPrincipal();
@@ -387,6 +417,7 @@ public class SecuritySubject implements Subject {
         return true;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean hasAllRole(Object loginId, String... roleIdentifiers) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
@@ -404,6 +435,7 @@ public class SecuritySubject implements Subject {
 
     // ==================== 状态判断 ====================
 
+    /** {@inheritDoc} */
     @Override
     public boolean isAuthenticated() {
         Authentication auth = getAuthentication();
@@ -412,28 +444,33 @@ public class SecuritySubject implements Subject {
                 && auth.isAuthenticated();
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isAuthenticated(Object loginId) {
         return isAuthenticated();
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isRemembered() {
         Authentication auth = getAuthentication();
         return Objects.nonNull(auth) && auth instanceof org.springframework.security.authentication.RememberMeAuthenticationToken;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isTrustDeviceId(String deviceId) {
         // Spring Security 不内置设备信任机制，委托给业务层
         return false;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isTrustDeviceId(Object userId, String deviceId) {
         return isTrustDeviceId(deviceId);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Object getLoginId() {
         Authentication auth = getAuthentication();
@@ -443,12 +480,14 @@ public class SecuritySubject implements Subject {
         return auth.getName();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Object getUserId() {
         AuthPrincipal principal = getPrincipal();
         return Objects.nonNull(principal) ? principal.getUserId() : null;
     }
 
+    /** {@inheritDoc} */
     @Override
     public Object getExtra(String tokenValue, String key) {
         AuthPrincipal principal = getPrincipalByToken(tokenValue);
@@ -460,16 +499,19 @@ public class SecuritySubject implements Subject {
 
     // ==================== 封禁（委托业务层）====================
 
+    /** {@inheritDoc} */
     @Override
     public void disable(Object loginId, long timeout) {
         // Spring Security 封禁通常通过 Token 黑名单或业务标记实现
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isDisabled(Object loginId) {
         return SubjectKit.getDataProvider().isDisabled(loginId, "default");
     }
 
+    /** {@inheritDoc} */
     @Override
     public void untieDisable(Object loginId) {
         // Spring Security 解封委托业务层

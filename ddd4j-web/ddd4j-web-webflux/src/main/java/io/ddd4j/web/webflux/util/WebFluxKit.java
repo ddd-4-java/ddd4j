@@ -35,14 +35,23 @@ import java.util.Objects;
 @Slf4j
 public class WebFluxKit {
 
+    /** XMLHttpRequest \u4f7f\u7528\u7684\u8bf7\u6c42\u5934\u503c\u3002 */
     private static final String XML_HTTP_REQUEST = "XMLHttpRequest";
+    /** \u6807\u8bc6 AJAX \u8bf7\u6c42\u6765\u6e90\u7684 HTTP \u5934\u540d\u79f0\u3002 */
     private static final String X_REQUESTED_WITH = "X-Requested-With";
+    /** \u6807\u8bc6 JSON \u5185\u5bb9\u7684\u5a92\u4f53\u7c7b\u578b\u3002 */
     private static final String CONTENT_TYPE_JSON = "application/json";
+    /** WebFlux \u5de5\u5177\u5904\u7406\u7684\u81ea\u5b9a\u4e49\u8bf7\u6c42\u5934\u96c6\u5408\u3002 */
     private static final String[] xheaders = new String[]{"X-Forwarded-For", "x-forwarded-for"};
+    /** WebFlux \u5de5\u5177\u5904\u7406\u7684\u6807\u51c6 HTTP \u8bf7\u6c42\u5934\u96c6\u5408\u3002 */
     private static final String[] headers = new String[]{"Cdn-Src-Ip", "Proxy-Client-IP", "WL-Proxy-Client-IP", "X-Real-IP", "HTTP_CLIENT_IP", "HTTP_X_FORWARDED_FOR"};
+    /** IPv4 \u56de\u73af\u5730\u5740\u3002 */
     private static final String LOCAL_HOST = "localhost";
+    /** IPv6 \u56de\u73af\u5730\u5740\u3002 */
     private static final String LOCAL_IP6 = "0:0:0:0:0:0:0:1";
+    /** \u672c\u5730\u5ba2\u6237\u7aef\u8fde\u63a5\u7684\u56de\u73af\u5730\u5740\u3002 */
     private static final String LOCAL_IP = "127.0.0.1";
+    /** \u4ee3\u7406\u5730\u5740\u672a\u77e5\u65f6\u8fd4\u56de\u7684\u6807\u8bc6\u3002 */
     private static final String UNKNOWN = "unknown";
 
     /**

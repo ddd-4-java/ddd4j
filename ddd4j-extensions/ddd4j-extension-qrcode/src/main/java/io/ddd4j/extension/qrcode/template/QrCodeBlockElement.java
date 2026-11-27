@@ -19,6 +19,10 @@ package io.ddd4j.extension.qrcode.template;
  */
 public final class QrCodeBlockElement extends QrCodeFrameElement {
 
+    /**
+     * \u6309\u6784\u5efa\u53c2\u6570\u590d\u5236\u4e8c\u7ef4\u7801\u5360\u4f4d\u5757\u7684\u4f4d\u7f6e\u3001\u5c3a\u5bf8\u4e0e\u5c42\u7ea7\u3002
+     * @param builder \u63d0\u4f9b\u5360\u4f4d\u5757\u8fb9\u754c\u548c\u53e0\u653e\u987a\u5e8f\u7684\u6784\u5efa\u5668
+     */
     private QrCodeBlockElement(Builder builder) {
         super(builder.x, builder.y, builder.width, builder.height, builder.zIndex);
     }
@@ -38,10 +42,15 @@ public final class QrCodeBlockElement extends QrCodeFrameElement {
      * <p>逐步设置区域坐标、尺寸与层级后构建不可变元素。
      */
     public static final class Builder {
+        /** \u5143\u7d20\u5728\u6a21\u677f\u753b\u5e03\u4e2d\u7684\u6a2a\u5411\u50cf\u7d20\u5750\u6807\u3002 */
         private int x;
+        /** \u5143\u7d20\u5728\u6a21\u677f\u753b\u5e03\u4e2d\u7684\u7eb5\u5411\u50cf\u7d20\u5750\u6807\u3002 */
         private int y;
+        /** \u5728\u7f16\u7801\u6216\u7ed8\u5236\u65f6\u4f7f\u7528\u7684\u50cf\u7d20\u5bbd\u5ea6\u3002 */
         private int width;
+        /** \u5728\u7f16\u7801\u6216\u7ed8\u5236\u65f6\u4f7f\u7528\u7684\u50cf\u7d20\u9ad8\u5ea6\u3002 */
         private int height;
+        /** \u91cd\u53e0\u5143\u7d20\u5728\u753b\u5e03\u4e2d\u7684\u53e0\u653e\u987a\u5e8f\u3002 */
         private int zIndex;
 
         /**

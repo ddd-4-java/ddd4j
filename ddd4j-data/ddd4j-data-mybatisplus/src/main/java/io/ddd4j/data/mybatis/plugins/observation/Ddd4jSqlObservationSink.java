@@ -24,6 +24,7 @@ import java.util.Objects;
  */
 public class Ddd4jSqlObservationSink implements SqlObservationSink, com.baomidou.mybatisplus.enhance.observation.SqlObservationSink {
 
+    /** {@inheritDoc} */
     @Override
     public void accept(com.baomidou.mybatisplus.enhance.observation.SqlObservation observation) {
         if (Objects.nonNull(observation)) {
@@ -32,6 +33,7 @@ public class Ddd4jSqlObservationSink implements SqlObservationSink, com.baomidou
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void accept(SqlObservation observation) {
         if (Objects.isNull(observation)) {

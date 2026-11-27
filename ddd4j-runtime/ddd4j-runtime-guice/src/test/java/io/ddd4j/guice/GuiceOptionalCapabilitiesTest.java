@@ -37,6 +37,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * 验证显式日志装配及没有 WebMVC/Servlet 的真实 JVM 日志调用。
  */
 class GuiceOptionalCapabilitiesTest {
+    /**
+     * \u6309 <code>("getMethod".equals(invoked.getName()))</code> \u7b49\u5b9e\u9645\u6761\u4ef6\u9009\u62e9\u5f53\u524d\u7528\u4f8b\u8fd4\u56de\u7684\u7ed3\u679c\u3002
+     * @param result \u4f20\u7ed9 <code>Proxy.newProxyInstance()</code> \u7684 <code>Object</code> \u8f93\u5165
+     * @param failure \u89e6\u53d1\u5f53\u524d\u6d4b\u8bd5\u9519\u8bef\u5904\u7406\u8def\u5f84\u7684\u5931\u8d25
+     * @return \u6839\u636e\u6d4b\u8bd5\u6761\u4ef6\u8fd4\u56de\u7684\u53ef\u80fd\u503c\uff0c\u5305\u62ec <code>method</code>\u3001<code>method.getName()</code>
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     static ProceedingJoinPoint point(Object result, Throwable failure) throws Exception {
         Method method = Endpoint.class.getMethod("handle", String.class);
         MethodSignature signature = (MethodSignature) Proxy.newProxyInstance(MethodSignature.class.getClassLoader(),
@@ -67,6 +74,10 @@ class GuiceOptionalCapabilitiesTest {
                 });
     }
 
+    /**
+     * \u9a8c\u8bc1<code>finished</code>\u4e3a\u771f\uff0c<code>process.exitValue()</code> \u7b49\u4e8e <code>0</code>\uff0c<code>output.contains("R07_BASIC_OK")</code>\u4e3a\u771f\u3002
+     * @throws Exception \u51c6\u5907\u6216\u8bfb\u53d6\u5939\u5177\u6587\u4ef6\u65f6\u5931\u8d25
+     */
     @Test
     void basicStartsInJvmWithoutUnselectedCapabilities() throws Exception {
         String classpath = Arrays.stream(System.getProperty("surefire.test.class.path", System.getProperty("java.class.path")).split(File.pathSeparator))
@@ -89,6 +100,10 @@ class GuiceOptionalCapabilitiesTest {
         assertTrue(output.contains("R07_BASIC_OK"), output);
     }
 
+    /**
+     * \u9a8c\u8bc1<code>finished</code>\u4e3a\u771f\uff0c<code>process.exitValue()</code> \u7b49\u4e8e <code>0</code>\uff0c<code>output.contains("R05_NO_WEBMVC_LOGGING_OK")</code>\u4e3a\u771f\u3002
+     * @throws Exception \u51c6\u5907\u6216\u8bfb\u53d6\u5939\u5177\u6587\u4ef6\u65f6\u5931\u8d25
+     */
     @Test
     void logsExecuteInJvmWithoutWebMvcSpringOrServlet() throws Exception {
         String classpath = Arrays.stream(System.getProperty("surefire.test.class.path",
@@ -112,6 +127,10 @@ class GuiceOptionalCapabilitiesTest {
         assertTrue(output.contains("R05_NO_WEBMVC_LOGGING_OK"), output);
     }
 
+    /**
+     * \u9a8c\u8bc1<code>result</code> \u7b49\u4e8e <code>"result"</code>\uff0c<code>watch.isRunning()</code>\u4e3a\u5047\u3002
+     * @throws Throwable \u5f53\u524d\u88ab\u6d4b\u8c03\u7528\u5931\u8d25
+     */
     @Test
     void aspectRetainsResultsCallbacksWrappingAndMdcCleanup() throws Throwable {
         Operation operation = Endpoint.class.getMethod("handle", String.class).getAnnotation(Operation.class);
@@ -159,6 +178,11 @@ class GuiceOptionalCapabilitiesTest {
      * 验证实际剥离能力依赖后的核心运行时生命周期。
      */
     public static class BasicProbe {
+        /**
+         * \u8c03\u7528 <code>Class.forName()</code>\u3001<code>Guice.createInjector()</code>\u3001<code>Ddd4jGuiceModule.basic()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+         * @param args \u4ece\u547d\u4ee4\u884c\u4f20\u5165\u6d4b\u8bd5\u63a2\u9488\u7684\u53c2\u6570
+         * @throws Exception \u53cd\u5c04\u8bbf\u95ee\u88ab\u6d4b\u6210\u5458\u65f6\u5931\u8d25
+         */
         public static void main(String[] args) throws Exception {
             for (String type : new String[]{"org.springframework.web.servlet.DispatcherServlet",
                     "org.apache.ibatis.session.SqlSession", "com.baomidou.mybatisplus.core.mapper.BaseMapper",
@@ -185,6 +209,11 @@ class GuiceOptionalCapabilitiesTest {
      * 独立进程入口，先证实缺少 HTTP 类型，再执行 Guice 默认日志和扩展回调。
      */
     public static class LoggingProbe {
+        /**
+         * \u8c03\u7528 <code>Class.forName()</code>\u3001<code>LogManager.getLogger()</code>\u3001<code>logger.getLevel()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+         * @param args \u4ece\u547d\u4ee4\u884c\u4f20\u5165\u6d4b\u8bd5\u63a2\u9488\u7684\u53c2\u6570
+         * @throws Throwable \u53cd\u5c04\u8bbf\u95ee\u88ab\u6d4b\u6210\u5458\u65f6\u5931\u8d25
+         */
         public static void main(String[] args) throws Throwable {
             for (String type : new String[]{"org.springframework.web.servlet.DispatcherServlet",
                     "org.springframework.web.context.request.RequestContextHolder", "jakarta.servlet.ServletRequest",
@@ -250,6 +279,11 @@ class GuiceOptionalCapabilitiesTest {
      * 日志目标方法。
      */
     public static class Endpoint {
+        /**
+         * \u8bfb\u53d6 <code>input</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
+         * @param input \u7528\u4e8e\u6784\u9020\u672c\u6b21\u8fd4\u56de\u7ed3\u679c\u7684 <code>String</code> \u8f93\u5165
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>input</code>
+         */
         @Operation(summary = "R05 logging")
         public String handle(String input) {
             return input;

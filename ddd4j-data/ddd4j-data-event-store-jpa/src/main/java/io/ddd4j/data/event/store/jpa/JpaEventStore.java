@@ -57,12 +57,18 @@ import java.util.function.Supplier;
  */
 public class JpaEventStore implements EventStore {
 
+    /** JPQL \u8bfb\u5199\u4e8b\u4ef6\u8bb0\u5f55\u65f6\u4f7f\u7528\u7684\u5b9e\u4f53\u540d\u79f0\u3002 */
     private static final String ENTITY = "StoredEventEntity";
 
+    /** \u6267\u884c JPA \u67e5\u8be2\u548c\u6301\u4e45\u5316\u64cd\u4f5c\u7684\u5b9e\u4f53\u7ba1\u7406\u5668\u3002 */
     private final EntityManager entityManager;
+    /** \u6309\u805a\u5408\u53ca\u4f4d\u7f6e\u67e5\u8be2 JPA \u4e8b\u4ef6\u8bb0\u5f55\u7684\u4ed3\u50a8\u3002 */
     private final JpaStoredEventRepository repository;
+    /** \u5c06\u9886\u57df\u4e8b\u4ef6\u8d1f\u8f7d\u5199\u4e3a\u5b58\u50a8\u683c\u5f0f\u5e76\u4ece\u5b58\u50a8\u683c\u5f0f\u6062\u590d\u7684\u5e8f\u5217\u5316\u5668\u3002 */
     private final EventPayloadSerializer serializer;
+    /** \u5f53\u524d JPA \u4e8b\u4ef6\u5b58\u50a8\u91c7\u7528\u7684\u4e8b\u52a1\u8fb9\u754c\u3002 */
     private final TransactionMode transactionMode;
+    /** \u6258\u7ba1\u4e8b\u52a1\u5199\u5165\u5931\u8d25\u65f6\u901a\u77e5\u4e8b\u52a1\u7ba1\u7406\u5668\u6807\u8bb0\u56de\u6eda\u7684\u52a8\u4f5c\u3002 */
     private final Runnable markRollbackOnly;
 
     /**
@@ -101,11 +107,26 @@ public class JpaEventStore implements EventStore {
         this(entityManager, repository, serializer, TransactionMode.INDEPENDENT);
     }
 
+    /**
+     * \u6309\u9009\u5b9a\u4e8b\u52a1\u6a21\u5f0f\u88c5\u914d JPA \u4e8b\u4ef6\u5b58\u50a8\u3002
+     * @param entityManager \u6267\u884c\u6301\u4e45\u5316\u64cd\u4f5c\u7684\u5b9e\u4f53\u7ba1\u7406\u5668
+     * @param repository \u8bfb\u53d6\u5df2\u6301\u4e45\u5316\u4e8b\u4ef6\u7684\u4ed3\u50a8
+     * @param serializer \u4e8b\u4ef6\u8d1f\u8f7d\u7684\u5e8f\u5217\u5316\u5668
+     * @param transactionMode \u5199\u5165\u4f7f\u7528\u7684\u4e8b\u52a1\u6a21\u5f0f
+     */
     private JpaEventStore(EntityManager entityManager, JpaStoredEventRepository repository,
                           EventPayloadSerializer serializer, TransactionMode transactionMode) {
         this(entityManager, repository, serializer, transactionMode, null);
     }
 
+    /**
+     * \u4e3a JPA \u5b58\u50a8\u88c5\u914d\u8bfb\u5199\u7ec4\u4ef6\u548c\u6258\u7ba1\u4e8b\u52a1\u56de\u6eda\u6807\u8bb0\u3002
+     * @param entityManager \u6267\u884c\u6301\u4e45\u5316\u64cd\u4f5c\u7684\u5b9e\u4f53\u7ba1\u7406\u5668
+     * @param repository \u8bfb\u53d6\u5df2\u6301\u4e45\u5316\u4e8b\u4ef6\u7684\u4ed3\u50a8
+     * @param serializer \u4e8b\u4ef6\u8d1f\u8f7d\u7684\u5e8f\u5217\u5316\u5668
+     * @param transactionMode \u5199\u5165\u4f7f\u7528\u7684\u4e8b\u52a1\u6a21\u5f0f
+     * @param markRollbackOnly \u901a\u77e5\u6258\u7ba1\u4e8b\u52a1\u6807\u8bb0\u56de\u6eda\u7684\u52a8\u4f5c
+     */
     private JpaEventStore(EntityManager entityManager, JpaStoredEventRepository repository,
                           EventPayloadSerializer serializer, TransactionMode transactionMode,
                           Runnable markRollbackOnly) {
@@ -271,6 +292,7 @@ public class JpaEventStore implements EventStore {
                 .toList());
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId,
                                   long fromVersion, long toVersion) {
@@ -299,6 +321,12 @@ public class JpaEventStore implements EventStore {
                 .toList());
     }
 
+    /**
+     * \u6839\u636e\u914d\u7f6e\u9009\u62e9\u72ec\u7acb\u3001\u53c2\u4e0e\u5f0f\u6216\u8c03\u7528\u65b9\u6258\u7ba1\u7684\u4e8b\u52a1\u6267\u884c\u8def\u5f84\u3002
+     * @param <T> \u4e8b\u52a1\u64cd\u4f5c\u7684\u8fd4\u56de\u7c7b\u578b
+     * @param operation \u5728\u9009\u5b9a\u4e8b\u52a1\u8fb9\u754c\u5185\u8fd0\u884c\u7684\u64cd\u4f5c
+     * @return \u4e8b\u52a1\u64cd\u4f5c\u7ed3\u679c
+     */
     private <T> T executeInTransaction(Supplier<T> operation) {
         if (transactionMode == TransactionMode.PARTICIPATING) {
             return executeParticipating(operation);
@@ -324,6 +352,13 @@ public class JpaEventStore implements EventStore {
         }
     }
 
+    /**
+     * \u5728\u5df2\u5f00\u542f\u7684\u8d44\u6e90\u672c\u5730\u4e8b\u52a1\u5185\u6267\u884c\u4e8b\u4ef6\u5199\u5165\uff0c\u5931\u8d25\u65f6\u6807\u8bb0\u56de\u6eda\u3002
+     * @param <T> \u5199\u5165\u64cd\u4f5c\u7684\u8fd4\u56de\u7c7b\u578b
+     * @param operation \u5728\u9009\u5b9a\u4e8b\u52a1\u8fb9\u754c\u5185\u8fd0\u884c\u7684\u64cd\u4f5c
+     * @return \u4e8b\u4ef6\u5199\u5165\u64cd\u4f5c\u7684\u8fd4\u56de\u7ed3\u679c
+     * @throws IllegalStateException \u4e0d\u5b58\u5728\u53ef\u53c2\u4e0e\u7684\u8c03\u7528\u65b9\u4e8b\u52a1
+     */
     private <T> T executeParticipating(Supplier<T> operation) {
         EntityTransaction tx = entityManager.getTransaction();
         if (!tx.isActive()) {
@@ -337,6 +372,13 @@ public class JpaEventStore implements EventStore {
         }
     }
 
+    /**
+     * \u4f7f\u7528\u5df2\u52a0\u5165\u8c03\u7528\u65b9\u4e8b\u52a1\u7684 EntityManager \u6267\u884c\u5199\u5165\u3002
+     * @param <T> \u5199\u5165\u64cd\u4f5c\u7684\u8fd4\u56de\u7c7b\u578b
+     * @param operation \u5728\u9009\u5b9a\u4e8b\u52a1\u8fb9\u754c\u5185\u8fd0\u884c\u7684\u64cd\u4f5c
+     * @return \u4e8b\u4ef6\u5199\u5165\u64cd\u4f5c\u7684\u8fd4\u56de\u7ed3\u679c
+     * @throws IllegalStateException \u5b9e\u4f53\u7ba1\u7406\u5668\u5c1a\u672a\u52a0\u5165\u8c03\u7528\u65b9\u4e8b\u52a1
+     */
     private <T> T executeManaged(Supplier<T> operation) {
         if (!entityManager.isJoinedToTransaction()) {
             throw new IllegalStateException("An EntityManager joined to the caller transaction is required");
@@ -349,6 +391,11 @@ public class JpaEventStore implements EventStore {
         }
     }
 
+    /**
+     * \u6267\u884c\u56de\u6eda\u6807\u8bb0\uff0c\u5e76\u5c06\u6807\u8bb0\u5931\u8d25\u4f5c\u4e3a\u539f\u64cd\u4f5c\u5f02\u5e38\u7684\u6291\u5236\u5f02\u5e38\u4fdd\u7559\u3002
+     * @param failure \u4e1a\u52a1\u64cd\u4f5c\u539f\u5148\u629b\u51fa\u7684\u5f02\u5e38
+     * @param rollbackMarker \u8bf7\u6c42\u56de\u6eda\u5f53\u524d\u4e8b\u52a1\u7684\u52a8\u4f5c
+     */
     private void preserveRollbackMarkingFailure(Throwable failure, Runnable rollbackMarker) {
         try {
             rollbackMarker.run();
@@ -359,6 +406,10 @@ public class JpaEventStore implements EventStore {
         }
     }
 
+    /**
+     * \u67e5\u8be2\u4e8b\u4ef6\u8868\u4e2d\u5df2\u7ecf\u5206\u914d\u7684\u6700\u5927\u5168\u5c40\u4f4d\u7f6e\u3002
+     * @return \u5f53\u524d\u6700\u5927\u5168\u5c40\u4f4d\u7f6e\uff0c\u6ca1\u6709\u8bb0\u5f55\u65f6\u4e3a\u96f6
+     */
     private long maxPosition() {
         List<Long> maxRows = entityManager.createQuery(
                         "select e.position from " + ENTITY + " e order by e.position desc", Long.class)
@@ -424,44 +475,64 @@ public class JpaEventStore implements EventStore {
         return (Class<? extends DomainEvent<?>>) eventClass;
     }
 
+    /** \u6807\u8bc6 JPA \u4e8b\u4ef6\u5b58\u50a8\u4f7f\u7528\u72ec\u7acb\u4e8b\u52a1\u3001\u8c03\u7528\u65b9\u4e8b\u52a1\u6216\u6258\u7ba1\u4e8b\u52a1\u7684\u65b9\u5f0f\u3002 */
     private enum TransactionMode {
+        /** \u4e8b\u4ef6\u5b58\u50a8\u81ea\u884c\u5f00\u542f\u5e76\u63d0\u4ea4\u4e8b\u52a1\u3002 */
         INDEPENDENT,
+        /** \u4e8b\u4ef6\u5199\u5165\u53c2\u4e0e\u5df2\u5b58\u5728\u7684\u8c03\u7528\u65b9\u4e8b\u52a1\u3002 */
         PARTICIPATING,
+        /** \u7531\u5916\u90e8\u4e8b\u52a1\u8bbe\u65bd\u7ba1\u7406\u4e8b\u52a1\u8fb9\u754c\u3002 */
         MANAGED
     }
 
+    /** \u5c06\u4e8b\u4ef6\u5b58\u50a8\u4e2d\u7684\u5b57\u7b26\u4e32\u6807\u8bc6\u9002\u914d\u4e3a\u805a\u5408\u6839\u6807\u8bc6\u3002 */
     private final static class StringAggregateRootId implements AggregateRootId {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
+        /** \u5b57\u7b26\u4e32\u683c\u5f0f\u7684\u805a\u5408\u6807\u8bc6\u7c7b\u578b\u3002 */
         private static final StringEntityType TYPE = new StringEntityType("String");
+        /** \u4ece\u6301\u4e45\u5316\u8bb0\u5f55\u8bfb\u53d6\u7684\u805a\u5408\u6807\u8bc6\u539f\u503c\u3002 */
         private final String value;
 
+        /**
+         * \u628a\u6301\u4e45\u5316\u6807\u8bc6\u6062\u590d\u6210\u5b57\u7b26\u4e32\u805a\u5408\u6839\u6807\u8bc6\u3002
+         * @param value \u5b58\u50a8\u7684\u6807\u8bc6\u539f\u503c
+         */
         @JsonCreator()
         private StringAggregateRootId(@JsonProperty("value") String value) {
             this.value = value;
         }
 
+        /** {@inheritDoc} */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
+        /** {@inheritDoc} */
         @Override
         @JsonValue
         public String asString() {
             return value;
         }
 
+        /** {@inheritDoc} */
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
         }
 
+        /**
+         * \u8bfb\u53d6<code>value</code> \u5b57\u6bb5\u3002
+         * @return <code>value</code> \u5b57\u6bb5
+         */
         @JsonProperty("value")
         public String value() {
             return value;
         }
 
+        /** {@inheritDoc} */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -474,6 +545,7 @@ public class JpaEventStore implements EventStore {
             return Objects.equals(this.value, other.value);
         }
 
+        /** {@inheritDoc} */
         @Override
         public int hashCode() {
             int result = 0;
@@ -481,6 +553,7 @@ public class JpaEventStore implements EventStore {
             return result;
         }
 
+        /** {@inheritDoc} */
         @Override
         public String toString() {
             return "StringAggregateRootId[value=" + value + "]";

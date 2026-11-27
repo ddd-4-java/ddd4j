@@ -59,6 +59,7 @@ public class JsonMQEventSerialization implements MQEventSerialization {
         return mapper;
     }
 
+    /** {@inheritDoc} */
     @Override
     public <S, T> T deserialize(S src, Class<T> dist) throws RuntimeException {
         if (Objects.isNull(src)) {
@@ -82,6 +83,7 @@ public class JsonMQEventSerialization implements MQEventSerialization {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("unchecked")
     public <T> T serialize(Object src) throws RuntimeException {

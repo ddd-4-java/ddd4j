@@ -240,6 +240,7 @@ public class TradeOrder extends AggregateRoot<Long> {
                 .build();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Long id() {
         return id;

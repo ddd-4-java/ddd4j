@@ -35,6 +35,7 @@ import java.util.Objects;
  */
 public final class LambdaCondition implements Serializable {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = -4292780888118581043L;
 
     /**
@@ -180,6 +181,7 @@ public final class LambdaCondition implements Serializable {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -194,6 +196,7 @@ public final class LambdaCondition implements Serializable {
                 && Objects.equals(value, other.value);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int result = 0;
@@ -203,6 +206,7 @@ public final class LambdaCondition implements Serializable {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "LambdaCondition[propertyRef=" + propertyRef + ", operator=" + operator + ", value=" + value + "]";

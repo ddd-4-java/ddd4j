@@ -67,6 +67,7 @@ public class QuarkusProjectionPositionRepository implements ProjectionPositionRe
                         found.streamId, found.nextEventNumber));
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<ProjectionPosition> findAll() {
         List<PanacheProjectionPositionEntity> entities = PanacheProjectionPositionEntity.listAll();
@@ -92,6 +93,7 @@ public class QuarkusProjectionPositionRepository implements ProjectionPositionRe
         return new DefaultProjectionPosition(position.getStreamId(), position.getNextEventNumber());
     }
 
+    /** {@inheritDoc} */
     @Override
     @Transactional
     public void deleteByStreamId(String streamId) {

@@ -36,6 +36,10 @@ import static org.mockito.Mockito.*;
  */
 class ActiveMQAdapterContractTest {
 
+    /**
+     * \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>mock()</code>\u3001<code>factory.createConnection()</code>\u3001<code>connection.createSession()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void shouldPublishCausalHeadersAsNativeJmsProperties() throws Exception {
         ActiveMQConnectionFactory factory = mock(ActiveMQConnectionFactory.class);
@@ -76,6 +80,10 @@ class ActiveMQAdapterContractTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>factory.toURI().toString().contains("localhost")</code>\u4e3a\u771f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void shouldConstructArtemisFactoryWithoutContainer() throws Exception {
         try (ActiveMQConnectionFactory factory =
@@ -84,6 +92,10 @@ class ActiveMQAdapterContractTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>ActiveMQClient.messageId(message)</code> \u7b49\u4e8e <code>"test-id"</code>\uff0c<code>acknowledgment.isAcknowledged()</code>\u4e3a\u771f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void shouldReadMessageIdAndRequeueOnNack() throws Exception {
         Message message = mock(Message.class);
@@ -100,6 +112,10 @@ class ActiveMQAdapterContractTest {
         assertTrue(acknowledgment.isAcknowledged());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>ActiveMQClient.messageId(message)</code> \u7b49\u4e8e <code>"legacy-id"</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void shouldFallbackToLegacyWhenPrimaryMissing() throws Exception {
         Message message = mock(Message.class);
@@ -109,6 +125,10 @@ class ActiveMQAdapterContractTest {
         assertEquals("legacy-id", ActiveMQClient.messageId(message));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>client.initProducer(new MQProperties())</code> \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>failure.getCause()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>startFailure</code>\u3002
+     * @throws Exception \u51c6\u5907\u6216\u91ca\u653e\u88ab\u6d4b\u8fd0\u884c\u8d44\u6e90\u65f6\u5931\u8d25
+     */
     @Test
     void shouldCloseConnectionWhenStartFails() throws Exception {
         ActiveMQConnectionFactory factory = mock(ActiveMQConnectionFactory.class);
@@ -127,6 +147,10 @@ class ActiveMQAdapterContractTest {
         verify(connection, times(1)).close();
     }
 
+    /**
+     * \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>mock()</code>\u3001<code>factory.createConnection()</code>\u3001<code>connection.createSession()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002
+     * @throws Exception \u53cd\u5c04\u8bbf\u95ee\u88ab\u6d4b\u6210\u5458\u65f6\u5931\u8d25
+     */
     @Test
     void shouldCloseConsumerSessionAndConnectionInReverseOrderOnlyOnce() throws Exception {
         ActiveMQConnectionFactory factory = mock(ActiveMQConnectionFactory.class);
@@ -162,6 +186,7 @@ class ActiveMQAdapterContractTest {
         order.verify(connection).close();
     }
 
+    /** \u4f5c\u4e3a\u7a7a\u5b9e\u73b0\u7684\u6d4b\u8bd5\u66ff\u8eab\uff0c\u8c03\u7528\u65f6\u4fdd\u6301\u5f53\u524d\u5939\u5177\u72b6\u6001\u3002 */
     @SuppressWarnings("unused")
     private void listenerMethod() {
     }

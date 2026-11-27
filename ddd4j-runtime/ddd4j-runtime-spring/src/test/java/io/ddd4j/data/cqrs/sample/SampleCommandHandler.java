@@ -40,6 +40,7 @@ public class SampleCommandHandler implements CommandExecutor<SampleCommand> {
      */
     public static final String HANDLED = "handled-by-sample-handler";
 
+    /** {@inheritDoc} */
     @Override
     public Set<Class<? extends Command>> supportedCommands() {
         return Collections.<Class<? extends Command>>singleton(SampleCommand.class);

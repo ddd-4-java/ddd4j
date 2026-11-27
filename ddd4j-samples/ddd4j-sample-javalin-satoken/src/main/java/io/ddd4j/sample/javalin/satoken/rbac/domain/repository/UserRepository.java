@@ -28,7 +28,9 @@ import java.util.Optional;
 public interface UserRepository extends Repository<User, String> {
 
     /**
-     * 查询全部用户。
+     * \u67e5\u8be2\u5168\u90e8\u7528\u6237\u3002
+     *
+     * @return \u4ed3\u50a8\u4e2d\u5df2\u6709\u7684\u7528\u6237\u96c6\u5408
      */
     List<User> findAll();
 

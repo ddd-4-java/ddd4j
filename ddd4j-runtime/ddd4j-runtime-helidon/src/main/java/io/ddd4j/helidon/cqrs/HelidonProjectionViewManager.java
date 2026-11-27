@@ -8,6 +8,7 @@ import java.util.Collection;
  * Helidon 视图适配器；手动 SE 与 MP 生命周期均委派共享管理器。
  */
 public class HelidonProjectionViewManager implements ViewManager {
+    /** \u6267\u884c Helidon \u6295\u5f71\u89c6\u56fe\u751f\u547d\u5468\u671f\u7684\u5171\u4eab\u7ba1\u7406\u5668\u3002 */
     private final DefaultViewManager<Object> delegate;
 
     /**
@@ -24,26 +25,31 @@ public class HelidonProjectionViewManager implements ViewManager {
                 (Collection<ProjectionView<Object>>) (Collection<?>) views);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void start() {
         delegate.start();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void stop() {
         delegate.stop();
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isRunning() {
         return delegate.isRunning();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void triggerOnce() {
         delegate.triggerOnce();
     }
 
+    /** {@inheritDoc} */
     @Override
     public ProjectionStatus getProjectionStatus(String streamId) {
         return delegate.getProjectionStatus(streamId);

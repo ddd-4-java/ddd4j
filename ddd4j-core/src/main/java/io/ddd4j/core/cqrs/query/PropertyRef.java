@@ -34,6 +34,7 @@ import java.util.Objects;
  */
 public final class PropertyRef implements Serializable {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = -3906849612189306727L;
 
     /**
@@ -100,6 +101,13 @@ public final class PropertyRef implements Serializable {
         return new PropertyRef(PropertySpace.PERSISTENCE, ownerType, LambdaKit.resolve(function));
     }
 
+    /**
+     * \u6784\u9020\u5c5e\u6027\u58f0\u660e\u7c7b\u578b\u4e0e\u5f53\u524d\u67e5\u8be2\u4f5c\u7528\u57df\u4e0d\u517c\u5bb9\u7684\u9519\u8bef\u3002
+     * @param space \u9886\u57df\u6216\u6301\u4e45\u5316\u5c5e\u6027\u7a7a\u95f4
+     * @param ownerType \u5c5e\u6027\u58f0\u660e\u6240\u5728\u7684 Java \u7c7b\u578b
+     * @param expectedType \u5f53\u524d\u4f5c\u7528\u57df\u63a5\u53d7\u7684\u7c7b\u578b
+     * @return \u63cf\u8ff0\u5c5e\u6027\u7c7b\u578b\u4e0d\u517c\u5bb9\u7684\u53c2\u6570\u5f02\u5e38
+     */
     private static IllegalArgumentException incompatible(PropertySpace space, Class<?> ownerType,
                                                          Class<?> expectedType) {
         return new IllegalArgumentException("Query " + space + " property owner " + ownerType.getName()
@@ -214,6 +222,7 @@ public final class PropertyRef implements Serializable {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -228,6 +237,7 @@ public final class PropertyRef implements Serializable {
                 && Objects.equals(property, other.property);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int result = 0;
@@ -237,6 +247,7 @@ public final class PropertyRef implements Serializable {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "PropertyRef[space=" + space + ", ownerType=" + ownerType + ", property=" + property + "]";

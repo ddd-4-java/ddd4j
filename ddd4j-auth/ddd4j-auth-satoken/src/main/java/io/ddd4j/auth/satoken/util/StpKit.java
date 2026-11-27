@@ -259,6 +259,12 @@ public class StpKit {
         return getExtraAs(SaConstants.PAYLOAD_IDENTITY_ID, FunctionKit.TO_INTEGER);
     }
 
+    /**
+     * \u4f18\u5148\u8bfb\u53d6\u7ea6\u5b9a\u7684\u58f0\u660e\u952e\uff0c\u6ca1\u6709\u503c\u65f6\u56de\u9000\u5230\u517c\u5bb9\u5b57\u6bb5\u3002
+     * @param claimKey \u4f18\u5148\u8bfb\u53d6\u7684 JWT \u58f0\u660e\u952e
+     * @param fieldKey \u517c\u5bb9\u65e7\u6570\u636e\u7684\u56de\u9000\u5b57\u6bb5\u952e
+     * @return \u89e3\u6790\u5230\u7684\u58f0\u660e\u503c\uff0c\u5747\u7f3a\u5931\u65f6\u8fd4\u56de\u7a7a
+     */
     private static Object getIdClaim(String claimKey, String fieldKey) {
         Object value = StpUtil.getExtra(claimKey);
         return Objects.nonNull(value) ? value : StpUtil.getExtra(fieldKey);

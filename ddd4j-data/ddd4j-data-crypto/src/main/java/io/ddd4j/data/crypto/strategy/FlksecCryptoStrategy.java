@@ -59,6 +59,7 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
      * 远程服务端口
      */
     private final String port;
+    /** \u8bbf\u95ee FLKSEC \u670d\u52a1\u4f7f\u7528\u7684 HTTP \u6216 HTTPS \u534f\u8bae\u3002 */
     private final String scheme;
 
     /**
@@ -73,6 +74,14 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
         this(objectMapper, httpClient, address, port, "https");
     }
 
+    /**
+     * \u7528\u7ed9\u5b9a\u503c\u521d\u59cb\u5316 <code>FlksecCryptoStrategy</code> \u5b9e\u4f8b\u3002
+     * @param objectMapper JSON \u5bf9\u8c61\u6620\u5c04\u5668
+     * @param httpClient HTTP \u5ba2\u6237\u7aef
+     * @param address \u8fdc\u7a0b\u670d\u52a1\u5730\u5740
+     * @param port \u8fdc\u7a0b\u670d\u52a1\u7aef\u53e3
+     * @param scheme <code>scheme</code> \u5b57\u6bb5
+     */
     private FlksecCryptoStrategy(ObjectMapper objectMapper, HttpClient httpClient, String address, String port, String scheme) {
         this.objectMapper = objectMapper;
         this.httpClient = httpClient;
@@ -92,6 +101,13 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
         this(objectMapper, HttpClient.newHttpClient(), address, port);
     }
 
+    /**
+     * \u4ee5\u9ed8\u8ba4 HTTP \u5ba2\u6237\u7aef\u8fde\u63a5\u6307\u5b9a\u7684 FLKSEC \u670d\u52a1\u3002
+     * @param objectMapper \u7f16\u7801\u5bc6\u7801\u670d\u52a1\u8bf7\u6c42\u548c\u54cd\u5e94\u7684 JSON \u6620\u5c04\u5668
+     * @param address \u5bc6\u7801\u670d\u52a1\u5730\u5740
+     * @param port \u5bc6\u7801\u670d\u52a1\u7aef\u53e3
+     * @param scheme \u8bf7\u6c42\u534f\u8bae
+     */
     FlksecCryptoStrategy(ObjectMapper objectMapper, String address, String port, String scheme) {
         this(objectMapper, HttpClient.newHttpClient(), address, port, scheme);
     }
@@ -107,7 +123,17 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
     }
 
     /**
-     * 字段加密（远程调用弗兰科信息加密服务）
+     * \u5b57\u6bb5\u52a0\u5bc6\uff08\u8fdc\u7a0b\u8c03\u7528\u5f17\u5170\u79d1\u4fe1\u606f\u52a0\u5bc6\u670d\u52a1\uff09
+     *
+     * @param value \u5f85\u52a0\u5bc6\u6570\u636e
+     * @param algorithmType \u52a0\u5bc6\u7b97\u6cd5\u7c7b\u578b
+     * @param encMode \u5206\u7ec4\u52a0\u5bc6\u5de5\u4f5c\u6a21\u5f0f
+     * @param padMode \u5206\u7ec4\u52a0\u5bc6\u586b\u5145\u65b9\u5f0f
+     * @param key \u8fd0\u7b97\u6240\u7528\u5bc6\u94a5
+     * @param iv \u521d\u59cb\u5316\u5411\u91cf
+     * @param plainIsEncode \u660e\u6587\u662f\u5426\u4ee5\u7f16\u7801\u5f62\u5f0f\u4f20\u5165\u6216\u8fd4\u56de
+     * @param <T> \u5f85\u52a0\u5bc6\u6570\u636e\u7684\u7c7b\u578b
+     * @return \u7f16\u7801\u540e\u7684\u5bc6\u6587
      */
     @Override
     public <T> String encrypt(T value, SymmetricAlgorithmType algorithmType, String encMode, String padMode, String key, String iv, boolean plainIsEncode) {
@@ -157,7 +183,18 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
     }
 
     /**
-     * 字段解密（远程调用弗兰科信息解密服务）
+     * \u5b57\u6bb5\u89e3\u5bc6\uff08\u8fdc\u7a0b\u8c03\u7528\u5f17\u5170\u79d1\u4fe1\u606f\u89e3\u5bc6\u670d\u52a1\uff09
+     *
+     * @param value \u5f85\u89e3\u5bc6\u7684\u5bc6\u6587
+     * @param algorithmType \u52a0\u5bc6\u7b97\u6cd5\u7c7b\u578b
+     * @param encMode \u5206\u7ec4\u52a0\u5bc6\u5de5\u4f5c\u6a21\u5f0f
+     * @param padMode \u5206\u7ec4\u52a0\u5bc6\u586b\u5145\u65b9\u5f0f
+     * @param key \u8fd0\u7b97\u6240\u7528\u5bc6\u94a5
+     * @param iv \u521d\u59cb\u5316\u5411\u91cf
+     * @param plainIsEncode \u660e\u6587\u662f\u5426\u4ee5\u7f16\u7801\u5f62\u5f0f\u4f20\u5165\u6216\u8fd4\u56de
+     * @param rtType \u89e3\u5bc6\u540e\u8f6c\u6362\u5230\u7684 Java \u7c7b\u578b
+     * @param <T> \u89e3\u5bc6\u7ed3\u679c\u7684\u7c7b\u578b
+     * @return \u6307\u5b9a\u76ee\u6807\u7c7b\u578b\u7684\u660e\u6587
      */
     @Override
     public <T> T decrypt(String value, SymmetricAlgorithmType algorithmType, String encMode, String padMode, String key, String iv, boolean plainIsEncode, Class<T> rtType) {
@@ -202,7 +239,15 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
     }
 
     /**
-     * HMAC 签名（远程调用弗兰科信息签名服务）
+     * HMAC \u7b7e\u540d\uff08\u8fdc\u7a0b\u8c03\u7528\u5f17\u5170\u79d1\u4fe1\u606f\u7b7e\u540d\u670d\u52a1\uff09
+     *
+     * @param value \u5f85\u8ba1\u7b97\u6d88\u606f\u8ba4\u8bc1\u7801\u7684\u6570\u636e
+     * @param hmacAlgorithm \u6d88\u606f\u8ba4\u8bc1\u7801\u7b97\u6cd5
+     * @param key \u8fd0\u7b97\u6240\u7528\u5bc6\u94a5
+     * @param iv \u521d\u59cb\u5316\u5411\u91cf
+     * @param plainIsEncode \u660e\u6587\u662f\u5426\u4ee5\u7f16\u7801\u5f62\u5f0f\u4f20\u5165\u6216\u8fd4\u56de
+     * @param <T> \u5f85\u8ba1\u7b97\u6d88\u606f\u8ba4\u8bc1\u7801\u7684\u6570\u636e\u7c7b\u578b
+     * @return \u6d88\u606f\u8ba4\u8bc1\u7801\u7684\u7f16\u7801\u7ed3\u679c
      */
     @Override
     public <T> String hmac(T value, HmacAlgorithm hmacAlgorithm, String key, String iv, boolean plainIsEncode) {

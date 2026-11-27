@@ -30,13 +30,25 @@ import java.util.function.Consumer;
 @Slf4j
 public final class SaTokenDataAccessAudit {
 
+    /** \u6807\u8bc6\u4e00\u6b21\u6570\u636e\u8bbf\u95ee\u5ba1\u8ba1\u7684\u8bf7\u6c42\u5c5e\u6027\u952e\u3002 */
     private static final Marker ACCESS_MARKER = MarkerFactory.getMarker(Constants.ACCESS_MARKER);
 
+    /** \u5f53\u524d\u8bbf\u95ee\u5df2\u7ecf\u901a\u8fc7\u8ba4\u8bc1\u7684\u6570\u636e\u8eab\u4efd\u3002 */
     private final SaTokenDataIdentity identity;
+    /** \u672c\u6b21\u5ba1\u8ba1\u8bb0\u5f55\u7684 HTTP \u65b9\u6cd5\u3002 */
     private final String method;
+    /** \u7528\u4e8e\u63cf\u8ff0\u5f53\u524d\u6570\u636e\u8bbf\u95ee\u7528\u9014\u7684\u64cd\u4f5c\u6807\u8bc6\u3002 */
     private final String operation;
+    /** \u672c\u6b21\u6570\u636e\u8bbf\u95ee\u7ed3\u675f\u65f6\u7684\u54cd\u5e94\u72b6\u6001\u7801\u3002 */
     private final int status;
 
+    /**
+     * \u4fdd\u5b58\u4e00\u6b21\u6570\u636e\u8303\u56f4\u8bbf\u95ee\u7684\u8ba4\u8bc1\u8eab\u4efd\u3001\u64cd\u4f5c\u548c\u72b6\u6001\u3002
+     * @param identity \u5f53\u524d\u5df2\u7ecf\u9a8c\u8bc1\u7684\u79df\u6237\u3001\u5e94\u7528\u548c\u7528\u6237\u8eab\u4efd
+     * @param method \u5f53\u524d\u8bbf\u95ee\u4f7f\u7528\u7684 HTTP \u8bf7\u6c42\u65b9\u6cd5
+     * @param operation \u5f53\u524d\u8bbf\u95ee\u5bf9\u5e94\u7684\u4e1a\u52a1\u64cd\u4f5c\u6807\u8bc6
+     * @param status \u5f53\u524d\u8bbf\u95ee\u7684 HTTP \u54cd\u5e94\u72b6\u6001\u7801
+     */
     private SaTokenDataAccessAudit(SaTokenDataIdentity identity, String method, String operation, int status) {
         this.identity = identity;
         this.method = method;

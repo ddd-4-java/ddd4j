@@ -22,7 +22,10 @@ import io.dropwizard.core.Configuration;
 @lombok.Getter
 @lombok.Setter
 public class DropwizardCqrsConfiguration extends Configuration {
+    /** \u5546\u54c1\u4ea4\u6613\u793a\u4f8b\u7684 JDBC \u8fde\u63a5\u5730\u5740\u3002 */
     private String catalogJdbcUrl;
+    /** \u5546\u54c1\u4ea4\u6613\u793a\u4f8b\u6570\u636e\u5e93\u8d26\u53f7\u3002 */
     private String catalogDbUser;
+    /** \u8fde\u63a5\u5546\u54c1\u4ea4\u6613\u793a\u4f8b\u6570\u636e\u5e93\u6240\u7528\u7684\u53e3\u4ee4\u3002 */
     private String catalogDbPassword;
 }

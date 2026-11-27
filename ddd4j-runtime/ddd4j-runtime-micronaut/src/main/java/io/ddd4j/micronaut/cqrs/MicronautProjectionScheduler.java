@@ -40,6 +40,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class MicronautProjectionScheduler implements ViewScheduler {
 
+    /** \u6309\u8ba1\u5212\u6267\u884c\u5f53\u524d\u7ec4\u4ef6\u540e\u53f0\u4efb\u52a1\u7684\u5b9a\u65f6\u7ebf\u7a0b\u6c60\u3002 */
     private final ScheduledExecutorService executor;
 
     /**
@@ -71,6 +72,7 @@ public class MicronautProjectionScheduler implements ViewScheduler {
         executor.shutdownNow();
     }
 
+    /** {@inheritDoc} */
     @Override
     public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
         Objects.requireNonNull(viewName, "viewName must not be null");
@@ -87,19 +89,32 @@ public class MicronautProjectionScheduler implements ViewScheduler {
      */
     private static class ReschedulingHandle implements ViewScheduleHandle, Runnable {
 
+        /** \u6309\u8ba1\u5212\u6267\u884c\u5f53\u524d\u7ec4\u4ef6\u540e\u53f0\u4efb\u52a1\u7684\u5b9a\u65f6\u7ebf\u7a0b\u6c60\u3002 */
         private final ScheduledExecutorService executor;
+        /** \u7528\u6765\u786e\u5b9a\u4efb\u52a1\u4e0b\u6b21\u89e6\u53d1\u65f6\u95f4\u7684 Cron \u8868\u8fbe\u5f0f\u3002 */
         private final CronExpression cron;
+        /** \u7531\u5f53\u524d\u8c03\u5ea6\u53e5\u67c4\u6267\u884c\u7684\u6295\u5f71\u4efb\u52a1\u3002 */
         private final Runnable task;
+        /** \u7528\u4e8e\u8ddf\u8e2a\u548c\u53d6\u6d88\u540e\u53f0\u8c03\u5ea6\u4efb\u52a1\u7684\u53e5\u67c4\u3002 */
         private volatile ScheduledFuture<?> future;
+        /** \u4efb\u52a1\u662f\u5426\u5df2\u53d6\u6d88\u5e76\u505c\u6b62\u7ee7\u7eed\u5b89\u6392\u65b0\u7684\u89e6\u53d1\u3002 */
         private volatile boolean cancelled = false;
+        /** \u6807\u8bc6\u5f53\u524d\u8ba1\u5212\u7248\u672c\uff0c\u4f9b\u505c\u7528\u5df2\u5931\u6548\u7684\u5f02\u6b65\u89e6\u53d1\u3002 */
         private long scheduleGeneration;
 
+        /**
+         * \u7528\u7ed9\u5b9a\u503c\u521d\u59cb\u5316 <code>ReschedulingHandle</code> \u5b9e\u4f8b\u3002
+         * @param executor \u6309\u8ba1\u5212\u6267\u884c\u5f53\u524d\u7ec4\u4ef6\u540e\u53f0\u4efb\u52a1\u7684\u5b9a\u65f6\u7ebf\u7a0b\u6c60
+         * @param cron <code>cron</code> \u5b57\u6bb5
+         * @param task <code>task</code> \u5b57\u6bb5
+         */
         ReschedulingHandle(ScheduledExecutorService executor, CronExpression cron, Runnable task) {
             this.executor = executor;
             this.cron = cron;
             this.task = task;
         }
 
+        /** \u6839\u636e Cron \u8ba1\u7b97\u4e0b\u4e00\u6b21\u6267\u884c\u65f6\u95f4\uff0c\u5e76\u5728\u8ba1\u5212\u4ecd\u6709\u6548\u65f6\u5411\u8c03\u5ea6\u7ebf\u7a0b\u6c60\u6ce8\u518c\u89e6\u53d1\u3002 */
         synchronized void scheduleNext() {
             if (cancelled) {
                 return;
@@ -121,6 +136,7 @@ public class MicronautProjectionScheduler implements ViewScheduler {
             }
         }
 
+        /** {@inheritDoc} */
         @Override
         public void run() {
             if (cancelled) {
@@ -133,6 +149,7 @@ public class MicronautProjectionScheduler implements ViewScheduler {
             }
         }
 
+        /** {@inheritDoc} */
         @Override
         public synchronized void cancel() {
             cancelled = true;
@@ -142,6 +159,7 @@ public class MicronautProjectionScheduler implements ViewScheduler {
             }
         }
 
+        /** {@inheritDoc} */
         @Override
         public synchronized boolean isActive() {
             if (cancelled) {
@@ -156,8 +174,13 @@ public class MicronautProjectionScheduler implements ViewScheduler {
      * 保留六段数值语法，时间搜索复用 core；保留本地时区语义。
      */
     public static class CronExpression {
+        /** \u8d1f\u8d23\u89e3\u6790 Cron \u5b57\u6bb5\u5e76\u8ba1\u7b97\u4e0b\u6b21\u89e6\u53d1\u65f6\u95f4\u7684\u5171\u7528\u5b9e\u73b0\u3002 */
         private final ProjectionCron delegate;
 
+        /**
+         * \u628a\u5df2\u89e3\u6790\u7684 Cron \u8ba1\u5212\u5305\u88c5\u6210\u5f53\u524d\u6846\u67b6\u7684\u8c03\u5ea6\u8868\u8fbe\u5f0f\u3002
+         * @param delegate \u6267\u884c\u5171\u4eab\u884c\u4e3a\u7684\u5e95\u5c42\u5b9e\u73b0
+         */
         private CronExpression(ProjectionCron delegate) {
             this.delegate = delegate;
         }

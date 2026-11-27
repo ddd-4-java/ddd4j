@@ -9,8 +9,10 @@ import java.time.Duration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+/** \u9a8c\u8bc1 <code>MQDeliveryPolicyValueContract</code> \u5728 <code>explicitJsonPropertiesRemainAvailable</code> \u7b49\u573a\u666f\u4e2d\u7684\u884c\u4e3a\u3002 */
 class MQDeliveryPolicyValueContractTest {
 
+    /** \u9a8c\u8bc1<code>same</code> \u7b49\u4e8e <code>policy</code>\uff0c<code>same.hashCode()</code> \u7b49\u4e8e <code>policy.hashCode()</code>\uff0c<code>different</code> \u4e0d\u7b49\u4e8e <code>policy</code>\u3002 */
     @Test
     void valueContractPreservesDeliverySettings() {
         MQDeliveryPolicy policy = MQDeliveryPolicy.productionDefault();
@@ -26,6 +28,10 @@ class MQDeliveryPolicyValueContractTest {
                 policy.toString());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>mapper.readTree(json).size()</code> \u7b49\u4e8e <code>5</code>\uff0c<code>mapper.readValue(json, MQDeliveryPolicy.class)</code> \u7b49\u4e8e <code>policy</code>\u3002
+     * @throws Exception \u5904\u7406\u6d4b\u8bd5\u6570\u636e\u7684\u5e8f\u5217\u5316\u65f6\u5931\u8d25
+     */
     @Test
     void jacksonRoundTripPreservesReliableDeliveryPolicy() throws Exception {
         MQDeliveryPolicy policy = MQDeliveryPolicy.productionDefault();
@@ -37,6 +43,10 @@ class MQDeliveryPolicyValueContractTest {
         assertEquals(policy, mapper.readValue(json, MQDeliveryPolicy.class));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>mapper.readTree(json).size()</code> \u7b49\u4e8e <code>5</code>\uff0c<code>mapper.readValue(json, MQDeliveryPolicy.class)</code> \u7b49\u4e8e <code>policy</code>\u3002
+     * @throws Exception \u5904\u7406\u6d4b\u8bd5\u6570\u636e\u7684\u5e8f\u5217\u5316\u65f6\u5931\u8d25
+     */
     @Test
     void explicitJsonPropertiesRemainAvailableWithGetterDiscoveryDisabled() throws Exception {
         MQDeliveryPolicy policy = MQDeliveryPolicy.productionDefault();
@@ -51,6 +61,7 @@ class MQDeliveryPolicyValueContractTest {
         assertEquals(policy, mapper.readValue(json, MQDeliveryPolicy.class));
     }
 
+    /** \u53ea\u63d0\u4f9b\u663e\u5f0f\u8bbf\u95ee\u5668\u7684\u6837\u672c\uff0c\u7528\u4e8e\u9a8c\u8bc1\u5b9e\u9645 Bean \u8bbf\u95ee\u89c4\u5219\u3002 */
     @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE)
     private abstract static class ExplicitGettersOnly {
     }

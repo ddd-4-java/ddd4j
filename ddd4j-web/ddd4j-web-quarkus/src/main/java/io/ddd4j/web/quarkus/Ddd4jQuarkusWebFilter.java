@@ -39,15 +39,23 @@ import java.util.*;
  */
 public class Ddd4jQuarkusWebFilter {
 
+    /** \u8bf7\u6c42\u5c5e\u6027\u4e2d\u4fdd\u5b58\u4f1a\u8bdd\u6216\u8ba4\u8bc1\u4e0a\u4e0b\u6587\u7684\u952e\u3002 */
     static final String SESSION_PROPERTY = Ddd4jQuarkusWebFilter.class.getName() + ".session";
+    /** \u8bf7\u6c42\u5c5e\u6027\u4e2d\u4fdd\u5b58 DDD4J \u4e0a\u4e0b\u6587\u4f5c\u7528\u57df\u7684\u952e\u3002 */
     static final String CONTEXT_PROPERTY = Ddd4jQuarkusWebFilter.class.getName() + ".context";
+    /** \u8bf7\u6c42\u5c5e\u6027\u4e2d\u4fdd\u5b58 OpenTelemetry \u8ddf\u8e2a Span \u7684\u952e\u3002 */
     static final String OTEL_SPAN_PROPERTY = Ddd4jQuarkusWebFilter.class.getName() + ".otelSpan";
+    /** \u8bf7\u6c42\u5c5e\u6027\u4e2d\u4fdd\u5b58 OpenTelemetry \u4e0a\u4e0b\u6587\u4f5c\u7528\u57df\u7684\u952e\u3002 */
     static final String OTEL_SCOPE_PROPERTY = Ddd4jQuarkusWebFilter.class.getName() + ".otelScope";
 
+    /** \u6839\u636e\u6846\u67b6\u8bf7\u6c42\u5143\u6570\u636e\u88c5\u914d\u5171\u7528 Web \u8bf7\u6c42\u4e0a\u4e0b\u6587\u3002 */
     private final WebRequestContextFactory contextFactory;
+    /** \u5f00\u542f\u548c\u5173\u95ed\u5f53\u524d Web \u8bf7\u6c42\u4e0a\u4e0b\u6587\u7684\u7ec4\u4ef6\u3002 */
     private final WebRequestLifecycle requestLifecycle;
+    /** \u5728\u8bf7\u6c42\u5904\u7406\u9636\u6bb5\u83b7\u53d6\u53ca\u91ca\u653e\u5e42\u7b49\u4fdd\u62a4\u7684\u7ec4\u4ef6\u3002 */
     private final WebIdempotencyLifecycle idempotencyLifecycle;
 
+    /** \u5f53\u524d Vert.x \u6216 Quarkus HTTP \u8def\u7531\u4e0a\u4e0b\u6587\u3002 */
     @Inject
     RoutingContext routingContext;
 
@@ -75,6 +83,12 @@ public class Ddd4jQuarkusWebFilter {
                 config.getIdempotencyTtl()) : null;
     }
 
+    /**
+     * \u7528\u7ed9\u5b9a\u503c\u521d\u59cb\u5316 <code>Ddd4jQuarkusWebFilter</code> \u5b9e\u4f8b\u3002
+     * @param contextFactory <code>contextFactory</code> \u5b57\u6bb5
+     * @param requestLifecycle \u5f00\u542f\u548c\u5173\u95ed\u5f53\u524d Web \u8bf7\u6c42\u4e0a\u4e0b\u6587\u7684\u7ec4\u4ef6
+     * @param idempotencyLifecycle \u5728\u8bf7\u6c42\u5904\u7406\u9636\u6bb5\u83b7\u53d6\u53ca\u91ca\u653e\u5e42\u7b49\u4fdd\u62a4\u7684\u7ec4\u4ef6
+     */
     Ddd4jQuarkusWebFilter(WebRequestContextFactory contextFactory,
                           WebRequestLifecycle requestLifecycle,
                           WebIdempotencyLifecycle idempotencyLifecycle) {
@@ -83,6 +97,10 @@ public class Ddd4jQuarkusWebFilter {
         this.idempotencyLifecycle = idempotencyLifecycle;
     }
 
+    /**
+     * \u5c1d\u8bd5\u5173\u95ed\u8bf7\u6c42\u4f5c\u7528\u57df\uff0c\u6e05\u7406\u6545\u969c\u4e0d\u6253\u65ad\u54cd\u5e94\u5904\u7406\u3002
+     * @param scope \u9700\u8981\u5728\u5f53\u524d\u8bf7\u6c42\u7ed3\u675f\u540e\u5173\u95ed\u7684\u4f5c\u7528\u57df
+     */
     private static void closeScope(Object scope) {
         if (scope instanceof AutoCloseable) {
             try {
@@ -92,6 +110,11 @@ public class Ddd4jQuarkusWebFilter {
         }
     }
 
+    /**
+     * \u6536\u96c6 HTTP \u8bf7\u6c42\u4e2d\u53ef\u7528\u7684\u5934\u540d\u79f0\u53ca\u5176\u503c\u3002
+     * @param request \u5f53\u524d\u6846\u67b6 HTTP \u8bf7\u6c42\u6216\u4ea4\u6362\u4e0a\u4e0b\u6587
+     * @return \u4f9b\u8bf7\u6c42\u4e0a\u4e0b\u6587\u8bfb\u53d6\u7684\u8bf7\u6c42\u5934\u6620\u5c04
+     */
     private static Map<String, String> extractRequestHeaders(ContainerRequestContext request) {
         Map<String, String> headers = new HashMap<>();
         for (Map.Entry<String, List<String>> entry : request.getHeaders().entrySet()) {
@@ -181,6 +204,11 @@ public class Ddd4jQuarkusWebFilter {
         }
     }
 
+    /**
+     * \u4ece\u6846\u67b6\u8bf7\u6c42\u63d0\u53d6\u79df\u6237\u3001\u8ddf\u8e2a\u6807\u8bc6\u3001\u8ba4\u8bc1\u548c\u8def\u7531\u4fe1\u606f\uff0c\u7ec4\u88c5\u5171\u7528\u4e0a\u4e0b\u6587\u3002
+     * @param request \u5f53\u524d\u6846\u67b6 HTTP \u8bf7\u6c42
+     * @return \u4f9b\u4e0a\u4e0b\u6587\u548c\u8ba4\u8bc1\u5904\u7406\u94fe\u4f7f\u7528\u7684\u8bf7\u6c42\u4e0a\u4e0b\u6587
+     */
     private WebRequestContext createContext(ContainerRequestContext request) {
         return contextFactory.create(new WebRequestData(
                 request.getHeaderString(WebHeaders.REQUEST_ID),
@@ -195,6 +223,10 @@ public class Ddd4jQuarkusWebFilter {
                 request.getUriInfo().getRequestUri().getPath()));
     }
 
+    /**
+     * \u4ece\u5e95\u5c42 HTTP \u8fde\u63a5\u8bfb\u53d6\u5bf9\u7aef\u5730\u5740\uff0c\u672a\u53d6\u5f97\u8fde\u63a5\u4fe1\u606f\u65f6\u8fd4\u56de\u7a7a\u3002
+     * @return \u6846\u67b6\u62a5\u544a\u7684\u5bf9\u7aef\u5730\u5740
+     */
     private String remoteAddress() {
         if (Objects.isNull(routingContext)) {
             return null;

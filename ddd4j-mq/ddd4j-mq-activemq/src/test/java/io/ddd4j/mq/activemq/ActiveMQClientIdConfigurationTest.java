@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class ActiveMQClientIdConfigurationTest {
 
+    /** \u9a8c\u8bc1<code>reads.get()</code> \u7b49\u4e8e <code>1</code>\u3002 */
     @Test
     void readsClientIdPrefixOnceWhenSettingFactoryClientId() {
         AtomicInteger reads = new AtomicInteger();

@@ -43,7 +43,9 @@ public class ApplicationStartReporter {
      */
     public static CodeVersion CODE_VERSION = null;
 
+    /** \u53d1\u5e03\u5e94\u7528\u542f\u52a8\u6d88\u606f\u7684\u53d1\u9001\u7ec4\u4ef6\u3002 */
     private final Sender sender;
+    /** \u542f\u52a8\u901a\u77e5\u4e2d\u663e\u793a\u7684\u5e94\u7528\u540d\u79f0\u3002 */
     private final String appName;
 
     /**
@@ -57,6 +59,12 @@ public class ApplicationStartReporter {
         this.appName = appName;
     }
 
+    /**
+     * \u628a\u975e\u7a7a\u767d\u5143\u6570\u636e\u8ffd\u52a0\u4e3a\u901a\u77e5\u4e2d\u7684 Markdown \u5b57\u6bb5\u3002
+     * @param sb \u901a\u77e5\u6587\u672c\u7f13\u51b2\u533a
+     * @param key \u5b57\u6bb5\u663e\u793a\u540d\u79f0
+     * @param value \u5f85\u5199\u5165\u7684\u5b57\u6bb5\u503c
+     */
     private static void markdownAppend(StringBuilder sb, String key, String value) {
         if (Objects.nonNull(value) && StrKit.isNotBlank(value)) {
             sb.append("**").append(key).append(":** ").append(value).append("\n");
@@ -100,6 +108,11 @@ public class ApplicationStartReporter {
         sender.send(buildNotice(CODE_VERSION));
     }
 
+    /**
+     * \u5c06\u5e94\u7528\u540d\u4e0e\u7248\u672c\u5143\u6570\u636e\u7ec4\u88c5\u4e3a\u542f\u52a8\u6210\u529f\u901a\u77e5\u3002
+     * @param v \u5f53\u524d\u6784\u5efa\u7684\u7248\u672c\u548c\u63d0\u4ea4\u4fe1\u606f
+     * @return \u53d1\u9001\u7ed9\u542f\u52a8\u901a\u77e5\u6e20\u9053\u7684 Markdown \u6587\u672c
+     */
     private String buildNotice(CodeVersion v) {
         StringBuilder sb = new StringBuilder();
         sb.append(StrKit.format("应用 **{0}** 启动成功！", appName)).append("\n");

@@ -7,8 +7,10 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/** \u901a\u8fc7 <code>Collections.singleton()</code>\u3001<code>user.loginId()</code>\u3001<code>user.getLoginId()</code> \u9a8c\u8bc1 <code>AuthorizationViewContract</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
 class AuthorizationViewContractTest {
 
+    /** \u9a8c\u8bc1<code>user.getLoginId()</code> \u7b49\u4e8e <code>user.loginId()</code>\uff0c<code>user.getDisplayName()</code> \u7b49\u4e8e <code>user.displayName()</code>\uff0c<code>permission.getDescription()</code> \u7b49\u4e8e <code>permission.description()</code>\u3002 */
     @Test
     void viewsExposeMatchingBeanAndComponentAccessors() {
         Set<String> roles = Collections.singleton("admin");
@@ -32,6 +34,7 @@ class AuthorizationViewContractTest {
         assertEquals(permission.description(), permission.getDescription());
     }
 
+    /** \u9a8c\u8bc1<code>user.hashCode()</code> \u7b49\u4e8e <code>userHash</code>\uff0c<code>role.hashCode()</code> \u7b49\u4e8e <code>roleHash</code>\uff0c<code>permission.hashCode()</code> \u7b49\u4e8e <code>permissionHash</code>\u3002 */
     @Test
     void viewsRetainThreeLineValueHashes() {
         Set<String> roles = Collections.singleton("admin");

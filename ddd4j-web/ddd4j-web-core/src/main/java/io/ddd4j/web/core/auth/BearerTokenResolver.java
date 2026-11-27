@@ -23,6 +23,7 @@ import java.util.Optional;
  */
 public final class BearerTokenResolver {
 
+    /** Authorization \u4e2d\u4f7f\u7528\u7684 Bearer \u534f\u8bae\u524d\u7f00\u3002 */
     private static final String PREFIX = "Bearer ";
 
     /**

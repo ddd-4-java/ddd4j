@@ -38,22 +38,40 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/** \u9a8c\u8bc1 <code>SaMixCheckLoginHandler</code> \u5728<code>check</code>\u3001<code>checkIgnoresLoginFlag</code>\u7b49\u64cd\u4f5c\u4e2d\u7684\u884c\u4e3a\u5951\u7ea6\u3002 */
 class SaMixCheckLoginHandlerTest {
 
+    /** \u5f53\u524d\u7528\u4f8b\u5b9e\u9645\u8c03\u7528\u6216\u914d\u7f6e\u884c\u4e3a\u7684\u5904\u7406\u5668\u3002 */
     private final SaMixCheckLoginHandler handler = new SaMixCheckLoginHandler();
 
+    /** \u8fdb\u5165\u6d4b\u8bd5\u573a\u666f\u524d\u6ce8\u518c\u7684\u914d\u7f6e\u3002 */
     private SaTokenConfig originalConfig;
+    /** \u8fdb\u5165\u6d4b\u8bd5\u573a\u666f\u524d\u6ce8\u518c\u7684\u4f1a\u8bdd\u5b58\u50a8\u3002 */
     private SaTokenDao originalDao;
+    /** \u8fdb\u5165\u6d4b\u8bd5\u573a\u666f\u524d\u6ce8\u518c\u7684\u8ba4\u8bc1\u903b\u8f91\u3002 */
     private StpLogic originalLogic;
 
+    /**
+     * \u901a\u8fc7 <code>Fixture.class.getDeclaredMethod()</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+     * @param methodName \u4f20\u7ed9 <code>Fixture.class.getDeclaredMethod()</code> \u7684 <code>String</code> \u8f93\u5165
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>Fixture.class.getDeclaredMethod(methodName).getAnnotation(SaMixCheckLogin.class)</code>
+     * @throws NoSuchMethodException \u53cd\u5c04\u5b9a\u4f4d\u88ab\u6d4b\u65b9\u6cd5\u5931\u8d25
+     */
     private static SaMixCheckLogin annotation(String methodName) throws NoSuchMethodException {
         return Fixture.class.getDeclaredMethod(methodName).getAnnotation(SaMixCheckLogin.class);
     }
 
+    /**
+     * \u901a\u8fc7 <code>Fixture.class.getDeclaredMethod()</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+     * @param methodName \u4f20\u7ed9 <code>Fixture.class.getDeclaredMethod()</code> \u7684 <code>String</code> \u8f93\u5165
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>Fixture.class.getDeclaredMethod(methodName)</code>
+     * @throws NoSuchMethodException \u53cd\u5c04\u5b9a\u4f4d\u88ab\u6d4b\u65b9\u6cd5\u5931\u8d25
+     */
     private static AnnotatedElement element(String methodName) throws NoSuchMethodException {
         return Fixture.class.getDeclaredMethod(methodName);
     }
 
+    /** \u6d4b\u8bd5\u524d\u4f9d\u6b21\u6062\u590d\u6216\u5b89\u88c5\u914d\u7f6e<code>SaManager</code>\u3001\u6062\u590d\u6216\u5b89\u88c5\u539f\u751f\u5b58\u50a8<code>SaManager</code>\u3002 */
     @BeforeEach
     void setUp() {
         originalConfig = SaManager.getConfig();
@@ -64,6 +82,7 @@ class SaMixCheckLoginHandlerTest {
         assertEquals("user", StpKit.USER.getLoginType()); // 触发 StpKit 静态初始化，注册 "user" StpLogic
     }
 
+    /** \u6d4b\u8bd5\u540e\u4f9d\u6b21\u6e05\u9664\u4e0a\u4e0b\u6587<code>SaTokenContextMockUtil</code>\u3001\u6062\u590d\u6216\u5b89\u88c5\u767b\u5f55\u903b\u8f91<code>StpUtil</code>\u3001\u6062\u590d\u6216\u5b89\u88c5\u539f\u751f\u5b58\u50a8<code>SaManager</code>\u3001\u6062\u590d\u6216\u5b89\u88c5\u914d\u7f6e<code>SaManager</code>\u3002 */
     @AfterEach
     void tearDown() {
         SaTokenContextMockUtil.clearContext();
@@ -72,6 +91,10 @@ class SaMixCheckLoginHandlerTest {
         SaManager.setConfig(originalConfig);
     }
 
+    /**
+     * \u8bfb\u53d6 <code>token</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>token</code>
+     */
     private SaTempToken tempToken() {
         SaTempToken token = new SaTempToken();
         token.setLoginId("user-1");
@@ -84,11 +107,16 @@ class SaMixCheckLoginHandlerTest {
         return token;
     }
 
+    /** \u9a8c\u8bc1<code>handler.getHandlerAnnotationClass()</code> \u7b49\u4e8e <code>SaMixCheckLogin.class</code>\u3002 */
     @Test
     void getHandlerAnnotationClassIsSaMixCheckLogin() {
         assertEquals(SaMixCheckLogin.class, handler.getHandlerAnnotationClass());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>handler.checkMethod( annotation("mixLoginOnly"), element("mixLoginOnly"))</code> \u629b\u51fa <code>SaTokenException.class</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void checkWithoutTempTokenRequiresLogin() throws Exception {
         SaTokenContextMockUtil.setMockContext();
@@ -96,6 +124,10 @@ class SaMixCheckLoginHandlerTest {
                 annotation("mixLoginOnly"), element("mixLoginOnly")));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>StpUtil.isLogin()</code>\u4e3a\u5047\uff0c<code>SaTempKit.getTimeout(tempToken)</code> \u7b49\u4e8e <code>-2</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void checkWithValidTempTokenLogsInAndClearsTokenForThrowaway() throws Exception {
         String tempToken = SaTempKit.createToken(tempToken(), 60);
@@ -110,6 +142,10 @@ class SaMixCheckLoginHandlerTest {
         assertEquals(-2, SaTempKit.getTimeout(tempToken));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>StpUtil.isLogin()</code>\u4e3a\u771f\uff0c<code>SaTempKit.getTimeout(tempToken) &gt; 0</code>\u4e3a\u771f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void checkWithValidTempTokenAndPersistentTokenKeepsIt() throws Exception {
         String tempToken = SaTempKit.createToken(tempToken(), 60);
@@ -123,6 +159,10 @@ class SaMixCheckLoginHandlerTest {
         assertTrue(SaTempKit.getTimeout(tempToken) > 0);
     }
 
+    /**
+     * \u9a8c\u8bc1<code>handler.checkMethod( annotation("mixLoginPersistent"), element("mixLoginPersistent"))</code> \u629b\u51fa <code>SaTokenException.class</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void checkRejectsExpiredTempToken() throws Exception {
         String tempToken = SaTempKit.createToken(tempToken(), 60);
@@ -135,6 +175,10 @@ class SaMixCheckLoginHandlerTest {
                 annotation("mixLoginPersistent"), element("mixLoginPersistent")));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>handler.checkMethod( annotation("mixLoginPersistent"), element("mixLoginPersistent"))</code> \u629b\u51fa <code>SaTokenException.class</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void checkRejectsTempTokenWithoutLoginId() throws Exception {
         SaTempToken noLoginId = new SaTempToken();
@@ -148,6 +192,7 @@ class SaMixCheckLoginHandlerTest {
                 annotation("mixLoginPersistent"), element("mixLoginPersistent")));
     }
 
+    /** \u9a8c\u8bc1<code>payload.get(AuthConstants.JWT_AUTH_TYPE)</code> \u7b49\u4e8e <code>"sms"</code>\uff0c<code>payload.get(AuthConstants.JWT_SUBJECT)</code> \u7b49\u4e8e <code>"user-1"</code>\uff0c<code>payload.get(AuthConstants.JWT_ISSUED_AT)</code>\u975e\u7a7a\u3002 */
     @Test
     void getTokenPayloadExtractsTokenFields() {
         Map<String, Object> payload = handler.getTokenPayload(tempToken());
@@ -157,6 +202,7 @@ class SaMixCheckLoginHandlerTest {
         assertNotNull(payload.get(AuthConstants.JWT_ISSUED_AT));
     }
 
+    /** \u9a8c\u8bc1<code>payload.get(AuthConstants.FIELD_DEVICE_TYPE)</code> \u7b49\u4e8e <code>"PC"</code>\uff0c<code>payload.get(AuthConstants.FIELD_DEVICE_ID)</code> \u7b49\u4e8e <code>"device-1"</code>\uff0c<code>payload.get(AuthConstants.FIELD_APP_VERSION)</code> \u7b49\u4e8e <code>"1.2.3"</code>\u3002 */
     @Test
     void getTerminalPayloadExtractsDeviceFields() {
         Map<String, Object> payload = handler.getTerminalPayload(tempToken());
@@ -167,6 +213,10 @@ class SaMixCheckLoginHandlerTest {
         assertEquals("1.2.3", payload.get(AuthConstants.FIELD_APP_VERSION));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>StpUtil.isLogin()</code>\u4e3a\u5047\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void checkIgnoresLoginFlagWhenTempTokenPresentButLoginDisabled() throws Exception {
         String tempToken = SaTempKit.createToken(tempToken(), 60);
@@ -179,21 +229,26 @@ class SaMixCheckLoginHandlerTest {
         assertFalse(StpUtil.isLogin());
     }
 
+    /** \u63d0\u4f9b <code>mixLoginOnly()</code>\u3001<code>mixLoginThrowaway()</code>\u3001<code>mixLoginPersistent()</code> \u7b49\u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u72ec\u7acb\u64cd\u4f5c\u3002 */
     @SuppressWarnings("unused")
     private static class Fixture {
 
+        /** \u4f5c\u4e3a\u7a7a\u5b9e\u73b0\u7684\u6d4b\u8bd5\u66ff\u8eab\uff0c\u8c03\u7528\u65f6\u4fdd\u6301\u5f53\u524d\u5939\u5177\u72b6\u6001\u3002 */
         @SaMixCheckLogin
         public void mixLoginOnly() {
         }
 
+        /** \u4f5c\u4e3a\u7a7a\u5b9e\u73b0\u7684\u6d4b\u8bd5\u66ff\u8eab\uff0c\u8c03\u7528\u65f6\u4fdd\u6301\u5f53\u524d\u5939\u5177\u72b6\u6001\u3002 */
         @SaMixCheckLogin(login = true, throwaway = true)
         public void mixLoginThrowaway() {
         }
 
+        /** \u4f5c\u4e3a\u7a7a\u5b9e\u73b0\u7684\u6d4b\u8bd5\u66ff\u8eab\uff0c\u8c03\u7528\u65f6\u4fdd\u6301\u5f53\u524d\u5939\u5177\u72b6\u6001\u3002 */
         @SaMixCheckLogin(login = true, throwaway = false)
         public void mixLoginPersistent() {
         }
 
+        /** \u4f5c\u4e3a\u7a7a\u5b9e\u73b0\u7684\u6d4b\u8bd5\u66ff\u8eab\uff0c\u8c03\u7528\u65f6\u4fdd\u6301\u5f53\u524d\u5939\u5177\u72b6\u6001\u3002 */
         @SaMixCheckLogin(login = false, throwaway = false)
         public void mixLoginDisabled() {
         }

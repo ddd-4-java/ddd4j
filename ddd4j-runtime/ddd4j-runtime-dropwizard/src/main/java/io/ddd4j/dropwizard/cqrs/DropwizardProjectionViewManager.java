@@ -11,10 +11,15 @@ import java.util.Objects;
  * Dropwizard 视图生命周期；共享管理器持有句柄，平台仅管理自有调度资源。
  */
 public class DropwizardProjectionViewManager implements ViewManager, AutoCloseable {
+    /** \u5b9e\u73b0\u5b9e\u9645\u89c6\u56fe\u542f\u52a8\u548c\u505c\u6b62\u7684\u5171\u4eab\u7ba1\u7406\u5668\u3002 */
     private final DefaultViewManager<Object> delegate;
+    /** \u63d0\u4f9b\u5e94\u7528\u751f\u547d\u5468\u671f\u53ca\u5bb9\u5668\u914d\u7f6e\u7684 Dropwizard \u73af\u5883\u3002 */
     private final Environment environment;
+    /** \u5b9e\u9645\u8bfb\u53d6\u5e76\u5e94\u7528\u6295\u5f71\u4e8b\u4ef6\u7684\u6267\u884c\u5668\u3002 */
     private final ProjectionRunner<?> runner;
+    /** \u7531\u5f53\u524d\u8fd0\u884c\u73af\u5883\u7ba1\u7406\u548c\u8c03\u5ea6\u7684\u6295\u5f71\u89c6\u56fe\u3002 */
     private final Collection<ProjectionView<?>> views;
+    /** \u5f53\u524d\u8fd0\u884c\u5b9e\u4f8b\u62e5\u6709\u5e76\u8d1f\u8d23\u5173\u95ed\u7684\u8c03\u5ea6\u5668\u3002 */
     private DropwizardProjectionScheduler ownedScheduler;
 
     /**
@@ -65,6 +70,7 @@ public class DropwizardProjectionViewManager implements ViewManager, AutoCloseab
         return new DropwizardProjectionViewManager(env, runner, views);
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized void start() {
         if (delegate.isRunning()) {
@@ -87,6 +93,7 @@ public class DropwizardProjectionViewManager implements ViewManager, AutoCloseab
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized void stop() {
         try {
@@ -100,21 +107,25 @@ public class DropwizardProjectionViewManager implements ViewManager, AutoCloseab
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isRunning() {
         return delegate.isRunning();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void triggerOnce() {
         delegate.triggerOnce();
     }
 
+    /** {@inheritDoc} */
     @Override
     public ProjectionStatus getProjectionStatus(String streamId) {
         return delegate.getProjectionStatus(streamId);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void close() {
         stop();

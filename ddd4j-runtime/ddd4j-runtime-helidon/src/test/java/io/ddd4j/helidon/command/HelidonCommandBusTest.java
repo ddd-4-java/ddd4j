@@ -65,6 +65,7 @@ class HelidonCommandBusTest {
         return HelidonCommandBus.discover(new CommandRegistry());
     }
 
+    /** \u9a8c\u8bc1<code>result.isSuccess()</code>\u4e3a\u771f\uff0c<code>result.data()</code> \u5305\u542b <code>SampleCommandHandler.HANDLED</code>\u3002 */
     @Test
     void execute_已注册命令_应路由到真实Handler并返回成功() {
         HelidonCommandBus bus = assemble();
@@ -75,6 +76,7 @@ class HelidonCommandBusTest {
         assertThat(result.data()).contains(SampleCommandHandler.HANDLED);
     }
 
+    /** \u9a8c\u8bc1<code>exception</code>\u975e\u7a7a\uff0c<code>exception.getMessage()</code> \u5305\u542b <code>SampleCommand.class.getName()</code>\u3002 */
     @Test
     void 装配期冲突_整批拒绝应自构造器传播() {
         // 预注册多类型占位执行器（SampleCommand + CompanionCommand），再以真实
@@ -91,6 +93,7 @@ class HelidonCommandBusTest {
         assertThat(exception.getMessage()).contains(SampleCommand.class.getName());
     }
 
+    /** \u9a8c\u8bc1<code>exception</code>\u975e\u7a7a\uff0c<code>exception.getMessage()</code> \u5305\u542b <code>UnknownCommand.class.getName()</code>\u3002 */
     @Test
     void execute_未注册命令_应抛ISE与ddd4j_core一致() {
         HelidonCommandBus bus = assemble();
@@ -118,6 +121,7 @@ class HelidonCommandBusTest {
      */
     static class OverlappingMultiTypeHandler implements CommandExecutor<Command> {
 
+        /** {@inheritDoc} */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return java.util.Collections.unmodifiableSet(new java.util.LinkedHashSet<>(

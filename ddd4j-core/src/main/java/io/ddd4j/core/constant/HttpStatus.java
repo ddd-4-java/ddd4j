@@ -252,6 +252,7 @@ public final class HttpStatus {
      */
     public static final int SC_NETWORK_AUTHENTICATION_REQUIRED = 511;
 
+    /** \u9650\u5236\u72b6\u6001\u7801\u5de5\u5177\u7c7b\u5b9e\u4f8b\u5316\u3002 */
     private HttpStatus() {
         // 工具类，禁止实例化
     }

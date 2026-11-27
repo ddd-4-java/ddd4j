@@ -56,7 +56,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class MicrometerProjectionMetrics implements ProjectionMetrics {
 
+    /** \u6ce8\u518c\u548c\u8bfb\u53d6\u5f53\u524d\u7ec4\u4ef6 Micrometer \u6307\u6807\u7684\u6ce8\u518c\u8868\u3002 */
     private final MeterRegistry registry;
+    /** \u6309\u4e8b\u4ef6\u6d41\u6807\u8bc6\u4fdd\u5b58\u6700\u8fd1\u4e00\u6b21\u6295\u5f71\u8fd0\u884c\u7ed3\u679c\u3002 */
     private final ConcurrentMap<String, ProjectionRunInfo> runInfoMap = new ConcurrentHashMap<>();
 
     /**
@@ -69,6 +71,13 @@ public class MicrometerProjectionMetrics implements ProjectionMetrics {
         this.registry = Objects.requireNonNull(registry, "MeterRegistry must not be null");
     }
 
+    /**
+     * \u8bb0\u5f55\u4e00\u6b21\u6295\u5f71\u6210\u529f\u6267\u884c\u7684\u4e8b\u4ef6\u8ba1\u6570\u548c\u8017\u65f6\uff0c\u5e76\u66f4\u65b0\u6700\u8fd1\u6267\u884c\u4fe1\u606f\u3002
+     * @param streamId \u6295\u5f71\u4e8b\u4ef6\u6d41\u6807\u8bc6
+     * @param eventCount \u672c\u6b21\u5904\u7406\u7684\u4e8b\u4ef6\u6570
+     * @param durationNanos \u672c\u6b21\u6295\u5f71\u6267\u884c\u8017\u65f6\uff0c\u5355\u4f4d\u4e3a\u7eb3\u79d2
+     * @param positionAdvance \u6295\u5f71\u6267\u884c\u5668\u63d0\u4f9b\u7684\u4e8b\u4ef6\u6d41\u4f4d\u70b9\u63a8\u8fdb\u91cf
+     */
     @Override
     public void onRunCompleted(String streamId, int eventCount, long durationNanos, long positionAdvance) {
         Counter.builder(ProjectionConstants.METRIC_EVENTS_TOTAL)
@@ -86,6 +95,11 @@ public class MicrometerProjectionMetrics implements ProjectionMetrics {
         runInfoMap.put(streamId, new ProjectionRunInfo(Instant.now(), eventCount, null));
     }
 
+    /**
+     * \u8bb0\u5f55\u4e8b\u4ef6\u6d41\u7684\u4e00\u6b21\u6295\u5f71\u6267\u884c\u5931\u8d25\u3002
+     * @param streamId \u6295\u5f71\u4e8b\u4ef6\u6d41\u6807\u8bc6
+     * @param error \u9020\u6210\u6267\u884c\u5931\u8d25\u7684\u5f02\u5e38
+     */
     @Override
     public void onRunFailed(String streamId, Throwable error) {
         Counter.builder(ProjectionConstants.METRIC_ERRORS_TOTAL)
@@ -99,6 +113,7 @@ public class MicrometerProjectionMetrics implements ProjectionMetrics {
                 (old, newInfo) -> newInfo);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Optional<ProjectionRunInfo> getLastRunInfo(String streamId) {
         return Optional.ofNullable(runInfoMap.get(streamId));

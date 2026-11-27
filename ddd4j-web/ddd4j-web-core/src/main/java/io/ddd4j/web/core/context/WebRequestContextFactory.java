@@ -24,7 +24,9 @@ import java.util.Objects;
  */
 public final class WebRequestContextFactory {
 
+    /** \u4e3a\u7f3a\u5c11\u8bf7\u6c42\u6807\u8bc6\u7684\u8c03\u7528\u751f\u6210\u9ed8\u8ba4\u503c\u7684\u7ec4\u4ef6\u3002 */
     private final RequestIdGenerator requestIdGenerator;
+    /** \u89e3\u6790\u539f\u751f\u8fde\u63a5\u6765\u6e90\u548c\u53ef\u4fe1\u8f6c\u53d1\u5730\u5740\u7684\u7ec4\u4ef6\u3002 */
     private final ClientIpResolver clientIpResolver;
 
     /** 使用 UUID 请求标识与远端地址解析器创建工厂。 */

@@ -69,6 +69,7 @@ public final class RepositoryRegistry {
      */
     private static final String PREFIX = "ddd4j.repository.";
 
+    /** \u6309\u6ce8\u518c\u952e\u67e5\u627e\u5f53\u524d\u4ed3\u50a8\u5b9e\u4f8b\u7684\u6620\u5c04\u3002 */
     private static final Map<Class<?>, Repository> INSTANCES = new ConcurrentHashMap<>();
 
     /**
@@ -76,6 +77,7 @@ public final class RepositoryRegistry {
      */
     private static final Map<Class<?>, Repository> QUERY_INSTANCES = new ConcurrentHashMap<>();
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>RepositoryRegistry</code> \u5b9e\u4f8b\u3002 */
     private RepositoryRegistry() {
     }
 

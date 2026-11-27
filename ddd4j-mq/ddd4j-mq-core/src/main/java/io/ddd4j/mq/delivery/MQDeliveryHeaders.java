@@ -32,6 +32,7 @@ public final class MQDeliveryHeaders {
     /** 跨语言消费方可直接读取的因果 ID header。 */
     public static final String CAUSATION_ID = "X-Causation-Id";
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>MQDeliveryHeaders</code> \u5b9e\u4f8b\u3002 */
     private MQDeliveryHeaders() {
     }
 }

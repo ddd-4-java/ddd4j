@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("SpringJpaProjectionPosition 不可变契约验收")
 class SpringJpaProjectionPositionTest {
 
+    /** withNextEventNumber \u5e94\u8fd4\u56de\u65b0\u5b9e\u4f8b\uff0c\u4e0d\u4fee\u6539\u539f\u5bf9\u8c61\u3002 */
     @Test
     @DisplayName("withNextEventNumber 应返回新实例，不修改原对象")
     void withNextEventNumberShouldReturnNewInstance() {
@@ -52,6 +53,7 @@ class SpringJpaProjectionPositionTest {
                 "新对象的 streamId 应与原对象一致");
     }
 
+    /** withNextEventNumber \u8fde\u7eed\u8c03\u7528\u5e94\u5404\u81ea\u4ea7\u751f\u72ec\u7acb\u5b9e\u4f8b\u3002 */
     @Test
     @DisplayName("withNextEventNumber 连续调用应各自产生独立实例")
     void consecutiveCallsShouldProduceIndependentInstances() {
@@ -66,6 +68,7 @@ class SpringJpaProjectionPositionTest {
         assertEquals(2L, second.getNextEventNumber());
     }
 
+    /** withNextEventNumber \u8fd4\u56de\u7c7b\u578b\u5e94\u53ef\u5b89\u5168\u8f6c\u578b\u4e3a SpringJpaProjectionPosition\u3002 */
     @Test
     @DisplayName("withNextEventNumber 返回类型应可安全转型为 SpringJpaProjectionPosition")
     void returnTypeShouldBeSpringJpaProjectionPosition() {

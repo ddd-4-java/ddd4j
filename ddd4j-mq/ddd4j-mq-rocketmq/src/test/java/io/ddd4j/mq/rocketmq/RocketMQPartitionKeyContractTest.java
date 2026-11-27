@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  */
 class RocketMQPartitionKeyContractTest {
 
+    /** \u9a8c\u8bc1<code>client.partitionKey(event)</code>\u4e3a\u7a7a\uff0c<code>client.partitionKey(event)</code> \u7b49\u4e8e <code>"created"</code>\uff0c<code>client.partitionKey(event)</code> \u7b49\u4e8e <code>"created|tenant-a"</code>\u3002 */
     @Test
     void configuredStrategiesReturnTheSameKeys() {
         RocketMQProperties properties = new RocketMQProperties();
@@ -46,6 +47,7 @@ class RocketMQPartitionKeyContractTest {
         assertEquals("created|tenant-a", client.partitionKey(event));
     }
 
+    /** \u9a8c\u8bc1<code>client.partitionKey(null)</code>\u4e3a\u7a7a\u3002 */
     @Test
     void nullEventFallsBackWithoutStartingBroker() {
         RocketMQClient client = new RocketMQClient(new RocketMQProperties());

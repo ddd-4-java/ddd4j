@@ -13,6 +13,7 @@ import java.util.Map;
  */
 @Controller("/auth")
 public final class AuthenticationController {
+    /** \u5904\u7406\u5f53\u524d\u793a\u4f8b\u5e94\u7528\u767b\u5f55\u72b6\u6001\u7684\u539f\u751f\u8ba4\u8bc1\u7ec4\u4ef6\u3002 */
     private final NativeAuth auth;
 
     /**

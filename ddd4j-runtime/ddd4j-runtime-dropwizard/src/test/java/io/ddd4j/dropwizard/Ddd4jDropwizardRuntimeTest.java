@@ -38,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class Ddd4jDropwizardRuntimeTest extends AbstractRuntimeContractTest {
 
+    /** \u9a8c\u8bc1<code>runtime.readiness().contributors().isEmpty()</code>\u4e3a\u771f\u3002 */
     @Test
     void defaultConstructorStartsWithNoReadinessContributors() {
         RuntimeFixtures fixtures = new RuntimeFixtures();
@@ -49,6 +50,7 @@ class Ddd4jDropwizardRuntimeTest extends AbstractRuntimeContractTest {
     }
 
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>LinkageError.class</code>\uff0c<code>BaseContext.get(SpiKeys.COMMAND_BUS, CommandBus.class)</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>previous</code>\uff0c<code>cleanup</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>failure</code>\u3002 */
     @Test
     void linkageFailureRestoresSpiAndKeepsOriginalEvenIfCleanupRepeatsIt() {
         RuntimeFixtures fixtures = new RuntimeFixtures();
@@ -90,6 +92,7 @@ class Ddd4jDropwizardRuntimeTest extends AbstractRuntimeContractTest {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     protected RuntimeContract createRuntime() {
         RuntimeFixtures fixtures = new RuntimeFixtures();

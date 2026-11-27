@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  */
 class PulsarPartitionKeyContractTest {
 
+    /** \u9a8c\u8bc1<code>client.partitionKey(event)</code>\u4e3a\u7a7a\uff0c<code>client.partitionKey(event)</code> \u7b49\u4e8e <code>"priority"</code>\uff0c<code>client.partitionKey(event)</code> \u7b49\u4e8e <code>"priority|tenant-a"</code>\u3002 */
     @Test
     void routesByConfiguredStrategy() {
         PulsarProperties properties = new PulsarProperties();
@@ -46,6 +47,7 @@ class PulsarPartitionKeyContractTest {
         assertEquals("priority|tenant-a", client.partitionKey(event));
     }
 
+    /** \u9a8c\u8bc1<code>client.partitionKey(null)</code>\u4e3a\u7a7a\uff0c<code>client.partitionKey(event)</code>\u4e3a\u7a7a\u3002 */
     @Test
     void handlesMissingEventFields() {
         PulsarProperties properties = new PulsarProperties();

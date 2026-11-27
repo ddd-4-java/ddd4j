@@ -28,8 +28,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/** \u9a8c\u8bc1 <code>DisruptorAdapterContract</code> \u5728 <code>shouldDeliverRawTopicExactlyOnce</code>\u3001<code>shouldDeliverUsingConfiguredNamespace</code>\u3001<code>shouldRetainStableMessageId</code> \u7b49\u573a\u666f\u4e2d\u7684\u884c\u4e3a\u3002 */
 class DisruptorAdapterContractTest {
 
+    /**
+     * \u9a8c\u8bc1<code>target.delivered.await(5, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>queued.getTopic()</code> \u7b49\u4e8e <code>"orders"</code>\uff0c<code>target.received.getMsgId()</code> \u7b49\u4e8e <code>"stable-route-id"</code>\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void shouldDeliverRawTopicExactlyOnceWithoutComposingRouteTwice() throws Exception {
         DisruptorMQProperties properties = new DisruptorMQProperties();
@@ -70,6 +75,10 @@ class DisruptorAdapterContractTest {
         assertEquals("stable-route-id", target.received.getMsgId());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>target.delivered.await(5, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>queued.getNamespace()</code> \u7b49\u4e8e <code>"production"</code>\uff0c<code>target.received.getMsgId()</code> \u7b49\u4e8e <code>"configured-namespace-id"</code>\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void shouldDeliverUsingConfiguredNamespaceWhenEventNamespaceIsAbsent() throws Exception {
         DisruptorMQProperties properties = new DisruptorMQProperties();
@@ -107,6 +116,10 @@ class DisruptorAdapterContractTest {
         assertEquals("configured-namespace-id", target.received.getMsgId());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>target.delivered.await(5, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>queued.getRouteExpression()</code> \u7b49\u4e8e <code>"production.orders"</code>\uff0c<code>target.received.getMsgId()</code> \u7b49\u4e8e <code>"global-namespace-id"</code>\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void shouldDeliverUsingConfiguredNamespaceWhenListenerAndEventNamespacesAreEmpty() throws Exception {
         DisruptorMQProperties properties = new DisruptorMQProperties();
@@ -144,6 +157,7 @@ class DisruptorAdapterContractTest {
         assertEquals("global-namespace-id", target.received.getMsgId());
     }
 
+    /** \u9a8c\u8bc1<code>acknowledgment.isAcknowledged()</code>\u4e3a\u771f\uff0c<code>ringBuffer.get(ringBuffer.getCursor()).getMessageId()</code> \u7b49\u4e8e <code>"stable-id"</code>\uff0c<code>ringBuffer.getCursor()</code> \u7b49\u4e8e <code>republishedSequence</code>\u3002 */
     @Test
     void shouldRetainStableMessageIdWhenNackRequeuesLocally() {
         DisruptorEvent event = new DisruptorEvent();
@@ -164,6 +178,7 @@ class DisruptorAdapterContractTest {
         assertEquals(republishedSequence, ringBuffer.getCursor());
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>client.close()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void shouldCloseOwnedDisruptorOnlyOnce() {
         DisruptorMQClient client = new DisruptorMQClient(new DisruptorMQProperties());
@@ -175,10 +190,17 @@ class DisruptorAdapterContractTest {
      * 记录真实消费者反序列化后的事件。
      */
     public static class RecordingListener {
+        /** \u534f\u8c03\u6d4b\u8bd5\u7ebf\u7a0b\u5728\u6307\u5b9a\u6267\u884c\u9636\u6bb5\u7b49\u5f85\u6216\u7ee7\u7eed\u7684\u95e8\u95e9\u3002 */
         private final CountDownLatch delivered = new CountDownLatch(1);
+        /** \u8bb0\u5f55\u88ab\u6d4b\u5165\u53e3\u5b9e\u9645\u89e6\u53d1\u7684\u8c03\u7528\u3002 */
         private final AtomicInteger calls = new AtomicInteger();
+        /** \u5f53\u524d\u6d4b\u8bd5\u63a5\u6536\u7684\u6570\u636e\uff0c\u4f9b\u65ad\u8a00\u6838\u5bf9\u6295\u9012\u5185\u5bb9\u6216\u6b21\u6570\u3002 */
         private MQEvent received;
 
+        /**
+         * \u6839\u636e\u672c\u6b21\u8c03\u7528\u66f4\u65b0 <code>received = event</code>\uff0c\u7528\u4e8e\u540e\u7eed\u6d4b\u8bd5\u6b65\u9aa4\u3002
+         * @param event \u4ea4\u7ed9\u88ab\u6d4b\u5165\u53e3\u5904\u7406\u7684\u6d4b\u8bd5\u9886\u57df\u4e8b\u4ef6
+         */
         public void onEvent(MQEvent event) {
             received = event;
             calls.incrementAndGet();

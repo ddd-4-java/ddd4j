@@ -106,12 +106,21 @@ public class ApiOperationLogAspect {
         }
     }
 
+    /**
+     * \u4ec5\u5728\u8ba1\u65f6\u5668\u5904\u4e8e\u8fd0\u884c\u72b6\u6001\u65f6\u505c\u6b62\u8ba1\u65f6\u3002
+     * @param stopwatch \u5f53\u524d API \u8c03\u7528\u7684\u8ba1\u65f6\u5668
+     */
     private void stop(Stopwatch stopwatch) {
         if (stopwatch.isRunning()) {
             stopwatch.stop();
         }
     }
 
+    /**
+     * \u6267\u884c\u5ba1\u8ba1\u65e5\u5fd7\u56de\u8c03\u5e76\u8bb0\u5f55\u5176\u8fd0\u884c\u65f6\u5f02\u5e38\uff0c\u4fdd\u7559\u539f API \u7ed3\u679c\u3002
+     * @param callback \u5f53\u524d\u9636\u6bb5\u7684\u65e5\u5fd7\u56de\u8c03
+     * @param phase \u7528\u4e8e\u5b9a\u4f4d\u65e5\u5fd7\u5f02\u5e38\u7684\u56de\u8c03\u9636\u6bb5
+     */
     private void invokeSafely(Runnable callback, String phase) {
         try {
             callback.run();

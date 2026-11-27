@@ -28,6 +28,7 @@ import static org.mockito.Mockito.when;
  */
 class JpaEncryptFieldListenerContractTest {
 
+    /** \u9a8c\u8bc1<code>entity.secret</code> \u7b49\u4e8e <code>"cipher"</code>\uff0c<code>entity.plain</code> \u7b49\u4e8e <code>"plain"</code>\uff0c<code>entity.secret</code> \u7b49\u4e8e <code>"secret"</code>\u3002 */
     @Test
     void lifecycleEncryptsAndDecryptsInheritedFieldOnly() {
         Ddd4jFieldCryptoHandler handler = mock(Ddd4jFieldCryptoHandler.class);
@@ -50,6 +51,7 @@ class JpaEncryptFieldListenerContractTest {
         assertEquals("cipher", entity.secret);
     }
 
+    /** \u9a8c\u8bc1<code>entity.secret</code>\u4e3a\u7a7a\uff0c<code>entity.secret</code> \u7b49\u4e8e <code>""</code>\u3002 */
     @Test
     void emptyAndNullFieldsStayUnchanged() {
         JpaEncryptFieldListener listener = new JpaEncryptFieldListener(mock(Ddd4jFieldCryptoHandler.class));
@@ -64,6 +66,7 @@ class JpaEncryptFieldListenerContractTest {
         assertEquals("", entity.secret);
     }
 
+    /** \u9a8c\u8bc1<code>entity.secret</code> \u7b49\u4e8e <code>"secret"</code>\u3002 */
     @Test
     void missingHandlerLeavesEncryptedFieldUntouched() {
         JpaEncryptFieldListener listener = new JpaEncryptFieldListener((Ddd4jFieldCryptoHandler) null);
@@ -76,12 +79,16 @@ class JpaEncryptFieldListenerContractTest {
         assertEquals("secret", entity.secret);
     }
 
+    /** \u5c06 <code>secret</code> \u7b49\u72b6\u6001\u4e00\u8d77\u4f20\u5165\u5f53\u524d\u6d4b\u8bd5\uff0c\u4f9b\u8c03\u7528\u6216\u7ed3\u679c\u65ad\u8a00\u4f7f\u7528\u3002 */
     static class BaseEntity {
+        /** \u5f53\u524d\u7b7e\u540d\u3001\u52a0\u5bc6\u6216\u4ee4\u724c\u6821\u9a8c\u6d4b\u8bd5\u4f7f\u7528\u7684\u5bc6\u94a5\u6837\u672c\u3002 */
         @EncryptField
         String secret;
     }
 
+    /** \u5c06 <code>plain</code> \u7b49\u72b6\u6001\u4e00\u8d77\u4f20\u5165\u5f53\u524d\u6d4b\u8bd5\uff0c\u4f9b\u8c03\u7528\u6216\u7ed3\u679c\u65ad\u8a00\u4f7f\u7528\u3002 */
     static final class TestEntity extends BaseEntity {
+        /** \u7528\u4e8e\u52a0\u89e3\u5bc6\u5f80\u8fd4\u65ad\u8a00\u7684\u660e\u6587\u6837\u672c\u3002 */
         private String plain;
     }
 }

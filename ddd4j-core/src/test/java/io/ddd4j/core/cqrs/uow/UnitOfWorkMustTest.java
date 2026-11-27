@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class UnitOfWorkMustTest {
 
+    /** \u9a8c\u8bc1<code>applied.get()</code> \u7b49\u4e8e <code>1</code>\uff0c<code>uow.state()</code> \u7b49\u4e8e <code>UnitOfWork.State.COMMITTED</code>\uff0c<code>trace</code> \u6309\u987a\u5e8f\u4ec5\u5305\u542b <code>"flush-work"</code>\u3002 */
     @Test
     void commitMustExecuteRegisteredCommitCallbacksAndReachCommittedState() {
         AtomicInteger applied = new AtomicInteger();
@@ -38,6 +39,7 @@ class UnitOfWorkMustTest {
         assertThat(trace).containsExactly("flush-work");
     }
 
+    /** \u9a8c\u8bc1<code>trace</code> \u6309\u987a\u5e8f\u4ec5\u5305\u542b <code>"begin-work"</code>\u3001<code>"undo-work"</code>\uff0c<code>uow.state()</code> \u7b49\u4e8e <code>UnitOfWork.State.ROLLED_BACK</code>\u3002 */
     @Test
     void failureInsideBoundaryMustRollBackAndPropagateOriginalException() {
         List<String> trace = new ArrayList<>();
@@ -56,6 +58,7 @@ class UnitOfWorkMustTest {
         assertThat(uow.state()).isEqualTo(UnitOfWork.State.ROLLED_BACK);
     }
 
+    /** \u9a8c\u8bc1<code>uow.state()</code> \u7b49\u4e8e <code>UnitOfWork.State.ROLLED_BACK</code>\uff0c<code>cleanupCalls.get()</code> \u7b49\u4e8e <code>1</code>\u3002 */
     @Test
     void rollbackCallbackErrorMustNotReplaceOriginalWorkFailure() {
         UnitOfWork uow = UnitOfWork.begin();
@@ -73,6 +76,7 @@ class UnitOfWorkMustTest {
         assertThat(cleanupCalls.get()).isEqualTo(1);
     }
 
+    /** \u9a8c\u8bc1<code>outer.state()</code> \u7b49\u4e8e <code>UnitOfWork.State.ACTIVE</code>\uff0c<code>result</code> \u7b49\u4e8e <code>"outer-result"</code>\uff0c<code>trace</code> \u6309\u987a\u5e8f\u4ec5\u5305\u542b <code>"inner-rollback"</code>\u3001<code>"outer-commit"</code>\u3002 */
     @Test
     void nestedBoundariesKeepTheirOwnCallbacksAndTerminalStates() {
         List<String> trace = new ArrayList<>();
@@ -98,6 +102,7 @@ class UnitOfWorkMustTest {
         assertThat(trace).containsExactly("inner-rollback", "outer-commit");
     }
 
+    /** \u9a8c\u8bc1<code>result</code> \u7b49\u4e8e <code>"computed"</code>\uff0c<code>trace</code> \u6309\u987a\u5e8f\u4ec5\u5305\u542b <code>"flush-work"</code>\uff0c<code>uow.state()</code> \u7b49\u4e8e <code>UnitOfWork.State.COMMITTED</code>\u3002 */
     @Test
     void executeSuccessPathMustCommitAndReturnValue() {
         UnitOfWork uow = UnitOfWork.begin();
@@ -111,6 +116,7 @@ class UnitOfWorkMustTest {
         assertThat(uow.state()).isEqualTo(UnitOfWork.State.COMMITTED);
     }
 
+    /** \u9a8c\u8bc1<code>uow.state()</code> \u7b49\u4e8e <code>UnitOfWork.State.ROLLED_BACK</code>\uff0c<code>rollbacks.get()</code> \u7b49\u4e8e <code>1</code>\uff0c\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\u3002 */
     @Test
     void terminalStateMustRejectRepeatedTerminationWithoutReplayingCallbacks() {
         AtomicInteger rollbacks = new AtomicInteger();

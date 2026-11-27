@@ -70,11 +70,16 @@ class VertxCommandBusTest {
      */
     private Vertx vertx;
 
+    /** \u6d4b\u8bd5\u6267\u884c\u524d\u6267\u884c <code>Vertx.vertx()</code> \u5b8c\u6210\u8d44\u6e90\u51c6\u5907\u3002 */
     @BeforeEach
     void startVertx() {
         vertx = Vertx.vertx();
     }
 
+    /**
+     * \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>vertx.close()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @AfterEach
     void closeVertx() throws Exception {
         if (vertx != null) {
@@ -111,6 +116,10 @@ class VertxCommandBusTest {
         return executors;
     }
 
+    /**
+     * \u9a8c\u8bc1<code>Vertx.currentContext().isEventLoopContext()</code>\u4e3a\u771f\uff0c<code>result.isSuccess()</code>\u4e3a\u771f\uff0c<code>result.data()</code> \u5305\u542b <code>SampleCommandHandler.HANDLED</code>\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void execute_已在Vertx上下文线程同步执行_应路由到真实Handler并返回成功() throws Exception {
         VertxCommandBus bus = assemble();
@@ -129,6 +138,7 @@ class VertxCommandBusTest {
         assertThat(result.data()).contains(SampleCommandHandler.HANDLED);
     }
 
+    /** \u9a8c\u8bc1<code>exception</code>\u975e\u7a7a\uff0c<code>exception.getMessage()</code> \u5305\u542b <code>SampleCommand.class.getName()</code>\u3002 */
     @Test
     void 装配期冲突_整批拒绝应自工厂传播() {
         // 供入「多类型占位执行器（SampleCommand + CompanionCommand）+ 真实
@@ -146,6 +156,7 @@ class VertxCommandBusTest {
         assertThat(exception.getMessage()).contains(SampleCommand.class.getName());
     }
 
+    /** \u9a8c\u8bc1<code>exception</code>\u975e\u7a7a\uff0c<code>exception.getMessage()</code> \u5305\u542b <code>UnknownCommand.class.getName()</code>\u3002 */
     @Test
     void execute_未注册命令_应抛ISE与ddd4j_core一致() {
         VertxCommandBus bus = assemble();
@@ -157,6 +168,7 @@ class VertxCommandBusTest {
         assertThat(exception.getMessage()).contains(UnknownCommand.class.getName());
     }
 
+    /** \u9a8c\u8bc1<code>bus.execute(new SampleCommand()).isSuccess()</code>\u4e3a\u771f\u3002 */
     @Test
     void factoryCapturesSnapshotAndRejectsRepeatedSameExecutor() {
         List<CommandExecutor<?>> candidates = new ArrayList<>(discover());
@@ -169,6 +181,7 @@ class VertxCommandBusTest {
                 .hasMessageContaining(SampleCommand.class.getName());
     }
 
+    /** \u9a8c\u8bc1<code>first</code> \u7b49\u4e8e <code>second</code>\uff0c<code>bus.&lt;String&gt;execute(new SampleCommand()).data()</code> \u5305\u542b <code>"sample"</code>\uff0c<code>bus.&lt;String&gt;execute(new CompanionCommand()).data()</code> \u5305\u542b <code>"companion"</code>\u3002 */
     @Test
     void routesDistinctCommandTypesEvenWhenExecutorsCompareEqual() {
         CommandExecutor<?> first = new EqualExecutor(SampleCommand.class, "sample");
@@ -181,30 +194,42 @@ class VertxCommandBusTest {
         assertThat(bus.<String>execute(new CompanionCommand()).data()).contains("companion");
     }
 
+    /** \u63a5\u6536\u6d4b\u8bd5\u547d\u4ee4\u5e76\u8fd4\u56de\u53ef\u65ad\u8a00\u7ed3\u679c\u7684\u6267\u884c\u5668\u66ff\u8eab\u3002 */
     private static final class EqualExecutor implements CommandExecutor<Command> {
+        /** \u9009\u62e9\u6d4b\u8bd5\u547d\u4ee4\u6267\u884c\u5668\u65f6\u4f7f\u7528\u7684\u547d\u4ee4\u7c7b\u578b\u3002 */
         private final Class<? extends Command> commandType;
+        /** \u6267\u884c\u88ab\u6d4b\u64cd\u4f5c\u540e\u4fdd\u5b58\u7684\u7ed3\u679c\u3002 */
         private final String result;
 
+        /**
+         * \u8bbe\u7f6e <code>commandType</code>\u3001<code>result</code>\uff0c\u7528\u4e8e\u6784\u9020 <code>EqualExecutor</code> \u6d4b\u8bd5\u5b9e\u4f8b\u3002
+         * @param commandType \u7528\u4e8e\u521d\u59cb\u5316 <code>EqualExecutor</code> \u7684 <code>Class&lt;? extends Command&gt;</code> \u503c
+         * @param result \u6267\u884c\u88ab\u6d4b\u64cd\u4f5c\u540e\u4fdd\u5b58\u7684\u7ed3\u679c
+         */
         private EqualExecutor(Class<? extends Command> commandType, String result) {
             this.commandType = commandType;
             this.result = result;
         }
 
+        /** {@inheritDoc} */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.singleton(commandType);
         }
 
+        /** {@inheritDoc} */
         @Override
         public Result<String> execute(Command command) {
             return Result.ok(result);
         }
 
+        /** {@inheritDoc} */
         @Override
         public boolean equals(Object other) {
             return other instanceof EqualExecutor;
         }
 
+        /** {@inheritDoc} */
         @Override
         public int hashCode() {
             return EqualExecutor.class.hashCode();
@@ -227,6 +252,7 @@ class VertxCommandBusTest {
      */
     static class OverlappingMultiTypeHandler implements CommandExecutor<Command> {
 
+        /** {@inheritDoc} */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(SampleCommand.class, CompanionCommand.class)));

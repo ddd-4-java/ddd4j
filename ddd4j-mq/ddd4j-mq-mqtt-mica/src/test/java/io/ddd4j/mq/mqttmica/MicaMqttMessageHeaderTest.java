@@ -32,6 +32,7 @@ import static org.mockito.Mockito.*;
  */
 class MicaMqttMessageHeaderTest {
 
+    /** \u9a8c\u8bc1<code>MicaMqttMQClient.messageId(stableMessage)</code> \u7b49\u4e8e <code>"stable-id"</code>\uff0c<code>MicaMqttMQClient.messageId(legacyMessage)</code> \u7b49\u4e8e <code>"legacy-id"</code>\u3002 */
     @Test
     void shouldPreferStableUserPropertyAndReadLegacyProperty() {
         MqttPublishMessage stableMessage = MqttPublishMessage.builder()
@@ -60,6 +61,7 @@ class MicaMqttMessageHeaderTest {
         assertEquals("legacy-id", MicaMqttMQClient.messageId(legacyMessage));
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>mock()</code>\u3001<code>adapter.close()</code>\u3001<code>never()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void shouldNotStopInjectedClient() {
         MqttClient client = mock(MqttClient.class);

@@ -19,8 +19,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/** \u901a\u8fc7 <code>authentication.token()</code>\u3001<code>authentication.getToken()</code>\u3001<code>authentication.principal()</code> \u9a8c\u8bc1 <code>BearerAuthenticationValueContract</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
 class BearerAuthenticationValueContractTest {
 
+    /** \u9a8c\u8bc1<code>authentication.token()</code> \u7b49\u4e8e <code>authentication.getToken()</code>\uff0c<code>authentication.principal()</code> \u7b49\u4e8e <code>authentication.getPrincipal()</code>\uff0c<code>authentication.toString()</code> \u7b49\u4e8e <code>"Authentication[token=token-1, principal=null, subject=null]"</code>\u3002 */
     @Test
     void beanAndComponentMethodsExposeTheSameValue() {
         BearerSubjectAuthenticator.Authentication authentication =
@@ -37,6 +39,7 @@ class BearerAuthenticationValueContractTest {
                 "Authentication[token=token-1, principal=null, subject=null]");
     }
 
+    /** \u9a8c\u8bc1<code>restored</code> \u7b49\u4e8e <code>authentication</code>\u3002 */
     @Test
     void jsonRoundTripRestoresTheAuthenticationValue() {
         BearerSubjectAuthenticator.Authentication authentication =

@@ -41,8 +41,13 @@ import java.util.function.Function;
  */
 public class GuavaCache<K, V> implements Cache<K, V> {
 
+    /** \u4fdd\u5b58\u672c\u5730\u7f13\u5b58\u6761\u76ee\u7684 Guava \u7f13\u5b58\u3002 */
     private final com.google.common.cache.Cache<K, V> cache;
 
+    /**
+     * \u5c01\u88c5\u5df2\u6784\u9020\u7684 Guava \u672c\u5730\u7f13\u5b58\u3002
+     * @param cache \u7528\u4e8e\u5b58\u653e\u952e\u503c\u7684\u5e95\u5c42\u7f13\u5b58
+     */
     private GuavaCache(com.google.common.cache.Cache<K, V> cache) {
         this.cache = Objects.requireNonNull(cache);
     }
@@ -69,11 +74,13 @@ public class GuavaCache<K, V> implements Cache<K, V> {
         return new GuavaCache<>(builder.build());
     }
 
+    /** {@inheritDoc} */
     @Override
     public V getIfPresent(K key) {
         return cache.getIfPresent(key);
     }
 
+    /** {@inheritDoc} */
     @Override
     public V get(K key, Function<K, V> mappingFunction) {
         try {
@@ -83,36 +90,43 @@ public class GuavaCache<K, V> implements Cache<K, V> {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void put(K key, V value) {
         cache.put(key, value);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void putAll(Map<K, V> map) {
         cache.putAll(map);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void invalidate(K key) {
         cache.invalidate(key);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void invalidateAll() {
         cache.invalidateAll();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void invalidateAll(Iterable<K> keys) {
         cache.invalidateAll(keys);
     }
 
+    /** {@inheritDoc} */
     @Override
     public long estimatedSize() {
         return cache.size();
     }
 
+    /** {@inheritDoc} */
     @Override
     public CacheStats stats() {
         // Guava 统计信息不映射到 ddd4j CacheStats
@@ -121,6 +135,7 @@ public class GuavaCache<K, V> implements Cache<K, V> {
 
     // ==================== CAS 实现（基于 asMap().replace + 重试）====================
 
+    /** {@inheritDoc} */
     @Override
     public V compareAndSet(K key, long expireSeconds, CASOperation<V, V> operation) {
         ConcurrentMap<K, V> map = cache.asMap();
@@ -159,6 +174,7 @@ public class GuavaCache<K, V> implements Cache<K, V> {
         return null;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean compareAndSet(K key, V expectedOldValue, V newValue) {
         ConcurrentMap<K, V> map = cache.asMap();

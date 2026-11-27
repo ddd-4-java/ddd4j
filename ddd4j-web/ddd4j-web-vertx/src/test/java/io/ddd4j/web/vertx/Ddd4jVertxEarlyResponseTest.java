@@ -45,8 +45,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/** \u901a\u8fc7 <code>Vertx.vertx()</code>\u3001<code>Router.router()</code>\u3001<code>router.route()</code> \u9a8c\u8bc1 <code>Ddd4jVertxEarlyResponse</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
 class Ddd4jVertxEarlyResponseTest {
 
+    /**
+     * \u9a8c\u8bc1<code>client.getResponseCode()</code> \u7b49\u4e8e <code>204</code>\uff0c<code>releasedOnWorker.get(5, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>dispatched.get()</code>\u4e3a\u5047\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void serverSideEarlyResponseReleasesUnusedLeaseOnWorker() throws Exception {
         Vertx vertx = Vertx.vertx();
@@ -110,6 +115,10 @@ class Ddd4jVertxEarlyResponseTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>serverObservedTermination.get(5, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>releasedOnWorker.get(5, TimeUnit.SECONDS)</code> \u7b49\u4e8e <code>disconnectedLease</code>\uff0c<code>dispatched.get()</code> \u7b49\u4e8e <code>1</code>\u3002
+     * @throws Exception \u51c6\u5907\u6216\u8bfb\u53d6\u5939\u5177\u6587\u4ef6\u3001\u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u3001\u53d1\u8d77\u6d4b\u8bd5\u8bf7\u6c42\u65f6\u5931\u8d25
+     */
     @Test
     void tcpResetDuringIdempotencyAcquisitionReleasesLeaseAndAllowsSameKeyRetry() throws Exception {
         String cacheName = "vertx-tcp-reset";
@@ -223,6 +232,13 @@ class Ddd4jVertxEarlyResponseTest {
         }
     }
 
+    /**
+     * \u901a\u8fc7 <code>client.getResponseCode()</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+     * @param port \u6d4b\u8bd5\u670d\u52a1\u76d1\u542c\u7684\u672c\u5730\u7aef\u53e3
+     * @param key \u7528\u4e8e\u5728\u6d4b\u8bd5\u4e0a\u4e0b\u6587\u6216\u7f13\u5b58\u4e2d\u7d22\u5f15\u6570\u636e\u7684\u952e
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>client.getResponseCode()</code>
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     private int postWithIdempotencyKey(int port, String key) throws Exception {
         HttpURLConnection client = (HttpURLConnection) new URL("http://127.0.0.1:" + port + "/reset")
                 .openConnection();

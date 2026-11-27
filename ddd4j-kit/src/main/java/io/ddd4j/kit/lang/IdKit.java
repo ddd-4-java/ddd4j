@@ -65,7 +65,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @UtilityClass
 public class IdKit extends IdUtil {
 
+    /** \u6839\u636e\u8282\u70b9\u3001\u65f6\u949f\u548c\u5e8f\u5217\u914d\u7f6e\u590d\u7528\u7684 Snowflake \u5b9e\u4f8b\u3002 */
     private static final Map<SnowflakeOptions, Snowflake> CUSTOM_SNOWFLAKES = new ConcurrentHashMap<>();
+    /** \u7f13\u5b58\u83b7\u53d6\u5230\u7684\u672c\u673a\u7f51\u7edc\u5730\u5740\u672b\u5c3e\u5b57\u8282\u3002 */
     private static byte LAST_IP = 0;
 
     /**
@@ -211,6 +213,11 @@ public class IdKit extends IdUtil {
         return CUSTOM_SNOWFLAKES.computeIfAbsent(options, IdKit::newSnowflake);
     }
 
+    /**
+     * \u7528\u5de5\u4f5c\u8282\u70b9\u3001\u6570\u636e\u4e2d\u5fc3\u548c\u65f6\u949f\u9009\u9879\u6784\u9020 Hutool Snowflake\u3002
+     * @param options Snowflake \u751f\u6210\u914d\u7f6e
+     * @return \u7b26\u5408\u9009\u9879\u7684 ID \u751f\u6210\u5668
+     */
     private static Snowflake newSnowflake(SnowflakeOptions options) {
         return new Snowflake(null, options.workerId, options.dataCenterId, options.useSystemClock,
                 options.timeOffset, options.randomSequenceLimit);
@@ -364,13 +371,27 @@ public class IdKit extends IdUtil {
         return LAST_IP;
     }
 
+    /** \u4fdd\u5b58 Snowflake \u8282\u70b9\u7f16\u53f7\u3001\u65f6\u949f\u9009\u62e9\u548c\u5e8f\u5217\u751f\u6210\u914d\u7f6e\u3002 */
     private static final class SnowflakeOptions {
+        /** Snowflake \u6807\u8bc6\u4e2d\u7684\u5de5\u4f5c\u8282\u70b9\u7f16\u53f7\u3002 */
         private final long workerId;
+        /** Snowflake \u6807\u8bc6\u4e2d\u7684\u6570\u636e\u4e2d\u5fc3\u7f16\u53f7\u3002 */
         private final long dataCenterId;
+        /** \u662f\u5426\u4f7f\u7528 Hutool \u7cfb\u7edf\u65f6\u949f\u8bfb\u53d6\u65f6\u95f4\u3002 */
         private final boolean useSystemClock;
+        /** \u5bb9\u8bb8\u65f6\u949f\u56de\u62e8\u7684\u65f6\u95f4\u5dee\uff0c\u5355\u4f4d\u4e3a\u6beb\u79d2\u3002 */
         private final long timeOffset;
+        /** \u6beb\u79d2\u5185\u521d\u59cb\u968f\u673a\u5e8f\u5217\u7684\u4e0a\u9650\u3002 */
         private final long randomSequenceLimit;
 
+        /**
+         * \u4fdd\u5b58\u7528\u4e8e\u521b\u5efa\u548c\u7f13\u5b58 Snowflake \u7684\u5b8c\u6574\u914d\u7f6e\u3002
+         * @param workerId Snowflake \u6807\u8bc6\u4e2d\u7684\u5de5\u4f5c\u8282\u70b9\u7f16\u53f7
+         * @param dataCenterId Snowflake \u6807\u8bc6\u4e2d\u7684\u6570\u636e\u4e2d\u5fc3\u7f16\u53f7
+         * @param useSystemClock \u662f\u5426\u4f7f\u7528 Hutool \u7cfb\u7edf\u65f6\u949f\u8bfb\u53d6\u65f6\u95f4
+         * @param timeOffset \u5bb9\u8bb8\u65f6\u949f\u56de\u62e8\u7684\u65f6\u95f4\u5dee\uff0c\u5355\u4f4d\u4e3a\u6beb\u79d2
+         * @param randomSequenceLimit \u6beb\u79d2\u5185\u521d\u59cb\u968f\u673a\u5e8f\u5217\u7684\u4e0a\u9650
+         */
         private SnowflakeOptions(long workerId, long dataCenterId, boolean useSystemClock,
                                  long timeOffset, long randomSequenceLimit) {
             this.workerId = workerId;
@@ -380,6 +401,7 @@ public class IdKit extends IdUtil {
             this.randomSequenceLimit = randomSequenceLimit;
         }
 
+        /** {@inheritDoc} */
         @Override
         public boolean equals(Object object) {
             if (this == object) {
@@ -396,6 +418,7 @@ public class IdKit extends IdUtil {
                     && randomSequenceLimit == that.randomSequenceLimit;
         }
 
+        /** {@inheritDoc} */
         @Override
         public int hashCode() {
             int result = (int) (workerId ^ (workerId >>> 32));

@@ -40,9 +40,14 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/** \u901a\u8fc7 <code>SaManager.getConfig()</code>\u3001<code>SaManager.getSaTokenDao()</code>\u3001<code>SaManager.getSaJsonTemplate()</code> \u9a8c\u8bc1 <code>SaTokenSubjectRedis</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
 @EnabledIfSystemProperty(named = "ddd4j.test.redis.port", matches = "[0-9]+")
 class SaTokenSubjectRedisTest {
 
+    /**
+     * \u9a8c\u8bc1<code>adminToken</code> \u7b49\u4e8e <code>"redis-admin-token"</code>\uff0c<code>adminToken</code>\u975e\u7a7a\u3002
+     * @param mode \u4f20\u7ed9 <code>properties.setAuthenticationMode()</code> \u7684 <code>SaTokenAuthenticationMode</code> \u8f93\u5165
+     */
     @ParameterizedTest
     @EnumSource(SaTokenAuthenticationMode.class)
     void realRedisRetainsRealmIsolationThroughLoginRenewalAndLogout(SaTokenAuthenticationMode mode) {
@@ -152,6 +157,12 @@ class SaTokenSubjectRedisTest {
         }
     }
 
+    /**
+     * \u6784\u9020 <code>AuthPrincipal</code>\u3001<code>AuthSessionConfig</code> \u4f5c\u4e3a\u5f53\u524d\u6d4b\u8bd5\u7684\u8f93\u5165\u6216\u7ed3\u679c\u3002
+     * @param userId \u4f20\u7ed9 <code>AuthRequest.of()</code> \u7684 <code>String</code> \u8f93\u5165
+     * @param token \u4ece\u6d4b\u8bd5\u767b\u5f55\u83b7\u5f97\u7684\u4f1a\u8bdd\u51ed\u636e
+     * @return \u63d0\u4f9b\u7ed9\u540e\u7eed\u5951\u7ea6\u65ad\u8a00\u7684 <code>AuthRequest</code> \u7ed3\u679c
+     */
     private AuthRequest loginRequest(String userId, String token) {
         return AuthRequest.of("shared")
                 .setPrincipal(new AuthPrincipal().setLoginId("shared").setUserId(userId))
@@ -160,6 +171,12 @@ class SaTokenSubjectRedisTest {
                         .setCreateTokenSessionNow(true).setPresetToken(token));
     }
 
+    /**
+     * \u6838\u5bf9<code>ttl &gt; timeout - 5 &amp;&amp; ttl &lt;= timeout</code>\u4e3a\u771f\u3002
+     * @param dao \u4f20\u7ed9 <code>dao.getTimeout()</code> \u7684 <code>SaTokenDao</code> \u8f93\u5165
+     * @param key \u7528\u4e8e\u5728\u6d4b\u8bd5\u4e0a\u4e0b\u6587\u6216\u7f13\u5b58\u4e2d\u7d22\u5f15\u6570\u636e\u7684\u952e
+     * @param timeout \u7b49\u5f85\u6d4b\u8bd5\u4e8b\u4ef6\u7684\u8d85\u65f6\u65f6\u957f
+     */
     private void assertTtl(SaTokenDao dao, String key, long timeout) {
         long ttl = dao.getTimeout(key);
         assertTrue(ttl > timeout - 5 && ttl <= timeout, () -> key + " has unexpected TTL " + ttl);

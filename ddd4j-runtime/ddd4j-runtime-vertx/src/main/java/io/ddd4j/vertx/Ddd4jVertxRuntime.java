@@ -41,10 +41,15 @@ import java.util.concurrent.Callable;
  */
 public final class Ddd4jVertxRuntime implements AutoCloseable {
 
+    /** \u5f53\u524d\u6846\u67b6\u7ec4\u4ef6\u5171\u4eab\u7684 Vert.x \u5b9e\u4f8b\u3002 */
     private final Vertx vertx;
+    /** \u7ba1\u7406\u5f53\u524d\u793a\u4f8b\u6216\u6d4b\u8bd5\u6240\u62e5\u6709\u7684 SPI \u6ce8\u518c\u8d44\u6e90\u3002 */
     private final SpiRegistrationScope registrations;
+    /** \u7ba1\u7406\u5f53\u524d\u8fd0\u884c\u65f6\u6ce8\u518c\u7684\u8ba4\u8bc1\u4e3b\u4f53\u63d0\u4f9b\u5668\u53ca\u5176\u6062\u590d\u52a8\u4f5c\u3002 */
     private final SubjectKitRegistrationScope subjectRegistration;
+    /** \u6c47\u603b\u5f53\u524d\u7ec4\u4ef6\u5c31\u7eea\u72b6\u6001\u7684\u6ce8\u518c\u8868\u3002 */
     private final RuntimeReadinessRegistry readinessRegistry;
+    /** \u8d1f\u8d23\u5728\u5e94\u7528\u751f\u547d\u5468\u671f\u5185\u7ba1\u7406\u6295\u5f71\u4efb\u52a1\u7684\u7ec4\u4ef6\u3002 */
     private VertxProjectionViewManager projectionManager;
 
     /**
@@ -145,6 +150,13 @@ public final class Ddd4jVertxRuntime implements AutoCloseable {
         return attachProjection(vertx, executors, manager);
     }
 
+    /**
+     * \u5c06\u4e8b\u4ef6\u8bfb\u53d6\u7aef\u53e3\u4e0e\u5171\u4eab\u6295\u5f71\u6267\u884c\u670d\u52a1\u88c5\u914d\u4e3a\u8fd0\u884c\u5668\u3002
+     * @param <E> \u5f53\u524d\u5bb9\u5668\u5904\u7406\u7684\u7ec4\u4ef6\u6216\u4e8b\u4ef6\u7c7b\u578b
+     * @param repository \u4fdd\u5b58\u5e76\u8bfb\u53d6\u6295\u5f71\u68c0\u67e5\u70b9\u7684\u4ed3\u50a8
+     * @param reader \u4ece\u4e8b\u4ef6\u6e90\u6309\u4f4d\u70b9\u5206\u6279\u8bfb\u53d6\u4e8b\u4ef6\u7684\u7ec4\u4ef6
+     * @return \u6267\u884c\u5df2\u6ce8\u518c\u6295\u5f71\u89c6\u56fe\u7684\u6295\u5f71\u8fd0\u884c\u5668
+     */
     private static <E> ProjectionRunner<E> projectionRunner(ProjectionPositionRepository repository,
                                                             EventChunkReader<E> reader) {
         Objects.requireNonNull(repository, "Explicit projection requires a position repository");
@@ -155,6 +167,13 @@ public final class Ddd4jVertxRuntime implements AutoCloseable {
         return new ProjectionRunner<>(new DefaultProjectionService(repository), reader);
     }
 
+    /**
+     * \u7ec4\u88c5\u8fde\u63a5 Vert.x \u5bb9\u5668\u7684 DDD4J \u8fd0\u884c\u65f6\u53ca\u6295\u5f71\u7ba1\u7406\u5668\u3002
+     * @param vertx \u627f\u8f7d\u5f53\u524d\u8fd0\u884c\u65f6\u548c\u4e8b\u4ef6\u603b\u7ebf\u7684 Vert.x \u5b9e\u4f8b
+     * @param executors \u5f53\u524d\u6846\u67b6\u5bb9\u5668\u63d0\u4f9b\u7684\u547d\u4ee4\u6267\u884c\u5668
+     * @param manager \u7528\u4e8e\u8c03\u5ea6\u5f53\u524d\u89c6\u56fe\u7684\u7ba1\u7406\u5668
+     * @return \u5305\u542b\u89c6\u56fe\u7ba1\u7406\u5668\u7684 Vert.x \u8fd0\u884c\u65f6
+     */
     private static Ddd4jVertxRuntime attachProjection(Vertx vertx,
                                                       Collection<CommandExecutor<?>> executors, VertxProjectionViewManager manager) {
         try {
@@ -237,6 +256,7 @@ public final class Ddd4jVertxRuntime implements AutoCloseable {
         });
     }
 
+    /** {@inheritDoc} */
     @Override
     public void close() {
         try {

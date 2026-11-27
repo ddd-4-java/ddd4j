@@ -35,6 +35,7 @@ import io.ddd4j.kit.lang.IdKit;
  */
 public class UuidIdStrategy implements IdGenerationStrategy<String> {
 
+    /** {@inheritDoc} */
     @Override
     public String generate() {
         return IdKit.simpleUUID();

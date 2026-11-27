@@ -69,6 +69,15 @@ public class RankKit {
         }
     }
 
+    /**
+     * \u76f8\u540c\u952e\u5e76\u5217\u4e14\u4e4b\u540e\u53ef\u80fd\u8df3\u8fc7\u540d\u6b21\u3002
+     * @param <T> \u88ab\u6392\u540d\u7684\u5143\u7d20\u7c7b\u578b
+     * @param <U> \u6bd4\u8f83\u662f\u5426\u5e76\u5217\u7684\u6392\u540d\u952e\u7c7b\u578b
+     * @param top \u8981\u4fdd\u7559\u7684\u540d\u6b21\u4e0a\u9650\uff0c\u7a7a\u503c\u6216\u975e\u6b63\u6570\u65f6\u4e0d\u9650\u5236
+     * @param sortedList \u5df2\u6392\u5e8f\u4e14\u7b49\u5f85\u9644\u52a0\u540d\u6b21\u7684\u8bb0\u5f55
+     * @param keyExtractor \u63d0\u53d6\u7528\u4e8e\u5224\u5b9a\u5e76\u5217\u7684\u6392\u540d\u952e
+     * @return \u542b\u540d\u6b21\u548c\u539f\u8bb0\u5f55\u7684\u6392\u540d\u5217\u8868
+     */
     private static <T, U> List<RankModel<T>> doRankSameNonContinuous(Integer top, List<T> sortedList, Function<? super T, ? extends U> keyExtractor) {
         List<RankModel<T>> result = new ArrayList<>();
         int rankNumber = 0;
@@ -87,6 +96,15 @@ public class RankKit {
         return result;
     }
 
+    /**
+     * \u76f8\u540c\u952e\u5e76\u5217\u4e14\u4e4b\u540e\u8fde\u7eed\u8ba1\u540d\u6b21\u3002
+     * @param <T> \u88ab\u6392\u540d\u7684\u5143\u7d20\u7c7b\u578b
+     * @param <U> \u6bd4\u8f83\u662f\u5426\u5e76\u5217\u7684\u6392\u540d\u952e\u7c7b\u578b
+     * @param top \u8981\u4fdd\u7559\u7684\u540d\u6b21\u4e0a\u9650\uff0c\u7a7a\u503c\u6216\u975e\u6b63\u6570\u65f6\u4e0d\u9650\u5236
+     * @param sortedList \u5df2\u6392\u5e8f\u4e14\u7b49\u5f85\u9644\u52a0\u540d\u6b21\u7684\u8bb0\u5f55
+     * @param keyExtractor \u63d0\u53d6\u7528\u4e8e\u5224\u5b9a\u5e76\u5217\u7684\u6392\u540d\u952e
+     * @return \u542b\u540d\u6b21\u548c\u539f\u8bb0\u5f55\u7684\u6392\u540d\u5217\u8868
+     */
     private static <T, U> List<RankModel<T>> doRankSameContinuous(Integer top, List<T> sortedList, Function<? super T, ? extends U> keyExtractor) {
         List<RankModel<T>> result = new ArrayList<>();
         int rankNumber = 0;
@@ -103,6 +121,13 @@ public class RankKit {
         return result;
     }
 
+    /**
+     * \u6309\u5217\u8868\u987a\u5e8f\u9010\u884c\u8ba1\u540d\u6b21\u3002
+     * @param <T> \u88ab\u6392\u540d\u7684\u5143\u7d20\u7c7b\u578b
+     * @param top \u8981\u4fdd\u7559\u7684\u540d\u6b21\u4e0a\u9650\uff0c\u7a7a\u503c\u6216\u975e\u6b63\u6570\u65f6\u4e0d\u9650\u5236
+     * @param sortedList \u5df2\u6392\u5e8f\u4e14\u7b49\u5f85\u9644\u52a0\u540d\u6b21\u7684\u8bb0\u5f55
+     * @return \u542b\u540d\u6b21\u548c\u539f\u8bb0\u5f55\u7684\u6392\u540d\u5217\u8868
+     */
     private static <T> List<RankModel<T>> doRankNatural(Integer top, List<T> sortedList) {
         List<RankModel<T>> result = new ArrayList<>();
         int rankNumber = 1;

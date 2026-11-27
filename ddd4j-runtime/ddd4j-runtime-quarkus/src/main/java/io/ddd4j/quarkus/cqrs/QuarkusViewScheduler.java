@@ -44,6 +44,7 @@ public class QuarkusViewScheduler implements ViewScheduler {
      */
     static final String TASK_KEY = "ddd4j.task";
 
+    /** {@inheritDoc} */
     @Override
     public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
         try {
@@ -54,7 +55,15 @@ public class QuarkusViewScheduler implements ViewScheduler {
     }
 
     // 将选装 Quartz 的链接边界放在真实 schedule 调用内，ArC 发现外层 Bean 时不加载 Quartz 类型。
+    /** \u5c06\u53ef\u9009\u7684 Quarkus Quartz \u8c03\u5ea6\u5668\u63a5\u5165\u6295\u5f71\u4efb\u52a1\uff0c\u5ef6\u8fdf\u52a0\u8f7d\u539f\u751f Quartz \u7c7b\u578b\u3002 */
     private static final class NativeQuartz {
+        /**
+         * \u6839\u636e\u89c6\u56fe\u540d\u79f0\u548c Cron \u914d\u7f6e\u6ce8\u518c\u4e00\u6b21\u6301\u7eed\u6709\u6548\u7684 Quartz \u6295\u5f71\u8ba1\u5212\u3002
+         * @param viewName \u5f53\u524d\u88ab\u8c03\u5ea6\u7684\u89c6\u56fe\u540d\u79f0
+         * @param cron \u4efb\u52a1\u8ba1\u5212\u7684 Cron \u8868\u8fbe\u5f0f
+         * @param task \u5b9e\u9645\u6267\u884c\u4e00\u6b21\u6295\u5f71\u7684\u56de\u8c03
+         * @return \u53ef\u53d6\u6d88\u8be5\u8ba1\u5212\u7684\u8c03\u5ea6\u53e5\u67c4
+         */
         private static ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
             Instance<io.quarkus.quartz.QuartzScheduler> schedulers = CDI.current()
                     .select(io.quarkus.quartz.QuartzScheduler.class);

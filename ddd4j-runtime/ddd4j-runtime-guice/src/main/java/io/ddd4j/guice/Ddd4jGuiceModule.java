@@ -80,6 +80,7 @@ public class Ddd4jGuiceModule extends AbstractModule {
         };
     }
 
+    /** \u628a DDD4J \u8fd0\u884c\u65f6\u4f7f\u7528\u7684\u57fa\u7840\u670d\u52a1\u6ce8\u518c\u5230 Guice\u3002 */
     @Override
     protected void configure() {
         // 启动期注册并托管全局 SPI；应用关闭时可从 Injector 获取后调用 close()。

@@ -49,6 +49,10 @@ public class ValidateException extends BizRuntimeException {
         super(ApiCode.BAD_REQUEST.getCode(), errorMsg);
     }
 
+    /**
+     * \u628a\u6821\u9a8c\u72b6\u6001\u3001\u9519\u8bef\u6d88\u606f\u548c\u5b57\u6bb5\u9519\u8bef\u6c47\u603b\u4e3a\u8bca\u65ad\u6587\u672c\u3002
+     * @return \u5f53\u524d\u6821\u9a8c\u5f02\u5e38\u7684\u6587\u672c\u8868\u793a
+     */
     public String toString() {
         return (new StringJoiner(", ", ValidateException.class.getSimpleName() + "[", "]")).add("code=" + this.getCode()).add("msg=" + this.getMessage()).add("errorMap=" + this.errorMap).toString();
     }

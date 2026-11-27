@@ -30,8 +30,11 @@ import java.util.function.Consumer;
 @Slf4j
 public final class MQInboxProcessor {
 
+    /** \u68c0\u67e5\u5e76\u8bb0\u5f55\u6d88\u606f\u6d88\u8d39\u5904\u7406\u72b6\u6001\u7684\u6536\u4ef6\u7bb1\u5b58\u50a8\u3002 */
     private final MQInboxStore store;
+    /** \u6b64\u6536\u4ef6\u7bb1\u5904\u7406\u5668\u6240\u5c5e\u7684\u903b\u8f91\u6d88\u8d39\u8005\u6807\u8bc6\u3002 */
     private final String consumerId;
+    /** \u63a5\u6536\u6d88\u606f\u6295\u9012\u6216\u8fd0\u884c\u72b6\u6001\u53d8\u5316\u7684\u56de\u8c03\u3002 */
     private final MQDeliveryObserver observer;
 
     /**
@@ -88,6 +91,10 @@ public final class MQInboxProcessor {
         }
     }
 
+    /**
+     * \u901a\u77e5\u6295\u9012\u89c2\u5bdf\u5668\u5e76\u8bb0\u5f55\u5176\u8fd0\u884c\u65f6\u5f02\u5e38\uff0c\u907f\u514d\u5f71\u54cd\u5b9e\u9645\u6295\u9012\u8def\u5f84\u3002
+     * @param action \u8981\u5728\u5f53\u524d\u89c2\u5bdf\u5668\u4e0a\u8c03\u7528\u7684\u901a\u77e5\u52a8\u4f5c
+     */
     private void notifyObserver(Consumer<MQDeliveryObserver> action) {
         try {
             action.accept(observer);

@@ -28,22 +28,26 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class ExceptionSpanTest {
 
+    /** \u6d4b\u8bd5\u6267\u884c\u524d\u6267\u884c <code>OpenTelemetrySdkSetter.set()</code>\u3001<code>OpenTelemetry.noop()</code> \u5b8c\u6210\u8d44\u6e90\u51c6\u5907\u3002 */
     @BeforeEach
     void setUp() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
     }
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>OpenTelemetrySdkSetter.set()</code>\u3001<code>OpenTelemetry.noop()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterEach
     void tearDown() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
     }
 
+    /** \u9a8c\u8bc1<code>true</code>\u4e3a\u771f\u3002 */
     @Test
     void record_withNull_shouldNotThrow() {
         ExceptionSpan.record(null);
         assertThat(true).isTrue();
     }
 
+    /** \u9a8c\u8bc1<code>true</code>\u4e3a\u771f\u3002 */
     @Test
     void record_whenOtelNotAvailable_shouldNotThrow() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -51,18 +55,21 @@ class ExceptionSpanTest {
         assertThat(true).isTrue();
     }
 
+    /** \u9a8c\u8bc1<code>true</code>\u4e3a\u771f\u3002 */
     @Test
     void record_withNullSpan_shouldNotThrow() {
         ExceptionSpan.record(null, new RuntimeException("test"));
         assertThat(true).isTrue();
     }
 
+    /** \u9a8c\u8bc1<code>true</code>\u4e3a\u771f\u3002 */
     @Test
     void record_withNullThrowableAndNullSpan_shouldNotThrow() {
         ExceptionSpan.record(null, null);
         assertThat(true).isTrue();
     }
 
+    /** \u9a8c\u8bc1<code>true</code>\u4e3a\u771f\u3002 */
     @Test
     void record_shouldAcceptAnyThrowable() {
         // 不抛异常即通过（noop OTel 下 record 是 noop）

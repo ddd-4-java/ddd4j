@@ -41,6 +41,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("EventChunkReader SPI 契约")
 class EventChunkReaderContractTest {
 
+    /** \u9a8c\u8bc1<code>chunk.getEvents()</code> \u6309\u987a\u5e8f\u4ec5\u5305\u542b <code>"b"</code>\u3001<code>"c"</code>\uff0c<code>chunk.getNextEventNumber()</code> \u7b49\u4e8e <code>4L</code>\u3002 */
     @Test
     void read_应按fromEventNumber包含起始读取事件() {
         InMemoryEventChunkReader reader = new InMemoryEventChunkReader();
@@ -54,6 +55,7 @@ class EventChunkReaderContractTest {
         assertThat(chunk.getNextEventNumber()).isEqualTo(4L);
     }
 
+    /** \u9a8c\u8bc1<code>chunk.getEvents()</code> \u7684\u5927\u5c0f\u4e3a <code>2</code>\uff0c<code>chunk.getNextEventNumber()</code> \u7b49\u4e8e <code>3L</code>\u3002 */
     @Test
     void read_应限制返回事件数量不超过chunkSize() {
         InMemoryEventChunkReader reader = new InMemoryEventChunkReader();
@@ -68,6 +70,7 @@ class EventChunkReaderContractTest {
         assertThat(chunk.getNextEventNumber()).isEqualTo(3L);
     }
 
+    /** \u9a8c\u8bc1<code>chunk.hasEvents()</code>\u4e3a\u5047\uff0c<code>chunk.getNextEventNumber()</code> \u7b49\u4e8e <code>2L</code>\u3002 */
     @Test
     void read_从已读完的位置继续读_应返回空chunk且不推进位置() {
         InMemoryEventChunkReader reader = new InMemoryEventChunkReader();
@@ -80,6 +83,7 @@ class EventChunkReaderContractTest {
         assertThat(chunk.getNextEventNumber()).isEqualTo(2L);
     }
 
+    /** \u9a8c\u8bc1<code>chunk.hasEvents()</code>\u4e3a\u5047\uff0c<code>chunk.getNextEventNumber()</code>\u4e3a\u96f6\u3002 */
     @Test
     void read_空流首次读取_应返回nextEventNumber为零的空chunk() {
         InMemoryEventChunkReader reader = new InMemoryEventChunkReader();
@@ -90,6 +94,7 @@ class EventChunkReaderContractTest {
         assertThat(chunk.getNextEventNumber()).isZero();
     }
 
+    /** \u9a8c\u8bc1<code>chunk.getEvents()</code> \u6309\u987a\u5e8f\u4ec5\u5305\u542b <code>"a"</code>\u3001<code>"b"</code>\u3002 */
     @Test
     void read_eventTypes为空_应读取全部类型() {
         InMemoryEventChunkReader reader = new InMemoryEventChunkReader();
@@ -107,12 +112,19 @@ class EventChunkReaderContractTest {
      */
     static class InMemoryEventChunkReader implements EventChunkReader<String> {
 
+        /** \u5f53\u524d\u6d4b\u8bd5\u671f\u95f4\u6536\u96c6\u7684\u9886\u57df\u4e8b\u4ef6\uff0c\u4f9b\u65ad\u8a00\u6bd4\u8f83\u53d1\u5e03\u5185\u5bb9\u6216\u987a\u5e8f\u3002 */
         private final Deque<Numbered> events = new ArrayDeque<>();
 
+        /**
+         * \u8c03\u7528 <code>events.addLast()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+         * @param number \u4f20\u7ed9 <code>events.addLast()</code> \u7684 <code>long</code> \u8f93\u5165
+         * @param payload \u4f20\u7ed9\u88ab\u6d4b\u64cd\u4f5c\u7684\u6d88\u606f\u8d1f\u8f7d
+         */
         void append(long number, String payload) {
             events.addLast(new Numbered(number, payload));
         }
 
+        /** {@inheritDoc} */
         @Override
         public EventChunk<String> read(String streamId, long fromEventNumber, int chunkSize,
                                        Collection<String> eventTypes) {
@@ -138,10 +150,13 @@ class EventChunkReaderContractTest {
          */
         private final static class Numbered {
 
+            /** Java \u5e8f\u5217\u5316\u4f7f\u7528\u7684\u7248\u672c\u6807\u8bc6\u3002 */
             private static final long serialVersionUID = 0L;
 
+            /** \u7528\u4e8e\u6d4b\u8bd5\u6620\u5c04\u6216\u5904\u7406\u903b\u8f91\u7684\u6570\u503c\u5b57\u6bb5\u3002 */
             private final long number;
 
+            /** \u5f53\u524d\u4e8b\u4ef6\u6216\u8bf7\u6c42\u5939\u5177\u643a\u5e26\u7684\u8d1f\u8f7d\u3002 */
             private final String payload;
 
             /**
@@ -156,16 +171,25 @@ class EventChunkReaderContractTest {
                 this.payload = payload;
             }
 
+            /**
+             * \u8bfb\u53d6<code>number</code> \u5b57\u6bb5\u3002
+             * @return <code>number</code> \u5b57\u6bb5
+             */
             @JsonProperty("number")
             public long number() {
                 return number;
             }
 
+            /**
+             * \u8bfb\u53d6<code>payload</code> \u5b57\u6bb5\u3002
+             * @return <code>payload</code> \u5b57\u6bb5
+             */
             @JsonProperty("payload")
             public String payload() {
                 return payload;
             }
 
+            /** {@inheritDoc} */
             @Override
             public boolean equals(Object obj) {
                 if (this == obj) {
@@ -178,6 +202,7 @@ class EventChunkReaderContractTest {
                 return this.number == other.number && Objects.equals(this.payload, other.payload);
             }
 
+            /** {@inheritDoc} */
             @Override
             public int hashCode() {
                 int result = 0;
@@ -186,6 +211,7 @@ class EventChunkReaderContractTest {
                 return result;
             }
 
+            /** {@inheritDoc} */
             @Override
             public String toString() {
                 return "Numbered[number=" + number + ", payload=" + payload + "]";

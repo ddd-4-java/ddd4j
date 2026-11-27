@@ -41,9 +41,12 @@ import java.util.Objects;
  */
 public abstract class BaseErrorConfiguration {
 
+    /** \u5f53\u524d\u7ec4\u4ef6\u4f7f\u7528\u7684\u65e5\u5fd7\u8bb0\u5f55\u5668\u3002 */
     private static final Logger LOG = LoggerFactory.getLogger(BaseErrorConfiguration.class);
 
+    /** \u5c06\u6267\u884c\u5f02\u5e38\u8f6c\u6362\u6210\u5171\u7528 Web \u9519\u8bef\u7684\u7ec4\u4ef6\u3002 */
     private final WebExceptionTranslator translator;
+    /** \u751f\u6210\u5e94\u7528\u7edf\u4e00\u9519\u8bef\u54cd\u5e94\u4f53\u7684\u6784\u9020\u5668\u3002 */
     private final WebErrorResponseBuilder responseBuilder;
 
     /** 使用默认异常翻译器和响应构造器。 */

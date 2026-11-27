@@ -69,14 +69,20 @@ public interface MQClient extends AutoCloseable {
     String MQ_STORER = MQEvent.MQ_EVENT_PUBLISHER + ".storer";
 
     /**
-     * 简单转义单引号（防止 tags 内含单引号破坏 selector 解析）。
+     * \u7b80\u5355\u8f6c\u4e49\u5355\u5f15\u53f7\uff08\u9632\u6b62 tags \u5185\u542b\u5355\u5f15\u53f7\u7834\u574f selector \u89e3\u6790\uff09\u3002
+     *
+     * @param s \u5f85\u8f6c\u4e49\u7684\u6587\u672c
+     * @return \u53ef\u7528\u4e8e\u62fc\u63a5\u6d88\u606f\u5143\u6570\u636e\u7684\u8f6c\u4e49\u6587\u672c
      */
     private static String escape(String s) {
         return s.replace("'", "''");
     }
 
     /**
-     * 反射调用异常解包（对齐 base-mq）。
+     * \u53cd\u5c04\u8c03\u7528\u5f02\u5e38\u89e3\u5305\uff08\u5bf9\u9f50 base-mq\uff09\u3002
+     *
+     * @param ex \u5f85\u89e3\u5305\u7684\u5f02\u5e38
+     * @return \u89e3\u5305\u540e\u7684\u5f02\u5e38
      */
     private static Throwable unwrap(Exception ex) {
         Throwable cause = ex.getCause();
@@ -243,6 +249,7 @@ public interface MQClient extends AutoCloseable {
         return MQStartupStatus.unmanaged();
     }
 
+    /** {@inheritDoc} */
     @Override
     default void close() {
         logger().info("Shutting down MQClient [{}]", impl());
@@ -253,6 +260,13 @@ public interface MQClient extends AutoCloseable {
         }
     }
 
+    /**
+     * \u6839\u636e\u76d1\u542c\u5668\u548c\u4ee3\u7406\u5f02\u5e38\u751f\u6210\u53ef\u8bca\u65ad\u7684\u521d\u59cb\u5316\u5931\u8d25\u8bb0\u5f55\u3002
+     * @param listener \u521d\u59cb\u5316\u5931\u8d25\u7684\u76d1\u542c\u5668
+     * @param required \u8be5\u76d1\u542c\u5668\u662f\u5426\u8981\u6c42\u6210\u529f\u521d\u59cb\u5316
+     * @param exception \u521d\u59cb\u5316\u65f6\u629b\u51fa\u7684\u5f02\u5e38
+     * @return \u5f53\u524d\u76d1\u542c\u5668\u7684\u542f\u52a8\u5931\u8d25\u8bb0\u5f55
+     */
     private MQListenerInitializationFailure failure(MQListener listener, boolean required,
                                                     Throwable exception) {
         String topic = Objects.isNull(listener) ? "" : Objects.toString(listener.getTopic(), "");
@@ -264,12 +278,24 @@ public interface MQClient extends AutoCloseable {
                 exception.getClass().getSimpleName());
     }
 
+    /**
+     * \u5c06\u76d1\u542c\u5668\u542f\u52a8\u5931\u8d25\u4fe1\u606f\u4e0e\u539f\u59cb\u5f02\u5e38\u5408\u5e76\u4e3a\u521d\u59cb\u5316\u5f02\u5e38\u3002
+     * @param failure \u5df2\u6574\u7406\u7684\u76d1\u542c\u5668\u521d\u59cb\u5316\u5931\u8d25\u4fe1\u606f
+     * @param cause \u539f\u59cb\u5f02\u5e38
+     * @return \u4f9b\u542f\u52a8\u72b6\u6001\u548c\u8c03\u7528\u65b9\u5904\u7406\u7684\u6d88\u606f\u521d\u59cb\u5316\u5f02\u5e38
+     */
     private MQInitializationException initializationException(MQListenerInitializationFailure failure,
                                                               Throwable cause) {
         return new MQInitializationException(failure.broker(), failure.topic(), failure.group(),
                 failure.listenerMethod(), cause);
     }
 
+    /**
+     * \u56de\u6eda\u5f53\u524d\u521d\u59cb\u5316\u68c0\u67e5\u70b9\u4e4b\u540e\u767b\u8bb0\u7684\u8d44\u6e90\uff0c\u4fdd\u7559\u539f\u6765\u7684\u521d\u59cb\u5316\u5f02\u5e38\u3002
+     * @param lifecycle \u8d1f\u8d23\u56de\u6536\u5df2\u767b\u8bb0\u8d44\u6e90\u7684\u751f\u547d\u5468\u671f
+     * @param checkpoint \u521d\u59cb\u5316\u524d\u8bb0\u5f55\u7684\u8d44\u6e90\u68c0\u67e5\u70b9
+     * @param initializationException \u89e6\u53d1\u56de\u6eda\u7684\u521d\u59cb\u5316\u5f02\u5e38
+     */
     private void rollback(MQClientLifecycle lifecycle, int checkpoint,
                           MQInitializationException initializationException) {
         try {
@@ -644,9 +670,14 @@ public interface MQClient extends AutoCloseable {
     @Slf4j(topic = "### DDD4J-MQ ###")
     final class LogHolder {
 
+        /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>LogHolder</code> \u5b9e\u4f8b\u3002 */
         private LogHolder() {
         }
 
+        /**
+         * \u8fd4\u56de\u5171\u4eab\u6d88\u606f\u5ba2\u6237\u7aef\u4f7f\u7528\u7684\u65e5\u5fd7\u8bb0\u5f55\u5668\u3002
+         * @return \u6d88\u606f\u5ba2\u6237\u7aef\u65e5\u5fd7\u8bb0\u5f55\u5668
+         */
         private static Logger logger() {
             return log;
         }

@@ -32,6 +32,7 @@ import java.util.Objects;
  */
 public final class SaTokenSecurityConfigurer {
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>SaTokenSecurityConfigurer</code> \u5b9e\u4f8b\u3002 */
     private SaTokenSecurityConfigurer() {
     }
 
@@ -47,6 +48,11 @@ public final class SaTokenSecurityConfigurer {
         return logic;
     }
 
+    /**
+     * \u6821\u9a8c\u914d\u7f6e\u5e76\u521b\u5efa\u5f53\u524d\u6a21\u5f0f\u5bf9\u5e94\u7684\u539f\u751f\u767b\u5f55\u903b\u8f91\u3002
+     * @param properties \u9009\u62e9\u767b\u5f55\u6a21\u5f0f\u5e76\u914d\u7f6e JWT \u7684\u5b89\u5168\u5c5e\u6027
+     * @return \u5e26\u6709\u6548\u5b89\u5168\u914d\u7f6e\u7684\u539f\u751f\u767b\u5f55\u903b\u8f91
+     */
     static StpLogic createConfiguredLogic(SaTokenSecurityProperties properties) {
         Objects.requireNonNull(properties, "properties must not be null");
         properties.validate();

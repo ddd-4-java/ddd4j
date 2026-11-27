@@ -28,6 +28,7 @@ import java.util.Collection;
  */
 public class NoopEventChunkReader<E> implements EventChunkReader<E> {
 
+    /** {@inheritDoc} */
     @Override
     public EventChunk<E> read(String streamId, long fromEventNumber, int chunkSize, Collection<String> eventTypes) {
         return EventChunk.empty(fromEventNumber);

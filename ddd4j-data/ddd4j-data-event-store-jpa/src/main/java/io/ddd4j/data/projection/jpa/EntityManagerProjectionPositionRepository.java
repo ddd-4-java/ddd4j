@@ -17,7 +17,9 @@ import java.util.Optional;
  * 同一实体管理器可与 EventStore、业务写入共享事务。应用负责事务范围和线程隔离。
  */
 public final class EntityManagerProjectionPositionRepository implements ProjectionPositionRepository {
+    /** \u6267\u884c JPA \u67e5\u8be2\u548c\u6301\u4e45\u5316\u64cd\u4f5c\u7684\u5b9e\u4f53\u7ba1\u7406\u5668\u3002 */
     private final EntityManager entityManager;
+    /** \u4f7f\u7528\u5f53\u524d\u5b9e\u4f53\u7ba1\u7406\u5668\u8bfb\u53d6\u548c\u5199\u5165\u6295\u5f71\u68c0\u67e5\u70b9\u7684\u7ec4\u4ef6\u3002 */
     private final JpaProjectionPositionStore<ProjectionPositionEntity> store;
 
     /**
@@ -29,20 +31,28 @@ public final class EntityManagerProjectionPositionRepository implements Projecti
                 "ProjectionPositionEntity");
     }
 
+    /**
+     * \u590d\u5236 JPA \u5b9e\u4f53\u7684\u6d41\u6807\u8bc6\u53ca\u4e8b\u4ef6\u5e8f\u53f7\u3002
+     * @param entity \u6570\u636e\u5e93\u8fd4\u56de\u7684\u6301\u4e45\u5316\u5b9e\u4f53
+     * @return \u72ec\u7acb\u4e8e JPA \u5b9e\u4f53\u7684\u6295\u5f71\u4f4d\u7f6e
+     */
     private static ProjectionPosition snapshot(ProjectionPositionEntity entity) {
         return new DefaultProjectionPosition(entity.getStreamId(), entity.getNextEventNumber());
     }
 
+    /** {@inheritDoc} */
     @Override
     public Optional<ProjectionPosition> findByStreamId(String streamId) {
         return store.findByStreamId(streamId).map(EntityManagerProjectionPositionRepository::snapshot);
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<ProjectionPosition> findAll() {
         return store.findAll().stream().map(EntityManagerProjectionPositionRepository::snapshot).toList();
     }
 
+    /** {@inheritDoc} */
     @Override
     public ProjectionPosition save(ProjectionPosition position) {
         Objects.requireNonNull(position, "position must not be null");
@@ -55,6 +65,7 @@ public final class EntityManagerProjectionPositionRepository implements Projecti
         return snapshot(entity);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void deleteByStreamId(String streamId) {
         requireTransaction();
@@ -62,6 +73,7 @@ public final class EntityManagerProjectionPositionRepository implements Projecti
         entityManager.flush();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void resetToZero(String streamId) {
         requireTransaction();
@@ -98,6 +110,10 @@ public final class EntityManagerProjectionPositionRepository implements Projecti
         return entity.getNextEventNumber();
     }
 
+    /**
+     * \u8981\u6c42\u5f53\u524d\u5b9e\u4f53\u7ba1\u7406\u5668\u5df2\u52a0\u5165\u4e8b\u52a1\u4ee5\u5b89\u5168\u5199\u5165\u68c0\u67e5\u70b9\u3002
+     * @throws TransactionRequiredException \u672a\u52a0\u5165\u8c03\u7528\u65b9\u4e8b\u52a1
+     */
     private void requireTransaction() {
         if (!entityManager.isJoinedToTransaction()) {
             throw new TransactionRequiredException("an active caller-managed transaction is required");

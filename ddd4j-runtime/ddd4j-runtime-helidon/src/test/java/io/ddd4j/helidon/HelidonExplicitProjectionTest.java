@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * 真正 MP 启动必须拒绝显式启用但未提供来源和持久位置的配置。
  */
 class HelidonExplicitProjectionTest {
+    /** \u9a8c\u8bc1<code>{ server[0] = Server.builder().host("127.0.0.1").port(0).build(); server[0].start(); }</code> \u629b\u51fa <code>Exception.class</code>\uff0c<code>cause</code>\u975e\u7a7a\u3002 */
     @Test
     void explicitProjectionWithoutStorageFailsNativeStartup() {
         String key = "ddd4j.cqrs.projection.enabled";

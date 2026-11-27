@@ -11,6 +11,7 @@ import java.util.Objects;
  */
 public class Ddd4jTenantContext {
 
+    /** \u4e0a\u6e38 ORM \u589e\u5f3a\u7ec4\u4ef6\u63d0\u4f9b\u7684\u79df\u6237\u4e0a\u4e0b\u6587\u59d4\u6258\u3002 */
     private final TenantContext delegate = new TenantContext() {
         @Override
         public Object getCurrentTenantId() {
@@ -82,8 +83,13 @@ public class Ddd4jTenantContext {
      */
     public static final class Scope implements AutoCloseable {
 
+        /** \u4e0a\u6e38\u79df\u6237\u4f5c\u7528\u57df\uff0c\u5173\u95ed\u65f6\u6062\u590d\u8fdb\u5165\u524d\u7684\u79df\u6237\u72b6\u6001\u3002 */
         private final com.baomidou.mybatisplus.enhance.context.TenantContext.Scope delegateScope;
 
+        /**
+         * \u5305\u88c5\u4e0a\u6e38\u79df\u6237\u4f5c\u7528\u57df\u4ee5\u4fbf\u968f DDD4J \u4e0a\u4e0b\u6587\u5173\u95ed\u3002
+         * @param scope \u4e0a\u6e38 ORM \u79df\u6237\u4e0a\u4e0b\u6587\u4f5c\u7528\u57df
+         */
         private Scope(com.baomidou.mybatisplus.enhance.context.TenantContext.Scope scope) {
             this.delegateScope = scope;
         }

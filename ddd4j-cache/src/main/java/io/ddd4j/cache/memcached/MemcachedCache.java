@@ -51,9 +51,13 @@ import java.util.function.Function;
 @Slf4j
 public class MemcachedCache<K, V> implements Cache<K, V> {
 
+    /** \u7528\u4e8e\u8bbf\u95ee Memcached \u670d\u52a1\u5668\u7684\u5ba2\u6237\u7aef\u3002 */
     private final MemcachedClient memcachedClient;
+    /** \u9ed8\u8ba4\u7f13\u5b58\u5b58\u6d3b\u65f6\u95f4\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002 */
     private final int expireSeconds;
+    /** \u53cd\u5e8f\u5217\u5316\u7f13\u5b58\u6761\u76ee\u65f6\u4f7f\u7528\u7684\u503c\u7c7b\u578b\u3002 */
     private final Class<V> valueType;
+    /** \u8d1f\u8d23\u5728 Redis \u6216 Memcached \u4e2d\u5b58\u50a8 JSON \u503c\u7684\u6620\u5c04\u5668\u3002 */
     private final ObjectMapper objectMapper;
 
     /**
@@ -97,10 +101,16 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
         this(memcachedClient, config, valueType, JsonMapper.builder().build());
     }
 
+    /**
+     * \u5c06 Memcached \u7f13\u5b58\u952e\u8f6c\u6362\u4e3a\u5b57\u7b26\u4e32\u5f62\u5f0f\u3002
+     * @param key \u7f13\u5b58\u952e
+     * @return \u5199\u5165 Memcached \u4f7f\u7528\u7684\u952e
+     */
     private String serializeKey(K key) {
         return String.valueOf(key);
     }
 
+    /** {@inheritDoc} */
     @Override
     public V getIfPresent(K key) {
         try {
@@ -115,6 +125,7 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public V get(K key, Function<K, V> mappingFunction) {
         V value = getIfPresent(key);
@@ -127,6 +138,7 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
         return value;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void put(K key, V value) {
         try {
@@ -137,6 +149,7 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void invalidate(K key) {
         try {
@@ -146,16 +159,22 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
         }
     }
 
+    /** \u4fdd\u7559\u540e\u7aef\u73b0\u6709\u952e\u3002\u8c03\u7528\u65b9\u9700\u901a\u8fc7\u660e\u786e\u7684\u952e\u9010\u4e2a\u5931\u6548\u3002 */
     @Override
     public void invalidateAll() {
         log.warn("Memcached 不支持全局 invalidateAll（flushAll 危险操作），请通过明确的 key 逐个删除");
     }
 
+    /**
+     * \u62a5\u544a\u5f53\u524d\u540e\u7aef\u7684\u7f13\u5b58\u6761\u76ee\u6570\u91cf\u662f\u5426\u53ef\u7528\u3002
+     * @return \u56fa\u5b9a\u8fd4\u56de -1\uff0c\u8868\u793a\u6b64\u9002\u914d\u5668\u4e0d\u4f30\u7b97\u6761\u76ee\u6570
+     */
     @Override
     public long estimatedSize() {
         return -1;
     }
 
+    /** {@inheritDoc} */
     @Override
     public CacheStats stats() {
         return null;
@@ -170,6 +189,11 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
         return memcachedClient;
     }
 
+    /**
+     * \u6309\u7167\u9002\u914d\u5668\u7684\u503c\u7c7b\u578b\u53cd\u5e8f\u5217\u5316\u7f13\u5b58\u6587\u672c\u3002
+     * @param json \u4ece\u7f13\u5b58\u540e\u7aef\u8bfb\u51fa\u7684\u5b57\u7b26\u4e32
+     * @return \u89e3\u7801\u540e\u7684\u7f13\u5b58\u503c\uff0c\u8f93\u5165\u4e3a\u7a7a\u6216\u89e3\u7801\u5931\u8d25\u65f6\u8fd4\u56de\u7a7a
+     */
     @SuppressWarnings("unchecked")
     private V deserialize(String json) {
         if (StrKit.isBlank(json)) {
@@ -184,6 +208,7 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
 
     // ==================== CAS SPI 实现（基于 xmemcached 原生 cas 版本号）====================
 
+    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("unchecked")
     public V compareAndSet(K key, long expireSeconds, CASOperation<V, V> operation) {
@@ -249,6 +274,7 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
         return null;
     }
 
+    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("unchecked")
     public boolean compareAndSet(K key, V newValue, long expectedVersion) {
@@ -266,6 +292,7 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean compareAndSet(K key, V expectedOldValue, V newValue) {
         // Memcached 的 CAS 基于版本号而非值比较；这里降级为 gets + 版本号 cas

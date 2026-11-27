@@ -28,6 +28,7 @@ import io.ddd4j.core.subject.SubjectProvider;
  */
 public class AnonymousSubjectProvider implements SubjectProvider {
 
+    /** {@inheritDoc} */
     @Override
     public Subject getSubject() {
         return null; // 匿名：未登录

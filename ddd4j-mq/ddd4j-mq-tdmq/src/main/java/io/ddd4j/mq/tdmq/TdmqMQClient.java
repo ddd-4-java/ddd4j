@@ -51,15 +51,24 @@ import java.util.function.Consumer;
 @Slf4j(topic = "### DDD4J-MQ : TdmqMQClient ###")
 public class TdmqMQClient implements MQClient {
 
+    /** \u5f53\u524d\u6d88\u606f\u4ee3\u7406\u5ba2\u6237\u7aef\u4f7f\u7528\u7684\u8fde\u63a5\u548c\u8ba2\u9605\u914d\u7f6e\u3002 */
     private final TdmqProperties properties;
+    /** \u5f53\u524d TDMQ \u5ba2\u6237\u7aef\u7ef4\u62a4\u7684\u6d88\u8d39\u8ba2\u9605\u3002 */
     private final List<Subscription> subscriptions = new CopyOnWriteArrayList<>();
+    /** \u6309\u6d88\u606f\u4e3b\u9898\u8bb0\u5f55\u5f53\u524d\u8ba2\u9605\u53ca\u5176\u76d1\u542c\u5668\u3002 */
     private final java.util.Map<String, java.util.List<Consumer<DeliveredMessage>>> topicSubscribers =
             new java.util.concurrent.ConcurrentHashMap<>();
+    /** \u534f\u8c03\u6d88\u606f\u5ba2\u6237\u7aef\u542f\u52a8\u3001\u521d\u59cb\u5316\u548c\u5173\u95ed\u7684\u751f\u547d\u5468\u671f\u3002 */
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    /** \u7ec4\u4ef6\u7684\u542f\u52a8\u72b6\u6001\u548c\u542f\u52a8\u5931\u8d25\u8bca\u65ad\u4fe1\u606f\u3002 */
     private final MQStartupStatus startupStatus = new MQStartupStatus("tdmq");
+    /** \u7528\u4e8e\u539f\u751f\u8fde\u63a5\u6a21\u5f0f\u7684 Pulsar \u5ba2\u6237\u7aef\u9002\u914d\u5668\u3002 */
     private final PulsarMQClient nativePulsar;
+    /** \u6d4b\u8bd5\u6216\u81ea\u5b9a\u4e49\u4ee3\u7406\u7684\u6d88\u606f\u53d1\u5e03\u5165\u53e3\u3002 */
     private BrokerPublisher brokerPublisher;
+    /** \u6d4b\u8bd5\u6216\u81ea\u5b9a\u4e49\u4ee3\u7406\u7684\u6d88\u606f\u8ba2\u9605\u5165\u53e3\u3002 */
     private BrokerSubscriber brokerSubscriber;
+    /** \u5f53\u524d\u5b9e\u4f8b\u662f\u5426\u5df2\u5173\u95ed\u3002 */
     private volatile boolean closed;
 
     /**
@@ -92,6 +101,11 @@ public class TdmqMQClient implements MQClient {
         this.nativePulsar = null;
     }
 
+    /**
+     * \u5c06 TDMQ \u914d\u7f6e\u6620\u5c04\u6210\u539f\u751f Pulsar \u9002\u914d\u5668\u5c5e\u6027\u3002
+     * @param source \u7528\u6765\u751f\u6210 Pulsar \u914d\u7f6e\u7684 TDMQ \u8fde\u63a5\u5c5e\u6027
+     * @return \u4f9b Pulsar \u76f4\u63a5\u8fde\u63a5\u7684\u914d\u7f6e
+     */
     private static PulsarProperties pulsarProperties(TdmqProperties source) {
         PulsarProperties target = new PulsarProperties();
         target.setEnabled(source.isEnabled());
@@ -110,6 +124,10 @@ public class TdmqMQClient implements MQClient {
         return target;
     }
 
+    /**
+     * \u68c0\u67e5\u53d1\u5e03\u548c\u8ba2\u9605\u662f\u5426\u90fd\u7531\u539f\u751f Pulsar \u9002\u914d\u5668\u8d1f\u8d23\u3002
+     * @return \u4ec5\u4f7f\u7528\u539f\u751f\u9002\u914d\u5668\u65f6\u8fd4\u56de true
+     */
     private boolean nativeMode() {
         return Objects.nonNull(nativePulsar) && Objects.isNull(brokerPublisher)
                 && Objects.isNull(brokerSubscriber);
@@ -133,16 +151,19 @@ public class TdmqMQClient implements MQClient {
         this.brokerSubscriber = subscriber;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String impl() {
         return "tdmq";
     }
 
+    /** {@inheritDoc} */
     @Override
     public MQClientLifecycle lifecycle() {
         return nativeMode() ? nativePulsar.lifecycle() : lifecycle;
     }
 
+    /** {@inheritDoc} */
     @Override
     public MQStartupStatus startupStatus() {
         return nativeMode() ? nativePulsar.startupStatus() : startupStatus;
@@ -150,6 +171,7 @@ public class TdmqMQClient implements MQClient {
 
     // ========================= 生产者 =========================
 
+    /** {@inheritDoc} */
     @Override
     public synchronized Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         if (closed) {
@@ -189,6 +211,7 @@ public class TdmqMQClient implements MQClient {
 
     // ========================= 消费者 =========================
 
+    /** {@inheritDoc} */
     @Override
     public synchronized boolean initConsumer(MQListener listener, MQProperties mqProperties) {
         if (closed) {
@@ -276,6 +299,7 @@ public class TdmqMQClient implements MQClient {
         return true;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void start() {
         if (nativeMode()) {
@@ -285,6 +309,7 @@ public class TdmqMQClient implements MQClient {
 
     // ========================= 关闭 =========================
 
+    /** \u91ca\u653e\u6d88\u606f\u5ba2\u6237\u7aef\u62e5\u6709\u7684\u8fd0\u884c\u8d44\u6e90\uff0c\u5e76\u5728\u9000\u51fa\u65f6\u767b\u8bb0\u7ec4\u4ef6\u5df2\u505c\u6b62\u3002 */
     @Override
     public synchronized void close() {
         if (closed) {
@@ -423,6 +448,7 @@ public class TdmqMQClient implements MQClient {
     @FunctionalInterface
     public interface Subscription extends AutoCloseable {
 
+        /** {@inheritDoc} */
         @Override
         void close();
     }
@@ -432,16 +458,22 @@ public class TdmqMQClient implements MQClient {
      */
     public final static class DeliveredMessage {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u6d88\u606f\u6807\u8bc6\u3002 */
         private final String messageId;
 
+        /** \u7528\u4e8e\u5173\u8054\u540c\u4e00\u6b21\u64cd\u4f5c\u4ea7\u751f\u7684\u4e8b\u4ef6\u6216\u6d88\u606f\u7684\u6807\u8bc6\u3002 */
         private final String correlationId;
 
+        /** \u6d88\u606f\u8f6c\u79fb\u6216\u53d1\u9001\u65f6\u4f7f\u7528\u7684\u5e8f\u5217\u5316\u8d1f\u8f7d\u3002 */
         private final byte[] payload;
 
+        /** \u5728\u539f\u751f\u4ee3\u7406\u6d88\u606f\u548c DDD4J \u4e4b\u95f4\u900f\u4f20\u7684\u5934\u5b57\u6bb5\u3002 */
         private final Map<String, String> headers;
 
+        /** \u539f\u751f\u4ee3\u7406\u66b4\u9732\u7684\u6295\u9012\u786e\u8ba4\u56de\u8c03\u3002 */
         private final java.util.function.Consumer<Boolean> ackCallback;
 
         /**
@@ -520,6 +552,7 @@ public class TdmqMQClient implements MQClient {
             return ackCallback;
         }
 
+        /** {@inheritDoc} */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -532,6 +565,7 @@ public class TdmqMQClient implements MQClient {
             return Objects.equals(this.messageId, other.messageId) && Objects.equals(this.correlationId, other.correlationId) && Objects.equals(this.payload, other.payload) && Objects.equals(this.headers, other.headers) && Objects.equals(this.ackCallback, other.ackCallback);
         }
 
+        /** {@inheritDoc} */
         @Override
         public int hashCode() {
             int result = 0;
@@ -543,6 +577,7 @@ public class TdmqMQClient implements MQClient {
             return result;
         }
 
+        /** {@inheritDoc} */
         @Override
         public String toString() {
             return "DeliveredMessage[messageId=" + messageId + ", correlationId=" + correlationId + ", payload=" + payload + ", headers=" + headers + ", ackCallback=" + ackCallback + "]";
@@ -554,17 +589,24 @@ public class TdmqMQClient implements MQClient {
      */
     static final class InMemoryBrokerPublisher implements BrokerPublisher {
 
+        /** \u6309\u6d88\u606f\u4e3b\u9898\u8bb0\u5f55\u5f53\u524d\u8ba2\u9605\u53ca\u5176\u76d1\u542c\u5668\u3002 */
         private final java.util.Map<String, java.util.List<Consumer<DeliveredMessage>>> topicSubscribers;
 
+        /**
+         * \u7528\u5171\u4eab\u8ba2\u9605\u8868\u521b\u5efa\u5185\u5b58\u53d1\u5e03\u7aef\u3002
+         * @param topicSubscribers \u6309\u4ee3\u7406\u4e3b\u9898\u4fdd\u5b58\u7684\u5185\u5b58\u8ba2\u9605\u56de\u8c03\u6620\u5c04
+         */
         InMemoryBrokerPublisher(java.util.Map<String, java.util.List<Consumer<DeliveredMessage>>> topicSubscribers) {
             this.topicSubscribers = topicSubscribers;
         }
 
+        /** {@inheritDoc} */
         @Override
         public void publish(String topic, String tag, String tenantId, String key, byte[] payload) {
             publish(topic, tag, tenantId, key, payload, Collections.emptyMap());
         }
 
+        /** {@inheritDoc} */
         @Override
         public void publish(String topic, String tag, String tenantId, String key,
                             byte[] payload, Map<String, String> headers) {
@@ -590,12 +632,18 @@ public class TdmqMQClient implements MQClient {
      */
     static final class InMemoryBrokerSubscriber implements BrokerSubscriber {
 
+        /** \u6309\u6d88\u606f\u4e3b\u9898\u8bb0\u5f55\u5f53\u524d\u8ba2\u9605\u53ca\u5176\u76d1\u542c\u5668\u3002 */
         private final java.util.Map<String, java.util.List<Consumer<DeliveredMessage>>> topicSubscribers;
 
+        /**
+         * \u7528\u5171\u4eab\u8ba2\u9605\u8868\u521b\u5efa\u5185\u5b58\u8ba2\u9605\u7aef\u3002
+         * @param topicSubscribers \u6309\u4ee3\u7406\u4e3b\u9898\u4fdd\u5b58\u7684\u5185\u5b58\u8ba2\u9605\u56de\u8c03\u6620\u5c04
+         */
         InMemoryBrokerSubscriber(java.util.Map<String, java.util.List<Consumer<DeliveredMessage>>> topicSubscribers) {
             this.topicSubscribers = topicSubscribers;
         }
 
+        /** {@inheritDoc} */
         @Override
         public Subscription subscribe(String topic, String tagExpression, String group,
                                       MessageHandler handler) {
@@ -604,6 +652,7 @@ public class TdmqMQClient implements MQClient {
                             handler.onMessage(messageId, correlationId, payload, ackCallback));
         }
 
+        /** {@inheritDoc} */
         @Override
         public Subscription subscribe(String topic, String tagExpression, String group,
                                       HeaderMessageHandler handler) {

@@ -82,12 +82,17 @@ class DropwizardCommandBusTest {
      */
     private static DropwizardTestSupport<Configuration> support;
 
+    /**
+     * \u6d4b\u8bd5\u6267\u884c\u524d\u6267\u884c <code>randomPortConfiguration()</code>\u3001<code>support.before()</code> \u5b8c\u6210\u8d44\u6e90\u51c6\u5907\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @BeforeAll
     static void startDropwizard() throws Exception {
         support = new DropwizardTestSupport<>(TestApplication.class, randomPortConfiguration());
         support.before();
     }
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>support.after()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterAll
     static void stopDropwizard() {
         if (support != null) {
@@ -141,6 +146,7 @@ class DropwizardCommandBusTest {
         return configuration;
     }
 
+    /** \u9a8c\u8bc1<code>result.isSuccess()</code>\u4e3a\u771f\uff0c<code>result.data()</code> \u5305\u542b <code>SampleCommandHandler.HANDLED</code>\uff0c<code>support.getLocalPort()</code>\u4e3a\u6b63\u3002 */
     @Test
     void execute_已注册命令_应路由到真实Handler并返回成功() {
         // run 装配轨：TestApplication.run 内经 create(this, discover()) 组装的生产
@@ -158,6 +164,7 @@ class DropwizardCommandBusTest {
         assertThat(support.getLocalPort()).isPositive();
     }
 
+    /** \u9a8c\u8bc1<code>exception</code>\u975e\u7a7a\uff0c<code>exception.getMessage()</code> \u5305\u542b <code>SampleCommand.class.getName()</code>\u3002 */
     @Test
     void 装配期冲突_整批拒绝应自工厂传播() {
         // 供入「多类型占位执行器（SampleCommand + CompanionCommand）+ 真实
@@ -176,6 +183,7 @@ class DropwizardCommandBusTest {
         assertThat(exception.getMessage()).contains(SampleCommand.class.getName());
     }
 
+    /** \u9a8c\u8bc1<code>exception</code>\u975e\u7a7a\uff0c<code>exception.getMessage()</code> \u5305\u542b <code>UnknownCommand.class.getName()</code>\u3002 */
     @Test
     void execute_未注册命令_应抛ISE与ddd4j_core一致() {
         DropwizardCommandBus bus = assemble();
@@ -187,9 +195,11 @@ class DropwizardCommandBusTest {
         assertThat(exception.getMessage()).contains(UnknownCommand.class.getName());
     }
 
+    /** \u4e0e\u4e3b\u8981\u6d4b\u8bd5\u547d\u4ee4\u5e76\u884c\u6ce8\u518c\u7684\u7b2c\u4e8c\u79cd\u547d\u4ee4\u6837\u672c\u3002 */
     static class CompanionCommand implements Command {
     }
 
+    /** \u6ca1\u6709\u6ce8\u518c\u6267\u884c\u5668\u7684\u547d\u4ee4\u6837\u672c\uff0c\u7528\u6765\u9a8c\u8bc1\u547d\u4ee4\u5206\u53d1\u8fb9\u754c\u3002 */
     static class UnknownCommand implements Command {
     }
 
@@ -201,11 +211,13 @@ class DropwizardCommandBusTest {
      */
     static class OverlappingMultiTypeHandler implements CommandExecutor<Command> {
 
+        /** {@inheritDoc} */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(SampleCommand.class, CompanionCommand.class)));
         }
 
+        /** {@inheritDoc} */
         @Override
         public Result execute(Command command) {
             return Result.ok();
@@ -221,14 +233,24 @@ class DropwizardCommandBusTest {
      */
     public static class TestApplication extends Application<Configuration> {
 
+        /** \u5e94\u7528\u542f\u52a8\u540e\u4ece\u771f\u5b9e\u8fd0\u884c\u4e0a\u4e0b\u6587\u53d6\u5f97\u7684\u6d88\u606f\u603b\u7ebf\u3002 */
         private volatile DropwizardCommandBus busFromRun;
 
+        /**
+         * \u6839\u636e\u672c\u6b21\u8c03\u7528\u66f4\u65b0 <code>this.busFromRun = DropwizardCommandBus.create(this, discover())</code>\uff0c\u7528\u4e8e\u540e\u7eed\u6d4b\u8bd5\u6b65\u9aa4\u3002
+         * @param configuration \u4f20\u7ed9 <code>Ddd4jLogbackAccessRequestLogFactory.configure()</code> \u7684 <code>Configuration</code> \u8f93\u5165
+         * @param environment \u672c\u6b21\u8c03\u7528\u4f7f\u7528\u7684 <code>Environment</code> \u53c2\u6570 <code>environment</code>
+         */
         @Override
         public void run(Configuration configuration, Environment environment) {
             Ddd4jLogbackAccessRequestLogFactory.configure(configuration);
             this.busFromRun = DropwizardCommandBus.create(this, discover());
         }
 
+        /**
+         * \u8bfb\u53d6<code>busFromRun</code> \u5b57\u6bb5\u3002
+         * @return <code>busFromRun</code> \u5b57\u6bb5
+         */
         DropwizardCommandBus busFromRun() {
             return busFromRun;
         }

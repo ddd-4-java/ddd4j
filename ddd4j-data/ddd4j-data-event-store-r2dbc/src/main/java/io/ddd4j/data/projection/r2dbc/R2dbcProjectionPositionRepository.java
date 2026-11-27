@@ -81,6 +81,7 @@ public class R2dbcProjectionPositionRepository implements ProjectionPositionRepo
     private static final String MERGE_SQL = "merge into ddd4j_projection_position "
             + "(stream_id, next_event_number) key (stream_id) values ($1, $2)";
 
+    /** \u521b\u5efa\u4e8b\u4ef6\u5b58\u50a8 R2DBC \u8fde\u63a5\u7684\u5de5\u5382\u3002 */
     private final ConnectionFactory connectionFactory;
 
     /**

@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class SpringI18nProviderWiringTest {
 
+    /** \u9a8c\u8bc1<code>context.getBean(SpringI18nProvider.class).getMessage("welcome")</code> \u7b49\u4e8e <code>"\u6b22\u8fce"</code>\u3002 */
     @Test
     void injectsExtensionMessageSourceIntoSpringI18nProvider() {
         try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext()) {
@@ -32,6 +33,7 @@ class SpringI18nProviderWiringTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>context.getBean(SpringI18nProvider.class).getMessage("welcome", "DDD")</code> \u7b49\u4e8e <code>"Bonjour DDD"</code>\u3002 */
     @Test
     void resolvesRegisteredSpringExtensionMessageSource() {
         LocaleContext previous = LocaleContextHolder.getLocaleContext();
@@ -49,6 +51,7 @@ class SpringI18nProviderWiringTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>properties.getBasename()</code> \u7b49\u4e8e <code>Collections.singletonList("messages")</code>\uff0c<code>properties.getBasename()</code> \u7b49\u4e8e <code>Arrays.asList("messages", "orders")</code>\u3002 */
     @Test
     void usesAMutableDefaultBasenameListPerConfiguration() {
         MessageSourceConfigurationProperties properties = new MessageSourceConfigurationProperties();

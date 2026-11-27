@@ -17,9 +17,12 @@ import java.util.Objects;
 /** 同步 JSON 路由的原生认证边界；使用 Micronaut 传播作用域恢复各参与线程的前任状态。 */
 @ServerFilter("/**") @Order(-100)
 public final class NativeAuthFilter {
+ /** \u4ece\u8ba4\u8bc1\u8bf7\u6c42\u5934\u63d0\u53d6\u4ee4\u724c\u65f6\u8bc6\u522b\u7684\u534f\u8bae\u524d\u7f00\u3002 */
  private static final String BEARER_PREFIX = "Bearer ";
 
+ /** \u89e3\u6790\u8bf7\u6c42\u8ba4\u8bc1\u4e3b\u4f53\u7684\u63d0\u4f9b\u5668\u6216\u7ba1\u7406\u5176\u6ce8\u518c\u751f\u547d\u5468\u671f\u7684\u4f5c\u7528\u57df\u3002 */
  private final SubjectProvider subjects;
+ /** \u4e3a\u5f53\u524d\u8bf7\u6c42\u521b\u5efa\u539f\u751f\u8ba4\u8bc1\u4f5c\u7528\u57df\u7684\u7ec4\u4ef6\u3002 */
  private final NativeAuth auth;
  /**
  * @param auth 原生全局资源

@@ -25,12 +25,16 @@ import java.util.Objects;
  */
 public final class WebRequestFailure {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 0L;
 
+    /** \u5f53\u524d HTTP \u8bf7\u6c42\u7684\u65b9\u6cd5\u3002 */
     private final String method;
 
+    /** \u5f53\u524d\u6846\u67b6\u89e3\u6790\u51fa\u7684\u8bf7\u6c42\u8def\u5f84\u3002 */
     private final String path;
 
+    /** \u5bfc\u81f4\u5f53\u524d\u8bf7\u6c42\u65e0\u6cd5\u6b63\u5e38\u5b8c\u6210\u7684\u539f\u59cb\u5f02\u5e38\u3002 */
     private final Throwable cause;
 
     /**
@@ -107,6 +111,7 @@ public final class WebRequestFailure {
         return cause;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -119,6 +124,7 @@ public final class WebRequestFailure {
         return Objects.equals(this.method, other.method) && Objects.equals(this.path, other.path) && Objects.equals(this.cause, other.cause);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int result = 0;
@@ -128,6 +134,7 @@ public final class WebRequestFailure {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "WebRequestFailure[method=" + method + ", path=" + path + ", cause=" + cause + "]";

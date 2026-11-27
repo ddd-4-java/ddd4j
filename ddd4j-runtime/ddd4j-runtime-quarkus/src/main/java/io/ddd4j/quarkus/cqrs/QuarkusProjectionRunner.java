@@ -32,7 +32,10 @@ public class QuarkusProjectionRunner extends ProjectionRunner<Object> {
     }
 
     /**
-     * 同一事务覆盖业务视图与位置更新；异常交给 JTA 回滚。
+     * \u540c\u4e00\u4e8b\u52a1\u8986\u76d6\u4e1a\u52a1\u89c6\u56fe\u4e0e\u4f4d\u7f6e\u66f4\u65b0\uff1b\u5f02\u5e38\u4ea4\u7ed9 JTA \u56de\u6eda\u3002
+     *
+     * @param view \u672c\u6b21\u6267\u884c\u7684\u6295\u5f71\u89c6\u56fe
+     * @return \u672c\u6b21\u6295\u5f71\u6267\u884c\u7684\u5904\u7406\u7ed3\u679c
      */
     @Override
     @Transactional

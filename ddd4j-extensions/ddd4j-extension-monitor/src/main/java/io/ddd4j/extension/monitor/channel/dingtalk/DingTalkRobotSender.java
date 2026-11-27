@@ -38,6 +38,7 @@ public class DingTalkRobotSender implements Sender {
         this.client = new DingTalkClient(accessToken, secret);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void send(String msg) {
         client.sendMarkdown(msg);

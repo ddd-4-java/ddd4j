@@ -48,14 +48,18 @@ public final class Ddd4jDropwizardExceptionMapper extends BaseErrorConfiguration
         super(translator);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected String frameworkName() {
         return "Dropwizard";
     }
 
     /**
-     * 先归一 JAX-RS {@link WebApplicationException}（保留容器给出的状态与消息），
-     * 其余异常走 ddd4j 通用翻译。
+     * \u5148\u5f52\u4e00 JAX-RS {@link WebApplicationException}\uff08\u4fdd\u7559\u5bb9\u5668\u7ed9\u51fa\u7684\u72b6\u6001\u4e0e\u6d88\u606f\uff09\uff0c
+     *  \u5176\u4f59\u5f02\u5e38\u8d70 ddd4j \u901a\u7528\u7ffb\u8bd1\u3002
+     *
+     * @param exception \u5f53\u524d\u8bf7\u6c42\u629b\u51fa\u7684\u5f02\u5e38
+     * @return \u547d\u4e2d\u7684\u5f02\u5e38\u6620\u5c04\u7ed3\u679c
      */
     @Override
     protected WebError doTranslate(Throwable exception) {
@@ -66,6 +70,11 @@ public final class Ddd4jDropwizardExceptionMapper extends BaseErrorConfiguration
         return super.doTranslate(exception);
     }
 
+    /**
+     * \u5c06\u6846\u67b6\u5f02\u5e38\u8f6c\u6362\u6210\u5e26 HTTP \u72b6\u6001\u7801\u548c JSON \u6b63\u6587\u7684\u5171\u7528\u9519\u8bef\u54cd\u5e94\u3002
+     * @param exception \u5f53\u524d HTTP \u8bf7\u6c42\u629b\u51fa\u7684\u5f02\u5e38
+     * @return \u63d0\u4ea4\u7ed9\u8fd0\u884c\u6846\u67b6\u7684\u5f02\u5e38\u54cd\u5e94
+     */
     @Override
     public Response toResponse(Throwable exception) {
         WebError error = translate(exception);

@@ -11,9 +11,13 @@ import java.util.Objects;
  * 旧 CDI 视图入口的共享生命周期装配；无独立 Bean 或执行内核。
  */
 public class QuarkusProjectionViewManager implements ViewManager {
+    /** \u8d1f\u8d23\u5b89\u6392\u6295\u5f71\u89e6\u53d1\u548c\u53d6\u6d88\u7684\u8c03\u5ea6\u5668\u3002 */
     private final ViewScheduler scheduler;
+    /** \u5b9e\u9645\u8bfb\u53d6\u5e76\u5e94\u7528\u6295\u5f71\u4e8b\u4ef6\u7684\u6267\u884c\u5668\u3002 */
     private final ProjectionRunner<?> runner;
+    /** \u7531\u5f53\u524d\u8fd0\u884c\u73af\u5883\u7ba1\u7406\u548c\u8c03\u5ea6\u7684\u6295\u5f71\u89c6\u56fe\u3002 */
     private final Instance<ProjectionView<?>> views;
+    /** \u6309\u9700\u88c5\u914d\u5e76\u590d\u7528\u7684\u6295\u5f71\u89c6\u56fe\u7ba1\u7406\u5668\u3002 */
     private DefaultViewManager<Object> delegate;
 
     /**
@@ -39,6 +43,10 @@ public class QuarkusProjectionViewManager implements ViewManager {
         views = null;
     }
 
+    /**
+     * \u83b7\u53d6\u5df2\u521d\u59cb\u5316\u7684\u5171\u4eab\u89c6\u56fe\u7ba1\u7406\u5668\uff0c\u5fc5\u8981\u65f6\u5b8c\u6210\u88c5\u914d\u3002
+     * @return \u7528\u4e8e\u5b9e\u9645\u6295\u5f71\u64cd\u4f5c\u7684\u5171\u4eab\u7ba1\u7406\u5668
+     */
     @SuppressWarnings({"unchecked", "rawtypes"})
     private synchronized DefaultViewManager<Object> delegate() {
         if (Objects.isNull(delegate)) {
@@ -51,6 +59,7 @@ public class QuarkusProjectionViewManager implements ViewManager {
         return delegate;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void start() {
         if (Objects.nonNull(views)) {
@@ -58,6 +67,7 @@ public class QuarkusProjectionViewManager implements ViewManager {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void stop() {
         if (Objects.nonNull(delegate)) {
@@ -65,11 +75,13 @@ public class QuarkusProjectionViewManager implements ViewManager {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isRunning() {
         return Objects.nonNull(delegate) && delegate.isRunning();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void triggerOnce() {
         if (Objects.nonNull(views)) {
@@ -77,6 +89,7 @@ public class QuarkusProjectionViewManager implements ViewManager {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public ProjectionStatus getProjectionStatus(String streamId) {
         return delegate().getProjectionStatus(streamId);

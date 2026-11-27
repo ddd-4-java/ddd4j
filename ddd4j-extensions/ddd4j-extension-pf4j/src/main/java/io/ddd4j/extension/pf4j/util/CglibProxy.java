@@ -30,6 +30,7 @@ import java.lang.reflect.Method;
  */
 public class CglibProxy implements MethodInterceptor {
 
+    /** \u62e6\u622a\u65b9\u6cd5\u8c03\u7528\u540e\u5b9e\u9645\u63a5\u6536\u8c03\u7528\u7684\u76ee\u6807\u5b9e\u4f8b\u3002 */
     private Object target;//需要代理的目标对象
 
     /**

@@ -84,7 +84,9 @@ public class RabbitMQClient implements MQClient {
      * 懒构造使用的配置（构造方法 2 传入）
      */
     private final RabbitMQProperties properties;
+    /** \u534f\u8c03\u6d88\u606f\u5ba2\u6237\u7aef\u542f\u52a8\u3001\u521d\u59cb\u5316\u548c\u5173\u95ed\u7684\u751f\u547d\u5468\u671f\u3002 */
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    /** \u7ec4\u4ef6\u7684\u542f\u52a8\u72b6\u6001\u548c\u542f\u52a8\u5931\u8d25\u8bca\u65ad\u4fe1\u606f\u3002 */
     private final MQStartupStatus startupStatus = new MQStartupStatus("rabbit");
 
     /**
@@ -108,7 +110,10 @@ public class RabbitMQClient implements MQClient {
     }
 
     /**
-     * 优先读取 ddd4j 标准消息 ID，兼容旧键，最后回退到 AMQP 原生 messageId。
+     * \u4f18\u5148\u8bfb\u53d6 ddd4j \u6807\u51c6\u6d88\u606f ID\uff0c\u517c\u5bb9\u65e7\u952e\uff0c\u6700\u540e\u56de\u9000\u5230 AMQP \u539f\u751f messageId\u3002
+     *
+     * @param properties \u6536\u5230\u7684 AMQP \u6d88\u606f\u5c5e\u6027
+     * @return AMQP \u6d88\u606f\u5c5e\u6027\u643a\u5e26\u7684\u6807\u8bc6
      */
     static String messageId(AMQP.BasicProperties properties) {
         Map<String, Object> headers = properties.getHeaders();
@@ -124,6 +129,10 @@ public class RabbitMQClient implements MQClient {
         return properties.getMessageId();
     }
 
+    /**
+     * \u5173\u95ed RabbitMQ \u4fe1\u9053\uff0c\u5e76\u5904\u7406\u539f\u751f\u5ba2\u6237\u7aef\u629b\u51fa\u7684\u5f02\u5e38\u3002
+     * @param channel \u5f85\u5173\u95ed\u7684 RabbitMQ \u4fe1\u9053
+     */
     private static void closeChannel(Channel channel) {
         try {
             if (channel.isOpen()) {
@@ -134,6 +143,10 @@ public class RabbitMQClient implements MQClient {
         }
     }
 
+    /**
+     * \u5173\u95ed\u539f\u751f\u4ee3\u7406\u8fde\u63a5\uff0c\u5e76\u5904\u7406\u539f\u751f\u5ba2\u6237\u7aef\u629b\u51fa\u7684\u5f02\u5e38\u3002
+     * @param connection \u5f85\u91ca\u653e\u6216\u7b49\u5f85\u5b8c\u6210\u7684\u539f\u751f\u8fde\u63a5
+     */
     private static void closeConnection(Connection connection) {
         try {
             if (connection.isOpen()) {
@@ -146,6 +159,7 @@ public class RabbitMQClient implements MQClient {
 
     // ========================= 生产者 =========================
 
+    /** {@inheritDoc} */
     @Override
     public String impl() {
         return "rabbit";
@@ -153,11 +167,13 @@ public class RabbitMQClient implements MQClient {
 
     // ========================= 消费者 =========================
 
+    /** {@inheritDoc} */
     @Override
     public MQClientLifecycle lifecycle() {
         return lifecycle;
     }
 
+    /** {@inheritDoc} */
     @Override
     public MQStartupStatus startupStatus() {
         return startupStatus;
@@ -165,6 +181,7 @@ public class RabbitMQClient implements MQClient {
 
     // ========================= 生命周期 =========================
 
+    /** {@inheritDoc} */
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         RabbitMQProperties rabbitProperties = mqProperties instanceof RabbitMQProperties
@@ -278,6 +295,7 @@ public class RabbitMQClient implements MQClient {
 
     // ========================= 连接管理（双构造共享的最小辅助）=========================
 
+    /** {@inheritDoc} */
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         Connection connection = connection();
@@ -397,6 +415,7 @@ public class RabbitMQClient implements MQClient {
         return true;
     }
 
+    /** \u91ca\u653e\u6d88\u606f\u5ba2\u6237\u7aef\u62e5\u6709\u7684\u8fd0\u884c\u8d44\u6e90\uff0c\u5e76\u5728\u9000\u51fa\u65f6\u767b\u8bb0\u7ec4\u4ef6\u5df2\u505c\u6b62\u3002 */
     @Override
     public void close() {
         try {
@@ -406,6 +425,10 @@ public class RabbitMQClient implements MQClient {
         }
     }
 
+    /**
+     * \u53d6\u5f97\u5f53\u524d\u9002\u914d\u5668\u4f7f\u7528\u7684\u539f\u751f\u8fde\u63a5\u6216\u5ba2\u6237\u7aef\uff0c\u7f3a\u5c11\u5b9e\u4f8b\u65f6\u5efa\u7acb\u8fde\u63a5\u3002
+     * @return \u4f9b\u53d1\u5e03\u6216\u6d88\u8d39\u64cd\u4f5c\u4f7f\u7528\u7684\u539f\u751f\u8fde\u63a5\u6216\u5ba2\u6237\u7aef
+     */
     private Connection connection() {
         Connection c = connectionRef.get();
         if (Objects.isNull(c)) {

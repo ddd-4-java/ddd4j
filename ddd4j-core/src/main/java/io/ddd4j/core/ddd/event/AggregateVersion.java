@@ -24,6 +24,7 @@ import java.util.Objects;
  */
 public final class AggregateVersion implements Serializable {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -53,6 +54,7 @@ public final class AggregateVersion implements Serializable {
         return value;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object object) {
         if (this == object) {
@@ -65,11 +67,13 @@ public final class AggregateVersion implements Serializable {
         return value == that.value;
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return Objects.hash(value);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return String.valueOf(value);

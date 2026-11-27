@@ -48,12 +48,17 @@ import java.util.concurrent.Executors;
  */
 class SpringCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
 
+    /**
+     * \u8c03\u7528 <code>io.ddd4j.core.cqrs.readmodel.EventChunk.empty()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @return \u63d0\u4f9b\u7ed9\u540e\u7eed\u5951\u7ea6\u65ad\u8a00\u7684 <code>io.ddd4j.core.cqrs.readmodel.ProjectionRunner&lt;Object&gt;</code> \u7ed3\u679c
+     */
     private static io.ddd4j.core.cqrs.readmodel.ProjectionRunner<Object> emptyFixtureRunner() {
         return new io.ddd4j.core.cqrs.readmodel.ProjectionRunner<>(
                 new io.ddd4j.core.cqrs.readmodel.DefaultProjectionService(new InMemoryProjectionPositionRepository()),
                 (stream, from, size, types) -> io.ddd4j.core.cqrs.readmodel.EventChunk.empty(from));
     }
 
+    /** \u9a8c\u8bc1<code>context.getBeansOfType(ViewManager.class).isEmpty()</code>\u4e3a\u771f\uff0c<code>context.getBeansOfType(ViewScheduler.class).isEmpty()</code>\u4e3a\u771f\uff0c<code>context.getBeansOfType(jakarta.persistence.EntityManagerFactory.class).isEmpty()</code>\u4e3a\u771f\u3002 */
     @org.junit.jupiter.api.Test
     void basicContextDoesNotActivatePersistenceOrProjection() {
         try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(
@@ -66,12 +71,14 @@ class SpringCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>org.springframework.beans.BeansException.class</code>\u3002 */
     @org.junit.jupiter.api.Test
     void explicitProjectionWithoutRequiredConfigurationFails() {
         org.junit.jupiter.api.Assertions.assertThrows(org.springframework.beans.BeansException.class,
                 () -> new AnnotationConfigApplicationContext(ExplicitProjection.class));
     }
 
+    /** \u9a8c\u8bc1<code>context.getBeansOfType(ViewManager.class).size()</code> \u7b49\u4e8e <code>1</code>\uff0c<code>context.getBeansOfType(ViewScheduler.class).isEmpty()</code>\u4e3a\u771f\uff0c<code>context.getBeansOfType( io.ddd4j.core.cqrs.readmodel.ProjectionRunner.class).isEmpty()</code>\u4e3a\u771f\u3002 */
     @org.junit.jupiter.api.Test
     void explicitProjectionReusesExistingManagerWithoutAddingSchedulerOrRunner() {
         for (boolean reverse : new boolean[]{false, true}) {
@@ -87,6 +94,7 @@ class SpringCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>context.getBeansOfType(ViewScheduler.class).isEmpty()</code>\u4e3a\u771f\uff0c<code>creations.get()</code> \u7b49\u4e8e <code>0</code>\uff0c<code>creations.get()</code> \u7b49\u4e8e <code>1</code>\u3002 */
     @org.junit.jupiter.api.Test
     void explicitProjectionReusesPrototypeAndCustomScopedManagerWithoutEagerCreation() {
         for (String scope : new String[]{"prototype", "requestLike"}) {
@@ -116,6 +124,7 @@ class SpringCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>context.getBeansOfType(ViewManager.class).size()</code> \u7b49\u4e8e <code>1</code>\uff0c<code>context.getBean(ViewManager.class).isRunning()</code>\u4e3a\u771f\u3002 */
     @org.junit.jupiter.api.Test
     void explicitProjectionReusesPrototypeAndCustomScopedScheduler() {
         for (String scope : new String[]{"prototype", "requestLike"}) {
@@ -138,6 +147,10 @@ class SpringCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>events</code> \u7b49\u4e8e <code>java.util.List.of("persisted-event-41")</code>\uff0c<code>context.getBeansOfType(ViewManager.class).size()</code> \u7b49\u4e8e <code>1</code>\uff0c<code>scheduler.getScheduledThreadPoolExecutor().isShutdown()</code>\u4e3a\u771f\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @org.junit.jupiter.api.Test
     void enabledProjectionRecoversPositionRunsNativeCronAndClosesResources() throws Exception {
         InMemoryProjectionPositionRepository positions = new InMemoryProjectionPositionRepository();
@@ -198,6 +211,7 @@ class SpringCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         org.junit.jupiter.api.Assertions.assertTrue(scheduler.getScheduledThreadPoolExecutor().isShutdown());
     }
 
+    /** {@inheritDoc} */
     @Override
     protected CqrsRuntimeContract createContract() {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SpringCqrsTestConfig.class);
@@ -235,8 +249,13 @@ class SpringCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         };
     }
 
+    /** \u5411\u6d4b\u8bd5\u5bb9\u5668\u6ce8\u518c <code>manualManager()</code> \u7b49\u6d4b\u8bd5\u5165\u53e3\u6216\u7ec4\u4ef6\u3002 */
     @Configuration(proxyBeanMethods = false)
     static class ExistingManager {
+        /**
+         * \u521b\u5efa <code>new SpringJpaViewManager</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new SpringJpaViewManager((name,cron,task)-&gt;{ throw new AssertionError("No implicit schedule allowed"); })</code>
+         */
         @Bean
         SpringJpaViewManager manualManager() {
             return new SpringJpaViewManager((name, cron, task) -> {
@@ -245,6 +264,7 @@ class SpringCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /** \u7528\u6765\u9a8c\u8bc1\u663e\u5f0f\u6295\u5f71\u914d\u7f6e\u4f18\u5148\u5e94\u7528\u7684\u6d4b\u8bd5\u7ec4\u4ef6\u3002 */
     @Configuration(proxyBeanMethods = false)
     @org.springframework.context.annotation.Import(io.ddd4j.spring.config.SpringProjectionConfig.class)
     static class ExplicitProjection {
@@ -256,36 +276,67 @@ class SpringCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
     @Configuration
     static class SpringCqrsTestConfig {
 
+        /**
+         * \u521b\u5efa <code>new SpringCommandBus</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+         * @param context \u5f53\u524d\u6846\u67b6\u4fdd\u5b58\u8bf7\u6c42\u6216\u8fd0\u884c\u65f6\u72b6\u6001\u7684\u4e0a\u4e0b\u6587
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new SpringCommandBus(context)</code>
+         */
         @Bean
         public SpringCommandBus springCommandBus(AnnotationConfigApplicationContext context) {
             return new SpringCommandBus(context);
         }
 
+        /**
+         * \u521b\u5efa <code>new AbstractCqrsRuntimeContractTest.StubExecutorA</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new AbstractCqrsRuntimeContractTest.StubExecutorA()</code>
+         */
         @Bean
         public AbstractCqrsRuntimeContractTest.StubExecutorA stubExecutorA() {
             return new AbstractCqrsRuntimeContractTest.StubExecutorA();
         }
 
+        /**
+         * \u521b\u5efa <code>new AbstractCqrsRuntimeContractTest.StubExecutorB</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new AbstractCqrsRuntimeContractTest.StubExecutorB()</code>
+         */
         @Bean
         public AbstractCqrsRuntimeContractTest.StubExecutorB stubExecutorB() {
             return new AbstractCqrsRuntimeContractTest.StubExecutorB();
         }
 
+        /**
+         * \u521b\u5efa <code>new ConcurrentTaskScheduler</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new ConcurrentTaskScheduler(Executors.newScheduledThreadPool(1))</code>
+         */
         @Bean
         public ConcurrentTaskScheduler taskScheduler() {
             return new ConcurrentTaskScheduler(Executors.newScheduledThreadPool(1));
         }
 
+        /**
+         * \u521b\u5efa <code>new SpringViewScheduler</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+         * @param taskScheduler \u7528\u4e8e\u6784\u9020\u672c\u6b21\u8fd4\u56de\u7ed3\u679c\u7684 <code>ConcurrentTaskScheduler</code> \u8f93\u5165
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new SpringViewScheduler(taskScheduler)</code>
+         */
         @Bean
         public SpringViewScheduler springViewScheduler(ConcurrentTaskScheduler taskScheduler) {
             return new SpringViewScheduler(taskScheduler);
         }
 
+        /**
+         * \u521b\u5efa <code>new SpringJpaViewManager</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+         * @param scheduler \u7528\u4e8e\u6784\u9020\u672c\u6b21\u8fd4\u56de\u7ed3\u679c\u7684 <code>SpringViewScheduler</code> \u8f93\u5165
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new SpringJpaViewManager(scheduler)</code>
+         */
         @Bean
         public SpringJpaViewManager springJpaViewManager(SpringViewScheduler scheduler) {
             return new SpringJpaViewManager(scheduler);
         }
 
+        /**
+         * \u521b\u5efa <code>new InMemoryProjectionPositionRepository</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new InMemoryProjectionPositionRepository()</code>
+         */
         @Bean
         public InMemoryProjectionPositionRepository inMemoryProjectionPositionRepository() {
             return new InMemoryProjectionPositionRepository();

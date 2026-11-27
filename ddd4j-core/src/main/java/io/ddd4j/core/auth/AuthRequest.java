@@ -128,6 +128,10 @@ public class AuthRequest {
         return this;
     }
 
+    /**
+     * \u4ec5\u5728\u8bf7\u6c42\u663e\u5f0f\u8986\u76d6\u4f1a\u8bdd\u8d85\u65f6\u65f6\u5199\u51fa JSON \u8d85\u65f6\u5b57\u6bb5\u3002
+     * @return \u663e\u5f0f\u8bbe\u7f6e\u7684\u4f1a\u8bdd\u8d85\u65f6\uff0c\u6cbf\u7528\u9ed8\u8ba4\u503c\u65f6\u8fd4\u56de\u7a7a
+     */
     @JsonGetter("timeout")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Long serializedTimeout() {
@@ -171,6 +175,7 @@ public class AuthRequest {
         return this;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -183,11 +188,13 @@ public class AuthRequest {
         return Objects.equals(loginId, that.loginId);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return Objects.hash(loginId);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "AuthRequest{loginId=" + loginId

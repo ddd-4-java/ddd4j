@@ -34,7 +34,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 public final class NatsAcknowledgment implements Acknowledgment {
 
+    /** \u5f53\u524d\u6d88\u8d39\u786e\u8ba4\u6240\u5173\u8054\u7684\u539f\u751f\u4ee3\u7406\u6d88\u606f\u3002 */
     private final Message message;
+    /** \u8bb0\u5f55\u5df2\u786e\u8ba4\u6d88\u606f\u7684\u72b6\u6001\u6216\u7ed3\u679c\u3002 */
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 
     /**
@@ -46,16 +48,19 @@ public final class NatsAcknowledgment implements Acknowledgment {
         this.message = Objects.requireNonNull(message, "message");
     }
 
+    /** {@inheritDoc} */
     @Override
     public long deliveryTag() {
         return Objects.isNull(message.metaData()) ? 0L : message.metaData().consumerSequence();
     }
 
+    /** {@inheritDoc} */
     @Override
     public String messageId() {
         return message.getSID();
     }
 
+    /** {@inheritDoc} */
     @Override
     public String correlationId() {
         Headers headers = message.getHeaders();
@@ -68,26 +73,31 @@ public final class NatsAcknowledgment implements Acknowledgment {
         return message.getReplyTo();
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isOpen() {
         return !acknowledged.get();
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isAcknowledged() {
         return acknowledged.get();
     }
 
+    /** {@inheritDoc} */
     @Override
     public BrokerType brokerType() {
         return BrokerType.NATS;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void ack() {
         ack(false);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void ack(boolean multiple) {
         ensureNotAcknowledged();
@@ -99,11 +109,13 @@ public final class NatsAcknowledgment implements Acknowledgment {
         acknowledged.set(true);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void nack(boolean requeue) {
         nack(false, requeue);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void nack(boolean multiple, boolean requeue) {
         ensureNotAcknowledged();
@@ -119,16 +131,19 @@ public final class NatsAcknowledgment implements Acknowledgment {
         acknowledged.set(true);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void reject(boolean requeue) {
         nack(requeue);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void recover(boolean requeue) {
         throw new UnsupportedOperationException("NATS does not support basicRecover semantics");
     }
 
+    /** {@inheritDoc} */
     @Override
     public <T> Optional<T> unwrap(Class<T> nativeType) {
         Objects.requireNonNull(nativeType, "nativeType");

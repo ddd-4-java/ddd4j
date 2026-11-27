@@ -49,8 +49,10 @@ public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
      * Bearer Token 前缀
      */
     public static final String BEARER_PREFIX = "Bearer ";
+    /** PF4J \u8ba4\u8bc1\u6269\u5c55\u9002\u914d\u5668\u7684\u65e5\u5fd7\u8bb0\u5f55\u5668\u3002 */
     private static final Logger log = LoggerFactory.getLogger(AuthcExtensionPointAdapter.class);
 
+    /** {@inheritDoc} */
     @Override
     public String getToken(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException {
         if (request == null) {
@@ -68,6 +70,7 @@ public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
         return null;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void handleHeader(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException {
         if (request == null || params == null) {
@@ -83,6 +86,7 @@ public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void handleRequest(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException {
         if (request == null || params == null) {
@@ -100,6 +104,7 @@ public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public Object handleResult(Object res) throws PluginRuntimeException {
         // 默认实现：原样返回结果

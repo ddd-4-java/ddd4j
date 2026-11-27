@@ -30,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @UtilityClass
 public class HMACKit {
 
+    /** \u6309\u76d0\u503c\u67e5\u627e\u548c\u590d\u7528 HMAC \u8fd0\u7b97\u5bf9\u8c61\u3002 */
     private final Map<String, HMac> hMacMap = new ConcurrentHashMap<>();
 
     /**

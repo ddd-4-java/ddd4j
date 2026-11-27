@@ -26,8 +26,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/** \u9a8c\u8bc1 <code>SaTokenRuntimeRegistration</code> \u5728<code>emptyDaoSlotIsRestored</code>\u3001<code>sharingTheSameJsonTemplateKeepsItsOwnerLive</code>\u7b49\u64cd\u4f5c\u4e2d\u7684\u884c\u4e3a\u5951\u7ea6\u3002 */
 class SaTokenRuntimeRegistrationTest {
 
+    /**
+     * \u521b\u5efa <code>new ProbeDao</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+     * @param failure \u89e6\u53d1\u5f53\u524d\u6d4b\u8bd5\u9519\u8bef\u5904\u7406\u8def\u5f84\u7684\u5931\u8d25
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new ProbeDao(){ &#64;Override public void init() { super.init(); if (inits == 2) { throw failure; } } }</code>
+     */
     private static ProbeDao failsFirstRestoration(IllegalStateException failure) {
         return new ProbeDao() {
             @Override
@@ -40,10 +46,15 @@ class SaTokenRuntimeRegistrationTest {
         };
     }
 
+    /**
+     * \u8c03\u7528 <code>ReflectUtil.getStaticFieldValue()</code>\u3001<code>ReflectUtil.getField()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>(SaTokenDao)ReflectUtil.getStaticFieldValue(ReflectUtil.getField(SaManager.class, "saTokenDao"))</code>
+     */
     private static SaTokenDao currentDao() {
         return (SaTokenDao) ReflectUtil.getStaticFieldValue(ReflectUtil.getField(SaManager.class, "saTokenDao"));
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalArgumentException.class</code>\uff0c<code>SaManager.getConfig()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>previousConfig</code>\uff0c<code>config.getTokenName()</code> \u7b49\u4e8e <code>"native"</code>\u3002 */
     @Test
     void sessionConfigOverridesDefaultsAndRestoresOwnedComponents() {
         SaTokenConfig previousConfig = SaManager.getConfig();
@@ -87,6 +98,7 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>StpUtil.stpLogic</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>logic</code>\uff0c<code>SaManager.getStpInterface()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>permissions</code>\uff0c<code>SaManager.getStpInterface()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>previousPermissions</code>\u3002 */
     @Test
     void customLogicAndPermissionSourceTakePrecedence() {
         StpLogic previousLogic = StpUtil.stpLogic;
@@ -120,6 +132,7 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>StpUtil.stpLogic</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>shared</code>\uff0c<code>publications.get()</code> \u7b49\u4e8e <code>2</code>\u3002 */
     @Test
     void sharingTheSameCustomLogicKeepsItsOwnerLiveAndPreservesNativeNotifications() {
         String realm = "runtime-shared-logic";
@@ -157,6 +170,7 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>SaManager.stpLogicMap.get(realm)</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>shared</code>\uff0c<code>SaManager.stpLogicMap.get(realm)</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>externalRealm</code>\u3002 */
     @Test
     void replacingTheDefaultLogicLeavesTheOtherBorrowedRealmProtected() {
         String realm = "runtime-shared-realm";
@@ -187,6 +201,7 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>SaManager.stpLogicMap.get(realm)</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>previous</code>\uff0c<code>StpUtil.stpLogic</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>expected</code>\uff0c<code>StpUtil.stpLogic</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>defaultLogic</code>\u3002 */
     @Test
     void customLogicLeavesTheRealmInstalledByAnSdkListener() {
         String realm = "runtime-custom-callback";
@@ -218,6 +233,7 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>SaManager.stpLogicMap.get(realm)</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>previous</code>\uff0c\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>SaManager.stpLogicMap.get(realm)</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>external</code>\u3002 */
     @Test
     void securityStartFailureLeavesTheRealmInstalledByAnSdkListener() {
         String realm = "runtime-security-callback";
@@ -253,6 +269,7 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>StpUtil.stpLogic</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>defaultLogic</code>\uff0c<code>SaManager.stpLogicMap.get(realm)</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>previous</code>\u3002 */
     @Test
     void failureInAnSdkListenerRestoresTheOwnedCustomLogic() {
         String realm = "runtime-owned-callback";
@@ -281,6 +298,7 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>currentDao()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>chosen</code>\uff0c<code>chosen.inits</code> \u7b49\u4e8e <code>1</code>\uff0c<code>chosen.destroys</code> \u7b49\u4e8e <code>1</code>\u3002 */
     @Test
     void emptyDaoSlotIsRestoredWithoutInstallingAnImplicitDefault() {
         SaTokenDao original = currentDao();
@@ -300,6 +318,7 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>currentDao()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>second</code>\uff0c<code>second.destroys</code> \u7b49\u4e8e <code>1</code>\u3002 */
     @Test
     void closingDependentOuterRegistrationBeforeInnerKeepsBothLive() {
         SaTokenDao original = currentDao();
@@ -336,6 +355,7 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>currentDao()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>shared</code>\uff0c<code>shared.destroys</code> \u7b49\u4e8e <code>1</code>\u3002 */
     @Test
     void sharingTheSameDaoKeepsItsOwnerLiveUntilAllBorrowersClose() {
         SaTokenDao original = currentDao();
@@ -371,6 +391,7 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>SaManager.getSaJsonTemplate()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>shared</code>\uff0c<code>publications.get()</code> \u7b49\u4e8e <code>1</code>\u3002 */
     @Test
     void sharingTheSameJsonTemplateKeepsItsOwnerLiveWithoutRepublishing() {
         SaJsonTemplate previous = SaManager.getSaJsonTemplate();
@@ -404,6 +425,7 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>currentDao()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>external</code>\uff0c<code>shared.destroys</code> \u7b49\u4e8e <code>1</code>\uff0c<code>external.destroys</code> \u7b49\u4e8e <code>0</code>\u3002 */
     @Test
     void externalDaoReplacementLetsTheOldOwnerCloseBeforeItsBorrower() {
         SaTokenDao original = currentDao();
@@ -428,6 +450,7 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>SaManager.getSaTokenContext()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>originalContext</code>\uff0c<code>currentDao()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>choice</code>\uff0c<code>caller.destroys</code> \u7b49\u4e8e <code>0</code>\u3002 */
     @Test
     void disjointRegistrationAndExternallyReplacedDaoRemainUsable() {
         SaTokenDao original = currentDao();
@@ -458,6 +481,7 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>currentDao()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>caller</code>\uff0c<code>caller.inits</code> \u7b49\u4e8e <code>2</code>\u3002 */
     @Test
     void failedDaoInitRollsBackInstalledDaoAndOtherOwnedSlots() {
         SaTokenDao original = currentDao();
@@ -486,6 +510,7 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>SaManager.getSaJsonTemplate()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>originalJson</code>\uff0c<code>currentDao()</code>\u4e3a\u7a7a\u3002 */
     @Test
     void failedDaoDestroyDoesNotSkipJsonRestoration() {
         SaTokenDao original = currentDao();
@@ -517,6 +542,7 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>currentDao()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>caller</code>\uff0c<code>installed.destroys</code> \u7b49\u4e8e <code>1</code>\u3002 */
     @Test
     void closeRetriesInitializationOfTheAlreadyPublishedPreviousDao() {
         SaTokenDao original = currentDao();
@@ -541,6 +567,7 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>currentDao()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>caller</code>\uff0c<code>external.destroys</code> \u7b49\u4e8e <code>0</code>\u3002 */
     @Test
     void closeLeavesTheExternalReplacementAfterPreviousDaoInitializationFails() {
         SaTokenDao original = currentDao();
@@ -565,6 +592,7 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>initFailure.getSuppressed().length</code> \u7b49\u4e8e <code>1</code>\uff0c<code>caller.inits</code> \u7b49\u4e8e <code>2</code>\u3002 */
     @Test
     void failedStartKeepsPrimaryFailureAndAllowsCleanupRetry() {
         SaTokenDao original = currentDao();
@@ -606,18 +634,24 @@ class SaTokenRuntimeRegistrationTest {
         }
     }
 
+    /** \u66ff\u6362 Sa-Token \u4f1a\u8bdd\u5b58\u50a8\u5e76\u66b4\u9732\u53ef\u68c0\u67e5\u7684\u521d\u59cb\u5316\u6216\u6e05\u7406\u884c\u4e3a\u3002 */
     private static class ProbeDao extends SaTokenDaoDefaultImpl {
 
+        /** \u8ddf\u8e2a\u5e95\u5c42\u7ec4\u4ef6\u521d\u59cb\u5316\u6b21\u6570\u7684\u8ba1\u6570\u5668\u3002 */
         int inits;
+        /** \u8ddf\u8e2a\u5e95\u5c42\u7ec4\u4ef6\u9500\u6bc1\u6b21\u6570\u7684\u8ba1\u6570\u5668\u3002 */
         int destroys;
+        /** \u5e95\u5c42\u7ec4\u4ef6\u521d\u59cb\u5316\u65f6\u89c2\u5bdf\u5230\u7684\u539f\u751f\u914d\u7f6e\u3002 */
         SaTokenConfig configAtInit;
 
+        /** \u6839\u636e\u672c\u6b21\u8c03\u7528\u66f4\u65b0 <code>configAtInit = SaManager.config</code>\uff0c\u7528\u4e8e\u540e\u7eed\u6d4b\u8bd5\u6b65\u9aa4\u3002 */
         @Override
         public void init() {
             inits++;
             configAtInit = SaManager.config;
         }
 
+        /** \u589e\u52a0\u9500\u6bc1\u6b21\u6570\u4ee5\u4f9b\u6d4b\u8bd5\u68c0\u67e5\u539f\u751f\u4f1a\u8bdd\u5b58\u50a8\u7684\u6e05\u7406\u3002 */
         @Override
         public void destroy() {
             destroys++;

@@ -41,11 +41,17 @@ import java.util.Objects;
  */
 public class Saga {
 
+    /** \u6309\u6267\u884c\u987a\u5e8f\u767b\u8bb0\u7684\u4e1a\u52a1\u64cd\u4f5c\u53ca\u5176\u8865\u507f\u6b65\u9aa4\u3002 */
     private final List<SagaStep> steps = new ArrayList<>();
+    /** \u5df2\u6210\u529f\u6267\u884c\u7684\u6b65\u9aa4\u5bf9\u5e94\u7684\u8865\u507f\u6808\u3002 */
     private final List<String> executedCompensations = new ArrayList<>();
+    /** \u5f53\u524d Saga \u7684\u6267\u884c\u72b6\u6001\u3002 */
     private SagaState state = SagaState.RUNNING;
+    /** \u89e6\u53d1\u672c\u6b21 Saga \u5931\u8d25\u7684\u5f02\u5e38\u3002 */
     private RuntimeException failure;
+    /** \u5f53\u524d Saga \u662f\u5426\u5df2\u7ecf\u5f00\u59cb\u8fd9\u4e00\u6b21\u6267\u884c\u3002 */
     private boolean started;
+    /** \u5931\u8d25\u56de\u6eda\u671f\u95f4\u662f\u5426\u51fa\u73b0\u8865\u507f\u64cd\u4f5c\u5931\u8d25\u3002 */
     private boolean compensationFailed;
 
     /**
@@ -134,6 +140,10 @@ public class Saga {
         }
     }
 
+    /**
+     * \u68c0\u67e5\u5f53\u524d Saga \u662f\u5426\u8fd8\u5141\u8bb8\u4fee\u6539\u6b65\u9aa4\u6216\u5f00\u59cb\u6267\u884c\u3002
+     * @throws IllegalStateException \u5f53\u524d Saga \u5df2\u7ecf\u5f00\u59cb\u6267\u884c
+     */
     private void requireNotStarted() {
         if (started) {
             throw new IllegalStateException("Saga instance is one-shot; create a new Saga to execute again");

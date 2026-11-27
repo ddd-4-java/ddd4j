@@ -29,6 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @ApplicationScoped
 public class InMemoryUserRepository {
 
+    /** \u6309\u4e1a\u52a1\u6807\u8bc6\u4fdd\u5b58\u5f53\u524d\u4ed3\u50a8\u4e2d\u7684\u8bb0\u5f55\u3002 */
     private final ConcurrentHashMap<String, User> store = new ConcurrentHashMap<>();
 
     /**

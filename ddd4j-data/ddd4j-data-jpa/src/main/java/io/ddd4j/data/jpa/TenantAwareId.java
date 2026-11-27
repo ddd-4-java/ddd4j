@@ -62,6 +62,7 @@ public class TenantAwareId implements Serializable {
         return new TenantAwareId(id, tenantId);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -74,6 +75,7 @@ public class TenantAwareId implements Serializable {
         return Objects.equals(id, that.id) && Objects.equals(tenantId, that.tenantId);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return Objects.hash(id, tenantId);

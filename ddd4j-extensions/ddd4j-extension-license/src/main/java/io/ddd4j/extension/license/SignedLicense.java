@@ -28,11 +28,16 @@ import java.util.Objects;
  */
 public final class SignedLicense {
 
+    /** \u7b7e\u540d\u8bb8\u53ef\u8bc1\u4fe1\u5c01\u4e2d\u7528\u4e8e\u8bc6\u522b\u683c\u5f0f\u7248\u672c\u7684\u6807\u8bb0\u3002 */
     private static final String FORMAT = "DDD4J-LICENSE-1";
+    /** \u89e3\u6790\u7b7e\u540d\u8bb8\u53ef\u8bc1\u4fe1\u5c01\u65f6\u9884\u671f\u7684\u5b57\u6bb5\u6570\u3002 */
     private static final int FIELD_COUNT = 4;
 
+    /** \u7b7e\u540d\u65f6\u4f7f\u7528\u4e14\u5728\u9a8c\u8bc1\u65f6\u590d\u7528\u7684\u7b97\u6cd5\u540d\u79f0\u3002 */
     private final String algorithm;
+    /** \u7ecf\u8fc7\u7b7e\u540d\u4fdd\u62a4\u7684\u8bb8\u53ef\u8bc1\u539f\u59cb\u6570\u636e\u3002 */
     private final byte[] payload;
+    /** \u5bf9\u8bb8\u53ef\u8bc1\u8d1f\u8f7d\u751f\u6210\u7684\u7b7e\u540d\u5b57\u8282\u3002 */
     private final byte[] signature;
 
     /**

@@ -29,6 +29,7 @@ import java.util.Objects;
  */
 public final class ActivemqKit {
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>ActivemqKit</code> \u5b9e\u4f8b\u3002 */
     private ActivemqKit() {
     }
 
@@ -145,6 +146,11 @@ public final class ActivemqKit {
         }
     }
 
+    /**
+     * \u68c0\u67e5\u8f93\u5165\u662f\u5426\u5b58\u5728\u975e\u7a7a\u767d\u5b57\u7b26\u3002
+     * @param s \u5f85\u68c0\u67e5\u7684\u5b57\u7b26\u4e32
+     * @return \u542b\u6709\u6548\u6587\u672c\u65f6\u8fd4\u56de true
+     */
     private static boolean hasText(String s) {
         return StrKit.isNotEmpty(s);
     }

@@ -211,6 +211,7 @@ public class MQListener {
      * 以固定 {@code required} 默认值为 {@code true}）。
      */
     public static class MQListenerBuilder {
+        /** \u542f\u52a8\u6d88\u606f\u7ec4\u4ef6\u5931\u8d25\u65f6\u662f\u5426\u963b\u6b62\u5e94\u7528\u5c31\u7eea\u3002 */
         private boolean required = true;
     }
 

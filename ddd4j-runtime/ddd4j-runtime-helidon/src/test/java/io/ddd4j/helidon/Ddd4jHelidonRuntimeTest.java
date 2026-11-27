@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class Ddd4jHelidonRuntimeTest extends AbstractRuntimeContractTest {
 
+    /** \u9a8c\u8bc1<code>runtime.readiness().contributors().isEmpty()</code>\u4e3a\u771f\u3002 */
     @Test
     void defaultConstructorStartsWithNoReadinessContributors() {
         RuntimeFixtures fixtures = new RuntimeFixtures();
@@ -37,6 +38,7 @@ class Ddd4jHelidonRuntimeTest extends AbstractRuntimeContractTest {
         runtime.close();
     }
 
+    /** {@inheritDoc} */
     @Override
     protected RuntimeContract createRuntime() {
         RuntimeFixtures fixtures = new RuntimeFixtures();

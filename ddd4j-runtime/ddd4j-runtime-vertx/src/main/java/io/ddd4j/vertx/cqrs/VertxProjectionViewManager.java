@@ -11,8 +11,11 @@ import java.util.Objects;
  * triggerOnce 保留同步契约，阻塞存储调用方须使用 runtime.executeBlocking。
  */
 public class VertxProjectionViewManager implements ViewManager, AutoCloseable {
+    /** \u7ba1\u7406 Vert.x \u6295\u5f71\u89c6\u56fe\u548c\u4efb\u52a1\u53e5\u67c4\u7684\u5171\u4eab\u5b9e\u73b0\u3002 */
     private final DefaultViewManager<Object> delegate;
+    /** \u5f53\u524d\u8fd0\u884c\u5b9e\u4f8b\u62e5\u6709\u5e76\u8d1f\u8d23\u5173\u95ed\u7684\u8c03\u5ea6\u5668\u3002 */
     private final VertxProjectionScheduler ownedScheduler;
+    /** \u5f53\u524d\u5b9e\u4f8b\u662f\u5426\u5df2\u5173\u95ed\u3002 */
     private volatile boolean closed;
 
     /**
@@ -27,6 +30,13 @@ public class VertxProjectionViewManager implements ViewManager, AutoCloseable {
         this(scheduler, runner, views, null);
     }
 
+    /**
+     * \u4ee5\u7ed9\u5b9a\u8c03\u5ea6\u5668\u548c\u6267\u884c\u5668\u88c5\u914d Vert.x \u6295\u5f71\uff0c\u5e76\u8bb0\u5f55\u81ea\u6709\u8d44\u6e90\u3002
+     * @param scheduler \u8c03\u5ea6\u6295\u5f71\u4efb\u52a1\u7684\u8fd0\u884c\u65f6\u7ec4\u4ef6
+     * @param runner \u8c03\u7528\u89c6\u56fe\u5e76\u7ef4\u62a4\u4e8b\u4ef6\u4f4d\u70b9\u7684\u6295\u5f71\u8fd0\u884c\u5668
+     * @param views \u5f53\u524d\u8fd0\u884c\u65f6\u6ce8\u518c\u7684\u6295\u5f71\u89c6\u56fe\u96c6\u5408
+     * @param owned \u5f53\u524d\u7ba1\u7406\u5668\u9000\u51fa\u65f6\u8d1f\u8d23\u5173\u95ed\u7684\u81ea\u6709\u8c03\u5ea6\u5668
+     */
     @SuppressWarnings("unchecked")
     private VertxProjectionViewManager(ViewScheduler scheduler, ProjectionRunner<?> runner,
                                        Collection<ProjectionView<?>> views, VertxProjectionScheduler owned) {
@@ -54,6 +64,7 @@ public class VertxProjectionViewManager implements ViewManager, AutoCloseable {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized void start() {
         if (closed) {
@@ -62,16 +73,19 @@ public class VertxProjectionViewManager implements ViewManager, AutoCloseable {
         delegate.start();
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized void stop() {
         delegate.stop();
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isRunning() {
         return delegate.isRunning();
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized void close() {
         closed = true;
@@ -84,6 +98,7 @@ public class VertxProjectionViewManager implements ViewManager, AutoCloseable {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void triggerOnce() {
         if (closed) {
@@ -92,6 +107,7 @@ public class VertxProjectionViewManager implements ViewManager, AutoCloseable {
         delegate.triggerOnce();
     }
 
+    /** {@inheritDoc} */
     @Override
     public ProjectionStatus getProjectionStatus(String streamId) {
         return delegate.getProjectionStatus(streamId);

@@ -27,12 +27,16 @@ import java.util.Optional;
  */
 public final class WebContractResponse {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 0L;
 
+    /** \u8981\u5199\u5165 HTTP \u54cd\u5e94\u7684\u72b6\u6001\u7801\u3002 */
     private final int status;
 
+    /** HTTP \u5408\u540c\u8bb0\u5f55\u7684\u54cd\u5e94\u5934\u6620\u5c04\u3002 */
     private final Map<String, List<String>> headers;
 
+    /** HTTP \u5408\u540c\u8bb0\u5f55\u7684\u54cd\u5e94\u6b63\u6587\u3002 */
     private final String body;
 
     /**
@@ -105,6 +109,7 @@ public final class WebContractResponse {
         return body;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -117,6 +122,7 @@ public final class WebContractResponse {
         return this.status == other.status && Objects.equals(this.headers, other.headers) && Objects.equals(this.body, other.body);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int result = 0;
@@ -126,6 +132,7 @@ public final class WebContractResponse {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "WebContractResponse[status=" + status + ", headers=" + headers + ", body=" + body + "]";

@@ -28,9 +28,13 @@ import java.util.Objects;
 @Builder
 public class LicenseVerificationResult {
 
+    /** \u672c\u6b21\u8bb8\u53ef\u8bc1\u9a8c\u8bc1\u662f\u5426\u6210\u529f\u3002 */
     private final boolean valid;
+    /** \u5bf9\u5916\u53ef\u533a\u5206\u7684\u8bb8\u53ef\u8bc1\u9a8c\u8bc1\u7ed3\u679c\u7c7b\u578b\u3002 */
     private final Status status;
+    /** \u8bb8\u53ef\u8bc1\u9a8c\u8bc1\u7ed3\u679c\u7684\u8bca\u65ad\u8bf4\u660e\u3002 */
     private final String message;
+    /** \u9a8c\u8bc1\u6210\u529f\u540e\u4ea4\u7ed9\u8c03\u7528\u65b9\u7684\u8bb8\u53ef\u8bc1\u4fe1\u606f\u3002 */
     private final LicenseInfo licenseInfo;
 
     /**

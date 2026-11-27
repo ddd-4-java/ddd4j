@@ -40,6 +40,7 @@ import java.util.Objects;
  */
 public class BizRuntimeException extends RuntimeException {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     @Serial
     private static final long serialVersionUID = 6537688993883872154L;
 

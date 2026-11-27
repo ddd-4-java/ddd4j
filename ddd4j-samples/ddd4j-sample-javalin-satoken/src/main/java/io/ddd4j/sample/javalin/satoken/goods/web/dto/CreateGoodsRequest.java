@@ -27,14 +27,19 @@ import java.util.Objects;
  */
 public class CreateGoodsRequest {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 0L;
 
+    /** \u5f53\u524d\u8bf7\u6c42\u6216\u7ed3\u679c\u4f7f\u7528\u7684\u4e1a\u52a1\u7f16\u7801\u3002 */
     private String code;
 
+    /** \u5f53\u524d\u8bf7\u6c42\u6216\u7ed3\u679c\u4f7f\u7528\u7684\u663e\u793a\u540d\u79f0\u3002 */
     private String name;
 
+    /** \u5546\u54c1\u793a\u4f8b\u4f7f\u7528\u7684\u9500\u552e\u4ef7\u683c\u3002 */
     private BigDecimal price;
 
+    /** \u793a\u4f8b\u5546\u54c1\u53ef\u7528\u7684\u5e93\u5b58\u6570\u91cf\u3002 */
     private Integer stock;
 
     /**
@@ -181,6 +186,7 @@ public class CreateGoodsRequest {
         return other instanceof CreateGoodsRequest;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -196,6 +202,7 @@ public class CreateGoodsRequest {
         return Objects.equals(this.getCode(), other.getCode()) && Objects.equals(this.getName(), other.getName()) && Objects.equals(this.getPrice(), other.getPrice()) && Objects.equals(this.getStock(), other.getStock());
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int result = 1;
@@ -206,6 +213,7 @@ public class CreateGoodsRequest {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "CreateGoodsRequest[code=" + code + ", name=" + name + ", price=" + price + ", stock=" + stock + "]";

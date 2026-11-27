@@ -43,12 +43,25 @@ class QuartzViewScheduleHandle implements ViewScheduler.ViewScheduleHandle {
      */
     private volatile boolean active = true;
 
+    /**
+     * \u7528\u7ed9\u5b9a\u503c\u521d\u59cb\u5316 <code>QuartzViewScheduleHandle</code> \u5b9e\u4f8b\u3002
+     * @param scheduler Quartz \u8c03\u5ea6\u5668
+     * @param identity \u8c03\u5ea6\u6807\u8bc6
+     */
     QuartzViewScheduleHandle(Scheduler scheduler, String identity) {
         this.scheduler = scheduler;
         this.identity = identity;
     }
 
 
+    /**
+     * \u6839\u636e\u89c6\u56fe\u540d\u79f0\u548c Cron \u914d\u7f6e\u6ce8\u518c\u4e00\u6b21\u6301\u7eed\u6709\u6548\u7684 Quartz \u6295\u5f71\u8ba1\u5212\u3002
+     * @param scheduler \u8c03\u5ea6\u6295\u5f71\u4efb\u52a1\u7684\u8fd0\u884c\u65f6\u7ec4\u4ef6
+     * @param viewName \u5f53\u524d\u88ab\u8c03\u5ea6\u7684\u89c6\u56fe\u540d\u79f0
+     * @param cron \u4efb\u52a1\u8ba1\u5212\u7684 Cron \u8868\u8fbe\u5f0f
+     * @param task \u5b9e\u9645\u6267\u884c\u4e00\u6b21\u6295\u5f71\u7684\u56de\u8c03
+     * @return \u53ef\u53d6\u6d88\u8be5\u8ba1\u5212\u7684\u8c03\u5ea6\u53e5\u67c4
+     */
     static QuartzViewScheduleHandle schedule(Scheduler scheduler, String viewName, String cron, Runnable task) {
         String identity = viewName + "-" + UUID.randomUUID();
         JobDetail job = JobBuilder.newJob(RunnableJob.class)
@@ -73,6 +86,7 @@ class QuartzViewScheduleHandle implements ViewScheduler.ViewScheduleHandle {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized void cancel() {
         if (!active) {
@@ -91,6 +105,7 @@ class QuartzViewScheduleHandle implements ViewScheduler.ViewScheduleHandle {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isActive() {
         return active;

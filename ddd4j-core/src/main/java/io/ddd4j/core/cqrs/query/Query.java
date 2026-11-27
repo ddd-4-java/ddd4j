@@ -1193,10 +1193,28 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
 
     // ========================= 内部方法 =========================
 
+    /**
+     * \u5728\u6761\u4ef6\u5f00\u542f\u4e14\u64cd\u4f5c\u6570\u7b26\u5408\u8fd0\u7b97\u7b26\u8981\u6c42\u65f6\u5199\u5165\u7b5b\u9009\u6761\u4ef6\u3002
+     * @param <Q> \u5f53\u524d\u67e5\u8be2\u7684\u8fd4\u56de\u7c7b\u578b
+     * @param condition \u662f\u5426\u8ffd\u52a0\u7b5b\u9009\u6761\u4ef6
+     * @param column \u8981\u7b5b\u9009\u7684\u5c5e\u6027\u5f15\u7528\u6216\u9886\u57df\u8bbf\u95ee\u5668
+     * @param operator \u6761\u4ef6\u8fd0\u7b97\u7b26
+     * @param value \u7528\u4e8e\u6bd4\u8f83\u7684\u7b5b\u9009\u503c
+     * @return \u652f\u6301\u94fe\u5f0f\u8c03\u7528\u7684\u5f53\u524d\u67e5\u8be2
+     */
     private <Q extends Query<M>> Q addCondition(boolean condition, SFunction<M, ?> column, String operator, Object value) {
         return addCondition(condition, PropertyRef.domain(column), operator, value);
     }
 
+    /**
+     * \u5728\u6761\u4ef6\u5f00\u542f\u4e14\u64cd\u4f5c\u6570\u7b26\u5408\u8fd0\u7b97\u7b26\u8981\u6c42\u65f6\u5199\u5165\u7b5b\u9009\u6761\u4ef6\u3002
+     * @param <Q> \u5f53\u524d\u67e5\u8be2\u7684\u8fd4\u56de\u7c7b\u578b
+     * @param condition \u662f\u5426\u8ffd\u52a0\u7b5b\u9009\u6761\u4ef6
+     * @param propertyRef \u8981\u7b5b\u9009\u7684\u5c5e\u6027\u5f15\u7528\u6216\u9886\u57df\u8bbf\u95ee\u5668
+     * @param operator \u6761\u4ef6\u8fd0\u7b97\u7b26
+     * @param value \u7528\u4e8e\u6bd4\u8f83\u7684\u7b5b\u9009\u503c
+     * @return \u652f\u6301\u94fe\u5f0f\u8c03\u7528\u7684\u5f53\u524d\u67e5\u8be2
+     */
     <Q extends Query<M>> Q addCondition(boolean condition, PropertyRef propertyRef, String operator, Object value) {
         boolean valueOptional = Objects.equals("IS_NULL", operator) || Objects.equals("IS_NOT_NULL", operator);
         if (condition && (Objects.nonNull(value) || valueOptional)) {
@@ -1208,6 +1226,11 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
         return (Q) this;
     }
 
+    /**
+     * \u8ffd\u52a0\u4e00\u9879\u6309\u6307\u5b9a\u5c5e\u6027\u6392\u5e8f\u7684\u914d\u7f6e\u3002
+     * @param property \u6392\u5e8f\u4f7f\u7528\u7684\u5c5e\u6027\u5f15\u7528
+     * @param direction \u5347\u5e8f\u6216\u964d\u5e8f\u7684\u6392\u5e8f\u65b9\u5411
+     */
     void addOrderBy(PropertyRef property, String direction) {
         if (Objects.isNull(this.orderByConditions)) {
             this.orderByConditions = new ArrayList<>();
@@ -1215,6 +1238,12 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
         this.orderByConditions.add(new LambdaCondition(property, direction, null));
     }
 
+    /**
+     * \u8ffd\u52a0\u7528\u4e8e\u66f4\u65b0\u6301\u4e45\u5316\u6570\u636e\u7684\u8d4b\u503c\u64cd\u4f5c\u3002
+     * @param property \u8981\u66f4\u65b0\u7684\u5c5e\u6027
+     * @param operator \u8d4b\u503c\u64cd\u4f5c\u7b26
+     * @param value \u5f85\u5199\u5165\u7684\u503c
+     */
     private void addSetOperation(PropertyRef property, String operator, Object value) {
         if (Objects.isNull(this.setOperations)) {
             this.setOperations = new ArrayList<>();

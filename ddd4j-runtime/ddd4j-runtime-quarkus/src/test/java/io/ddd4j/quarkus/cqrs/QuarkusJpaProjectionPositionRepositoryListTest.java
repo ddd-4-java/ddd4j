@@ -37,15 +37,19 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class QuarkusJpaProjectionPositionRepositoryListTest {
 
+    /** \u7528\u4e8e\u9694\u79bb <code>Instance&lt;EntityManager&gt;</code> \u8c03\u7528\u5e76\u8bb0\u5f55\u4ea4\u4e92\u7684\u6d4b\u8bd5\u66ff\u8eab\u3002 */
     @Mock
     Instance<EntityManager> entityManagers;
 
+    /** \u7528\u4e8e\u9694\u79bb <code>EntityManager</code> \u8c03\u7528\u5e76\u8bb0\u5f55\u4ea4\u4e92\u7684\u6d4b\u8bd5\u66ff\u8eab\u3002 */
     @Mock
     EntityManager manager;
 
+    /** \u7528\u4e8e\u9694\u79bb <code>TypedQuery&lt;QuarkusJpaProjectionPosition&gt;</code> \u8c03\u7528\u5e76\u8bb0\u5f55\u4ea4\u4e92\u7684\u6d4b\u8bd5\u66ff\u8eab\u3002 */
     @Mock
     TypedQuery<QuarkusJpaProjectionPosition> query;
 
+    /** \u9a8c\u8bc1<code>snapshot</code>\u4e3a\u7a7a\uff0c<code>repository.findAll()</code> \u7684\u5927\u5c0f\u4e3a <code>1</code>\u3002 */
     @Test
     void findAllReturnsMutableDetachedList() {
         when(entityManagers.get()).thenReturn(manager);
@@ -62,6 +66,7 @@ class QuarkusJpaProjectionPositionRepositoryListTest {
         assertThat(repository.findAll()).hasSize(1);
     }
 
+    /** \u9a8c\u8bc1<code>repository.save(newPosition)</code> \u6307\u5411\u540c\u4e00\u5b9e\u4f8b <code>newPosition</code>\uff0c<code>repository.save(newPosition)</code> \u6307\u5411\u540c\u4e00\u5b9e\u4f8b <code>managed</code>\u3002 */
     @Test
     void saveKeepsLegacyEntityIdentityAndMergeResult() {
         when(entityManagers.get()).thenReturn(manager);
@@ -76,6 +81,7 @@ class QuarkusJpaProjectionPositionRepositoryListTest {
         assertThat(repository.save(newPosition)).isSameAs(managed);
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>entityManagers.get()</code>\u3001<code>mock()</code>\u3001<code>manager.createQuery()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void missingResetRetainsUpdateOnlySemantics() {
         when(entityManagers.get()).thenReturn(manager);
@@ -91,6 +97,7 @@ class QuarkusJpaProjectionPositionRepositoryListTest {
         verify(manager, never()).clear();
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>entityManagers.get()</code>\u3001<code>repository.deleteByStreamId()</code>\u3001<code>never()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void deleteOnlyRemovesAnExistingEntity() {
         when(entityManagers.get()).thenReturn(manager);

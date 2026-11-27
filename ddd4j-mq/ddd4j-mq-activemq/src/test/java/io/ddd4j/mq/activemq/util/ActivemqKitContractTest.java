@@ -27,6 +27,10 @@ import static org.mockito.Mockito.*;
  */
 class ActivemqKitContractTest {
 
+    /**
+     * \u9a8c\u8bc1<code>ActivemqKit.createDestination(session, "queue:work")</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>queue</code>\uff0c<code>ActivemqKit.createDestination(session, "topic:news")</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>topic</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void resolvesPhysicalDestinationAndJmsKind() throws Exception {
         assertEquals("ddd4j.default.topic", ActivemqKit.resolvePhysical("", "", ""));
@@ -42,6 +46,10 @@ class ActivemqKitContractTest {
         assertSame(topic, ActivemqKit.createDestination(session, "news"));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>ActivemqKit.extractPayload(text)</code> \u7b49\u4e8e <code>"\u8ba2\u5355"</code>\uff0c<code>ActivemqKit.extractPayload(bytes)</code> \u7b49\u4e8e <code>"\u8ba2\u5355"</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void extractsTextAndBytesPayload() throws Exception {
         TextMessage text = mock(TextMessage.class);
@@ -61,6 +69,10 @@ class ActivemqKitContractTest {
         assertEquals("", ActivemqKit.extractPayload(mock(Message.class)));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>ActivemqKit.stringProperty(message, "key")</code> \u7b49\u4e8e <code>"value"</code>\uff0c<code>ActivemqKit.messageIdOf(message)</code> \u7b49\u4e8e <code>"message-1"</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void safelyReadsHeadersAndReturnsDefaultsOnJmsErrors() throws Exception {
         Message message = mock(Message.class);

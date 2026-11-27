@@ -200,6 +200,11 @@ public class BaseContext {
         return new Registration(key, entry);
     }
 
+    /**
+     * \u53d6\u51fa\u5f53\u524d\u4e0a\u4e0b\u6587\u8282\u70b9\u4e2d\u7684\u4e1a\u52a1\u503c\u3002
+     * @param entry \u8981\u8bfb\u53d6\u7684\u4e0a\u4e0b\u6587\u7ed1\u5b9a\u8282\u70b9
+     * @return \u7ed1\u5b9a\u7684\u503c\uff0c\u8282\u70b9\u4e0d\u5b58\u5728\u65f6\u8fd4\u56de\u7a7a
+     */
     private static Object contextValue(ContextEntry entry) {
         return Objects.isNull(entry) ? null : entry.value;
     }
@@ -284,12 +289,20 @@ public class BaseContext {
         GLOBAL.clear();
     }
 
+    /** \u4fdd\u5b58\u4e00\u6b21\u4e0a\u4e0b\u6587\u7ed1\u5b9a\u7684\u503c\u53ca\u56de\u6eda\u94fe\u4e2d\u7684\u524d\u4e00\u4e2a\u8282\u70b9\u3002 */
     private static final class ContextEntry {
+        /** \u672c\u8282\u70b9\u7ed1\u5b9a\u7684\u4e0a\u4e0b\u6587\u503c\u3002 */
         private final Object value;
         // 同一键的 compute 回调负责访问和修改回滚链。
+        /** \u540c\u4e00\u952e\u4e0b\u6700\u8fd1\u7684\u4e00\u6b21\u65e7\u7ed1\u5b9a\uff0c\u7528\u4e8e\u56de\u6eda\u5f53\u524d\u8282\u70b9\u3002 */
         private ContextEntry previous;
+        /** \u5f53\u524d\u8282\u70b9\u662f\u5426\u5df2\u88ab\u56de\u6eda\u3002 */
         private boolean rolledBack;
 
+        /**
+         * \u4e3a\u5171\u4eab\u4e0a\u4e0b\u6587\u521b\u5efa\u4e00\u4e2a\u6301\u6709\u975e\u7a7a\u503c\u7684\u7ed1\u5b9a\u8282\u70b9\u3002
+         * @param value \u5f53\u524d\u952e\u8981\u7ed1\u5b9a\u7684\u503c
+         */
         private ContextEntry(Object value) {
             this.value = Objects.requireNonNull(value);
         }
@@ -303,10 +316,18 @@ public class BaseContext {
      * 一次待提交的全局注册。查找方法继续返回原始注册值。
      */
     public static final class Registration {
+        /** \u53c2\u4e0e SPI \u6ce8\u518c\u53ca\u67e5\u627e\u7684\u952e\u3002 */
         private final String key;
+        /** \u5f52\u5f53\u524d\u4e0a\u4e0b\u6587\u6ce8\u518c\u6301\u6709\u7684\u7ed1\u5b9a\u8282\u70b9\u3002 */
         private final ContextEntry entry;
+        /** \u8bb0\u5f55\u5f53\u524d\u5c1a\u672a\u63d0\u4ea4\u6216\u5c1a\u672a\u7ed3\u675f\u7684\u6ce8\u518c\u72b6\u6001\u3002 */
         private boolean pending = true;
 
+        /**
+         * \u5c06\u5f53\u524d\u6ce8\u518c\u4e0e\u4e0a\u4e0b\u6587\u69fd\u4f4d\u53ca\u5177\u4f53\u7ed1\u5b9a\u8282\u70b9\u5173\u8054\u3002
+         * @param key \u5171\u4eab\u4e0a\u4e0b\u6587\u952e
+         * @param entry \u5f53\u524d\u6ce8\u518c\u7684\u503c\u8282\u70b9
+         */
         private Registration(String key, ContextEntry entry) {
             this.key = key;
             this.entry = entry;

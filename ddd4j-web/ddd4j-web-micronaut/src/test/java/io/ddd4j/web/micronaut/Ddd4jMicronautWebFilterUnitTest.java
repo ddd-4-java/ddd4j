@@ -35,22 +35,36 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.mockito.Mockito.*;
 
+/** \u9a8c\u8bc1 <code>Ddd4jMicronautWebFilterUnit</code> \u5728 <code>secondConstructor</code> \u7b49\u573a\u666f\u4e2d\u7684\u884c\u4e3a\u3002 */
 class Ddd4jMicronautWebFilterUnitTest {
 
+    /** \u6784\u9020\u672c\u7ec4\u6d4b\u8bd5\u8f93\u5165\u65f6\u590d\u7528\u7684\u56fa\u5b9a\u6807\u8bc6\u6216\u540d\u79f0\u3002 */
     private static final String REQUEST_ID = "reqId-001";
 
+    /**
+     * \u521b\u5efa <code>new WebRequestContextFactory</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new WebRequestContextFactory(()-&gt;REQUEST_ID, ClientIpResolver.remoteAddressOnly())</code>
+     */
     private WebRequestContextFactory newContextFactory() {
         return new WebRequestContextFactory(
                 () -> REQUEST_ID,
                 ClientIpResolver.remoteAddressOnly());
     }
 
+    /**
+     * \u6784\u9020 <code>WebRequestLifecycle</code>\u3001<code>BearerSubjectAuthenticator</code> \u4f5c\u4e3a\u5f53\u524d\u6d4b\u8bd5\u7684\u8f93\u5165\u6216\u7ed3\u679c\u3002
+     * @return \u63d0\u4f9b\u7ed9\u540e\u7eed\u5951\u7ea6\u65ad\u8a00\u7684 <code>WebRequestLifecycle</code> \u7ed3\u679c
+     */
     private WebRequestLifecycle newLifecycle() {
         return new WebRequestLifecycle(
                 new BearerSubjectAuthenticator(),
                 new PathWebAccessPolicy(java.util.List.of("/test"), io.ddd4j.web.core.auth.AuthenticationMode.REQUIRED));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>new Ddd4jMicronautWebFilter(
+     *                         null, newLifecycle(), null)</code> \u629b\u51fa <code>NullPointerException</code>\u3002
+     */
     @Test
     void secondConstructorRejectsNullContextFactory() {
         assertThatNullPointerException()
@@ -58,6 +72,10 @@ class Ddd4jMicronautWebFilterUnitTest {
                         null, newLifecycle(), null));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>new Ddd4jMicronautWebFilter(
+     *                         newContextFactory(), null, null)</code> \u629b\u51fa <code>NullPointerException</code>\u3002
+     */
     @Test
     void secondConstructorRejectsNullRequestLifecycle() {
         assertThatNullPointerException()
@@ -65,6 +83,7 @@ class Ddd4jMicronautWebFilterUnitTest {
                         newContextFactory(), null, null));
     }
 
+    /** \u9a8c\u8bc1<code>filter</code>\u975e\u7a7a\u3002 */
     @Test
     void secondConstructorAcceptsNullIdempotency() {
         Ddd4jMicronautWebFilter filter = new Ddd4jMicronautWebFilter(
@@ -72,6 +91,7 @@ class Ddd4jMicronautWebFilterUnitTest {
         assertThat(filter).isNotNull();
     }
 
+    /** \u9a8c\u8bc1<code>Flux.from(result).blockFirst()</code> \u6307\u5411\u540c\u4e00\u5b9e\u4f8b <code>response</code>\u3002 */
     @Test
     void publicPathProceedsThroughMicronautFilterChain() {
         Ddd4jMicronautWebFilter filter = new Ddd4jMicronautWebFilter(

@@ -17,6 +17,7 @@ import java.util.Map;
 @ApplicationScoped
 @Produces(MediaType.APPLICATION_JSON)
 public class AuthenticationResource {
+    /** \u5904\u7406\u5f53\u524d\u793a\u4f8b\u5e94\u7528\u767b\u5f55\u72b6\u6001\u7684\u539f\u751f\u8ba4\u8bc1\u7ec4\u4ef6\u3002 */
     @Inject
     NativeAuth auth;
 
@@ -68,7 +69,9 @@ public class AuthenticationResource {
      */
     @Data
     public static class Login {
+        /** \u5f53\u524d\u8eab\u4efd\u51ed\u636e\u4f7f\u7528\u7684\u7528\u6237\u540d\u3002 */
         private String username;
+        /** \u5f53\u524d\u767b\u5f55\u6216\u8d26\u53f7\u521b\u5efa\u8bf7\u6c42\u63d0\u4f9b\u7684\u53e3\u4ee4\u3002 */
         private String password;
     }
 }

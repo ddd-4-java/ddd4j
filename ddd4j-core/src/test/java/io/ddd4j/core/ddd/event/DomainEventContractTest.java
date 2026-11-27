@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class DomainEventContractTest {
 
+    /** \u9a8c\u8bc1<code>first.getEventType().asString()</code> \u7b49\u4e8e <code>"TestEvent"</code>\uff0c<code>second.getEventType()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>first.getEventType()</code>\uff0c<code>first.getCausationId()</code>\u4e3a\u7a7a\u3002 */
     @Test
     void eventTypeAndSourceAreDerivedFromTheEventClassAndPath() {
         TestEvent first = new TestEvent("order-1");
@@ -31,6 +32,7 @@ class DomainEventContractTest {
         assertNull(first.getCausationId());
     }
 
+    /** \u9a8c\u8bc1<code>child.getCorrelationId()</code> \u7b49\u4e8e <code>original.getEventId()</code>\uff0c<code>child.getCausationId()</code> \u7b49\u4e8e <code>original.getEventId()</code>\uff0c<code>grandchild.getCausationId()</code> \u7b49\u4e8e <code>child.getEventId()</code>\u3002 */
     @Test
     void chainedEventKeepsTheOriginalCorrelationAndImmediateCause() {
         TestEvent original = new TestEvent("order-1");
@@ -43,6 +45,7 @@ class DomainEventContractTest {
         assertEquals(child.getEventId(), grandchild.getCausationId());
     }
 
+    /** \u9a8c\u8bc1<code>event.supports("paid")</code>\u4e3a\u5047\uff0c<code>event.supports("created", "paid")</code>\u4e3a\u771f\uff0c<code>event.supports()</code>\u4e3a\u5047\u3002 */
     @Test
     void strategyKeysRequireAnIntersection() {
         TestEvent event = new TestEvent("order-1");
@@ -55,12 +58,22 @@ class DomainEventContractTest {
         assertFalse(event.supports());
     }
 
+    /** \u6d4b\u8bd5\u4e13\u7528\u9886\u57df\u4e8b\u4ef6\uff0c\u7528\u4e8e\u63a7\u5236\u4e8b\u4ef6\u7c7b\u578b\u548c\u8d1f\u8f7d\u3002 */
     private static final class TestEvent extends DomainEvent<StringEntityId> {
 
+        /**
+         * \u4f7f\u7528 <code>super()</code> \u521d\u59cb\u5316 <code>TestEvent</code> \u6d4b\u8bd5\u5939\u5177\u3002
+         * @param entityId \u7528\u4e8e\u521d\u59cb\u5316 <code>TestEvent</code> \u7684 <code>String</code> \u503c
+         */
         private TestEvent(String entityId) {
             super(entityId);
         }
 
+        /**
+         * \u4f7f\u7528 <code>super()</code> \u521d\u59cb\u5316 <code>TestEvent</code> \u6d4b\u8bd5\u5939\u5177\u3002
+         * @param entityId \u7528\u4e8e\u521d\u59cb\u5316 <code>TestEvent</code> \u7684 <code>String</code> \u503c
+         * @param respondTo \u7528\u4e8e\u521d\u59cb\u5316 <code>TestEvent</code> \u7684 <code>Event</code> \u503c
+         */
         private TestEvent(String entityId, Event respondTo) {
             super(new EntityIdPath(new StringEntityId(entityId)), respondTo);
         }

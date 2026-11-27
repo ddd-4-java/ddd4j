@@ -27,6 +27,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 class RedisStreamRecordJsonContractTest {
 
+    /**
+     * \u9a8c\u8bc1<code>restored</code>\u975e\u7a7a\uff0c<code>restored.getStream()</code> \u7b49\u4e8e <code>original.getStream()</code>\uff0c<code>restored.getNativeMessage()</code> \u7b49\u4e8e <code>original.getNativeMessage()</code>\u3002
+     * @throws Exception \u5904\u7406\u6d4b\u8bd5\u6570\u636e\u7684\u5e8f\u5217\u5316\u65f6\u5931\u8d25
+     */
     @Test
     void jsonRoundTripPreservesPublicFields() throws Exception {
         RedisStreamRecord original = new RedisStreamRecord("orders", "1-0",

@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class AuthenticationValueContractTest {
 
+    /** \u9a8c\u8bc1<code>second</code> \u7b49\u4e8e <code>first</code>\uff0c<code>second.hashCode()</code> \u7b49\u4e8e <code>first.hashCode()</code>\uff0c<code>first.getSubject()</code>\u4e3a\u7a7a\u3002 */
     @Test
     void equalResultsHaveEqualHashAndReadableToken() {
         BearerSubjectAuthenticator.Authentication first =

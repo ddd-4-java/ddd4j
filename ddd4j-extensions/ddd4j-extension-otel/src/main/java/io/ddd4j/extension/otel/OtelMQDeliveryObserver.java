@@ -26,6 +26,7 @@ import io.ddd4j.mq.delivery.MQOutboxRecord;
  */
 public final class OtelMQDeliveryObserver implements MQDeliveryObserver {
 
+    /** \u7528\u4e8e\u533a\u5206\u6d88\u606f\u6295\u9012\u6307\u6807\u6765\u6e90\u7684\u4ee3\u7406\u540d\u79f0\u3002 */
     private final String broker;
 
     /**
@@ -35,36 +36,43 @@ public final class OtelMQDeliveryObserver implements MQDeliveryObserver {
         this.broker = StrKit.isBlank(broker) ? "unknown" : StrKit.trim(broker);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void onOutboxPublished(MQOutboxRecord record) {
         MqDeliveryMetrics.outboxPublished(broker);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void onOutboxRetry(MQOutboxRecord record) {
         MqDeliveryMetrics.outboxRetry(broker);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void onOutboxDead(MQOutboxRecord record) {
         MqDeliveryMetrics.outboxDead(broker);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void onOutboxFailed(MQOutboxRecord record) {
         MqDeliveryMetrics.outboxFailed(broker);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void onInboxProcessed(String consumerId, String messageId) {
         MqDeliveryMetrics.inboxProcessed(broker);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void onInboxDuplicate(String consumerId, String messageId) {
         MqDeliveryMetrics.inboxDuplicate(broker);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void onInboxFailed(String consumerId, String messageId) {
         MqDeliveryMetrics.inboxFailed(broker);

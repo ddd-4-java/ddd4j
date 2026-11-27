@@ -38,8 +38,11 @@ import java.lang.reflect.Field;
 @Data
 public class DomainFieldInfo {
 
+    /** \u5173\u8054\u9886\u57df\u5c5e\u6027\u7684 Java \u53cd\u5c04\u5b57\u6bb5\u3002 */
     private final Field field;
+    /** Java \u9886\u57df\u6a21\u578b\u4e2d\u7684\u5c5e\u6027\u540d\u3002 */
     private final String property;
+    /** \u5f53\u524d\u9886\u57df\u5b57\u6bb5\u5bf9\u5e94\u7684\u6301\u4e45\u5316\u5217\u540d\u3002 */
     private final String poColumn;
 
     /**

@@ -38,6 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class DefaultQueryBus implements QueryBus {
 
+    /** \u6309\u67e5\u8be2\u8fd0\u884c\u65f6\u7c7b\u578b\u7d22\u5f15\u7684\u5904\u7406\u5668\u3002 */
     private final Map<Class<?>, QueryHandler<?, ?>> handlers = new ConcurrentHashMap<>();
 
     /**
@@ -50,6 +51,7 @@ public class DefaultQueryBus implements QueryBus {
         Objects.requireNonNull(queryHandlers, "queryHandlers must not be null").forEach(this::register);
     }
 
+    /** {@inheritDoc} */
     @Override
     public <R> R ask(Object query) {
         Object actual = Objects.requireNonNull(query, "query must not be null");
@@ -60,6 +62,10 @@ public class DefaultQueryBus implements QueryBus {
         return (R) handler.handle(actual);
     }
 
+    /**
+     * \u6839\u636e\u58f0\u660e\u7684\u67e5\u8be2\u7c7b\u578b\u6ce8\u518c\u5904\u7406\u5668\uff0c\u91cd\u590d\u7c7b\u578b\u4f1a\u5728\u88c5\u914d\u65f6\u5931\u8d25\u3002
+     * @param handler \u5f85\u7ed1\u5b9a\u7684\u67e5\u8be2\u5904\u7406\u5668
+     */
     private void register(QueryHandler<?, ?> handler) {
         QueryHandler<?, ?> actual = Objects.requireNonNull(handler, "handler must not be null");
         Object previous = handlers.putIfAbsent(actual.queryType(), actual);

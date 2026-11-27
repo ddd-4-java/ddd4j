@@ -27,8 +27,11 @@ import java.util.Objects;
  */
 public final class SubjectKitRegistrationScope implements AutoCloseable {
 
+    /** \u6839\u636e\u5f53\u524d\u8c03\u7528\u8303\u56f4\u63d0\u4f9b\u8ba4\u8bc1\u4e3b\u4f53\u7684\u7ec4\u4ef6\u3002 */
     private final SubjectProvider subjectProvider;
+    /** \u5f53\u524d\u6ce8\u518c\u4f5c\u7528\u57df\u542f\u52a8\u524d\u7684\u8ba4\u8bc1\u4e3b\u4f53\u63d0\u4f9b\u5668\u3002 */
     private SubjectProvider previousSubjectProvider;
+    /** \u5f53\u524d\u4e3b\u4f53\u6ce8\u518c\u662f\u5426\u5df2\u7ecf\u5b89\u88c5\u3002 */
     private boolean started;
 
     /**

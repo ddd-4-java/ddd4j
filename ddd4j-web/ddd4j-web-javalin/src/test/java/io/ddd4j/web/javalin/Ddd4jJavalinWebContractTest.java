@@ -57,12 +57,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/** \u9a8c\u8bc1 <code>Ddd4jJavalinWeb</code> \u5728<code>readinessEndpointReflectsRegistry</code>\u7b49\u64cd\u4f5c\u4e2d\u7684\u884c\u4e3a\u5951\u7ea6\u3002 */
 class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
 
+    /** \u7531\u5f53\u524d\u6d4b\u8bd5\u542f\u52a8\u548c\u5173\u95ed\u7684\u5e94\u7528\u5b9e\u4f8b\u3002 */
     private Javalin app;
+    /** \u6267\u884c\u771f\u5b9e\u8bf7\u6c42\u4f9b\u516c\u5171 HTTP \u5408\u540c\u65ad\u8a00\u4f7f\u7528\u7684\u5ba2\u6237\u7aef\u3002 */
     private WebContractClient contractClient;
+    /** \u6c47\u603b\u5f53\u524d\u7ec4\u4ef6\u5c31\u7eea\u72b6\u6001\u7684\u6ce8\u518c\u8868\u3002 */
     private RuntimeReadinessRegistry readinessRegistry;
 
+    /** \u6d4b\u8bd5\u6267\u884c\u524d\u6267\u884c <code>CacheKit.build()</code>\u3001<code>mock()</code>\u3001<code>BaseContext.inject()</code>\u3001<code>provider()</code> \u5b8c\u6210\u8d44\u6e90\u51c6\u5907\u3002 */
     @BeforeEach
     void setUp() {
         CacheKit.build("javalin-contract", 300L);
@@ -85,6 +90,7 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
         contractClient = new JavalinContractClient(HttpClient.newHttpClient(), app.port());
     }
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>app.stop()</code>\u3001<code>ThreadContext.clear()</code>\u3001<code>BaseContext.clear()</code>\u3001<code>CacheKit.unregister()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterEach
     void tearDown() {
         if (Objects.nonNull(app)) {
@@ -95,11 +101,13 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
         CacheKit.unregister("javalin-contract");
     }
 
+    /** {@inheritDoc} */
     @Override
     protected WebContractClient client() {
         return contractClient;
     }
 
+    /** \u9a8c\u8bc1<code>ready.status()</code> \u7b49\u4e8e <code>200</code>\uff0c<code>ready.body()</code> \u5305\u542b <code>"\"ready\":true"</code>\uff0c<code>unavailable.body()</code> \u5305\u542b <code>"\"ready\":false"</code>\u3002 */
     @Test
     void readinessEndpointReflectsRegistryWithoutLeakingDetails() {
         WebContractResponse ready = client().request("GET", ReadinessEndpoint.PATH, Collections.emptyMap(), null);
@@ -113,6 +121,10 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
                 .doesNotContain("database", "secret diagnostic");
     }
 
+    /**
+     * \u8c03\u7528 <code>routes.get()</code>\u3001<code>context.json()</code>\u3001<code>R.ok()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @param routes \u4f20\u7ed9 <code>routes.get()</code> \u7684 <code>io.javalin.config.RoutesConfig</code> \u8f93\u5165
+     */
     private void registerContractRoutes(io.javalin.config.RoutesConfig routes) {
         routes.get(WebContractPaths.SUCCESS, context -> context.json(R.ok(Map.of("result", "ok"))));
         routes.get(WebContractPaths.PUBLIC, context -> context.json(R.ok(Map.of("result", "ok"))));
@@ -143,6 +155,11 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
         });
     }
 
+    /**
+     * \u521b\u5efa <code>new SubjectProvider</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+     * @param subject \u7528\u4e8e\u6784\u9020\u672c\u6b21\u8fd4\u56de\u7ed3\u679c\u7684 <code>Subject</code> \u8f93\u5165
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new SubjectProvider(){ &#64;Override public Subject getSubject() { return subject; } }</code>
+     */
     private SubjectProvider provider(Subject subject) {
         return new SubjectProvider() {
             @Override
@@ -152,20 +169,30 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
         };
     }
 
+    /** \u5728\u5f53\u524d HTTP \u6846\u67b6\u4e2d\u6267\u884c\u5171\u7528\u5408\u540c\u7684\u5ba2\u6237\u7aef\u9002\u914d\u5668\u3002 */
     private final static class JavalinContractClient implements WebContractClient {
 
+        /** Java \u5e8f\u5217\u5316\u4f7f\u7528\u7684\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u7528\u4e8e\u53d1\u9001 HTTP \u8bf7\u6c42\u7684\u5ba2\u6237\u7aef\u3002 */
         private final HttpClient httpClient;
 
+        /** \u5f53\u524d\u5939\u5177\u670d\u52a1\u7ed1\u5b9a\u7684\u672c\u5730\u7aef\u53e3\u3002 */
         private final int port;
 
+        /**
+         * \u7528\u7ed9\u5b9a\u503c\u521d\u59cb\u5316 <code>JavalinContractClient</code> \u5b9e\u4f8b\u3002
+         * @param httpClient \u7528\u4e8e\u53d1\u9001 HTTP \u8bf7\u6c42\u7684\u5ba2\u6237\u7aef
+         * @param port <code>port</code> \u5b57\u6bb5
+         */
         @JsonCreator()
         private JavalinContractClient(@JsonProperty("httpClient") HttpClient httpClient, @JsonProperty("port") int port) {
             this.httpClient = httpClient;
             this.port = port;
         }
 
+        /** {@inheritDoc} */
         @Override
         public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
             try {
@@ -182,16 +209,25 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
             }
         }
 
+        /**
+         * \u8bfb\u53d6\u7528\u4e8e\u53d1\u9001 HTTP \u8bf7\u6c42\u7684\u5ba2\u6237\u7aef\u3002
+         * @return \u7528\u4e8e\u53d1\u9001 HTTP \u8bf7\u6c42\u7684\u5ba2\u6237\u7aef
+         */
         @JsonProperty("httpClient")
         public HttpClient httpClient() {
             return httpClient;
         }
 
+        /**
+         * \u8bfb\u53d6<code>port</code> \u5b57\u6bb5\u3002
+         * @return <code>port</code> \u5b57\u6bb5
+         */
         @JsonProperty("port")
         public int port() {
             return port;
         }
 
+        /** {@inheritDoc} */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -204,6 +240,7 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
             return Objects.equals(this.httpClient, other.httpClient) && this.port == other.port;
         }
 
+        /** {@inheritDoc} */
         @Override
         public int hashCode() {
             int result = 0;
@@ -212,6 +249,7 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
             return result;
         }
 
+        /** {@inheritDoc} */
         @Override
         public String toString() {
             return "JavalinContractClient[httpClient=" + httpClient + ", port=" + port + "]";

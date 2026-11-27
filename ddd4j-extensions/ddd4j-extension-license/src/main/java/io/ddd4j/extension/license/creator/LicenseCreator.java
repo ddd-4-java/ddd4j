@@ -38,6 +38,7 @@ import java.util.Objects;
 @Slf4j
 public class LicenseCreator {
 
+    /** \u521b\u5efa\u8bb8\u53ef\u8bc1\u65f6\u4f7f\u7528\u7684\u7b7e\u53d1\u53c2\u6570\u3002 */
     private final LicenseCreatorParam param;
 
     /**
@@ -93,6 +94,10 @@ public class LicenseCreator {
         }
     }
 
+    /**
+     * \u6839\u636e\u7b7e\u53d1\u53c2\u6570\u7ec4\u88c5\u5c06\u88ab\u7b7e\u540d\u7684\u8bb8\u53ef\u8bc1\u8d1f\u8f7d\u3002
+     * @return \u542b\u6709\u6548\u671f\u548c\u6d88\u8d39\u7ea6\u675f\u7684\u8bb8\u53ef\u8bc1\u4fe1\u606f
+     */
     private LicenseInfo createLicenseInfo() {
         return LicenseInfo.builder()
                 .subject(param.getSubject())
@@ -105,6 +110,11 @@ public class LicenseCreator {
                 .build();
     }
 
+    /**
+     * \u4ece\u7b7e\u53d1\u5bc6\u94a5\u5e93\u52a0\u8f7d\u914d\u7f6e\u522b\u540d\u4e0b\u7684\u79c1\u94a5\u3002
+     * @return \u7528\u4e8e\u7b7e\u540d\u8bb8\u53ef\u8bc1\u8d1f\u8f7d\u7684\u79c1\u94a5
+     * @throws Exception \u5bc6\u94a5\u5e93\u8bfb\u53d6\u3001\u53e3\u4ee4\u6821\u9a8c\u6216\u79c1\u94a5\u67e5\u627e\u5931\u8d25
+     */
     private PrivateKey loadPrivateKey() throws Exception {
         KeyStore keyStore = KeyStore.getInstance("JKS");
         try (var inputStream = Files.newInputStream(Paths.get(param.getPrivateKeysStorePath()))) {
@@ -117,6 +127,7 @@ public class LicenseCreator {
         return privateKey;
     }
 
+    /** \u9a8c\u8bc1\u8bb8\u53ef\u8bc1\u7b7e\u53d1\u914d\u7f6e\u53ca\u6709\u6548\u65e5\u671f\u7b49\u8f93\u5165\u7ea6\u675f\u3002 */
     private void validateParam() {
         Objects.requireNonNull(param, "LicenseCreatorParam 不能为空");
         requireText(param.getSubject(), "subject");
@@ -138,12 +149,24 @@ public class LicenseCreator {
         }
     }
 
+    /**
+     * \u68c0\u67e5\u8bb8\u53ef\u8bc1\u914d\u7f6e\u4e2d\u7684\u5fc5\u586b\u6587\u672c\u3002
+     * @param value \u5f85\u68c0\u67e5\u7684\u914d\u7f6e\u503c
+     * @param field \u7528\u4e8e\u8bca\u65ad\u7684\u914d\u7f6e\u5b57\u6bb5\u540d\u79f0
+     * @throws IllegalStateException \u914d\u7f6e\u672a\u63d0\u4f9b\u6709\u6548\u6587\u672c
+     */
     private void requireText(String value, String field) {
         if (StrKit.isBlank(value)) {
             throw new IllegalStateException("生成证书缺少必填参数: " + field);
         }
     }
 
+    /**
+     * \u7528\u751f\u6210\u7684\u4e34\u65f6\u6587\u4ef6\u66ff\u6362\u8bb8\u53ef\u8bc1\u76ee\u6807\uff0c\u6587\u4ef6\u7cfb\u7edf\u4e0d\u652f\u6301\u539f\u5b50\u79fb\u52a8\u65f6\u6267\u884c\u666e\u901a\u66ff\u6362\u3002
+     * @param source \u4fdd\u5b58\u5df2\u751f\u6210\u8bb8\u53ef\u8bc1\u7684\u4e34\u65f6\u6587\u4ef6
+     * @param target \u6700\u7ec8\u8bb8\u53ef\u8bc1\u6587\u4ef6\u8def\u5f84
+     * @throws Exception \u6587\u4ef6\u65e0\u6cd5\u79fb\u5230\u76ee\u6807\u4f4d\u7f6e
+     */
     private void moveAtomically(Path source, Path target) throws Exception {
         try {
             Files.move(source, target, java.nio.file.StandardCopyOption.ATOMIC_MOVE,
@@ -153,6 +176,12 @@ public class LicenseCreator {
         }
     }
 
+    /**
+     * \u4e3a RSA\u3001EC \u6216 DSA \u79c1\u94a5\u9009\u62e9 SHA-256 \u7b7e\u540d\u7b97\u6cd5\u3002
+     * @param keyAlgorithm \u7b7e\u53d1\u79c1\u94a5\u7684\u7b97\u6cd5\u6807\u8bc6
+     * @return \u4ea4\u7ed9 Java Signature \u5b9e\u4f8b\u4f7f\u7528\u7684\u7b97\u6cd5\u540d
+     * @throws IllegalStateException \u79c1\u94a5\u7b97\u6cd5\u4e0d\u53d7\u652f\u6301
+     */
     private String signatureAlgorithm(String keyAlgorithm) {
         if ("EC".equalsIgnoreCase(keyAlgorithm)) {
             return "SHA256withECDSA";

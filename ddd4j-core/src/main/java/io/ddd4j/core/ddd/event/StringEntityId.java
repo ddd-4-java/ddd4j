@@ -28,7 +28,9 @@ import java.util.Objects;
  */
 public final class StringEntityId implements EntityId {
 
+    /** \u5b57\u7b26\u4e32\u5b9e\u4f53\u6807\u8bc6\u7684\u5b9e\u4f53\u7c7b\u578b\u5b9a\u4e49\u3002 */
     static final EntityType TYPE = new StringEntityType("String");
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     @Serial
     private static final long serialVersionUID = 1L;
     /**
@@ -48,22 +50,26 @@ public final class StringEntityId implements EntityId {
         this.value = value;
     }
 
+    /** {@inheritDoc} */
     @Override
     public EntityType getType() {
         return TYPE;
     }
 
+    /** {@inheritDoc} */
     @Override
     @JsonValue
     public String asString() {
         return value;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String asTypedString() {
         return TYPE.asString() + ":" + value;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object object) {
         if (this == object) {
@@ -76,11 +82,13 @@ public final class StringEntityId implements EntityId {
         return Objects.equals(value, that.value);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return Objects.hash(value);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return value;

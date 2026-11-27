@@ -32,10 +32,15 @@ import java.util.Objects;
  */
 public final class SqlObservation {
 
+    /** \u6267\u884c SQL \u5bf9\u5e94\u7684 MyBatis \u6620\u5c04\u8bed\u53e5\u6807\u8bc6\u3002 */
     private final String statementId;
+    /** \u672c\u6b21 SQL \u6267\u884c\u7684\u8bed\u53e5\u6587\u672c\u3002 */
     private final String sql;
+    /** \u6309\u539f\u53c2\u6570\u4f4d\u7f6e\u6392\u5e8f\u7684\u89c2\u6d4b\u53c2\u6570\u3002 */
     private final List<String> sortedParams;
+    /** SQL \u6267\u884c\u8017\u65f6\uff0c\u5355\u4f4d\u4e3a\u7eb3\u79d2\u3002 */
     private final long elapsedNanos;
+    /** SQL \u6267\u884c\u5931\u8d25\u65f6\u8bb0\u5f55\u7684\u5f02\u5e38\u3002 */
     private final Throwable error;
 
     /**
@@ -166,7 +171,10 @@ public final class SqlObservation {
     }
 
     /**
-     * 按全部观测字段判断值相等，保证跨版本去重语义一致。
+     * \u6309\u5168\u90e8\u89c2\u6d4b\u5b57\u6bb5\u5224\u65ad\u503c\u76f8\u7b49\uff0c\u4fdd\u8bc1\u8de8\u7248\u672c\u53bb\u91cd\u8bed\u4e49\u4e00\u81f4\u3002
+     *
+     * @param o \u5f85\u6bd4\u8f83\u7684\u5bf9\u8c61
+     * @return \u53e6\u4e00\u89c2\u6d4b\u5177\u6709\u76f8\u540c\u5b57\u6bb5\u503c\u65f6\u8fd4\u56de true
      */
     @Override
     public boolean equals(Object o) {
@@ -185,7 +193,9 @@ public final class SqlObservation {
     }
 
     /**
-     * 按 record 组件顺序计算哈希，引用字段允许为空。
+     * \u6309 record \u7ec4\u4ef6\u987a\u5e8f\u8ba1\u7b97\u54c8\u5e0c\uff0c\u5f15\u7528\u5b57\u6bb5\u5141\u8bb8\u4e3a\u7a7a\u3002
+     *
+     * @return \u6839\u636e\u89c2\u6d4b\u5b57\u6bb5\u8ba1\u7b97\u7684\u6563\u5217\u503c
      */
     @Override
     public int hashCode() {
@@ -198,7 +208,9 @@ public final class SqlObservation {
     }
 
     /**
-     * 返回与其他版本 record 相同的观测文本。
+     * \u8fd4\u56de\u4e0e\u5176\u4ed6\u7248\u672c record \u76f8\u540c\u7684\u89c2\u6d4b\u6587\u672c\u3002
+     *
+     * @return \u7528\u4e8e\u8bca\u65ad\u7684 SQL \u89c2\u6d4b\u5185\u5bb9
      */
     @Override
     public String toString() {

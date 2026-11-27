@@ -12,8 +12,13 @@ import java.util.Objects;
  * 不创建线程、不选择默认时区，平台按其既有时区传入 ZonedDateTime。
  */
 public final class ProjectionCron {
+    /** \u5404 Cron \u5b57\u6bb5\u5141\u8bb8\u53d6\u503c\u7684\u4f4d\u96c6\u5408\u3002 */
     private final BitSet[] fields;
 
+    /**
+     * \u4ee5\u5404\u5b57\u6bb5\u5df2\u7ecf\u89e3\u6790\u51fa\u7684\u4f4d\u96c6\u5408\u521b\u5efa Cron \u8ba1\u5212\u3002
+     * @param fields \u5404\u5b57\u6bb5\u5141\u8bb8\u5339\u914d\u7684\u53d6\u503c\u96c6\u5408
+     */
     private ProjectionCron(BitSet[] fields) {
         this.fields = fields;
     }
@@ -46,6 +51,13 @@ public final class ProjectionCron {
         return new ProjectionCron(fields);
     }
 
+    /**
+     * \u89e3\u6790 Cron \u5b57\u6bb5\u4e2d\u7684\u5355\u503c\u3001\u8303\u56f4\u3001\u6b65\u957f\u548c\u9017\u53f7\u5206\u9694\u9879\u3002
+     * @param field Cron \u8868\u8fbe\u5f0f\u4e2d\u7684\u5355\u4e2a\u5b57\u6bb5
+     * @param min \u5b57\u6bb5\u5141\u8bb8\u7684\u6700\u5c0f\u503c
+     * @param max \u5b57\u6bb5\u5141\u8bb8\u7684\u6700\u5927\u503c
+     * @return \u8bb0\u5f55\u5141\u8bb8\u53d6\u503c\u7684\u4f4d\u96c6\u5408
+     */
     private static BitSet parseField(String field, int min, int max) {
         BitSet values = new BitSet(max + 1);
         for (String item : field.split(",", -1)) {

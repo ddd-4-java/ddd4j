@@ -27,8 +27,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+/** \u901a\u8fc7 <code>mock()</code>\u3001<code>RabbitMQClient.messageId()</code>\u3001<code>acknowledgment.nack()</code> \u9a8c\u8bc1 <code>RabbitMQAdapterContract</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
 class RabbitMQAdapterContractTest {
 
+    /**
+     * \u9a8c\u8bc1<code>RabbitMQClient.messageId(properties)</code> \u7b49\u4e8e <code>"stable-id"</code>\uff0c<code>acknowledgment.isAcknowledged()</code>\u4e3a\u771f\u3002
+     * @throws Exception \u88c5\u914d\u8fd0\u884c\u6d4b\u8bd5\u6240\u9700\u7684\u7ec4\u4ef6\u65f6\u5931\u8d25
+     */
     @Test
     void shouldPreferStableMessageIdAndNackForRedelivery() throws Exception {
         AMQP.BasicProperties properties = new AMQP.BasicProperties.Builder()
@@ -45,6 +50,10 @@ class RabbitMQAdapterContractTest {
         assertTrue(acknowledgment.isAcknowledged());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>captor.getValue().getDeliveryMode()</code> \u7b49\u4e8e <code>2</code>\uff0c<code>captor.getValue().getHeaders().get(MQDeliveryHeaders.CORRELATION_ID)</code> \u7b49\u4e8e <code>"correlation-1"</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void shouldPublishPersistentMessageAndWaitForBrokerConfirm() throws Exception {
         // 池创建 N 个 channel（默认 32），故 confirmSelect 也调用 N 次。
@@ -98,6 +107,10 @@ class RabbitMQAdapterContractTest {
         verify(borrowed).waitForConfirmsOrDie(properties.getPublisherConfirmTimeoutMillis());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>listenerByChannel.size()</code> \u7b49\u4e8e <code>poolSize</code>\uff0c\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\u3002
+     * @throws Exception \u88c5\u914d\u8fd0\u884c\u6d4b\u8bd5\u6240\u9700\u7684\u7ec4\u4ef6\u65f6\u5931\u8d25
+     */
     @Test
     void shouldRejectMessageReturnedAsUnroutable() throws Exception {
         // 池化后每个 channel 独立注册自己的 ReturnListener 与 return holder。
@@ -153,6 +166,10 @@ class RabbitMQAdapterContractTest {
         assertThrows(IllegalStateException.class, event::publish);
     }
 
+    /**
+     * \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>anyPublish</code>\u4e3a\u771f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void shouldReplenishPoolAfterChannelFailure() throws Exception {
         // channels[0] 在 basicPublish 时抛 IO 异常，验证：
@@ -225,6 +242,10 @@ class RabbitMQAdapterContractTest {
         assertTrue(anyPublish, "Expected basicPublish on any non-broken channel after pool replenishment");
     }
 
+    /**
+     * \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>mock()</code>\u3001<code>ch.isOpen()</code>\u3001<code>channels.add()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void shouldCloseOwnedChannelsButNotInjectedConnectionOnlyOnce() throws Exception {
         int poolSize = 32;

@@ -38,11 +38,18 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/** \u901a\u8fc7 <code>WebOtelSupport.isAvailable()</code>\u3001<code>WebOtelSupport.startServerSpan()</code>\u3001<code>span.getSpanContext()</code> \u9a8c\u8bc1 <code>WebOtelSupport</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
 class WebOtelSupportTest {
 
+    /** \u7528\u4e8e\u6355\u83b7\u6d4b\u8bd5\u7ed3\u675f\u524d\u5df2\u5bfc\u51fa\u7684\u8ddf\u8e2a\u6570\u636e\u3002 */
     private InMemorySpanExporter exporter;
+    /** \u4e3a\u6d4b\u8bd5\u6536\u96c6 OpenTelemetry \u8ddf\u8e2a\u4fe1\u606f\u7684\u63d0\u4f9b\u5668\u3002 */
     private SdkTracerProvider tracerProvider;
 
+    /**
+     * \u8c03\u7528 <code>GlobalOpenTelemetry.resetForTest()</code>\u3001<code>Ddd4jOtel.class.getDeclaredField()</code>\u3001<code>field.setAccessible()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @throws Exception \u53cd\u5c04\u8bbf\u95ee\u88ab\u6d4b\u6210\u5458\u65f6\u5931\u8d25
+     */
     private static void resetOpenTelemetry() throws Exception {
         GlobalOpenTelemetry.resetForTest();
         for (String fieldName : new String[]{"TRACER_CACHE", "METER_CACHE"}) {
@@ -55,6 +62,10 @@ class WebOtelSupportTest {
         available.setBoolean(null, false);
     }
 
+    /**
+     * \u6d4b\u8bd5\u6267\u884c\u524d\u6267\u884c <code>resetOpenTelemetry()</code>\u3001<code>InMemorySpanExporter.create()</code>\u3001<code>SdkTracerProvider.builder()</code>\u3001<code>SimpleSpanProcessor.create()</code> \u5b8c\u6210\u8d44\u6e90\u51c6\u5907\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @BeforeEach
     void setUp() throws Exception {
         resetOpenTelemetry();
@@ -68,6 +79,10 @@ class WebOtelSupportTest {
                 .buildAndRegisterGlobal();
     }
 
+    /**
+     * \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>tracerProvider.close()</code>\u3001<code>exporter.close()</code>\u3001<code>resetOpenTelemetry()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @AfterEach
     void tearDown() throws Exception {
         if (tracerProvider != null) {
@@ -79,6 +94,10 @@ class WebOtelSupportTest {
         resetOpenTelemetry();
     }
 
+    /**
+     * \u9a8c\u8bc1<code>WebOtelSupport.isAvailable()</code>\u4e3a\u771f\uff0c<code>spanObject instanceof Span</code>\u4e3a\u771f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void startAndActivateDelegateToRealOtelIntegration() throws Exception {
         assertTrue(WebOtelSupport.isAvailable());
@@ -95,6 +114,7 @@ class WebOtelSupportTest {
         WebOtelSupport.endServerSpan(span, 200);
     }
 
+    /** \u9a8c\u8bc1<code>spans.size()</code> \u7b49\u4e8e <code>1</code>\uff0c<code>data.getStatus().getStatusCode()</code> \u7b49\u4e8e <code>StatusCode.ERROR</code>\uff0c<code>data.getEvents().isEmpty()</code>\u4e3a\u5047\u3002 */
     @Test
     void errorAndStatusAreExportedThroughReflectionBridge() {
         Object span = WebOtelSupport.startServerSpan("POST", "/orders", new HashMap<>());
@@ -110,6 +130,10 @@ class WebOtelSupportTest {
         assertFalse(data.getEvents().isEmpty());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>headers.get("traceparent")</code>\u975e\u7a7a\uff0c<code>headers.get("traceparent").startsWith("00-")</code>\u4e3a\u771f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void responseContextIsInjectedThroughReflectionBridge() throws Exception {
         Object span = WebOtelSupport.startServerSpan("GET", "/api", new HashMap<>());
@@ -124,6 +148,7 @@ class WebOtelSupportTest {
         assertTrue(headers.get("traceparent").startsWith("00-"));
     }
 
+    /** \u9a8c\u8bc1<code>WebOtelSupport.startServerSpan("GET", "/api", null)</code>\u975e\u7a7a\u3002 */
     @Test
     void nullInputsRemainSafe() {
         assertNotNull(WebOtelSupport.startServerSpan("GET", "/api", null));

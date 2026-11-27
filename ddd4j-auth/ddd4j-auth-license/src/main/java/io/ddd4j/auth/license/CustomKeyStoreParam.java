@@ -36,9 +36,13 @@ public class CustomKeyStoreParam {
      * 公钥/私钥在磁盘上的存储路径
      */
     private final String storePath;
+    /** \u4ece\u5bc6\u94a5\u5e93\u4e2d\u9009\u62e9\u8bc1\u4e66\u6216\u5bc6\u94a5\u6761\u76ee\u7684\u522b\u540d\u3002 */
     private final String alias;
+    /** \u6253\u5f00\u5bc6\u94a5\u5e93\u6240\u9700\u7684\u5b58\u50a8\u53e3\u4ee4\u3002 */
     private final String storePwd;
+    /** \u89e3\u9501\u5bc6\u94a5\u5e93\u4e2d\u7b7e\u540d\u79c1\u94a5\u6761\u76ee\u7684\u53e3\u4ee4\u3002 */
     private final String keyPwd;
+    /** \u7528\u4e8e\u7b7e\u53d1\u6216\u9a8c\u8bc1\u8bb8\u53ef\u8bc1\u7684\u7b7e\u540d\u7b97\u6cd5\u3002 */
     private final String signatureAlgorithm;
 
     /**

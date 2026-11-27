@@ -44,6 +44,7 @@ import lombok.extern.slf4j.Slf4j;
 @ApplicationScoped
 public class GoodsConfig {
 
+    /** \u8bfb\u5199\u5f53\u524d\u793a\u4f8b\u5546\u54c1\u7684\u5185\u5b58\u4ed3\u50a8\u3002 */
     private final InMemoryGoodsRepository productRepository;
 
     /**

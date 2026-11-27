@@ -28,8 +28,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+/** \u9a8c\u8bc1 <code>DropwizardDomainEventPublisher</code> \u5728<code>constructor</code>\u7b49\u64cd\u4f5c\u4e2d\u7684\u884c\u4e3a\u5951\u7ea6\u3002 */
 class DropwizardDomainEventPublisherTest {
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>mock()</code>\u3001<code>Arrays.asList()</code>\u3001<code>publisher.publish()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void publishNotifiesAllListeners() {
         Consumer<Object> first = mock(Consumer.class);
@@ -43,6 +45,7 @@ class DropwizardDomainEventPublisherTest {
         verify(second).accept("payload");
     }
 
+    /** \u9a8c\u8bc1\u672a\u8c03\u7528 <code>listener</code>\u3002 */
     @Test
     void publishSkipsNullEvent() {
         Consumer<Object> listener = mock(Consumer.class);
@@ -54,6 +57,7 @@ class DropwizardDomainEventPublisherTest {
         org.mockito.Mockito.verifyNoInteractions(listener);
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>mock()</code>\u3001<code>Collections.singletonList()</code>\u3001<code>publisher.publish()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void publishDomainEventNotifiesListeners() {
         Consumer<Object> listener = mock(Consumer.class);
@@ -67,6 +71,7 @@ class DropwizardDomainEventPublisherTest {
         verify(listener).accept(event);
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>NullPointerException.class</code>\u3002 */
     @Test
     void constructorRejectsNullAndSnapshotsListeners() {
         assertThrows(NullPointerException.class, () -> new DropwizardDomainEventPublisher(null));

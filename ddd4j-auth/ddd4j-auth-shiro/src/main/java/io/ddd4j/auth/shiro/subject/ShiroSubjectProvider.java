@@ -28,11 +28,13 @@ import io.ddd4j.core.subject.SubjectProvider;
  */
 public class ShiroSubjectProvider implements SubjectProvider {
 
+    /** {@inheritDoc} */
     @Override
     public Subject getSubject() {
         return new ShiroSubject();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Subject getSubject(String realm) {
         // Shiro 多 Realm 场景由 SecurityManager 配置，此处返回默认 Subject

@@ -52,13 +52,17 @@ public class ProjectionRunner<E> {
      */
     public static final int CONSECUTIVE_FAILURE_THRESHOLD = 5;
 
+    /** \u5e94\u7528\u6295\u5f71\u4e8b\u4ef6\u53ca\u7ef4\u62a4\u68c0\u67e5\u70b9\u7684\u5171\u4eab\u670d\u52a1\u3002 */
     private final ProjectionService projectionService;
 
+    /** \u6309\u4f4d\u70b9\u5206\u5757\u8bfb\u53d6\u4e8b\u4ef6\u7684\u6295\u5f71\u7ec4\u4ef6\u3002 */
     private final EventChunkReader<E> chunkReader;
 
+    /** \u63a5\u6536\u6295\u5f71\u6267\u884c\u7ed3\u679c\u548c\u5904\u7406\u8017\u65f6\u7684\u6307\u6807\u7ec4\u4ef6\u3002 */
     private final ProjectionMetrics metrics;
 
     // 同一运行器内按检查点标识互斥；不替代跨实例锁或数据库事务。
+    /** \u6309\u68c0\u67e5\u70b9\u6807\u8bc6\u9650\u5236\u540c\u4e00\u6267\u884c\u5668\u5185\u540c\u4e00\u6d41\u5e76\u884c\u8fd0\u884c\u3002 */
     private final Set<String> runningStreams = ConcurrentHashMap.newKeySet();
 
     /**
@@ -196,6 +200,11 @@ public class ProjectionRunner<E> {
         }
     }
 
+    /**
+     * \u5728\u8fd0\u884c\u524d\u68c0\u67e5\u89c6\u56fe\u53ca\u5176\u4e8b\u4ef6\u6d41\u540d\u79f0\u3002
+     * @param view \u8bf7\u6c42\u6267\u884c\u7684\u6295\u5f71\u89c6\u56fe
+     * @return \u6821\u9a8c\u901a\u8fc7\u7684\u6295\u5f71\u89c6\u56fe
+     */
     private ProjectionView<E> validateView(ProjectionView<E> view) {
         ProjectionView<E> projectionView = Objects.requireNonNull(view, "view must not be null");
         if (StrKit.isBlank(projectionView.getName())) {

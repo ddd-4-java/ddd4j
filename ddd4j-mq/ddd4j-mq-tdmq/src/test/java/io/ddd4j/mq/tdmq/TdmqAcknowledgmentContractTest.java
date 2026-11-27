@@ -30,6 +30,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class TdmqAcknowledgmentContractTest {
 
+    /**
+     * \u9a8c\u8bc1<code>entered.await(5, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>acknowledgment.nack(true)</code> \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>acknowledgment.isAcknowledged()</code>\u4e3a\u771f\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void concurrentAckAndNackInvokeProtocolOnlyOnce() throws Exception {
         CountDownLatch entered = new CountDownLatch(1);
@@ -69,6 +73,7 @@ class TdmqAcknowledgmentContractTest {
         }
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>acknowledgment.isAcknowledged()</code>\u4e3a\u5047\uff0c<code>acknowledgment.isAcknowledged()</code>\u4e3a\u771f\u3002 */
     @Test
     void failedCallbackLeavesAcknowledgmentRetryable() {
         AtomicInteger calls = new AtomicInteger();
@@ -85,6 +90,7 @@ class TdmqAcknowledgmentContractTest {
         assertTrue(acknowledgment.isAcknowledged());
     }
 
+    /** \u9a8c\u8bc1<code>requeue.get()</code> \u7b49\u4e8e <code>Boolean.TRUE</code>\uff0c<code>acknowledgment.isAcknowledged()</code>\u4e3a\u771f\u3002 */
     @Test
     void shouldForwardRequeueIntentToProtocolAdapter() {
         AtomicReference<Boolean> requeue = new AtomicReference<>();

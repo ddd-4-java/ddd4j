@@ -49,6 +49,7 @@ public class GuiceDomainEventPublisher implements DomainEventPublisher {
         this.eventBus = eventBus;
     }
 
+    /** {@inheritDoc} */
     @Override
     public <ID extends EntityId> void publish(DomainEvent<ID> event) {
         if (Objects.isNull(event)) {

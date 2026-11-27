@@ -33,9 +33,13 @@ import java.util.Objects;
  */
 public final class RedisStreamRecord {
 
+    /** \u5f53\u524d\u6d88\u606f\u6240\u5c5e\u7684 Redis Stream \u952e\u3002 */
     private final String stream;
+    /** \u5f53\u524d Redis Stream \u6761\u76ee\u7684\u552f\u4e00\u8bb0\u5f55\u6807\u8bc6\u3002 */
     private final String id;
+    /** \u4ece Redis Stream \u6761\u76ee\u8bfb\u53d6\u7684\u5b57\u6bb5\u53ca\u6d88\u606f\u5143\u6570\u636e\u3002 */
     private final Map<String, String> fields;
+    /** Redis \u5ba2\u6237\u7aef\u4f7f\u7528\u7684\u539f\u751f Stream \u6d88\u606f\u5bf9\u8c61\u3002 */
     private final Object nativeMessage;
 
     /**
@@ -94,6 +98,7 @@ public final class RedisStreamRecord {
         return nativeMessage;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -109,6 +114,7 @@ public final class RedisStreamRecord {
                 && Objects.equals(nativeMessage, that.nativeMessage);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int result = Objects.hashCode(stream);
@@ -117,6 +123,7 @@ public final class RedisStreamRecord {
         return 31 * result + Objects.hashCode(nativeMessage);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "RedisStreamRecord[stream=" + stream + ", id=" + id + ", fields=" + fields

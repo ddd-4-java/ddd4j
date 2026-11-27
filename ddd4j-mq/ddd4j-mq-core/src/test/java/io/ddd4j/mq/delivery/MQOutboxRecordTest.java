@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /** 验证 Outbox 消息身份、消息头和不可修改快照契约。 */
 class MQOutboxRecordTest {
 
+    /** \u9a8c\u8bc1<code>record.status()</code> \u7b49\u4e8e <code>MQOutboxStatus.PENDING</code>\uff0c<code>record.attempts()</code> \u7b49\u4e8e <code>0</code>\uff0c<code>record.headers().get("tenant")</code> \u7b49\u4e8e <code>"tenant-1"</code>\u3002 */
     @Test
     void pending_shouldUsePendingStateAndEnforceStableMessageIdHeader() {
         Map<String, String> headers = new LinkedHashMap<>();
@@ -43,6 +44,7 @@ class MQOutboxRecordTest {
         assertEquals("tenant-1", record.headers().get("tenant"));
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
     @Test
     void constructor_shouldRejectBlankIdentityAndDestination() {
         assertThrows(IllegalArgumentException.class, () -> MQOutboxRecord.pending("", "orders.created", "{}",
@@ -51,6 +53,7 @@ class MQOutboxRecordTest {
                 Collections.emptyMap(), Instant.EPOCH));
     }
 
+    /** \u9a8c\u8bc1<code>record.headers().put("other", "value")</code> \u629b\u51fa <code>UnsupportedOperationException.class</code>\uff0c\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>NullPointerException.class</code>\u3002 */
     @Test
     void headers_shouldKeepInputOrderAndRejectNullEntries() {
         Map<String, String> headers = new LinkedHashMap<>();
@@ -73,6 +76,7 @@ class MQOutboxRecordTest {
                 "message-3", "orders.created", "{}", headers, Instant.EPOCH));
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>MQOutboxRecord.pending()</code>\u3001<code>Collections.emptyMap()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void toString_shouldMatchRecordValueSemanticsForEveryComponent() {
         MQOutboxRecord record = MQOutboxRecord.pending(

@@ -11,8 +11,13 @@ import java.lang.reflect.Field;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/** \u901a\u8fc7 <code>StoredEventEntity.class.getAnnotation()</code>\u3001<code>entity.name()</code>\u3001<code>StoredEventEntity.class.getSimpleName()</code> \u9a8c\u8bc1 <code>StoredEventEntityMapping</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
 class StoredEventEntityMappingTest {
 
+    /**
+     * \u9a8c\u8bc1<code>entity</code>\u975e\u7a7a\uff0c<code>entity.name().isEmpty() ? StoredEventEntity.class.getSimpleName() : entity.name()</code> \u7b49\u4e8e <code>"StoredEventEntity"</code>\uff0c<code>constraint.columnNames()[0]</code> \u7b49\u4e8e <code>EventStoreConstants.COLUMN_POSITION</code>\u3002
+     * @throws NoSuchFieldException \u53cd\u5c04\u5b9a\u4f4d\u88ab\u6d4b\u5b57\u6bb5\u5931\u8d25
+     */
     @Test
     void mapsSharedEventStoreIdentityAndPositionConstraint() throws NoSuchFieldException {
         Entity entity = StoredEventEntity.class.getAnnotation(Entity.class);

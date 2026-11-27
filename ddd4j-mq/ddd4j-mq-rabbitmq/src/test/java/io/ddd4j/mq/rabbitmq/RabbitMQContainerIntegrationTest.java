@@ -60,15 +60,22 @@ import static org.junit.jupiter.api.Assertions.*;
 @Testcontainers(disabledWithoutDocker = true)
 class RabbitMQContainerIntegrationTest {
 
+    /** \u4e3a\u5f53\u524d\u96c6\u6210\u6d4b\u8bd5\u63d0\u4f9b\u72ec\u7acb RabbitMQ \u670d\u52a1\u7684\u5bb9\u5668\u3002 */
     @Container
     static final RabbitMQContainer RABBIT = new RabbitMQContainer("rabbitmq:4.1.8-management")
             .withEnv("RABBITMQ_ERLANG_COOKIE", "ddd4j-test-cookie-for-rabbitmq")
             .withTmpFs(Collections.singletonMap("/var/lib/rabbitmq", "rw,size=512m"))
             .withCopyToContainer(Transferable.of("ddd4j-test-cookie-for-rabbitmq", 0600),
                     "/var/lib/rabbitmq/.erlang.cookie");
+    /** \u7528\u4e8e\u53d1\u5e03\u3001\u8ba2\u9605\u6216\u7ed1\u5b9a\u6d4b\u8bd5\u6d88\u606f\u7684\u4ea4\u6362\u673a\u540d\u79f0\u3002 */
     private static final String EXCHANGE = "ddd4j.it.rabbit";
+    /** \u6d4b\u8bd5\u6d88\u8d39\u8005\u8bfb\u5199\u6d88\u606f\u7684\u4ee3\u7406\u961f\u5217\u540d\u79f0\u3002 */
     private static final String QUEUE = "ddd4j.it.rabbit.verify";
 
+    /**
+     * \u8bfb\u53d6 <code>properties</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>properties</code>
+     */
     private static RabbitMQProperties brokerProperties() {
         RabbitMQProperties properties = new RabbitMQProperties();
         properties.setHost(RABBIT.getHost());
@@ -79,6 +86,10 @@ class RabbitMQContainerIntegrationTest {
         return properties;
     }
 
+    /**
+     * \u9a8c\u8bc1<code>received</code>\u975e\u7a7a\uff0c<code>received.getBody().length</code> \u7b49\u4e8e <code>body.length</code>\u3002
+     * @throws Exception \u88c5\u914d\u8fd0\u884c\u6d4b\u8bd5\u6240\u9700\u7684\u7ec4\u4ef6\u65f6\u5931\u8d25
+     */
     @Test
     void rabbitMQPropertiesConnectsToContainerBroker() throws Exception {
         RabbitMQProperties properties = brokerProperties();
@@ -122,6 +133,10 @@ class RabbitMQContainerIntegrationTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>RABBIT.getAmqpPort()</code>\u975e\u7a7a\uff0c<code>RABBIT.getHost()</code>\u975e\u7a7a\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void rabbitMQContainerExposesStandardAmqpPort() throws Exception {
         assertNotNull(RABBIT.getAmqpPort(), "AMQP 端口应就绪");
@@ -130,6 +145,10 @@ class RabbitMQContainerIntegrationTest {
         assertTrue(RABBIT.getAmqpPort() > 0);
     }
 
+    /**
+     * \u9a8c\u8bc1<code>raw</code>\u975e\u7a7a\uff0c<code>headers.get(MQDeliveryHeaders.MESSAGE_ID).toString()</code> \u7b49\u4e8e <code>event.getMsgId()</code>\uff0c<code>acknowledgment.get().correlationId()</code> \u7b49\u4e8e <code>"native-correlation"</code>\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void clientShouldRoundTripCausalityThroughNativeAmqpHeaders() throws Exception {
         String suffix = UUID.randomUUID().toString().replace("-", "");
@@ -219,6 +238,10 @@ class RabbitMQContainerIntegrationTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>producer.accept(event)</code> \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>failure.getCause() instanceof com.rabbitmq.client.ShutdownSignalException</code>\u4e3a\u771f\u3002
+     * @throws Exception \u51c6\u5907\u6216\u91ca\u653e\u88ab\u6d4b\u8fd0\u884c\u8d44\u6e90\u65f6\u5931\u8d25
+     */
     @Test
     void producerMustReportClosedConnectionInsteadOfReturningSuccess() throws Exception {
         RabbitMQProperties properties = brokerProperties();
@@ -251,6 +274,10 @@ class RabbitMQContainerIntegrationTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>client.initConsumer(listener, properties)</code>\u4e3a\u771f\uff0c<code>bean.redelivered.await(10, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>bean.lastMessageId</code> \u7b49\u4e8e <code>event.getMsgId()</code>\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void failedListenerShouldBeNackedAndRedeliveredByTheBroker() throws Exception {
         String suffix = UUID.randomUUID().toString().replace("-", "");
@@ -302,6 +329,10 @@ class RabbitMQContainerIntegrationTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>first</code>\u975e\u7a7a\uff0c<code>retry.isAcknowledged()</code>\u4e3a\u771f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void nativeAcknowledgmentShouldRequeueThenPermanentlyConfirm() throws Exception {
         String queue = "ddd4j.it.rabbit.ack." + UUID.randomUUID().toString().replace("-", "");
@@ -332,6 +363,10 @@ class RabbitMQContainerIntegrationTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>client.init(Collections.singletonList(listener), properties, new JsonMQEventSerialization(), null)</code> \u629b\u51fa <code>MQInitializationException.class</code>\uff0c<code>setup.isOpen()</code>\u4e3a\u771f\u3002
+     * @throws Exception \u51c6\u5907\u6216\u91ca\u653e\u88ab\u6d4b\u8fd0\u884c\u8d44\u6e90\u65f6\u5931\u8d25
+     */
     @Test
     void requiredListenerDeclarationFailureShouldRollBackOwnedChannels() throws Exception {
         String suffix = UUID.randomUUID().toString().replace("-", "");
@@ -368,6 +403,10 @@ class RabbitMQContainerIntegrationTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>client.startupStatus().snapshot().state()</code> \u7b49\u4e8e <code>MQStartupState.DEGRADED</code>\uff0c<code>client.lifecycle().checkpoint()</code> \u7b49\u4e8e <code>0</code>\u3002
+     * @throws Exception \u51c6\u5907\u6216\u91ca\u653e\u88ab\u6d4b\u8fd0\u884c\u8d44\u6e90\u65f6\u5931\u8d25
+     */
     @Test
     void optionalListenerDeclarationFailureShouldKeepProducerAvailable() throws Exception {
         String suffix = UUID.randomUUID().toString().replace("-", "");
@@ -414,6 +453,10 @@ class RabbitMQContainerIntegrationTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>client.initConsumer(listener, properties)</code>\u4e3a\u771f\uff0c<code>bean.entered.await(5, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>bean.attempts.get()</code> \u7b49\u4e8e <code>1</code>\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void closingDuringUnacknowledgedDeliveryShouldReleaseAndRequeue() throws Exception {
         String suffix = UUID.randomUUID().toString().replace("-", "");
@@ -477,11 +520,19 @@ class RabbitMQContainerIntegrationTest {
         }
     }
 
+    /** \u5c06 <code>attempts</code>\u3001<code>redelivered</code>\u3001<code>lastMessageId</code> \u7b49\u72b6\u6001\u4e00\u8d77\u4f20\u5165\u5f53\u524d\u6d4b\u8bd5\uff0c\u4f9b\u8c03\u7528\u6216\u7ed3\u679c\u65ad\u8a00\u4f7f\u7528\u3002 */
     public static final class RetryingListener {
+        /** \u8ddf\u8e2a\u6d4b\u8bd5\u64cd\u4f5c\u7684\u8c03\u7528\u6216\u91cd\u8bd5\u6b21\u6570\u3002 */
         private final AtomicInteger attempts = new AtomicInteger();
+        /** \u534f\u8c03\u6d4b\u8bd5\u7ebf\u7a0b\u5728\u6307\u5b9a\u6267\u884c\u9636\u6bb5\u7b49\u5f85\u6216\u7ee7\u7eed\u7684\u95e8\u95e9\u3002 */
         private final CountDownLatch redelivered = new CountDownLatch(1);
+        /** \u6700\u8fd1\u4e00\u6b21\u6295\u9012\u6216\u786e\u8ba4\u65f6\u8bfb\u53d6\u7684\u6d88\u606f\u6807\u8bc6\u3002 */
         private volatile String lastMessageId;
 
+        /**
+         * \u6839\u636e\u672c\u6b21\u8c03\u7528\u66f4\u65b0 <code>lastMessageId = event.getMsgId()</code>\uff0c\u7528\u4e8e\u540e\u7eed\u6d4b\u8bd5\u6b65\u9aa4\u3002
+         * @param event \u4ea4\u7ed9\u88ab\u6d4b\u5165\u53e3\u5904\u7406\u7684\u6d4b\u8bd5\u9886\u57df\u4e8b\u4ef6
+         */
         public void handle(MQEvent event) {
             lastMessageId = event.getMsgId();
             if (attempts.incrementAndGet() == 1) {
@@ -491,11 +542,20 @@ class RabbitMQContainerIntegrationTest {
         }
     }
 
+    /** \u5c06 <code>attempts</code>\u3001<code>entered</code>\u3001<code>release</code> \u7b49\u72b6\u6001\u4e00\u8d77\u4f20\u5165\u5f53\u524d\u6d4b\u8bd5\uff0c\u4f9b\u8c03\u7528\u6216\u7ed3\u679c\u65ad\u8a00\u4f7f\u7528\u3002 */
     public static final class BlockingListener {
+        /** \u8ddf\u8e2a\u6d4b\u8bd5\u64cd\u4f5c\u7684\u8c03\u7528\u6216\u91cd\u8bd5\u6b21\u6570\u3002 */
         private final AtomicInteger attempts = new AtomicInteger();
+        /** \u7b49\u5f85\u88ab\u6d4b\u64cd\u4f5c\u5df2\u8fdb\u5165\u6267\u884c\u7684\u540c\u6b65\u95e8\u95e9\u3002 */
         private final CountDownLatch entered = new CountDownLatch(1);
+        /** \u7528\u6765\u63a7\u5236\u6d4b\u8bd5\u7ebf\u7a0b\u9000\u51fa\u7b49\u5f85\u6216\u89c2\u5bdf\u64cd\u4f5c\u5b8c\u6210\u7684\u540c\u6b65\u95e8\u95e9\u3002 */
         private final CountDownLatch release = new CountDownLatch(1);
 
+        /**
+         * \u8c03\u7528 <code>attempts.incrementAndGet()</code>\u3001<code>entered.countDown()</code>\u3001<code>release.await()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+         * @param event \u4ea4\u7ed9\u88ab\u6d4b\u5165\u53e3\u5904\u7406\u7684\u6d4b\u8bd5\u9886\u57df\u4e8b\u4ef6
+         * @throws InterruptedException \u7b49\u5f85\u6d4b\u8bd5\u64cd\u4f5c\u65f6\u88ab\u4e2d\u65ad
+         */
         public void handle(MQEvent event) throws InterruptedException {
             attempts.incrementAndGet();
             entered.countDown();

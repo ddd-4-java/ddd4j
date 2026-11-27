@@ -42,6 +42,7 @@ public class SampleCommandHandler implements CommandExecutor<SampleCommand> {
      */
     static final String HANDLED = "handled-by-helidon-handler";
 
+    /** {@inheritDoc} */
     @Override
     public Set<Class<? extends Command>> supportedCommands() {
         return java.util.Collections.singleton(SampleCommand.class);

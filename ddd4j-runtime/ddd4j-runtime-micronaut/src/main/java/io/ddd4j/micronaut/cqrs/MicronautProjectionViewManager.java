@@ -29,6 +29,7 @@ public class MicronautProjectionViewManager implements ViewManager {
      * 新 runtime 的显式持久投影开关；不改变旧 GAV 的缺省激活规则。
      */
     public static final String ENABLED = "ddd4j.cqrs.projection.enabled";
+    /** \u5b9e\u73b0 Micronaut \u6295\u5f71\u4efb\u52a1\u88c5\u914d\u540e\u7684\u542f\u52a8\u4e0e\u505c\u6b62\u3002 */
     private final DefaultViewManager<Object> delegate;
 
     /**
@@ -84,6 +85,7 @@ public class MicronautProjectionViewManager implements ViewManager {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void start() {
         if (Objects.nonNull(delegate)) {
@@ -91,6 +93,7 @@ public class MicronautProjectionViewManager implements ViewManager {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void stop() {
         if (Objects.nonNull(delegate)) {
@@ -98,11 +101,13 @@ public class MicronautProjectionViewManager implements ViewManager {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isRunning() {
         return Objects.nonNull(delegate) && delegate.isRunning();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void triggerOnce() {
         if (Objects.nonNull(delegate)) {
@@ -110,6 +115,7 @@ public class MicronautProjectionViewManager implements ViewManager {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public ProjectionStatus getProjectionStatus(String streamId) {
         return Objects.nonNull(delegate) ? delegate.getProjectionStatus(streamId) : ProjectionStatus.baseline(streamId, false);

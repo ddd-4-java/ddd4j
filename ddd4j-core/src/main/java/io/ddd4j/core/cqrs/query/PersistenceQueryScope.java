@@ -35,9 +35,16 @@ import java.util.*;
  */
 public final class PersistenceQueryScope<M extends AggregateRoot<?>, P> {
 
+    /** \u63a5\u6536\u6301\u4e45\u5316\u5b57\u6bb5\u67e5\u8be2\u6761\u4ef6\u7684\u539f\u59cb\u9886\u57df\u67e5\u8be2\u3002 */
     private final Query<M> query;
+    /** \u5141\u8bb8\u672c\u67e5\u8be2\u4f5c\u7528\u57df\u5f15\u7528\u7684\u6301\u4e45\u5316\u5bf9\u8c61\u7c7b\u578b\u3002 */
     private final Class<P> persistenceType;
 
+    /**
+     * \u4e3a\u5df2\u6709\u9886\u57df\u67e5\u8be2\u6253\u5f00\u663e\u5f0f\u7684\u6301\u4e45\u5316\u5bf9\u8c61\u5b57\u6bb5\u4f5c\u7528\u57df\u3002
+     * @param query \u8981\u63a5\u6536\u6761\u4ef6\u7684\u9886\u57df\u67e5\u8be2
+     * @param persistenceType \u6301\u4e45\u5316\u5bf9\u8c61\u7c7b\u578b
+     */
     PersistenceQueryScope(Query<M> query, Class<P> persistenceType) {
         this.query = Objects.requireNonNull(query, "query must not be null");
         this.persistenceType = Objects.requireNonNull(persistenceType, "persistenceType must not be null");
@@ -330,12 +337,25 @@ public final class PersistenceQueryScope<M extends AggregateRoot<?>, P> {
         return query.count();
     }
 
+    /**
+     * \u5c06\u672c\u4f5c\u7528\u57df\u4e2d\u7684\u6301\u4e45\u5316\u5c5e\u6027\u8f6c\u6362\u6210\u67e5\u8be2\u7b5b\u9009\u6761\u4ef6\u3002
+     * @param condition \u662f\u5426\u8ffd\u52a0\u8be5\u6761\u4ef6
+     * @param property \u6301\u4e45\u5316\u5c5e\u6027\u7684\u65b9\u6cd5\u5f15\u7528
+     * @param operator \u6761\u4ef6\u8fd0\u7b97\u7b26
+     * @param value \u6bd4\u8f83\u503c\u6216\u67e5\u8be2\u64cd\u4f5c\u6570
+     * @return \u5f53\u524d\u6301\u4e45\u5316\u67e5\u8be2\u4f5c\u7528\u57df
+     */
     private PersistenceQueryScope<M, P> condition(boolean condition, SFunction<P, ?> property,
                                                   String operator, Object value) {
         query.addCondition(condition, reference(property), operator, value);
         return this;
     }
 
+    /**
+     * \u6309\u672c\u4f5c\u7528\u57df\u7ed1\u5b9a\u7684\u6301\u4e45\u5316\u7c7b\u578b\u89e3\u6790\u5b57\u6bb5\u5f15\u7528\u3002
+     * @param property \u6301\u4e45\u5316\u5c5e\u6027\u8bbf\u95ee\u5668\u7684\u65b9\u6cd5\u5f15\u7528
+     * @return \u6807\u8bc6\u6301\u4e45\u5316\u5b57\u6bb5\u7684\u5c5e\u6027\u5f15\u7528
+     */
     private PropertyRef reference(SFunction<P, ?> property) {
         return PropertyRef.persistence(persistenceType, property);
     }

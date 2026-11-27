@@ -24,9 +24,13 @@ import java.util.function.BiConsumer;
  * 原生 Dropwizard 认证样例；主入口与可调用入口共用全部 Bundle、资源及 Managed。
  */
 public final class DropwizardShiroApplication extends Application<AuthConfiguration> {
+    /** \u5f53\u524d HTTP \u793a\u4f8b\u4f7f\u7528\u7684\u5171\u7528\u5546\u54c1\u4ea4\u6613\u5165\u53e3\u3002 */
     private final CatalogEndpoints catalog;
+    /** \u5728\u8bf7\u6c42\u5904\u7406\u540e\u901a\u77e5\u6d4b\u8bd5\u6216\u5916\u90e8\u89c2\u5bdf\u8005\u7684\u56de\u8c03\u3002 */
     private final BiConsumer<String, Boolean> completed;
+    /** \u7528\u4e8e\u6ce8\u518c\u6216\u5b9a\u4f4d\u7f13\u5b58\u5b9e\u4f8b\u7684\u540d\u79f0\u3002 */
     private final String cacheName = "dropwizard-shiro-" + java.util.UUID.randomUUID();
+    /** \u5904\u7406\u5f53\u524d\u793a\u4f8b\u5e94\u7528\u767b\u5f55\u72b6\u6001\u7684\u539f\u751f\u8ba4\u8bc1\u7ec4\u4ef6\u3002 */
     private NativeAuth auth;
 
     /**
@@ -54,6 +58,10 @@ public final class DropwizardShiroApplication extends Application<AuthConfigurat
         new DropwizardShiroApplication().run(args);
     }
 
+    /**
+     * \u5728 Dropwizard \u5f15\u5bfc\u9636\u6bb5\u6dfb\u52a0\u5546\u54c1\u4ea4\u6613\u793a\u4f8b\u6240\u9700\u7684\u7ec4\u4ef6\u3002
+     * @param bootstrap \u5f53\u524d Dropwizard \u5e94\u7528\u7684\u5f15\u5bfc\u5bf9\u8c61
+     */
     @Override
     public void initialize(Bootstrap<AuthConfiguration> bootstrap) {
         bootstrap.addBundle(new ConfiguredBundle<AuthConfiguration>() {
@@ -97,6 +105,11 @@ public final class DropwizardShiroApplication extends Application<AuthConfigurat
         }));
     }
 
+    /**
+     * \u4ece\u914d\u7f6e\u88c5\u914d\u5546\u54c1\u4ea4\u6613\u5e94\u7528\u5e76\u5411 Dropwizard \u73af\u5883\u6ce8\u518c\u8d44\u6e90\u3002
+     * @param configuration \u5f53\u524d\u5e94\u7528\u52a0\u8f7d\u7684\u8ba4\u8bc1\u6216\u4ea4\u6613\u914d\u7f6e
+     * @param environment \u7528\u4e8e\u767b\u8bb0\u8def\u7531\u3001\u8fc7\u6ee4\u5668\u53ca\u751f\u547d\u5468\u671f\u7684\u6846\u67b6\u73af\u5883
+     */
     @Override
     public void run(AuthConfiguration configuration, Environment environment) {
         environment.servlets().addFilter("native-shiro", new NativeRequestFilter(() -> auth, completed))

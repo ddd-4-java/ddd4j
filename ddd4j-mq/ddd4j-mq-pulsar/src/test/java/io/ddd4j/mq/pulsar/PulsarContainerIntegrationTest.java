@@ -44,15 +44,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Testcontainers(disabledWithoutDocker = true)
 class PulsarContainerIntegrationTest {
 
+    /** \u4e3a\u5f53\u524d\u96c6\u6210\u6d4b\u8bd5\u63d0\u4f9b\u72ec\u7acb Pulsar \u670d\u52a1\u7684\u5bb9\u5668\u3002 */
     @Container
     static final PulsarContainer PULSAR = new PulsarContainer(DockerImageName.parse("apachepulsar/pulsar:4.2.4"))
             .withTmpFs(Map.of("/pulsar/data", "rw,mode=1777", "/pulsar/logs", "rw,mode=1777"));
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>BaseContext.clear()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterEach
     void clearContext() {
         BaseContext.clear();
     }
 
+    /**
+     * \u9a8c\u8bc1<code>delivered.await(30, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>received.get().getMsgId()</code> \u7b49\u4e8e <code>event.getMsgId()</code>\uff0c<code>acknowledgment.get().correlationId()</code> \u7b49\u4e8e <code>event.getCorrelationId()</code>\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void taggedEventReachesSubscriberWithNativeCausalityProperties() throws Exception {
         PulsarProperties properties = new PulsarProperties();
@@ -111,6 +117,10 @@ class PulsarContainerIntegrationTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>retried.await(30, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>attempts.get()</code> \u7b49\u4e8e <code>2</code>\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void failedListenerIsRedeliveredByNativeBroker() throws Exception {
         PulsarProperties properties = new PulsarProperties();

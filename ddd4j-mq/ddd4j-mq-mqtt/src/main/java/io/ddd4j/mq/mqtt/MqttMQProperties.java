@@ -46,14 +46,23 @@ public class MqttMQProperties extends MQProperties {
      * QoS level: 0 (at most once), 1 (at least once), 2 (exactly once).
      */
     private int qos = 1;
+    /** \u8fde\u63a5\u4ee3\u7406\u65f6\u662f\u5426\u4f7f\u7528\u65b0\u7684 MQTT \u4f1a\u8bdd\u3002 */
     private boolean cleanSession = true;
+    /** MQTT \u5fc3\u8df3\u95f4\u9694\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002 */
     private int keepAliveSeconds = 30;
+    /** \u7b49\u5f85 MQTT \u8fde\u63a5\u5efa\u7acb\u7684\u79d2\u6570\u3002 */
     private int connectionTimeoutSeconds = 30;
+    /** MQTT \u65ad\u7ebf\u540e\u662f\u5426\u81ea\u52a8\u5c1d\u8bd5\u91cd\u8fde\u3002 */
     private boolean automaticReconnect = true;
+    /** \u5355\u4e2a\u5ba2\u6237\u7aef\u5141\u8bb8\u540c\u65f6\u672a\u5b8c\u6210\u7684 MQTT \u6d41\u7a0b\u6570\u3002 */
     private int maxInflight = 100;
+    /** MQTT \u9057\u5631\u6d88\u606f\u7684\u76ee\u6807\u4e3b\u9898\u3002 */
     private String willTopic;
+    /** \u5ba2\u6237\u7aef\u5f02\u5e38\u65ad\u5f00\u65f6\u4ee3\u7406\u53d1\u5e03\u7684\u9057\u5631\u5185\u5bb9\u3002 */
     private String willPayload;
+    /** MQTT \u9057\u5631\u6d88\u606f\u7684\u670d\u52a1\u8d28\u91cf\u7b49\u7ea7\u3002 */
     private int willQos = 0;
+    /** \u4ee3\u7406\u662f\u5426\u4fdd\u7559 MQTT \u9057\u5631\u6d88\u606f\u3002 */
     private boolean willRetained = false;
 
     /**

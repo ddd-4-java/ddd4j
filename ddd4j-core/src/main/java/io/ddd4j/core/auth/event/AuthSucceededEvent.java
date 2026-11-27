@@ -124,6 +124,7 @@ public final class AuthSucceededEvent {
         return occurredAt;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -136,6 +137,7 @@ public final class AuthSucceededEvent {
         return Objects.equals(request, that.request) && Objects.equals(principal, that.principal) && Objects.equals(token, that.token) && Objects.equals(occurredAt, that.occurredAt);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int result = Objects.hashCode(request);
@@ -145,6 +147,7 @@ public final class AuthSucceededEvent {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "AuthSucceededEvent[request=" + request + ", principal=" + principal + ", token=" + token + ", occurredAt=" + occurredAt + ']';

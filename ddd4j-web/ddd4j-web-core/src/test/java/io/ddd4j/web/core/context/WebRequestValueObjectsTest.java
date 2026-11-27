@@ -21,8 +21,10 @@ import java.util.Locale;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+/** \u901a\u8fc7 <code>first.hashCode()</code>\u3001<code>same.hashCode()</code>\u3001<code>data.getRequestId()</code> \u9a8c\u8bc1 <code>WebRequestValueObjects</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
 class WebRequestValueObjectsTest {
 
+    /** \u9a8c\u8bc1<code>same</code> \u7b49\u4e8e <code>first</code>\uff0c<code>same.hashCode()</code> \u7b49\u4e8e <code>first.hashCode()</code>\uff0c<code>otherPath</code> \u4e0d\u7b49\u4e8e <code>first</code>\u3002 */
     @Test
     void webRequestDataValueEqualityIncludesTenantAndRequestPath() {
         WebRequestData first = new WebRequestData("request-1", "trace-1", "tenant-a", "Bearer token",
@@ -40,6 +42,7 @@ class WebRequestValueObjectsTest {
         assertNotEquals(first, otherPath);
     }
 
+    /** \u9a8c\u8bc1<code>data.getRequestId()</code> \u7b49\u4e8e <code>"request-1"</code>\uff0c<code>data.getTraceId()</code> \u7b49\u4e8e <code>"trace-1"</code>\uff0c<code>data.getPath()</code> \u7b49\u4e8e <code>"/orders"</code>\u3002 */
     @Test
     void webRequestDataExposesJavaBeanAccessors() {
         WebRequestData data = new WebRequestData("request-1", "trace-1", "tenant-1", "Bearer token",
@@ -57,6 +60,7 @@ class WebRequestValueObjectsTest {
         assertEquals("/orders", data.getPath());
     }
 
+    /** \u9a8c\u8bc1<code>context.getRequestId()</code> \u7b49\u4e8e <code>"request-1"</code>\uff0c<code>context.getTraceId()</code> \u7b49\u4e8e <code>"request-1"</code>\uff0c<code>context.getPath()</code> \u7b49\u4e8e <code>"/orders"</code>\u3002 */
     @Test
     void webRequestContextExposesNormalizedJavaBeanAccessors() {
         WebRequestContext context = new WebRequestContext("request-1", null, "tenant-1", "Bearer token",

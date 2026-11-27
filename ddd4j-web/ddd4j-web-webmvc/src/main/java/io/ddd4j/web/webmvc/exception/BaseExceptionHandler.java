@@ -43,6 +43,7 @@ public abstract class BaseExceptionHandler {
     /** 异步请求标识头名称。 */
     protected static final String X_REQUESTED_WITH = "X-Requested-With";
 
+    /** \u67e5\u627e\u5f53\u524d Servlet \u8bf7\u6c42\u53ca\u5176\u4e0a\u4e0b\u6587\u7684\u8bf7\u6c42\u6301\u6709\u5668\u3002 */
     private static final ThreadLocal<HttpServletRequest> REQUEST_HOLDER = new TransmittableThreadLocal<>();
 
     /**

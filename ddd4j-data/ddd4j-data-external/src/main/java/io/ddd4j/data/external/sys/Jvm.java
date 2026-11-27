@@ -29,6 +29,7 @@ import java.time.format.DateTimeFormatter;
  */
 @Data
 public class Jvm {
+    /** \u683c\u5f0f\u5316 JVM \u542f\u52a8\u65f6\u95f4\u7684\u65e5\u671f\u65f6\u95f4\u683c\u5f0f\u5668\u3002 */
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     /**

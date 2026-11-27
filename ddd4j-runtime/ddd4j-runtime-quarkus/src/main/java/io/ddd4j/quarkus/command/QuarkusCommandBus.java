@@ -43,17 +43,28 @@ import java.util.Objects;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class QuarkusCommandBus implements CommandBus {
 
+    /** \u6846\u67b6\u5bb9\u5668\u4e2d\u9700\u8981\u767b\u8bb0\u5230\u547d\u4ee4\u603b\u7ebf\u7684\u6267\u884c\u5668\u3002 */
     @Inject
     Instance<CommandExecutor<?>> executors;
 
+    /** \u7528 CDI \u6536\u96c6\u7684\u6267\u884c\u5668\u88c5\u914d\u7684\u5171\u4eab\u547d\u4ee4\u603b\u7ebf\u3002 */
     private volatile DefaultCommandBus delegate = createDelegate(List.of());
 
+    /**
+     * \u5728\u5e94\u7528\u542f\u52a8\u540e\u6536\u96c6 CDI \u6267\u884c\u5668\uff0c\u5e76\u521b\u5efa\u5171\u4eab\u547d\u4ee4\u603b\u7ebf\u3002
+     * @param event \u5f53\u524d\u6846\u67b6\u751f\u547d\u5468\u671f\u6216\u5bb9\u5668\u542f\u52a8\u4e8b\u4ef6
+     */
     void onStart(@Observes @jakarta.annotation.Priority(900) StartupEvent event) {
         List<CommandExecutor<?>> snapshot = new java.util.ArrayList<>();
         executors.forEach(snapshot::add);
         delegate = createDelegate(snapshot);
     }
 
+    /**
+     * \u6839\u636e CDI \u5feb\u7167\u88c5\u914d\u5171\u4eab\u547d\u4ee4\u603b\u7ebf\u3002
+     * @param snapshot \u4ece CDI \u5bb9\u5668\u53d6\u5f97\u7684\u6267\u884c\u5668\u5feb\u7167
+     * @return \u7ed1\u5b9a\u5f53\u524d\u6267\u884c\u5668\u7684\u5171\u4eab\u547d\u4ee4\u603b\u7ebf
+     */
     private DefaultCommandBus createDelegate(Collection<CommandExecutor<?>> snapshot) {
         return new DefaultCommandBus(snapshot) {
             @Override

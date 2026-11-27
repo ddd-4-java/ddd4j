@@ -24,8 +24,10 @@ import java.util.Objects;
  */
 public final class QLExpressValidationResult {
 
+    /** \u8868\u8fbe\u5f0f\u662f\u5426\u901a\u8fc7\u8bed\u6cd5\u9a8c\u8bc1\u3002 */
     private final boolean valid;
 
+    /** \u9a8c\u8bc1\u5931\u8d25\u65f6\u8fd4\u56de\u7ed9\u8c03\u7528\u65b9\u7684\u9519\u8bef\u8bf4\u660e\u3002 */
     private final String message;
 
     /**
@@ -97,6 +99,7 @@ public final class QLExpressValidationResult {
         return message;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -109,6 +112,7 @@ public final class QLExpressValidationResult {
         return this.valid == other.valid && Objects.equals(this.message, other.message);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int result = 0;
@@ -117,6 +121,7 @@ public final class QLExpressValidationResult {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "QLExpressValidationResult[valid=" + valid + ", message=" + message + "]";

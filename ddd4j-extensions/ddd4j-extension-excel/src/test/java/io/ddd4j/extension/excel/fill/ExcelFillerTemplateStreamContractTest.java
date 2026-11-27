@@ -30,6 +30,12 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class ExcelFillerTemplateStreamContractTest {
 
+    /**
+     * \u901a\u8fc7 <code>output.toByteArray()</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+     * @param stream \u4f20\u7ed9 <code>stream.read()</code> \u7684 <code>InputStream</code> \u8f93\u5165
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>output.toByteArray()</code>
+     * @throws Exception \u51c6\u5907\u6216\u8bfb\u53d6\u5939\u5177\u6587\u4ef6\u65f6\u5931\u8d25
+     */
     private static byte[] read(InputStream stream) throws Exception {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         byte[] chunk = new byte[4];
@@ -40,6 +46,10 @@ class ExcelFillerTemplateStreamContractTest {
         return output.toByteArray();
     }
 
+    /**
+     * \u9a8c\u8bc1<code>convert.invoke(null, direct)</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>direct</code>\uff0c<code>buffered</code> \u4e0e\u2026\u4e3a\u4e0d\u540c\u7684\u5b9e\u4f8b <code>source</code>\uff0c<code>read(buffered)</code> \u4e0e\u2026\u7684\u5143\u7d20\u9010\u9879\u76f8\u540c <code>template</code>\u3002
+     * @throws Exception \u51c6\u5907\u6216\u8bfb\u53d6\u5939\u5177\u6587\u4ef6\u3001\u53cd\u5c04\u8bbf\u95ee\u88ab\u6d4b\u6210\u5458\u65f6\u5931\u8d25
+     */
     @Test
     void byteArrayStreamIsReusedAndOtherStreamsAreBufferedWithoutClosingSource() throws Exception {
         Method convert = ExcelFiller.class.getDeclaredMethod("toNonClosingStream", InputStream.class);

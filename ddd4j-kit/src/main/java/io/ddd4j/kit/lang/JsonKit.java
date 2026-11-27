@@ -76,7 +76,9 @@ public class JsonKit {
      */
     public static final TypeReference<Double> DOUBLE_TYPE = new TypeReference<Double>() {
     };
+    /** \u53ea\u542b\u5e74\u6708\u65e5\u7684\u517c\u5bb9\u65e5\u671f\u683c\u5f0f\u3002 */
     private static final String DATE_PATTERN = "yyyy-MM-dd";
+    /** \u542b\u5e74\u6708\u65e5\u53ca\u79d2\u7684\u517c\u5bb9\u65e5\u671f\u65f6\u95f4\u683c\u5f0f\u3002 */
     private static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
     /**
      * 默认 ObjectMapper（用于普通 JSON 序列化）
@@ -463,12 +465,21 @@ public class JsonKit {
         }
     }
 
+    /**
+     * \u6309 JSON \u6570\u5b57\u3001\u5e03\u5c14\u3001\u6587\u672c\u6216\u5176\u4ed6\u8282\u70b9\u7c7b\u578b\u53d6\u51fa Java \u503c\u3002
+     * @param childNode \u5f85\u8f6c\u6362\u7684 Jackson \u6811\u8282\u70b9
+     * @return JSON \u8282\u70b9\u5bf9\u5e94\u7684 Java \u503c
+     */
     private static Object getNodeValue(JsonNode childNode) {
         return childNode.isBigDecimal() ? childNode.decimalValue() : childNode.isDouble() ? childNode.asDouble() :
                 childNode.isFloat() ? childNode.floatValue() : childNode.isLong() ? childNode.asLong() :
                         childNode.isInt() ? childNode.asInt() : childNode.isBoolean() ? childNode.asBoolean() : childNode.asText();
     }
 
+    /**
+     * \u4e3a Jackson \u6a21\u5757\u6ce8\u518c ISO \u65f6\u95f4\u7c7b\u578b\u7684\u5e8f\u5217\u5316\u53ca\u53cd\u5e8f\u5217\u5316\u5668\u3002
+     * @param module \u63a5\u6536\u65f6\u95f4\u7c7b\u578b\u5904\u7406\u5668\u7684 Jackson \u6a21\u5757
+     */
     private static void registerIsoTimeTypes(SimpleModule module) {
         module.addSerializer(Instant.class, new JsonSerializer<Instant>() {
             public void serialize(Instant value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
@@ -492,6 +503,11 @@ public class JsonKit {
         });
     }
 
+    /**
+     * \u7528\u7ed9\u5b9a\u683c\u5f0f\u8f93\u51fa\u65e5\u671f\u7684 JSON \u5b57\u7b26\u4e32\u3002
+     * @param formatter \u5e8f\u5217\u5316\u4f7f\u7528\u7684 Java \u65f6\u95f4\u683c\u5f0f
+     * @return \u9002\u7528\u4e8e\u8be5\u65f6\u95f4\u7c7b\u578b\u7684 Jackson \u5e8f\u5217\u5316\u5668
+     */
     private static JsonSerializer<LocalDate> localDateSerializer(DateTimeFormatter formatter) {
         return new JsonSerializer<LocalDate>() {
             public void serialize(LocalDate value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
@@ -500,6 +516,11 @@ public class JsonKit {
         };
     }
 
+    /**
+     * \u6309\u7ed9\u5b9a\u683c\u5f0f\u89e3\u6790 JSON \u4e2d\u7684\u65e5\u671f\u3002
+     * @param formatter \u53cd\u5e8f\u5217\u5316\u4f7f\u7528\u7684 Java \u65f6\u95f4\u683c\u5f0f
+     * @return \u9002\u7528\u4e8e\u8be5\u65f6\u95f4\u7c7b\u578b\u7684 Jackson \u53cd\u5e8f\u5217\u5316\u5668
+     */
     private static JsonDeserializer<LocalDate> localDateDeserializer(DateTimeFormatter formatter) {
         return new JsonDeserializer<LocalDate>() {
             public LocalDate deserialize(JsonParser parser, DeserializationContext ctxt) throws IOException {
@@ -508,6 +529,11 @@ public class JsonKit {
         };
     }
 
+    /**
+     * \u7528\u7ed9\u5b9a\u683c\u5f0f\u8f93\u51fa\u672c\u5730\u65e5\u671f\u65f6\u95f4\u7684 JSON \u5b57\u7b26\u4e32\u3002
+     * @param formatter \u5e8f\u5217\u5316\u4f7f\u7528\u7684 Java \u65f6\u95f4\u683c\u5f0f
+     * @return \u9002\u7528\u4e8e\u8be5\u65f6\u95f4\u7c7b\u578b\u7684 Jackson \u5e8f\u5217\u5316\u5668
+     */
     private static JsonSerializer<LocalDateTime> localDateTimeSerializer(DateTimeFormatter formatter) {
         return new JsonSerializer<LocalDateTime>() {
             public void serialize(LocalDateTime value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
@@ -516,6 +542,11 @@ public class JsonKit {
         };
     }
 
+    /**
+     * \u6309\u7ed9\u5b9a\u683c\u5f0f\u89e3\u6790 JSON \u4e2d\u7684\u672c\u5730\u65e5\u671f\u65f6\u95f4\u3002
+     * @param formatter \u53cd\u5e8f\u5217\u5316\u4f7f\u7528\u7684 Java \u65f6\u95f4\u683c\u5f0f
+     * @return \u9002\u7528\u4e8e\u8be5\u65f6\u95f4\u7c7b\u578b\u7684 Jackson \u53cd\u5e8f\u5217\u5316\u5668
+     */
     private static JsonDeserializer<LocalDateTime> localDateTimeDeserializer(DateTimeFormatter formatter) {
         return new JsonDeserializer<LocalDateTime>() {
             public LocalDateTime deserialize(JsonParser parser, DeserializationContext ctxt) throws IOException {
@@ -524,6 +555,11 @@ public class JsonKit {
         };
     }
 
+    /**
+     * \u7528\u7ed9\u5b9a\u683c\u5f0f\u8f93\u51fa\u672c\u5730\u65f6\u95f4\u7684 JSON \u5b57\u7b26\u4e32\u3002
+     * @param formatter \u5e8f\u5217\u5316\u4f7f\u7528\u7684 Java \u65f6\u95f4\u683c\u5f0f
+     * @return \u9002\u7528\u4e8e\u8be5\u65f6\u95f4\u7c7b\u578b\u7684 Jackson \u5e8f\u5217\u5316\u5668
+     */
     private static JsonSerializer<LocalTime> localTimeSerializer(DateTimeFormatter formatter) {
         return new JsonSerializer<LocalTime>() {
             public void serialize(LocalTime value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
@@ -532,6 +568,11 @@ public class JsonKit {
         };
     }
 
+    /**
+     * \u6309\u7ed9\u5b9a\u683c\u5f0f\u89e3\u6790 JSON \u4e2d\u7684\u672c\u5730\u65f6\u95f4\u3002
+     * @param formatter \u53cd\u5e8f\u5217\u5316\u4f7f\u7528\u7684 Java \u65f6\u95f4\u683c\u5f0f
+     * @return \u9002\u7528\u4e8e\u8be5\u65f6\u95f4\u7c7b\u578b\u7684 Jackson \u53cd\u5e8f\u5217\u5316\u5668
+     */
     private static JsonDeserializer<LocalTime> localTimeDeserializer(DateTimeFormatter formatter) {
         return new JsonDeserializer<LocalTime>() {
             public LocalTime deserialize(JsonParser parser, DeserializationContext ctxt) throws IOException {
@@ -540,11 +581,19 @@ public class JsonKit {
         };
     }
 
+    /** \u89e3\u6790\u79d2\u7ea7\u548c\u6beb\u79d2\u7ea7\u65f6\u95f4\u6587\u672c\uff0c\u7f3a\u5c11\u5c0f\u6570\u90e8\u5206\u65f6\u8865\u9f50\u6beb\u79d2\u3002 */
     private static class BaseSimpleDateFormat extends SimpleDateFormat {
+        /** \u4f7f\u7528\u5e26\u6beb\u79d2\u7684\u65e5\u671f\u65f6\u95f4\u6a21\u5f0f\u521d\u59cb\u5316\u683c\u5f0f\u5668\u3002 */
         public BaseSimpleDateFormat() {
             super("yyyy-MM-dd HH:mm:ss.SSS");
         }
 
+        /**
+         * \u5728\u7f3a\u5c11\u6beb\u79d2\u540e\u7f00\u7684\u79d2\u7ea7\u6587\u672c\u4e0a\u8865\u96f6\uff0c\u518d\u4ea4\u7ed9\u65e5\u671f\u65f6\u95f4\u683c\u5f0f\u5668\u89e3\u6790\u3002
+         * @param source \u79d2\u7ea7\u6216\u6beb\u79d2\u7ea7\u65e5\u671f\u65f6\u95f4\u6587\u672c
+         * @return \u89e3\u6790\u540e\u7684\u65e5\u671f
+         * @throws ParseException \u6587\u672c\u4e0d\u80fd\u6309\u65e5\u671f\u65f6\u95f4\u6a21\u5f0f\u89e3\u6790
+         */
         public Date parse(String source) throws ParseException {
             if (source.length() == 19) {
                 source = source.concat(".000");

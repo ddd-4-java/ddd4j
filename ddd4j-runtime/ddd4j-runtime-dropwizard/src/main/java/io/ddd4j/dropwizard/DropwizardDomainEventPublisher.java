@@ -31,6 +31,7 @@ import java.util.function.Consumer;
 @Slf4j
 public final class DropwizardDomainEventPublisher implements DomainEventPublisher {
 
+    /** \u63a5\u6536\u8fd0\u884c\u65f6\u53d1\u5e03\u9886\u57df\u4e8b\u4ef6\u7684\u76d1\u542c\u56de\u8c03\u3002 */
     private final List<Consumer<Object>> listeners;
 
     /**
@@ -43,11 +44,13 @@ public final class DropwizardDomainEventPublisher implements DomainEventPublishe
         this.listeners = ImmutableList.copyOf(Objects.requireNonNull(listeners, "listeners must not be null"));
     }
 
+    /** {@inheritDoc} */
     @Override
     public <ID extends EntityId> void publish(DomainEvent<ID> event) {
         publish((Object) event);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void publish(Object event) {
         if (Objects.nonNull(event)) {

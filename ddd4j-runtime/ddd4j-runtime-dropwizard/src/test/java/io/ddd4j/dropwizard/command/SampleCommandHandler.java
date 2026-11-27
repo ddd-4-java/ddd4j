@@ -43,6 +43,7 @@ public class SampleCommandHandler implements CommandExecutor<SampleCommand> {
      */
     static final String HANDLED = "handled-by-dropwizard-handler";
 
+    /** {@inheritDoc} */
     @Override
     public Set<Class<? extends Command>> supportedCommands() {
         return Collections.singleton(SampleCommand.class);

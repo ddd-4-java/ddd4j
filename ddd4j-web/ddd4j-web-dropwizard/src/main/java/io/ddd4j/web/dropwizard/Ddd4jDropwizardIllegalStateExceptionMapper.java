@@ -24,6 +24,7 @@ import java.util.Objects;
  */
 public final class Ddd4jDropwizardIllegalStateExceptionMapper implements ExceptionMapper<IllegalStateException> {
 
+    /** \u6267\u884c\u5b9e\u9645\u5f02\u5e38\u8f6c\u6362\u7684\u6846\u67b6\u6620\u5c04\u5668\u3002 */
     private final Ddd4jDropwizardExceptionMapper delegate;
 
     /** 使用默认 ddd4j 异常映射器。 */
@@ -40,6 +41,11 @@ public final class Ddd4jDropwizardIllegalStateExceptionMapper implements Excepti
         this.delegate = Objects.requireNonNull(delegate, "delegate must not be null");
     }
 
+    /**
+     * \u628a\u5f02\u5e38\u4ea4\u7ed9\u5171\u7528\u6846\u67b6\u6620\u5c04\u5668\u751f\u6210 HTTP \u9519\u8bef\u54cd\u5e94\u3002
+     * @param exception \u5f85\u6620\u5c04\u7684\u8bf7\u6c42\u5f02\u5e38
+     * @return \u7531\u5171\u7528\u6620\u5c04\u5668\u8fd4\u56de\u7684 HTTP \u54cd\u5e94
+     */
     @Override
     public Response toResponse(IllegalStateException exception) {
         return delegate.toResponse(exception);

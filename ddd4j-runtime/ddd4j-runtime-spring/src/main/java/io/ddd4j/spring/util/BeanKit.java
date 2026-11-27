@@ -32,7 +32,9 @@ import java.util.*;
  */
 @UtilityClass
 public class BeanKit {
+    /** \u53cd\u5c04\u521b\u5efa\u5bf9\u8c61\u5931\u8d25\u65f6\u4f7f\u7528\u7684\u8bca\u65ad\u6a21\u677f\u3002 */
     private final String REFLECT_ERROR = "反射获取转换对象异常";
+    /** \u5206\u9694\u5f85\u5ffd\u7565\u7684 Bean \u5c5e\u6027\u540d\u6240\u7528\u7684\u9017\u53f7\u3002 */
     private final String COMMA = ",";
 
     /**
@@ -222,6 +224,11 @@ public class BeanKit {
         return gainInstanceByReflect(className);
     }
 
+    /**
+     * \u6839\u636e\u7c7b\u540d\u52a0\u8f7d\u7c7b\u578b\u5e76\u8c03\u7528\u6784\u9020\u5668\u5efa\u7acb\u5bf9\u8c61\u3002
+     * @param className \u5f53\u524d\u51c6\u5907\u52a0\u8f7d\u6216\u521b\u5efa\u7684\u7c7b\u540d
+     * @return \u901a\u8fc7\u53cd\u5c04\u521b\u5efa\u7684\u5b9e\u4f8b
+     */
     private Object gainInstanceByReflect(String className) {
         Object target = null;
 
@@ -288,6 +295,11 @@ public class BeanKit {
         }
     }
 
+    /**
+     * \u6536\u96c6\u6e90 Bean \u4e2d\u7f3a\u5c11\u503c\u6216\u914d\u7f6e\u5ffd\u7565\u7684\u5c5e\u6027\u540d\u3002
+     * @param source \u9700\u8981\u8bfb\u53d6\u5c5e\u6027\u7684\u6e90 Bean
+     * @param ignorePropertiesList \u8c03\u7528\u65b9\u6307\u5b9a\u7684\u4e0d\u53c2\u4e0e\u6620\u5c04\u7684\u5c5e\u6027\u540d
+     */
     private void ignoreNull(Object source, List<String> ignorePropertiesList) {
         Field[] fields = source.getClass().getDeclaredFields();
 

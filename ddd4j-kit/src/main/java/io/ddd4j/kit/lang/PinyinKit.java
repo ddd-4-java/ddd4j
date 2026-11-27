@@ -29,6 +29,7 @@ import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombi
 @Slf4j(topic = "### BASE-KIT : PinyinKit ###")
 @UtilityClass
 public class PinyinKit {
+    /** \u5f53\u524d\u8f6c\u6362\u64cd\u4f5c\u4f7f\u7528\u7684\u6c49\u8bed\u62fc\u97f3\u8f93\u51fa\u683c\u5f0f\u3002 */
     HanyuPinyinOutputFormat format = new HanyuPinyinOutputFormat();
 
     static {

@@ -58,10 +58,15 @@ import java.util.function.Function;
 public class DefaultEventSourcingRepository<M extends AggregateRoot<ID>, ID extends Serializable>
         implements EventSourcingRepository<M, ID> {
 
+    /** \u7528\u4e8e\u533a\u5206\u805a\u5408\u7c7b\u578b\u7684\u903b\u8f91\u540d\u79f0\u3002 */
     private final String aggregateType;
+    /** \u7528\u4e8e\u6784\u9020\u548c\u6062\u590d\u805a\u5408\u7684 Java \u7c7b\u578b\u3002 */
     private final Class<M> aggregateClass;
+    /** \u5c06\u4ed3\u50a8\u4e3b\u952e\u8f6c\u6362\u6210\u4e8b\u4ef6\u5b58\u50a8\u805a\u5408\u6839\u6807\u8bc6\u7684\u9002\u914d\u5668\u3002 */
     private final Function<ID, ? extends AggregateRootId> idAdapter;
+    /** \u8bfb\u53d6\u53ca\u8ffd\u52a0\u9886\u57df\u4e8b\u4ef6\u7684\u4e8b\u4ef6\u5b58\u50a8\u3002 */
     private final EventStore eventStore;
+    /** \u8ddf\u8e2a\u4ed3\u50a8\u5df2\u7ecf\u8bfb\u53d6\u6216\u8ffd\u52a0\u7684\u805a\u5408\u4e8b\u4ef6\u7248\u672c\u3002 */
     private final ConcurrentMap<ID, Long> trackedVersions = new ConcurrentHashMap<>();
 
     /**
@@ -164,6 +169,11 @@ public class DefaultEventSourcingRepository<M extends AggregateRoot<ID>, ID exte
         return aggregate;
     }
 
+    /**
+     * \u8bfb\u53d6\u805a\u5408\u5df2\u6301\u4e45\u5316\u7684\u5168\u90e8\u4e8b\u4ef6\u5e76\u53d6\u5f97\u6700\u540e\u4e00\u4e2a\u7248\u672c\u3002
+     * @param aggregateId \u5f85\u67e5\u8be2\u7684\u805a\u5408\u6807\u8bc6
+     * @return \u6700\u540e\u4e00\u4e2a\u4e8b\u4ef6\u7684\u7248\u672c\uff0c\u4e8b\u4ef6\u6d41\u4e3a\u7a7a\u65f6\u4e3a\u96f6
+     */
     private long currentStreamVersion(ID aggregateId) {
         List<StoredEvent> stored = eventStore.read(aggregateType, resolve(aggregateId));
         return stored.isEmpty() ? 0L : stored.get(stored.size() - 1).version();
@@ -186,10 +196,20 @@ public class DefaultEventSourcingRepository<M extends AggregateRoot<ID>, ID exte
         }
     }
 
+    /**
+     * \u4ece\u805a\u5408\u5bf9\u8c61\u4e2d\u53d6\u5f97\u975e\u7a7a\u6807\u8bc6\u3002
+     * @param aggregate \u5f85\u5199\u5165\u4e8b\u4ef6\u7684\u805a\u5408
+     * @return \u805a\u5408\u81ea\u8eab\u7684\u6807\u8bc6
+     */
     private ID requireId(M aggregate) {
         return Objects.requireNonNull(aggregate.id(), "aggregate id must not be null");
     }
 
+    /**
+     * \u901a\u8fc7\u9002\u914d\u5668\u628a\u4ed3\u50a8\u6807\u8bc6\u89e3\u6790\u4e3a\u4e8b\u4ef6\u5b58\u50a8\u53ef\u7528\u7684\u6807\u8bc6\u3002
+     * @param aggregateId \u4ed3\u50a8\u4f7f\u7528\u7684\u805a\u5408\u6807\u8bc6
+     * @return \u8f6c\u6362\u540e\u7684\u4e8b\u4ef6\u5b58\u50a8\u6807\u8bc6
+     */
     private AggregateRootId resolve(ID aggregateId) {
         return Objects.requireNonNull(idAdapter.apply(aggregateId),
                 "idAdapter must not return null for id: " + aggregateId);

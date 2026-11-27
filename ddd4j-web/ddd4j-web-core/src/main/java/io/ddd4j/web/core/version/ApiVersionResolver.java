@@ -43,6 +43,7 @@ import java.util.regex.Pattern;
  */
 public final class ApiVersionResolver {
 
+    /** \u5f53\u524d\u7ec4\u4ef6\u4f7f\u7528\u7684\u65e5\u5fd7\u8bb0\u5f55\u5668\u3002 */
     private static final Logger LOG = LoggerFactory.getLogger(ApiVersionResolver.class);
 
     /**

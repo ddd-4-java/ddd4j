@@ -54,22 +54,28 @@ class QuarkusProjectionPositionRepositoryIT {
      */
     private static final String ORDER_SUMMARY = "order-summary";
 
+    /** \u4f9b\u5e93\u5b58\u4e8b\u4ef6\u6216\u72b6\u6001\u6062\u590d\u7528\u4f8b\u4f7f\u7528\u7684\u5feb\u7167\u6837\u672c\u3002 */
     private static final String INVENTORY_SNAPSHOT = "inventory-snapshot";
 
+    /** \u6d4b\u8bd5\u4f7f\u7528\u6216\u8bb0\u5f55\u7684\u591a\u6761\u6295\u5f71\u4f4d\u70b9\u3002 */
     @Inject
     QuarkusProjectionPositionRepository positions;
 
+    /** \u4e3a\u96c6\u6210\u6d4b\u8bd5\u5e94\u7528\u542f\u52a8\u63d0\u4f9b\u7684\u6846\u67b6\u914d\u7f6e\u3002 */
     @Inject
     ProjectionPanacheItCdiConfig itConfig;
 
+    /** \u6267\u884c JPA \u67e5\u8be2\u548c\u6301\u4e45\u5316\u64cd\u4f5c\u7684\u5b9e\u4f53\u7ba1\u7406\u5668\u3002 */
     @PersistenceContext
     EntityManager entityManager;
 
+    /** \u6d4b\u8bd5\u6267\u884c\u524d\u6267\u884c <code>itConfig.clearPositions()</code> \u5b8c\u6210\u8d44\u6e90\u51c6\u5907\u3002 */
     @BeforeEach
     void cleanPositions() {
         itConfig.clearPositions();
     }
 
+    /** \u9a8c\u8bc1<code>snapshot</code>\u4e3a\u7a7a\uff0c<code>positions.findAll()</code> \u7684\u5927\u5c0f\u4e3a <code>1</code>\u3002 */
     @Test
     void findAll_返回可修改的独立结果快照() {
         positions.save(new DefaultProjectionPosition(ORDER_SUMMARY, 7L));
@@ -81,6 +87,7 @@ class QuarkusProjectionPositionRepositoryIT {
         assertThat(positions.findAll()).hasSize(1);
     }
 
+    /** \u9a8c\u8bc1<code>position.getNextEventNumber()</code>\u4e3a\u96f6\uff0c<code>position.getStreamId()</code> \u7b49\u4e8e <code>ORDER_SUMMARY</code>\uff0c<code>position.getNextEventNumber()</code> \u7b49\u4e8e <code>5L</code>\u3002 */
     @Test
     void saveAdvanceReload_完整循环_应跨持久化上下文读回最终位置() {
         // 先落零位行（dispatcher 冷启动路径）
@@ -105,6 +112,7 @@ class QuarkusProjectionPositionRepositoryIT {
                 });
     }
 
+    /** \u9a8c\u8bc1<code>position.getNextEventNumber()</code> \u7b49\u4e8e <code>5L</code>\uff0c<code>position.getNextEventNumber()</code>\u4e3a\u96f6\u3002 */
     @Test
     void resetToZero_推进后重置_应回退到0() {
         positions.save(new DefaultProjectionPosition(ORDER_SUMMARY, 5L));
@@ -118,6 +126,7 @@ class QuarkusProjectionPositionRepositoryIT {
                 .hasValueSatisfying(position -> assertThat(position.getNextEventNumber()).isZero());
     }
 
+    /** \u9a8c\u8bc1<code>positions.findByStreamId(ORDER_SUMMARY)</code>\u4e3a\u7a7a\uff0c<code>position.getNextEventNumber()</code>\u4e3a\u96f6\u3002 */
     @Test
     void resetToZero_流不存在_应插入零位行() {
         // 与 core InMemoryProjectionPositionRepository 同款语义：缺行 reset 后可读到 0
@@ -130,6 +139,7 @@ class QuarkusProjectionPositionRepositoryIT {
                 .hasValueSatisfying(position -> assertThat(position.getNextEventNumber()).isZero());
     }
 
+    /** \u9a8c\u8bc1<code>positions.findByStreamId(ORDER_SUMMARY)</code>\u4e3a\u7a7a\uff0c<code>saved.getStreamId()</code> \u7b49\u4e8e <code>ORDER_SUMMARY</code>\uff0c<code>positions.findAll()</code> \u7684\u5927\u5c0f\u4e3a <code>2</code>\u3002 */
     @Test
     void save不存在则插入存在则更新_delete后不可见_且命名空间隔离() {
         // save（缺行）→ 插入（dispatcher 首次推进路径依赖的 upsert 语义）

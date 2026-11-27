@@ -31,9 +31,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class CleanArchitectureStructureContractTest {
 
+    /** JUnit \u4e3a\u672c\u6b21\u6d4b\u8bd5\u5206\u914d\u7684\u4e34\u65f6\u76ee\u5f55\u3002 */
     @TempDir
     Path temporary;
 
+    /** \u9a8c\u8bc1 Clean \u67b6\u6784\u9884\u671f\u7ed3\u6784\u7684\u672b\u5c3e\u76f4\u63a5\u7ed3\u675f\u4e8e\u6700\u540e\u4e00\u4e2a\u76ee\u5f55\u540d\u3002 */
     @Test
     void expectedStructureEndsAtLastDirectoryWithoutTrailingLineBreak() {
         String description = new CleanArchitectureChecker("example").getExpectedStructure();
@@ -57,6 +59,10 @@ class CleanArchitectureStructureContractTest {
                 "    └── external/"), description);
     }
 
+    /**
+     * \u6784\u9020\u7f3a\u5c11\u5206\u5c42\u76ee\u5f55\u7684 Clean \u9879\u76ee\u5e76\u6838\u5bf9\u8fdd\u89c4\u9879\u987a\u5e8f\u3002
+     * @throws Exception \u521b\u5efa\u6d4b\u8bd5\u76ee\u5f55\u6216\u8bfb\u53d6\u626b\u63cf\u7ed3\u679c\u5931\u8d25
+     */
     @Test
     void missingLayerViolationsFollowDocumentedLayerOrder() throws Exception {
         Files.createDirectories(temporary.resolve("example"));

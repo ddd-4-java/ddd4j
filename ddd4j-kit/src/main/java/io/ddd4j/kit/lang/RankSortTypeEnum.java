@@ -48,12 +48,20 @@ public enum RankSortTypeEnum {
      */
     NATURAL("同分非并列", 3);
 
+    /** \u5e76\u5217\u9879\u4e4b\u540e\u4e0d\u7559\u7a7a\u4f4d\u7684\u9ed8\u8ba4\u6392\u540d\u65b9\u5f0f\u3002 */
     private static final RankSortTypeEnum DEFAULT_SORT_TYPE = RankSortTypeEnum.SAME_CONTINUOUS;
 
+    /** \u6392\u540d\u89c4\u5219\u7684\u663e\u793a\u540d\u79f0\u3002 */
     private final String name;
 
+    /** \u6392\u540d\u89c4\u5219\u7684\u6570\u503c\u7f16\u7801\u3002 */
     private final Integer value;
 
+    /**
+     * \u6ce8\u518c\u4e00\u79cd\u6392\u540d\u89c4\u5219\u7684\u540d\u79f0\u548c\u7f16\u7801\u3002
+     * @param name \u6392\u540d\u89c4\u5219\u7684\u663e\u793a\u540d\u79f0
+     * @param value \u6392\u540d\u89c4\u5219\u7684\u6570\u503c\u7f16\u7801
+     */
     RankSortTypeEnum(String name, Integer value) {
         this.name = name;
         this.value = value;
@@ -127,6 +135,7 @@ public enum RankSortTypeEnum {
         return this.compareTo(sortType) == 0;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return name + " -> " + value;

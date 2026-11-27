@@ -55,11 +55,13 @@ import java.util.Objects;
 @Slf4j
 public class ContextWebInterceptor implements WebInterceptor {
 
+    /** {@inheritDoc} */
     @Override
     public int getOrder() {
         return -400;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 提取租户 ID（兼容三种 header 命名）
@@ -113,6 +115,7 @@ public class ContextWebInterceptor implements WebInterceptor {
         return true;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         ThreadContext.clear();
@@ -138,7 +141,11 @@ public class ContextWebInterceptor implements WebInterceptor {
     }
 
     /**
-     * 从请求头中提取值，支持多个 header 名称（按优先级）。
+     * \u4ece\u8bf7\u6c42\u5934\u4e2d\u63d0\u53d6\u503c\uff0c\u652f\u6301\u591a\u4e2a header \u540d\u79f0\uff08\u6309\u4f18\u5148\u7ea7\uff09\u3002
+     *
+     * @param request \u5f53\u524d Web \u8bf7\u6c42
+     * @param names \u6309\u987a\u5e8f\u5c1d\u8bd5\u7684\u8bf7\u6c42\u5934\u540d\u79f0
+     * @return \u9996\u4e2a\u53ef\u7528\u7684\u8bf7\u6c42\u5934\u503c
      */
     private String extractHeader(HttpServletRequest request, String... names) {
         for (String name : names) {

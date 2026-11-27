@@ -7,10 +7,15 @@ import java.util.*;
  * 平台仍拥有线程池、容器钩子和事务；停止只取消后续调度，不中断已运行的业务。
  */
 public final class DefaultViewManager<E> implements ViewManager {
+    /** \u8d1f\u8d23\u5b9a\u65f6\u89e6\u53d1\u5404\u4e2a\u6295\u5f71\u89c6\u56fe\u7684\u8c03\u5ea6\u5668\u3002 */
     private final ViewScheduler scheduler;
+    /** \u5b9e\u9645\u8bfb\u53d6\u3001\u5e94\u7528\u4e8b\u4ef6\u5e76\u63a8\u8fdb\u4f4d\u7f6e\u7684\u6295\u5f71\u8fd0\u884c\u5668\u3002 */
     private final ProjectionRunner<E> runner;
+    /** \u5f53\u524d\u5df2\u7ecf\u6ce8\u518c\u7684\u6295\u5f71\u89c6\u56fe\u3002 */
     private final List<? extends ProjectionView<E>> views;
+    /** \u7528\u4e8e\u53d6\u6d88\u5404\u89c6\u56fe\u8c03\u5ea6\u7684\u53e5\u67c4\u3002 */
     private final List<ViewScheduler.ViewScheduleHandle> handles = new ArrayList<>();
+    /** \u89c6\u56fe\u7ba1\u7406\u5668\u662f\u5426\u5df2\u542f\u52a8\u8c03\u5ea6\u3002 */
     private volatile boolean running;
 
     /**
@@ -33,6 +38,7 @@ public final class DefaultViewManager<E> implements ViewManager {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized void start() {
         if (running) {
@@ -59,6 +65,7 @@ public final class DefaultViewManager<E> implements ViewManager {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized void stop() {
         running = false;
@@ -84,16 +91,19 @@ public final class DefaultViewManager<E> implements ViewManager {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isRunning() {
         return running;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void triggerOnce() {
         runner.runAll(views);
     }
 
+    /** {@inheritDoc} */
     @Override
     public ProjectionStatus getProjectionStatus(String streamId) {
         ProjectionStatus execution = runner.getProjectionStatus(streamId);

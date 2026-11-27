@@ -29,8 +29,11 @@ import java.util.Objects;
  */
 public final class IdempotencyLease {
 
+    /** \u6807\u8bc6\u5f53\u524d\u5e42\u7b49\u8bb0\u5f55\u7684\u4e3b\u952e\u3002 */
     private final String key;
+    /** \u533a\u5206\u5f53\u524d\u5e42\u7b49\u79df\u7ea6\u4e0e\u5176\u4ed6\u8bf7\u6c42\u6301\u6709\u6743\u7684\u4ee4\u724c\u3002 */
     private final String ownerToken;
+    /** \u5e42\u7b49\u8bb0\u5f55\u4fdd\u7559\u7684\u65f6\u957f\u3002 */
     private final Duration ttl;
 
     /**
@@ -106,6 +109,7 @@ public final class IdempotencyLease {
         return ttl;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -120,6 +124,7 @@ public final class IdempotencyLease {
                 && Objects.equals(ttl, other.ttl);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int result = Objects.hashCode(key);
@@ -128,6 +133,7 @@ public final class IdempotencyLease {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "IdempotencyLease[key=" + key + ", ownerToken=" + ownerToken + ", ttl=" + ttl + "]";

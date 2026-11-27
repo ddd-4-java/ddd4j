@@ -30,6 +30,7 @@ public final class NoopProjectionMetrics implements ProjectionMetrics {
      */
     public static final NoopProjectionMetrics INSTANCE = new NoopProjectionMetrics();
 
+    /** \u9650\u5236\u65e0\u64cd\u4f5c\u6307\u6807\u5b9e\u73b0\u901a\u8fc7\u5185\u90e8\u5355\u4f8b\u6784\u9020\u3002 */
     private NoopProjectionMetrics() {
         // 单例，禁止外部实例化
     }

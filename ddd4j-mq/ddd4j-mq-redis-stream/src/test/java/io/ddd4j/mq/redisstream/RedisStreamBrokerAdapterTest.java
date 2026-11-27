@@ -37,14 +37,15 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Redis Stream Acknowledgment 及 Jedis / Redisson / Lettuce 三种客户端 SPI 适配契约测试。
- *
- * <p>发布与消费已整合进 {@link RedisStreamClient}，相关单测见其模块；此处保留 SPI 层契约。
- *
+ * \u9a8c\u8bc1 Redis Stream \u6d88\u606f\u786e\u8ba4\u7684\u5e76\u53d1\u4e0e\u91cd\u8bd5\u884c\u4e3a\uff0c\u4ee5\u53ca Jedis\u3001Redisson \u548c Lettuce \u7684\u547d\u4ee4\u6620\u5c04\u3002
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 class RedisStreamBrokerAdapterTest {
 
+    /**
+     * \u9a8c\u8bc1\u8bf7\u6c42\u91cd\u65b0\u5165\u961f\u7684\u5426\u5b9a\u786e\u8ba4\u4f1a\u7b49\u5f85\u6b63\u5728\u6267\u884c\u7684 XACK\uff0c\u4e14\u6700\u7ec8\u53ea\u53d1\u9001\u4e00\u6b21 XACK\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void nackMustWaitForInFlightXackBeforeClaimingRequeue() throws Exception {
         RedisStreamOperations operations = mock(RedisStreamOperations.class);
@@ -80,6 +81,7 @@ class RedisStreamBrokerAdapterTest {
         }
     }
 
+    /** \u9a8c\u8bc1\u624b\u52a8\u786e\u8ba4\u901a\u8fc7 Jedis \u5411\u6307\u5b9a\u6d88\u8d39\u8005\u7ec4\u53d1\u9001 XACK\uff0c\u5e76\u6807\u8bb0\u6d88\u606f\u5df2\u786e\u8ba4\u3002 */
     @Test
     void manualAckShouldMapToXack() {
         UnifiedJedis jedis = mock(UnifiedJedis.class);
@@ -98,6 +100,7 @@ class RedisStreamBrokerAdapterTest {
         assertTrue(ack.isAcknowledged());
     }
 
+    /** \u9a8c\u8bc1 XACK \u5931\u8d25\u65f6\u4fdd\u7559\u672a\u786e\u8ba4\u72b6\u6001\uff0c\u540c\u4e00\u786e\u8ba4\u5bf9\u8c61\u53ef\u4ee5\u91cd\u8bd5\u5e76\u6700\u7ec8\u6210\u529f\u3002 */
     @Test
     void failedXackMustRemainRetryableOnSameAcknowledgment() {
         UnifiedJedis jedis = mock(UnifiedJedis.class);
@@ -115,6 +118,7 @@ class RedisStreamBrokerAdapterTest {
         verify(jedis, times(2)).xack("orders", "workers", id);
     }
 
+    /** \u9a8c\u8bc1\u8bf7\u6c42\u91cd\u65b0\u5165\u961f\u65f6\u8df3\u8fc7 XACK\uff0c\u8ba9\u6d88\u606f\u7559\u5728\u5f85\u5904\u7406\u5217\u8868\uff0c\u540c\u65f6\u7ed3\u675f\u672c\u6b21\u672c\u5730\u786e\u8ba4\u3002 */
     @Test
     void nackWithRequeueShouldLeaveEntryPendingAndMarkItHandled() {
         UnifiedJedis jedis = mock(UnifiedJedis.class);
@@ -128,6 +132,7 @@ class RedisStreamBrokerAdapterTest {
         assertTrue(acknowledgment.isAcknowledged());
     }
 
+    /** \u9a8c\u8bc1 Redisson \u9002\u914d\u5c42\u6dfb\u52a0\u6d88\u606f\u3001\u521b\u5efa\u6d88\u8d39\u8005\u7ec4\u53ca\u53d1\u9001\u786e\u8ba4\uff0c\u5e76\u5c06\u6d88\u606f\u6807\u8bc6\u8f6c\u4e3a\u5b57\u7b26\u4e32\u3002 */
     @Test
     void redissonOperationsShouldMapStreamCommands() {
         RedissonClient client = mock(RedissonClient.class);
@@ -146,6 +151,7 @@ class RedisStreamBrokerAdapterTest {
         verify(stream).ack("sample", new StreamMessageId(1L, 0L));
     }
 
+    /** \u9a8c\u8bc1 Lettuce \u9002\u914d\u5c42\u5c06\u6dfb\u52a0\u6d88\u606f\u3001\u521b\u5efa\u6d88\u8d39\u8005\u7ec4\u53ca\u786e\u8ba4\u6620\u5c04\u4e3a\u5bf9\u5e94\u7684 Redis \u547d\u4ee4\u3002 */
     @Test
     void lettuceOperationsShouldMapStreamCommands() {
         RedisCommands<String, String> commands = mock(RedisCommands.class);

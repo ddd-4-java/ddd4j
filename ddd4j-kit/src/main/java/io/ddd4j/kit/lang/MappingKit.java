@@ -29,6 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @UtilityClass
 public final class MappingKit {
     // Bean容器
+    /** \u6309\u6620\u5c04\u540d\u79f0\u4fdd\u5b58\u7684\u5bf9\u8c61\u952e\u503c\u8f6c\u6362\u8868\u3002 */
     private final Map<String, Map<Object, Object>> BEAN_MAPPINGS = new ConcurrentHashMap<>();
 
     /**

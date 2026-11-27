@@ -43,6 +43,12 @@ import java.util.Objects;
  */
 class GuiceCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
 
+    /**
+     * \u6784\u9020 <code>io.ddd4j.core.cqrs.readmodel.ProjectionView&lt;&gt;</code> \u4f5c\u4e3a\u5f53\u524d\u6d4b\u8bd5\u7684\u8f93\u5165\u6216\u7ed3\u679c\u3002
+     * @param name \u5f53\u524d\u6d4b\u8bd5\u6307\u5b9a\u7684\u5bf9\u8c61\u6216\u5c5e\u6027\u540d\u79f0
+     * @param cron \u7528\u4e8e\u6784\u9020\u672c\u6b21\u8fd4\u56de\u7ed3\u679c\u7684 <code>String</code> \u8f93\u5165
+     * @return \u63d0\u4f9b\u7ed9\u540e\u7eed\u5951\u7ea6\u65ad\u8a00\u7684 <code>io.ddd4j.core.cqrs.readmodel.ProjectionView&lt;Object&gt;</code> \u7ed3\u679c
+     */
     private static io.ddd4j.core.cqrs.readmodel.ProjectionView<Object> startupView(String name, String cron) {
         return new io.ddd4j.core.cqrs.readmodel.ProjectionView<>() {
             public String getName() {
@@ -62,6 +68,12 @@ class GuiceCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         };
     }
 
+    /**
+     * \u6839\u636e\u672c\u6b21\u8c03\u7528\u66f4\u65b0 <code>previous = com.google.inject.Guice.createInjector(new io.ddd4j.guice.Ddd4jGuiceModule())</code>\u3001<code>priorRuntime = previous.getInstance(io.ddd4j.guice.Ddd4jGuiceRuntime.class)</code>\uff0c\u7528\u4e8e\u540e\u7eed\u6d4b\u8bd5\u6b65\u9aa4\u3002
+     * @param prior \u4f20\u7ed9 <code>"empty".equals(prior)</code> \u7684 <code>String</code> \u8f93\u5165
+     * @param projectionFirst \u4f20\u7ed9 <code>org.junit.jupiter.api.Assertions.assertThrows()</code> \u7684 <code>boolean</code> \u8f93\u5165
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @org.junit.jupiter.params.ParameterizedTest
     @org.junit.jupiter.params.provider.CsvSource({"empty,false", "empty,true", "registrations,false", "registrations,true", "runtime,false", "runtime,true"})
     void failedProjectionStartupPreservesGlobalsAndReleasesOwnedResources(String prior, boolean projectionFirst) throws Exception {
@@ -166,6 +178,7 @@ class GuiceCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>basic.getExistingBinding(com.google.inject.Key.get(ProjectionPositionRepository.class))</code>\u4e3a\u7a7a\uff0c<code>basic.getExistingBinding(com.google.inject.Key.get(ViewManager.class))</code>\u4e3a\u7a7a\uff0c<code>basic.getInstance(CommandBus.class)</code>\u975e\u7a7a\u3002 */
     @org.junit.jupiter.api.Test
     void basicHasNoProjectionAndLegacyKeepsMemoryDefault() {
         com.google.inject.Injector basic = com.google.inject.Guice.createInjector(io.ddd4j.guice.Ddd4jGuiceModule.basic());
@@ -184,6 +197,7 @@ class GuiceCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>com.google.inject.CreationException.class</code>\u3002 */
     @org.junit.jupiter.api.Test
     void explicitProjectionRejectsMissingRepositoryAndReaderAtInjectorCreation() {
         for (boolean supplyRepository : new boolean[]{false, true}) {
@@ -204,6 +218,10 @@ class GuiceCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>checkpoint</code>\u975e\u7a7a\uff0c<code>injector.getInstance(ViewManager.class)</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>manager</code>\uff0c<code>handle.isActive()</code>\u4e3a\u5047\u3002
+     * @throws Exception \u51c6\u5907\u6216\u8bfb\u53d6\u5939\u5177\u6587\u4ef6\u65f6\u5931\u8d25
+     */
     @org.junit.jupiter.api.Test
     void explicitProjectionRestoresFrozenPositionProcessesEventsAndClosesTasks() throws Exception {
         org.h2.jdbcx.JdbcDataSource source = new org.h2.jdbcx.JdbcDataSource();
@@ -261,6 +279,7 @@ class GuiceCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         org.junit.jupiter.api.Assertions.assertFalse(handle.isActive());
     }
 
+    /** {@inheritDoc} */
     @Override
     protected CqrsRuntimeContract createContract() {
         StubExecutorA executorA = new StubExecutorA();

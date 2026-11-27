@@ -26,6 +26,7 @@ import java.util.UUID;
  */
 public final class EventId implements Serializable {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -81,6 +82,7 @@ public final class EventId implements Serializable {
         return value.toString();
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object object) {
         if (this == object) {
@@ -93,11 +95,13 @@ public final class EventId implements Serializable {
         return Objects.equals(value, that.value);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return Objects.hash(value);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return asString();

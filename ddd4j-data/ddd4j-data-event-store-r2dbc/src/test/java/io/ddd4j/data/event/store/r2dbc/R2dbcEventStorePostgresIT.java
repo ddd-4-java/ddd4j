@@ -44,13 +44,18 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Testcontainers(disabledWithoutDocker = true)
 class R2dbcEventStorePostgresIT {
 
+    /** \u4e3a\u5f53\u524d\u96c6\u6210\u6d4b\u8bd5\u63d0\u4f9b\u72ec\u7acb PostgreSQL \u670d\u52a1\u7684\u5bb9\u5668\u3002 */
     @Container
     static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16-alpine")
             .withTmpFs(Map.of("/var/lib/postgresql/data", "rw"));
+    /** \u6d4b\u8bd5\u4e8b\u4ef6\u6d41\u4e2d\u4f7f\u7528\u7684\u805a\u5408\u7c7b\u578b\u540d\u79f0\u3002 */
     private static final String ORDER_TYPE = "Order";
+    /** \u4e3a\u53d7\u6d4b R2DBC \u7ec4\u4ef6\u63d0\u4f9b\u6570\u636e\u5e93\u8fde\u63a5\u7684\u5de5\u5382\u3002 */
     private PostgresqlConnectionFactory connectionFactory;
+    /** \u8bfb\u53d6\u53ca\u8ffd\u52a0\u9886\u57df\u4e8b\u4ef6\u7684\u4e8b\u4ef6\u5b58\u50a8\u3002 */
     private R2dbcEventStore eventStore;
 
+    /** \u6d4b\u8bd5\u524d\u4f9d\u6b21\u6ce8\u518c<code>EntityIdRegistry</code>\u3002 */
     @BeforeEach
     void setUp() {
         connectionFactory = new PostgresqlConnectionFactory(PostgresqlConnectionConfiguration.builder()
@@ -64,6 +69,7 @@ class R2dbcEventStorePostgresIT {
         eventStore = new R2dbcEventStore(connectionFactory);
     }
 
+    /** \u6d4b\u8bd5\u540e\u4f9d\u6b21\u6ce8\u9500<code>EntityIdRegistry</code>\u3001\u5173\u95ed<code>connection</code>\u3002 */
     @AfterEach
     void tearDown() {
         EntityIdRegistry.unregister("Order");
@@ -74,6 +80,7 @@ class R2dbcEventStorePostgresIT {
         }
     }
 
+    /** \u9a8c\u8bc1<code>events</code> \u7684\u5927\u5c0f\u4e3a <code>1</code>\uff0c<code>events.get(0).aggregateType()</code> \u7b49\u4e8e <code>ORDER_TYPE</code>\uff0c<code>events.get(0).eventId()</code> \u7b49\u4e8e <code>event.getEventId()</code>\u3002 */
     @Test
     void appendAndReadShouldRoundTripTypedMetadataOnPostgres() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-pg-1");
@@ -89,6 +96,7 @@ class R2dbcEventStorePostgresIT {
         assertThat(events.get(0).eventId()).isEqualTo(event.getEventId());
     }
 
+    /** \u9a8c\u8bc1<code>eventStore.read("Invoice", orderId)</code> \u7684\u5927\u5c0f\u4e3a <code>1</code>\u3002 */
     @Test
     void versionRangeAndAggregateTypeIsolationShouldFollowCoreContractOnPostgres() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-pg-shared");
@@ -103,6 +111,7 @@ class R2dbcEventStorePostgresIT {
         assertThat(eventStore.read("Invoice", orderId)).hasSize(1);
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>eventStore.append()</code>\u3001<code>eventStore.readAll()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void readAllShouldPreserveGlobalPositionOrderOnPostgres() {
         TestAggregateRootId first = new TestAggregateRootId("order-pg-a");
@@ -114,6 +123,7 @@ class R2dbcEventStorePostgresIT {
                 .containsExactly(1L, 2L);
     }
 
+    /** \u9a8c\u8bc1<code>eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId)), 0L)</code> \u629b\u51fa <code>AggregateVersionConflictException.class</code>\uff0c<code>conflict.expectedVersion()</code> \u7b49\u4e8e <code>0L</code>\uff0c<code>eventStore.read(ORDER_TYPE, orderId)</code> \u7684\u5927\u5c0f\u4e3a <code>1</code>\u3002 */
     @Test
     void appendWithStaleVersionShouldRejectOnPostgres() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-pg-conflict");
@@ -130,37 +140,53 @@ class R2dbcEventStorePostgresIT {
         assertThat(eventStore.read(ORDER_TYPE, orderId)).hasSize(1);
     }
 
+    /** \u6d4b\u8bd5\u4e13\u7528\u805a\u5408\u6839\u6807\u8bc6\uff0c\u4f9b\u4ed3\u50a8\u3001\u4e8b\u4ef6\u5e8f\u5217\u5316\u6216\u547d\u4ee4\u8def\u7531\u6784\u9020\u72ec\u7acb\u7684\u805a\u5408\u5b9e\u4f8b\u3002 */
     private final static class TestAggregateRootId implements AggregateRootId {
 
+        /** Java \u5e8f\u5217\u5316\u4f7f\u7528\u7684\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
+        /** \u6d4b\u8bd5\u805a\u5408\u6ce8\u518c\u548c\u53cd\u5e8f\u5217\u5316\u6240\u7528\u7684\u5b9e\u4f53\u7c7b\u578b\u6807\u8bc6\u3002 */
         private static final EntityType TYPE = new StringEntityType("Order");
+        /** \u7528\u4e8e\u7ec4\u6210\u6d4b\u8bd5\u6807\u8bc6\u7684\u539f\u59cb\u503c\u3002 */
         private final String value;
 
+        /**
+         * \u4ee5\u7ed9\u5b9a\u72b6\u6001\u6784\u9020 <code>TestAggregateRootId</code> \u6d4b\u8bd5\u5bf9\u8c61\u3002
+         * @param value \u7528\u4e8e\u7ec4\u6210\u6d4b\u8bd5\u6807\u8bc6\u7684\u539f\u59cb\u503c
+         */
         @JsonCreator()
         private TestAggregateRootId(@JsonProperty("value") String value) {
             this.value = value;
         }
 
+        /** {@inheritDoc} */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
+        /** {@inheritDoc} */
         @Override
         public String asString() {
             return value;
         }
 
+        /** {@inheritDoc} */
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
         }
 
+        /**
+         * \u8bfb\u53d6<code>value</code> \u5b57\u6bb5\u3002
+         * @return <code>value</code> \u5b57\u6bb5
+         */
         @JsonProperty("value")
         public String value() {
             return value;
         }
 
+        /** {@inheritDoc} */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -173,6 +199,7 @@ class R2dbcEventStorePostgresIT {
             return Objects.equals(this.value, other.value);
         }
 
+        /** {@inheritDoc} */
         @Override
         public int hashCode() {
             int result = 0;
@@ -180,18 +207,25 @@ class R2dbcEventStorePostgresIT {
             return result;
         }
 
+        /** {@inheritDoc} */
         @Override
         public String toString() {
             return "TestAggregateRootId[value=" + value + "]";
         }
     }
 
+    /** \u8868\u793a\u8ba2\u5355\u521b\u5efa\u7684\u6d4b\u8bd5\u9886\u57df\u4e8b\u4ef6\uff0c\u4f9b\u65ad\u8a00\u9a8c\u8bc1\u4e8b\u4ef6\u5904\u7406\u94fe\u3002 */
     static final class OrderCreatedEvent extends DomainEvent<TestAggregateRootId> {
 
+        /** \u4f7f\u7528 <code>super()</code> \u521d\u59cb\u5316 <code>OrderCreatedEvent</code> \u6d4b\u8bd5\u5939\u5177\u3002 */
         OrderCreatedEvent() {
             super();
         }
 
+        /**
+         * \u4f7f\u7528 <code>super()</code> \u521d\u59cb\u5316 <code>OrderCreatedEvent</code> \u6d4b\u8bd5\u5939\u5177\u3002
+         * @param orderId \u6d4b\u8bd5\u4e2d\u8981\u5b9a\u4f4d\u7684\u8ba2\u5355\u6807\u8bc6
+         */
         OrderCreatedEvent(TestAggregateRootId orderId) {
             super(new EntityIdPath(orderId));
         }

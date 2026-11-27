@@ -129,10 +129,14 @@ public final class Ddd4jOtel {
      */
     public static final AttributeKey<String> ATTR_DB_STATEMENT = AttributeKey.stringKey("db.statement");
 
+    /** \u6309\u89c2\u6d4b\u4f5c\u7528\u57df\u7f13\u5b58 OpenTelemetry Tracer\u3002 */
     private static final AtomicReference<Tracer> TRACER_CACHE = new AtomicReference<>();
+    /** \u6309\u89c2\u6d4b\u4f5c\u7528\u57df\u7f13\u5b58 OpenTelemetry Meter\u3002 */
     private static final AtomicReference<Meter> METER_CACHE = new AtomicReference<>();
+    /** \u5f53\u524d\u8fdb\u7a0b\u662f\u5426\u80fd\u4f7f\u7528 OpenTelemetry API\u3002 */
     private static volatile boolean available = false;
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>Ddd4jOtel</code> \u5b9e\u4f8b\u3002 */
     private Ddd4jOtel() {
     }
 
@@ -230,8 +234,10 @@ public final class Ddd4jOtel {
      */
     static final class AttributesBuilderHelper {
 
+        /** \u7d2f\u79ef OpenTelemetry \u952e\u503c\u5c5e\u6027\u7684\u539f\u751f\u6784\u5efa\u5668\u3002 */
         private final AttributesBuilder delegate = Attributes.builder();
 
+        /** \u8bfb\u53d6 DDD4J \u5f53\u524d\u7ebf\u7a0b\u4e2d\u7684\u8ddf\u8e2a\u76f8\u5173\u5c5e\u6027\u3002 */
         void readFromThreadContext() {
             String tenantId = ThreadContext.get(ContextConstants.TENANT_ID);
             if (Objects.nonNull(tenantId)) {
@@ -255,10 +261,18 @@ public final class Ddd4jOtel {
             }
         }
 
+        /**
+         * \u6784\u9020\u5df2\u6536\u96c6\u7684\u4e0d\u53ef\u53d8 OpenTelemetry \u5c5e\u6027\u96c6\u5408\u3002
+         * @return \u53ef\u7528\u4e8e Span \u6216\u6307\u6807\u7684\u5c5e\u6027\u96c6\u5408
+         */
         Attributes build() {
             return delegate.build();
         }
 
+        /**
+         * \u628a\u5df2\u6536\u96c6\u7684\u8ddf\u8e2a\u5c5e\u6027\u5e94\u7528\u5230\u6307\u5b9a Span\u3002
+         * @param span \u63a5\u6536\u5f53\u524d\u8ddf\u8e2a\u5c5e\u6027\u7684 Span
+         */
         void applyTo(Span span) {
             Attributes attrs = build();
             attrs.forEach((key, value) -> span.setAttribute((AttributeKey) key, value));

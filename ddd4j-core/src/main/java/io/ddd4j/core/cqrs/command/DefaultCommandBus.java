@@ -42,6 +42,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class DefaultCommandBus implements CommandBus {
 
+    /** \u6309\u547d\u4ee4\u8fd0\u884c\u65f6\u7c7b\u578b\u9009\u62e9\u6267\u884c\u5668\u7684\u7d22\u5f15\u3002 */
     private final Map<Class<? extends Command>, CommandExecutor<?>> executors = new ConcurrentHashMap<>();
 
     /**
@@ -53,6 +54,7 @@ public class DefaultCommandBus implements CommandBus {
         Objects.requireNonNull(commandExecutors, "commandExecutors must not be null").forEach(this::register);
     }
 
+    /** {@inheritDoc} */
     @Override
     public <R> Result<R> execute(Command command) {
         Command actual = Objects.requireNonNull(command, "command must not be null");
@@ -83,6 +85,10 @@ public class DefaultCommandBus implements CommandBus {
         return null;
     }
 
+    /**
+     * \u7ed1\u5b9a\u6267\u884c\u5668\u58f0\u660e\u652f\u6301\u7684\u6bcf\u4e00\u79cd\u547d\u4ee4\u7c7b\u578b\u3002
+     * @param executor \u58f0\u660e\u652f\u6301\u547d\u4ee4\u7c7b\u578b\u7684\u6267\u884c\u5668
+     */
     private void register(CommandExecutor<?> executor) {
         CommandExecutor<?> actual = Objects.requireNonNull(executor, "executor must not be null");
         for (Class<? extends Command> commandType : actual.supportedCommands()) {

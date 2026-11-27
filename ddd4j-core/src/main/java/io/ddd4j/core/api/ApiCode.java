@@ -265,9 +265,16 @@ public enum ApiCode implements IEnum<Integer>, CustomApiCode {
      */
     NETWORK_AUTHENTICATION_REQUIRED(HttpStatus.SC_NETWORK_AUTHENTICATION_REQUIRED, "要求网络认证");
 
+    /** \u5bf9\u5916\u54cd\u5e94\u4e2d\u7684\u6570\u503c\u72b6\u6001\u7801\u3002 */
     private final Integer code;
+    /** \u4e0e\u72b6\u6001\u7801\u5173\u8054\u7684\u8bf4\u660e\u3002 */
     private final String reason;
 
+    /**
+     * \u521b\u5efa\u5bf9\u5916\u72b6\u6001\u7801\u4e0e\u5176\u8bf4\u660e\u7684\u7ec4\u5408\u3002
+     * @param code \u6570\u503c\u72b6\u6001\u7801
+     * @param reason \u72b6\u6001\u7684\u8bf4\u660e
+     */
     private ApiCode(Integer code, String reason) {
         this.code = code;
         this.reason = reason;
@@ -308,6 +315,7 @@ public enum ApiCode implements IEnum<Integer>, CustomApiCode {
         return resultCode;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDesc() {
         return reason;

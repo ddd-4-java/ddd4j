@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  */
 class AuthenticationResponseContractTest {
 
+    /** \u9a8c\u8bc1<code>data.get("orderId")</code>\u4e3a\u7a7a\uff0c<code>data.get("paid")</code> \u7b49\u4e8e <code>true</code>\u3002 */
     @Test
     void paymentResponseKeepsOrderAndNullableId() {
         Map<String, Object> data = new AuthenticationResource().businessPayOrder(null).getData();

@@ -16,6 +16,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class GoodsRequestContractTest {
 
+    /**
+     * \u9a8c\u8bc1<code>request.code()</code> \u7b49\u4e8e <code>"goods-1"</code>\uff0c<code>request.name()</code> \u7b49\u4e8e <code>"Notebook"</code>\uff0c<code>restored.stock()</code> \u7b49\u4e8e <code>request.stock()</code>\u3002
+     * @throws Exception \u5904\u7406\u6d4b\u8bd5\u6570\u636e\u7684\u5e8f\u5217\u5316\u65f6\u5931\u8d25
+     */
     @Test
     void createRequestKeepsFluentAccessorsAndJsonFields() throws Exception {
         GoodsController.CreateGoodsRequest request = new GoodsController.CreateGoodsRequest(
@@ -34,6 +38,10 @@ class GoodsRequestContractTest {
         assertEquals(request.stock(), restored.stock());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>request.name()</code> \u7b49\u4e8e <code>"Updated"</code>\uff0c<code>restored.name()</code> \u7b49\u4e8e <code>request.name()</code>\uff0c<code>restored.price()</code> \u7b49\u4e8e <code>request.price()</code>\u3002
+     * @throws Exception \u5904\u7406\u6d4b\u8bd5\u6570\u636e\u7684\u5e8f\u5217\u5316\u65f6\u5931\u8d25
+     */
     @Test
     void updateRequestKeepsFluentAccessorsAndJsonFields() throws Exception {
         GoodsController.UpdateGoodsRequest request = new GoodsController.UpdateGoodsRequest(

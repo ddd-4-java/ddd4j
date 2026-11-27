@@ -46,6 +46,10 @@ public class CRUDController<M extends AggregateRoot<?>, Q extends Query<M>> {
     /** 聚合根持久化仓库。 */
     protected Repository<M, Serializable> repository;
 
+    /**
+     * \u4ece\u6cdb\u578b\u6a21\u578b\u7c7b\u578b\u67e5\u627e\u5e76\u7f13\u5b58\u5f53\u524d\u63a7\u5236\u5668\u4f7f\u7528\u7684\u4ed3\u50a8\u3002
+     * @return \u5f53\u524d\u805a\u5408\u4ed3\u50a8\uff0c\u672a\u6ce8\u518c\u65f6\u4e3a\u7a7a
+     */
     private Repository<M, Serializable> getRepository() {
         if (Objects.isNull(this.repository)) {
             Class<M> modelClass = ReflectKit.getSuperClassGenericType(this.getClass(), 0);

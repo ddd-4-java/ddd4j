@@ -48,6 +48,11 @@ public final class Ddd4jLogbackAccessRequestLogFactory extends LogbackAccessRequ
         }
     }
 
+    /**
+     * \u521b\u5efa\u5f53\u524d Dropwizard \u5e94\u7528\u4f7f\u7528\u7684 HTTP \u8bbf\u95ee\u65e5\u5fd7\u3002
+     * @param name \u5f53\u524d\u7ec4\u4ef6\u3001\u6307\u6807\u3001\u4efb\u52a1\u6216 Bean \u4f7f\u7528\u7684\u540d\u79f0
+     * @return \u53ef\u4e3a\u6846\u67b6\u8bb0\u5f55\u8bbf\u95ee\u4e8b\u4ef6\u7684\u8bf7\u6c42\u65e5\u5fd7
+     */
     @Override
     public RequestLog build(String name) {
         Logger logger = (Logger) LoggerFactory.getLogger("http.request");

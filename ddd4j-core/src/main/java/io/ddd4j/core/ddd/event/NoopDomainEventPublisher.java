@@ -38,11 +38,13 @@ public class NoopDomainEventPublisher implements DomainEventPublisher {
      */
     public static final NoopDomainEventPublisher INSTANCE = new NoopDomainEventPublisher();
 
+    /** {@inheritDoc} */
     @Override
     public <ID extends EntityId> void publish(DomainEvent<ID> event) {
         // 丢弃事件
     }
 
+    /** {@inheritDoc} */
     @Override
     public <ID extends EntityId> void publishAll(Collection<DomainEvent<ID>> events) {
         // 丢弃事件

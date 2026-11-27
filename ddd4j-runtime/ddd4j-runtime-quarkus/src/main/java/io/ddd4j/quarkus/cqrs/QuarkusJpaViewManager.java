@@ -52,8 +52,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @DefaultBean
 public class QuarkusJpaViewManager implements ViewManager {
 
+    /** \u9009\u62e9 Quarkus \u6295\u5f71\u8fd0\u884c\u6a21\u5f0f\u7684\u914d\u7f6e\u9879\u3002 */
     static final String MODE_KEY = "ddd4j.quarkus.cqrs.projection.mode";
+    /** \u8bfb\u53d6 Quarkus \u6295\u5f71\u8c03\u5ea6 Cron \u8868\u8fbe\u5f0f\u7684\u914d\u7f6e\u9879\u3002 */
     static final String CRON_KEY = "ddd4j.quarkus.cqrs.projection.cron";
+    /** \u914d\u7f6e\u672a\u7ed9\u5b9a\u65f6\u91c7\u7528\u7684\u9ed8\u8ba4\u6295\u5f71 Cron \u8868\u8fbe\u5f0f\u3002 */
     static final String DEFAULT_CRON = "*/30 * * * * ?";
     /**
      * 运行状态标志
@@ -69,26 +72,44 @@ public class QuarkusJpaViewManager implements ViewManager {
      */
     @Inject
     Instance<ProjectionMetrics> projectionMetricsInstances;
+    /** \u7528\u4e8e\u8bfb\u53d6\u6295\u5f71\u8fd0\u884c\u6a21\u5f0f\u548c\u8c03\u5ea6\u914d\u7f6e\u7684 MicroProfile \u914d\u7f6e\u3002 */
     @Inject
     Config config;
+    /** \u517c\u5bb9\u8c03\u5ea6\u8def\u5f84\u53ef\u4f7f\u7528\u7684\u6295\u5f71\u670d\u52a1\u5019\u9009\u96c6\u5408\u3002 */
     @Inject
     Instance<QuarkusJpaProjectionService> legacyServices;
+    /** CDI \u5bb9\u5668\u63d0\u4f9b\u7684\u6295\u5f71\u4e8b\u4ef6\u8fd0\u884c\u5668\u5019\u9009\u96c6\u5408\u3002 */
     @Inject
     Instance<ProjectionRunner<Object>> runners;
+    /** \u7531\u5f53\u524d\u8fd0\u884c\u73af\u5883\u7ba1\u7406\u548c\u8c03\u5ea6\u7684\u6295\u5f71\u89c6\u56fe\u3002 */
     @Inject
     Instance<ProjectionView<Object>> views;
+    /** CDI \u5bb9\u5668\u63d0\u4f9b\u7684\u8c03\u5ea6\u5668\u5019\u9009\u96c6\u5408\u3002 */
     @Inject
     Instance<ViewScheduler> schedulers;
+    /** CDI \u5bb9\u5668\u63d0\u4f9b\u7684\u89c6\u56fe\u7ba1\u7406\u5668\u5019\u9009\u96c6\u5408\u3002 */
     @Inject
     Instance<ViewManager> managers;
+    /** CDI \u5bb9\u5668\u63d0\u4f9b\u7684\u4e8b\u4ef6\u8bfb\u53d6\u5668\u5019\u9009\u96c6\u5408\u3002 */
     @Inject
     Instance<EventChunkReader<Object>> readers;
+    /** CDI \u5bb9\u5668\u63d0\u4f9b\u7684\u4e8b\u52a1\u7ba1\u7406\u5668\u5019\u9009\u96c6\u5408\u3002 */
     @Inject
     Instance<TransactionManager> transactionManagers;
+    /** \u91c7\u7528\u663e\u5f0f\u6295\u5f71\u89c6\u56fe\u914d\u7f6e\u65f6\u4f7f\u7528\u7684\u7ba1\u7406\u5668\u3002 */
     private DefaultViewManager<Object> delegate;
+    /** \u7528\u4e8e\u53d6\u6d88\u517c\u5bb9\u6295\u5f71\u8c03\u5ea6\u4efb\u52a1\u7684\u53e5\u67c4\u3002 */
     private ViewScheduler.ViewScheduleHandle legacyHandle;
+    /** \u5f53\u524d\u517c\u5bb9\u8c03\u5ea6\u8def\u5f84\u5b9e\u9645\u4f7f\u7528\u7684\u6295\u5f71\u670d\u52a1\u3002 */
     private QuarkusJpaProjectionService legacyService;
 
+    /**
+     * \u4ece CDI \u5019\u9009\u4e2d\u89e3\u6790\u552f\u4e00\u7684\u6295\u5f71\u7ec4\u4ef6\u3002
+     * @param <T> \u5f53\u524d\u5bb9\u5668\u5904\u7406\u7684\u7ec4\u4ef6\u6216\u4e8b\u4ef6\u7c7b\u578b
+     * @param candidates CDI \u5bb9\u5668\u53ef\u63d0\u4f9b\u7684\u5019\u9009\u7ec4\u4ef6
+     * @param name \u5f53\u524d\u7ec4\u4ef6\u3001\u6307\u6807\u3001\u4efb\u52a1\u6216 Bean \u4f7f\u7528\u7684\u540d\u79f0
+     * @return \u627e\u5230\u7684\u552f\u4e00\u5019\u9009\uff0c\u672a\u914d\u7f6e\u65f6\u4e3a\u7a7a
+     */
     private static <T> T unique(Instance<T> candidates, String name) {
         if (!candidates.isResolvable()) {
             throw new IllegalStateException("A unique " + name + " is required for projection");
@@ -96,6 +117,10 @@ public class QuarkusJpaViewManager implements ViewManager {
         return candidates.get();
     }
 
+    /**
+     * \u5728 Quarkus \u542f\u52a8\u540e\u9009\u62e9\u5e76\u542f\u52a8\u6295\u5f71\u8fd0\u884c\u6a21\u5f0f\u3002
+     * @param event \u5f53\u524d\u6846\u67b6\u751f\u547d\u5468\u671f\u6216\u5bb9\u5668\u542f\u52a8\u4e8b\u4ef6
+     */
     synchronized void onStart(@Observes @jakarta.annotation.Priority(1000) StartupEvent event) {
         if (running.get()) {
             return;
@@ -141,25 +166,39 @@ public class QuarkusJpaViewManager implements ViewManager {
     }
 
     // 先完成能力装配，再由默认优先级初始化器发布 SPI，最后才允许业务任务执行。
+    /**
+     * \u6309\u663e\u5f0f\u6216\u517c\u5bb9\u6295\u5f71\u914d\u7f6e\u88c5\u914d\u8c03\u5ea6\u4efb\u52a1\u3002
+     * @param event \u5f53\u524d\u6846\u67b6\u751f\u547d\u5468\u671f\u6216\u5bb9\u5668\u542f\u52a8\u4e8b\u4ef6
+     */
     void launch(@Observes @jakarta.annotation.Priority(4000) StartupEvent event) {
         if (Objects.nonNull(delegate) || Objects.nonNull(legacyService)) {
             start();
         }
     }
 
+    /**
+     * \u5728\u505c\u6b62\u4e8b\u4ef6\u4e2d\u6e05\u7406\u5f53\u524d\u7ba1\u7406\u5668\u542f\u52a8\u7684\u6295\u5f71\u4efb\u52a1\u3002
+     * @param event \u5f53\u524d\u6846\u67b6\u751f\u547d\u5468\u671f\u6216\u5bb9\u5668\u542f\u52a8\u4e8b\u4ef6
+     */
     void onStop(@Observes ShutdownEvent event) {
         stop();
     }
 
+    /** \u5173\u95ed\u7531\u672c\u7ba1\u7406\u5668\u62e5\u6709\u7684\u663e\u5f0f\u6216\u517c\u5bb9\u6295\u5f71\u89c6\u56fe\u3002 */
     @jakarta.annotation.PreDestroy
     void destroy() {
         stop();
     }
 
+    /**
+     * \u5224\u65ad\u5f53\u524d\u7ba1\u7406\u5668\u662f\u5426\u8d1f\u8d23\u7ba1\u7406\u6295\u5f71\u8fd0\u884c\u72b6\u6001\u3002
+     * @return \u5f53\u524d\u5b9e\u4f8b\u62e5\u6709\u6295\u5f71\u542f\u505c\u804c\u8d23\u65f6\u8fd4\u56de true
+     */
     private boolean ownsLifecycle() {
         return ClientProxy.unwrap(unique(managers, "ViewManager")) == this;
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized void start() {
         if (running.get()) {
@@ -186,6 +225,7 @@ public class QuarkusJpaViewManager implements ViewManager {
     }
 
     // 普通 Quartz Job 不经过 @Scheduled invoker，需在真实定时边界恢复其原请求作用域。
+    /** \u5728\u5df2\u6fc0\u6d3b\u7684 CDI \u8bf7\u6c42\u4e0a\u4e0b\u6587\u4e2d\u6267\u884c\u517c\u5bb9\u6295\u5f71\u4efb\u52a1\u3002 */
     private void runLegacyWithRequestContext() {
         var requestContext = Arc.container().requestContext();
         boolean owner = !requestContext.isActive();
@@ -201,6 +241,7 @@ public class QuarkusJpaViewManager implements ViewManager {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized void stop() {
         running.set(false);
@@ -213,11 +254,13 @@ public class QuarkusJpaViewManager implements ViewManager {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isRunning() {
         return running.get();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void triggerOnce() {
         if (Objects.nonNull(delegate)) {

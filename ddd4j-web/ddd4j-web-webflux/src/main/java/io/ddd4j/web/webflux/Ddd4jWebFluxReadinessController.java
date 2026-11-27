@@ -30,6 +30,7 @@ import java.util.Objects;
 @RestController
 public final class Ddd4jWebFluxReadinessController {
 
+    /** \u63d0\u4f9b\u4f9d\u8d56\u5c31\u7eea\u72b6\u6001\u7684 Web \u7aef\u70b9\u3002 */
     private final ReadinessEndpoint readinessEndpoint;
 
     /**

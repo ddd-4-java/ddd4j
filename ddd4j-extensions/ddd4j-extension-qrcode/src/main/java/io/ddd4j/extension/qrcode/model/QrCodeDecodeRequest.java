@@ -26,6 +26,7 @@ import java.util.Objects;
 @Getter
 public final class QrCodeDecodeRequest {
 
+    /** \u5f85\u89e3\u6790\u7684\u4e8c\u7ef4\u7801\u56fe\u50cf\u6570\u636e\u3002 */
     private final byte[] bytes;
 
     /**

@@ -87,7 +87,12 @@ public class DingTalkClient {
     }
 
     /**
-     * 计算钉钉机器人加签。
+     * \u8ba1\u7b97\u9489\u9489\u673a\u5668\u4eba\u52a0\u7b7e\u3002
+     *
+     * @param timestamp \u7b7e\u540d\u4f7f\u7528\u7684\u65f6\u95f4\u6233
+     * @param secret \u7528\u4e8e\u8ba1\u7b97\u7b7e\u540d\u7684\u5bc6\u94a5
+     * @return \u7f16\u7801\u540e\u5199\u5165\u8bf7\u6c42 URL \u7684\u7b7e\u540d
+     * @throws Exception \u7b7e\u540d\u7b97\u6cd5\u521d\u59cb\u5316\u6216\u7f16\u7801\u5931\u8d25
      */
     private static String getSign(long timestamp, String secret) throws Exception {
         String stringToSign = timestamp + "\n" + secret;

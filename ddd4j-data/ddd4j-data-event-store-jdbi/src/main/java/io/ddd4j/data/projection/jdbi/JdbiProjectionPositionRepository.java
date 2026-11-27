@@ -68,6 +68,7 @@ public class JdbiProjectionPositionRepository implements ProjectionPositionRepos
     private static final String MERGE_SQL = "merge into ddd4j_projection_position "
             + "(stream_id, next_event_number) key (stream_id) values (:streamId, :next)";
 
+    /** \u8d1f\u8d23\u83b7\u53d6 JDBC \u8fde\u63a5\u5e76\u6267\u884c SQL \u64cd\u4f5c\u7684\u8bbf\u95ee\u5165\u53e3\u3002 */
     private final Jdbi jdbi;
 
     /**
@@ -95,6 +96,7 @@ public class JdbiProjectionPositionRepository implements ProjectionPositionRepos
                 .findOne());
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<ProjectionPosition> findAll() {
         return jdbi.withHandle(handle -> handle.createQuery(SELECT_COLUMNS)

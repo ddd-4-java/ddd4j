@@ -33,7 +33,9 @@ public final class WebIdempotencyLifecycle {
      */
     public static final Duration DEFAULT_TTL = Duration.ofMinutes(5);
 
+    /** \u83b7\u53d6\u3001\u5b8c\u6210\u53ca\u91ca\u653e\u5e42\u7b49\u79df\u7ea6\u7684\u7ec4\u4ef6\u3002 */
     private final IdempotencyGuard guard;
+    /** \u5e42\u7b49\u8bb0\u5f55\u4fdd\u7559\u7684\u65f6\u957f\u3002 */
     private final Duration ttl;
 
     /**
@@ -85,11 +87,22 @@ public final class WebIdempotencyLifecycle {
         return Optional.of(new Scope(guard, lease.get()));
     }
 
+    /**
+     * \u4ece\u8bf7\u6c42\u8303\u56f4\u4e0e\u5ba2\u6237\u7aef\u5e42\u7b49\u952e\u6784\u9020\u5b58\u50a8\u952e\u3002
+     * @param context \u5f53\u524d\u6846\u67b6\u8c03\u7528\u6240\u643a\u5e26\u7684\u8bf7\u6c42\u4e0a\u4e0b\u6587
+     * @param idempotencyKey \u7531\u5ba2\u6237\u7aef\u4f20\u5165\u7684\u5e42\u7b49\u952e\u5934\u503c
+     * @return \u7528\u4e8e\u9694\u79bb\u4e0d\u540c\u8bf7\u6c42\u8303\u56f4\u7684\u5e42\u7b49\u8bb0\u5f55\u952e
+     */
     private String storageKey(WebRequestContext context, String idempotencyKey) {
         return value(context.tenantId()) + ':' + value(context.method()) + ':' + value(context.path()) + ':'
                 + idempotencyKey;
     }
 
+    /**
+     * \u5c06\u53ef\u9009\u8bf7\u6c42\u5b57\u6bb5\u5f52\u4e00\u4e3a\u5b58\u50a8\u952e\u4f7f\u7528\u7684\u503c\u3002
+     * @param value \u5f53\u524d\u5f85\u5199\u5165\u6216\u89e3\u6790\u7684\u503c
+     * @return \u5f52\u4e00\u5316\u7684\u5b57\u7b26\u4e32
+     */
     private String value(String value) {
         return StrKit.isBlank(value) ? "_" : value;
     }
@@ -102,11 +115,20 @@ public final class WebIdempotencyLifecycle {
      */
     public static final class Scope implements AutoCloseable {
 
+        /** \u83b7\u53d6\u3001\u5b8c\u6210\u53ca\u91ca\u653e\u5e42\u7b49\u79df\u7ea6\u7684\u7ec4\u4ef6\u3002 */
         private final IdempotencyGuard guard;
+        /** \u5f53\u524d\u8bf7\u6c42\u6301\u6709\u7684\u5e42\u7b49\u79df\u7ea6\u3002 */
         private final IdempotencyLease lease;
+        /** \u5f53\u524d\u5e42\u7b49\u4f5c\u7528\u57df\u662f\u5426\u5df2\u7ecf\u63d0\u4ea4\u6210\u529f\u72b6\u6001\u3002 */
         private boolean completed;
+        /** \u5f53\u524d\u5b9e\u4f8b\u662f\u5426\u5df2\u5173\u95ed\u3002 */
         private boolean closed;
 
+        /**
+         * \u8bb0\u4f4f\u6240\u83b7\u5f97\u7684\u5e42\u7b49\u79df\u7ea6\u53ca\u5176\u91ca\u653e\u5165\u53e3\u3002
+         * @param guard \u8d1f\u8d23\u7ba1\u7406\u5f53\u524d\u8bf7\u6c42\u5e42\u7b49\u72b6\u6001\u7684\u7ec4\u4ef6
+         * @param lease \u5f53\u524d\u8bf7\u6c42\u5df2\u7ecf\u83b7\u5f97\u7684\u4fdd\u62a4\u79df\u7ea6
+         */
         private Scope(IdempotencyGuard guard, IdempotencyLease lease) {
             this.guard = guard;
             this.lease = lease;

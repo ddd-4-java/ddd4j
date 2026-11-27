@@ -42,6 +42,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * 检查实际 Guice 默认日志回调，不以非空 Bean 代替日志行为。
  */
 class ThreeLineLogsParityTest {
+    /**
+     * \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>Guice.createInjector()</code>\u3001<code>LogManager.getLogger()</code>\u3001<code>logger.getLevel()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void guiceDefaultProviderEmitsSuccessAndFailureAccessLogs() throws Exception {
         ApiOperationLogProvider provider = Guice.createInjector(new Ddd4jLogsGuiceModule())
@@ -102,7 +106,13 @@ class ThreeLineLogsParityTest {
         }
     }
 
+    /** \u63d0\u4f9b <code>handle()</code> \u7b49\u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u72ec\u7acb\u64cd\u4f5c\u3002 */
     public static class Endpoint {
+        /**
+         * \u8bfb\u53d6 <code>value</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
+         * @param value \u5f53\u524d\u7528\u4f8b\u4f20\u5165\u7684\u503c
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>value</code>
+         */
         @Operation(summary = "parity")
         public String handle(String value) {
             return value;

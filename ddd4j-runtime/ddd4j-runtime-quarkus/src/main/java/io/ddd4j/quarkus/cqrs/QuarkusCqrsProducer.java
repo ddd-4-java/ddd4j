@@ -31,6 +31,10 @@ import org.eclipse.microprofile.config.ConfigProvider;
  */
 @ApplicationScoped
 public class QuarkusCqrsProducer {
+    /**
+     * \u5728\u542f\u52a8\u4e8b\u4ef6\u4e2d\u9a8c\u8bc1\u5f53\u524d\u5bb9\u5668\u7684 CQRS \u7ec4\u4ef6\u88c5\u914d\u3002
+     * @param event \u5f53\u524d\u6846\u67b6\u751f\u547d\u5468\u671f\u6216\u5bb9\u5668\u542f\u52a8\u4e8b\u4ef6
+     */
     void validateBootstrap(@jakarta.enterprise.event.Observes @jakarta.annotation.Priority(800) io.quarkus.runtime.StartupEvent event) {
         String bootstrap = ConfigProvider.getConfig().getOptionalValue(
                 "ddd4j.quarkus.cqrs.projection.bootstrap-cron", String.class).orElse("off").stripLeading();

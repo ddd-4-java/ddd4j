@@ -19,13 +19,16 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/** \u901a\u8fc7 <code>AnnotationFusionVerifier.main()</code>\u3001<code>service.hello()</code>\u3001<code>service.getClass()</code> \u9a8c\u8bc1 <code>AnnotationFusionVerifier</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
 class AnnotationFusionVerifierTest {
 
+    /** \u9a8c\u8bc1<code>AnnotationFusionVerifier.main(new String[0])</code> \u6b63\u5e38\u8fd4\u56de\u3002 */
     @Test
     void mainVerificationPasses() {
         assertDoesNotThrow(() -> AnnotationFusionVerifier.main(new String[0]));
     }
 
+    /** \u9a8c\u8bc1<code>service.hello()</code> \u7b49\u4e8e <code>"hello"</code>\uff0c<code>service.getClass().getAnnotation(DomainService.class).annotationType()</code> \u7b49\u4e8e <code>DomainService.class</code>\u3002 */
     @Test
     void businessDomainServiceIsAnnotatedAndUsable() {
         BusinessDomainService service = new BusinessDomainService();

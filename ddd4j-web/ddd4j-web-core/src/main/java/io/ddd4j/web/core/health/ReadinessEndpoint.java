@@ -27,6 +27,7 @@ public final class ReadinessEndpoint {
      */
     public static final String PATH = "/-/ready";
 
+    /** \u5f53\u524d\u8c03\u7528\u4f7f\u7528\u7684\u8fd0\u884c\u65f6\u5c31\u7eea\u72b6\u6001\u63d0\u4f9b\u51fd\u6570\u3002 */
     private final BooleanSupplier readinessSupplier;
 
     /**
