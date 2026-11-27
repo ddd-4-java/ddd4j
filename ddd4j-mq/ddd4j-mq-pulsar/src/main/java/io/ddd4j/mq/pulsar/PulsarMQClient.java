@@ -47,11 +47,29 @@ import java.util.function.Consumer;
 @Slf4j(topic = "### DDD4J-MQ : PulsarMQClient ###")
 public class PulsarMQClient implements MQClient {
 
+    /**
+     * 当前消息代理客户端使用的连接和订阅配置。
+     */
     private final PulsarProperties properties;
+    /**
+     * 当前适配器已建立的原生消费者。
+     */
     private final List<org.apache.pulsar.client.api.Consumer<?>> consumers = new CopyOnWriteArrayList<>();
+    /**
+     * 按主题管理的 Pulsar 原生生产者。
+     */
     private final ConcurrentMap<String, Producer<byte[]>> producers = new ConcurrentHashMap<>();
+    /**
+     * 协调消息客户端启动、初始化和关闭的生命周期。
+     */
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    /**
+     * 组件的启动状态和启动失败诊断信息。
+     */
     private final MQStartupStatus startupStatus = new MQStartupStatus("pulsar");
+    /**
+     * 建立 Pulsar 生产者和消费者的原生客户端。
+     */
     private PulsarClient client;
 
     /**
@@ -76,12 +94,21 @@ public class PulsarMQClient implements MQClient {
         this.properties = Objects.requireNonNull(properties, "properties");
     }
 
+    /**
+     * 将原生 Pulsar 消息标识转换为文本。
+     *
+     * @param id 原生代理提供的消息标识
+     * @return 消息标识文本，原生值为空时返回空
+     */
     private static String messageIdString(MessageId id) {
         return Objects.isNull(id) ? null : id.toString();
     }
 
     /**
      * 优先读取 ddd4j 标准消息 ID，兼容旧键，最后回退到 Pulsar 投递 ID。
+     *
+     * @param message 收到的原生 Pulsar 消息
+     * @return 用于消费确认或日志记录的消息标识
      */
     static String messageId(Message<?> message) {
         String messageId = message.getProperty(MessageHeaders.HEADER_MESSAGE_ID);
@@ -91,6 +118,11 @@ public class PulsarMQClient implements MQClient {
         return Objects.nonNull(messageId) ? messageId : messageIdString(message.getMessageId());
     }
 
+    /**
+     * 关闭原生消费者，并处理原生客户端抛出的异常。
+     *
+     * @param consumer 本次操作涉及的原生消费者
+     */
     private static void closeConsumer(org.apache.pulsar.client.api.Consumer<?> consumer) {
         try {
             consumer.close();
@@ -99,6 +131,11 @@ public class PulsarMQClient implements MQClient {
         }
     }
 
+    /**
+     * 关闭原生生产者，并处理原生客户端抛出的异常。
+     *
+     * @param producer 本次操作涉及的原生生产者
+     */
     private static void closeProducer(Producer<byte[]> producer) {
         try {
             producer.flush();
@@ -108,6 +145,11 @@ public class PulsarMQClient implements MQClient {
         }
     }
 
+    /**
+     * 关闭 Pulsar 客户端，并处理原生客户端抛出的异常。
+     *
+     * @param client 建立 Pulsar 生产者和消费者的原生客户端
+     */
     private static void closePulsarClient(PulsarClient client) {
         try {
             client.close();
@@ -118,11 +160,21 @@ public class PulsarMQClient implements MQClient {
 
     // ========================= 生产者 =========================
 
+    /**
+     * 返回此消息适配器在 DDD4J 中登记的实现名。
+     *
+     * @return 实际返回<code>"pulsar"</code>，供调用方取得当前值
+     */
     @Override
     public String impl() {
         return "pulsar";
     }
 
+    /**
+     * 返回管理连接、生产者和消费者资源的生命周期对象。
+     *
+     * @return 当前消息适配器用于登记和关闭资源的生命周期对象
+     */
     @Override
     public MQClientLifecycle lifecycle() {
         return lifecycle;
@@ -130,6 +182,11 @@ public class PulsarMQClient implements MQClient {
 
     // ========================= 消费者 =========================
 
+    /**
+     * 返回消息客户端当前记录的启动状态。
+     *
+     * @return 当前消息适配器记录的启动状态
+     */
     @Override
     public MQStartupStatus startupStatus() {
         return startupStatus;
@@ -149,6 +206,9 @@ public class PulsarMQClient implements MQClient {
      *   <li>TAG_TENANT → 复用父类 {@code tag|tenant} 复合 key（默认）</li>
      *   <li>CUSTOM → 父类默认（占位：子类自行覆写）</li>
      * </ul>
+     *
+     * @param event 决定消息路由的发布事件
+     * @return 用于 Pulsar 消息路由的键
      */
     @Override
     public String partitionKey(MQEvent event) {
@@ -164,6 +224,14 @@ public class PulsarMQClient implements MQClient {
         };
     }
 
+    /**
+     * 准备消息生产者并返回可发布事件的入口。
+     *
+     * <p>此实现调用 <code>properties.client()</code>。</p>
+     *
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 接收待发布事件的函数
+     */
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         try {
@@ -210,6 +278,13 @@ public class PulsarMQClient implements MQClient {
 
     // ========================= 关闭 =========================
 
+    /**
+     * 查找指定主题的原生 Pulsar 生产者，缺少时创建。
+     *
+     * @param topic 要发布、订阅或取消订阅的代理主题
+     * @return 可向指定主题发布的生产者
+     * @throws Exception 原生代理或客户端操作失败
+     */
     private Producer<byte[]> producer(String topic) throws Exception {
         return producers.computeIfAbsent(topic, t -> {
             try {
@@ -225,6 +300,16 @@ public class PulsarMQClient implements MQClient {
         });
     }
 
+    /**
+     * 为监听器建立消息消费所需的订阅和客户端资源。
+     *
+     * <p>此实现调用 <code>listener.getTopic()</code>。</p>
+     *
+     * @param listener     监听器定义
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 此实现返回<code>true</code>
+     * @throws Exception 当前框架、存储或底层客户端无法完成此操作时
+     */
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         Objects.requireNonNull(listener, "listener");
@@ -293,11 +378,17 @@ public class PulsarMQClient implements MQClient {
         return true;
     }
 
+    /**
+     * 提供生命周期启动回调，当前实现的客户端在初始化阶段启动，此处无额外操作。
+     */
     @Override
     public void start() {
         // Pulsar consumer 在 .subscribe() 时已启动
     }
 
+    /**
+     * 释放消息客户端拥有的运行资源，并在退出时登记组件已停止。
+     */
     @Override
     public void close() {
         try {

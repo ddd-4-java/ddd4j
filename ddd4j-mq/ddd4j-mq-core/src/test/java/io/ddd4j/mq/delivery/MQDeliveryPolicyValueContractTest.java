@@ -9,8 +9,14 @@ import java.time.Duration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+/**
+ * 验证 <code>MQDeliveryPolicyValueContract</code> 在 <code>explicitJsonPropertiesRemainAvailable</code> 等场景中的行为。
+ */
 class MQDeliveryPolicyValueContractTest {
 
+    /**
+     * 验证<code>same</code> 等于 <code>policy</code>，<code>same.hashCode()</code> 等于 <code>policy.hashCode()</code>，<code>different</code> 不等于 <code>policy</code>。
+     */
     @Test
     void valueContractPreservesDeliverySettings() {
         MQDeliveryPolicy policy = MQDeliveryPolicy.productionDefault();
@@ -26,6 +32,11 @@ class MQDeliveryPolicyValueContractTest {
                 policy.toString());
     }
 
+    /**
+     * 验证<code>mapper.readTree(json).size()</code> 等于 <code>5</code>，<code>mapper.readValue(json, MQDeliveryPolicy.class)</code> 等于 <code>policy</code>。
+     *
+     * @throws Exception 处理测试数据的序列化时失败
+     */
     @Test
     void jacksonRoundTripPreservesReliableDeliveryPolicy() throws Exception {
         MQDeliveryPolicy policy = MQDeliveryPolicy.productionDefault();
@@ -37,6 +48,11 @@ class MQDeliveryPolicyValueContractTest {
         assertEquals(policy, mapper.readValue(json, MQDeliveryPolicy.class));
     }
 
+    /**
+     * 验证<code>mapper.readTree(json).size()</code> 等于 <code>5</code>，<code>mapper.readValue(json, MQDeliveryPolicy.class)</code> 等于 <code>policy</code>。
+     *
+     * @throws Exception 处理测试数据的序列化时失败
+     */
     @Test
     void explicitJsonPropertiesRemainAvailableWithGetterDiscoveryDisabled() throws Exception {
         MQDeliveryPolicy policy = MQDeliveryPolicy.productionDefault();
@@ -51,6 +67,9 @@ class MQDeliveryPolicyValueContractTest {
         assertEquals(policy, mapper.readValue(json, MQDeliveryPolicy.class));
     }
 
+    /**
+     * 只提供显式访问器的样本，用于验证实际 Bean 访问规则。
+     */
     @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE)
     private abstract static class ExplicitGettersOnly {
     }

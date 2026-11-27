@@ -35,18 +35,39 @@ import java.util.Objects;
 
 public final class ProjectionStatus {
 
+    /**
+     * Java 序列化版本标识。
+     */
     private static final long serialVersionUID = 0L;
 
+    /**
+     * 投影任务使用的事件流标识。
+     */
     private final String streamId;
 
+    /**
+     * 投影恢复时应读取的下一条源事件序号。
+     */
     private final long nextEventNumber;
 
+    /**
+     * 当前视图的投影调度是否正在运行。
+     */
     private final boolean running;
 
+    /**
+     * 最近一次执行的时间。
+     */
     private final Instant lastRunAt;
 
+    /**
+     * 最近一次处理的事件数。
+     */
     private final int lastEventCount;
 
+    /**
+     * 最近一次失败的诊断信息。
+     */
     private final String lastError;
 
     /**
@@ -204,6 +225,14 @@ public final class ProjectionStatus {
         return lastError;
     }
 
+    /**
+     * 根据<code>streamId</code>、<code>lastRunAt</code>、<code>lastError</code>、<code>nextEventNumber</code>、<code>running</code>、<code>lastEventCount</code>比较对象的值是否相等。
+     *
+     * <p>只比较运行时类型相同的对象。</p>
+     *
+     * @param obj 用来比较或转换的输入对象
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -216,6 +245,11 @@ public final class ProjectionStatus {
         return Objects.equals(this.streamId, other.streamId) && this.nextEventNumber == other.nextEventNumber && this.running == other.running && Objects.equals(this.lastRunAt, other.lastRunAt) && this.lastEventCount == other.lastEventCount && Objects.equals(this.lastError, other.lastError);
     }
 
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         int result = 0;
@@ -228,6 +262,11 @@ public final class ProjectionStatus {
         return result;
     }
 
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>streamId</code>、<code>nextEventNumber</code>、<code>running</code>、<code>lastRunAt</code>、<code>lastEventCount</code>、<code>lastError</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "ProjectionStatus[streamId=" + streamId + ", nextEventNumber=" + nextEventNumber + ", running=" + running + ", lastRunAt=" + lastRunAt + ", lastEventCount=" + lastEventCount + ", lastError=" + lastError + "]";

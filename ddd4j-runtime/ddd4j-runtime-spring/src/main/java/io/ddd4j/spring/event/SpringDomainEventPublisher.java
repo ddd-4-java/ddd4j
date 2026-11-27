@@ -50,6 +50,14 @@ public class SpringDomainEventPublisher implements DomainEventPublisher {
         this.publisher = publisher;
     }
 
+    /**
+     * 将传入的事件交给当前发布通道。
+     *
+     * <p>Spring 实现调用 <code>log.warn("Attempted to publish null domain event")</code>。</p>
+     *
+     * @param <ID>  实体标识类型
+     * @param event 领域事件
+     */
     @Override
     public <ID extends EntityId> void publish(DomainEvent<ID> event) {
         if (Objects.isNull(event)) {

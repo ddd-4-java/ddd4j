@@ -33,9 +33,18 @@ import static org.mockito.Mockito.*;
  */
 class SubjectKitTest {
 
+    /**
+     * 当前用例使用的认证主体。
+     */
     private Subject subject;
+    /**
+     * 为当前用例提供认证或 SPI 服务的组件。
+     */
     private SubjectProvider provider;
 
+    /**
+     * 测试执行前执行 <code>mock()</code>、<code>provider.getSubject()</code>、<code>resetStatic()</code>、<code>SubjectKit.register()</code> 完成资源准备。
+     */
     @BeforeEach
     void setUp() {
         subject = mock(Subject.class);
@@ -45,22 +54,34 @@ class SubjectKitTest {
         SubjectKit.register(provider);
     }
 
+    /**
+     * 测试结束后执行 <code>resetStatic()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void tearDown() {
         resetStatic();
     }
 
+    /**
+     * 根据本次调用更新 <code>SubjectKit.subjectProvider = null</code>、<code>SubjectKit.dataProvider = null</code>，用于后续测试步骤。
+     */
     private void resetStatic() {
         SubjectKit.subjectProvider = null;
         SubjectKit.dataProvider = null;
         SubjectKit.strategy = null;
     }
 
+    /**
+     * 验证<code>SubjectKit.getSubject()</code> 指向同一实例 <code>subject</code>。
+     */
     @Test
     void getSubject_shouldReturnRegisteredProviderSubject() {
         assertThat(SubjectKit.getSubject()).isSameAs(subject);
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>。
+     */
     @Test
     void getSubject_shouldThrowWhenProviderNotRegistered() {
         SubjectKit.subjectProvider = null;
@@ -70,6 +91,9 @@ class SubjectKitTest {
                 .hasMessageContaining("SubjectProvider not registered");
     }
 
+    /**
+     * 验证<code>result</code> 指向同一实例 <code>subject</code>。
+     */
     @Test
     void getSubjectByRealm_shouldDelegateToProvider() {
         when(provider.getSubject("admin")).thenReturn(subject);
@@ -80,6 +104,9 @@ class SubjectKitTest {
         verify(provider).getSubject("admin");
     }
 
+    /**
+     * 验证<code>resolved</code> 指向同一实例 <code>principal</code>。
+     */
     @Test
     void getPrincipal_shouldDelegateToSubject() {
         AuthPrincipal principal = new AuthPrincipal().setLoginId("u1");
@@ -90,6 +117,9 @@ class SubjectKitTest {
         assertThat(resolved).isSameAs(principal);
     }
 
+    /**
+     * 验证<code>result</code>为空。
+     */
     @Test
     void getPrincipal_withClass_shouldReturnNullOnTypeMismatch() {
         when(subject.getPrincipal()).thenReturn(new AuthPrincipal());
@@ -99,6 +129,9 @@ class SubjectKitTest {
         assertThat(result).isNull();
     }
 
+    /**
+     * 验证<code>Boolean.valueOf(SubjectKit.isLogin())</code>为真，<code>Boolean.valueOf(SubjectKit.isLogin())</code>为假。
+     */
     @Test
     void isLogin_shouldReflectSubjectAuthentication() {
         when(subject.isAuthenticated()).thenReturn(true);
@@ -108,6 +141,9 @@ class SubjectKitTest {
         assertThat(Boolean.valueOf(SubjectKit.isLogin())).isFalse();
     }
 
+    /**
+     * 验证<code>SubjectKit.hasPermission("user:add")</code>为真。
+     */
     @Test
     void hasPermission_shouldDelegateToSubject() {
         when(subject.isPermitted("user:add")).thenReturn(true);
@@ -116,6 +152,9 @@ class SubjectKitTest {
         verify(subject).isPermitted("user:add");
     }
 
+    /**
+     * 验证<code>SubjectKit.hasRole("admin")</code>为真。
+     */
     @Test
     void hasRole_shouldDelegateToSubject() {
         when(subject.hasRole("admin")).thenReturn(true);
@@ -124,6 +163,9 @@ class SubjectKitTest {
         verify(subject).hasRole("admin");
     }
 
+    /**
+     * 验证<code>token</code> 等于 <code>"token-123"</code>。
+     */
     @Test
     void login_shouldDelegateAndReturnToken() {
         AuthRequest request = AuthRequest.of("u1");
@@ -135,6 +177,9 @@ class SubjectKitTest {
         verify(subject).login(request);
     }
 
+    /**
+     * 在测试框架中执行 <code>SubjectKit.logout()</code>，验证该场景。
+     */
     @Test
     void logout_shouldDelegateToSubject() {
         SubjectKit.logout();
@@ -142,6 +187,9 @@ class SubjectKitTest {
         verify(subject).logout();
     }
 
+    /**
+     * 验证<code>SubjectKit.getDataProvider()</code>非空。
+     */
     @Test
     void getDataProvider_shouldReturnDefaultWhenNotRegistered() {
         SubjectKit.dataProvider = null;
@@ -149,6 +197,9 @@ class SubjectKitTest {
         assertThat(SubjectKit.getDataProvider()).isNotNull();
     }
 
+    /**
+     * 验证<code>SubjectKit.getStrategy()</code>非空。
+     */
     @Test
     void getStrategy_shouldReturnDefaultWhenNotRegistered() {
         SubjectKit.strategy = null;
@@ -156,6 +207,9 @@ class SubjectKitTest {
         assertThat(SubjectKit.getStrategy()).isNotNull();
     }
 
+    /**
+     * 用于测试身份映射是否保留自定义主体类型的认证对象。
+     */
     static class CustomPrincipal extends AuthPrincipal {
     }
 }

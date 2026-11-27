@@ -41,10 +41,25 @@ import java.util.concurrent.Callable;
  */
 public final class Ddd4jVertxRuntime implements AutoCloseable {
 
+    /**
+     * 当前框架组件共享的 Vert.x 实例。
+     */
     private final Vertx vertx;
+    /**
+     * 管理当前示例或测试所拥有的 SPI 注册资源。
+     */
     private final SpiRegistrationScope registrations;
+    /**
+     * 管理当前运行时注册的认证主体提供器及其恢复动作。
+     */
     private final SubjectKitRegistrationScope subjectRegistration;
+    /**
+     * 汇总当前组件就绪状态的注册表。
+     */
     private final RuntimeReadinessRegistry readinessRegistry;
+    /**
+     * 负责在应用生命周期内管理投影任务的组件。
+     */
     private VertxProjectionViewManager projectionManager;
 
     /**
@@ -145,6 +160,14 @@ public final class Ddd4jVertxRuntime implements AutoCloseable {
         return attachProjection(vertx, executors, manager);
     }
 
+    /**
+     * 将事件读取端口与共享投影执行服务装配为运行器。
+     *
+     * @param <E>        当前容器处理的组件或事件类型
+     * @param repository 保存并读取投影检查点的仓储
+     * @param reader     从事件源按位点分批读取事件的组件
+     * @return 执行已注册投影视图的投影运行器
+     */
     private static <E> ProjectionRunner<E> projectionRunner(ProjectionPositionRepository repository,
                                                             EventChunkReader<E> reader) {
         Objects.requireNonNull(repository, "Explicit projection requires a position repository");
@@ -155,6 +178,14 @@ public final class Ddd4jVertxRuntime implements AutoCloseable {
         return new ProjectionRunner<>(new DefaultProjectionService(repository), reader);
     }
 
+    /**
+     * 组装连接 Vert.x 容器的 DDD4J 运行时及投影管理器。
+     *
+     * @param vertx     承载当前运行时和事件总线的 Vert.x 实例
+     * @param executors 当前框架容器提供的命令执行器
+     * @param manager   用于调度当前视图的管理器
+     * @return 包含视图管理器的 Vert.x 运行时
+     */
     private static Ddd4jVertxRuntime attachProjection(Vertx vertx,
                                                       Collection<CommandExecutor<?>> executors, VertxProjectionViewManager manager) {
         try {
@@ -237,6 +268,11 @@ public final class Ddd4jVertxRuntime implements AutoCloseable {
         });
     }
 
+    /**
+     * 结束当前组件持有的资源。
+     *
+     * <p>Vert.x 实现调用 <code>projectionManager.close()</code>。</p>
+     */
     @Override
     public void close() {
         try {

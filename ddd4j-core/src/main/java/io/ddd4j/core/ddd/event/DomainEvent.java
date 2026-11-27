@@ -61,9 +61,15 @@ import java.util.Set;
 @SuppressWarnings("unchecked")
 public abstract class DomainEvent<ID extends EntityId> implements Event, Serializable {
 
+    /**
+     * Java 序列化版本标识。
+     */
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 用于按类型查找领域事件的注册表。
+     */
     private static final ClassValue<EventType> EVENT_TYPES = new ClassValue<>() {
         @Override
         protected EventType computeValue(Class<?> type) {

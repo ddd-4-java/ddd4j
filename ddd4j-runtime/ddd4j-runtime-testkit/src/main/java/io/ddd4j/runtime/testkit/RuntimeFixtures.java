@@ -35,15 +35,27 @@ import java.util.Map;
  */
 public final class RuntimeFixtures {
 
+    /**
+     * 将领域事件交给运行时分发的发布器。
+     */
     private final DomainEventPublisher publisher = new DomainEventPublisher() {
         @Override
         public <ID extends EntityId> void publish(DomainEvent<ID> event) {
             // Contract tests only verify registration and lifecycle.
         }
     };
+    /**
+     * 根据当前调用范围提供认证主体的组件。
+     */
     private final SubjectProvider subjectProvider = new InMemorySubjectProvider(new InMemorySubject(event -> {
     }));
+    /**
+     * 当前运行框架注册的国际化消息提供器。
+     */
     private final I18nProvider i18nProvider = I18nProvider.DEFAULT;
+    /**
+     * 根据命令类型分发写操作的命令总线。
+     */
     private final CommandBus commandBus = new DefaultCommandBus(List.of());
 
     /**

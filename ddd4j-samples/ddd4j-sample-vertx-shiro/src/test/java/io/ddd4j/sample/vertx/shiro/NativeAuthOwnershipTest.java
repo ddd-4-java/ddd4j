@@ -16,10 +16,18 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  * 原生全局引擎的 owner 恢复，不覆盖后任。
  */
 class NativeAuthOwnershipTest {
+    /**
+     * 调用 <code>ReflectUtil.getStaticFieldValue()</code>、<code>ReflectUtil.getField()</code> 执行当前夹具操作。
+     *
+     * @return 提供给后续契约断言的 <code>SecurityManager</code> 结果
+     */
     private SecurityManager current() {
         return (SecurityManager) ReflectUtil.getStaticFieldValue(Objects.requireNonNull(ReflectUtil.getField(SecurityUtils.class, "securityManager")));
     }
 
+    /**
+     * 验证<code>current()</code> 与…为同一实例 <code>previous</code>，<code>current()</code> 与…为同一实例 <code>replacement</code>。
+     */
     @Test
     void restoresPreviousAndPreservesReplacement() {
         var previous = current();
@@ -38,6 +46,9 @@ class NativeAuthOwnershipTest {
         }
     }
 
+    /**
+     * 验证<code>current()</code> 与…为同一实例 <code>caller</code>。
+     */
     @Test
     void leavesCallerProcessManagerInstalledWhileRunning() {
         SecurityManager previous = current();
@@ -56,6 +67,9 @@ class NativeAuthOwnershipTest {
         }
     }
 
+    /**
+     * 验证<code>ThreadContext.getSecurityManager()</code> 与…为同一实例 <code>app.manager()</code>，<code>ThreadContext.getSubject()</code> 与…为不同的实例 <code>previous</code>，<code>ThreadContext.getSubject()</code> 与…为同一实例 <code>replacement</code>。
+     */
     @Test
     void restoresWorkerBindingsAndPreservesLaterOwners() {
         SecurityManager originalManager = ThreadContext.getSecurityManager();

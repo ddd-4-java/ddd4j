@@ -29,9 +29,21 @@ import java.util.Objects;
  */
 public final class SqlObservation {
 
+    /**
+     * 执行 SQL 对应的 MyBatis 映射语句标识。
+     */
     private final String statementId;
+    /**
+     * 本次 SQL 执行的语句文本。
+     */
     private final String sql;
+    /**
+     * SQL 执行耗时，单位为纳秒。
+     */
     private final long elapsedNanos;
+    /**
+     * SQL 执行失败时记录的异常。
+     */
     private final Throwable error;
 
     /**
@@ -120,6 +132,12 @@ public final class SqlObservation {
         return error;
     }
 
+    /**
+     * 根据<code>statementId</code>、<code>sql</code>、<code>error</code>、<code>elapsedNanos</code>比较对象的值是否相等。
+     *
+     * @param o 用来比较的另一个对象，允许为空
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -135,6 +153,11 @@ public final class SqlObservation {
                 && Objects.equals(error, that.error);
     }
 
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         int result = 0;
@@ -145,6 +168,11 @@ public final class SqlObservation {
         return result;
     }
 
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>statementId</code>、<code>sql</code>、<code>elapsedNanos</code>、<code>error</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "SqlObservation[statementId=" + statementId + ", sql=" + sql + ", elapsedNanos=" + elapsedNanos + ", error=" + error + "]";

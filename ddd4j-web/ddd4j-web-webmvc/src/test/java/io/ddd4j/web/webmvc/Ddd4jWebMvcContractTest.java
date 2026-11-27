@@ -60,10 +60,19 @@ import java.util.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * 实现 <code>AbstractWebContractTest</code>，供测试调用 <code>setUp()</code>、<code>tearDown()</code>、<code>client()</code> 并观察结果。
+ */
 class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
 
+    /**
+     * 执行真实请求供公共 HTTP 合同断言使用的客户端。
+     */
     private WebContractClient contractClient;
 
+    /**
+     * 测试执行前执行 <code>CacheKit.build()</code>、<code>mock()</code>、<code>BaseContext.inject()</code>、<code>provider()</code> 完成资源准备。
+     */
     @BeforeEach
     void setUp() {
         CacheKit.build("webmvc-contract", 300L);
@@ -83,6 +92,9 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
         contractClient = new MockMvcContractClient(mockMvc);
     }
 
+    /**
+     * 测试结束后执行 <code>ThreadContext.clear()</code>、<code>BaseContext.clear()</code>、<code>CacheKit.unregister()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void tearDown() {
         ThreadContext.clear();
@@ -90,11 +102,22 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
         CacheKit.unregister("webmvc-contract");
     }
 
+    /**
+     * 返回发送测试请求所用的客户端。
+     *
+     * @return 实际返回<code>contractClient</code>，供调用方取得当前值
+     */
     @Override
     protected WebContractClient client() {
         return contractClient;
     }
 
+    /**
+     * 创建 <code>new SubjectProvider</code> 供当前测试路径调用。
+     *
+     * @param subject 用于构造本次返回结果的 <code>Subject</code> 输入
+     * @return 当前测试使用的结果，取自 <code>new SubjectProvider(){ &#64;Override public Subject getSubject() { return subject; } }</code>
+     */
     private SubjectProvider provider(Subject subject) {
         return new SubjectProvider() {
             @Override
@@ -104,19 +127,37 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
         };
     }
 
+    /**
+     * 为 HTTP 合同提供实际请求路由的 Spring 测试控制器。
+     */
     @RestController
     static class ContractController {
 
+        /**
+         * 通过 <code>R.ok()</code> 取得当前测试需要的结果。
+         *
+         * @return 当前测试使用的结果，取自 <code>R.ok(Map.of("result", "ok"))</code>
+         */
         @GetMapping({WebContractPaths.SUCCESS, WebContractPaths.PUBLIC, WebContractPaths.PROTECTED})
         R<Map<String, String>> success() {
             return R.ok(Map.of("result", "ok"));
         }
 
+        /**
+         * 通过 <code>ResponseEntity.status()</code> 取得当前测试需要的结果。
+         *
+         * @return 当前测试使用的结果，取自 <code>ResponseEntity.status(HttpStatus.CREATED).body(R.ok(Map.of("result", "created")))</code>
+         */
         @PostMapping(WebContractPaths.CREATED)
         ResponseEntity<R<Map<String, String>>> created() {
             return ResponseEntity.status(HttpStatus.CREATED).body(R.ok(Map.of("result", "created")));
         }
 
+        /**
+         * 通过 <code>R.ok()</code> 取得当前测试需要的结果。
+         *
+         * @return 当前测试使用的结果，取自 <code>R.ok(context)</code>
+         */
         @GetMapping(WebContractPaths.CONTEXT)
         R<Map<String, Object>> context() {
             Map<String, Object> context = new LinkedHashMap<>();
@@ -126,11 +167,22 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
             return R.ok(context);
         }
 
+        /**
+         * 通过 <code>R.ok()</code> 取得当前测试需要的结果。
+         *
+         * @return 当前测试使用的结果，取自 <code>R.ok(Map.of("result", "accepted"))</code>
+         */
         @PostMapping(WebContractPaths.IDEMPOTENT)
         R<Map<String, String>> idempotent() {
             return R.ok(Map.of("result", "accepted"));
         }
 
+        /**
+         * 构造 <code>IllegalArgumentException</code>、<code>SecurityException</code> 作为当前测试的输入或结果。
+         *
+         * @param type 用来解析、检查或构造测试对象的 Java 类型
+         * @return 提供给后续契约断言的 <code>R&lt;Void&gt;</code> 结果
+         */
         @GetMapping("/contract/errors/{type}")
         R<Void> error(@PathVariable("type") String type) {
             throw switch (type) {
@@ -146,17 +198,40 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
         }
     }
 
+    /**
+     * 在当前 HTTP 框架中执行共用合同的客户端适配器。
+     */
     private final static class MockMvcContractClient implements WebContractClient {
 
+        /**
+         * Java 序列化使用的版本标识。
+         */
         private static final long serialVersionUID = 0L;
 
+        /**
+         * 执行 Spring MVC 合同请求的测试客户端。
+         */
         private final MockMvc mockMvc;
 
+        /**
+         * 设置 <code>mockMvc</code>，用于构造 <code>MockMvcContractClient</code> 测试实例。
+         *
+         * @param mockMvc 用于初始化 <code>MockMvcContractClient</code> 的 <code>MockMvc</code> 值
+         */
         @JsonCreator()
         private MockMvcContractClient(@JsonProperty("mockMvc") MockMvc mockMvc) {
             this.mockMvc = mockMvc;
         }
 
+        /**
+         * 通过当前客户端发起 HTTP 请求。
+         *
+         * @param method  HTTP 方法
+         * @param path    请求路径
+         * @param headers 请求头
+         * @param body    请求体
+         * @return 响应快照
+         */
         @Override
         public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
             try {
@@ -169,6 +244,15 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
             }
         }
 
+        /**
+         * 读取 <code>builder</code> 供当前测试使用。
+         *
+         * @param method  发给被测服务的 HTTP 方法
+         * @param path    测试请求的资源路径或待访问文件路径
+         * @param headers 当前测试请求携带的头字段
+         * @param body    当前请求或响应中要读取的正文
+         * @return 当前测试使用的结果，取自 <code>builder</code>
+         */
         private MockHttpServletRequestBuilder requestBuilder(String method, String path, Map<String, String> headers, String body) {
             MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.request(HttpMethod.valueOf(method), path);
             builder.accept(MediaType.APPLICATION_JSON);
@@ -179,11 +263,24 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
             return builder;
         }
 
+        /**
+         * 读取<code>mockMvc</code> 字段。
+         *
+         * @return <code>mockMvc</code> 字段
+         */
         @JsonProperty("mockMvc")
         public MockMvc mockMvc() {
             return mockMvc;
         }
 
+        /**
+         * 根据<code>mockMvc</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -196,6 +293,11 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
             return Objects.equals(this.mockMvc, other.mockMvc);
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 0;
@@ -203,6 +305,11 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
             return result;
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>mockMvc</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "MockMvcContractClient[mockMvc=" + mockMvc + "]";

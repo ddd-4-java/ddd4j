@@ -32,12 +32,20 @@ import static org.mockito.Mockito.*;
  */
 class QuarkusJpaProjectionServiceContractTest {
 
+    /**
+     * 验证<code>QuarkusJpaViewManager.DEFAULT_CRON</code> 等于 <code>"*&#47;30 * * * * ?"</code>，<code>QuarkusJpaViewManager.CRON_KEY</code> 等于 <code>"ddd4j.quarkus.cqrs.projection.cron"</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void usesThirtySecondDefaultCron() throws Exception {
         assertEquals("*/30 * * * * ?", QuarkusJpaViewManager.DEFAULT_CRON);
         assertEquals("ddd4j.quarkus.cqrs.projection.cron", QuarkusJpaViewManager.CRON_KEY);
     }
 
+    /**
+     * 验证<code>service.streams</code> 等于 <code>Collections.emptyList()</code>。
+     */
     @Test
     void skipsMissingOrEmptyRepository() {
         RecordingProjectionService service = new RecordingProjectionService();
@@ -60,6 +68,9 @@ class QuarkusJpaProjectionServiceContractTest {
         assertEquals(Collections.emptyList(), service.streams);
     }
 
+    /**
+     * 验证<code>service.streams</code> 等于 <code>Arrays.asList("failed", "next")</code>。
+     */
     @Test
     void failureInOneStreamDoesNotSkipTheNext() {
         RecordingProjectionService service = new RecordingProjectionService();
@@ -79,16 +90,37 @@ class QuarkusJpaProjectionServiceContractTest {
         assertEquals(Arrays.asList("failed", "next"), service.streams);
     }
 
+    /**
+     * 通过 <code>mock()</code> 取得当前测试需要的结果。
+     *
+     * @return 当前测试使用的结果，取自 <code>mock(Instance.class)</code>
+     */
     @SuppressWarnings("unchecked")
     private Instance<ProjectionPositionRepository> repositoryInstance() {
         return mock(Instance.class);
     }
 
+    /**
+     * 实现 <code>QuarkusJpaProjectionService</code>，供测试调用 <code>pullAndApply()</code> 并观察结果。
+     */
     private static final class RecordingProjectionService extends QuarkusJpaProjectionService {
 
+        /**
+         * 当前测试读取、认领或发布消息使用的流集合。
+         */
         private final List<String> streams = new ArrayList<>();
+        /**
+         * 控制测试替身在哪个调用条件下抛出异常。
+         */
         private String failOn;
 
+        /**
+         * 拉取投影尚未处理的事件并更新读模型。
+         *
+         * <p>测试夹具会调用 <code>streams.add(streamId)</code>、<code>streamId.equals(failOn)</code>。</p>
+         *
+         * @param streamId 投影流标识
+         */
         @Override
         protected void pullAndApply(String streamId) {
             streams.add(streamId);

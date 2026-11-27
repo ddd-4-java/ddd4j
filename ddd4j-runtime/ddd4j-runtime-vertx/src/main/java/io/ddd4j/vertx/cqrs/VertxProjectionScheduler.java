@@ -22,8 +22,17 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Slf4j
 public class VertxProjectionScheduler implements ViewScheduler, AutoCloseable {
+    /**
+     * 当前框架组件共享的 Vert.x 实例。
+     */
     private final Vertx vertx;
+    /**
+     * 当前已经注册的投影任务及其取消句柄。
+     */
     private final Set<Handle> handles = ConcurrentHashMap.newKeySet();
+    /**
+     * 当前实例是否已关闭。
+     */
     private volatile boolean closed;
 
     /**
@@ -35,6 +44,16 @@ public class VertxProjectionScheduler implements ViewScheduler, AutoCloseable {
         this.vertx = Objects.requireNonNull(vertx, "vertx must not be null");
     }
 
+    /**
+     * 按给定时间规则安排任务。
+     *
+     * <p>满足 <code>closed</code> 时抛出 <code>IllegalStateException</code>。 Vert.x 实现调用 <code>CronExpression.parse(cron)</code>。</p>
+     *
+     * @param viewName 视图名称（用于日志 / 调试）
+     * @param cron     CRON 表达式
+     * @param task     要执行的任务
+     * @return 实际返回<code>handle</code>
+     */
     @Override
     public synchronized ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
         if (closed) {
@@ -62,6 +81,11 @@ public class VertxProjectionScheduler implements ViewScheduler, AutoCloseable {
         handles.clear();
     }
 
+    /**
+     * 结束当前组件持有的资源。
+     *
+     * <p>Vert.x 实现调用 <code>shutdown()</code>。</p>
+     */
     @Override
     public void close() {
         shutdown();
@@ -71,8 +95,16 @@ public class VertxProjectionScheduler implements ViewScheduler, AutoCloseable {
      * 旧 Vert.x 数字方言与搜索窗口的兼容桥。
      */
     public static final class CronExpression {
+        /**
+         * 负责解析 Cron 字段并计算下次触发时间的共用实现。
+         */
         private final ProjectionCron delegate;
 
+        /**
+         * 把已解析的 Cron 计划包装成当前框架的调度表达式。
+         *
+         * @param delegate 执行共享行为的底层实现
+         */
         private CronExpression(ProjectionCron delegate) {
             this.delegate = delegate;
         }
@@ -107,14 +139,43 @@ public class VertxProjectionScheduler implements ViewScheduler, AutoCloseable {
         }
     }
 
+    /**
+     * 管理 Vert.x 投影任务的定时器、Cron 计划和捕获的上下文。
+     */
     private final class Handle implements ViewScheduleHandle {
+        /**
+         * 用于定位定时任务所属视图的名称。
+         */
         private final String name;
+        /**
+         * 用来确定任务下次触发时间的 Cron 表达式。
+         */
         private final CronExpression cron;
+        /**
+         * 由当前调度句柄执行的投影任务。
+         */
         private final Runnable task;
+        /**
+         * 提交任务时捕获并在回调内恢复的线程上下文。
+         */
         private final Map<Object, Object> captured;
+        /**
+         * 已登记的 Vert.x 定时器标识，用于取消计划。
+         */
         private long timerId = -1;
+        /**
+         * 任务是否已取消并停止继续安排新的触发。
+         */
         private volatile boolean cancelled;
 
+        /**
+         * 保存任务、Cron 和上下文快照以便定时执行。
+         *
+         * @param name     当前组件、指标、任务或 Bean 使用的名称
+         * @param cron     任务计划的 Cron 表达式
+         * @param task     实际执行一次投影的回调
+         * @param captured 调度提交时捕获、回调时恢复的线程上下文
+         */
         private Handle(String name, CronExpression cron, Runnable task, Map<Object, Object> captured) {
             this.name = name;
             this.cron = cron;
@@ -122,6 +183,9 @@ public class VertxProjectionScheduler implements ViewScheduler, AutoCloseable {
             this.captured = captured;
         }
 
+        /**
+         * 根据 Cron 计算下一次执行时间，并在计划仍有效时向Vert.x 定时器注册触发。
+         */
         private synchronized void scheduleNext() {
             if (cancelled || closed) {
                 return;
@@ -135,6 +199,9 @@ public class VertxProjectionScheduler implements ViewScheduler, AutoCloseable {
             timerId = vertx.setTimer(Math.max(1, Duration.between(now, next).toMillis()), ignored -> dispatch());
         }
 
+        /**
+         * 在 Vert.x 中派发当前投影回调并使用捕获的上下文。
+         */
         private void dispatch() {
             if (cancelled || closed) {
                 return;
@@ -155,6 +222,11 @@ public class VertxProjectionScheduler implements ViewScheduler, AutoCloseable {
             });
         }
 
+        /**
+         * 撤销当前任务句柄允许撤销的操作。
+         *
+         * <p>此实现调用 <code>vertx.cancelTimer(timerId)</code>。</p>
+         */
         @Override
         public synchronized void cancel() {
             cancelled = true;
@@ -165,6 +237,11 @@ public class VertxProjectionScheduler implements ViewScheduler, AutoCloseable {
             handles.remove(this);
         }
 
+        /**
+         * 检查当前句柄是否仍处于有效状态。
+         *
+         * @return 实际返回<code>!cancelled &amp;&amp; !closed</code>，作为本次判断结果
+         */
         @Override
         public boolean isActive() {
             return !cancelled && !closed;

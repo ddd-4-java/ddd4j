@@ -50,6 +50,9 @@ class ProjectionPositionJdbiIT {
      */
     private static final String ORDER_SUMMARY = "order-summary";
 
+    /**
+     * 作为库存投影测试输入或比较基准的快照数据。
+     */
     private static final String INVENTORY_SNAPSHOT = "inventory-snapshot";
 
     /**
@@ -62,10 +65,19 @@ class ProjectionPositionJdbiIT {
                     "  next_event_number bigint not null" +
                     ")";
 
+    /**
+     * 负责获取 JDBC 连接并执行 SQL 操作的访问入口。
+     */
     private static Jdbi jdbi;
 
+    /**
+     * 测试使用或记录的多条投影位点。
+     */
     private JdbiProjectionPositionRepository positions;
 
+    /**
+     * 测试前依次初始化<code>jdbi</code>。
+     */
     @BeforeAll
     static void setUpDatabase() {
         JdbcDataSource dataSource = new JdbcDataSource();
@@ -76,6 +88,9 @@ class ProjectionPositionJdbiIT {
         jdbi.useHandle(handle -> handle.execute(DDL));
     }
 
+    /**
+     * 测试前依次初始化<code>positions</code>。
+     */
     @BeforeEach
     void cleanPositions() {
         jdbi.useHandle(handle -> handle.execute("delete from ddd4j_projection_position"));
@@ -83,6 +98,9 @@ class ProjectionPositionJdbiIT {
         positions = new JdbiProjectionPositionRepository(jdbi);
     }
 
+    /**
+     * 验证<code>saved.getStreamId()</code> 等于 <code>ORDER_SUMMARY</code>，<code>saved.getNextEventNumber()</code>为零，<code>position.getNextEventNumber()</code> 等于 <code>5L</code>。
+     */
     @Test
     void saveIncrReload_完整循环_应跨仓储实例读回最终位置() {
         // 先落零位行（dispatcher 冷启动路径）
@@ -107,6 +125,9 @@ class ProjectionPositionJdbiIT {
                 });
     }
 
+    /**
+     * 验证<code>position.getNextEventNumber()</code> 等于 <code>5L</code>，<code>position.getNextEventNumber()</code>为零。
+     */
     @Test
     void resetToZero_推进后重置_应回退到0() {
         positions.save(new DefaultProjectionPosition(ORDER_SUMMARY, 5L));
@@ -119,6 +140,9 @@ class ProjectionPositionJdbiIT {
                 .hasValueSatisfying(position -> assertThat(position.getNextEventNumber()).isZero());
     }
 
+    /**
+     * 验证<code>position.getNextEventNumber()</code>为零。
+     */
     @Test
     void resetToZero_流不存在_应插入零位行() {
         // 与 core InMemoryProjectionPositionRepository 同款语义：缺行 reset 后可读到 0
@@ -128,6 +152,9 @@ class ProjectionPositionJdbiIT {
                 .hasValueSatisfying(position -> assertThat(position.getNextEventNumber()).isZero());
     }
 
+    /**
+     * 验证<code>position.getNextEventNumber()</code> 等于 <code>3L</code>，<code>position.getNextEventNumber()</code>为零，<code>positions.findAll()</code> 的大小为 <code>2</code>。
+     */
     @Test
     void 两个handler命名空间_分别save后独立推进_互不串扰() {
         positions.save(DefaultProjectionPosition.zero(ORDER_SUMMARY));
@@ -146,6 +173,9 @@ class ProjectionPositionJdbiIT {
                 .containsExactlyInAnyOrder(ORDER_SUMMARY, INVENTORY_SNAPSHOT);
     }
 
+    /**
+     * 验证<code>positions.findByStreamId(ORDER_SUMMARY)</code>为空，<code>saved.getStreamId()</code> 等于 <code>ORDER_SUMMARY</code>，<code>positions.findAll()</code>为空。
+     */
     @Test
     void save不存在则插入存在则更新_delete后不可见() {
         // save（缺行）→ MERGE INTO 插入（dispatcher 首次推进路径依赖的 upsert 语义）

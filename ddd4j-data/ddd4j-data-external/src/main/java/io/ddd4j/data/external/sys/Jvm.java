@@ -29,6 +29,9 @@ import java.time.format.DateTimeFormatter;
  */
 @Data
 public class Jvm {
+    /**
+     * 格式化 JVM 启动时间的日期时间格式器。
+     */
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     /**

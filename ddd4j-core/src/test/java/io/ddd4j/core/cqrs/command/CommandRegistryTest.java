@@ -35,8 +35,14 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class CommandRegistryTest {
 
+    /**
+     * 当前用例注册被测组件和观察指标的容器。
+     */
     private final CommandRegistry registry = new CommandRegistry();
 
+    /**
+     * 验证<code>found</code> 与…为同一实例 <code>executor</code>。
+     */
     @Test
     void registeredExecutorIsFoundByExactCommandType() {
         CreateOrderCmdExe executor = new CreateOrderCmdExe();
@@ -47,6 +53,9 @@ class CommandRegistryTest {
         assertSame(executor, found, "findExecutor should return the registered executor instance");
     }
 
+    /**
+     * 验证<code>registry.findExecutor(CancelOrderCommand.class)</code>为空。
+     */
     @Test
     void findExecutorReturnsNullForUnregisteredCommandType() {
         registry.register(new CreateOrderCmdExe());
@@ -55,11 +64,17 @@ class CommandRegistryTest {
                 "unregistered command type should yield null (bus layer owns the missing-executor error)");
     }
 
+    /**
+     * 验证<code>registry.register(null)</code> 抛出 <code>NullPointerException.class</code>。
+     */
     @Test
     void registerRejectsNullExecutor() {
         assertThrows(NullPointerException.class, () -> registry.register(null));
     }
 
+    /**
+     * 验证<code>registry.register(new CreateOrderCmdExe())</code> 抛出 <code>IllegalStateException.class</code>，<code>ex</code> 的异常消息包含 <code>CreateOrderCommand.class.getName()</code>。
+     */
     @Test
     void duplicateCommandTypeRegistrationThrowsIllegalStateWithCommandName() {
         registry.register(new CreateOrderCmdExe());
@@ -70,6 +85,9 @@ class CommandRegistryTest {
         assertThat(ex).hasMessageContaining(CreateOrderCommand.class.getName());
     }
 
+    /**
+     * 验证<code>registry.register(multiTypeExecutor)</code> 抛出 <code>IllegalStateException.class</code>，<code>ex</code> 的异常消息包含 <code>CreateOrderCommand.class.getName()</code>，<code>registry.executors()</code> 的大小为 <code>1</code>。
+     */
     @Test
     void conflictingBatchRegistrationIsRejectedEntirely() {
         CreateOrderCmdExe original = new CreateOrderCmdExe();
@@ -88,6 +106,9 @@ class CommandRegistryTest {
                 .doesNotContain(multiTypeExecutor);
     }
 
+    /**
+     * 验证<code>registry.executors().add(new CancelOrderCmdExe())</code> 抛出 <code>UnsupportedOperationException.class</code>。
+     */
     @Test
     void executorsViewIsImmutable() {
         registry.register(new CreateOrderCmdExe());
@@ -96,6 +117,9 @@ class CommandRegistryTest {
                 () -> registry.executors().add(new CancelOrderCmdExe()));
     }
 
+    /**
+     * 验证<code>registry.findExecutor(CreateOrderCommand.class)</code> 与…为同一实例 <code>createExecutor</code>，<code>registry.findExecutor(CancelOrderCommand.class)</code> 与…为同一实例 <code>cancelExecutor</code>，<code>registry.executors()</code> 的大小为 <code>3</code>。
+     */
     @Test
     void multipleExecutorsRouteToTheirOwnCommandTypes() {
         CreateOrderCmdExe createExecutor = new CreateOrderCmdExe();
@@ -115,6 +139,9 @@ class CommandRegistryTest {
                 .containsOnlyOnce(multiTypeExecutor);
     }
 
+    /**
+     * 验证<code>snapshot</code> 按顺序仅包含 <code>original</code>，<code>registry.executors()</code> 仅包含 <code>original</code>、<code>later</code>。
+     */
     @Test
     void executorsCollectionIsASnapshotOfCompletedRegistrations() {
         CreateOrderCmdExe original = new CreateOrderCmdExe();
@@ -128,6 +155,9 @@ class CommandRegistryTest {
         assertThat(registry.executors()).containsExactlyInAnyOrder(original, later);
     }
 
+    /**
+     * 验证<code>registry.register(original)</code> 抛出 <code>IllegalStateException.class</code>，<code>registry.findExecutor(CreateOrderCommand.class)</code> 与…为同一实例 <code>original</code>，<code>registry.executors()</code> 按顺序仅包含 <code>original</code>。
+     */
     @Test
     void registeringTheSameExecutorTwicePreservesTheOriginalRegistration() {
         CreateOrderCmdExe original = new CreateOrderCmdExe();
@@ -139,43 +169,94 @@ class CommandRegistryTest {
         assertThat(registry.executors()).containsExactly(original);
     }
 
+    /**
+     * 验证<code>registry.findExecutor(null)</code> 抛出 <code>NullPointerException.class</code>。
+     */
     @Test
     void findExecutorRejectsNullCommandType() {
         assertThrows(NullPointerException.class, () -> registry.findExecutor(null));
     }
 
+    /**
+     * 供命令总线验证类型匹配和分发的命令样本。
+     */
     static class CreateOrderCommand implements Command {
     }
 
+    /**
+     * 用于验证取消订单命令路由的样本。
+     */
     static class CancelOrderCommand implements Command {
     }
 
+    /**
+     * 用于验证订单发运命令路由的样本。
+     */
     static class ShipOrderCommand implements Command {
     }
 
+    /**
+     * 供命令总线验证类型匹配和分发的命令样本。
+     */
     static class TrackOrderCommand implements Command {
     }
 
+    /**
+     * 接收测试命令并返回可断言结果的执行器替身。
+     */
     static class CreateOrderCmdExe implements CommandExecutor<CreateOrderCommand> {
 
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>Collections.&lt;Class&lt;? extends Command&gt;&gt;singleton(CreateOrderCommand.class)</code>。</p>
+         *
+         * @return 实际返回<code>Collections.&lt;Class&lt;? extends Command&gt;&gt;singleton(CreateOrderCommand.class)</code>
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.<Class<? extends Command>>singleton(CreateOrderCommand.class);
         }
 
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>Result.ok()</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>Result.ok()</code>
+         */
         @Override
         public Result execute(CreateOrderCommand command) {
             return Result.ok();
         }
     }
 
+    /**
+     * 接收测试命令并返回可断言结果的执行器替身。
+     */
     static class CancelOrderCmdExe implements CommandExecutor<CancelOrderCommand> {
 
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>Collections.&lt;Class&lt;? extends Command&gt;&gt;singleton(CancelOrderCommand.class)</code>。</p>
+         *
+         * @return 实际返回<code>Collections.&lt;Class&lt;? extends Command&gt;&gt;singleton(CancelOrderCommand.class)</code>
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.<Class<? extends Command>>singleton(CancelOrderCommand.class);
         }
 
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>Result.fail("cancelled")</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>Result.fail("cancelled")</code>
+         */
         @Override
         public Result execute(CancelOrderCommand command) {
             return Result.fail("cancelled");
@@ -188,12 +269,27 @@ class CommandRegistryTest {
      */
     static class OrderLifecycleCmdExe implements CommandExecutor<Command> {
 
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>Arrays.&lt;Class&lt;? extends Command&gt;&gt;asList(CancelOrderCommand.class, CreateOrderCommand.class)</code>。</p>
+         *
+         * @return 支持的命令类型集合
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return new LinkedHashSet<>(Arrays.<Class<? extends Command>>asList(
                     CancelOrderCommand.class, CreateOrderCommand.class));
         }
 
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>Result.ok()</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>Result.ok()</code>
+         */
         @Override
         public Result execute(Command command) {
             return Result.ok();
@@ -206,12 +302,27 @@ class CommandRegistryTest {
      */
     static class OrderFulfillmentCmdExe implements CommandExecutor<Command> {
 
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>Arrays.&lt;Class&lt;? extends Command&gt;&gt;asList(ShipOrderCommand.class, TrackOrderCommand.class)</code>。</p>
+         *
+         * @return 支持的命令类型集合
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return new HashSet<>(Arrays.<Class<? extends Command>>asList(
                     ShipOrderCommand.class, TrackOrderCommand.class));
         }
 
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>Result.ok()</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>Result.ok()</code>
+         */
         @Override
         public Result execute(Command command) {
             return Result.ok();

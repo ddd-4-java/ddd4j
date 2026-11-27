@@ -13,8 +13,13 @@ import javax.sql.DataSource;
 import java.time.Clock;
 import java.util.Objects;
 
-/** 组装商品交易 HTTP 适配器、应用服务和四表持久化。 */
+/**
+ * 组装商品交易 HTTP 适配器、应用服务和四表持久化。
+ */
 public final class CatalogRuntime {
+    /**
+     * 将商品交易领域事件转发给运行框架的发布器。
+     */
     private static final DomainEventPublisher FRAMEWORK_EVENTS = new DomainEventPublisher() {
         @Override
         public <ID extends EntityId> void publish(DomainEvent<ID> event) {
@@ -22,38 +27,96 @@ public final class CatalogRuntime {
         }
     };
 
+    /**
+     * 限制工具类实例化。
+     */
     private CatalogRuntime() {
     }
 
+    /**
+     * 读取环境中的数据库配置并装配商品交易入口。
+     *
+     * @return 商品交易入口
+     */
     public static CatalogApi start() {
         return start(FRAMEWORK_EVENTS);
     }
 
+    /**
+     * 读取环境中的数据库配置并装配商品交易入口。
+     *
+     * @param publisher 框架原生领域事件发布器
+     * @return 商品交易入口
+     */
     public static CatalogApi start(DomainEventPublisher publisher) {
         return start(required("CATALOG_JDBC_URL"), required("CATALOG_DB_USER"), required("CATALOG_DB_PASSWORD"), publisher);
     }
 
+    /**
+     * 初始化商品交易四表并装配示例入口。
+     *
+     * @param url      四表所在的 MySQL JDBC URL
+     * @param username 数据库用户名
+     * @param password 数据库密码
+     * @return 商品交易入口
+     */
     public static CatalogApi start(String url, String username, String password) {
         return start(url, username, password, FRAMEWORK_EVENTS);
     }
 
+    /**
+     * 初始化商品交易四表并装配示例入口。
+     *
+     * @param url       四表所在的 MySQL JDBC URL
+     * @param username  数据库用户名
+     * @param password  数据库密码
+     * @param publisher 框架原生领域事件发布器
+     * @return 商品交易入口
+     */
     public static CatalogApi start(String url, String username, String password, DomainEventPublisher publisher) {
         return assemble(CatalogDatabase.open(url, username, password), publisher);
     }
 
+    /**
+     * 初始化商品交易四表并装配示例入口。
+     *
+     * @param source 用于初始化和事务的数据源
+     * @return 商品交易入口
+     */
     public static CatalogApi start(DataSource source) {
         return start(source, FRAMEWORK_EVENTS);
     }
 
+    /**
+     * 初始化商品交易四表并装配示例入口。
+     *
+     * @param source    用于初始化和事务的数据源
+     * @param publisher 框架原生领域事件发布器
+     * @return 商品交易入口
+     */
     public static CatalogApi start(DataSource source, DomainEventPublisher publisher) {
         return assemble(CatalogDatabase.open(source), publisher);
     }
 
+    /**
+     * 使用指定事务入口、发布器和 UTC 时钟组装商品交易用例。
+     *
+     * @param transactions 商品交易的事务入口
+     * @param publisher    领域事件发布器
+     * @return 供各运行框架复用的商品交易 HTTP 操作
+     */
     private static CatalogApi assemble(TradeSession.Transactions transactions, DomainEventPublisher publisher) {
         var service = new CatalogService(transactions, Objects.requireNonNull(publisher), Clock.systemUTC());
         return new CatalogApi(service);
     }
 
+    /**
+     * 读取一个必填的运行环境变量。
+     *
+     * @param key 环境变量名
+     * @return 配置的非空白变量值
+     * @throws IllegalStateException 环境变量没有配置或只包含空白
+     */
     private static String required(String key) {
         String value = System.getenv(key);
         if (StrKit.isBlank(value)) {

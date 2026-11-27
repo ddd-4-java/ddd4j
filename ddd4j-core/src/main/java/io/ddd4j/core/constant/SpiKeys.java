@@ -97,6 +97,9 @@ public final class SpiKeys {
      */
     public static final String TRANSACTION_PORT = PREFIX + "tx.TransactionPort";
 
+    /**
+     * 限制调用方直接创建 <code>SpiKeys</code> 实例。
+     */
     private SpiKeys() {
     }
 }

@@ -29,6 +29,8 @@ public interface RoleRepository extends Repository<Role, String> {
 
     /**
      * 查询全部角色。
+     *
+     * @return 仓储中已有的角色集合
      */
     List<Role> findAll();
 

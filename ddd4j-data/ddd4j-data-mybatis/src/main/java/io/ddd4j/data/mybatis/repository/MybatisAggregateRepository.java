@@ -132,6 +132,9 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
         registerToRegistry();
     }
 
+    /**
+     * inherit。
+     */
     private void registerToRegistry() {
         if (Objects.nonNull(modelClass) && Objects.nonNull(queryClass)) {
             RepositoryRegistry.register(modelClass, queryClass, this);
@@ -142,6 +145,14 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
 
     // ========================= Repository SPI 实现 =========================
 
+    /**
+     * 按主键读取领域对象或持久化记录。
+     *
+     * <p>MyBatis 实现调用 <code>Optional.empty()</code>。</p>
+     *
+     * @param id 当前操作使用的记录主键或业务标识
+     * @return 实际返回<code>Optional.empty()</code>
+     */
     @Override
     public Optional<M> findById(ID id) {
         if (Objects.isNull(id)) {
@@ -150,6 +161,14 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
         return Optional.ofNullable(baseMapper.selectById(id)).map(this::toModel);
     }
 
+    /**
+     * 写入或更新给定的领域对象或存储记录。
+     *
+     * <p>MyBatis 实现调用 <code>toPersistenceObject(aggregate)</code>。</p>
+     *
+     * @param aggregate 传给 <code>toPersistenceObject(aggregate)</code>
+     * @return 实际返回<code>toModel(po)</code>
+     */
     @Override
     public M save(M aggregate) {
         Objects.requireNonNull(aggregate, "aggregate must not be null");
@@ -166,6 +185,9 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
 
     /**
      * 仅按主键更新（不插入），对齐 {@code BaseMapper.updateById}。
+     *
+     * @param aggregate 待写入的聚合
+     * @return 更新后的聚合
      */
     @Override
     public M updateById(M aggregate) {
@@ -178,6 +200,9 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
 
     /**
      * 主键存在则更新，否则插入（与 {@code save} 同为 upsert 语义）。
+     *
+     * @param aggregate 待写入的聚合
+     * @return 插入或更新后的聚合
      */
     @Override
     public M insertOrUpdate(M aggregate) {
@@ -188,6 +213,8 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
      * 按标识删除。
      *
      * <p>对有效主键调用具体仓储绑定的删除 SQL。</p>
+     *
+     * @param id 聚合主键
      */
     @Override
     public void deleteById(ID id) {
@@ -196,6 +223,14 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
         }
     }
 
+    /**
+     * 批量读取指定主键对应的记录。
+     *
+     * <p>MyBatis 实现调用 <code>ids.isEmpty()</code>。</p>
+     *
+     * @param ids 要查询、更新或删除的记录标识集合
+     * @return 与给定主键相匹配的记录
+     */
     @Override
     public List<M> findByIds(Collection<ID> ids) {
         if (Objects.isNull(ids) || ids.isEmpty()) {
@@ -208,6 +243,9 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
      * 按标识批量删除。
      *
      * <p>与 {@link #deleteById(Serializable)} 相同，删除 SQL 必须由业务仓储显式实现。
+     *
+     * @param ids 待删除的聚合主键集合
+     * @return 删除操作影响的记录数
      */
     @Override
     public int deleteByIds(Collection<ID> ids) {
@@ -217,6 +255,14 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
         return deleteRows(ids);
     }
 
+    /**
+     * 批量保存传入的对象。
+     *
+     * <p>MyBatis 实现调用 <code>aggregates.isEmpty()</code>。</p>
+     *
+     * @param aggregates 传给 <code>aggregates.isEmpty()</code>
+     * @return 根据执行路径返回<code>Collections.emptyList()</code>、<code>result</code>
+     */
     @Override
     public List<M> saveBatch(Collection<M> aggregates) {
         if (Objects.isNull(aggregates) || aggregates.isEmpty()) {
@@ -232,6 +278,14 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
         return result;
     }
 
+    /**
+     * 按主键批量更新数据。
+     *
+     * <p>MyBatis 实现调用 <code>aggregates.isEmpty()</code>。</p>
+     *
+     * @param aggregates 传给 <code>aggregates.isEmpty()</code>
+     * @return 根据执行路径返回<code>0</code>、<code>count</code>
+     */
     @Override
     public int updateBatchById(Collection<M> aggregates) {
         if (Objects.isNull(aggregates) || aggregates.isEmpty()) {
@@ -247,6 +301,14 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
         return count;
     }
 
+    /**
+     * 批量写入数据，根据各记录是否存在选择插入或更新。
+     *
+     * <p>MyBatis 实现调用 <code>aggregates.isEmpty()</code>。</p>
+     *
+     * @param aggregates 传给 <code>aggregates.isEmpty()</code>
+     * @return 根据执行路径返回<code>0</code>、<code>count</code>
+     */
     @Override
     public int insertOrUpdateBatch(Collection<M> aggregates) {
         if (Objects.isNull(aggregates) || aggregates.isEmpty()) {
@@ -260,16 +322,37 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
         return count;
     }
 
+    /**
+     * 读取满足条件的第一条记录。
+     *
+     * <p>MyBatis 实现调用 <code>selectRows(null, 0, 1).stream().findFirst()</code>。</p>
+     *
+     * @return 第一个匹配条件的结果
+     */
     @Override
     public Optional<M> findFirst() {
         return selectRows(null, 0, 1).stream().findFirst().map(this::toModel);
     }
 
+    /**
+     * 查询存储中符合条件的记录。
+     *
+     * <p>MyBatis 实现调用 <code>convert(baseMapper.selectList())</code>。</p>
+     *
+     * @return 满足条件的结果列表
+     */
     @Override
     public List<M> findAll() {
         return convert(baseMapper.selectList());
     }
 
+    /**
+     * 统计符合查询范围的数据数量。
+     *
+     * <p>MyBatis 实现调用 <code>countRows(null)</code>。</p>
+     *
+     * @return 满足筛选条件的记录数量
+     */
     @Override
     public long count() {
         return countRows(null);
@@ -277,6 +360,14 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
 
     // ========================= 充血查询（需子类提供条件 SQL） =========================
 
+    /**
+     * 根据分页参数和查询条件读取结果。
+     *
+     * <p>MyBatis 实现调用 <code>Math.max(1L, query.getCurrent())</code>。</p>
+     *
+     * @param query 交给查询处理器或仓储的查询条件
+     * @return 实际返回<code>Page.succeed(records, countRows(query), current, size)</code>
+     */
     @Override
     public Page<M> page(Query<M> query) {
         Objects.requireNonNull(query, "query");
@@ -288,11 +379,27 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
         return Page.succeed(records, countRows(query), current, size);
     }
 
+    /**
+     * 统计符合查询范围的数据数量。
+     *
+     * <p>MyBatis 实现调用 <code>countRows(Objects.requireNonNull(query, "query"))</code>。</p>
+     *
+     * @param query 交给查询处理器或仓储的查询条件
+     * @return 满足筛选条件的记录数量
+     */
     @Override
     public long count(Query<M> query) {
         return countRows(Objects.requireNonNull(query, "query"));
     }
 
+    /**
+     * 读取满足条件的第一条记录。
+     *
+     * <p>MyBatis 实现调用 <code>convert(selectRows(Objects.requireNonNull(query, "query"), 0, 1))</code>。</p>
+     *
+     * @param query 交给查询处理器或仓储的查询条件
+     * @return 第一个匹配条件的结果
+     */
     @Override
     public Optional<M> findFirst(Query<M> query) {
         List<M> list = convert(selectRows(Objects.requireNonNull(query, "query"), 0, 1));
@@ -300,6 +407,14 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
         return list.isEmpty() ? Optional.empty() : Optional.of(list.get(0));
     }
 
+    /**
+     * 按查询条件读取记录列表。
+     *
+     * <p>MyBatis 实现调用 <code>convert(selectRows(Objects.requireNonNull(query, "query"), 0, -1))</code>。</p>
+     *
+     * @param query 交给查询处理器或仓储的查询条件
+     * @return 满足条件的结果列表
+     */
     @Override
     public List<M> findList(Query<M> query) {
         List<M> records = convert(selectRows(Objects.requireNonNull(query, "query"), 0, -1));
@@ -307,6 +422,12 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
         return records;
     }
 
+    /**
+     * 通过<code>findList(query).stream()</code>、<code>findList(query)</code>处理当前调用。
+     *
+     * @param query 交给查询处理器或仓储的查询条件
+     * @return 此操作产生的<code>List&lt;Map&lt;String, Object&gt;&gt;</code>结果
+     */
     @Override
     public List<Map<String, Object>> maps(Query<M> query) {
         return findList(query).stream()
@@ -314,6 +435,15 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
                 .collect(java.util.stream.Collectors.toList());
     }
 
+    /**
+     * 更新已经存在的记录。
+     *
+     * <p>MyBatis 实现调用 <code>findList(query)</code>。</p>
+     *
+     * @param aggregate 传给 <code>toPersistenceObject((M)aggregate)</code>
+     * @param query     交给查询处理器或仓储的查询条件
+     * @return 实际返回<code>!targets.isEmpty()</code>
+     */
     @Override
     public boolean update(AggregateRoot<?> aggregate, Query<M> query) {
         // 默认行为：逐条匹配后更新
@@ -327,6 +457,14 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
         return !targets.isEmpty();
     }
 
+    /**
+     * 删除匹配查询条件的记录。
+     *
+     * <p>MyBatis 实现调用 <code>findList(query)</code>。</p>
+     *
+     * @param query 交给查询处理器或仓储的查询条件
+     * @return 实际返回<code>!targets.isEmpty()</code>
+     */
     @Override
     public boolean deleteByQuery(Query<M> query) {
         List<M> targets = findList(query);
@@ -339,6 +477,12 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
         return !targets.isEmpty();
     }
 
+    /**
+     * 接收<code>fill</code>回调，当前实现无需在此步骤更新状态。
+     *
+     * @param query 交给查询处理器或仓储的查询条件
+     * @param model 用于此操作的 <code>model</code>（<code>AggregateRoot&lt;?&gt;</code>）
+     */
     @Override
     public void fill(Query<M> query, AggregateRoot<?> model) {
         // 业务仓储按需覆盖
@@ -380,6 +524,14 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
 
     // ========================= DomainObjectMapper =========================
 
+    /**
+     * 将持久化对象转换为领域模型。
+     *
+     * <p>MyBatis 实现调用 <code>BeanKit.copy(persistenceObject, modelClass)</code>。</p>
+     *
+     * @param persistenceObject 传给 <code>BeanKit.copy(persistenceObject, modelClass)</code>
+     * @return 由持久化数据构造的领域模型
+     */
     @Override
     public M toModel(P persistenceObject) {
         if (Objects.isNull(persistenceObject)) {
@@ -388,6 +540,14 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
         return BeanKit.copy(persistenceObject, modelClass);
     }
 
+    /**
+     * 将领域模型转换为仓储使用的持久化对象。
+     *
+     * <p>MyBatis 实现调用 <code>BeanKit.copy(model, persistenceClass)</code>。</p>
+     *
+     * @param model 传给 <code>BeanKit.copy(model, persistenceClass)</code>
+     * @return 由领域模型生成的持久化对象
+     */
     @Override
     public P toPersistenceObject(M model) {
         if (Objects.isNull(model)) {
@@ -479,6 +639,12 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
         }
     }
 
+    /**
+     * 按字段类型和注解写入缺省时间或当前租户信息。
+     *
+     * @param po    当前要写入或填充的持久化对象
+     * @param field 待处理的 Java 反射字段
+     */
     private void fillField(P po, Field field) {
         try {
             field.setAccessible(true);
@@ -500,6 +666,14 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
         }
     }
 
+    /**
+     * 把文本上下文值转换为字段声明支持的字符串或整数类型。
+     *
+     * @param po    当前要写入或填充的持久化对象
+     * @param field 待处理的 Java 反射字段
+     * @param value 当前条件操作数或待写入字段值
+     * @throws IllegalAccessException 无法写入目标反射字段
+     */
     private void setContextValue(P po, Field field, String value) throws IllegalAccessException {
         if (field.getType() == String.class) {
             field.set(po, value);
@@ -539,6 +713,12 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
         return (Serializable) SystemMetaObject.forObject(entity).getValue(persistenceIdProperty());
     }
 
+    /**
+     * 将领域模型主键复制到持久化对象的主键字段。
+     *
+     * @param po       当前要写入或填充的持久化对象
+     * @param template 提供主键值的领域模型
+     */
     private void setIdValue(P po, M template) {
         Serializable id = Objects.requireNonNull(extractId(template), "Matched model must have an identity");
         SystemMetaObject.forObject(po).setValue(persistenceIdProperty(), id);
@@ -584,6 +764,15 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
         return "id";
     }
 
+    /**
+     * 由 MyBatis Mapper 方法及参数类型定位已注册的 SQL 语句。
+     *
+     * @param configuration 当前 MyBatis 映射配置
+     * @param mapperType    声明持久化操作的 Mapper 接口类型
+     * @param methodName    要查找的 Mapper 方法名称
+     * @param parameterType Mapper 方法的参数类型
+     * @return 解析得到的 MyBatis 语句配置
+     */
     private MappedStatement mappedStatement(Configuration configuration, Class<?> mapperType,
                                             String methodName, Class<?> parameterType) {
         try {
@@ -596,6 +785,12 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
         }
     }
 
+    /**
+     * 将聚合对象转换为字段名和值组成的映射。
+     *
+     * @param model 待处理的领域模型
+     * @return 聚合的属性映射
+     */
     private Map<String, Object> toMap(M model) {
         Map<String, Object> map = new LinkedHashMap<>();
         for (Field field : FieldUtils.getAllFieldsList(model.getClass())) {
@@ -610,6 +805,10 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
 
     /**
      * 反射解析泛型参数的实际类型。
+     *
+     * @param index 泛型实参的索引
+     * @param <C>   解析得到的泛型实参类型
+     * @return 解析出的实参类型
      */
     private <C> Class<C> resolveClassArg(int index) {
         Class<?> current = getClass();

@@ -2,7 +2,8 @@
 
 ## 当前商品交易入口
 
-此模块以 Shiro 方式运行共享商品交易。先按[示例总览](../README.md#启动默认订单示例)配置 MySQL。以下命令从仓库根目录运行，使用实际 Maven 版本替换 `<version>`。
+此模块以 Shiro 方式运行共享商品交易。先按[示例总览](../README.md#启动默认订单示例)配置 MySQL。以下命令从仓库根目录运行，使用实际
+Maven 版本替换 `<version>`。
 
 ```bash
 module=ddd4j-samples/ddd4j-sample-javalin-shiro
@@ -10,18 +11,22 @@ module=ddd4j-samples/ddd4j-sample-javalin-shiro
 java -cp "$module/target/ddd4j-sample-javalin-shiro-<version>.jar:$(cat "$module/target/runtime-classpath.txt")" io.ddd4j.sample.javalin.shiro.JavalinShiroApplication
 ```
 
-业务请求携带 `X-Tenant-Id`。商品地址为 `/orders/catalog/goods/{spuCode}`，订单地址为 `/orders/catalog/orders/{orderNo}`。支付、取消和履约分别使用订单子路径 `/payment`、`/cancel`、`/fulfill`。
+业务请求携带 `X-Tenant-Id`。商品地址为 `/orders/catalog/goods/{spuCode}`，订单地址为 `/orders/catalog/orders/{orderNo}`
+。支付、取消和履约分别使用订单子路径 `/payment`、`/cancel`、`/fulfill`。
 
-本地演示登录使用 `POST /auth/login`，请求体为 `{"loginId":"zhangsan","password":"pass123"}`。将令牌放入 `ddd4j-token: <token>` 请求头。
+本地演示登录使用 `POST /auth/login`，请求体为 `{"loginId":"zhangsan","password":"pass123"}`。将令牌放入
+`ddd4j-token: <token>` 请求头。
 
 <details>
 <summary>商品交易迁移前的说明</summary>
 
-示例在 Guice 中装配 Shiro、`SubjectKit` 和共享订单服务。订单端点位于 `/orders`，支付和取消分别按 `order:pay`、`order:cancel` 检查权限。
+示例在 Guice 中装配 Shiro、`SubjectKit` 和共享订单服务。订单端点位于 `/orders`，支付和取消分别按 `order:pay`、`order:cancel`
+检查权限。
 
 ## 构建和启动
 
-在仓库根目录使用当前发行线的 JDK 和 Maven Wrapper。将 `<version>` 换成 `target` 中实际 JAR 的版本。主入口使用端口 `7000`，一次启动一个认证示例。
+在仓库根目录使用当前发行线的 JDK 和 Maven Wrapper。将 `<version>` 换成 `target` 中实际 JAR 的版本。主入口使用端口 `7000`
+，一次启动一个认证示例。
 
 ```bash
 module=ddd4j-samples/ddd4j-sample-javalin-shiro

@@ -2,7 +2,8 @@
 
 ## 当前商品交易入口
 
-此模块以 Sa-Token 方式运行共享商品交易。先按[示例总览](../README.md#启动默认订单示例)配置 MySQL。以下命令从仓库根目录运行，使用实际 Maven 版本替换 `<version>`。
+此模块以 Sa-Token 方式运行共享商品交易。先按[示例总览](../README.md#启动默认订单示例)配置 MySQL。以下命令从仓库根目录运行，使用实际
+Maven 版本替换 `<version>`。
 
 ```bash
 module=ddd4j-samples/ddd4j-sample-quarkus-satoken
@@ -10,14 +11,17 @@ module=ddd4j-samples/ddd4j-sample-quarkus-satoken
 java -jar "$module/target/quarkus-app/quarkus-run.jar"
 ```
 
-业务请求携带 `X-Tenant-Id`。商品地址为 `/orders/catalog/goods/{spuCode}`，订单地址为 `/orders/catalog/orders/{orderNo}`。支付、取消和履约分别使用订单子路径 `/payment`、`/cancel`、`/fulfill`。
+业务请求携带 `X-Tenant-Id`。商品地址为 `/orders/catalog/goods/{spuCode}`，订单地址为 `/orders/catalog/orders/{orderNo}`
+。支付、取消和履约分别使用订单子路径 `/payment`、`/cancel`、`/fulfill`。
 
-本地演示登录使用 `POST /auth/login`，请求体为 `{"username":"admin","password":"123456"}`。将令牌放入 `Authorization: Bearer <token>` 请求头。
+本地演示登录使用 `POST /auth/login`，请求体为 `{"username":"admin","password":"123456"}`。将令牌放入
+`Authorization: Bearer <token>` 请求头。
 
 <details>
 <summary>商品交易迁移前的说明</summary>
 
-本示例在 Quarkus 中组合 ddd4j 的订单、商品和 RBAC 场景，鉴权实现为 Sa-Token。三条 ddd4j 线使用各自的 JDK、Quarkus 与第三方依赖；本页描述三线共同的 HTTP 和业务行为。实际依赖版本以本线 pom.xml 和根 BOM 为准。
+本示例在 Quarkus 中组合 ddd4j 的订单、商品和 RBAC 场景，鉴权实现为 Sa-Token。三条 ddd4j 线使用各自的 JDK、Quarkus
+与第三方依赖；本页描述三线共同的 HTTP 和业务行为。实际依赖版本以本线 pom.xml 和根 BOM 为准。
 
 ## 运行与登录
 
@@ -34,7 +38,8 @@ java -jar "$module/target/quarkus-app/quarkus-run.jar"
 java -jar ddd4j-samples/ddd4j-sample-quarkus-satoken/target/quarkus-app/quarkus-run.jar
 ~~~
 
-应用配置端口为 8083。应用启动后，可使用 RbacConfig 创建的样例账号 admin/123456 登录；POST /auth/login 接受 JSON 用户名和密码，响应顶层含有 `token`。
+应用配置端口为 8083。应用启动后，可使用 RbacConfig 创建的样例账号 admin/123456 登录；POST /auth/login 接受 JSON
+用户名和密码，响应顶层含有 `token`。
 
 ~~~bash
 curl -s -X POST http://localhost:8083/auth/login \
@@ -42,16 +47,21 @@ curl -s -X POST http://localhost:8083/auth/login \
   -d '{"username":"admin","password":"123456"}'
 ~~~
 
-后续访问 GET /auth/me、GET /auth/check/permission?permission=user:list 等受保护接口时，在 Authorization 头传入 Bearer TOKEN（将 TOKEN 替换为登录响应中的 token）。GET /auth/status 可检查登录状态。用户名、密码、端口和请求格式均对应当前源码与 HTTP 测试。
+后续访问 GET /auth/me、GET /auth/check/permission?permission=user:list 等受保护接口时，在 Authorization 头传入 Bearer
+TOKEN（将 TOKEN 替换为登录响应中的 token）。GET /auth/status 可检查登录状态。用户名、密码、端口和请求格式均对应当前源码与 HTTP
+测试。
 
 ## 实现边界
 
 - 鉴权资源：src/main/java/io/ddd4j/sample/quarkus/satoken/rbac/AuthenticationResource.java；提供登录、登出、当前用户与权限/角色查询。
-- RBAC 业务：src/main/java/io/ddd4j/sample/quarkus/satoken/rbac/RbacService.java；校验用户与密码，通过 SubjectKit 签发 token 并读取当前身份。
+- RBAC 业务：src/main/java/io/ddd4j/sample/quarkus/satoken/rbac/RbacService.java；校验用户与密码，通过 SubjectKit 签发
+  token 并读取当前身份。
 - 样例数据：src/main/java/io/ddd4j/sample/quarkus/satoken/rbac/RbacConfig.java；启动时初始化用户、角色和权限。
 - Maven 依赖：ddd4j-auth-satoken 与 ddd4j-runtime-quarkus；Quarkus 1.x/3.x REST、CDI 和 JAX-RS 包名按本线 POM 与源码适配。
 
-Sa-Token 资源以鉴权注解保护接口，业务层通过 SubjectKit 访问当前 Subject。 POST /auth/orders/{id}/pay 演示 order:pay 权限，DELETE /auth/users/{id} 演示 admin 角色与 user:delete 权限；这些端点是鉴权演示，订单领域的业务写入使用下方 /orders 资源。
+Sa-Token 资源以鉴权注解保护接口，业务层通过 SubjectKit 访问当前 Subject。 POST /auth/orders/{id}/pay 演示 order:pay
+权限，DELETE /auth/users/{id} 演示 admin 角色与 user:delete 权限；这些端点是鉴权演示，订单领域的业务写入使用下方 /orders
+资源。
 
 ### 🛒 业务能力（Order + Goods）
 
@@ -133,10 +143,15 @@ curl 'http://localhost:8083/api/goods/page?current=1&size=10&status=ON_SALE&orde
 
 ## S03 原生共享订单入口
 
-原 `/orders`、Goods、RBAC 路由和 JSON DTO 保留。实际 CDI 入口复用 `ddd4j-sample-order-application` 与 `ddd4j-sample-order-local`，订单内存存储仅供演示，不证明持久化；旧直接构造器保留供既有消费者/测试使用。查询仍返回原完整明细和币种，折扣规则沿用原领域服务。
+原 `/orders`、Goods、RBAC 路由和 JSON DTO 保留。实际 CDI 入口复用 `ddd4j-sample-order-application` 与
+`ddd4j-sample-order-local`，订单内存存储仅供演示，不证明持久化；旧直接构造器保留供既有消费者/测试使用。查询仍返回原完整明细和币种，折扣规则沿用原领域服务。
 
-所有订单请求需要原生登录；写操作需要 `order:pay`，取消需要 `order:cancel`。权限基于原生已匹配资源方法，拒绝发生在业务写入前。`admin/123456` 有写/取消权限，`user/123456` 默认只读，演示账户仅用于本地样例。实际登录、角色/权限、退出令牌失效均由现有 native 引擎处理。
+所有订单请求需要原生登录；写操作需要 `order:pay`，取消需要 `order:cancel`。权限基于原生已匹配资源方法，拒绝发生在业务写入前。
+`admin/123456` 有写/取消权限，`user/123456` 默认只读，演示账户仅用于本地样例。实际登录、角色/权限、退出令牌失效均由现有
+native 引擎处理。
 
-Quarkus 1 使用 RESTEasy Classic 的请求完成回调，Quarkus 3 使用 Quarkus REST 的请求完成回调。响应过滤器和完成回调按请求所有权释放自身的 Sa-Token 上下文，并恢复请求前的上下文。各版本的同步 HTTP、鉴权拒绝、退出失效、断连及 JVM 启停验证见 [R14 实施计划](../../docs/superpowers/plans/2026-10-10-three-line-product-convergence.md#r14三线存储和多平台完整验收)。
+Quarkus 1 使用 RESTEasy Classic 的请求完成回调，Quarkus 3 使用 Quarkus REST 的请求完成回调。响应过滤器和完成回调按请求所有权释放自身的
+Sa-Token 上下文，并恢复请求前的上下文。各版本的同步 HTTP、鉴权拒绝、退出失效、断连及 JVM
+启停验证见 [R14 实施计划](../../docs/superpowers/plans/2026-10-10-three-line-product-convergence.md#r14三线存储和多平台完整验收)。
 
 </details>

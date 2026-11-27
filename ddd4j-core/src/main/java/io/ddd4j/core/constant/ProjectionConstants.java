@@ -81,6 +81,9 @@ public final class ProjectionConstants {
      */
     public static final String OTel_ATTR_STREAM_ID = "streamId";
 
+    /**
+     * 限制调用方直接创建 <code>ProjectionConstants</code> 实例。
+     */
     private ProjectionConstants() {
     }
 }

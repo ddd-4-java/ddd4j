@@ -119,6 +119,9 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
             };
         }
     };
+    /**
+     * 聚合当前尚未清理的领域事件。
+     */
     private transient List<DomainEvent<?>> domainEvents = new ArrayList<>();
 
     /**
@@ -402,6 +405,11 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
         return !mutableDomainEvents().isEmpty();
     }
 
+    /**
+     * 在第一次写入前初始化领域事件列表。
+     *
+     * @return 当前聚合可写入的领域事件列表
+     */
     private List<DomainEvent<?>> mutableDomainEvents() {
         if (Objects.isNull(domainEvents)) {
             domainEvents = new ArrayList<>();
@@ -435,6 +443,7 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
      *
      * @param event  领域事件
      * @param replay 是否处于历史回放（{@code loadFromHistory}）
+     * @param <E>    聚合可应用的领域事件类型
      * @return 传入的事件
      * @throws IllegalStateException 找不到对应事件类型的处理器，或反射调用失败
      */

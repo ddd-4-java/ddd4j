@@ -28,6 +28,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class SpringCoreConfigReadinessContractTest {
 
+    /**
+     * 验证<code>registry.contributors().size()</code> 等于 <code>2</code>，<code>registry.contributors().get(0)</code> 与…为同一实例 <code>context.getBean(EarlyContributor.class)</code>，<code>registry.readiness().ready()</code>为真。
+     */
     @Test
     void registersContributorsInSpringOrder() {
         try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext()) {
@@ -42,16 +45,36 @@ class SpringCoreConfigReadinessContractTest {
         }
     }
 
+    /**
+     * 向运行时测试提供可控的就绪状态。
+     */
     @Order(2)
     static final class LateContributor implements ReadinessContributor {
+        /**
+         * 执行当前实现对应的检查。
+         *
+         * <p>测试夹具会调用 <code>ReadinessResult.ready("late")</code>。</p>
+         *
+         * @return 实际返回<code>ReadinessResult.ready("late")</code>
+         */
         @Override
         public ReadinessResult check() {
             return ReadinessResult.ready("late");
         }
     }
 
+    /**
+     * 向运行时测试提供可控的就绪状态。
+     */
     @Order(1)
     static final class EarlyContributor implements ReadinessContributor {
+        /**
+         * 执行当前实现对应的检查。
+         *
+         * <p>测试夹具会调用 <code>ReadinessResult.ready("early")</code>。</p>
+         *
+         * @return 实际返回<code>ReadinessResult.ready("early")</code>
+         */
         @Override
         public ReadinessResult check() {
             return ReadinessResult.ready("early");

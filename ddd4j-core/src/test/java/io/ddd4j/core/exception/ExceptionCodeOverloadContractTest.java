@@ -12,14 +12,26 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class ExceptionCodeOverloadContractTest {
 
+    /**
+     * 构造本组测试输入时复用的固定键。
+     */
     private static final String KEY = "ddd4j.exception.overload.contract";
 
+    /**
+     * 核对<code>exception.getCode()</code> 等于 <code>code.getCode()</code>，<code>exception.getI18nCode()</code> 等于 <code>KEY</code>。
+     *
+     * @param exception 测试中捕获或传播的异常
+     * @param code      用于定位目标测试记录的业务编码
+     */
     private static void assertRuntime(BizRuntimeException exception, CustomApiCode code) {
         assertEquals(code.getCode(), exception.getCode());
         assertEquals(KEY, exception.getI18nCode());
         assertEquals(I18nKit.get(KEY, code.getReason()), exception.getMessage());
     }
 
+    /**
+     * 验证<code>exceptionType.getConstructor(ApiCode.class, String.class)</code> 正常返回，<code>exceptionType.getConstructor(CustomApiCode.class, String.class)</code> 正常返回。
+     */
     @Test
     void bothBinaryConstructorSignaturesArePublished() {
         Class<?>[] exceptionTypes = {
@@ -34,6 +46,9 @@ class ExceptionCodeOverloadContractTest {
         }
     }
 
+    /**
+     * 验证<code>checked.getCode()</code> 等于 <code>code.getCode()</code>，<code>checked.getI18nCode()</code> 等于 <code>KEY</code>，<code>checked.getMessage()</code> 等于 <code>I18nKit.get(KEY, code.getReason())</code>。
+     */
     @Test
     void standardApiCodeOverloadsPreserveCodeAndI18nKey() {
         ApiCode code = ApiCode.BAD_REQUEST;
@@ -50,6 +65,9 @@ class ExceptionCodeOverloadContractTest {
         assertRuntime(new RedisOperationException(code, KEY), code);
     }
 
+    /**
+     * 验证<code>checked.getCode()</code> 等于 <code>code.getCode()</code>，<code>checked.getI18nCode()</code> 等于 <code>KEY</code>，<code>checked.getMessage()</code> 等于 <code>I18nKit.get(KEY, code.getReason())</code>。
+     */
     @Test
     void customApiCodeOverloadsPreserveCodeAndI18nKey() {
         CustomApiCode code = new CustomApiCode() {
@@ -76,6 +94,9 @@ class ExceptionCodeOverloadContractTest {
         assertRuntime(new RedisOperationException(code, KEY), code);
     }
 
+    /**
+     * 验证被测调用 抛出 <code>NullPointerException.class</code>。
+     */
     @Test
     void typedNullCodeFailsWithoutChoosingAnotherOverload() {
         assertThrows(NullPointerException.class, () -> new BizIOException((ApiCode) null, KEY));

@@ -68,6 +68,9 @@ import java.util.function.Consumer;
 @Slf4j(topic = "### DDD4J-MQ : redisMQClient ###")
 public class RedisMQClient implements MQClient {
 
+    /**
+     * 当前适配器是否已开始工作。
+     */
     private final AtomicBoolean started = new AtomicBoolean(false);
     /**
      * 双构造：构造方法 1 直接持有外部注入的 Jedis 客户端（UnifiedJedis 形态）。
@@ -77,8 +80,17 @@ public class RedisMQClient implements MQClient {
      * 双构造：构造方法 2 持有 properties，第一次调用时 lazy 构造 Jedis。
      */
     private final RedisStreamMQProperties properties;
+    /**
+     * 协调消息客户端启动、初始化和关闭的生命周期。
+     */
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    /**
+     * 组件的启动状态和启动失败诊断信息。
+     */
     private final MQStartupStatus startupStatus = new MQStartupStatus("redis");
+    /**
+     * 保留待匹配回环通知的正在发送消息状态。
+     */
     BlockingQueue<MQEvent> SENDING_MSGS = new LinkedBlockingQueue<>();
     /**
      * lazy 构造的 Jedis（volatile 保证发布可见性）。
@@ -107,6 +119,8 @@ public class RedisMQClient implements MQClient {
 
     /**
      * 获取当前实例使用的 Jedis 客户端（注入优先，否则 lazy 构造）。
+     *
+     * @return 当前适配器使用的 Jedis 客户端
      */
     private UnifiedJedis jedis() {
         if (Objects.nonNull(injectedJedis)) {
@@ -127,16 +141,31 @@ public class RedisMQClient implements MQClient {
         return j;
     }
 
+    /**
+     * 返回此消息适配器在 DDD4J 中登记的实现名。
+     *
+     * @return 实际返回<code>"redis"</code>，供调用方取得当前值
+     */
     @Override
     public String impl() {
         return "redis";
     }
 
+    /**
+     * 返回管理连接、生产者和消费者资源的生命周期对象。
+     *
+     * @return 当前消息适配器用于登记和关闭资源的生命周期对象
+     */
     @Override
     public MQClientLifecycle lifecycle() {
         return lifecycle;
     }
 
+    /**
+     * 返回消息客户端当前记录的启动状态。
+     *
+     * @return 当前消息适配器记录的启动状态
+     */
     @Override
     public MQStartupStatus startupStatus() {
         return startupStatus;
@@ -144,6 +173,8 @@ public class RedisMQClient implements MQClient {
 
     /**
      * Redis Pubsub 默认拼接符 {@code :}（Redis 命名习惯）。
+     *
+     * @return 默认的频道名连接字符串
      */
     @Override
     public String defaultConcat() {
@@ -152,6 +183,14 @@ public class RedisMQClient implements MQClient {
 
     // ========================= 生产者 =========================
 
+    /**
+     * 准备消息生产者并返回可发布事件的入口。
+     *
+     * <p>此实现调用 <code>started.compareAndSet(false, true)</code>。</p>
+     *
+     * @param properties MQ 配置
+     * @return 接收待发布事件的函数
+     */
     @Override
     public Consumer<MQEvent> initProducer(MQProperties properties) {
         if (started.compareAndSet(false, true)) {
@@ -184,6 +223,16 @@ public class RedisMQClient implements MQClient {
 
     // ========================= 消费者 =========================
 
+    /**
+     * 为监听器建立消息消费所需的订阅和客户端资源。
+     *
+     * <p>此实现调用 <code>resolveTopic(listener, properties)</code>。</p>
+     *
+     * @param listener   监听器定义
+     * @param properties MQ 配置
+     * @return 此实现返回<code>true</code>
+     * @throws Exception 当前框架、存储或底层客户端无法完成此操作时
+     */
     @Override
     public boolean initConsumer(MQListener listener, MQProperties properties) throws Exception {
         // channel=namespace:topic[:tag]；多正向 tag 各订阅一份
@@ -251,6 +300,9 @@ public class RedisMQClient implements MQClient {
         return true;
     }
 
+    /**
+     * 释放消息客户端拥有的运行资源，并在退出时登记组件已停止。
+     */
     @Override
     public void close() {
         try {

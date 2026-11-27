@@ -48,8 +48,17 @@ public class KafkaMessageAcknowledgment implements Acknowledgment {
      */
     public static final String HEADER_KAFKA_RECORD = "ddd4j.kafka.record";
 
+    /**
+     * 当前工作线程轮询、消费或提交位点时使用的原生消费者。
+     */
     private final Consumer<?, ?> consumer;
+    /**
+     * 当前确认动作关联的 Kafka 原生记录。
+     */
     private final ConsumerRecord<?, ?> record;
+    /**
+     * 记录已确认消息的状态或结果。
+     */
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 
     /**
@@ -63,11 +72,25 @@ public class KafkaMessageAcknowledgment implements Acknowledgment {
         this.record = Objects.requireNonNull(record, "ConsumerRecord is required");
     }
 
+    /**
+     * 返回本次消息投递的标识。
+     *
+     * <p>Kafka 实现调用 <code>record.offset()</code>。</p>
+     *
+     * @return 当前投递的标记值
+     */
     @Override
     public long deliveryTag() {
         return record.offset();
     }
 
+    /**
+     * 返回收到的消息标识。
+     *
+     * <p>Kafka 实现调用 <code>header(MessageHeaders.HEADER_MESSAGE_ID)</code>。</p>
+     *
+     * @return 当前消息的标识
+     */
     @Override
     public String messageId() {
         String header = header(MessageHeaders.HEADER_MESSAGE_ID);
@@ -77,31 +100,65 @@ public class KafkaMessageAcknowledgment implements Acknowledgment {
         return Objects.isNull(header) ? record.topic() + "-" + record.partition() + "-" + record.offset() : header;
     }
 
+    /**
+     * 返回消息所属链路的关联标识。
+     *
+     * <p>Kafka 实现调用 <code>header(MessageHeaders.HEADER_CORRELATION_ID)</code>。</p>
+     *
+     * @return 当前消息关联的请求或事件标识
+     */
     @Override
     public String correlationId() {
         return header(MessageHeaders.HEADER_CORRELATION_ID);
     }
 
+    /**
+     * 检查当前投递的确认对象是否仍可用。
+     *
+     * @return 此实现返回<code>true</code>
+     */
     @Override
     public boolean isOpen() {
         return true;
     }
 
+    /**
+     * 判断当前投递是否已完成确认处理。
+     *
+     * <p>Kafka 实现调用 <code>acknowledged.get()</code>。</p>
+     *
+     * @return 此投递已经进入确认终态时为真
+     */
     @Override
     public boolean isAcknowledged() {
         return acknowledged.get();
     }
 
+    /**
+     * 返回当前投递所使用的消息中间件类型。
+     *
+     * @return 客户端或投递协议对应的 broker 枚举值
+     */
     @Override
     public BrokerType brokerType() {
         return BrokerType.KAFKA;
     }
 
+    /**
+     * 确认本次投递或将已处理的位置通知 broker。
+     *
+     * <p>Kafka 实现调用 <code>ack(false)</code>。</p>
+     */
     @Override
     public void ack() {
         ack(false);
     }
 
+    /**
+     * 通过底层消息会话更新当前投递的确认状态。
+     *
+     * @param multiple 是否批量确认至当前 tag
+     */
     @Override
     public synchronized void ack(boolean multiple) {
         if (!acknowledged.get()) {
@@ -113,11 +170,26 @@ public class KafkaMessageAcknowledgment implements Acknowledgment {
         }
     }
 
+    /**
+     * 向底层客户端报告本次投递处理失败，并按调用选项决定是否请求重新投递。
+     *
+     * <p>Kafka 实现调用 <code>nack(false, requeue)</code>。</p>
+     *
+     * @param requeue 是否重新入队
+     */
     @Override
     public void nack(boolean requeue) {
         nack(false, requeue);
     }
 
+    /**
+     * 向底层客户端报告本次投递处理失败，并按调用选项决定是否请求重新投递。
+     *
+     * <p>Kafka 实现调用 <code>ack(multiple)</code>。</p>
+     *
+     * @param multiple 是否批量否定
+     * @param requeue  是否重新入队
+     */
     @Override
     public void nack(boolean multiple, boolean requeue) {
         if (!requeue) {
@@ -125,11 +197,25 @@ public class KafkaMessageAcknowledgment implements Acknowledgment {
         }
     }
 
+    /**
+     * 拒绝当前投递，并按约定处理是否重新入队。
+     *
+     * <p>Kafka 实现调用 <code>nack(false, requeue)</code>。</p>
+     *
+     * @param requeue 是否重新入队
+     */
     @Override
     public void reject(boolean requeue) {
         nack(false, requeue);
     }
 
+    /**
+     * 请求底层消息会话恢复未处理的投递。
+     *
+     * <p>满足 <code>!requeue</code> 时抛出 <code>UnsupportedOperationException</code>。 Kafka 实现调用 <code>consumer.seek(new TopicPartition(record.topic(), record.partition()), record.offset())</code>。</p>
+     *
+     * @param requeue 是否重新入队
+     */
     @Override
     public void recover(boolean requeue) {
         if (!requeue) {
@@ -138,6 +224,15 @@ public class KafkaMessageAcknowledgment implements Acknowledgment {
         consumer.seek(new TopicPartition(record.topic(), record.partition()), record.offset());
     }
 
+    /**
+     * 取出适配器持有的底层投递或客户端对象。
+     *
+     * <p>Kafka 实现调用 <code>Optional.empty()</code>。</p>
+     *
+     * @param <T>        类型参数
+     * @param nativeType 原生类型
+     * @return 根据执行路径返回<code>Optional.empty()</code>、<code>Optional.of(nativeType.cast(consumer))</code>、<code>Optional.of(nativeType.cast(record))</code>
+     */
     @Override
     public <T> Optional<T> unwrap(Class<T> nativeType) {
         if (Objects.isNull(nativeType)) {
@@ -152,6 +247,12 @@ public class KafkaMessageAcknowledgment implements Acknowledgment {
         return Optional.empty();
     }
 
+    /**
+     * 读取 Kafka 记录中指定键的消息头。
+     *
+     * @param key 待查询的消息头或属性名称
+     * @return 解析得到的消息头值
+     */
     private String header(String key) {
         Header header = record.headers().lastHeader(key);
         if (Objects.isNull(header) || Objects.isNull(header.value())) {

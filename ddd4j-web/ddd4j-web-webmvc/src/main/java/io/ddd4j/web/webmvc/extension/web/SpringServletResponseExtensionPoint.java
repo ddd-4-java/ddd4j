@@ -33,7 +33,7 @@ public interface SpringServletResponseExtensionPoint extends ExtensionPoint {
     /**
      * 解包外部响应。
      *
-     * @param response HTTP 响应
+     * @param response   HTTP 响应
      * @param realParams 原始请求参数
      * @return 解包后的响应
      */
@@ -43,7 +43,7 @@ public interface SpringServletResponseExtensionPoint extends ExtensionPoint {
      * 解包外部响应。
      *
      * @param responseEntity 响应实体
-     * @param <T> 响应体类型
+     * @param <T>            响应体类型
      * @return 解包后的响应
      */
     <T> ResponseEntity<T> dewrap(ResponseEntity<T> responseEntity);

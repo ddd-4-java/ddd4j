@@ -24,6 +24,13 @@ import java.util.Objects;
  */
 public class Ddd4jSqlObservationSink implements SqlObservationSink, com.baomidou.mybatisplus.enhance.observation.SqlObservationSink {
 
+    /**
+     * 接收调用方提交的记录。
+     *
+     * <p>此实现调用 <code>observation.getMappedStatementId()</code>。</p>
+     *
+     * @param observation SQL 观测数据
+     */
     @Override
     public void accept(com.baomidou.mybatisplus.enhance.observation.SqlObservation observation) {
         if (Objects.nonNull(observation)) {
@@ -32,6 +39,13 @@ public class Ddd4jSqlObservationSink implements SqlObservationSink, com.baomidou
         }
     }
 
+    /**
+     * 接收调用方提交的记录。
+     *
+     * <p>此实现调用 <code>observation.sql()</code>。</p>
+     *
+     * @param observation SQL 观测数据
+     */
     @Override
     public void accept(SqlObservation observation) {
         if (Objects.isNull(observation)) {

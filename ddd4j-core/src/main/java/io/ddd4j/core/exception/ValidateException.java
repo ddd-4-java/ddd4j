@@ -49,6 +49,11 @@ public class ValidateException extends BizRuntimeException {
         super(ApiCode.BAD_REQUEST.getCode(), errorMsg);
     }
 
+    /**
+     * 把校验状态、错误消息和字段错误汇总为诊断文本。
+     *
+     * @return 当前校验异常的文本表示
+     */
     public String toString() {
         return (new StringJoiner(", ", ValidateException.class.getSimpleName() + "[", "]")).add("code=" + this.getCode()).add("msg=" + this.getMessage()).add("errorMap=" + this.errorMap).toString();
     }

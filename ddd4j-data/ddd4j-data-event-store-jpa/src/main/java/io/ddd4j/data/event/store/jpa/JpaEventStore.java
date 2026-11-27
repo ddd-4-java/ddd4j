@@ -57,12 +57,30 @@ import java.util.function.Supplier;
  */
 public class JpaEventStore implements EventStore {
 
+    /**
+     * JPQL 读写事件记录时使用的实体名称。
+     */
     private static final String ENTITY = "StoredEventEntity";
 
+    /**
+     * 执行 JPA 查询和持久化操作的实体管理器。
+     */
     private final EntityManager entityManager;
+    /**
+     * 按聚合及位置查询 JPA 事件记录的仓储。
+     */
     private final JpaStoredEventRepository repository;
+    /**
+     * 将领域事件负载写为存储格式并从存储格式恢复的序列化器。
+     */
     private final EventPayloadSerializer serializer;
+    /**
+     * 当前 JPA 事件存储采用的事务边界。
+     */
     private final TransactionMode transactionMode;
+    /**
+     * 托管事务写入失败时通知事务管理器标记回滚的动作。
+     */
     private final Runnable markRollbackOnly;
 
     /**
@@ -101,11 +119,28 @@ public class JpaEventStore implements EventStore {
         this(entityManager, repository, serializer, TransactionMode.INDEPENDENT);
     }
 
+    /**
+     * 按选定事务模式装配 JPA 事件存储。
+     *
+     * @param entityManager   执行持久化操作的实体管理器
+     * @param repository      读取已持久化事件的仓储
+     * @param serializer      事件负载的序列化器
+     * @param transactionMode 写入使用的事务模式
+     */
     private JpaEventStore(EntityManager entityManager, JpaStoredEventRepository repository,
                           EventPayloadSerializer serializer, TransactionMode transactionMode) {
         this(entityManager, repository, serializer, transactionMode, null);
     }
 
+    /**
+     * 为 JPA 存储装配读写组件和托管事务回滚标记。
+     *
+     * @param entityManager    执行持久化操作的实体管理器
+     * @param repository       读取已持久化事件的仓储
+     * @param serializer       事件负载的序列化器
+     * @param transactionMode  写入使用的事务模式
+     * @param markRollbackOnly 通知托管事务标记回滚的动作
+     */
     private JpaEventStore(EntityManager entityManager, JpaStoredEventRepository repository,
                           EventPayloadSerializer serializer, TransactionMode transactionMode,
                           Runnable markRollbackOnly) {
@@ -181,27 +216,34 @@ public class JpaEventStore implements EventStore {
     }
 
     /**
-     * {@inheritDoc}
+     * 向指定聚合的事件流追加这一批领域事件。
      *
-     * <p>乐观锁：先查询当前流最大版本，与 {@code expectedVersion} 不一致即抛
-     * {@link IllegalStateException}。同一聚合的 append 操作在同一事务内完成，
-     * 冲突时整体回滚，不留半截流。
+     * <p>\u4e50\u89c2\u9501\uff1a\u5148\u67e5\u8be2\u5f53\u524d\u6d41\u6700\u5927\u7248\u672c\uff0c\u4e0e {@code expectedVersion} \u4e0d\u4e00\u81f4\u5373\u629b
+     * {@link IllegalStateException}\u3002\u540c\u4e00\u805a\u5408\u7684 append \u64cd\u4f5c\u5728\u540c\u4e00\u4e8b\u52a1\u5185\u5b8c\u6210\uff0c
+     * \u51b2\u7a81\u65f6\u6574\u4f53\u56de\u6eda\uff0c\u4e0d\u7559\u534a\u622a\u6d41\u3002
      *
-     * <p>事务边界：默认模式在本方法内开启编程式事务；显式参与模式复用调用方事务。
+     * <p>\u4e8b\u52a1\u8fb9\u754c\uff1a\u9ed8\u8ba4\u6a21\u5f0f\u5728\u672c\u65b9\u6cd5\u5185\u5f00\u542f\u7f16\u7a0b\u5f0f\u4e8b\u52a1\uff1b\u663e\u5f0f\u53c2\u4e0e\u6a21\u5f0f\u590d\u7528\u8c03\u7528\u65b9\u4e8b\u52a1\u3002
      *
-     * <p><b>批量插入</b></p>
-     * <p>循环构造 entity 后，先 {@link EntityManager#flush()} 触发 Hibernate 批量 INSERT；
-     * 仅默认独立模式再通过 {@link EntityManager#clear()} 清空 persistence context。
-     * 默认独立模式的顺序很关键：先 flush 再 clear 才能让 Hibernate 把所有 INSERT 合并为批量 SQL。
+     * <p><b>\u6279\u91cf\u63d2\u5165</b></p>
+     * <p>\u5faa\u73af\u6784\u9020 entity \u540e\uff0c\u5148 {@link EntityManager#flush()} \u89e6\u53d1 Hibernate \u6279\u91cf INSERT\uff1b
+     * \u4ec5\u9ed8\u8ba4\u72ec\u7acb\u6a21\u5f0f\u518d\u901a\u8fc7 {@link EntityManager#clear()} \u6e05\u7a7a persistence context\u3002
+     * \u9ed8\u8ba4\u72ec\u7acb\u6a21\u5f0f\u7684\u987a\u5e8f\u5f88\u5173\u952e\uff1a\u5148 flush \u518d clear \u624d\u80fd\u8ba9 Hibernate \u628a\u6240\u6709 INSERT \u5408\u5e76\u4e3a\u6279\u91cf SQL\u3002
      *
-     * <p>批量插入需配合 Hibernate 配置生效：
+     * <p>\u6279\u91cf\u63d2\u5165\u9700\u914d\u5408 Hibernate \u914d\u7f6e\u751f\u6548\uff1a
      * <pre>{@code
-     * spring.jpa.properties.hibernate.jdbc.batch_size=50
-     * spring.jpa.properties.hibernate.order_inserts=true
-     * spring.jpa.properties.hibernate.order_updates=true
-     * }</pre>
+     *  spring.jpa.properties.hibernate.jdbc.batch_size=50
+     *  spring.jpa.properties.hibernate.order_inserts=true
+     *  spring.jpa.properties.hibernate.order_updates=true
+     *  }</pre>
      *
-     * <p>未配置 batch_size 时，每次 flush 仍会发出单条 INSERT（行为正确，但无性能提升）。
+     * <p>\u672a\u914d\u7f6e batch_size \u65f6\uff0c\u6bcf\u6b21 flush \u4ecd\u4f1a\u53d1\u51fa\u5355\u6761 INSERT\uff08\u884c\u4e3a\u6b63\u786e\uff0c\u4f46\u65e0\u6027\u80fd\u63d0\u5347\uff09\u3002
+     *
+     * <p>JPA 实现调用 <code>events.isEmpty()</code>。</p>
+     *
+     * @param aggregateType   聚合类型
+     * @param aggregateId     聚合 ID
+     * @param events          要追加的事件（非空列表）
+     * @param expectedVersion 期望的当前版本号（乐观锁，空流为 0）
      */
     @Override
     public void append(String aggregateType, AggregateRootId aggregateId,
@@ -255,10 +297,14 @@ public class JpaEventStore implements EventStore {
     }
 
     /**
-     * {@inheritDoc}
+     * 按聚合查询其事件流并还原已存储的事件。
      *
-     * <p>按版本升序读取指定聚合的全部事件。
-     * 事件载荷通过 {@link EventPayloadSerializer} 反序列化，事件类不存在时抛出异常。
+     * <p>\u6309\u7248\u672c\u5347\u5e8f\u8bfb\u53d6\u6307\u5b9a\u805a\u5408\u7684\u5168\u90e8\u4e8b\u4ef6\u3002
+     * \u4e8b\u4ef6\u8f7d\u8377\u901a\u8fc7 {@link EventPayloadSerializer} \u53cd\u5e8f\u5217\u5316\uff0c\u4e8b\u4ef6\u7c7b\u4e0d\u5b58\u5728\u65f6\u629b\u51fa\u5f02\u5e38\u3002
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId   聚合 ID
+     * @return 按版本升序的持久化事件；无事件时为空列表
      */
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId) {
@@ -271,6 +317,15 @@ public class JpaEventStore implements EventStore {
                 .toList());
     }
 
+    /**
+     * 按聚合查询其事件流并还原已存储的事件。
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId   聚合 ID
+     * @param fromVersion   起始版本号（含）
+     * @param toVersion     结束版本号（含）
+     * @return 版本区间内的持久化事件，按版本升序
+     */
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId,
                                   long fromVersion, long toVersion) {
@@ -283,9 +338,15 @@ public class JpaEventStore implements EventStore {
     }
 
     /**
-     * {@inheritDoc}
+     * 按全局位置读取用于投影或重放的存储事件。
      *
-     * <p>按全局 position 升序分页读取事件。
+     * <p>\u6309\u5168\u5c40 position \u5347\u5e8f\u5206\u9875\u8bfb\u53d6\u4e8b\u4ef6\u3002
+     *
+     * <p>满足 <code>limit &lt;= 0</code> 时抛出 <code>IllegalArgumentException</code>。</p>
+     *
+     * @param fromPosition 起始 position（含）
+     * @param limit        最大读取数量
+     * @return position 升序的持久化事件
      */
     @Override
     public List<StoredEvent> readAll(long fromPosition, int limit) {
@@ -299,6 +360,13 @@ public class JpaEventStore implements EventStore {
                 .toList());
     }
 
+    /**
+     * 根据配置选择独立、参与式或调用方托管的事务执行路径。
+     *
+     * @param <T>       事务操作的返回类型
+     * @param operation 在选定事务边界内运行的操作
+     * @return 事务操作结果
+     */
     private <T> T executeInTransaction(Supplier<T> operation) {
         if (transactionMode == TransactionMode.PARTICIPATING) {
             return executeParticipating(operation);
@@ -324,6 +392,14 @@ public class JpaEventStore implements EventStore {
         }
     }
 
+    /**
+     * 在已开启的资源本地事务内执行事件写入，失败时标记回滚。
+     *
+     * @param <T>       写入操作的返回类型
+     * @param operation 在选定事务边界内运行的操作
+     * @return 事件写入操作的返回结果
+     * @throws IllegalStateException 不存在可参与的调用方事务
+     */
     private <T> T executeParticipating(Supplier<T> operation) {
         EntityTransaction tx = entityManager.getTransaction();
         if (!tx.isActive()) {
@@ -337,6 +413,14 @@ public class JpaEventStore implements EventStore {
         }
     }
 
+    /**
+     * 使用已加入调用方事务的 EntityManager 执行写入。
+     *
+     * @param <T>       写入操作的返回类型
+     * @param operation 在选定事务边界内运行的操作
+     * @return 事件写入操作的返回结果
+     * @throws IllegalStateException 实体管理器尚未加入调用方事务
+     */
     private <T> T executeManaged(Supplier<T> operation) {
         if (!entityManager.isJoinedToTransaction()) {
             throw new IllegalStateException("An EntityManager joined to the caller transaction is required");
@@ -349,6 +433,12 @@ public class JpaEventStore implements EventStore {
         }
     }
 
+    /**
+     * 执行回滚标记，并将标记失败作为原操作异常的抑制异常保留。
+     *
+     * @param failure        业务操作原先抛出的异常
+     * @param rollbackMarker 请求回滚当前事务的动作
+     */
     private void preserveRollbackMarkingFailure(Throwable failure, Runnable rollbackMarker) {
         try {
             rollbackMarker.run();
@@ -359,6 +449,11 @@ public class JpaEventStore implements EventStore {
         }
     }
 
+    /**
+     * 查询事件表中已经分配的最大全局位置。
+     *
+     * @return 当前最大全局位置，没有记录时为零
+     */
     private long maxPosition() {
         List<Long> maxRows = entityManager.createQuery(
                         "select e.position from " + ENTITY + " e order by e.position desc", Long.class)
@@ -424,44 +519,103 @@ public class JpaEventStore implements EventStore {
         return (Class<? extends DomainEvent<?>>) eventClass;
     }
 
+    /**
+     * 标识 JPA 事件存储使用独立事务、调用方事务或托管事务的方式。
+     */
     private enum TransactionMode {
+        /**
+         * 事件存储自行开启并提交事务。
+         */
         INDEPENDENT,
+        /**
+         * 事件写入参与已存在的调用方事务。
+         */
         PARTICIPATING,
+        /**
+         * 由外部事务设施管理事务边界。
+         */
         MANAGED
     }
 
+    /**
+     * 将事件存储中的字符串标识适配为聚合根标识。
+     */
     private final static class StringAggregateRootId implements AggregateRootId {
 
+        /**
+         * Java 序列化版本标识。
+         */
         private static final long serialVersionUID = 0L;
+        /**
+         * 字符串格式的聚合标识类型。
+         */
         private static final StringEntityType TYPE = new StringEntityType("String");
+        /**
+         * 从持久化记录读取的聚合标识原值。
+         */
         private final String value;
 
+        /**
+         * 把持久化标识恢复成字符串聚合根标识。
+         *
+         * @param value 存储的标识原值
+         */
         @JsonCreator()
         private StringAggregateRootId(@JsonProperty("value") String value) {
             this.value = value;
         }
 
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 实际返回<code>TYPE</code>，供调用方取得当前值
+         */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 不含类型标记的业务标识
+         */
         @Override
         @JsonValue
         public String asString() {
             return value;
         }
 
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * <p>此实现调用 <code>TYPE.asString()</code>。</p>
+         *
+         * @return 包含类型标记的标识
+         */
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
         }
 
+        /**
+         * 读取<code>value</code> 字段。
+         *
+         * @return <code>value</code> 字段
+         */
         @JsonProperty("value")
         public String value() {
             return value;
         }
 
+        /**
+         * 根据<code>value</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -474,6 +628,11 @@ public class JpaEventStore implements EventStore {
             return Objects.equals(this.value, other.value);
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 0;
@@ -481,6 +640,11 @@ public class JpaEventStore implements EventStore {
             return result;
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>value</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "StringAggregateRootId[value=" + value + "]";

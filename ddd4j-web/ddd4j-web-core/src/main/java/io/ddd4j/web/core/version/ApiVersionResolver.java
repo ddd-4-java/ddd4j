@@ -43,6 +43,9 @@ import java.util.regex.Pattern;
  */
 public final class ApiVersionResolver {
 
+    /**
+     * 当前组件使用的日志记录器。
+     */
     private static final Logger LOG = LoggerFactory.getLogger(ApiVersionResolver.class);
 
     /**
@@ -51,17 +54,21 @@ public final class ApiVersionResolver {
     private static final Pattern PATH_VERSION_PATTERN =
             Pattern.compile("^v\\d+(?:\\.\\d+){0,2}$", Pattern.CASE_INSENSITIVE);
 
-    /** 配置默认版本，头与路径双缺失时兜底。 */
+    /**
+     * 配置默认版本，头与路径双缺失时兜底。
+     */
     private final ApiVersion defaultVersion;
 
-    /** 非法版本值的处理模式。 */
+    /**
+     * 非法版本值的处理模式。
+     */
     private final ApiVersionMode mode;
 
     /**
      * 创建解析器。
      *
      * @param defaultVersion 配置默认版本（非 null）
-     * @param mode 非法版本值处理模式（非 null）
+     * @param mode           非法版本值处理模式（非 null）
      */
     public ApiVersionResolver(ApiVersion defaultVersion, ApiVersionMode mode) {
         this.defaultVersion = Objects.requireNonNull(defaultVersion, "defaultVersion must not be null");
@@ -111,7 +118,7 @@ public final class ApiVersionResolver {
      * 按冻结优先级解析版本。
      *
      * @param headerVersion {@code X-App-Version} 请求头值，可为 null 或空白（表示未携带）
-     * @param path 请求路径，可为 null 或空白（表示未知路径）
+     * @param path          请求路径，可为 null 或空白（表示未知路径）
      * @return 解析结果，恒非 null
      * @throws ApiVersionRejectedException {@link ApiVersionMode#STRICT} 且请求头版本值非法时抛出
      */
@@ -131,7 +138,7 @@ public final class ApiVersionResolver {
      * 非法则按模式回退默认版本或抛出拒绝异常。
      *
      * @param headerVersion 请求头原文（非空白）
-     * @param path 请求路径，可为 null 或空白
+     * @param path          请求路径，可为 null 或空白
      * @return 以请求头或默认版本构成的解析结果
      * @throws ApiVersionRejectedException 严格模式且请求头版本值非法时抛出
      */

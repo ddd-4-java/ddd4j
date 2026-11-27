@@ -14,10 +14,10 @@
  */
 package io.ddd4j.dropwizard.command;
 
-import io.ddd4j.dropwizard.Ddd4jLogbackAccessRequestLogFactory;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.Result;
+import io.ddd4j.dropwizard.Ddd4jLogbackAccessRequestLogFactory;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.server.DefaultServerFactory;
@@ -29,13 +29,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.ServiceLoader;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
@@ -82,27 +76,25 @@ class DropwizardCommandBusTest {
      */
     private static DropwizardTestSupport<Configuration> support;
 
+    /**
+     * 测试执行前执行 <code>randomPortConfiguration()</code>、<code>support.before()</code> 完成资源准备。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @BeforeAll
     static void startDropwizard() throws Exception {
         support = new DropwizardTestSupport<>(TestApplication.class, randomPortConfiguration());
         support.before();
     }
 
+    /**
+     * 测试结束后执行 <code>support.after()</code> 完成资源回收或状态恢复。
+     */
     @AfterAll
     static void stopDropwizard() {
         if (support != null) {
             support.after();
         }
-    }
-
-    /**
-     * 每用例独立装配总线（构造即快照、无共享可变状态），保持用例间隔离。
-     * 发现轨为真实 JDK {@link ServiceLoader}（{@link #discover}）。
-     *
-     * @return 经真实 ServiceLoader 发现装配的总线
-     */
-    private DropwizardCommandBus assemble() {
-        return DropwizardCommandBus.create(support.getApplication(), discover());
     }
 
     /**
@@ -141,6 +133,19 @@ class DropwizardCommandBusTest {
         return configuration;
     }
 
+    /**
+     * 每用例独立装配总线（构造即快照、无共享可变状态），保持用例间隔离。
+     * 发现轨为真实 JDK {@link ServiceLoader}（{@link #discover}）。
+     *
+     * @return 经真实 ServiceLoader 发现装配的总线
+     */
+    private DropwizardCommandBus assemble() {
+        return DropwizardCommandBus.create(support.getApplication(), discover());
+    }
+
+    /**
+     * 验证<code>result.isSuccess()</code>为真，<code>result.data()</code> 包含 <code>SampleCommandHandler.HANDLED</code>，<code>support.getLocalPort()</code>为正。
+     */
     @Test
     void execute_已注册命令_应路由到真实Handler并返回成功() {
         // run 装配轨：TestApplication.run 内经 create(this, discover()) 组装的生产
@@ -158,6 +163,9 @@ class DropwizardCommandBusTest {
         assertThat(support.getLocalPort()).isPositive();
     }
 
+    /**
+     * 验证<code>exception</code>非空，<code>exception.getMessage()</code> 包含 <code>SampleCommand.class.getName()</code>。
+     */
     @Test
     void 装配期冲突_整批拒绝应自工厂传播() {
         // 供入「多类型占位执行器（SampleCommand + CompanionCommand）+ 真实
@@ -176,6 +184,9 @@ class DropwizardCommandBusTest {
         assertThat(exception.getMessage()).contains(SampleCommand.class.getName());
     }
 
+    /**
+     * 验证<code>exception</code>非空，<code>exception.getMessage()</code> 包含 <code>UnknownCommand.class.getName()</code>。
+     */
     @Test
     void execute_未注册命令_应抛ISE与ddd4j_core一致() {
         DropwizardCommandBus bus = assemble();
@@ -187,9 +198,15 @@ class DropwizardCommandBusTest {
         assertThat(exception.getMessage()).contains(UnknownCommand.class.getName());
     }
 
+    /**
+     * 与主要测试命令并行注册的第二种命令样本。
+     */
     static class CompanionCommand implements Command {
     }
 
+    /**
+     * 没有注册执行器的命令样本，用来验证命令分发边界。
+     */
     static class UnknownCommand implements Command {
     }
 
@@ -201,11 +218,26 @@ class DropwizardCommandBusTest {
      */
     static class OverlappingMultiTypeHandler implements CommandExecutor<Command> {
 
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>Arrays.asList(SampleCommand.class, CompanionCommand.class)</code>。</p>
+         *
+         * @return 支持的命令类型集合
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(SampleCommand.class, CompanionCommand.class)));
         }
 
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>Result.ok()</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>Result.ok()</code>
+         */
         @Override
         public Result execute(Command command) {
             return Result.ok();
@@ -221,14 +253,28 @@ class DropwizardCommandBusTest {
      */
     public static class TestApplication extends Application<Configuration> {
 
+        /**
+         * 应用启动后从真实运行上下文取得的消息总线。
+         */
         private volatile DropwizardCommandBus busFromRun;
 
+        /**
+         * 根据本次调用更新 <code>this.busFromRun = DropwizardCommandBus.create(this, discover())</code>，用于后续测试步骤。
+         *
+         * @param configuration 传给 <code>Ddd4jLogbackAccessRequestLogFactory.configure()</code> 的 <code>Configuration</code> 输入
+         * @param environment   本次调用使用的 <code>Environment</code> 参数 <code>environment</code>
+         */
         @Override
         public void run(Configuration configuration, Environment environment) {
             Ddd4jLogbackAccessRequestLogFactory.configure(configuration);
             this.busFromRun = DropwizardCommandBus.create(this, discover());
         }
 
+        /**
+         * 读取<code>busFromRun</code> 字段。
+         *
+         * @return <code>busFromRun</code> 字段
+         */
         DropwizardCommandBus busFromRun() {
             return busFromRun;
         }

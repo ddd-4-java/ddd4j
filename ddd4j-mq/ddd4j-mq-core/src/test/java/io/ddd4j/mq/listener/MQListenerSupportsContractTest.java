@@ -19,14 +19,16 @@ import org.junit.jupiter.api.Test;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** 验证空策略支持列表和显式配置的监听契约。 */
+/**
+ * 验证空策略支持列表和显式配置的监听契约。
+ */
 class MQListenerSupportsContractTest {
 
+    /**
+     * 验证<code>supports.isEmpty()</code>为真，<code>supports.contains("kafka")</code>为假，<code>supports.add("kafka")</code> 抛出 <code>UnsupportedOperationException.class</code>。
+     */
     @Test
     void absentSupportsReturnsAnImmutableEmptyListThatMatchesNoStrategy() {
         List<String> supports = MQListener.builder().build().supports();
@@ -37,6 +39,9 @@ class MQListenerSupportsContractTest {
         assertThrows(UnsupportedOperationException.class, () -> supports.add("kafka"));
     }
 
+    /**
+     * 验证<code>MQListener.builder().supports(declared).build().supports()</code> 等于 <code>declared</code>。
+     */
     @Test
     void configuredSupportsKeepsTheDeclaredStrategies() {
         List<String> declared = Collections.singletonList("kafka");

@@ -35,6 +35,9 @@ public final class GuiceConstants {
      */
     public static final int DEFAULT_THREAD_POOL_SIZE = 2;
 
+    /**
+     * 限制调用方直接创建 <code>GuiceConstants</code> 实例。
+     */
     private GuiceConstants() {
     }
 }

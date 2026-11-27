@@ -37,6 +37,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class CommandHandlerTest {
 
+    /**
+     * 验证<code>target</code>非空，<code>retention</code>非空，<code>retention.value()</code> 等于 <code>RetentionPolicy.RUNTIME</code>。
+     */
     @Test
     void annotationDeclarationIsTypeTargetedAndRuntimeRetained() {
         Target target = CommandHandler.class.getAnnotation(Target.class);
@@ -50,6 +53,9 @@ class CommandHandlerTest {
                 "@CommandHandler must be visible at runtime for reflective scanning by adapters");
     }
 
+    /**
+     * 验证<code>annotation</code>非空，<code>annotation.value()</code> 等于 <code>CreateOrderCommand.class</code>。
+     */
     @Test
     void valueAttributeIsReadableAtRuntime() {
         CommandHandler annotation = CreateOrderCmdExe.class.getAnnotation(CommandHandler.class);
@@ -72,6 +78,13 @@ class CommandHandlerTest {
     @CommandHandler(CreateOrderCommand.class)
     static class CreateOrderCmdExe implements CommandExecutor<CreateOrderCommand> {
 
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>Collections.&lt;Class&lt;? extends Command&gt;&gt;singleton(CreateOrderCommand.class)</code>。</p>
+         *
+         * @return 实际返回<code>Collections.&lt;Class&lt;? extends Command&gt;&gt;singleton(CreateOrderCommand.class)</code>
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.<Class<? extends Command>>singleton(CreateOrderCommand.class);

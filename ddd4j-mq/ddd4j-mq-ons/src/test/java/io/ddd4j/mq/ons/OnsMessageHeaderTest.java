@@ -13,9 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.mq.ons;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.mock;
 
 import com.aliyun.openservices.ons.api.Message;
 import com.aliyun.openservices.ons.api.Producer;
@@ -26,15 +23,42 @@ import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.event.MQEventSerialization;
 import io.ddd4j.mq.message.MessageHeaders;
-import org.mockito.ArgumentCaptor;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
+/**
+ * 验证 <code>OnsMessageHeader</code> 在 <code>acknowledgment</code>、<code>nativeProperties</code> 等场景中的行为。
+ */
 class OnsMessageHeaderTest {
 
+    /**
+     * 构造 <code>MQEventSerialization</code> 作为当前测试的输入或结果。
+     *
+     * @return 提供给后续契约断言的 <code>MQEventSerialization</code> 结果
+     */
+    private static MQEventSerialization serialization() {
+        return new MQEventSerialization() {
+            @Override
+            @SuppressWarnings("unchecked")
+            public <S, T> T deserialize(S src, Class<T> dist) {
+                return (T) new MQEvent();
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            public <T> T serialize(Object src) {
+                return (T) "{}";
+            }
+        };
+    }
+
+    /**
+     * 验证<code>OnsMQClient.messageId(stableMessage)</code> 等于 <code>"stable-id"</code>，<code>OnsMQClient.messageId(legacyMessage)</code> 等于 <code>"legacy-id"</code>。
+     */
     @Test
     void shouldPreferStableHeaderAndReadLegacyHeader() {
         Message stableMessage = new Message();
@@ -47,6 +71,9 @@ class OnsMessageHeaderTest {
         assertEquals("legacy-id", OnsMQClient.messageId(legacyMessage));
     }
 
+    /**
+     * 在测试框架中执行 <code>mock()</code>、<code>client.initProducer()</code>、<code>client.close()</code>，验证该场景。
+     */
     @Test
     void shouldNotShutdownInjectedProducer() {
         Producer producer = mock(Producer.class);
@@ -57,6 +84,9 @@ class OnsMessageHeaderTest {
         verify(producer, never()).shutdown();
     }
 
+    /**
+     * 验证<code>sent.getValue().getUserProperties(MQDeliveryHeaders.MESSAGE_ID)</code> 等于 <code>"stable-id"</code>，<code>sent.getValue().getUserProperties(MQDeliveryHeaders.CORRELATION_ID)</code> 等于 <code>"correlation-id"</code>，<code>second.getUserProperties(MQDeliveryHeaders.CAUSATION_ID)</code>为空。
+     */
     @Test
     void shouldPublishFrozenCausalityAsNativeOnsProperties() {
         Producer producer = mock(Producer.class);
@@ -89,6 +119,9 @@ class OnsMessageHeaderTest {
         }
     }
 
+    /**
+     * 验证<code>acknowledgment.messageId()</code> 等于 <code>"stable-id"</code>，<code>acknowledgment.correlationId()</code> 等于 <code>"correlation-id"</code>。
+     */
     @Test
     void acknowledgmentShouldPreferStableIdAndCorrelationHeader() {
         Message nativeMessage = new Message();
@@ -103,6 +136,9 @@ class OnsMessageHeaderTest {
         assertEquals("correlation-id", acknowledgment.correlationId());
     }
 
+    /**
+     * 验证<code>payload.getMsgId()</code> 等于 <code>"native-id"</code>，<code>payload.getCorrelationId()</code> 等于 <code>"native-correlation"</code>，<code>legacyPayload.getCorrelationId()</code> 等于 <code>"payload-correlation"</code>。
+     */
     @Test
     void nativePropertiesShouldOverridePayloadMirrorBeforeDispatch() {
         Message nativeMessage = new Message();
@@ -127,21 +163,5 @@ class OnsMessageHeaderTest {
         legacyPayload.setCorrelationId("payload-correlation");
         OnsMQClient.applyNativeHeaders(new Message(), legacyPayload);
         assertEquals("payload-correlation", legacyPayload.getCorrelationId());
-    }
-
-    private static MQEventSerialization serialization() {
-        return new MQEventSerialization() {
-            @Override
-            @SuppressWarnings("unchecked")
-            public <S, T> T deserialize(S src, Class<T> dist) {
-                return (T) new MQEvent();
-            }
-
-            @Override
-            @SuppressWarnings("unchecked")
-            public <T> T serialize(Object src) {
-                return (T) "{}";
-            }
-        };
     }
 }

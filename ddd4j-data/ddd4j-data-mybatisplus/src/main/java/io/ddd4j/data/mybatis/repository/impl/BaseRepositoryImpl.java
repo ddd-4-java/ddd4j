@@ -35,9 +35,9 @@ import java.io.Serializable;
  * }</pre>
  *
  * @param <MP> MyBatis-Plus Mapper 类型
- * @param <M> 聚合根类型，主键类型必须与 ID 相同
- * @param <P> 持久化对象类型
- * @param <Q> 领域查询类型
+ * @param <M>  聚合根类型，主键类型必须与 ID 相同
+ * @param <P>  持久化对象类型
+ * @param <Q>  领域查询类型
  * @param <ID> 聚合根标识类型
  */
 public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends AggregateRoot<ID>, P, Q extends Query<M>, ID extends Serializable>

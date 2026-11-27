@@ -29,6 +29,9 @@ import java.util.Objects;
  */
 public class InMemorySubjectProvider implements SubjectProvider {
 
+    /**
+     * 返回给调用方的内存认证主体适配器。
+     */
     private final InMemorySubject subject;
 
     /**
@@ -40,11 +43,22 @@ public class InMemorySubjectProvider implements SubjectProvider {
         this.subject = Objects.requireNonNull(subject, "subject must not be null");
     }
 
+    /**
+     * 取得当前请求使用的认证主体接口。
+     *
+     * @return 本次调用使用的认证主体接口
+     */
     @Override
     public Subject getSubject() {
         return subject;
     }
 
+    /**
+     * 取得当前请求使用的认证主体接口。
+     *
+     * @param realm 账号体系标识（如 sa-token 的 "admin"/"user"）
+     * @return 本次调用使用的认证主体接口
+     */
     @Override
     public Subject getSubject(String realm) {
         return subject;

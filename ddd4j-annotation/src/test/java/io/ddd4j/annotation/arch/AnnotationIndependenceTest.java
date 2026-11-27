@@ -38,21 +38,33 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 @AnalyzeClasses(packages = "io.ddd4j.annotation", importOptions = {ImportOption.DoNotIncludeTests.class})
 class AnnotationIndependenceTest {
 
+    /**
+     * 阻止注解模块依赖 Spring 类型的架构规则。
+     */
     @ArchTest
     static final ArchRule no_spring =
             noClasses().that().resideInAPackage("io.ddd4j.annotation..")
                     .should().dependOnClassesThat().resideInAPackage("org.springframework..");
 
+    /**
+     * 阻止注解模块依赖 MyBatis 类型的架构规则。
+     */
     @ArchTest
     static final ArchRule no_mybatis =
             noClasses().that().resideInAPackage("io.ddd4j.annotation..")
                     .should().dependOnClassesThat().resideInAPackage("com.baomidou..");
 
+    /**
+     * 阻止注解模块依赖 Servlet 类型的架构规则。
+     */
     @ArchTest
     static final ArchRule no_servlet =
             noClasses().that().resideInAPackage("io.ddd4j.annotation..")
                     .should().dependOnClassesThat().resideInAPackage("jakarta.servlet..");
 
+    /**
+     * 阻止注解模块依赖 CDI 类型的架构规则。
+     */
     @ArchTest
     static final ArchRule no_cdi =
             noClasses().that().resideInAPackage("io.ddd4j.annotation..")
@@ -61,6 +73,9 @@ class AnnotationIndependenceTest {
                             "jakarta.enterprise.."
                     );
 
+    /**
+     * 阻止注解模块依赖 Guice 类型的架构规则。
+     */
     @ArchTest
     static final ArchRule no_guice =
             noClasses().that().resideInAPackage("io.ddd4j.annotation..")

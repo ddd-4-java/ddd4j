@@ -124,6 +124,12 @@ public final class AuthSucceededEvent {
         return occurredAt;
     }
 
+    /**
+     * 根据<code>request</code>、<code>principal</code>、<code>token</code>、<code>occurredAt</code>比较对象的值是否相等。
+     *
+     * @param obj 用来比较或转换的输入对象
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -136,6 +142,11 @@ public final class AuthSucceededEvent {
         return Objects.equals(request, that.request) && Objects.equals(principal, that.principal) && Objects.equals(token, that.token) && Objects.equals(occurredAt, that.occurredAt);
     }
 
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         int result = Objects.hashCode(request);
@@ -145,6 +156,11 @@ public final class AuthSucceededEvent {
         return result;
     }
 
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>request</code>、<code>principal</code>、<code>token</code>、<code>occurredAt</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "AuthSucceededEvent[request=" + request + ", principal=" + principal + ", token=" + token + ", occurredAt=" + occurredAt + ']';

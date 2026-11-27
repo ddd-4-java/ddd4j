@@ -49,14 +49,23 @@ import static org.hamcrest.Matchers.*;
 @io.quarkus.test.junit.TestProfile(io.ddd4j.sample.quarkus.GoodsStandaloneProfile.class)
 class GoodsResourceTest {
 
+    /**
+     * 用于当前读取或写入断言的测试仓储。
+     */
     @Inject
     GoodsRepository repository;
 
+    /**
+     * 处理商品创建、维护和查询操作的应用服务。
+     */
     @Inject
     GoodsApplicationService applicationService;
 
     // ========== 应用服务层 ==========
 
+    /**
+     * 验证<code>created.id()</code>非空，<code>created.getCode()</code> 等于 <code>"SKU-T-1"</code>，<code>afterDelete.getStatus()</code> 等于 <code>GoodsStatus.DELETED</code>。
+     */
     @Test
     void shouldCreateUpdateChangeStatusAndDelete() {
         Goods created = applicationService.create("SKU-T-1", "Test Goods", new BigDecimal("99.00"), 50);
@@ -77,6 +86,9 @@ class GoodsResourceTest {
         assertThat(afterDelete.getStatus()).isEqualTo(GoodsStatus.DELETED);
     }
 
+    /**
+     * 验证<code>page.getRecords()</code> 的大小为 <code>2</code>，<code>page.getTotal()</code> 等于 <code>2L</code>，<code>count</code> 等于 <code>2L</code>。
+     */
     @Test
     void shouldSupportRichQueryPageListCount() {
         applicationService.create("SKU-T-2", "Apple iPhone", new BigDecimal("5999.00"), 10);
@@ -98,6 +110,9 @@ class GoodsResourceTest {
         assertThat(count).isEqualTo(2L);
     }
 
+    /**
+     * 验证被测调用 抛出 <code>BizRuntimeException.class</code>。
+     */
     @Test
     void shouldRejectDuplicateCode() {
         applicationService.create("SKU-DUP-1", "First", new BigDecimal("10.00"), 1);
@@ -105,36 +120,54 @@ class GoodsResourceTest {
                 () -> applicationService.create("SKU-DUP-1", "Second", new BigDecimal("10.00"), 1));
     }
 
+    /**
+     * 验证被测调用 抛出 <code>BizRuntimeException.class</code>。
+     */
     @Test
     void shouldRejectBlankCode() {
         org.junit.jupiter.api.Assertions.assertThrows(BizRuntimeException.class,
                 () -> applicationService.create("", "NoCode", new BigDecimal("10.00"), 1));
     }
 
+    /**
+     * 验证被测调用 抛出 <code>BizRuntimeException.class</code>。
+     */
     @Test
     void shouldRejectBlankName() {
         org.junit.jupiter.api.Assertions.assertThrows(BizRuntimeException.class,
                 () -> applicationService.create("SKU-NM-1", "", new BigDecimal("10.00"), 1));
     }
 
+    /**
+     * 验证被测调用 抛出 <code>BizRuntimeException.class</code>。
+     */
     @Test
     void shouldRejectNegativePrice() {
         org.junit.jupiter.api.Assertions.assertThrows(BizRuntimeException.class,
                 () -> applicationService.create("SKU-NEG", "Bad", new BigDecimal("-1.00"), 1));
     }
 
+    /**
+     * 验证被测调用 抛出 <code>BizRuntimeException.class</code>。
+     */
     @Test
     void shouldRejectNegativeStock() {
         org.junit.jupiter.api.Assertions.assertThrows(BizRuntimeException.class,
                 () -> applicationService.create("SKU-STK", "Bad", new BigDecimal("10.00"), -1));
     }
 
+    /**
+     * 验证<code>applicationService.update(GoodsId.of(99999999999L), "X", new BigDecimal("1"))</code> 抛出 <code>BizRuntimeException.class</code>。
+     */
     @Test
     void shouldRejectUpdateForMissingProduct() {
         org.junit.jupiter.api.Assertions.assertThrows(BizRuntimeException.class,
                 () -> applicationService.update(GoodsId.of(99999999999L), "X", new BigDecimal("1")));
     }
 
+    /**
+     * 验证<code>applicationService.changeStatus(GoodsId.of(created.id()), GoodsStatus.ON_SALE)</code> 抛出 <code>BizRuntimeException.class</code>。
+     */
     @Test
     void shouldRejectChangeStatusForDeletedProduct() {
         Goods created = applicationService.create("SKU-DEL-1", "Del me", new BigDecimal("10.00"), 5);
@@ -143,6 +176,9 @@ class GoodsResourceTest {
                 () -> applicationService.changeStatus(GoodsId.of(created.id()), GoodsStatus.ON_SALE));
     }
 
+    /**
+     * 验证<code>applicationService.update(GoodsId.of(created.id()), "NewName", new BigDecimal("1"))</code> 抛出 <code>BizRuntimeException.class</code>。
+     */
     @Test
     void shouldRejectUpdateForDeletedProduct() {
         Goods created = applicationService.create("SKU-DEL-2", "Del me 2", new BigDecimal("10.00"), 5);
@@ -151,6 +187,9 @@ class GoodsResourceTest {
                 () -> applicationService.update(GoodsId.of(created.id()), "NewName", new BigDecimal("1")));
     }
 
+    /**
+     * 验证<code>draft.getStatus()</code> 等于 <code>GoodsStatus.DRAFT</code>，<code>onSale.getStatus()</code> 等于 <code>GoodsStatus.ON_SALE</code>，<code>offSale.getStatus()</code> 等于 <code>GoodsStatus.OFF_SALE</code>。
+     */
     @Test
     void shouldChangeStatusBetweenAllStates() {
         Goods created = applicationService.create("SKU-CHG-1", "State Walker", new BigDecimal("10.00"), 1);
@@ -165,6 +204,9 @@ class GoodsResourceTest {
         assertThat(offSale.getStatus()).isEqualTo(GoodsStatus.OFF_SALE);
     }
 
+    /**
+     * 验证<code>byId.getCode()</code> 等于 <code>"SKU-GBC-1"</code>，<code>byCode.id()</code> 等于 <code>created.id()</code>。
+     */
     @Test
     void shouldGetByIdAndByCode() {
         Goods created = applicationService.create("SKU-GBC-1", "Lookup", new BigDecimal("10.00"), 1);
@@ -176,18 +218,27 @@ class GoodsResourceTest {
         assertThat(byCode.id()).isEqualTo(created.id());
     }
 
+    /**
+     * 验证<code>applicationService.getById(GoodsId.of(88888888888L))</code> 抛出 <code>BizRuntimeException.class</code>。
+     */
     @Test
     void shouldRejectGetByMissingId() {
         org.junit.jupiter.api.Assertions.assertThrows(BizRuntimeException.class,
                 () -> applicationService.getById(GoodsId.of(88888888888L)));
     }
 
+    /**
+     * 验证<code>applicationService.getByCode("DOES-NOT-EXIST")</code> 抛出 <code>BizRuntimeException.class</code>。
+     */
     @Test
     void shouldRejectGetByMissingCode() {
         org.junit.jupiter.api.Assertions.assertThrows(BizRuntimeException.class,
                 () -> applicationService.getByCode("DOES-NOT-EXIST"));
     }
 
+    /**
+     * 在测试框架中执行 <code>applicationService.create()</code>、<code>applicationService.listQuery()</code>，验证该场景。
+     */
     @Test
     void shouldPageQueryWithPriceRange() {
         applicationService.create("SKU-PR-1", "Cheap", new BigDecimal("10.00"), 1);
@@ -200,6 +251,9 @@ class GoodsResourceTest {
         assertThat(result).hasSizeGreaterThanOrEqualTo(1);
     }
 
+    /**
+     * 验证<code>count</code> 大于或等于 <code>1L</code>。
+     */
     @Test
     void shouldCountQueryWithStatus() {
         applicationService.create("SKU-CS-1", "StA", new BigDecimal("1.00"), 1);
@@ -209,6 +263,9 @@ class GoodsResourceTest {
 
     // ========== REST 端点 ==========
 
+    /**
+     * 请求 <code>POST /goods</code>，确认 HTTP 响应状态为 200，响应中的 <code>data.status</code> 等于 <code>"DRAFT"</code>。
+     */
     @Test
     void shouldCreateGoodsViaRest() {
         Map<String, Object> body = new HashMap<>();
@@ -227,6 +284,9 @@ class GoodsResourceTest {
                 .body("data.status", equalTo("DRAFT"));
     }
 
+    /**
+     * 请求 <code>PUT /goods/{id}</code>，确认 HTTP 响应状态为 200，响应中的 <code>data.price</code> 等于 <code>20.00F</code>。
+     */
     @Test
     void shouldUpdateGoodsViaRest() {
         Goods created = applicationService.create("SKU-REST-2", "Original", new BigDecimal("10.00"), 5);
@@ -244,6 +304,9 @@ class GoodsResourceTest {
                 .body("data.price", equalTo(20.00F));
     }
 
+    /**
+     * 请求 <code>PUT /goods/{id}/status?status=ON_SALE</code>，确认 HTTP 响应状态为 200，响应中的 <code>data.status</code> 等于 <code>"ON_SALE"</code>。
+     */
     @Test
     void shouldChangeStatusViaRest() {
         Goods created = applicationService.create("SKU-REST-3", "For Status", new BigDecimal("10.00"), 5);
@@ -256,6 +319,9 @@ class GoodsResourceTest {
                 .body("data.status", equalTo("ON_SALE"));
     }
 
+    /**
+     * 请求 <code>PUT /goods/{id}/status?status=OFF_SALE</code>，确认 HTTP 响应状态为 200，响应中的 <code>data.status</code> 等于 <code>"OFF_SALE"</code>。
+     */
     @Test
     void shouldChangeStatusToOffSale() {
         Goods created = applicationService.create("SKU-REST-3-OFF", "Off me", new BigDecimal("10.00"), 5);
@@ -267,6 +333,9 @@ class GoodsResourceTest {
                 .body("data.status", equalTo("OFF_SALE"));
     }
 
+    /**
+     * 请求 <code>GET /goods/{id}</code>，确认 HTTP 响应状态为 200，响应中的 <code>data.code</code> 等于 <code>"SKU-REST-4"</code>。
+     */
     @Test
     void shouldGetByIdViaRest() {
         Goods created = applicationService.create("SKU-REST-4", "Get By Id", new BigDecimal("10.00"), 5);
@@ -280,6 +349,9 @@ class GoodsResourceTest {
                 .body("data.code", equalTo("SKU-REST-4"));
     }
 
+    /**
+     * 请求 <code>GET /goods/by-code?code=SKU-REST-5</code>，确认 HTTP 响应状态为 200，响应中的 <code>data.code</code> 等于 <code>"SKU-REST-5"</code>。
+     */
     @Test
     void shouldGetByCodeViaRest() {
         applicationService.create("SKU-REST-5", "Get By Code", new BigDecimal("10.00"), 5);
@@ -292,6 +364,9 @@ class GoodsResourceTest {
                 .body("data.code", equalTo("SKU-REST-5"));
     }
 
+    /**
+     * 验证<code>afterDelete.getStatus()</code> 等于 <code>GoodsStatus.DELETED</code>。
+     */
     @Test
     void shouldDeleteViaRest() {
         Goods created = applicationService.create("SKU-REST-DEL", "To Delete", new BigDecimal("10.00"), 1);
@@ -306,6 +381,9 @@ class GoodsResourceTest {
         assertThat(afterDelete.getStatus()).isEqualTo(GoodsStatus.DELETED);
     }
 
+    /**
+     * 请求 <code>GET /query/goods/list?code=SKU-REST-6</code>，确认 HTTP 响应状态为 200，响应中的 <code>code</code> 等于 <code>0</code>。
+     */
     @Test
     void shouldListViaQueryEndpoint() {
         applicationService.create("SKU-REST-6", "List Query", new BigDecimal("10.00"), 5);
@@ -319,6 +397,9 @@ class GoodsResourceTest {
                 .body("data[0].code", equalTo("SKU-REST-6"));
     }
 
+    /**
+     * 请求 <code>GET /query/goods/page?code=SKU-REST-7&amp;current=1&amp;size=5</code>，确认 HTTP 响应状态为 200，响应中的 <code>data.current</code> 等于 <code>1</code>。
+     */
     @Test
     void shouldPageViaQueryEndpoint() {
         applicationService.create("SKU-REST-7", "Page Query", new BigDecimal("10.00"), 5);
@@ -333,6 +414,9 @@ class GoodsResourceTest {
                 .body("data.current", equalTo(1));
     }
 
+    /**
+     * 请求 <code>GET /query/goods/count?code=SKU-REST-8</code>，确认 HTTP 响应状态为 200，响应中的 <code>data</code> 等于 <code>1</code>。
+     */
     @Test
     void shouldCountViaQueryEndpoint() {
         applicationService.create("SKU-REST-8", "Count Query", new BigDecimal("10.00"), 5);
@@ -345,6 +429,9 @@ class GoodsResourceTest {
                 .body("data", equalTo(1));
     }
 
+    /**
+     * 请求 <code>GET /query/goods/list?code=NOTHING-EXISTS</code>，确认 HTTP 响应状态为 200，响应中的 <code>code</code> 等于 <code>0</code>。
+     */
     @Test
     void shouldReturnEmptyListForUnmatchedQuery() {
         given()
@@ -355,6 +442,9 @@ class GoodsResourceTest {
                 .body("data.size()", equalTo(0));
     }
 
+    /**
+     * 请求 <code>GET /query/goods/count?code=NOTHING-EXISTS</code>，确认 HTTP 响应状态为 200，响应中的 <code>data</code> 等于 <code>0</code>。
+     */
     @Test
     void shouldReturnZeroCountForUnmatchedQuery() {
         given()
@@ -364,6 +454,9 @@ class GoodsResourceTest {
                 .body("data", equalTo(0));
     }
 
+    /**
+     * 请求 <code>PUT /goods/{id}/status?status=UNKNOWN_STATE</code>，确认 HTTP 响应状态为 400，响应中的 <code>code</code> 等于 <code>400</code>。
+     */
     @Test
     void shouldReturnBadRequestOnUnknownStatus() {
         Goods created = applicationService.create("SKU-REST-BAD", "Bad", new BigDecimal("1"), 1);
@@ -374,6 +467,9 @@ class GoodsResourceTest {
                 .body("code", equalTo(400));
     }
 
+    /**
+     * 请求 <code>POST /goods</code>，确认 HTTP 响应状态为 500。
+     */
     @Test
     void shouldRejectRestCreateWithDuplicateCode() {
         applicationService.create("SKU-REST-DUPLICATE", "First", new BigDecimal("1"), 1);
@@ -388,6 +484,9 @@ class GoodsResourceTest {
                 .statusCode(500);
     }
 
+    /**
+     * 请求 <code>GET /query/goods/page?code=SKU-REST-OB-1&amp;current=1&amp;size=10</code>，确认 HTTP 响应状态为 200，响应中的 <code>code</code> 等于 <code>0</code>。
+     */
     @Test
     void shouldPageQueryWithOrderBys() {
         applicationService.create("SKU-REST-OB-1", "Order1", new BigDecimal("10"), 1);

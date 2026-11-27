@@ -24,9 +24,21 @@ import java.util.function.BiConsumer;
  * 原生 Dropwizard 认证样例；主入口与可调用入口共用全部 Bundle、资源及 Managed。
  */
 public final class DropwizardShiroApplication extends Application<AuthConfiguration> {
+    /**
+     * 当前 HTTP 示例使用的共用商品交易入口。
+     */
     private final CatalogEndpoints catalog;
+    /**
+     * 在请求处理后通知测试或外部观察者的回调。
+     */
     private final BiConsumer<String, Boolean> completed;
+    /**
+     * 用于注册或定位缓存实例的名称。
+     */
     private final String cacheName = "dropwizard-shiro-" + java.util.UUID.randomUUID();
+    /**
+     * 处理当前示例应用登录状态的原生认证组件。
+     */
     private NativeAuth auth;
 
     /**
@@ -54,6 +66,11 @@ public final class DropwizardShiroApplication extends Application<AuthConfigurat
         new DropwizardShiroApplication().run(args);
     }
 
+    /**
+     * 在 Dropwizard 引导阶段添加商品交易示例所需的组件。
+     *
+     * @param bootstrap 当前 Dropwizard 应用的引导对象
+     */
     @Override
     public void initialize(Bootstrap<AuthConfiguration> bootstrap) {
         bootstrap.addBundle(new ConfiguredBundle<AuthConfiguration>() {
@@ -97,6 +114,12 @@ public final class DropwizardShiroApplication extends Application<AuthConfigurat
         }));
     }
 
+    /**
+     * 从配置装配商品交易应用并向 Dropwizard 环境注册资源。
+     *
+     * @param configuration 当前应用加载的认证或交易配置
+     * @param environment   用于登记路由、过滤器及生命周期的框架环境
+     */
     @Override
     public void run(AuthConfiguration configuration, Environment environment) {
         environment.servlets().addFilter("native-shiro", new NativeRequestFilter(() -> auth, completed))

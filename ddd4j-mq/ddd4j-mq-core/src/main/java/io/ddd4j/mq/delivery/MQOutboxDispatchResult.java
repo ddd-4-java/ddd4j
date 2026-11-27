@@ -29,10 +29,25 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public final class MQOutboxDispatchResult {
 
+    /**
+     * 本轮成功获得租约的待投递记录数。
+     */
     private final int claimed;
+    /**
+     * 本轮已成功发送并确认的记录数。
+     */
     private final int published;
+    /**
+     * 发送失败且已重新安排重试的记录数。
+     */
     private final int rescheduled;
+    /**
+     * 达到终止条件并标记为死亡的记录数。
+     */
     private final int dead;
+    /**
+     * 发送后的存储确认因租约或状态变化未被接受的记录数。
+     */
     private final int confirmationLost;
 
     /**
@@ -58,31 +73,47 @@ public final class MQOutboxDispatchResult {
         this.confirmationLost = confirmationLost;
     }
 
-    /** @return 已领取数量 */
+    /**
+     * @return 已领取数量
+     */
     public int claimed() {
         return claimed;
     }
 
-    /** @return 已确认发布数量 */
+    /**
+     * @return 已确认发布数量
+     */
     public int published() {
         return published;
     }
 
-    /** @return 已安排重试数量 */
+    /**
+     * @return 已安排重试数量
+     */
     public int rescheduled() {
         return rescheduled;
     }
 
-    /** @return 预计进入死信数量 */
+    /**
+     * @return 预计进入死信数量
+     */
     public int dead() {
         return dead;
     }
 
-    /** @return 租约确认丢失数量 */
+    /**
+     * @return 租约确认丢失数量
+     */
     public int confirmationLost() {
         return confirmationLost;
     }
 
+    /**
+     * 根据<code>claimed</code>、<code>published</code>、<code>rescheduled</code>、<code>dead</code>、<code>confirmationLost</code>比较对象的值是否相等。
+     *
+     * @param o 用来比较的另一个对象，允许为空
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -97,6 +128,11 @@ public final class MQOutboxDispatchResult {
                 && confirmationLost == that.confirmationLost;
     }
 
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         int result = claimed;
@@ -107,6 +143,11 @@ public final class MQOutboxDispatchResult {
         return result;
     }
 
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>claimed</code>、<code>published</code>、<code>rescheduled</code>、<code>dead</code>、<code>confirmationLost</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "MQOutboxDispatchResult[claimed=" + claimed + ", published=" + published
@@ -114,27 +155,37 @@ public final class MQOutboxDispatchResult {
                 + ", confirmationLost=" + confirmationLost + ']';
     }
 
-    /** @return 已领取数量 */
+    /**
+     * @return 已领取数量
+     */
     public int getClaimed() {
         return claimed;
     }
 
-    /** @return 已确认发布数量 */
+    /**
+     * @return 已确认发布数量
+     */
     public int getPublished() {
         return published;
     }
 
-    /** @return 已安排重试数量 */
+    /**
+     * @return 已安排重试数量
+     */
     public int getRescheduled() {
         return rescheduled;
     }
 
-    /** @return 预计进入死信数量 */
+    /**
+     * @return 预计进入死信数量
+     */
     public int getDead() {
         return dead;
     }
 
-    /** @return 租约确认丢失数量 */
+    /**
+     * @return 租约确认丢失数量
+     */
     public int getConfirmationLost() {
         return confirmationLost;
     }

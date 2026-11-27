@@ -34,14 +34,32 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * 验证 <code>JpaEventStore</code> 在<code>independentAppend</code>、<code>appendAndRead</code>、<code>reopenedStore</code>、<code>repeatedReads</code>等操作中的行为契约。
+ */
 class JpaEventStoreTest {
 
+    /**
+     * 测试事件流中使用的聚合类型名称。
+     */
     private static final String ORDER_TYPE = "Order";
 
+    /**
+     * 用于创建 JPA 实体管理器的工厂。
+     */
     private static EntityManagerFactory entityManagerFactory;
+    /**
+     * 执行 JPA 查询和持久化操作的实体管理器。
+     */
     private EntityManager entityManager;
+    /**
+     * 读取及追加领域事件的事件存储。
+     */
     private EventStore eventStore;
 
+    /**
+     * 测试前依次初始化<code>entityManagerFactory</code>。
+     */
     @BeforeAll
     static void createEntityManagerFactory() {
         Configuration configuration = new Configuration();
@@ -56,6 +74,9 @@ class JpaEventStoreTest {
         entityManagerFactory = configuration.buildSessionFactory();
     }
 
+    /**
+     * 测试后依次关闭<code>entityManagerFactory</code>。
+     */
     @AfterAll
     static void closeEntityManagerFactory() {
         if (entityManagerFactory != null && entityManagerFactory.isOpen()) {
@@ -63,12 +84,18 @@ class JpaEventStoreTest {
         }
     }
 
+    /**
+     * 测试前依次初始化<code>entityManager</code>、初始化<code>eventStore</code>。
+     */
     @BeforeEach
     void setUp() {
         entityManager = entityManagerFactory.createEntityManager();
         eventStore = new JpaEventStore(entityManager);
     }
 
+    /**
+     * 测试后依次关闭<code>entityManager</code>。
+     */
     @AfterEach
     void tearDown() {
         EntityTransaction tx = entityManager.getTransaction();
@@ -80,6 +107,9 @@ class JpaEventStoreTest {
         entityManager.close();
     }
 
+    /**
+     * 验证<code>saved[0]</code>非空，<code>entityManager.contains(saved[0])</code>为假。
+     */
     @Test
     void independentAppendShouldDetachPersistedEntity() {
         StoredEventEntity[] saved = new StoredEventEntity[1];
@@ -98,6 +128,9 @@ class JpaEventStoreTest {
         assertFalse(entityManager.contains(saved[0]));
     }
 
+    /**
+     * 验证<code>events.size()</code> 等于 <code>2</code>，<code>events.get(0).version()</code> 等于 <code>1L</code>，<code>events.get(0).aggregateId().asString()</code> 等于 <code>orderId.asString()</code>。
+     */
     @Test
     void appendAndReadShouldRoundTripBusinessPayload() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-a");
@@ -114,6 +147,11 @@ class JpaEventStoreTest {
         assertEquals(orderId.asString(), events.get(0).aggregateId().asString());
     }
 
+    /**
+     * 验证<code>framework.loadClass(eventClassName)</code> 抛出 <code>ClassNotFoundException.class</code>，<code>event.getFact()</code> 等于 <code>"created"</code>。
+     *
+     * @throws Exception 准备或释放被测运行资源时失败
+     */
     @Test
     void reopenedStoreShouldReadHostEventFromContextClassLoader() throws Exception {
         TestAggregateRootId orderId = new TestAggregateRootId("host-event");
@@ -152,6 +190,9 @@ class JpaEventStoreTest {
         }
     }
 
+    /**
+     * 验证<code>second</code> 等于 <code>first</code>，<code>second.hashCode()</code> 等于 <code>first.hashCode()</code>。
+     */
     @Test
     void repeatedReadsShouldReconstructEqualAggregateIds() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-value-id");
@@ -164,6 +205,11 @@ class JpaEventStoreTest {
         assertEquals(first.hashCode(), second.hashCode());
     }
 
+    /**
+     * 验证<code>JsonMapper.builder().build().writeValueAsString(reconstructed)</code> 等于 <code>"\"serialized-id\""</code>。
+     *
+     * @throws Exception 处理测试数据的序列化时失败
+     */
     @Test
     void reconstructedAggregateIdShouldSerializeAsString() throws Exception {
         TestAggregateRootId orderId = new TestAggregateRootId("serialized-id");
@@ -175,6 +221,9 @@ class JpaEventStoreTest {
                 JsonMapper.builder().build().writeValueAsString(reconstructed));
     }
 
+    /**
+     * 验证被测调用 抛出 <code>AggregateVersionConflictException.class</code>，<code>conflict.expectedVersion()</code> 等于 <code>0L</code>，<code>conflict.actualVersion()</code> 等于 <code>1L</code>。
+     */
     @Test
     void appendWithStaleVersionShouldReject() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-b");
@@ -188,6 +237,9 @@ class JpaEventStoreTest {
         assertEquals(1L, conflict.actualVersion());
     }
 
+    /**
+     * 验证<code>slice.size()</code> 等于 <code>2</code>，<code>slice.get(0).version()</code> 等于 <code>2L</code>，<code>slice.get(1).version()</code> 等于 <code>3L</code>。
+     */
     @Test
     void readVersionRangeShouldReturnInclusiveSlice() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-c");
@@ -200,6 +252,9 @@ class JpaEventStoreTest {
         assertEquals(3L, slice.get(1).version());
     }
 
+    /**
+     * 验证<code>events.size() &gt;= 2</code>为真，<code>events.get(events.size() - 2).aggregateId().asString()</code> 等于 <code>first.asString()</code>，<code>events.get(events.size() - 2).position() &lt; events.get(events.size() - 1).position()</code>为真。
+     */
     @Test
     void readAllShouldPreserveGlobalPositionOrderAcrossAggregates() {
         TestAggregateRootId first = new TestAggregateRootId("order-d");
@@ -216,6 +271,9 @@ class JpaEventStoreTest {
         assertTrue(events.get(events.size() - 2).position() < events.get(events.size() - 1).position());
     }
 
+    /**
+     * 验证<code>events.get(0).correlationId()</code>为空，<code>events.get(1).correlationId()</code> 等于 <code>cause.getEventId()</code>，<code>events.get(1).causationId()</code> 等于 <code>cause.getEventId()</code>。
+     */
     @Test
     void causalityColumnsShouldRoundTrip() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-f");
@@ -229,11 +287,17 @@ class JpaEventStoreTest {
         assertEquals(cause.getEventId(), events.get(1).causationId());
     }
 
+    /**
+     * 验证<code>eventStore.read(ORDER_TYPE, new TestAggregateRootId("missing")).size()</code> 等于 <code>0</code>。
+     */
     @Test
     void readMissingStreamShouldReturnEmpty() {
         assertEquals(0, eventStore.read(ORDER_TYPE, new TestAggregateRootId("missing")).size());
     }
 
+    /**
+     * 验证<code>event.getAggregateVersion()</code>为空。
+     */
     @Test
     void appendMustNotMutateInputAggregateVersion() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-input");
@@ -245,6 +309,9 @@ class JpaEventStoreTest {
         assertNull(event.getAggregateVersion());
     }
 
+    /**
+     * 验证<code>stored.size()</code> 等于 <code>2</code>，<code>stored.get(0).position() &lt; stored.get(1).position()</code>为真，<code>entityManager.getFlushMode()</code> 等于 <code>jakarta.persistence.FlushModeType.COMMIT</code>。
+     */
     @Test
     void batchAppendMustWorkWithCommitFlushMode() {
         entityManager.setFlushMode(jakarta.persistence.FlushModeType.COMMIT);
@@ -258,6 +325,9 @@ class JpaEventStoreTest {
         assertEquals(jakarta.persistence.FlushModeType.COMMIT, entityManager.getFlushMode());
     }
 
+    /**
+     * 验证被测调用 抛出 <code>AggregateVersionConflictException.class</code>，<code>conflict.actualVersion()</code> 等于 <code>7L</code>，<code>conflict.expectedVersion()</code> 等于 <code>0L</code>。
+     */
     @Test
     void customRepositoryMustControlVersionConflict() {
         JpaStoredEventRepository custom = new JpaStoredEventRepositoryImpl(entityManager) {
@@ -274,6 +344,9 @@ class JpaEventStoreTest {
         assertEquals(0L, conflict.expectedVersion());
     }
 
+    /**
+     * 验证<code>eventStore.read(ORDER_TYPE, new TestAggregateRootId("source-stream")).isEmpty()</code>为真，<code>stored.size()</code> 等于 <code>1</code>，<code>((OrderCreatedEvent) stored.get(0).payload()).getFact()</code> 等于 <code>"custom-persistence"</code>。
+     */
     @Test
     void customRepositoryMustControlPositionAndPersistence() {
         JpaStoredEventRepository custom = new JpaStoredEventRepositoryImpl(entityManager) {
@@ -300,6 +373,9 @@ class JpaEventStoreTest {
         assertEquals("custom-persistence", ((OrderCreatedEvent) stored.get(0).payload()).getFact());
     }
 
+    /**
+     * 验证<code>eventStore.read(ORDER_TYPE, orderId).size()</code> 等于 <code>1</code>，<code>customized.read(ORDER_TYPE, orderId).isEmpty()</code>为真，<code>customized.readAll(0, 10).isEmpty()</code>为真。
+     */
     @Test
     void customRepositoryMustControlAllReadPaths() {
         TestAggregateRootId orderId = new TestAggregateRootId("filtered-stream");
@@ -332,6 +408,9 @@ class JpaEventStoreTest {
         assertEquals(1, eventStore.read(ORDER_TYPE, orderId).size());
     }
 
+    /**
+     * 验证被测调用 抛出 <code>RuntimeException.class</code>，<code>afterFailure.size()</code> 等于 <code>1</code>，<code>recovered.get(1).version()</code> 等于 <code>2L</code>。
+     */
     @Test
     void failedBatchMustPreserveCommittedStateAndAllowNextAppend() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-rollback");
@@ -356,6 +435,9 @@ class JpaEventStoreTest {
         assertEquals(2L, recovered.get(1).version());
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，<code>callerTransaction.isActive()</code>为真，<code>eventStore.readAll(0, 10)</code> 抛出 <code>IllegalStateException.class</code>。
+     */
     @Test
     void rejectedNestedAppendMustNotRollbackCallerTransaction() {
         EntityTransaction callerTransaction = entityManager.getTransaction();
@@ -380,6 +462,9 @@ class JpaEventStoreTest {
         }
     }
 
+    /**
+     * 验证<code>tx.isActive()</code>为真，<code>participating.read(ORDER_TYPE, orderId).size()</code> 等于 <code>1</code>，<code>eventStore.read(ORDER_TYPE, orderId).isEmpty()</code>为真。
+     */
     @Test
     void participatingAppendMustLeaveCommitToCaller() {
         JpaEventStore participating = JpaEventStore.participating(entityManager);
@@ -402,6 +487,9 @@ class JpaEventStoreTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，<code>participating.read(ORDER_TYPE, orderId)</code> 抛出 <code>IllegalStateException.class</code>，<code>participating.readAll(0, 10)</code> 抛出 <code>IllegalStateException.class</code>。
+     */
     @Test
     void participatingOperationsMustRejectWithoutCallerTransaction() {
         JpaEventStore participating = JpaEventStore.participating(entityManager);
@@ -414,6 +502,9 @@ class JpaEventStoreTest {
         assertThrows(IllegalStateException.class, () -> participating.readAll(0, 10));
     }
 
+    /**
+     * 验证<code>participating.append(ORDER_TYPE, new TestAggregateRootId("empty-batch"), Collections.emptyList(), 0)</code> 抛出 <code>IllegalStateException.class</code>。
+     */
     @Test
     void participatingEmptyAppendMustRejectWithoutCallerTransaction() {
         JpaEventStore participating = JpaEventStore.participating(entityManager);
@@ -422,6 +513,9 @@ class JpaEventStoreTest {
                 new TestAggregateRootId("empty-batch"), Collections.emptyList(), 0));
     }
 
+    /**
+     * 验证<code>tx.isActive()</code>为真，<code>stored.size()</code> 等于 <code>2</code>，<code>((OrderCreatedEvent) stored.get(1).payload()).getFact()</code> 等于 <code>"second"</code>。
+     */
     @Test
     void participatingAppendsMustShareCallerTransactionAndCommitTogether() {
         JpaEventStore participating = JpaEventStore.participating(entityManager);
@@ -449,6 +543,9 @@ class JpaEventStoreTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>RuntimeException.class</code>，<code>tx.isActive()</code>为真，<code>tx.getRollbackOnly()</code>为真。
+     */
     @Test
     void participatingFailedBatchMustMarkCallerTransactionRollbackOnly() {
         JpaEventStore participating = JpaEventStore.participating(entityManager);
@@ -467,6 +564,9 @@ class JpaEventStoreTest {
         }
     }
 
+    /**
+     * 验证<code>participating.read(ORDER_TYPE, orderId).size()</code> 等于 <code>2</code>，<code>entityManager.getFlushMode()</code> 等于 <code>jakarta.persistence.FlushModeType.COMMIT</code>。
+     */
     @Test
     void participatingAppendMustPreserveCommitFlushMode() {
         jakarta.persistence.FlushModeType originalFlushMode = entityManager.getFlushMode();
@@ -489,6 +589,9 @@ class JpaEventStoreTest {
         }
     }
 
+    /**
+     * 验证<code>tx.isActive()</code>为真，<code>eventStore.read(ORDER_TYPE, new TestAggregateRootId("participating-source-stream")).isEmpty()</code>为真，<code>stored.get(0).position()</code> 等于 <code>84L</code>。
+     */
     @Test
     void participatingCustomRepositoryMustControlPositionAndPersistence() {
         JpaStoredEventRepository custom = new JpaStoredEventRepositoryImpl(entityManager) {
@@ -527,11 +630,19 @@ class JpaEventStoreTest {
         }
     }
 
+    /**
+     * 验证<code>eventStore.readAll(0, 0)</code> 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void readAllLimitMustBePositive() {
         assertThrows(IllegalArgumentException.class, () -> eventStore.readAll(0, 0));
     }
 
+    /**
+     * 验证<code>eventStore.read(ORDER_TYPE, orderId).get(0).timestamp().toInstant()</code> 等于 <code>expected.toInstant()</code>。
+     *
+     * @throws Exception 反射访问被测成员时失败
+     */
     @Test
     void persistedTimestampMustComeFromEvent() throws Exception {
         TestAggregateRootId orderId = new TestAggregateRootId("order-time");
@@ -546,26 +657,57 @@ class JpaEventStoreTest {
         assertEquals(expected.toInstant(), eventStore.read(ORDER_TYPE, orderId).get(0).timestamp().toInstant());
     }
 
+    /**
+     * 测试专用聚合根标识，供仓储、事件序列化或命令路由构造独立的聚合实例。
+     */
     private static final class TestAggregateRootId implements AggregateRootId {
 
+        /**
+         * 测试聚合注册和反序列化所用的实体类型标识。
+         */
         private static final EntityType TYPE = new StringEntityType("Order");
 
+        /**
+         * 用于组成测试标识的原始值。
+         */
         private final String value;
 
+        /**
+         * 以给定状态构造 <code>TestAggregateRootId</code> 测试对象。
+         *
+         * @param value 用于组成测试标识的原始值
+         */
         private TestAggregateRootId(String value) {
             this.value = value;
         }
 
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 实际返回<code>TYPE</code>，供调用方取得当前值
+         */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 实际返回<code>value</code>，供调用方取得当前值
+         */
         @Override
         public String asString() {
             return value;
         }
 
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * <p>测试夹具会调用 <code>TYPE.asString()</code>。</p>
+         *
+         * @return 实际返回<code>TYPE.asString() + ":" + value</code>
+         */
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
@@ -577,26 +719,53 @@ class JpaEventStoreTest {
      */
     public static final class OrderCreatedEvent extends DomainEvent<TestAggregateRootId> {
 
+        /**
+         * 本用例写入或读取的事件事实。
+         */
         private String fact;
 
+        /**
+         * 使用 <code>super()</code> 初始化 <code>OrderCreatedEvent</code> 测试夹具。
+         */
         public OrderCreatedEvent() {
             super();
         }
 
+        /**
+         * 以给定状态构造 <code>OrderCreatedEvent</code> 测试对象。
+         *
+         * @param fact 本用例写入或读取的事件事实
+         */
         private OrderCreatedEvent(String fact) {
             super(new EntityIdPath(new TestAggregateRootId("order-1")));
             this.fact = fact;
         }
 
+        /**
+         * 使用 <code>super()</code> 初始化 <code>OrderCreatedEvent</code> 测试夹具。
+         *
+         * @param fact         本用例写入或读取的事件事实
+         * @param causingEvent 用于初始化 <code>OrderCreatedEvent</code> 的 <code>io.ddd4j.core.ddd.event.Event</code> 值
+         */
         private OrderCreatedEvent(String fact, io.ddd4j.core.ddd.event.Event causingEvent) {
             super(new EntityIdPath(new TestAggregateRootId("order-1")), causingEvent);
             this.fact = fact;
         }
 
+        /**
+         * 读取<code>fact</code> 字段。
+         *
+         * @return <code>fact</code> 字段
+         */
         public String getFact() {
             return fact;
         }
 
+        /**
+         * 设置<code>fact</code> 字段。
+         *
+         * @param fact 要写入的值
+         */
         public void setFact(String fact) {
             this.fact = fact;
         }

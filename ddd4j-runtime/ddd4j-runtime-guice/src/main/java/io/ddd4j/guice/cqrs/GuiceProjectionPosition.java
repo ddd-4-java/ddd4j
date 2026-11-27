@@ -35,6 +35,9 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class GuiceProjectionPosition implements ProjectionPosition, Serializable {
 
+    /**
+     * Java 序列化版本标识。
+     */
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -47,6 +50,14 @@ public class GuiceProjectionPosition implements ProjectionPosition, Serializable
      */
     private long nextEventNumber;
 
+    /**
+     * 以新事件位置构造同一流的投影检查点。
+     *
+     * <p>此实现更新<code>this.nextEventNumber = nextEventNumber</code>。</p>
+     *
+     * @param nextEventNumber 新的下一个事件号
+     * @return 实际返回<code>this</code>，供调用方取得当前值
+     */
     @Override
     public ProjectionPosition withNextEventNumber(long nextEventNumber) {
         this.nextEventNumber = nextEventNumber;

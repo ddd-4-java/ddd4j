@@ -32,9 +32,18 @@ import java.util.Map.Entry;
  */
 public class DefaultWebFluxConfigurer implements WebFluxConfigurer {
 
+    /**
+     * 约定静态 Web 资源的 classpath 位置。
+     */
     private final String META_INF_RESOURCES = "classpath:/META-INF/resources/";
+    /**
+     * WebJars 静态资源的 classpath 位置。
+     */
     private final String META_INF_WEBJAR_RESOURCES = META_INF_RESOURCES + "webjars/";
 
+    /**
+     * 配置本地目录和静态资源访问路径的属性。
+     */
     private LocalResourceProperteis localResourceProperteis;
 
     /**

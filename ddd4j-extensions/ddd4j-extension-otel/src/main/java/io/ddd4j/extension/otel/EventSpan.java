@@ -30,6 +30,9 @@ import io.opentelemetry.context.Scope;
  */
 public final class EventSpan {
 
+    /**
+     * 限制调用方直接创建 <code>EventSpan</code> 实例。
+     */
     private EventSpan() {
     }
 

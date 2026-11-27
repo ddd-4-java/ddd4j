@@ -29,46 +29,66 @@ import java.util.Objects;
  */
 public final class ApiVersionDispatchResult<T> {
 
-    /** 分发成功状态码（200），含优雅回落到最低可用版本的情形。 */
+    /**
+     * 分发成功状态码（200），含优雅回落到最低可用版本的情形。
+     */
     public static final int STATUS_OK = 200;
 
-    /** 请求主版本无任何注册处理器时的状态码（404 语义）。 */
+    /**
+     * 请求主版本无任何注册处理器时的状态码（404 语义）。
+     */
     public static final int STATUS_NOT_FOUND = 404;
 
-    /** 严格模式下请求版本低于最低可用版本时的状态码（400 语义）。 */
+    /**
+     * 严格模式下请求版本低于最低可用版本时的状态码（400 语义）。
+     */
     public static final int STATUS_REJECTED = 400;
 
-    /** 请求版本，恒非 null。 */
+    /**
+     * 请求版本，恒非 null。
+     */
     private final ApiVersion requestedVersion;
 
-    /** 命中的可用版本，未命中时为 null。 */
+    /**
+     * 命中的可用版本，未命中时为 null。
+     */
     private final ApiVersion matchedVersion;
 
-    /** 命中的处理器句柄，未命中时为 null。 */
+    /**
+     * 命中的处理器句柄，未命中时为 null。
+     */
     private final T handler;
 
-    /** 是否发生了回落（请求低于最低可用版本时优雅回落到最低版本）。 */
+    /**
+     * 是否发生了回落（请求低于最低可用版本时优雅回落到最低版本）。
+     */
     private final boolean degraded;
 
-    /** 是否带升级提示（回落时为 true）。 */
+    /**
+     * 是否带升级提示（回落时为 true）。
+     */
     private final boolean upgradeHint;
 
-    /** HTTP 语义状态码。 */
+    /**
+     * HTTP 语义状态码。
+     */
     private final int status;
 
-    /** 结果说明，用于日志与错误响应，可为 null。 */
+    /**
+     * 结果说明，用于日志与错误响应，可为 null。
+     */
     private final String message;
 
     /**
      * 创建分发结果（由 {@link ApiVersionDispatchPolicy} 调用）。
      *
      * @param requestedVersion 请求版本（非 null）
-     * @param matchedVersion 命中的可用版本，可为 null
-     * @param handler 命中的处理器句柄，可为 null
-     * @param degraded 是否回落
-     * @param upgradeHint 是否带升级提示
-     * @param status HTTP 语义状态码
-     * @param message 结果说明，可为 null
+     * @param matchedVersion   命中的可用版本，可为 null
+     * @param handler          命中的处理器句柄，可为 null
+     * @param degraded         是否回落
+     * @param upgradeHint      是否带升级提示
+     * @param status           HTTP 语义状态码
+     * @param message          结果说明，可为 null
      */
     ApiVersionDispatchResult(ApiVersion requestedVersion, ApiVersion matchedVersion, T handler,
                              boolean degraded, boolean upgradeHint, int status, String message) {
@@ -84,10 +104,10 @@ public final class ApiVersionDispatchResult<T> {
     /**
      * 构造「主版本命中、未回落」的成功结果。
      *
-     * @param <T> 处理器类型
+     * @param <T>              处理器类型
      * @param requestedVersion 请求版本
-     * @param matchedVersion 命中版本
-     * @param handler 处理器句柄
+     * @param matchedVersion   命中版本
+     * @param handler          处理器句柄
      * @return 分发成功结果（200）
      */
     static <T> ApiVersionDispatchResult<T> matched(ApiVersion requestedVersion, ApiVersion matchedVersion, T handler) {
@@ -98,10 +118,10 @@ public final class ApiVersionDispatchResult<T> {
     /**
      * 构造「请求低于最低可用版本、优雅回落」的成功结果（200，带升级提示）。
      *
-     * @param <T> 处理器类型
+     * @param <T>              处理器类型
      * @param requestedVersion 请求版本
-     * @param lowestVersion 最低可用版本
-     * @param handler 最低版本对应的处理器句柄
+     * @param lowestVersion    最低可用版本
+     * @param handler          最低版本对应的处理器句柄
      * @return 回落结果
      */
     static <T> ApiVersionDispatchResult<T> degraded(ApiVersion requestedVersion, ApiVersion lowestVersion, T handler) {
@@ -114,7 +134,7 @@ public final class ApiVersionDispatchResult<T> {
     /**
      * 构造「主版本无注册处理器」的 404 结果。
      *
-     * @param <T> 处理器类型
+     * @param <T>              处理器类型
      * @param requestedVersion 请求版本
      * @return 404 结果
      */
@@ -127,9 +147,9 @@ public final class ApiVersionDispatchResult<T> {
     /**
      * 构造「严格模式下请求低于最低可用版本」的拒绝结果（400）。
      *
-     * @param <T> 处理器类型
+     * @param <T>              处理器类型
      * @param requestedVersion 请求版本
-     * @param lowestVersion 最低可用版本
+     * @param lowestVersion    最低可用版本
      * @return 400 拒绝结果
      */
     static <T> ApiVersionDispatchResult<T> rejected(ApiVersion requestedVersion, ApiVersion lowestVersion) {

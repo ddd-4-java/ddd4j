@@ -23,6 +23,9 @@ import io.ddd4j.extension.monitor.Sender;
  */
 public class WeComRobotSender implements Sender {
 
+    /**
+     * 将消息请求发送到企业微信机器人的 HTTP 客户端。
+     */
     private final WeComClient client;
 
     /**
@@ -41,6 +44,11 @@ public class WeComRobotSender implements Sender {
         return client;
     }
 
+    /**
+     * 通过当前适配器发出请求或消息。
+     *
+     * @param msg 已格式化为通道要求的字符串（通常为 markdown 或 JSON payload）
+     */
     @Override
     public void send(String msg) {
         client.sendMarkdown(msg);

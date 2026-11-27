@@ -46,9 +46,21 @@ public final class RegionEnum implements Comparable<RegionEnum> {
      * 未知地区地区。
      */
     public static final RegionEnum UK;
+    /**
+     * 按地区枚举名称索引的地区定义。
+     */
     private static final Map<String, RegionEnum> BY_NAME = new LinkedHashMap<>();
+    /**
+     * 按 ISO 两字母代码索引的地区定义。
+     */
     private static final Map<String, RegionEnum> BY_CODE2 = new LinkedHashMap<>();
+    /**
+     * 按 ISO 三字母代码索引的地区定义。
+     */
     private static final Map<String, RegionEnum> BY_CODE3 = new LinkedHashMap<>();
+    /**
+     * 按中文地区名称索引的地区定义。
+     */
     private static final Map<String, RegionEnum> BY_CNAME = new LinkedHashMap<>();
 
     static {
@@ -64,12 +76,36 @@ public final class RegionEnum implements Comparable<RegionEnum> {
         UK = register("UK", "UKN", "Unknown", "未知");
     }
 
+    /**
+     * 用于唯一标识地区定义的枚举名称。
+     */
     private final String name;
+    /**
+     * ISO 两字母国家或地区代码。
+     */
     private final String code2;
+    /**
+     * ISO 三字母国家或地区代码。
+     */
     private final String code3;
+    /**
+     * 国家或地区的 ISO 显示名称。
+     */
     private final String isoName;
+    /**
+     * 本地化的中文国家或地区名称。
+     */
     private final String cname;
 
+    /**
+     * 创建包含标准地区代码和显示名称的地区定义。
+     *
+     * @param name    地区定义名称
+     * @param code2   ISO 两字母代码
+     * @param code3   ISO 三字母代码
+     * @param isoName ISO 显示名称
+     * @param cname   中文显示名称
+     */
     private RegionEnum(String name, String code2, String code3, String isoName, String cname) {
         this.name = name;
         this.code2 = code2;
@@ -78,6 +114,15 @@ public final class RegionEnum implements Comparable<RegionEnum> {
         this.cname = cname;
     }
 
+    /**
+     * 创建地区定义并写入名称和各类地区代码索引。
+     *
+     * @param code2   ISO 两字母代码
+     * @param code3   ISO 三字母代码
+     * @param isoName ISO 显示名称
+     * @param cname   中文显示名称
+     * @return 新登记的地区定义
+     */
     private static RegionEnum register(String code2, String code3, String isoName, String cname) {
         RegionEnum region = new RegionEnum(code2, code2, code3, isoName, cname);
         BY_NAME.put(code2, region);
@@ -87,6 +132,12 @@ public final class RegionEnum implements Comparable<RegionEnum> {
         return region;
     }
 
+    /**
+     * 读取三字母代码，无法解析时使用 Locale 的原区域代码。
+     *
+     * @param locale 描述地区的 Locale
+     * @return 该地区的三字母代码或原区域代码
+     */
     private static String safeIso3(Locale locale) {
         try {
             return locale.getISO3Country();
@@ -177,6 +228,13 @@ public final class RegionEnum implements Comparable<RegionEnum> {
         return Objects.nonNull(region) && region.isValidRegion();
     }
 
+    /**
+     * 去除首尾空白并以大写键查找地区，空值或未命中时使用英国定义。
+     *
+     * @param map 当前调用使用的地区索引
+     * @param key 待查询的地区名称或代码
+     * @return 匹配到的地区定义或默认英国定义
+     */
     private static RegionEnum get(Map<String, RegionEnum> map, String key) {
         if (!StrKit.hasText(key)) {
             return UK;
@@ -256,6 +314,14 @@ public final class RegionEnum implements Comparable<RegionEnum> {
         return cname;
     }
 
+    /**
+     * 比较当前对象与输入对象的顺序。
+     *
+     * <p>此实现调用 <code>name.compareTo(other.name)</code>。</p>
+     *
+     * @param other 与当前对象比较的对象
+     * @return 实际返回<code>name.compareTo(other.name)</code>
+     */
     @Override
     public int compareTo(RegionEnum other) {
         return name.compareTo(other.name);

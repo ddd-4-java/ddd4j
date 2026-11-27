@@ -4,11 +4,7 @@ import io.ddd4j.sample.order.adapter.http.CatalogApi;
 import io.ddd4j.sample.order.app.projection.CatalogOrderView;
 import io.ddd4j.sample.order.app.projection.ProjectedTradeOrderQuery;
 import io.ddd4j.sample.order.client.query.TradeOrderQuery;
-import io.ddd4j.sample.order.domain.model.GoodsSku;
-import io.ddd4j.sample.order.domain.model.GoodsSkuOffer;
-import io.ddd4j.sample.order.domain.model.GoodsSpu;
-import io.ddd4j.sample.order.domain.model.TradeOrder;
-import io.ddd4j.sample.order.domain.model.TradeOrderItem;
+import io.ddd4j.sample.order.domain.model.*;
 import io.ddd4j.sample.order.infrastructure.CatalogDatabase;
 import org.junit.jupiter.api.Test;
 
@@ -23,13 +19,46 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * 验证商品交易示例的层间制品边界、聚合约束和投影并发顺序。
+ */
 class CatalogArchitectureTest {
+    /**
+     * 构造架构测试所用的单行订单明细。
+     *
+     * @return 数量为一的示例订单明细
+     */
+    private static TradeOrderItem line() {
+        return TradeOrderItem.fromOffer("tenant", 1, new GoodsSkuOffer(5L, "Book", "Edition", 1200L), 1L);
+    }
+
+    /**
+     * 等待并发测试中的指定阶段，在超时或中断时使断言失败。
+     *
+     * @param latch 用来同步两个并发测试阶段的门闩
+     * @throws AssertionError 等待门闩超时或当前线程被中断
+     */
+    private static void await(CountDownLatch latch) {
+        try {
+            assertTrue(latch.await(5, TimeUnit.SECONDS));
+        } catch (InterruptedException failure) {
+            Thread.currentThread().interrupt();
+            throw new AssertionError(failure);
+        }
+    }
+
+    /**
+     * 验证 HTTP 适配层和 JDBC 持久化层来自不同构建制品。
+     */
     @Test
     void jdbcAndHttpAreDistinctArtifacts() {
         assertNotEquals(CatalogApi.class.getProtectionDomain().getCodeSource().getLocation(),
                 CatalogDatabase.class.getProtectionDomain().getCodeSource().getLocation());
     }
 
+    /**
+     * 验证商品或订单聚合拒绝属于其他租户的子对象。
+     */
     @Test
     void aggregatesRejectChildrenFromAnotherTenant() {
         var offer = new GoodsSkuOffer(5L, "Book", "Edition", 1200L);
@@ -41,6 +70,9 @@ class CatalogArchitectureTest {
                 () -> GoodsSpu.listPackage("tenant", "G-1", "Book", 3L, sku));
     }
 
+    /**
+     * 验证领域聚合未公开绕过校验入口的构建方法。
+     */
     @Test
     void aggregateCannotBeBuiltWithoutItsValidatedEntryPoints() {
         assertThrows(NoSuchMethodException.class, () -> TradeOrder.class.getMethod("builder"));
@@ -50,6 +82,9 @@ class CatalogArchitectureTest {
                 () -> TradeOrder.place("tenant", "O-1", 3L, List.of(invalidLine)));
     }
 
+    /**
+     * 验证还原的订单独立持有明细，调用方修改原始集合无法改变聚合。
+     */
     @Test
     void restoredAggregateOwnsItsItemCollection() {
         var items = new ArrayList<>(List.of(line()));
@@ -61,6 +96,11 @@ class CatalogArchitectureTest {
         assertThrows(UnsupportedOperationException.class, () -> order.getItems().clear());
     }
 
+    /**
+     * 验证同一订单的第二次并发投影需等第一次发布后方可读取。
+     *
+     * @throws Exception 测试线程获取结果失败或等待超时
+     */
     @Test
     void concurrentRebuildCannotReadTheSameKeyBeforeOlderRebuildPublishes() throws Exception {
         var pending = TradeOrder.place("tenant", "O-1", 3L, List.of(line()));
@@ -104,19 +144,6 @@ class CatalogArchitectureTest {
         } finally {
             release.countDown();
             workers.shutdownNow();
-        }
-    }
-
-    private static TradeOrderItem line() {
-        return TradeOrderItem.fromOffer("tenant", 1, new GoodsSkuOffer(5L, "Book", "Edition", 1200L), 1L);
-    }
-
-    private static void await(CountDownLatch latch) {
-        try {
-            assertTrue(latch.await(5, TimeUnit.SECONDS));
-        } catch (InterruptedException failure) {
-            Thread.currentThread().interrupt();
-            throw new AssertionError(failure);
         }
     }
 }

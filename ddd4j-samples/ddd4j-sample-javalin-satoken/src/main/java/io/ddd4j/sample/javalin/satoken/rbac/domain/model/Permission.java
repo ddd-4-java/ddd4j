@@ -32,6 +32,9 @@ import java.util.Objects;
 @Getter
 public class Permission extends AggregateRoot<String> {
 
+    /**
+     * Java 序列化版本标识。
+     */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -112,6 +115,11 @@ public class Permission extends AggregateRoot<String> {
         this.status = Status.DISABLED;
     }
 
+    /**
+     * 读取权限 ID（与 permissionCode 一致，简化示例）。
+     *
+     * @return 权限 ID（与 permissionCode 一致，简化示例）
+     */
     @Override
     public String id() {
         return permissionId;

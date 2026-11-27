@@ -11,7 +11,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+/**
+ * 通过 <code>tasks.add()</code>、<code>handles.add()</code>、<code>service.updateProjectionPosition()</code> 验证 <code>DefaultViewManager</code> 的运行行为。
+ */
 class DefaultViewManagerTest {
+    /**
+     * 验证<code>name</code> 等于 <code>"orders"</code>，<code>cron</code> 等于 <code>"0/5 * * * * ?"</code>，<code>service.readProjectionPosition("orders")</code> 等于 <code>30</code>。
+     */
     @Test
     void repeatedStartStopKeepsOneHandleAndCanRestartFromSavedPosition() {
         List<Handle> handles = new ArrayList<>();
@@ -47,6 +53,9 @@ class DefaultViewManagerTest {
         manager.stop();
     }
 
+    /**
+     * 验证<code>manager.isRunning()</code>为假，<code>handles.get(0).isActive()</code>为假，<code>manager.isRunning()</code>为真。
+     */
     @Test
     void partialStartFailureCancelsCreatedHandlesAndAllowsRetry() {
         List<Handle> handles = new ArrayList<>();
@@ -74,6 +83,9 @@ class DefaultViewManagerTest {
         assertThat(handles).allMatch(handle -> !handle.isActive());
     }
 
+    /**
+     * 验证<code>other.isActive()</code>为假。
+     */
     @Test
     void cancellationFailureStillCancelsOtherHandlesAndIsRetriedBeforeRestart() {
         AtomicBoolean failCancel = new AtomicBoolean(true);
@@ -107,6 +119,9 @@ class DefaultViewManagerTest {
         manager.stop();
     }
 
+    /**
+     * 验证<code>manager.isRunning()</code>为假，<code>first.isActive()</code>为假，<code>manager.isRunning()</code>为真。
+     */
     @Test
     void partialStartErrorCancelsCreatedHandlesAndRethrowsOriginal() {
         LinkageError unavailableScheduler = new LinkageError("scheduler unavailable");
@@ -133,6 +148,9 @@ class DefaultViewManagerTest {
         manager.stop();
     }
 
+    /**
+     * 验证<code>manager.isRunning()</code>为假，<code>other.isActive()</code>为假。
+     */
     @Test
     void cancellationErrorStillCancelsOtherHandlesAndCanBeRetried() {
         LinkageError unavailableScheduler = new LinkageError("cancel unavailable");
@@ -169,14 +187,28 @@ class DefaultViewManagerTest {
         manager.stop();
     }
 
+    /**
+     * 实现 <code>ViewScheduleHandle</code>，供测试调用 <code>cancel()</code>、<code>isActive()</code> 并观察结果。
+     */
     private static final class Handle implements ViewScheduler.ViewScheduleHandle {
+        /**
+         * 记录测试观察到的任务取消调用次数。
+         */
         private int cancels;
 
+        /**
+         * 撤销当前任务句柄允许撤销的操作。
+         */
         @Override
         public void cancel() {
             cancels++;
         }
 
+        /**
+         * 检查当前句柄是否仍处于有效状态。
+         *
+         * @return 实际返回<code>cancels == 0</code>，作为本次判断结果
+         */
         @Override
         public boolean isActive() {
             return cancels == 0;

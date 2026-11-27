@@ -27,14 +27,20 @@ import java.util.Optional;
  */
 public final class WebRequestLifecycle {
 
+    /**
+     * 解析并验证当前请求主体的认证组件。
+     */
     private final BearerSubjectAuthenticator authenticator;
+    /**
+     * 选择不同请求路径鉴权模式的访问策略。
+     */
     private final WebAccessPolicy accessPolicy;
 
     /**
      * 创建请求认证生命周期。
      *
      * @param authenticator Bearer 主体认证器
-     * @param accessPolicy 访问策略
+     * @param accessPolicy  访问策略
      */
     public WebRequestLifecycle(BearerSubjectAuthenticator authenticator, WebAccessPolicy accessPolicy) {
         this.authenticator = Objects.requireNonNull(authenticator, "authenticator must not be null");

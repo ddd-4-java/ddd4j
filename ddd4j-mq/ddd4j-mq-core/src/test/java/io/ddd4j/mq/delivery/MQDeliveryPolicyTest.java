@@ -19,14 +19,16 @@ import org.junit.jupiter.api.Test;
 import java.time.Duration;
 import java.time.Instant;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** 验证投递租约、退避和重试耗尽的公开契约。 */
+/**
+ * 验证投递租约、退避和重试耗尽的公开契约。
+ */
 class MQDeliveryPolicyTest {
 
+    /**
+     * 验证<code>policy.leaseDuration()</code> 等于 <code>Duration.ofSeconds(60)</code>，<code>policy.maxAttempts()</code> 等于 <code>12</code>，<code>policy.jitterFactor()</code> 等于 <code>0.20D</code>。
+     */
     @Test
     void productionDefault_shouldExposeTheDocumentedReliabilityDefaults() {
         MQDeliveryPolicy policy = MQDeliveryPolicy.productionDefault();
@@ -38,6 +40,9 @@ class MQDeliveryPolicyTest {
         assertEquals(0.20D, policy.jitterFactor());
     }
 
+    /**
+     * 验证<code>policy.nextAvailableAt(1, failedAt, 0.50D)</code> 等于 <code>failedAt.plusSeconds(1)</code>，<code>policy.nextAvailableAt(3, failedAt, 0.50D)</code> 等于 <code>failedAt.plusSeconds(4)</code>，<code>policy.nextAvailableAt(1, failedAt, 1.0D)</code> 等于 <code>failedAt.plusMillis(1200)</code>。
+     */
     @Test
     void nextAvailableAt_shouldApplyCappedExponentialBackoffAndJitter() {
         MQDeliveryPolicy policy = MQDeliveryPolicy.productionDefault();
@@ -50,6 +55,9 @@ class MQDeliveryPolicyTest {
         assertEquals(failedAt.plusMillis(1200), policy.nextAvailableAt(1, failedAt, 1.0D));
     }
 
+    /**
+     * 验证<code>policy.exhausted(11)</code>为假，<code>policy.exhausted(12)</code>为真。
+     */
     @Test
     void exhausted_shouldStartAtConfiguredMaximum() {
         MQDeliveryPolicy policy = MQDeliveryPolicy.productionDefault();
@@ -58,6 +66,9 @@ class MQDeliveryPolicyTest {
         assertTrue(policy.exhausted(12));
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalArgumentException.class</code>，<code>policy.nextAvailableAt( 1, Instant.parse("2026-08-03T00:00:00Z"), Double.NaN)</code> 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void nonFiniteJitter_shouldBeRejectedBeforeScheduling() {
         assertThrows(IllegalArgumentException.class, () -> new MQDeliveryPolicy(
@@ -67,6 +78,9 @@ class MQDeliveryPolicyTest {
                 1, Instant.parse("2026-08-03T00:00:00Z"), Double.NaN));
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void constructor_shouldRejectInvalidDeliverySettings() {
         assertThrows(IllegalArgumentException.class, () -> new MQDeliveryPolicy(

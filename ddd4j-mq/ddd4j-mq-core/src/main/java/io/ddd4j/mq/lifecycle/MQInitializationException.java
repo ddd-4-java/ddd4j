@@ -9,23 +9,31 @@ package io.ddd4j.mq.lifecycle;
  */
 public final class MQInitializationException extends IllegalStateException {
 
-    /** Broker 标识。 */
+    /**
+     * Broker 标识。
+     */
     private final String broker;
-    /** 消息主题。 */
+    /**
+     * 消息主题。
+     */
     private final String topic;
-    /** 消费组。 */
+    /**
+     * 消费组。
+     */
     private final String group;
-    /** 监听方法。 */
+    /**
+     * 监听方法。
+     */
     private final String listenerMethod;
 
     /**
      * 创建必需监听器初始化失败异常。
      *
-     * @param broker Broker 标识
-     * @param topic 消息主题
-     * @param group 消费组
+     * @param broker         Broker 标识
+     * @param topic          消息主题
+     * @param group          消费组
      * @param listenerMethod 监听方法
-     * @param cause 原始异常
+     * @param cause          原始异常
      */
     public MQInitializationException(String broker, String topic, String group,
                                      String listenerMethod, Throwable cause) {

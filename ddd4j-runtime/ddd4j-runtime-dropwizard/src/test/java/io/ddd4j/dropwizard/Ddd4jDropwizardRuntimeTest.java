@@ -38,6 +38,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class Ddd4jDropwizardRuntimeTest extends AbstractRuntimeContractTest {
 
+    /**
+     * 验证<code>runtime.readiness().contributors().isEmpty()</code>为真。
+     */
     @Test
     void defaultConstructorStartsWithNoReadinessContributors() {
         RuntimeFixtures fixtures = new RuntimeFixtures();
@@ -49,6 +52,9 @@ class Ddd4jDropwizardRuntimeTest extends AbstractRuntimeContractTest {
     }
 
 
+    /**
+     * 验证被测调用 抛出 <code>LinkageError.class</code>，<code>BaseContext.get(SpiKeys.COMMAND_BUS, CommandBus.class)</code> 与…为同一实例 <code>previous</code>，<code>cleanup</code> 与…为同一实例 <code>failure</code>。
+     */
     @Test
     void linkageFailureRestoresSpiAndKeepsOriginalEvenIfCleanupRepeatsIt() {
         RuntimeFixtures fixtures = new RuntimeFixtures();
@@ -90,6 +96,13 @@ class Ddd4jDropwizardRuntimeTest extends AbstractRuntimeContractTest {
         }
     }
 
+    /**
+     * 为契约测试构造当前框架的运行实例。
+     *
+     * <p>测试夹具会调用 <code>fixtures.publisher()</code>、<code>fixtures.subjectProvider()</code>。</p>
+     *
+     * @return 待验证的运行时适配器
+     */
     @Override
     protected RuntimeContract createRuntime() {
         RuntimeFixtures fixtures = new RuntimeFixtures();

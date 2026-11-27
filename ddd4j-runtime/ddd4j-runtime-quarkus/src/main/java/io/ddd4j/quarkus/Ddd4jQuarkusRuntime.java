@@ -32,7 +32,13 @@ import java.util.Objects;
  */
 public final class Ddd4jQuarkusRuntime implements AutoCloseable {
 
+    /**
+     * 管理当前示例或测试所拥有的 SPI 注册资源。
+     */
     private final SpiRegistrationScope registrations;
+    /**
+     * 汇总当前组件就绪状态的注册表。
+     */
     private final RuntimeReadinessRegistry readinessRegistry;
 
     /**
@@ -103,6 +109,11 @@ public final class Ddd4jQuarkusRuntime implements AutoCloseable {
         return readinessRegistry;
     }
 
+    /**
+     * 结束当前组件持有的资源。
+     *
+     * <p>Quarkus 实现调用 <code>registrations.close()</code>。</p>
+     */
     @Override
     public void close() {
         registrations.close();

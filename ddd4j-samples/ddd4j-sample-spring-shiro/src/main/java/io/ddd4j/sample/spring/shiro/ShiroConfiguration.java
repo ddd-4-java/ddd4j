@@ -1,22 +1,24 @@
 package io.ddd4j.sample.spring.shiro;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.realm.text.IniRealm;
 import org.apache.shiro.config.Ini;
+import org.apache.shiro.realm.text.IniRealm;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.AbstractShiroFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.util.ServletRequestPathUtils;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.util.ServletRequestPathUtils;
 
-/** 使用原生 Shiro Realm、Servlet Subject 绑定及 finally 恢复上下文。 */
+/**
+ * 使用原生 Shiro Realm、Servlet Subject 绑定及 finally 恢复上下文。
+ */
 @Configuration(proxyBeanMethods = false)
 public class ShiroConfiguration implements WebMvcConfigurer {
     /**
@@ -28,18 +30,26 @@ public class ShiroConfiguration implements WebMvcConfigurer {
         ini.load("[users]\nalice = demo-password, reader\nwriter = demo-password, writer\n[roles]\nreader = order:read\nwriter = order:read, order:write\n");
         return new DefaultWebSecurityManager(new IniRealm(ini));
     }
+
     /**
      * @param manager 原生安全管理器
      * @return 真正创建及释放请求 Subject 的 Shiro 过滤器
      */
     @Bean
     public FilterRegistrationBean<AbstractShiroFilter> shiroFilter(DefaultWebSecurityManager manager) {
-        AbstractShiroFilter filter = new AbstractShiroFilter() { };
+        AbstractShiroFilter filter = new AbstractShiroFilter() {
+        };
         filter.setSecurityManager(manager);
         FilterRegistrationBean<AbstractShiroFilter> registration = new FilterRegistrationBean<>(filter);
         registration.setOrder(-100);
         return registration;
     }
+
+    /**
+     * 向 Spring MVC 注册当前示例使用的原生认证拦截器。
+     *
+     * @param registry Spring MVC 的拦截器注册器
+     */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new HandlerInterceptor() {

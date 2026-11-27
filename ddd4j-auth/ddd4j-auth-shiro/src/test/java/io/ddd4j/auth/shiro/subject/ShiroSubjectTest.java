@@ -33,22 +33,47 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * 验证 <code>ShiroSubject</code> 在<code>defaults</code>、<code>login</code>、<code>works</code>等操作中的行为契约。
+ */
 class ShiroSubjectTest {
 
+    /**
+     * 创建 <code>new ShiroSubject</code> 供当前测试路径调用。
+     *
+     * @return 当前测试使用的结果，取自 <code>new ShiroSubject()</code>
+     */
     private ShiroSubject shiroSubject() {
         return new ShiroSubject();
     }
 
+    /**
+     * 创建 <code>new AuthPrincipal</code> 供当前测试路径调用。
+     *
+     * @param loginId 测试会话使用的账号标识
+     * @return 当前测试使用的结果，取自 <code>new AuthPrincipal().setLoginId(loginId).setUserId("user-" + loginId).setOrgId("org-1").setRoleId("role-1")</code>
+     */
     private AuthPrincipal principal(String loginId) {
         return new AuthPrincipal().setLoginId(loginId).setUserId("user-" + loginId)
                 .setOrgId("org-1").setRoleId("role-1");
     }
 
+    /**
+     * 创建 <code>new AuthRequest</code> 供当前测试路径调用。
+     *
+     * @param loginId    测试会话使用的账号标识
+     * @param credential 传给 <code>new AuthRequest</code> 的 <code>String</code> 输入
+     * @param principal  传给 <code>new AuthRequest</code> 的 <code>AuthPrincipal</code> 输入
+     * @return 当前测试使用的结果，取自 <code>new AuthRequest(loginId).setPrincipal(principal).extra("credential", credential)</code>
+     */
     private AuthRequest request(String loginId, String credential, AuthPrincipal principal) {
         return new AuthRequest(loginId).setPrincipal(principal)
                 .extra("credential", credential);
     }
 
+    /**
+     * 测试执行前执行 <code>org.apache.shiro.util.ThreadContext.remove()</code>、<code>manager.setRealm()</code>、<code>SecurityUtils.setSecurityManager()</code> 完成资源准备。
+     */
     @BeforeEach
     void setUp() {
         org.apache.shiro.util.ThreadContext.remove();
@@ -57,12 +82,18 @@ class ShiroSubjectTest {
         SecurityUtils.setSecurityManager(manager);
     }
 
+    /**
+     * 测试结束后执行 <code>SecurityUtils.setSecurityManager()</code>、<code>org.apache.shiro.util.ThreadContext.remove()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void tearDown() {
         SecurityUtils.setSecurityManager(null);
         org.apache.shiro.util.ThreadContext.remove();
     }
 
+    /**
+     * 验证<code>subject.getPrincipal()</code>为空，<code>subject.getPrincipalByLoginId("anyone")</code>为空，<code>subject.isDisabled("anyone")</code>为假。
+     */
     @Test
     void defaultsWhenNotLoggedIn() {
         ShiroSubject subject = shiroSubject();
@@ -109,6 +140,9 @@ class ShiroSubjectTest {
         subject.untieDisable("anyone");
     }
 
+    /**
+     * 验证<code>sessionId</code>非空，<code>subject.isAuthenticated()</code>为真，<code>subject.isAuthenticated("other")</code>为假。
+     */
     @Test
     void loginStoresPrincipalAndSessionConfig() {
         ShiroSubject subject = shiroSubject();
@@ -131,6 +165,9 @@ class ShiroSubjectTest {
         assertFalse(subject.isAuthenticated("other"));
     }
 
+    /**
+     * 验证<code>sessionId</code>非空，<code>subject.isAuthenticated()</code>为真，<code>subject.getPrincipal()</code>为空。
+     */
     @Test
     void loginWithEmptyPrincipalKeepsShiroFallback() {
         ShiroSubject subject = shiroSubject();
@@ -143,6 +180,9 @@ class ShiroSubjectTest {
         assertNull(subject.getPrincipal());
     }
 
+    /**
+     * 验证<code>sessionId</code>非空，<code>session.getTimeout()</code> 等于 <code>60_000L</code>。
+     */
     @Test
     void loginAppliesSessionTimeout() {
         io.ddd4j.core.auth.session.AuthSessionConfig sessionConfig =
@@ -158,6 +198,9 @@ class ShiroSubjectTest {
         assertEquals(60_000L, session.getTimeout());
     }
 
+    /**
+     * 验证<code>subject.login(null)</code> 抛出 <code>NullPointerException.class</code>，<code>subject.login(noLoginId)</code> 抛出 <code>NullPointerException.class</code>。
+     */
     @Test
     void loginRejectsNullArguments() {
         ShiroSubject subject = shiroSubject();
@@ -167,6 +210,9 @@ class ShiroSubjectTest {
         assertThrows(NullPointerException.class, () -> subject.login(noLoginId));
     }
 
+    /**
+     * 验证被测调用 抛出 <code>UnknownAccountException.class</code>，被测调用 抛出 <code>BadCredentialsException.class</code>，被测调用 抛出 <code>NotLoggedInException.class</code>。
+     */
     @Test
     void loginMapsShiroAuthenticationFailures() {
         ShiroSubject subject = shiroSubject();
@@ -185,6 +231,9 @@ class ShiroSubjectTest {
                 () -> subject.login(request("runtime", "pw", principal("runtime"))));
     }
 
+    /**
+     * 验证<code>subject.isAuthenticated()</code>为真，<code>subject.isAuthenticated()</code>为假。
+     */
     @Test
     void logoutAndKickoutCurrentUser() {
         ShiroSubject subject = shiroSubject();
@@ -203,6 +252,9 @@ class ShiroSubjectTest {
         assertTrue(subject.isAuthenticated());
     }
 
+    /**
+     * 验证<code>refreshed</code> 等于 <code>sessionId</code>。
+     */
     @Test
     void refreshTouchesSession() {
         ShiroSubject subject = shiroSubject();
@@ -213,6 +265,9 @@ class ShiroSubjectTest {
         assertEquals(sessionId, refreshed);
     }
 
+    /**
+     * 验证<code>subject.getExtra("ignored-token", "channel")</code> 等于 <code>"web"</code>，<code>subject.getExtra("ignored-token", "missing")</code>为空。
+     */
     @Test
     void getExtraReadsSessionAttributes() {
         ShiroSubject subject = shiroSubject();
@@ -223,6 +278,9 @@ class ShiroSubjectTest {
         assertNull(subject.getExtra("ignored-token", "missing"));
     }
 
+    /**
+     * 验证<code>subject.isPermitted("order:read")</code>为真，<code>subject.isPermitted("order:delete")</code>为假，<code>subject.hasAllRole("user-1", new String[]{"admin"})</code>为真。
+     */
     @Test
     void permissionsAndRolesDelegateToAuthorizer() {
         ShiroSubject subject = shiroSubject();
@@ -257,6 +315,9 @@ class ShiroSubjectTest {
         assertTrue(subject.hasAllRole("user-1", new String[]{"admin"}));
     }
 
+    /**
+     * 验证<code>subject.isPermitted().length</code> 等于 <code>0</code>，<code>subject.hasRoles().length</code> 等于 <code>0</code>，<code>subject.hasAllRole()</code>为假。
+     */
     @Test
     void permissionDefaultsForEmptyArrays() {
         ShiroSubject subject = shiroSubject();
@@ -270,6 +331,9 @@ class ShiroSubjectTest {
         assertFalse(subject.hasAllRole());
     }
 
+    /**
+     * 验证<code>subject.getPrincipal()</code>为空，<code>subject.isPermitted("anything")</code>为假，<code>subject.refresh()</code>为空。
+     */
     @Test
     void worksWithoutSecurityManager() {
         SecurityUtils.setSecurityManager(null);
@@ -295,6 +359,12 @@ class ShiroSubjectTest {
      */
     private static final class TestRealm extends AuthorizingRealm {
 
+        /**
+         * 创建 <code>new SimpleAuthenticationInfo</code> 供当前测试路径调用。
+         *
+         * @param token 从测试登录获得的会话凭据
+         * @return 当前测试使用的结果，取自 <code>new SimpleAuthenticationInfo(username, "pw", getName())</code>
+         */
         @Override
         protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) {
             String username = (String) token.getPrincipal();
@@ -316,6 +386,12 @@ class ShiroSubjectTest {
             return new SimpleAuthenticationInfo(username, "pw", getName());
         }
 
+        /**
+         * 读取 <code>info</code> 供当前测试使用。
+         *
+         * @param principals 本次调用使用的 <code>PrincipalCollection</code> 参数 <code>principals</code>
+         * @return 当前测试使用的结果，取自 <code>info</code>
+         */
         @Override
         protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
             SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();

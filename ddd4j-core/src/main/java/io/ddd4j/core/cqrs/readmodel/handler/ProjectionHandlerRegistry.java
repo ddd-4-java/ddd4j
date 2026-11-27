@@ -27,7 +27,13 @@ import java.util.stream.Collectors;
  */
 public class ProjectionHandlerRegistry {
 
+    /**
+     * 按投影名查找已登记的处理器。
+     */
     private final Map<String, ProjectionHandler> handlers = new LinkedHashMap<>();
+    /**
+     * 每个已登记处理器订阅的事件类型索引。
+     */
     private final Map<String, List<Class<? extends DomainEvent<?>>>> subscriptions = new LinkedHashMap<>();
 
     /**
@@ -59,6 +65,10 @@ public class ProjectionHandlerRegistry {
     /**
      * 校验本次适配快照与登记元数据一致；未注册对象可直接适配。
      * 按对象身份匹配，避免改名后用新名称绕过登记检查。
+     *
+     * @param handler 注册的投影处理器
+     * @param name    处理器声明的投影名称
+     * @param types   处理器订阅的领域事件类型
      */
     synchronized void validateMetadata(ProjectionHandler handler, String name,
                                        Collection<Class<? extends DomainEvent<?>>> types) {

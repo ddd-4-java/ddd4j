@@ -21,8 +21,14 @@ import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * 验证 <code>QrCodeTemplateRegistry</code> 在<code>bindText</code>等操作中的行为契约。
+ */
 class QrCodeTemplateRegistryTests {
 
+    /**
+     * 验证<code>registry.find("label")</code> 包含 <code>definition</code>，<code>registry.remove("label")</code>为真，<code>registry.find("label")</code>为空。
+     */
     @Test
     void registerFindAndRemoveTemplate() {
         QrCodeTemplateRegistry registry = new InMemoryQrCodeTemplateRegistry();
@@ -38,6 +44,9 @@ class QrCodeTemplateRegistryTests {
         assertThat(registry.find("label")).isEmpty();
     }
 
+    /**
+     * 验证<code>((QrCodeTextElement) bound.getElements().get(0)).getText()</code> 等于 <code>"欢迎 DDD4J"</code>，<code>((QrCodeTextElement) definition.getFrame().getElements().get(0)).getText()</code> 等于 <code>"欢迎 ${name}"</code>。
+     */
     @Test
     void bindTextWithoutMutatingRegisteredTemplate() {
         QrCodeFrame frame = QrCodeFrame.builder(320, 380)

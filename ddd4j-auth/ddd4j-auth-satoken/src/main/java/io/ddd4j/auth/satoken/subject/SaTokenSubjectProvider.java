@@ -29,6 +29,11 @@ import io.ddd4j.core.subject.SubjectProvider;
  */
 public class SaTokenSubjectProvider implements SubjectProvider {
 
+    /**
+     * 取得当前请求使用的认证主体接口。
+     *
+     * @return 本次调用使用的认证主体接口
+     */
     @Override
     public Subject getSubject() {
         return new SaTokenSubject();
@@ -38,6 +43,9 @@ public class SaTokenSubjectProvider implements SubjectProvider {
      * 按账号体系获取 Subject（对齐 Sa-Token {@code SaManager.getStpLogic(loginType)}）。
      *
      * <p>返回绑定指定账号体系的 Subject。
+     *
+     * @param realm 要取得主体的认证域
+     * @return 绑定指定认证域的主体
      */
     @Override
     public Subject getSubject(String realm) {

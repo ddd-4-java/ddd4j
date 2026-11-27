@@ -17,8 +17,14 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+/**
+ * 通过 <code>RbacConfig.initSeedData()</code>、<code>RbacConfig.createSubjectDataProvider()</code>、<code>provider.getPermissionList()</code> 验证 <code>RbacConfigContract</code> 的运行行为。
+ */
 class RbacConfigContractTest {
 
+    /**
+     * 验证<code>roleCodes</code> 等于 <code>Arrays.asList("user")</code>，<code>permissions.add("admin:*")</code> 抛出 <code>UnsupportedOperationException.class</code>，<code>roleCodes.add("admin")</code> 抛出 <code>UnsupportedOperationException.class</code>。
+     */
     @Test
     void returnsImmutablePermissionAndRoleSnapshots() {
         InMemoryUserRepository users = new InMemoryUserRepository();
@@ -35,6 +41,9 @@ class RbacConfigContractTest {
         assertThrows(UnsupportedOperationException.class, () -> roleCodes.add("admin"));
     }
 
+    /**
+     * 验证<code>provider.getPermissionList(new AuthPrincipal().setLoginId("ordered"))</code> 等于 <code>Arrays.asList("z", "a")</code>。
+     */
     @Test
     void preservesDirectPermissionInsertionOrder() {
         InMemoryUserRepository users = new InMemoryUserRepository();

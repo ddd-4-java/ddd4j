@@ -35,6 +35,9 @@ public class DefaultRowHeightStyleStrategy extends AbstractRowHeightStyleStrateg
      */
     public static final short DEFAULT_HEADER_ROW_HEIGHT = 600;
 
+    /**
+     * 首行表头使用的高度。
+     */
     private final short headerRowHeight;
 
     /**
@@ -53,6 +56,12 @@ public class DefaultRowHeightStyleStrategy extends AbstractRowHeightStyleStrateg
         this.headerRowHeight = headerRowHeight;
     }
 
+    /**
+     * 仅为第一行表头设置配置的高度。
+     *
+     * @param row              当前正在写入的行
+     * @param relativeRowIndex 相对表头或内容起点的行索引
+     */
     @Override
     protected void setHeadColumnHeight(Row row, int relativeRowIndex) {
         if (relativeRowIndex == 0) {
@@ -60,6 +69,12 @@ public class DefaultRowHeightStyleStrategy extends AbstractRowHeightStyleStrateg
         }
     }
 
+    /**
+     * 保留内容行的 Excel 默认行高。
+     *
+     * @param row              当前正在写入的行
+     * @param relativeRowIndex 相对表头或内容起点的行索引
+     */
     @Override
     protected void setContentColumnHeight(Row row, int relativeRowIndex) {
         // 内容行使用 Excel 默认行高

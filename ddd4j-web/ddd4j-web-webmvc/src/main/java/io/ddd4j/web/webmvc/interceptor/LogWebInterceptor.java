@@ -44,16 +44,39 @@ public class LogWebInterceptor extends BaseWebInterceptor {
     @Autowired
     BaseWebProperties baseWebProperties;
 
+    /**
+     * 获取拦截的请求路径模式。
+     *
+     * <p>此实现调用 <code>baseWebProperties.getLog().getIncludes().split(",")</code>。</p>
+     *
+     * @return 实际返回<code>baseWebProperties.getLog().getIncludes().split(",")</code>
+     */
     @Override
     public String[] pathPatterns() {
         return baseWebProperties.getLog().getIncludes().split(",");
     }
 
+    /**
+     * 获取不拦截的请求路径模式。
+     *
+     * <p>此实现调用 <code>baseWebProperties.getLog().getExcludes().split(",")</code>。</p>
+     *
+     * @return 实际返回<code>baseWebProperties.getLog().getExcludes().split(",")</code>
+     */
     @Override
     public String[] excludePathPatterns() {
         return baseWebProperties.getLog().getExcludes().split(",");
     }
 
+    /**
+     * 识别 MVC 控制器请求并记录请求开始信息。
+     *
+     * @param request  当前进入调用链的 HTTP 请求
+     * @param response 当前准备写出的 HTTP 响应
+     * @param handler  MVC 当前匹配的请求处理器
+     * @return 允许当前请求继续执行时返回 true
+     * @throws Exception 当前框架请求处理、消息读写或参数转换失败
+     */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (handler.getClass() == ResourceHttpRequestHandler.class) {
@@ -67,6 +90,15 @@ public class LogWebInterceptor extends BaseWebInterceptor {
         return true;
     }
 
+    /**
+     * 记录请求处理耗时并清理线程中的计时信息。
+     *
+     * @param request      当前进入调用链的 HTTP 请求
+     * @param response     当前准备写出的 HTTP 响应
+     * @param handler      MVC 当前匹配的请求处理器
+     * @param modelAndView 请求处理器返回的视图及模型
+     * @throws Exception 当前框架请求处理、消息读写或参数转换失败
+     */
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         try {
@@ -81,6 +113,11 @@ public class LogWebInterceptor extends BaseWebInterceptor {
 
     }
 
+    /**
+     * 返回请求日志拦截器执行优先级。
+     *
+     * @return 当前拦截器的 Spring 排序值
+     */
     @Override
     public int getOrder() {
         return -600;

@@ -25,6 +25,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class ApiCodeTest {
 
+    /**
+     * 验证<code>ApiCode.getReasonByCode(ApiCode.OK.getCode())</code> 等于 <code>"请求/操作成功"</code>，<code>ApiCode.getReasonByCode(ApiCode.UNAUTHORIZED.getCode())</code> 等于 <code>"未登录或token已经失效"</code>。
+     */
     @Test
     void getReasonByCode_shouldReturnMatchingDesc() {
         assertThat(ApiCode.getReasonByCode(ApiCode.OK.getCode()))
@@ -33,32 +36,50 @@ class ApiCodeTest {
                 .isEqualTo("未登录或token已经失效");
     }
 
+    /**
+     * 验证<code>ApiCode.getReasonByCode(999999)</code>为空。
+     */
     @Test
     void getReasonByCode_shouldReturnEmptyStringForUnknownCode() {
         assertThat(ApiCode.getReasonByCode(999999)).isEmpty();
     }
 
+    /**
+     * 验证<code>ApiCode.getReasonByCode(null)</code>为空。
+     */
     @Test
     void getReasonByCode_shouldReturnEmptyStringForNull() {
         assertThat(ApiCode.getReasonByCode(null)).isEmpty();
     }
 
+    /**
+     * 验证<code>ApiCode.getByCode(ApiCode.FAIL.getCode())</code> 等于 <code>ApiCode.FAIL</code>，<code>ApiCode.getByCode(ApiCode.FORBIDDEN.getCode())</code> 等于 <code>ApiCode.FORBIDDEN</code>。
+     */
     @Test
     void getByCode_shouldReturnMatchingEnum() {
         assertThat(ApiCode.getByCode(ApiCode.FAIL.getCode())).isEqualTo(ApiCode.FAIL);
         assertThat(ApiCode.getByCode(ApiCode.FORBIDDEN.getCode())).isEqualTo(ApiCode.FORBIDDEN);
     }
 
+    /**
+     * 验证<code>ApiCode.getByCode(999999)</code>为空。
+     */
     @Test
     void getByCode_shouldReturnNullForUnknownCode() {
         assertThat(ApiCode.getByCode(999999)).isNull();
     }
 
+    /**
+     * 验证<code>ApiCode.getByCode(null)</code>为空。
+     */
     @Test
     void getByCode_shouldReturnNullForNull() {
         assertThat(ApiCode.getByCode(null)).isNull();
     }
 
+    /**
+     * 验证<code>ApiCode.OK.getCode()</code>为零，<code>ApiCode.SUCCESS.getCode()</code> 等于 <code>200</code>，<code>ApiCode.SERVER_ERROR.getCode()</code> 等于 <code>500</code>。
+     */
     @Test
     void values_shouldContainKeyCodes() {
         assertThat(ApiCode.OK.getCode()).isZero();
@@ -67,6 +88,9 @@ class ApiCodeTest {
         assertThat(ApiCode.SERVER_ERROR.getCode()).isEqualTo(500);
     }
 
+    /**
+     * 验证<code>ApiCode.OK.getCode()</code>为零，<code>ApiCode.SUCCESS.getCode()</code> 等于 <code>200</code>，<code>ApiCode.NETWORK_AUTHENTICATION_REQUIRED.getCode()</code> 等于 <code>511</code>。
+     */
     @Test
     void values_shouldContainKeyCodesFromBothCatalogs() {
         // 通用码段（原 ResultCode）
@@ -81,6 +105,9 @@ class ApiCodeTest {
         assertThat(ApiCode.NETWORK_AUTHENTICATION_REQUIRED.getCode()).isEqualTo(511);
     }
 
+    /**
+     * 验证<code>code.getCode()</code>非空。
+     */
     @Test
     void getCodeAndDesc_shouldExposeGetters() {
         for (ApiCode code : ApiCode.values()) {
@@ -89,6 +116,9 @@ class ApiCodeTest {
         }
     }
 
+    /**
+     * 验证<code>ApiCode.getReasonByCode(code.getCode())</code>非空，<code>ApiCode.getByCode(code.getCode())</code>非空。
+     */
     @Test
     void getReasonByCode_shouldResolveAllEnumValues() {
         for (ApiCode code : ApiCode.values()) {
@@ -98,6 +128,9 @@ class ApiCodeTest {
         }
     }
 
+    /**
+     * 验证<code>ok.getCode()</code> 等于 <code>200</code>，<code>ok.isOk()</code>为真，<code>withMsgAndData.getData()</code> 等于 <code>"payload"</code>。
+     */
     @Test
     void toResponse_shouldBuildRFromCustomApiCodeContract() {
         // ResultCode 作为 CustomApiCode 实现，默认方法直接构建 R

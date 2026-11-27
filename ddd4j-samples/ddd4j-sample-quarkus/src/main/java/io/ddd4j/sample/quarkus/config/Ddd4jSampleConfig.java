@@ -66,8 +66,14 @@ public class Ddd4jSampleConfig {
      */
     @Inject
     Instance<DomainEventPublisher> domainEventPublisher;
+    /**
+     * 根据当前调用范围提供认证主体的组件。
+     */
     @Inject
     Instance<SubjectProvider> subjectProvider;
+    /**
+     * CDI 环境中可供示例业务使用的国际化提供器。
+     */
     @Inject
     Instance<I18nProvider> i18nProvider;
 
@@ -101,6 +107,13 @@ public class Ddd4jSampleConfig {
         return domainEventPublisher.isUnsatisfied() ? Optional.empty() : Optional.of(domainEventPublisher.get());
     }
 
+    /**
+     * 记录 CDI 中实际发现的 SPI 服务实现。
+     *
+     * @param <T>      当前示例所使用的数据或框架类型
+     * @param name     待读取的参数、Cookie、请求头或其他配置项名称
+     * @param instance 需要记录发现结果的 CDI 组件实例
+     */
     private <T> void logSPI(String name, Instance<T> instance) {
         if (instance.isUnsatisfied()) {
             log.warn("[Ddd4jSampleConfig] {} NOT FOUND (unsatisfied)", name);

@@ -44,13 +44,28 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Testcontainers(disabledWithoutDocker = true)
 class R2dbcEventStorePostgresIT {
 
+    /**
+     * 为当前集成测试提供独立 PostgreSQL 服务的容器。
+     */
     @Container
     static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16-alpine")
             .withTmpFs(Map.of("/var/lib/postgresql/data", "rw"));
+    /**
+     * 测试事件流中使用的聚合类型名称。
+     */
     private static final String ORDER_TYPE = "Order";
+    /**
+     * 为受测 R2DBC 组件提供数据库连接的工厂。
+     */
     private PostgresqlConnectionFactory connectionFactory;
+    /**
+     * 读取及追加领域事件的事件存储。
+     */
     private R2dbcEventStore eventStore;
 
+    /**
+     * 测试前依次注册<code>EntityIdRegistry</code>。
+     */
     @BeforeEach
     void setUp() {
         connectionFactory = new PostgresqlConnectionFactory(PostgresqlConnectionConfiguration.builder()
@@ -64,6 +79,9 @@ class R2dbcEventStorePostgresIT {
         eventStore = new R2dbcEventStore(connectionFactory);
     }
 
+    /**
+     * 测试后依次注销<code>EntityIdRegistry</code>、关闭<code>connection</code>。
+     */
     @AfterEach
     void tearDown() {
         EntityIdRegistry.unregister("Order");
@@ -74,6 +92,9 @@ class R2dbcEventStorePostgresIT {
         }
     }
 
+    /**
+     * 验证<code>events</code> 的大小为 <code>1</code>，<code>events.get(0).aggregateType()</code> 等于 <code>ORDER_TYPE</code>，<code>events.get(0).eventId()</code> 等于 <code>event.getEventId()</code>。
+     */
     @Test
     void appendAndReadShouldRoundTripTypedMetadataOnPostgres() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-pg-1");
@@ -89,6 +110,9 @@ class R2dbcEventStorePostgresIT {
         assertThat(events.get(0).eventId()).isEqualTo(event.getEventId());
     }
 
+    /**
+     * 验证<code>eventStore.read("Invoice", orderId)</code> 的大小为 <code>1</code>。
+     */
     @Test
     void versionRangeAndAggregateTypeIsolationShouldFollowCoreContractOnPostgres() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-pg-shared");
@@ -103,6 +127,9 @@ class R2dbcEventStorePostgresIT {
         assertThat(eventStore.read("Invoice", orderId)).hasSize(1);
     }
 
+    /**
+     * 在测试框架中执行 <code>eventStore.append()</code>、<code>eventStore.readAll()</code>，验证该场景。
+     */
     @Test
     void readAllShouldPreserveGlobalPositionOrderOnPostgres() {
         TestAggregateRootId first = new TestAggregateRootId("order-pg-a");
@@ -114,6 +141,9 @@ class R2dbcEventStorePostgresIT {
                 .containsExactly(1L, 2L);
     }
 
+    /**
+     * 验证<code>eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId)), 0L)</code> 抛出 <code>AggregateVersionConflictException.class</code>，<code>conflict.expectedVersion()</code> 等于 <code>0L</code>，<code>eventStore.read(ORDER_TYPE, orderId)</code> 的大小为 <code>1</code>。
+     */
     @Test
     void appendWithStaleVersionShouldRejectOnPostgres() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-pg-conflict");
@@ -130,37 +160,84 @@ class R2dbcEventStorePostgresIT {
         assertThat(eventStore.read(ORDER_TYPE, orderId)).hasSize(1);
     }
 
+    /**
+     * 测试专用聚合根标识，供仓储、事件序列化或命令路由构造独立的聚合实例。
+     */
     private final static class TestAggregateRootId implements AggregateRootId {
 
+        /**
+         * Java 序列化使用的版本标识。
+         */
         private static final long serialVersionUID = 0L;
+        /**
+         * 测试聚合注册和反序列化所用的实体类型标识。
+         */
         private static final EntityType TYPE = new StringEntityType("Order");
+        /**
+         * 用于组成测试标识的原始值。
+         */
         private final String value;
 
+        /**
+         * 以给定状态构造 <code>TestAggregateRootId</code> 测试对象。
+         *
+         * @param value 用于组成测试标识的原始值
+         */
         @JsonCreator()
         private TestAggregateRootId(@JsonProperty("value") String value) {
             this.value = value;
         }
 
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 实际返回<code>TYPE</code>，供调用方取得当前值
+         */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 实际返回<code>value</code>，供调用方取得当前值
+         */
         @Override
         public String asString() {
             return value;
         }
 
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * <p>测试夹具会调用 <code>TYPE.asString()</code>。</p>
+         *
+         * @return 实际返回<code>TYPE.asString() + ":" + value</code>
+         */
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
         }
 
+        /**
+         * 读取<code>value</code> 字段。
+         *
+         * @return <code>value</code> 字段
+         */
         @JsonProperty("value")
         public String value() {
             return value;
         }
 
+        /**
+         * 根据<code>value</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -173,6 +250,11 @@ class R2dbcEventStorePostgresIT {
             return Objects.equals(this.value, other.value);
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 0;
@@ -180,18 +262,34 @@ class R2dbcEventStorePostgresIT {
             return result;
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>value</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "TestAggregateRootId[value=" + value + "]";
         }
     }
 
+    /**
+     * 表示订单创建的测试领域事件，供断言验证事件处理链。
+     */
     static final class OrderCreatedEvent extends DomainEvent<TestAggregateRootId> {
 
+        /**
+         * 使用 <code>super()</code> 初始化 <code>OrderCreatedEvent</code> 测试夹具。
+         */
         OrderCreatedEvent() {
             super();
         }
 
+        /**
+         * 使用 <code>super()</code> 初始化 <code>OrderCreatedEvent</code> 测试夹具。
+         *
+         * @param orderId 测试中要定位的订单标识
+         */
         OrderCreatedEvent(TestAggregateRootId orderId) {
             super(new EntityIdPath(orderId));
         }

@@ -52,7 +52,13 @@ import java.util.concurrent.TimeUnit;
  */
 public class MicrometerProjectionMetrics implements ProjectionMetrics {
 
+    /**
+     * 注册和读取当前组件 Micrometer 指标的注册表。
+     */
     private final MeterRegistry registry;
+    /**
+     * 按事件流标识保存最近一次投影运行结果。
+     */
     private final ConcurrentMap<String, ProjectionRunInfo> runInfoMap = new ConcurrentHashMap<>();
 
     /**
@@ -65,6 +71,14 @@ public class MicrometerProjectionMetrics implements ProjectionMetrics {
         this.registry = Objects.requireNonNull(registry, "MeterRegistry must not be null");
     }
 
+    /**
+     * 记录一次投影成功执行的事件计数和耗时，并更新最近执行信息。
+     *
+     * @param streamId        投影事件流标识
+     * @param eventCount      本次处理的事件数
+     * @param durationNanos   本次投影执行耗时，单位为纳秒
+     * @param positionAdvance 投影执行器提供的事件流位点推进量
+     */
     @Override
     public void onRunCompleted(String streamId, int eventCount, long durationNanos, long positionAdvance) {
         Counter.builder(ProjectionConstants.METRIC_EVENTS_TOTAL)
@@ -82,6 +96,12 @@ public class MicrometerProjectionMetrics implements ProjectionMetrics {
         runInfoMap.put(streamId, new ProjectionRunInfo(Instant.now(), eventCount, null));
     }
 
+    /**
+     * 记录事件流的一次投影执行失败。
+     *
+     * @param streamId 投影事件流标识
+     * @param error    造成执行失败的异常
+     */
     @Override
     public void onRunFailed(String streamId, Throwable error) {
         Counter.builder(ProjectionConstants.METRIC_ERRORS_TOTAL)
@@ -95,6 +115,14 @@ public class MicrometerProjectionMetrics implements ProjectionMetrics {
                 (old, newInfo) -> newInfo);
     }
 
+    /**
+     * 读取投影最近一次运行的记录。
+     *
+     * <p>此实现调用 <code>Optional.ofNullable(runInfoMap.get(streamId))</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     * @return 最近一次运行的时间和结果等信息
+     */
     @Override
     public Optional<ProjectionRunInfo> getLastRunInfo(String streamId) {
         return Optional.ofNullable(runInfoMap.get(streamId));

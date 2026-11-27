@@ -51,6 +51,9 @@ import java.util.stream.Collectors;
  */
 public class AuthorizationController {
 
+    /**
+     * 执行基于角色的授权与分配操作的应用服务。
+     */
     private final RbacService rbacService;
 
     /**
@@ -67,6 +70,9 @@ public class AuthorizationController {
 
     /**
      * 数组 → Set 转换（保留顺序）。
+     *
+     * @param arr 待转换的数组
+     * @return 数组中的不同元素组成的集合
      */
     private static Set<String> toSet(String[] arr) {
         if (Objects.isNull(arr)) {
@@ -79,16 +85,34 @@ public class AuthorizationController {
         return set;
     }
 
+    /**
+     * 把账号实体映射为不含口令的对外结果。
+     *
+     * @param user 待保存或对外返回的账号实体
+     * @return 账号展示对象
+     */
     private static UserView toUserView(User user) {
         return new UserView(user.loginId(), user.displayName(),
                 new LinkedHashSet<>(user.roles()),
                 new LinkedHashSet<>(user.permissions()));
     }
 
+    /**
+     * 把角色实体及其分配权限映射为对外结果。
+     *
+     * @param role 待保存或对外返回的角色实体
+     * @return 角色展示对象
+     */
     private static RoleView toRoleView(Role role) {
         return new RoleView(role.code(), role.name(), new LinkedHashSet<>(role.permissions()));
     }
 
+    /**
+     * 把权限实体映射为对外返回的权限说明。
+     *
+     * @param permission 待保存或对外返回的权限实体
+     * @return 权限展示对象
+     */
     private static PermissionView toPermissionView(Permission permission) {
         return new PermissionView(permission.code(), permission.description());
     }
@@ -285,6 +309,9 @@ public class AuthorizationController {
 
     /**
      * 校验当前会话是否为 admin 角色，否则直接返回 403 响应。
+     *
+     * @param ctx 用于读取认证上下文的当前请求
+     * @return 当前主体拥有管理员角色时返回 true，拒绝请求后返回 false
      */
     private boolean requireAdmin(Context ctx) {
         if (!SubjectKit.hasRole("admin")) {
@@ -303,17 +330,35 @@ public class AuthorizationController {
     @NoArgsConstructor
     public static class CreateUserRequest {
 
+        /**
+         * Java 序列化版本标识。
+         */
         private static final long serialVersionUID = 0L;
 
+        /**
+         * 用来识别账号的登录标识。
+         */
         private String loginId;
 
+        /**
+         * 当前登录或账号创建请求提供的口令。
+         */
         @ToString.Exclude
         private String password;
 
+        /**
+         * 账号在示例接口中使用的显示名称。
+         */
         private String displayName;
 
+        /**
+         * 当前账号持有或待分配的角色编码。
+         */
         private String[] roles;
 
+        /**
+         * 当前角色或主体关联的权限编码。
+         */
         private String[] permissions;
 
         /**
@@ -393,15 +438,30 @@ public class AuthorizationController {
     @NoArgsConstructor
     public static class UpdateUserRequest {
 
+        /**
+         * Java 序列化版本标识。
+         */
         private static final long serialVersionUID = 0L;
 
+        /**
+         * 账号在示例接口中使用的显示名称。
+         */
         private String displayName;
 
+        /**
+         * 当前登录或账号创建请求提供的口令。
+         */
         @ToString.Exclude
         private String password;
 
+        /**
+         * 当前账号持有或待分配的角色编码。
+         */
         private String[] roles;
 
+        /**
+         * 当前角色或主体关联的权限编码。
+         */
         private String[] permissions;
 
         /**
@@ -469,12 +529,24 @@ public class AuthorizationController {
     @NoArgsConstructor
     public static class CreateRoleRequest {
 
+        /**
+         * Java 序列化版本标识。
+         */
         private static final long serialVersionUID = 0L;
 
+        /**
+         * 当前请求或结果使用的业务编码。
+         */
         private String code;
 
+        /**
+         * 当前请求或结果使用的显示名称。
+         */
         private String name;
 
+        /**
+         * 当前角色或主体关联的权限编码。
+         */
         private String[] permissions;
 
         /**
@@ -530,10 +602,19 @@ public class AuthorizationController {
     @NoArgsConstructor
     public static class UpdateRoleRequest {
 
+        /**
+         * Java 序列化版本标识。
+         */
         private static final long serialVersionUID = 0L;
 
+        /**
+         * 当前请求或结果使用的显示名称。
+         */
         private String name;
 
+        /**
+         * 当前角色或主体关联的权限编码。
+         */
         private String[] permissions;
 
         /**
@@ -577,10 +658,19 @@ public class AuthorizationController {
     @NoArgsConstructor
     public static class CreatePermissionRequest {
 
+        /**
+         * Java 序列化版本标识。
+         */
         private static final long serialVersionUID = 0L;
 
+        /**
+         * 当前请求或结果使用的业务编码。
+         */
         private String code;
 
+        /**
+         * 当前角色或权限定义的说明。
+         */
         private String description;
 
         /**
@@ -622,14 +712,29 @@ public class AuthorizationController {
      */
     public final static class UserView {
 
+        /**
+         * Java 序列化版本标识。
+         */
         private static final long serialVersionUID = 0L;
 
+        /**
+         * 用来识别账号的登录标识。
+         */
         private final String loginId;
 
+        /**
+         * 账号在示例接口中使用的显示名称。
+         */
         private final String displayName;
 
+        /**
+         * 当前账号持有或待分配的角色编码。
+         */
         private final Set<String> roles;
 
+        /**
+         * 对外返回的账号权限编码集合。
+         */
         private final Set<String> permissions;
 
         /**
@@ -716,6 +821,14 @@ public class AuthorizationController {
             return permissions;
         }
 
+        /**
+         * 根据<code>loginId</code>、<code>displayName</code>、<code>roles</code>、<code>permissions</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -728,6 +841,11 @@ public class AuthorizationController {
             return Objects.equals(this.loginId, other.loginId) && Objects.equals(this.displayName, other.displayName) && Objects.equals(this.roles, other.roles) && Objects.equals(this.permissions, other.permissions);
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 1;
@@ -738,6 +856,11 @@ public class AuthorizationController {
             return result;
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>loginId</code>、<code>displayName</code>、<code>roles</code>、<code>permissions</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "AuthorizationController.UserView(loginId=" + loginId + ", displayName=" + displayName + ", roles=" + roles + ", permissions=" + permissions + ")";
@@ -749,12 +872,24 @@ public class AuthorizationController {
      */
     public final static class RoleView {
 
+        /**
+         * Java 序列化版本标识。
+         */
         private static final long serialVersionUID = 0L;
 
+        /**
+         * 当前请求或结果使用的业务编码。
+         */
         private final String code;
 
+        /**
+         * 当前请求或结果使用的显示名称。
+         */
         private final String name;
 
+        /**
+         * 对外返回的角色权限编码集合。
+         */
         private final Set<String> permissions;
 
         /**
@@ -822,6 +957,14 @@ public class AuthorizationController {
             return permissions;
         }
 
+        /**
+         * 根据<code>code</code>、<code>name</code>、<code>permissions</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -834,6 +977,11 @@ public class AuthorizationController {
             return Objects.equals(this.code, other.code) && Objects.equals(this.name, other.name) && Objects.equals(this.permissions, other.permissions);
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 1;
@@ -843,6 +991,11 @@ public class AuthorizationController {
             return result;
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>code</code>、<code>name</code>、<code>permissions</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "AuthorizationController.RoleView(code=" + code + ", name=" + name + ", permissions=" + permissions + ")";
@@ -854,10 +1007,19 @@ public class AuthorizationController {
      */
     public final static class PermissionView {
 
+        /**
+         * Java 序列化版本标识。
+         */
         private static final long serialVersionUID = 0L;
 
+        /**
+         * 当前请求或结果使用的业务编码。
+         */
         private final String code;
 
+        /**
+         * 对外返回的权限描述。
+         */
         private final String description;
 
         /**
@@ -906,6 +1068,14 @@ public class AuthorizationController {
             return description;
         }
 
+        /**
+         * 根据<code>code</code>、<code>description</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -918,6 +1088,11 @@ public class AuthorizationController {
             return Objects.equals(this.code, other.code) && Objects.equals(this.description, other.description);
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 1;
@@ -926,6 +1101,11 @@ public class AuthorizationController {
             return result;
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>code</code>、<code>description</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "AuthorizationController.PermissionView(code=" + code + ", description=" + description + ")";

@@ -1,25 +1,40 @@
 package io.ddd4j.data.mybatis.config;
 
-import org.apache.ibatis.enhance.plugins.MybatisEnhanceInterceptor;
+import org.apache.ibatis.enhance.crypto.handler.DefaultDataSignatureHandler;
+import org.apache.ibatis.enhance.crypto.handler.EncryptedFieldHandler;
+import org.apache.ibatis.enhance.crypto.interceptor.DataDecryptionInnerInterceptor;
 import org.apache.ibatis.enhance.crypto.interceptor.DataEncryptionInnerInterceptor;
 import org.apache.ibatis.enhance.crypto.interceptor.DataSignatureInnerInterceptor;
-import org.apache.ibatis.enhance.crypto.interceptor.DataDecryptionInnerInterceptor;
-import org.apache.ibatis.enhance.crypto.handler.DefaultDataSignatureHandler;
+import org.apache.ibatis.enhance.plugins.MybatisEnhanceInterceptor;
 import org.apache.ibatis.enhance.plugins.inner.SqlObservationInnerInterceptor;
-import org.apache.ibatis.enhance.crypto.handler.EncryptedFieldHandler;
+
 import java.util.Objects;
 
-/** 原生 MyBatis 增强链装配，保留显式 Mapper/XML SQL 模型。 */
+/**
+ * 原生 MyBatis 增强链装配，保留显式 Mapper/XML SQL 模型。
+ */
 public final class Ddd4jMybatisConfigurer {
+    /**
+     * ORM 适配器使用的字段加解密处理器。
+     */
     private EncryptedFieldHandler crypto;
+    /**
+     * 对持久化字段执行签名相关处理的组件。
+     */
     private boolean signature;
+    /**
+     * SQL 租户隔离使用的列名称。
+     */
     private String tenantColumn;
+    /**
+     * 不应用租户隔离规则的表集合。
+     */
     private java.util.function.Predicate<String> ignored = table -> false;
 
     /**
      * 设置租户过滤，启用后缺失租户即终止执行。
      *
-     * @param column 租户字段名
+     * @param column  租户字段名
      * @param ignored 判断表是否免于租户过滤的条件
      * @return 当前装配器
      */

@@ -21,8 +21,14 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * 验证 <code>Ddd4jHelidonReadinessHealthCheck</code> 在<code>shouldMapReadyAndUnavailableReports</code>等操作中的行为契约。
+ */
 class Ddd4jHelidonReadinessHealthCheckTest {
 
+    /**
+     * 验证<code>ready.getStatus()</code> 等于 <code>HealthCheckResponse.Status.UP</code>，<code>ready.getData().orElseThrow().get("checks")</code> 等于 <code>1L</code>，<code>unavailable.getData().orElseThrow().get("checks")</code> 等于 <code>2L</code>。
+     */
     @Test
     void shouldMapReadyAndUnavailableReportsWithoutExposingFailureDetails() {
         RuntimeReadinessRegistry registry = new RuntimeReadinessRegistry()

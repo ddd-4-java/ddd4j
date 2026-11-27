@@ -32,6 +32,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("NoopEventChunkReader")
 class NoopEventChunkReaderTest {
 
+    /**
+     * 验证<code>chunk</code>非空，<code>chunk.hasEvents()</code>为假，<code>chunk.getEvents()</code>为空。
+     */
     @Test
     void read_应返回空chunk() {
         NoopEventChunkReader<String> reader = new NoopEventChunkReader<>();
@@ -43,6 +46,9 @@ class NoopEventChunkReaderTest {
         assertThat(chunk.getEvents()).isEmpty();
     }
 
+    /**
+     * 验证<code>chunk.getNextEventNumber()</code> 等于 <code>42L</code>。
+     */
     @Test
     void read_nextEventNumber应等于传入的fromEventNumber() {
         NoopEventChunkReader<String> reader = new NoopEventChunkReader<>();
@@ -52,6 +58,9 @@ class NoopEventChunkReaderTest {
         assertThat(chunk.getNextEventNumber()).isEqualTo(42L);
     }
 
+    /**
+     * 验证<code>chunk.getNextEventNumber()</code>为零，<code>chunk.hasEvents()</code>为假。
+     */
     @Test
     void read_fromEventNumber为零时_应返回nextEventNumber为零的空chunk() {
         NoopEventChunkReader<String> reader = new NoopEventChunkReader<>();

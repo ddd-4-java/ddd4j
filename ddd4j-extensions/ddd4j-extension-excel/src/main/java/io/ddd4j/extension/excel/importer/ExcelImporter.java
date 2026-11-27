@@ -40,6 +40,9 @@ import java.util.List;
 public final class ExcelImporter {
 
 
+    /**
+     * 限制调用方直接创建 <code>ExcelImporter</code> 实例。
+     */
     private ExcelImporter() {
     }
 

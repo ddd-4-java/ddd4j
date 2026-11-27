@@ -44,6 +44,10 @@ public class QuarkusJpaProjectionService {
     Instance<ProjectionPositionRepository> projectionPositionRepository;
 
     // 原生禁用声明使 NORMAL 模式保留 Quartz 编程式生命周期；此声明不创建业务任务。
+
+    /**
+     * 执行兼容调度入口触发的投影处理。
+     */
     @Scheduled(cron = "${ddd4j.quarkus.cqrs.projection.bootstrap-cron:off}")
     void scheduled() {
         runOnce();

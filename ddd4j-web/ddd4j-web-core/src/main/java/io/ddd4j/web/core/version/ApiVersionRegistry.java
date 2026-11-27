@@ -14,11 +14,7 @@
  */
 package io.ddd4j.web.core.version;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -32,7 +28,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class ApiVersionRegistry<T> {
 
-    /** 版本到处理器的映射，线程安全。 */
+    /**
+     * 版本到处理器的映射，线程安全。
+     */
     private final Map<ApiVersion, T> handlers = new ConcurrentHashMap<ApiVersion, T>();
 
     /**

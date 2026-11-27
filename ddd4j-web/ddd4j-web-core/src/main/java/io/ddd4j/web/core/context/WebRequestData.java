@@ -14,40 +14,99 @@
  */
 package io.ddd4j.web.core.context;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * Web 框架采集到的原始请求元数据。
  */
 public final class WebRequestData {
 
+    /**
+     * Java 序列化版本标识。
+     */
     private static final long serialVersionUID = 0L;
 
+    /**
+     * 当前请求的标识。
+     */
     private final String requestId;
 
+    /**
+     * 用于关联一条调用链的跟踪标识。
+     */
     private final String traceId;
 
+    /**
+     * 当前业务数据所属的租户标识。
+     */
     private final String tenantId;
 
+    /**
+     * 当前请求中用于认证的 Authorization 头原值。
+     */
     private final String authorization;
 
+    /**
+     * 当前请求使用的语言及区域配置。
+     */
     private final Locale locale;
 
+    /**
+     * 代理传入的原始 X-Forwarded-For 请求头。
+     */
     private final String forwardedFor;
 
+    /**
+     * X-Real-IP 请求头中代理报告的来源地址。
+     */
     private final String realIp;
 
+    /**
+     * 服务器观察到的连接对端地址。
+     */
     private final String remoteAddress;
 
+    /**
+     * 当前 HTTP 请求的方法。
+     */
     private final String method;
 
+    /**
+     * 当前框架解析出的请求路径。
+     */
     private final String path;
+
+    /**
+     * 创建框架无关的原始请求数据。
+     *
+     * @param requestId     请求标识
+     * @param traceId       跟踪标识
+     * @param tenantId      租户标识
+     * @param authorization Authorization 请求头
+     * @param locale        区域设置
+     * @param forwardedFor  代理转发地址
+     * @param realIp        真实 IP 地址
+     * @param remoteAddress 远端地址
+     * @param method        HTTP 方法
+     * @param path          请求路径
+     */
+    @JsonCreator()
+    public WebRequestData(@JsonProperty("requestId") String requestId, @JsonProperty("traceId") String traceId, @JsonProperty("tenantId") String tenantId, @JsonProperty("authorization") String authorization, @JsonProperty("locale") Locale locale, @JsonProperty("forwardedFor") String forwardedFor, @JsonProperty("realIp") String realIp, @JsonProperty("remoteAddress") String remoteAddress, @JsonProperty("method") String method, @JsonProperty("path") String path) {
+        this.requestId = requestId;
+        this.traceId = traceId;
+        this.tenantId = tenantId;
+        this.authorization = authorization;
+        this.locale = locale;
+        this.forwardedFor = forwardedFor;
+        this.realIp = realIp;
+        this.remoteAddress = remoteAddress;
+        this.method = method;
+        this.path = path;
+    }
 
     /**
      * 返回Authorization 请求头。
@@ -150,34 +209,6 @@ public final class WebRequestData {
     }
 
     /**
-     * 创建框架无关的原始请求数据。
-     *
-     * @param requestId 请求标识
-     * @param traceId 跟踪标识
-     * @param tenantId 租户标识
-     * @param authorization Authorization 请求头
-     * @param locale 区域设置
-     * @param forwardedFor 代理转发地址
-     * @param realIp 真实 IP 地址
-     * @param remoteAddress 远端地址
-     * @param method HTTP 方法
-     * @param path 请求路径
-     */
-    @JsonCreator()
-    public WebRequestData(@JsonProperty("requestId") String requestId, @JsonProperty("traceId") String traceId, @JsonProperty("tenantId") String tenantId, @JsonProperty("authorization") String authorization, @JsonProperty("locale") Locale locale, @JsonProperty("forwardedFor") String forwardedFor, @JsonProperty("realIp") String realIp, @JsonProperty("remoteAddress") String remoteAddress, @JsonProperty("method") String method, @JsonProperty("path") String path) {
-        this.requestId = requestId;
-        this.traceId = traceId;
-        this.tenantId = tenantId;
-        this.authorization = authorization;
-        this.locale = locale;
-        this.forwardedFor = forwardedFor;
-        this.realIp = realIp;
-        this.remoteAddress = remoteAddress;
-        this.method = method;
-        this.path = path;
-    }
-
-    /**
      * 返回请求标识。
      *
      * @return 请求标识
@@ -277,6 +308,14 @@ public final class WebRequestData {
         return path;
     }
 
+    /**
+     * 根据<code>requestId</code>、<code>traceId</code>、<code>tenantId</code>、<code>authorization</code>、<code>locale</code>、<code>forwardedFor</code>比较对象的值是否相等。
+     *
+     * <p>只比较运行时类型相同的对象。</p>
+     *
+     * @param obj 用来比较或转换的输入对象
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -289,6 +328,11 @@ public final class WebRequestData {
         return Objects.equals(this.requestId, other.requestId) && Objects.equals(this.traceId, other.traceId) && Objects.equals(this.tenantId, other.tenantId) && Objects.equals(this.authorization, other.authorization) && Objects.equals(this.locale, other.locale) && Objects.equals(this.forwardedFor, other.forwardedFor) && Objects.equals(this.realIp, other.realIp) && Objects.equals(this.remoteAddress, other.remoteAddress) && Objects.equals(this.method, other.method) && Objects.equals(this.path, other.path);
     }
 
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         int result = 0;
@@ -305,6 +349,11 @@ public final class WebRequestData {
         return result;
     }
 
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>requestId</code>、<code>traceId</code>、<code>tenantId</code>、<code>authorization</code>、<code>locale</code>、<code>forwardedFor</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "WebRequestData[requestId=" + requestId + ", traceId=" + traceId + ", tenantId=" + tenantId + ", authorization=" + authorization + ", locale=" + locale + ", forwardedFor=" + forwardedFor + ", realIp=" + realIp + ", remoteAddress=" + remoteAddress + ", method=" + method + ", path=" + path + "]";

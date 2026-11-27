@@ -17,7 +17,13 @@ import java.util.Optional;
  * 同一实体管理器可与 EventStore、业务写入共享事务。应用负责事务范围和线程隔离。
  */
 public final class EntityManagerProjectionPositionRepository implements ProjectionPositionRepository {
+    /**
+     * 执行 JPA 查询和持久化操作的实体管理器。
+     */
     private final EntityManager entityManager;
+    /**
+     * 使用当前实体管理器读取和写入投影检查点的组件。
+     */
     private final JpaProjectionPositionStore<ProjectionPositionEntity> store;
 
     /**
@@ -29,20 +35,49 @@ public final class EntityManagerProjectionPositionRepository implements Projecti
                 "ProjectionPositionEntity");
     }
 
+    /**
+     * 复制 JPA 实体的流标识及事件序号。
+     *
+     * @param entity 数据库返回的持久化实体
+     * @return 独立于 JPA 实体的投影位置
+     */
     private static ProjectionPosition snapshot(ProjectionPositionEntity entity) {
         return new DefaultProjectionPosition(entity.getStreamId(), entity.getNextEventNumber());
     }
 
+    /**
+     * 查询指定事件流的投影检查点。
+     *
+     * <p>此实现调用 <code>store.findByStreamId(streamId)</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     * @return 与给定流标识对应的投影检查点
+     */
     @Override
     public Optional<ProjectionPosition> findByStreamId(String streamId) {
         return store.findByStreamId(streamId).map(EntityManagerProjectionPositionRepository::snapshot);
     }
 
+    /**
+     * 查询存储中符合条件的记录。
+     *
+     * <p>此实现调用 <code>store.findAll().stream()</code>。</p>
+     *
+     * @return 满足条件的结果列表
+     */
     @Override
     public List<ProjectionPosition> findAll() {
         return store.findAll().stream().map(EntityManagerProjectionPositionRepository::snapshot).toList();
     }
 
+    /**
+     * 在持久化存储中写入指定事件流的投影检查点。
+     *
+     * <p>此实现调用 <code>requireTransaction()</code>。</p>
+     *
+     * @param position 投影位置
+     * @return 实际返回<code>snapshot(entity)</code>
+     */
     @Override
     public ProjectionPosition save(ProjectionPosition position) {
         Objects.requireNonNull(position, "position must not be null");
@@ -55,6 +90,13 @@ public final class EntityManagerProjectionPositionRepository implements Projecti
         return snapshot(entity);
     }
 
+    /**
+     * 删除指定事件流的投影检查点。
+     *
+     * <p>此实现调用 <code>requireTransaction()</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     */
     @Override
     public void deleteByStreamId(String streamId) {
         requireTransaction();
@@ -62,6 +104,13 @@ public final class EntityManagerProjectionPositionRepository implements Projecti
         entityManager.flush();
     }
 
+    /**
+     * 将指定流的投影检查点重置为零。
+     *
+     * <p>此实现调用 <code>requireTransaction()</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     */
     @Override
     public void resetToZero(String streamId) {
         requireTransaction();
@@ -98,6 +147,11 @@ public final class EntityManagerProjectionPositionRepository implements Projecti
         return entity.getNextEventNumber();
     }
 
+    /**
+     * 要求当前实体管理器已加入事务以安全写入检查点。
+     *
+     * @throws TransactionRequiredException 未加入调用方事务
+     */
     private void requireTransaction() {
         if (!entityManager.isJoinedToTransaction()) {
             throw new TransactionRequiredException("an active caller-managed transaction is required");

@@ -1,9 +1,7 @@
 package io.ddd4j.sample.spring.shiro;
 
+import jakarta.servlet.Filter;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.MySQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.web.context.WebServerApplicationContext;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -11,35 +9,71 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.web.context.request.RequestContextHolder;
-import jakarta.servlet.Filter;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Optional;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
-/** 原生引擎通过真实 Servlet/HTTP/DI 执行鉴权；外层测试过滤器只观察，不清理上下文。 */
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * 原生引擎通过真实 Servlet/HTTP/DI 执行鉴权；外层测试过滤器只观察，不清理上下文。
+ */
 @Testcontainers
 class SpringShiroHttpTest {
+    /**
+     * 为当前集成测试提供独立 MySQL 服务的容器。
+     */
     @Container
     static final MySQLContainer<?> MYSQL = new MySQLContainer<>("mysql:8.0.36");
 
+    /**
+     * 核对<code>driver.call(method, path, token, body)</code> 抛出 <code>SecurityException.class</code>，<code>driver.lastStatus</code> 等于 <code>403</code>。
+     *
+     * @param driver 传给 <code>assertThrows()</code> 的 <code>AuthDriver</code> 输入
+     * @param method 发给被测服务的 HTTP 方法
+     * @param path   测试请求的资源路径或待访问文件路径
+     * @param token  从测试登录获得的会话凭据
+     * @param body   当前请求或响应中要读取的正文
+     */
+    private static void assertForbidden(AuthDriver driver, String method, String path, String token, String body) {
+        try {
+            assertThrows(SecurityException.class, () -> driver.call(method, path, token, body));
+            assertEquals(403, driver.lastStatus);
+        } finally {
+            assertEquals(Optional.empty(), driver.contextPrincipal(), "denied request server cleanup");
+        }
+    }
+
+    /**
+     * 验证 Shiro 在根路径下的真实 HTTP 认证及请求结束后的上下文清理。
+     */
     @Test
     void nativeAuthAndRequestCleanup() {
         verify("");
     }
 
+    /**
+     * 验证 Shiro 在配置的上下文路径下仍完成认证和请求清理。
+     */
     @Test
     void nativeAuthWithContextPathAndRequestCleanup() {
         verify("/sample");
     }
 
+    /**
+     * 调用 <code>SpringApplication.run()</code>、<code>MYSQL.getJdbcUrl()</code>、<code>MYSQL.getUsername()</code> 执行当前夹具操作。
+     *
+     * @param contextPath 传给 <code>SpringApplication.run()</code> 的 <code>String</code> 输入
+     */
     private void verify(String contextPath) {
         var context = SpringApplication.run(SpringShiroSampleApplication.class, "--server.port=0", "--server.tomcat.threads.max=1", "--server.tomcat.threads.min-spare=1",
                 "--server.servlet.context-path=" + contextPath, "--CATALOG_JDBC_URL=" + MYSQL.getJdbcUrl(),
@@ -87,19 +121,25 @@ class SpringShiroHttpTest {
         assertFalse(context.isActive());
     }
 
-    private static void assertForbidden(AuthDriver driver, String method, String path, String token, String body) {
-        try {
-            assertThrows(SecurityException.class, () -> driver.call(method, path, token, body));
-            assertEquals(403, driver.lastStatus);
-        } finally {
-            assertEquals(Optional.empty(), driver.contextPrincipal(), "denied request server cleanup");
-        }
-    }
-
+    /**
+     * 向测试容器注册 <code>requestObservation()</code> 等测试入口或组件。
+     */
     @Configuration(proxyBeanMethods = false)
     static class Observation {
+        /**
+         * 执行测试工作任务的线程或执行组件。
+         */
         final java.util.Set<Long> workers = java.util.concurrent.ConcurrentHashMap.newKeySet();
+        /**
+         * 当前测试记录的属性值或批量输入集合。
+         */
         final LinkedBlockingQueue<Optional<String>> values = new LinkedBlockingQueue<>();
+
+        /**
+         * 读取 <code>registration</code> 供当前测试使用。
+         *
+         * @return 当前测试使用的结果，取自 <code>registration</code>
+         */
         @Bean
         FilterRegistrationBean<Filter> requestObservation() {
             Filter filter = (request, response, chain) -> {
@@ -122,26 +162,81 @@ class SpringShiroHttpTest {
         }
     }
 
+    /**
+     * 将 <code>base</code>、<code>observation</code>、<code>tenant</code>、<code>client</code> 等状态一起传入当前测试，供调用或结果断言使用。
+     */
     private static class AuthDriver {
+        /**
+         * 本地测试服务的基础地址。
+         */
         private final String base;
+        /**
+         * 收集到的框架事件、调用或 SQL 观测结果。
+         */
         private final Observation observation;
+        /**
+         * 业务数据或认证请求所属的测试租户。
+         */
         private final String tenant = java.util.UUID.randomUUID().toString().substring(0, 20);
+        /**
+         * 发送与接收测试请求的客户端。
+         */
         private final HttpClient client = HttpClient.newHttpClient();
+        /**
+         * 保存当前尚未执行或尚未处理完成的测试操作。
+         */
         private int pending;
+        /**
+         * 最近一次记录的响应或投递状态。
+         */
         private int lastStatus;
+
+        /**
+         * 用给定值初始化 <code>AuthDriver</code> 实例。
+         *
+         * @param base        本地测试服务的基础地址
+         * @param observation <code>observation</code> 字段
+         */
         AuthDriver(String base, Observation observation) {
             this.base = base;
             this.observation = observation;
         }
+
+        /**
+         * 调用 <code>call()</code> 执行当前夹具操作。
+         *
+         * @param username 测试会话使用的用户名
+         * @param password 测试账号的口令
+         * @return 提供给后续契约断言的 <code>String</code> 结果
+         */
         public String login(String username, String password) {
             return call("POST", "/auth/login?username=" + username + "&password=" + password, "", "");
         }
+
+        /**
+         * 通过 <code>call()</code> 取得当前测试需要的结果。
+         *
+         * @param token 从测试登录获得的会话凭据
+         * @return 当前测试使用的结果，取自 <code>call("GET", "/auth/me", token, "")</code>
+         */
         public String authenticatedPrincipal(String token) {
             return call("GET", "/auth/me", token, "");
         }
+
+        /**
+         * 调用 <code>call()</code> 执行当前夹具操作。
+         *
+         * @param token 从测试登录获得的会话凭据
+         */
         public void logout(String token) {
             call("POST", "/auth/logout", token, "");
         }
+
+        /**
+         * 按 <code>(pending == 0)</code> 等实际条件选择当前用例返回的结果。
+         *
+         * @return 根据测试条件返回的可能值，包括 <code>Optional.ofNullable(org.apache.shiro.util.ThreadContext.getSubject()).map(Object::toString)</code>、<code>Objects.requireNonNull(observation.values.poll(10, TimeUnit.SECONDS), "request observation missing")</code>
+         */
         public Optional<String> contextPrincipal() {
             if (pending == 0) {
                 return Optional.ofNullable(org.apache.shiro.util.ThreadContext.getSubject()).map(Object::toString);
@@ -154,6 +249,16 @@ class SpringShiroHttpTest {
                 throw new IllegalStateException(exception);
             }
         }
+
+        /**
+         * 根据本次调用更新 <code>lastStatus = response.statusCode()</code>，用于后续测试步骤。
+         *
+         * @param method 发给被测服务的 HTTP 方法
+         * @param path   测试请求的资源路径或待访问文件路径
+         * @param token  从测试登录获得的会话凭据
+         * @param body   当前请求或响应中要读取的正文
+         * @return 该异常路径没有正常返回结果
+         */
         private String call(String method, String path, String token, String body) {
             try {
                 var builder = HttpRequest.newBuilder(URI.create(base + path)).header("Content-Type", "application/json").header("X-Tenant-Id", tenant)

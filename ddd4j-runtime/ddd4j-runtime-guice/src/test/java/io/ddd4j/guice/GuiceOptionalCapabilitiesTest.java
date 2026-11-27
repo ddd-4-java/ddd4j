@@ -37,6 +37,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * 验证显式日志装配及没有 WebMVC/Servlet 的真实 JVM 日志调用。
  */
 class GuiceOptionalCapabilitiesTest {
+    /**
+     * 按 <code>("getMethod".equals(invoked.getName()))</code> 等实际条件选择当前用例返回的结果。
+     *
+     * @param result  传给 <code>Proxy.newProxyInstance()</code> 的 <code>Object</code> 输入
+     * @param failure 触发当前测试错误处理路径的失败
+     * @return 根据测试条件返回的可能值，包括 <code>method</code>、<code>method.getName()</code>
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     static ProceedingJoinPoint point(Object result, Throwable failure) throws Exception {
         Method method = Endpoint.class.getMethod("handle", String.class);
         MethodSignature signature = (MethodSignature) Proxy.newProxyInstance(MethodSignature.class.getClassLoader(),
@@ -67,6 +75,11 @@ class GuiceOptionalCapabilitiesTest {
                 });
     }
 
+    /**
+     * 验证<code>finished</code>为真，<code>process.exitValue()</code> 等于 <code>0</code>，<code>output.contains("R07_BASIC_OK")</code>为真。
+     *
+     * @throws Exception 准备或读取夹具文件时失败
+     */
     @Test
     void basicStartsInJvmWithoutUnselectedCapabilities() throws Exception {
         String classpath = Arrays.stream(System.getProperty("surefire.test.class.path", System.getProperty("java.class.path")).split(File.pathSeparator))
@@ -89,6 +102,11 @@ class GuiceOptionalCapabilitiesTest {
         assertTrue(output.contains("R07_BASIC_OK"), output);
     }
 
+    /**
+     * 验证<code>finished</code>为真，<code>process.exitValue()</code> 等于 <code>0</code>，<code>output.contains("R05_NO_WEBMVC_LOGGING_OK")</code>为真。
+     *
+     * @throws Exception 准备或读取夹具文件时失败
+     */
     @Test
     void logsExecuteInJvmWithoutWebMvcSpringOrServlet() throws Exception {
         String classpath = Arrays.stream(System.getProperty("surefire.test.class.path",
@@ -112,6 +130,11 @@ class GuiceOptionalCapabilitiesTest {
         assertTrue(output.contains("R05_NO_WEBMVC_LOGGING_OK"), output);
     }
 
+    /**
+     * 验证<code>result</code> 等于 <code>"result"</code>，<code>watch.isRunning()</code>为假。
+     *
+     * @throws Throwable 当前被测调用失败
+     */
     @Test
     void aspectRetainsResultsCallbacksWrappingAndMdcCleanup() throws Throwable {
         Operation operation = Endpoint.class.getMethod("handle", String.class).getAnnotation(Operation.class);
@@ -159,6 +182,12 @@ class GuiceOptionalCapabilitiesTest {
      * 验证实际剥离能力依赖后的核心运行时生命周期。
      */
     public static class BasicProbe {
+        /**
+         * 调用 <code>Class.forName()</code>、<code>Guice.createInjector()</code>、<code>Ddd4jGuiceModule.basic()</code> 执行当前夹具操作。
+         *
+         * @param args 从命令行传入测试探针的参数
+         * @throws Exception 反射访问被测成员时失败
+         */
         public static void main(String[] args) throws Exception {
             for (String type : new String[]{"org.springframework.web.servlet.DispatcherServlet",
                     "org.apache.ibatis.session.SqlSession", "com.baomidou.mybatisplus.core.mapper.BaseMapper",
@@ -185,6 +214,12 @@ class GuiceOptionalCapabilitiesTest {
      * 独立进程入口，先证实缺少 HTTP 类型，再执行 Guice 默认日志和扩展回调。
      */
     public static class LoggingProbe {
+        /**
+         * 调用 <code>Class.forName()</code>、<code>LogManager.getLogger()</code>、<code>logger.getLevel()</code> 执行当前夹具操作。
+         *
+         * @param args 从命令行传入测试探针的参数
+         * @throws Throwable 反射访问被测成员时失败
+         */
         public static void main(String[] args) throws Throwable {
             for (String type : new String[]{"org.springframework.web.servlet.DispatcherServlet",
                     "org.springframework.web.context.request.RequestContextHolder", "jakarta.servlet.ServletRequest",
@@ -250,6 +285,12 @@ class GuiceOptionalCapabilitiesTest {
      * 日志目标方法。
      */
     public static class Endpoint {
+        /**
+         * 读取 <code>input</code> 供当前测试使用。
+         *
+         * @param input 用于构造本次返回结果的 <code>String</code> 输入
+         * @return 当前测试使用的结果，取自 <code>input</code>
+         */
         @Operation(summary = "R05 logging")
         public String handle(String input) {
             return input;

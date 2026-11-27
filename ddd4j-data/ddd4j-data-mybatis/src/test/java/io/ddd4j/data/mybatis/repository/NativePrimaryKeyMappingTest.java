@@ -5,15 +5,7 @@ import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.kit.lang.BeanKit;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.ResultMap;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.enhance.mapper.EnhanceMapper;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.Configuration;
@@ -21,8 +13,8 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.h2.jdbcx.JdbcDataSource;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.Serializable;
@@ -35,12 +27,44 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-/** 使用真实 MyBatis 映射验证继承主键、异名对象转换和普通 id 字段的隔离。 */
+/**
+ * 使用真实 MyBatis 映射验证继承主键、异名对象转换和普通 id 字段的隔离。
+ */
 class NativePrimaryKeyMappingTest {
+    /**
+     * 测试中用于执行 Mapper 操作的数据库会话。
+     */
     private SqlSession session;
+    /**
+     * 当前被验证或替换的持久化 Mapper 实例。
+     */
     private OrderMapper mapper;
+    /**
+     * 被测仓储或用于提供测试数据的仓储实例。
+     */
     private OrderRepository repository;
 
+    /**
+     * 读取 <code>model</code> 供当前测试使用。
+     *
+     * @param key        用于在测试上下文或缓存中索引数据的键
+     * @param ordinaryId 传给 <code>model.setId()</code> 的 <code>Long</code> 输入
+     * @param name       当前测试指定的对象或属性名称
+     * @return 当前测试使用的结果，取自 <code>model</code>
+     */
+    private static Order order(Long key, Long ordinaryId, String name) {
+        Order model = new Order();
+        model.setBusinessId(key);
+        model.setId(ordinaryId);
+        model.setName(name);
+        return model;
+    }
+
+    /**
+     * 测试前依次初始化<code>session</code>、初始化<code>mapper</code>、初始化<code>repository</code>。
+     *
+     * @throws Exception 执行数据库操作时失败
+     */
     @BeforeEach
     void openSession() throws Exception {
         JdbcDataSource source = new JdbcDataSource();
@@ -57,11 +81,17 @@ class NativePrimaryKeyMappingTest {
         repository = new OrderRepository(mapper);
     }
 
+    /**
+     * 测试后依次关闭<code>session</code>。
+     */
     @AfterEach
     void closeSession() {
         session.close();
     }
 
+    /**
+     * 验证<code>mapper.selectById(101L).getName()</code> 等于 <code>"after"</code>，<code>mapper.selectRows(null)</code> 的大小为 <code>1</code>，<code>repository.findById(101L).get().id()</code> 等于 <code>101L</code>。
+     */
     @Test
     void saveUsesInheritedMappedKeyInsteadOfOrdinaryId() {
         seed(101L, 901L, "before");
@@ -74,6 +104,9 @@ class NativePrimaryKeyMappingTest {
         assertThat(repository.findById(101L).get().id()).isEqualTo(101L);
     }
 
+    /**
+     * 验证<code>saved.id()</code>非空，<code>mapper.selectById(901L).getName()</code> 等于 <code>"existing"</code>，<code>mapper.selectById(saved.id()).getId()</code> 等于 <code>901L</code>。
+     */
     @Test
     void nullMappedKeyIsNotReplacedByOrdinaryIdAndGeneratedKeyIsReturned() {
         seed(901L, 55L, "existing");
@@ -86,6 +119,9 @@ class NativePrimaryKeyMappingTest {
         assertThat(mapper.selectById(saved.id()).getId()).isEqualTo(901L);
     }
 
+    /**
+     * 验证<code>repository.update(order(999L, 77L, "updated"), new OrderQuery())</code>为真，<code>mapper.selectById(101L).getName()</code> 等于 <code>"updated"</code>，<code>mapper.selectById(999L)</code>为空。
+     */
     @Test
     void conditionalUpdateCopiesMatchedIdentityThroughResultMap() {
         seed(101L, 901L, "one");
@@ -98,6 +134,9 @@ class NativePrimaryKeyMappingTest {
         assertThat(mapper.selectById(999L)).isNull();
     }
 
+    /**
+     * 验证<code>repository.deleteByQuery(query)</code>为真，<code>mapper.selectById(101L)</code>为空，<code>mapper.selectById(901L)</code>非空。
+     */
     @Test
     void conditionalDeleteUsesDomainIdentityRatherThanIdNamedField() {
         seed(101L, 901L, "one");
@@ -111,6 +150,9 @@ class NativePrimaryKeyMappingTest {
         assertThat(mapper.selectById(901L)).isNotNull();
     }
 
+    /**
+     * 验证<code>mapper.selectById(101L).getName()</code> 等于 <code>"after"</code>，<code>mapper.selectRows(null)</code> 的大小为 <code>1</code>。
+     */
     @Test
     void generatedKeyPropertyIsUsedWhenResultMapHasNoExplicitId() {
         seed(101L, 901L, "before");
@@ -122,6 +164,9 @@ class NativePrimaryKeyMappingTest {
         assertThat(mapper.selectRows(null)).hasSize(1);
     }
 
+    /**
+     * 验证<code>conventional.extractId(po)</code> 等于 <code>901L</code>。
+     */
     @Test
     void conventionalIdIsOnlyFallbackWhenNoKeyMetadataExists() {
         OrderRepository conventional = repositoryFor(ConventionalMapper.class);
@@ -130,6 +175,9 @@ class NativePrimaryKeyMappingTest {
         assertThat(conventional.extractId(po)).isEqualTo(901L);
     }
 
+    /**
+     * 验证<code>composite.save(order(101L, 901L, "invalid"))</code> 抛出 <code>IllegalStateException.class</code>，<code>mapper.selectRows(null)</code>为空。
+     */
     @Test
     void multipleExplicitKeysAreRejectedBeforeWriting() {
         OrderRepository composite = repositoryFor(CompositeKeyMapper.class);
@@ -139,58 +187,38 @@ class NativePrimaryKeyMappingTest {
         assertThat(mapper.selectRows(null)).isEmpty();
     }
 
+    /**
+     * 创建 <code>new OrderRepository</code> 供当前测试路径调用。
+     *
+     * @param mapperType 传给 <code>session.getConfiguration()</code> 的 <code>Class&lt;? extends OrderMapper&gt;</code> 输入
+     * @return 当前测试使用的结果，取自 <code>new OrderRepository(session.getMapper(mapperType))</code>
+     */
     private OrderRepository repositoryFor(Class<? extends OrderMapper> mapperType) {
         session.getConfiguration().addMapper(mapperType);
         return new OrderRepository(session.getMapper(mapperType));
     }
 
+    /**
+     * 调用 <code>mapper.insert()</code>、<code>repository.toPersistenceObject()</code>、<code>order()</code> 执行当前夹具操作。
+     *
+     * @param key        用于在测试上下文或缓存中索引数据的键
+     * @param ordinaryId 传给 <code>mapper.insert()</code> 的 <code>Long</code> 输入
+     * @param name       当前测试指定的对象或属性名称
+     */
     private void seed(Long key, Long ordinaryId, String name) {
         mapper.insert(repository.toPersistenceObject(order(key, ordinaryId, name)));
     }
 
-    private static Order order(Long key, Long ordinaryId, String name) {
-        Order model = new Order();
-        model.setBusinessId(key);
-        model.setId(ordinaryId);
-        model.setName(name);
-        return model;
-    }
-
-    @Getter
-    @Setter
-    public static class OrderIdentity extends AggregateRoot<Long> {
-        private Long businessId;
-
-        @Override
-        public Long id() {
-            return businessId;
-        }
-    }
-
-    @Getter
-    @Setter
-    public static class Order extends OrderIdentity {
-        private Long id;
-        private String name;
-    }
-
-    @Getter
-    @Setter
-    public static class PoIdentity {
-        private Long orderKey;
-    }
-
-    @Getter
-    @Setter
-    public static class OrderPO extends PoIdentity {
-        private Long id;
-        private String name;
-    }
-
-    public static class OrderQuery extends Query<Order> {
-    }
-
+    /**
+     * 提供 MyBatis 增强 Mapper 的测试接口，供仓储或映射契约用例实例化。
+     */
     interface IdentityMapper extends EnhanceMapper<OrderPO> {
+        /**
+         * 按映射 SQL 读取测试记录。
+         *
+         * @param key 要用于命中测试表的原生主键
+         * @return 与查询匹配的映射结果
+         */
         @Override
         @Select("SELECT order_pk, id, name FROM order_identity WHERE order_pk = #{key}")
         @Results(id = "identity", value = {
@@ -200,27 +228,63 @@ class NativePrimaryKeyMappingTest {
         OrderPO selectById(@Param("key") Serializable key);
     }
 
+    /**
+     * 为订单持久化测试提供的映射入口。
+     */
     interface OrderMapper extends IdentityMapper {
+        /**
+         * 把给定夹具数据插入当前测试表。
+         *
+         * @param entity 待写入的测试表持久化对象
+         * @return 插入操作影响的行数
+         */
         @Override
         @Insert("<script>INSERT INTO order_identity(<if test='orderKey != null'>order_pk,</if> id, name)"
                 + " VALUES(<if test='orderKey != null'>#{orderKey},</if> #{id}, #{name})</script>")
         @Options(useGeneratedKeys = true, keyProperty = "orderKey", keyColumn = "order_pk")
         int insert(OrderPO entity);
 
+        /**
+         * 按指定主键更新当前测试表中的记录。
+         *
+         * @param entity 待写入的测试表持久化对象
+         * @return 更新操作影响的行数
+         */
         @Override
         @Update("UPDATE order_identity SET id = #{id}, name = #{name} WHERE order_pk = #{orderKey}")
         int updateById(OrderPO entity);
 
+        /**
+         * 按映射 SQL 读取测试记录。
+         *
+         * @param key 要用于命中测试表的原生主键
+         * @return 与查询匹配的映射结果
+         */
         @Select("<script>SELECT order_pk, id, name FROM order_identity"
                 + "<if test='key != null'> WHERE order_pk = #{key}</if> ORDER BY order_pk</script>")
         @ResultMap("identity")
         List<OrderPO> selectRows(@Param("key") Long key);
 
+        /**
+         * 依据主键条件移除测试表中匹配的记录。
+         *
+         * @param key 要用于命中测试表的原生主键
+         * @return 删除操作影响的行数
+         */
         @Delete("DELETE FROM order_identity WHERE order_pk = #{key}")
         int remove(Long key);
     }
 
+    /**
+     * 实现 <code>OrderMapper</code>，供测试调用 <code>selectById()</code> 并观察结果。
+     */
     interface GeneratedKeyMapper extends OrderMapper {
+        /**
+         * 按映射 SQL 读取测试记录。
+         *
+         * @param key 要用于命中测试表的原生主键
+         * @return 与查询匹配的映射结果
+         */
         @Override
         @Select("SELECT order_pk, id, name FROM order_identity WHERE order_pk = #{key}")
         @Results(id = "identity", value = {
@@ -230,13 +294,31 @@ class NativePrimaryKeyMappingTest {
         OrderPO selectById(@Param("key") Serializable key);
     }
 
+    /**
+     * 实现 <code>GeneratedKeyMapper</code>，供测试调用 <code>insert()</code> 并观察结果。
+     */
     interface ConventionalMapper extends GeneratedKeyMapper {
+        /**
+         * 把给定夹具数据插入当前测试表。
+         *
+         * @param entity 待写入的测试表持久化对象
+         * @return 插入操作影响的行数
+         */
         @Override
         @Insert("INSERT INTO order_identity(order_pk, id, name) VALUES(#{orderKey}, #{id}, #{name})")
         int insert(OrderPO entity);
     }
 
+    /**
+     * 实现 <code>OrderMapper</code>，供测试调用 <code>selectById()</code> 并观察结果。
+     */
     interface CompositeKeyMapper extends OrderMapper {
+        /**
+         * 按映射 SQL 读取测试记录。
+         *
+         * @param key 要用于命中测试表的原生主键
+         * @return 与查询匹配的映射结果
+         */
         @Override
         @Select("SELECT order_pk, id, name FROM order_identity WHERE order_pk = #{key}")
         @Results(id = "identity", value = {
@@ -245,11 +327,97 @@ class NativePrimaryKeyMappingTest {
         OrderPO selectById(@Param("key") Serializable key);
     }
 
+    /**
+     * 供测试验证事件应用和持久化的聚合样本。
+     */
+    @Getter
+    @Setter
+    public static class OrderIdentity extends AggregateRoot<Long> {
+        /**
+         * 区分测试交易记录的业务标识。
+         */
+        private Long businessId;
+
+        /**
+         * 读取<code>businessId</code> 字段。
+         *
+         * @return <code>businessId</code> 字段
+         */
+        @Override
+        public Long id() {
+            return businessId;
+        }
+    }
+
+    /**
+     * 使用 <code>id</code>、<code>name</code> 验证当前测试的输入和数据映射。
+     */
+    @Getter
+    @Setter
+    public static class Order extends OrderIdentity {
+        /**
+         * 用于构造和定位测试记录的主键。
+         */
+        private Long id;
+        /**
+         * 测试对象的显示名称。
+         */
+        private String name;
+    }
+
+    /**
+     * 将 <code>orderKey</code> 等状态一起传入当前测试，供调用或结果断言使用。
+     */
+    @Getter
+    @Setter
+    public static class PoIdentity {
+        /**
+         * 用于定位同一订单记录的测试业务键。
+         */
+        private Long orderKey;
+    }
+
+    /**
+     * 持久化层使用的订单测试数据模型。
+     */
+    @Getter
+    @Setter
+    public static class OrderPO extends PoIdentity {
+        /**
+         * 用于构造和定位测试记录的主键。
+         */
+        private Long id;
+        /**
+         * 测试对象的显示名称。
+         */
+        private String name;
+    }
+
+    /**
+     * 订单测试查询对象，供构造仓储检索条件。
+     */
+    public static class OrderQuery extends Query<Order> {
+    }
+
+    /**
+     * 实现 <code>MybatisAggregateRepository</code>，供测试调用 <code>toModel()</code>、<code>toPersistenceObject()</code>、<code>selectRows()</code> 并观察结果。
+     */
     static class OrderRepository extends MybatisAggregateRepository<OrderMapper, Order, OrderPO, OrderQuery, Long> {
+        /**
+         * 使用 <code>super()</code> 初始化 <code>OrderRepository</code> 测试夹具。
+         *
+         * @param mapper 当前测试登记或使用的持久化映射组件
+         */
         OrderRepository(OrderMapper mapper) {
             super(mapper, Order.class, OrderPO.class);
         }
 
+        /**
+         * 读取 <code>model</code> 供当前测试使用。
+         *
+         * @param po 传给 <code>BeanKit.copy()</code> 的 <code>OrderPO</code> 输入
+         * @return 当前测试使用的结果，取自 <code>model</code>
+         */
         @Override
         public Order toModel(OrderPO po) {
             Order model = BeanKit.copy(po, Order.class);
@@ -257,6 +425,12 @@ class NativePrimaryKeyMappingTest {
             return model;
         }
 
+        /**
+         * 读取 <code>po</code> 供当前测试使用。
+         *
+         * @param model 传给 <code>BeanKit.copy()</code> 的 <code>Order</code> 输入
+         * @return 当前测试使用的结果，取自 <code>po</code>
+         */
         @Override
         public OrderPO toPersistenceObject(Order model) {
             OrderPO po = BeanKit.copy(model, OrderPO.class);
@@ -264,22 +438,54 @@ class NativePrimaryKeyMappingTest {
             return po;
         }
 
+        /**
+         * 查询符合条件的持久化记录。
+         *
+         * <p>测试夹具会调用 <code>query.getWhereConditions().isEmpty()</code>、<code>query.getWhereConditions()</code>。</p>
+         *
+         * @param query  领域查询，null 表示无额外条件
+         * @param offset 从零开始的偏移量
+         * @param limit  最大行数，负数表示不分页
+         * @return 实际返回<code>baseMapper.selectRows(key)</code>
+         */
         @Override
         protected List<OrderPO> selectRows(Query<Order> query, long offset, long limit) {
             Long key = query.getWhereConditions().isEmpty() ? null : (Long) query.getWhereConditions().get(0).value();
             return baseMapper.selectRows(key);
         }
 
+        /**
+         * 统计符合条件的持久化记录数。
+         *
+         * <p>测试夹具会调用 <code>selectRows(query, 0, -1).size()</code>、<code>selectRows(query, 0, -1)</code>。</p>
+         *
+         * @param query 领域查询，null 表示无额外条件
+         * @return 实际返回<code>selectRows(query, 0, -1).size()</code>
+         */
         @Override
         protected long countRows(Query<Order> query) {
             return selectRows(query, 0, -1).size();
         }
 
+        /**
+         * 通过 <code>baseMapper.remove()</code> 取得当前测试需要的结果。
+         *
+         * @param key 用于在测试上下文或缓存中索引数据的键
+         * @return 当前测试使用的结果，取自 <code>baseMapper.remove(key)</code>
+         */
         @Override
         protected int deleteRow(Long key) {
             return baseMapper.remove(key);
         }
 
+        /**
+         * 删除符合条件的持久化记录。
+         *
+         * <p>测试夹具会调用 <code>baseMapper.remove(key)</code>。</p>
+         *
+         * @param keys 用于此操作的 <code>keys</code>（<code>Collection&lt;Long&gt;</code>）
+         * @return 实际返回<code>count</code>
+         */
         @Override
         protected int deleteRows(Collection<Long> keys) {
             int count = 0;

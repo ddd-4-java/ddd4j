@@ -122,6 +122,11 @@ public class SpringContext implements ApplicationContextAware {
         return APPLICATION_CONTEXT;
     }
 
+    /**
+     * 记录容器提供的 Spring 应用上下文，供后续查询 Bean。
+     *
+     * @param applicationContext 当前 Spring 应用容器
+     */
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         SpringContext.APPLICATION_CONTEXT = applicationContext;

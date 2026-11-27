@@ -28,12 +28,18 @@ import static org.hamcrest.Matchers.hasSize;
 @io.quarkus.test.junit.TestProfile(io.ddd4j.sample.quarkus.satoken.GoodsStandaloneProfile.class)
 class GoodsQueryHttpContractTest {
 
+    /**
+     * 请求 <code>GET /api/goods/count</code>，确认 HTTP 响应状态为 200，响应中的 <code>data</code> 等于 <code>0</code>。
+     */
     @Test
     void emptyCatalogHasZeroCount() {
         given().when().get("/api/goods/count")
                 .then().statusCode(200).body("data", equalTo(0));
     }
 
+    /**
+     * 请求 <code>GET /api/goods/list</code>，确认 HTTP 响应状态为 200。
+     */
     @Test
     void emptyCatalogHasEmptyList() {
         given().when().get("/api/goods/list")

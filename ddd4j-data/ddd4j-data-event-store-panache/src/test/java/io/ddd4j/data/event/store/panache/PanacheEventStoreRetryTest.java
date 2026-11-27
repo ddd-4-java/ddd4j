@@ -54,12 +54,32 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class PanacheEventStoreRetryTest {
 
+    /**
+     * 测试事件流中使用的聚合类型名称。
+     */
     private static final String ORDER_TYPE = "Order";
+    /**
+     * 创建 JPA 实体管理器的工厂。
+     */
     private EntityManagerFactory emf;
+    /**
+     * 执行数据访问操作的 JPA 实体管理器。
+     */
     private EntityManager em;
+    /**
+     * 读取及追加领域事件的事件存储。
+     */
     private EventStore eventStore;
+    /**
+     * 记录、替代或控制测试退避等待的组件。
+     */
     private CountingSleeper sleeper;
 
+    /**
+     * 根据本次调用更新 <code>emf = configuration.buildSessionFactory()</code>，用于后续测试步骤。
+     *
+     * @param withFaultInjector 本次调用使用的 <code>boolean</code> 参数 <code>withFaultInjector</code>
+     */
     private void buildEmf(boolean withFaultInjector) {
         Configuration configuration = new Configuration()
                 .setProperty("hibernate.dialect", "org.hibernate.dialect.H2Dialect")
@@ -78,12 +98,18 @@ class PanacheEventStoreRetryTest {
         emf = configuration.buildSessionFactory();
     }
 
+    /**
+     * 根据本次调用更新 <code>sleeper = new CountingSleeper()</code>、<code>eventStore = new PanacheEventStore(em, retry)</code>，用于后续测试步骤。
+     */
     private void setupStore() {
         sleeper = new CountingSleeper();
         EventStoreRetry retry = new EventStoreRetry(5, 1L, sleeper);
         eventStore = new PanacheEventStore(em, retry);
     }
 
+    /**
+     * 测试执行前执行 <code>buildEmf()</code>、<code>emf.createEntityManager()</code>、<code>setupStore()</code> 完成资源准备。
+     */
     @BeforeEach
     void setUpBase() {
         buildEmf(false);
@@ -91,6 +117,9 @@ class PanacheEventStoreRetryTest {
         setupStore();
     }
 
+    /**
+     * 测试结束后执行 <code>em.isOpen()</code>、<code>em.close()</code>、<code>emf.isOpen()</code>、<code>emf.close()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void tearDown() {
         if (em != null && em.isOpen()) {
@@ -101,6 +130,9 @@ class PanacheEventStoreRetryTest {
         }
     }
 
+    /**
+     * 验证<code>sleeper.calls.get()</code>为零，<code>eventStore.read(ORDER_TYPE, orderId)</code> 的大小为 <code>1</code>。
+     */
     @Test
     void append_成功路径_不触发Sleeper() {
         TestAggregateRootId orderId = new TestAggregateRootId("agg-1");
@@ -110,6 +142,9 @@ class PanacheEventStoreRetryTest {
         assertThat(eventStore.read(ORDER_TYPE, orderId)).hasSize(1);
     }
 
+    /**
+     * 验证<code>eventStore.append(ORDER_TYPE, orderId, java.util.Arrays.asList(new TestEvent(orderId)), 99L)</code> 抛出 <code>AggregateVersionConflictException.class</code>，<code>eventStore.read(ORDER_TYPE, orderId)</code> 的大小为 <code>1</code>。
+     */
     @Test
     void append_期望版本不匹配_强类型冲突异常_不触发重试_事务回滚() {
         TestAggregateRootId orderId = new TestAggregateRootId("agg-1");
@@ -125,6 +160,9 @@ class PanacheEventStoreRetryTest {
         assertThat(eventStore.read(ORDER_TYPE, orderId)).hasSize(1);
     }
 
+    /**
+     * 验证<code>eventStore.read(ORDER_TYPE, orderId)</code> 的大小为 <code>1</code>。
+     */
     @Test
     void append_uk_position冲突_触发自动重试_最终成功() {
         // 重建带 FaultInjector 的独立 EMF（不与成功路径/乐观锁路径的 EMF 共享）
@@ -148,6 +186,9 @@ class PanacheEventStoreRetryTest {
         assertThat(eventStore.read(ORDER_TYPE, orderId)).hasSize(1);
     }
 
+    /**
+     * 验证<code>sleeper.calls.get()</code>为零，<code>eventStore.read(ORDER_TYPE, orderId)</code>为空。
+     */
     @Test
     void append_空事件列表_不触发Sleeper_不落库() {
         TestAggregateRootId orderId = new TestAggregateRootId("agg-empty");
@@ -157,10 +198,24 @@ class PanacheEventStoreRetryTest {
         assertThat(eventStore.read(ORDER_TYPE, orderId)).isEmpty();
     }
 
+    /**
+     * 实现 <code>Sleeper</code>，供测试调用 <code>sleep()</code> 并观察结果。
+     */
     static final class CountingSleeper implements EventStoreRetry.Sleeper {
+        /**
+         * 记录被测入口实际触发的调用。
+         */
         final AtomicInteger calls = new AtomicInteger();
+        /**
+         * 收集实际调度或重试采用的延时。
+         */
         final List<Long> delays = new ArrayList<>();
 
+        /**
+         * 调用 <code>calls.incrementAndGet()</code>、<code>delays.add()</code> 执行当前夹具操作。
+         *
+         * @param millis 等待或推进的毫秒数
+         */
         @Override
         public void sleep(long millis) {
             calls.incrementAndGet();
@@ -174,11 +229,23 @@ class PanacheEventStoreRetryTest {
      * → 第一个回滚 → 第二个重试成功"的场景。
      */
     public static final class FaultInjector implements StatementInspector {
+        /**
+         * 在测试线程之间共享当前操作次数或更新数量的计数器。
+         */
         final AtomicInteger insertCount = new AtomicInteger();
 
+        /**
+         * 创建字段使用默认初始值的 <code>FaultInjector</code> 测试对象。
+         */
         public FaultInjector() {
         }
 
+        /**
+         * 读取 <code>sql</code> 供当前测试使用。
+         *
+         * @param sql 当前操作要交给数据库执行的 SQL
+         * @return 当前测试使用的结果，取自 <code>sql</code>
+         */
         @Override
         public String inspect(String sql) {
             if (sql != null && sql.trim().toUpperCase().startsWith("INSERT")
@@ -190,37 +257,84 @@ class PanacheEventStoreRetryTest {
         }
     }
 
+    /**
+     * 测试专用聚合根标识，供仓储、事件序列化或命令路由构造独立的聚合实例。
+     */
     final static class TestAggregateRootId implements AggregateRootId {
 
+        /**
+         * Java 序列化使用的版本标识。
+         */
         private static final long serialVersionUID = 0L;
+        /**
+         * 测试聚合注册和反序列化所用的实体类型标识。
+         */
         private static final EntityType TYPE = new StringEntityType("Order");
+        /**
+         * 组成测试标识的原始值。
+         */
         private final String value;
 
+        /**
+         * 设置 <code>value</code>，用于构造 <code>TestAggregateRootId</code> 测试实例。
+         *
+         * @param value 组成测试标识的原始值
+         */
         @JsonCreator()
         TestAggregateRootId(@JsonProperty("value") String value) {
             this.value = value;
         }
 
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 实际返回<code>TYPE</code>，供调用方取得当前值
+         */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 实际返回<code>value</code>，供调用方取得当前值
+         */
         @Override
         public String asString() {
             return value;
         }
 
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * <p>测试夹具会调用 <code>TYPE.asString()</code>。</p>
+         *
+         * @return 实际返回<code>TYPE.asString() + ":" + value</code>
+         */
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
         }
 
+        /**
+         * 读取<code>value</code> 字段。
+         *
+         * @return <code>value</code> 字段
+         */
         @JsonProperty("value")
         public String value() {
             return value;
         }
 
+        /**
+         * 根据<code>value</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -233,6 +347,11 @@ class PanacheEventStoreRetryTest {
             return Objects.equals(this.value, other.value);
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 0;
@@ -240,17 +359,33 @@ class PanacheEventStoreRetryTest {
             return result;
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>value</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "TestAggregateRootId[value=" + value + "]";
         }
     }
 
+    /**
+     * 测试专用领域事件，用于控制事件类型和负载。
+     */
     static final class TestEvent extends DomainEvent<TestAggregateRootId> {
+        /**
+         * 使用 <code>super()</code> 初始化 <code>TestEvent</code> 测试夹具。
+         */
         TestEvent() {
             super();
         }
 
+        /**
+         * 使用 <code>super()</code> 初始化 <code>TestEvent</code> 测试夹具。
+         *
+         * @param orderId 测试中要定位的订单标识
+         */
         TestEvent(TestAggregateRootId orderId) {
             super(new EntityIdPath(orderId));
         }

@@ -27,14 +27,29 @@ import java.util.Objects;
 
 public final class QLExpressExecutionResult<T> {
 
+    /**
+     * 表达式是否正常完成。
+     */
     private final boolean success;
 
+    /**
+     * 表达式成功执行后返回的值。
+     */
     private final T value;
 
+    /**
+     * 稳定标识执行失败类别的错误码。
+     */
     private final String errorCode;
 
+    /**
+     * 表达式执行失败时返回的诊断说明。
+     */
     private final String errorMessage;
 
+    /**
+     * 单次执行从开始到结束的耗时，单位为纳秒。
+     */
     private final long elapsedNanos;
 
     /**
@@ -174,6 +189,14 @@ public final class QLExpressExecutionResult<T> {
         return elapsedNanos;
     }
 
+    /**
+     * 根据<code>value</code>、<code>errorCode</code>、<code>errorMessage</code>、<code>success</code>、<code>elapsedNanos</code>比较对象的值是否相等。
+     *
+     * <p>只比较运行时类型相同的对象。</p>
+     *
+     * @param obj 用来比较或转换的输入对象
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -186,6 +209,11 @@ public final class QLExpressExecutionResult<T> {
         return this.success == other.success && Objects.equals(this.value, other.value) && Objects.equals(this.errorCode, other.errorCode) && Objects.equals(this.errorMessage, other.errorMessage) && this.elapsedNanos == other.elapsedNanos;
     }
 
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         int result = 0;
@@ -197,6 +225,11 @@ public final class QLExpressExecutionResult<T> {
         return result;
     }
 
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>success</code>、<code>value</code>、<code>errorCode</code>、<code>errorMessage</code>、<code>elapsedNanos</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "QLExpressExecutionResult[success=" + success + ", value=" + value + ", errorCode=" + errorCode + ", errorMessage=" + errorMessage + ", elapsedNanos=" + elapsedNanos + "]";

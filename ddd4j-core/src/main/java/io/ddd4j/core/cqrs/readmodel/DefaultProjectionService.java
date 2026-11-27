@@ -24,6 +24,9 @@ import java.util.Objects;
  */
 public class DefaultProjectionService implements ProjectionService {
 
+    /**
+     * 读取并保存投影消费位置的仓储。
+     */
     private final ProjectionPositionRepository repository;
 
     /**
@@ -35,11 +38,26 @@ public class DefaultProjectionService implements ProjectionService {
         this.repository = Objects.requireNonNull(repository, "repository must not be null");
     }
 
+    /**
+     * 重置指定投影所用的事件读取位置。
+     *
+     * <p>此实现调用 <code>repository.resetToZero(streamId)</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     */
     @Override
     public void resetProjectionPosition(String streamId) {
         repository.resetToZero(streamId);
     }
 
+    /**
+     * 查询指定投影所用的事件读取位置。
+     *
+     * <p>此实现调用 <code>repository.findByStreamId(streamId)</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     * @return 下一个待处理事件号，不存在时返回 0
+     */
     @Override
     public long readProjectionPosition(String streamId) {
         return repository.findByStreamId(streamId)
@@ -47,6 +65,15 @@ public class DefaultProjectionService implements ProjectionService {
                 .orElse(0L);
     }
 
+    /**
+     * 将投影已处理的位置更新为给定检查点。
+     *
+     * <p>此实现调用 <code>repository.findByStreamId(streamId)</code>。</p>
+     *
+     * @param streamId        投影流 ID
+     * @param nextEventNumber 下一个待处理事件号
+     * @return 实际返回<code>repository.save(current.withNextEventNumber(nextEventNumber))</code>
+     */
     @Override
     public ProjectionPosition updateProjectionPosition(String streamId, long nextEventNumber) {
         ProjectionPosition current = repository.findByStreamId(streamId)

@@ -265,9 +265,21 @@ public enum ApiCode implements IEnum<Integer>, CustomApiCode {
      */
     NETWORK_AUTHENTICATION_REQUIRED(HttpStatus.SC_NETWORK_AUTHENTICATION_REQUIRED, "要求网络认证");
 
+    /**
+     * 对外响应中的数值状态码。
+     */
     private final Integer code;
+    /**
+     * 与状态码关联的说明。
+     */
     private final String reason;
 
+    /**
+     * 创建对外状态码与其说明的组合。
+     *
+     * @param code   数值状态码
+     * @param reason 状态的说明
+     */
     private ApiCode(Integer code, String reason) {
         this.code = code;
         this.reason = reason;
@@ -308,6 +320,11 @@ public enum ApiCode implements IEnum<Integer>, CustomApiCode {
         return resultCode;
     }
 
+    /**
+     * 返回该对象公开的说明。
+     *
+     * @return 实际返回<code>reason</code>，供调用方取得当前值
+     */
     @Override
     public String getDesc() {
         return reason;

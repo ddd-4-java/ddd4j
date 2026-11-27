@@ -94,6 +94,13 @@ public class GoodsSpu extends AggregateRoot<Long> {
 
     /**
      * 建立在指定门店可售的不限量套餐。
+     *
+     * @param tenant 租户编号
+     * @param code   业务编号
+     * @param name   业务名称
+     * @param shopId 门店主键
+     * @param sku    初始商品规格
+     * @return 新的商品聚合
      */
     public static GoodsSpu listPackage(String tenant, String code, String name, long shopId, GoodsSku sku) {
         requireText(tenant, 32);
@@ -110,13 +117,42 @@ public class GoodsSpu extends AggregateRoot<Long> {
                 .applicableShopIds(List.of(Long.toString(shopId))).skus(List.of(sku)).build();
     }
 
+    /**
+     * 要求文本非空白、长度不超过限制且无首尾空白。
+     *
+     * @param value 待校验文本
+     * @param max   字符串长度上限
+     * @throws IllegalArgumentException 文本为空白、过长或含首尾空白
+     */
     static void requireText(String value, int max) {
         if (StrKit.isBlank(value) || value.length() > max || !value.equals(value.strip())) {
             throw new IllegalArgumentException("名称或编码为空、超长或含首尾空白");
         }
     }
 
-    /** 从已持久化数据恢复聚合，保留表结构允许的历史空值。 */
+    /**
+     * 从已持久化数据恢复聚合，保留表结构允许的历史空值。
+     *
+     * @param id                数据库主键
+     * @param tenantId          租户编号
+     * @param spuCode           租户内 SPU 编号
+     * @param spuName           商品名称
+     * @param productKind       商品类型
+     * @param categoryId        类目编号
+     * @param imageUrls         商品图片地址
+     * @param applicableShopIds 适用门店编号列表
+     * @param reviewState       审核状态
+     * @param reviewNote        审核备注
+     * @param isVisible         可见标记
+     * @param isOnSale          上架标记
+     * @param createdBy         创建者编号
+     * @param createdTime       创建时间
+     * @param updatedBy         最近更新者编号
+     * @param updatedTime       最近更新时间
+     * @param deleted           逻辑删除标记
+     * @param skus              规格集合
+     * @return 恢复的商品聚合
+     */
     public static GoodsSpu restore(
             Long id, String tenantId, String spuCode,
             String spuName, String productKind, Long categoryId,
@@ -139,6 +175,11 @@ public class GoodsSpu extends AggregateRoot<Long> {
                 .build();
     }
 
+    /**
+     * 读取<code>id</code>提供给调用方。
+     *
+     * @return 实际返回<code>id</code>，供调用方取得当前值
+     */
     @Override
     public Long id() {
         return id;

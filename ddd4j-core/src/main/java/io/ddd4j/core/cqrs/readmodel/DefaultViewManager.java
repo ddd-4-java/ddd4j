@@ -7,10 +7,25 @@ import java.util.*;
  * 平台仍拥有线程池、容器钩子和事务；停止只取消后续调度，不中断已运行的业务。
  */
 public final class DefaultViewManager<E> implements ViewManager {
+    /**
+     * 负责定时触发各个投影视图的调度器。
+     */
     private final ViewScheduler scheduler;
+    /**
+     * 实际读取、应用事件并推进位置的投影运行器。
+     */
     private final ProjectionRunner<E> runner;
+    /**
+     * 当前已经注册的投影视图。
+     */
     private final List<? extends ProjectionView<E>> views;
+    /**
+     * 用于取消各视图调度的句柄。
+     */
     private final List<ViewScheduler.ViewScheduleHandle> handles = new ArrayList<>();
+    /**
+     * 视图管理器是否已启动调度。
+     */
     private volatile boolean running;
 
     /**
@@ -33,6 +48,11 @@ public final class DefaultViewManager<E> implements ViewManager {
         }
     }
 
+    /**
+     * 启动当前组件并准备其运行资源。
+     *
+     * <p>此实现调用 <code>handles.isEmpty()</code>。</p>
+     */
     @Override
     public synchronized void start() {
         if (running) {
@@ -59,6 +79,11 @@ public final class DefaultViewManager<E> implements ViewManager {
         }
     }
 
+    /**
+     * 停止当前组件并清理已登记的运行资源。
+     *
+     * <p>此实现调用 <code>handles.iterator()</code>。</p>
+     */
     @Override
     public synchronized void stop() {
         running = false;
@@ -84,16 +109,34 @@ public final class DefaultViewManager<E> implements ViewManager {
         }
     }
 
+    /**
+     * 检查当前组件是否仍处于运行状态。
+     *
+     * @return 实际返回<code>running</code>，作为本次判断结果
+     */
     @Override
     public boolean isRunning() {
         return running;
     }
 
+    /**
+     * 请求立即执行指定投影视图的一轮更新。
+     *
+     * <p>此实现调用 <code>runner.runAll(views)</code>。</p>
+     */
     @Override
     public void triggerOnce() {
         runner.runAll(views);
     }
 
+    /**
+     * 汇总当前登记的投影视图及其运行状态。
+     *
+     * <p>此实现调用 <code>runner.getProjectionStatus(streamId)</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     * @return 投影状态快照
+     */
     @Override
     public ProjectionStatus getProjectionStatus(String streamId) {
         ProjectionStatus execution = runner.getProjectionStatus(streamId);

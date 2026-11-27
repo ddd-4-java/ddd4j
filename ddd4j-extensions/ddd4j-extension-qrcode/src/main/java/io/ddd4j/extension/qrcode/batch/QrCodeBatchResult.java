@@ -26,6 +26,9 @@ import java.util.List;
 @Getter
 public final class QrCodeBatchResult {
 
+    /**
+     * 按批量执行结果保留的逐项生成结果。
+     */
     private final List<QrCodeBatchItemResult> items;
 
     /**

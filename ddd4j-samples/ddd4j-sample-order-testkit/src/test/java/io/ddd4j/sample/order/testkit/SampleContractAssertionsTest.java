@@ -25,11 +25,20 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * 控制夹具验证共用断言的检错能力；不是 HTTP、原生认证引擎或平台验收。
  */
 class SampleContractAssertionsTest {
+    /**
+     * 使用固定账号和权限数据运行指定引擎的鉴权合同断言。
+     *
+     * @param engine 鉴权引擎名称
+     * @param driver 测试使用的鉴权驱动
+     */
     private static void authenticate(String engine, AuthSampleDriver driver) {
         SampleContractAssertions.authentication(engine, driver, "alice", "fixture-password", "alice",
                 "order:read", "order:delete", "orders-for-alice");
     }
 
+    /**
+     * 验证<code>authenticate(engine, driver)</code> 抛出 <code>AssertionError.class</code>，<code>failure.getMessage()</code> 等于 <code>"unsupported auth scenario name"</code>，<code>driver.requests</code> 等于 <code>Collections.emptyList()</code>。
+     */
     @Test
     void rejectsUnknownAndMissingEngineBeforeCallingDriver() {
         for (String engine : Arrays.asList("unsupported", null)) {
@@ -45,6 +54,9 @@ class SampleContractAssertionsTest {
         }
     }
 
+    /**
+     * 验证 Sa-Token 和 Shiro 的合同覆盖全部预期请求路径。
+     */
     @Test
     void bothAuthNamesExerciseAllRequestBoundaries() {
         for (String engine : Arrays.asList("satoken", "shiro")) {
@@ -55,6 +67,9 @@ class SampleContractAssertionsTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>AssertionError.class</code>。
+     */
     @Test
     void bothAuthNamesDetectAuthorizationBypass() {
         for (String engine : Arrays.asList("satoken", "shiro")) {
@@ -67,6 +82,9 @@ class SampleContractAssertionsTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>AssertionError.class</code>。
+     */
     @Test
     void bothAuthNamesDetectLogoutTokenReuse() {
         for (String engine : Arrays.asList("satoken", "shiro")) {
@@ -79,6 +97,9 @@ class SampleContractAssertionsTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>AssertionError.class</code>。
+     */
     @Test
     void bothAuthNamesDetectExceptionalContextLeak() {
         for (String engine : Arrays.asList("satoken", "shiro")) {
@@ -92,6 +113,9 @@ class SampleContractAssertionsTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>AssertionError.class</code>。
+     */
     @Test
     void bothAuthNamesDetectSuccessfulRequestContextLeak() {
         for (String engine : Arrays.asList("satoken", "shiro")) {
@@ -106,6 +130,9 @@ class SampleContractAssertionsTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>AssertionError.class</code>。
+     */
     @Test
     void bothAuthNamesDetectWrongPrincipal() {
         for (String engine : Arrays.asList("satoken", "shiro")) {
@@ -118,6 +145,9 @@ class SampleContractAssertionsTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>AssertionError.class</code>。
+     */
     @Test
     void bothAuthNamesDetectDeniedRequestContextLeak() {
         for (String engine : Arrays.asList("satoken", "shiro")) {
@@ -135,6 +165,9 @@ class SampleContractAssertionsTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>AssertionError.class</code>。
+     */
     @Test
     void bothAuthNamesDetectEmptyLoginToken() {
         for (String engine : Arrays.asList("satoken", "shiro")) {
@@ -147,11 +180,32 @@ class SampleContractAssertionsTest {
         }
     }
 
+    /**
+     * 模拟登录会话和请求边界的可替换鉴权测试驱动。
+     */
     private static class AuthDriver implements AuthSampleDriver {
+        /**
+         * 驱动接收到的请求类别，按执行顺序保留。
+         */
         final List<String> requests = new ArrayList<>();
+        /**
+         * 从测试令牌映射到登录用户名的会话记录。
+         */
         final Map<String, String> sessions = new HashMap<>();
+        /**
+         * 驱动模拟请求期间绑定的主体用户名。
+         */
         String context;
 
+        /**
+         * 以传入的凭据启动认证会话。
+         *
+         * <p>测试夹具会调用 <code>requests.add("login")</code>、<code>sessions.put("fixture-token", username)</code>。</p>
+         *
+         * @param username 已配置测试账号
+         * @param password 已配置密码
+         * @return 实际返回<code>"fixture-token"</code>
+         */
         @Override
         public String login(String username, String password) {
             requests.add("login");
@@ -159,6 +213,14 @@ class SampleContractAssertionsTest {
             return "fixture-token";
         }
 
+        /**
+         * 通过已认证请求探测服务端识别出的登录主体。
+         *
+         * <p>此实现更新<code>context = sessions.get(token)</code>。</p>
+         *
+         * @param token 令牌
+         * @return 实际返回<code>context</code>
+         */
         @Override
         public String authenticatedPrincipal(String token) {
             requests.add("authenticated");
@@ -173,6 +235,15 @@ class SampleContractAssertionsTest {
             }
         }
 
+        /**
+         * 访问当前鉴权契约中受权限约束的资源。
+         *
+         * <p>测试夹具会调用 <code>"order:read".equals(permission)</code>、<code>sessions.get(token)</code>。</p>
+         *
+         * @param token      令牌
+         * @param permission 权限
+         * @return 实际返回<code>"orders-for-" + context</code>
+         */
         @Override
         public String authorizedResource(String token, String permission) {
             requests.add("order:read".equals(permission) ? "allowed" : "denied");
@@ -187,12 +258,26 @@ class SampleContractAssertionsTest {
             }
         }
 
+        /**
+         * 结束由当前调用指定的认证会话。
+         *
+         * <p>测试夹具会调用 <code>requests.add("logout")</code>、<code>sessions.remove(token)</code>。</p>
+         *
+         * @param token 令牌；实际退出入口必须使该令牌失效
+         */
         @Override
         public void logout(String token) {
             requests.add("logout");
             sessions.remove(token);
         }
 
+        /**
+         * 访问测试中指定会失败的请求路径。
+         *
+         * <p>测试夹具会调用 <code>requests.add("failure")</code>、<code>sessions.get(token)</code>。</p>
+         *
+         * @param token 令牌；调用已注入业务异常的受保护入口并保留 IllegalStateException
+         */
         @Override
         public void failingRequest(String token) {
             requests.add("failure");
@@ -204,6 +289,13 @@ class SampleContractAssertionsTest {
             }
         }
 
+        /**
+         * 探测当前请求上下文里可读取的登录主体。
+         *
+         * <p>测试夹具会调用 <code>Optional.ofNullable(context)</code>。</p>
+         *
+         * @return 实际返回<code>Optional.ofNullable(context)</code>
+         */
         @Override
         public Optional<String> contextPrincipal() {
             return Optional.ofNullable(context);

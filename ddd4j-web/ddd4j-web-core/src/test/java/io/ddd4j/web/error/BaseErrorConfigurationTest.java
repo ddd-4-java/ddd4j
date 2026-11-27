@@ -24,8 +24,14 @@ import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * 验证 <code>BaseErrorConfiguration</code> 在<code>toResponse</code>、<code>httpStatusErrorFallsBack</code>等操作中的行为契约。
+ */
 class BaseErrorConfigurationTest {
 
+    /**
+     * 验证<code>error.status()</code> 等于 <code>400</code>，<code>error.message()</code> 等于 <code>"bad"</code>。
+     */
     @Test
     void defaultConstructorUsesDefaultTranslator() {
         BaseErrorConfiguration configuration = new PassThroughConfiguration();
@@ -36,6 +42,9 @@ class BaseErrorConfigurationTest {
         assertEquals("bad", error.message());
     }
 
+    /**
+     * 验证被测调用 抛出 <code>NullPointerException.class</code>。
+     */
     @Test
     void rejectsNullTranslatorAndBuilder() {
         assertThrows(NullPointerException.class,
@@ -44,6 +53,9 @@ class BaseErrorConfigurationTest {
                 () -> new StubErrorConfiguration(null, new DefaultWebExceptionTranslator(), null));
     }
 
+    /**
+     * 验证<code>configuration.translate(new RuntimeException("ignored"))</code> 等于 <code>stubbed</code>。
+     */
     @Test
     void doTranslateOverrideShortCircuitsTranslator() {
         WebError stubbed = new WebError(418, "TEAPOT", "short circuited", null);
@@ -52,6 +64,9 @@ class BaseErrorConfigurationTest {
         assertEquals(stubbed, configuration.translate(new RuntimeException("ignored")));
     }
 
+    /**
+     * 验证<code>response.getCode()</code> 等于 <code>"VALIDATION"</code>，<code>response.getMsg()</code> 等于 <code>"bad input"</code>，<code>response.getData()</code> 等于 <code>"detail"</code>。
+     */
     @Test
     void toResponseDelegatesToWebError() {
         WebError error = new WebError(422, "VALIDATION", "bad input", "detail");
@@ -64,6 +79,9 @@ class BaseErrorConfigurationTest {
         assertEquals("detail", response.getData());
     }
 
+    /**
+     * 验证<code>configuration.toResponse(null)</code> 抛出 <code>NullPointerException.class</code>。
+     */
     @Test
     void toResponseRejectsNullError() {
         BaseErrorConfiguration configuration = new StubErrorConfiguration(null);
@@ -71,6 +89,9 @@ class BaseErrorConfigurationTest {
         assertThrows(NullPointerException.class, () -> configuration.toResponse(null));
     }
 
+    /**
+     * 验证<code>configuration.isServerError(new WebError(499, 499, "client", null))</code>为假，<code>configuration.isServerError(new WebError(500, 500, "server", null))</code>为真。
+     */
     @Test
     void isServerErrorUsesThreshold500() {
         BaseErrorConfiguration configuration = new StubErrorConfiguration(null);
@@ -79,6 +100,9 @@ class BaseErrorConfigurationTest {
         assertTrue(configuration.isServerError(new WebError(500, 500, "server", null)));
     }
 
+    /**
+     * 验证<code>configuration</code>非空。
+     */
     @Test
     void logUnhandledToleratesClientAndServerErrors() {
         BaseErrorConfiguration configuration = new StubErrorConfiguration(null);
@@ -89,6 +113,9 @@ class BaseErrorConfigurationTest {
         assertNotNull(configuration);
     }
 
+    /**
+     * 验证<code>error.status()</code> 等于 <code>404</code>，<code>error.code()</code> 等于 <code>404</code>，<code>error.message()</code> 等于 <code>"Not Found"</code>。
+     */
     @Test
     void httpStatusErrorFallsBackWhenMessageBlank() {
         WebError error = BaseErrorConfiguration.httpStatusError(404, "Not Found", "  ");
@@ -98,6 +125,9 @@ class BaseErrorConfigurationTest {
         assertEquals("Not Found", error.message());
     }
 
+    /**
+     * 验证<code>error.message()</code> 等于 <code>"duplicate order"</code>。
+     */
     @Test
     void httpStatusErrorKeepsGivenMessage() {
         WebError error = BaseErrorConfiguration.httpStatusError(409, "Conflict", "duplicate order");
@@ -105,6 +135,9 @@ class BaseErrorConfigurationTest {
         assertEquals("duplicate order", error.message());
     }
 
+    /**
+     * 验证<code>builder.fallbackBody()</code> 与…的元素逐项相同 <code>WebErrorResponseBuilder.INTERNAL_ERROR_FALLBACK_JSON.getBytes(StandardCharsets.UTF_8)</code>，<code>builder.toResponse(new WebError(500, 500, "boom", null)).getCode()</code> 等于 <code>500</code>，<code>builder.isServerError(new WebError(404, 404, "missing", null))</code>为假。
+     */
     @Test
     void builderBuildsFallbackBodyAndResponses() {
         WebErrorResponseBuilder builder = WebErrorResponseBuilder.defaults();
@@ -121,23 +154,49 @@ class BaseErrorConfigurationTest {
      */
     private static final class StubErrorConfiguration extends BaseErrorConfiguration {
 
+        /**
+         * 记录测试替身已准备的响应或其状态。
+         */
         private final WebError stubbed;
 
+        /**
+         * 使用 <code>super()</code> 初始化 <code>StubErrorConfiguration</code> 测试夹具。
+         *
+         * @param stubbed         用于初始化 <code>StubErrorConfiguration</code> 的 <code>WebError</code> 值
+         * @param translator      用于初始化 <code>StubErrorConfiguration</code> 的 <code>WebExceptionTranslator</code> 值
+         * @param responseBuilder 用于初始化 <code>StubErrorConfiguration</code> 的 <code>WebErrorResponseBuilder</code> 值
+         */
         StubErrorConfiguration(WebError stubbed, WebExceptionTranslator translator,
                                WebErrorResponseBuilder responseBuilder) {
             super(translator, responseBuilder);
             this.stubbed = stubbed;
         }
 
+        /**
+         * 使用 <code>this()</code> 初始化 <code>StubErrorConfiguration</code> 测试夹具。
+         *
+         * @param stubbed 用于初始化 <code>StubErrorConfiguration</code> 的 <code>WebError</code> 值
+         */
         StubErrorConfiguration(WebError stubbed) {
             this(stubbed, new DefaultWebExceptionTranslator(), WebErrorResponseBuilder.defaults());
         }
 
+        /**
+         * 返回当前适配实现对应的运行框架名称。
+         *
+         * @return 实际返回<code>"Stub"</code>，供调用方取得当前值
+         */
         @Override
         protected String frameworkName() {
             return "Stub";
         }
 
+        /**
+         * 策略翻译，子类可覆盖以先归一框架特定异常（如 JAX-RS {@code WebApplicationException}），。
+         *
+         * @param throwable 原始异常
+         * @return 实际返回<code>stubbed</code>，供调用方取得当前值
+         */
         @Override
         protected WebError doTranslate(Throwable throwable) {
             return stubbed;
@@ -149,10 +208,18 @@ class BaseErrorConfigurationTest {
      */
     private static final class PassThroughConfiguration extends BaseErrorConfiguration {
 
+        /**
+         * 使用 <code>super()</code> 初始化 <code>PassThroughConfiguration</code> 测试夹具。
+         */
         PassThroughConfiguration() {
             super();
         }
 
+        /**
+         * 返回当前适配实现对应的运行框架名称。
+         *
+         * @return 实际返回<code>"Stub"</code>，供调用方取得当前值
+         */
         @Override
         protected String frameworkName() {
             return "Stub";

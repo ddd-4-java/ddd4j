@@ -451,7 +451,7 @@ public <T extends AuthPrincipal> T getPrincipal() {
 |---|-----------------------------------------------------|--------------------------------------------------------------------------|
 | 6 | 新增 `ddd4j-auth-core` 纯 Java SPI 模块             | 从 ddd4j-core 迁入 Subject/SubjectKit/SubjectProvider 体系（含会话能力） |
 | 7 | 新增 `ddd4j-auth-spring` Spring 桥接模块            | `SubjectRegistrar` + 自动装配                                            |
-| 8 | Bean Validation 数据权限已迁入 Easy4j | 应用注册业务 Provider |
+| 8 | Bean Validation 数据权限已迁入 Easy4j               | 应用注册业务 Provider                                                    |
 | 9 | `ddd4j-extension-license` 迁移到 `ddd4j-extensions` | 软件授权不属于鉴权                                                       |
 
 ### P2：能力增强（借鉴 Sa-Token）
@@ -814,10 +814,10 @@ ddd4j-javalin/.../ddd4j-javalin-auth-satoken/← Javalin + sa-token 整合
 
 #### P3：模块归属调整
 
-| #  | 任务                                               | 说明               |
-|----|----------------------------------------------------|--------------------|
-| 16 | Bean Validation 数据权限已迁入 Easy4j | 应用注册业务 Provider |
-| 17 | **`ddd4j-extension-license` → `ddd4j-extensions`** | 软件授权不属于鉴权 |
+| #  | 任务                                               | 说明                  |
+|----|----------------------------------------------------|-----------------------|
+| 16 | Bean Validation 数据权限已迁入 Easy4j              | 应用注册业务 Provider |
+| 17 | **`ddd4j-extension-license` → `ddd4j-extensions`** | 软件授权不属于鉴权    |
 
 ### 8.8 修订后的验收标准
 

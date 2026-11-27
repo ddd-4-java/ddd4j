@@ -23,16 +23,32 @@ import static org.junit.jupiter.api.Assertions.*;
  * 使用真实 H2 连接与 Spring 事务代理，验证两套公开入口的原有提交和回滚契约。
  */
 class SpringCommandTransactionTest {
+    /**
+     * 验证命令执行器采用当前事务声明时的传播行为。
+     *
+     * @throws Exception 准备测试数据库、启动框架或执行业务合同失败
+     */
     @Test
     void currentTransactions() throws Exception {
         verify(false);
     }
 
+    /**
+     * 验证兼容事务声明仍能正确管理命令处理边界。
+     *
+     * @throws Exception 准备测试数据库、启动框架或执行业务合同失败
+     */
     @Test
     void legacyTransactions() throws Exception {
         verify(true);
     }
 
+    /**
+     * 调用 <code>source.setURL()</code>、<code>UUID.randomUUID()</code>、<code>source.getConnection()</code> 执行当前夹具操作。
+     *
+     * @param legacy 本次调用使用的 <code>boolean</code> 参数 <code>legacy</code>
+     * @throws Exception 执行数据库操作时失败
+     */
     private void verify(boolean legacy) throws Exception {
         JdbcDataSource source = new JdbcDataSource();
         source.setURL("jdbc:h2:mem:" + UUID.randomUUID() + ";DB_CLOSE_DELAY=-1");
@@ -86,14 +102,28 @@ class SpringCommandTransactionTest {
         }
     }
 
+    /**
+     * 提供投影合同测试所需的事务边界或事务替身。
+     */
     @Configuration(proxyBeanMethods = false)
     @EnableTransactionManagement(proxyTargetClass = true)
     static class Transactions {
     }
 
+    /**
+     * 供命令总线验证类型匹配和分发的命令样本。
+     */
     static final class WriteCommand implements Command {
+        /**
+         * 标识当前测试对象的主键或事件标识。
+         */
         private final int id;
 
+        /**
+         * 设置 <code>id</code>，用于构造 <code>WriteCommand</code> 测试实例。
+         *
+         * @param id 标识当前测试对象的主键或事件标识
+         */
         WriteCommand(int id) {
             this.id = id;
         }

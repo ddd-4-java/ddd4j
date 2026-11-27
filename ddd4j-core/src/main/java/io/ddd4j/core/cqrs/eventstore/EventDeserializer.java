@@ -41,6 +41,9 @@ public final class EventDeserializer {
      */
     private static volatile ClassNameFilter filter = defaultFilter();
 
+    /**
+     * 限制调用方直接创建 <code>EventDeserializer</code> 实例。
+     */
     private EventDeserializer() {
     }
 

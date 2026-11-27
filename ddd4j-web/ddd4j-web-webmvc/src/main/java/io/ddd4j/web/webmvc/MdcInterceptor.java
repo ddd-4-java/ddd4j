@@ -32,6 +32,14 @@ import java.util.UUID;
  */
 public class MdcInterceptor implements HandlerInterceptor {
 
+    /**
+     * 把当前请求的标识和路径信息写入日志 MDC。
+     *
+     * @param request  当前进入调用链的 HTTP 请求
+     * @param response 当前准备写出的 HTTP 响应
+     * @param handler  MVC 当前匹配的请求处理器
+     * @return 允许继续处理当前请求时返回 true
+     */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         MDC.put("requestId", Objects.toString(request.getHeader(XHeaders.X_REQUEST_ID), UUID.randomUUID().toString()));
@@ -49,6 +57,14 @@ public class MdcInterceptor implements HandlerInterceptor {
         return true;
     }
 
+    /**
+     * 清除当前 MVC 请求线程留下的 MDC 值。
+     *
+     * @param request   当前进入调用链的 HTTP 请求
+     * @param response  当前准备写出的 HTTP 响应
+     * @param handler   MVC 当前匹配的请求处理器
+     * @param exception 当前请求处理时抛出的异常
+     */
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception exception) {
         MDC.clear();

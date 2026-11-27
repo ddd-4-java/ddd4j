@@ -10,33 +10,54 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * 验证 <code>Ddd4jTenantContextConcurrency</code> 在 <code>rejectsForeignThreadClose</code> 等场景中的行为。
+ */
 class Ddd4jTenantContextConcurrencyTest {
 
+    /**
+     * 用于检查当前请求上下文是否保留或已清除的标记。
+     */
     private static final String REQUEST_MARKER = Ddd4jTenantContextConcurrencyTest.class.getName();
 
+    /**
+     * 当前测试使用的框架上下文或请求作用域。
+     */
     private final Ddd4jTenantContext context = new Ddd4jTenantContext();
+    /**
+     * 供测试替身转发实际行为的底层实现。
+     */
     private final TenantContext delegate = context.asEnhanceContext();
 
+    /**
+     * 调用 <code>executor.shutdownNow()</code>、<code>executor.awaitTermination()</code> 执行当前夹具操作。
+     *
+     * @param executor 当前测试涉及的命令执行器或线程执行器
+     * @throws InterruptedException 等待测试操作时被中断
+     */
+    private static void shutdown(ExecutorService executor) throws InterruptedException {
+        executor.shutdownNow();
+        assertTrue(executor.awaitTermination(10, TimeUnit.SECONDS));
+    }
+
+    /**
+     * 测试后依次清除<code>ThreadContext</code>。
+     */
     @AfterEach
     void clearRequestContext() {
         ThreadContext.clear();
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，<code>delegate.getCurrentTenantId()</code> 等于 <code>"owner-original"</code>。
+     *
+     * @param enhanceEntry 参数化用例提供的候选 <code>enhanceEntry</code> 值
+     * @throws Exception 等待并发操作时失败
+     */
     @ParameterizedTest
     @ValueSource(booleans = {false, true})
     void rejectsForeignThreadCloseWithoutChangingEitherTenantOrConsumingScope(boolean enhanceEntry) throws Exception {
@@ -59,6 +80,12 @@ class Ddd4jTenantContextConcurrencyTest {
         assertEquals("owner-original", delegate.getCurrentTenantId());
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，<code>delegate.getCurrentTenantId()</code>为空。
+     *
+     * @param enhanceEntry 参数化用例提供的候选 <code>enhanceEntry</code> 值
+     * @throws Exception 等待并发操作时失败
+     */
     @ParameterizedTest
     @ValueSource(booleans = {false, true})
     void rejectsForeignThreadCloseEvenAfterOwnerClosedScope(boolean enhanceEntry) throws Exception {
@@ -81,6 +108,12 @@ class Ddd4jTenantContextConcurrencyTest {
         }
     }
 
+    /**
+     * 验证<code>delegate.getCurrentTenantId()</code> 等于 <code>"original"</code>，<code>delegate.getCurrentTenantId()</code> 等于 <code>"subsequent"</code>。
+     *
+     * @param enhanceEntry 参数化用例提供的候选 <code>enhanceEntry</code> 值
+     * @throws Exception 准备或释放被测运行资源时失败
+     */
     @ParameterizedTest
     @ValueSource(booleans = {false, true})
     void repeatedOwnerCloseDoesNotOverwriteSubsequentTenant(boolean enhanceEntry) throws Exception {
@@ -93,6 +126,11 @@ class Ddd4jTenantContextConcurrencyTest {
         assertEquals("subsequent", delegate.getCurrentTenantId());
     }
 
+    /**
+     * 验证<code>delegate.getCurrentTenantId()</code> 等于 <code>tenant</code>，<code>delegate.getCurrentTenantId()</code>为空，<code>ThreadContext.get(REQUEST_MARKER)</code>为空。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void sharedDelegateKeepsOverlappingThreadScopesIsolated() throws Exception {
         ExecutorService executor = Executors.newFixedThreadPool(4);
@@ -138,6 +176,11 @@ class Ddd4jTenantContextConcurrencyTest {
         }
     }
 
+    /**
+     * 验证<code>Thread.currentThread()</code> 与…为同一实例 <code>worker</code>，<code>delegate.getCurrentTenantId()</code>为空，<code>error.getCause()</code> 与…为同一实例 <code>failure</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void reusedWorkerRestoresTenantAfterSuccessfulAndFailedScopes() throws Exception {
         ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -172,6 +215,11 @@ class Ddd4jTenantContextConcurrencyTest {
         }
     }
 
+    /**
+     * 验证<code>release.await(10, TimeUnit.SECONDS)</code>为真，<code>started.await(10, TimeUnit.SECONDS)</code>为真，<code>delegate.getCurrentTenantId()</code> 等于 <code>"parent-after-submission"</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void queuedAsyncTasksCaptureSubmissionTenantAndRestoreWorkerAfterFailure() throws Exception {
         ExecutorService raw = Executors.newSingleThreadExecutor();
@@ -233,6 +281,11 @@ class Ddd4jTenantContextConcurrencyTest {
         }
     }
 
+    /**
+     * 验证<code>delegate.getCurrentTenantId()</code> 等于 <code>"request-tenant"</code>，<code>delegate.getCurrentTenantId()</code> 等于 <code>"outer-tenant"</code>，<code>task.get(10, TimeUnit.SECONDS)</code> 等于 <code>"request-tenant"</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void nestedAsyncTasksRestoreEachWorkerAndDoNotWriteBackToParent() throws Exception {
         ExecutorService outerRaw = Executors.newSingleThreadExecutor();
@@ -268,10 +321,5 @@ class Ddd4jTenantContextConcurrencyTest {
             shutdown(outerRaw);
             shutdown(innerRaw);
         }
-    }
-
-    private static void shutdown(ExecutorService executor) throws InterruptedException {
-        executor.shutdownNow();
-        assertTrue(executor.awaitTermination(10, TimeUnit.SECONDS));
     }
 }

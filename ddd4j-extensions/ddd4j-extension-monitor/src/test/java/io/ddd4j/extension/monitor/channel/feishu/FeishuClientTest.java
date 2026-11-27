@@ -51,12 +51,30 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class FeishuClientTest {
 
+    /**
+     * 签发和校验测试令牌固定使用的密钥样本。
+     */
     private static final String SECRET = "SEC1234567890abcdef";
+    /**
+     * 在测试线程之间共享当前操作次数或更新数量的计数器。
+     */
     private static final AtomicLong FROZEN_NOW = new AtomicLong();
 
+    /**
+     * 当前测试启动并负责释放的本地服务。
+     */
     private HttpServer server;
+    /**
+     * 当前测试服务绑定的本地端口。
+     */
     private int port;
 
+    /**
+     * 读取 <code>out</code> 供当前测试使用。
+     *
+     * @param query 用来读取测试数据的查询对象
+     * @return 当前测试使用的结果，取自 <code>out</code>
+     */
     private static Map<String, String> parseQuery(String query) {
         Map<String, String> out = new HashMap<>();
         if (Objects.isNull(query)) {
@@ -72,6 +90,11 @@ class FeishuClientTest {
         return out;
     }
 
+    /**
+     * 测试前依次启动<code>server</code>。
+     *
+     * @throws IOException 读取或写入测试数据时发生 I/O 错误
+     */
     @BeforeEach
     void startServer() throws IOException {
         server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
@@ -82,6 +105,9 @@ class FeishuClientTest {
         FROZEN_NOW.set(System.currentTimeMillis() / 1000L);
     }
 
+    /**
+     * 测试后依次停止<code>server</code>。
+     */
     @AfterEach
     void stopServer() {
         if (Objects.nonNull(server)) {
@@ -89,6 +115,11 @@ class FeishuClientTest {
         }
     }
 
+    /**
+     * 验证<code>Recorder.lastMethod</code> 等于 <code>"POST"</code>，<code>Recorder.lastQuery</code> 包含 <code>"timestamp="</code>，<code>q.get("sign")</code> 等于 <code>expectedDecoded</code>。
+     *
+     * @throws Exception 等待并发操作、发起测试请求时失败
+     */
     @Test
     void sendWithSecretShouldPostValidSignedRequest() throws Exception {
         FeishuClient client = new FeishuClient(
@@ -125,6 +156,11 @@ class FeishuClientTest {
         assertThat(Recorder.lastBody).contains("\"msg_type\":\"text\"");
     }
 
+    /**
+     * 验证<code>Recorder.lastMethod</code> 等于 <code>"POST"</code>，<code>Recorder.lastQuery</code>为空。
+     *
+     * @throws Exception 等待并发操作、发起测试请求时失败
+     */
     @Test
     void sendWithoutSecretShouldPostPlainRequest() throws Exception {
         FeishuClient client = new FeishuClient(
@@ -142,11 +178,29 @@ class FeishuClientTest {
         assertThat(Recorder.lastBody).contains("\"msg_type\":\"text\"");
     }
 
+    /**
+     * 实现 <code>HttpHandler</code>，供测试调用 <code>handle()</code> 并观察结果。
+     */
     static class Recorder implements HttpHandler {
+        /**
+         * 测试服务器最近收到的 HTTP 方法。
+         */
         static volatile String lastMethod;
+        /**
+         * 测试服务器最近收到的请求查询字符串。
+         */
         static volatile String lastQuery;
+        /**
+         * 测试服务器最近收到的 HTTP 请求正文。
+         */
         static volatile String lastBody;
 
+        /**
+         * 根据本次调用更新 <code>lastMethod = exchange.getRequestMethod()</code>、<code>lastQuery = uri.getRawQuery()</code>，用于后续测试步骤。
+         *
+         * @param exchange 当前 HTTP 请求及响应交换对象
+         * @throws IOException 读取或写入测试数据时发生 I/O 错误
+         */
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             lastMethod = exchange.getRequestMethod();

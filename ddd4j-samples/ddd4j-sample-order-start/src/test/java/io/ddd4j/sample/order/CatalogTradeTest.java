@@ -6,34 +6,61 @@ import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.ddd.event.EntityId;
 import io.ddd4j.core.ddd.event.NoopDomainEventPublisher;
-import io.ddd4j.sample.order.domain.event.TradeOrderPaymentConfirmed;
-import java.util.ArrayList;
 import io.ddd4j.sample.order.adapter.http.CatalogApi;
 import io.ddd4j.sample.order.adapter.http.CatalogCqrs;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import io.ddd4j.sample.order.start.CatalogRuntime;
-import io.ddd4j.sample.order.domain.gateway.DuplicateTradeKey;
+import io.ddd4j.sample.order.domain.event.TradeOrderPaymentConfirmed;
+import io.ddd4j.sample.order.domain.exception.DuplicateTradeKey;
 import io.ddd4j.sample.order.domain.model.GoodsSku;
 import io.ddd4j.sample.order.domain.model.GoodsSpu;
 import io.ddd4j.sample.order.infrastructure.CatalogDatabase;
-import java.util.NoSuchElementException;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import io.ddd4j.sample.order.start.CatalogRuntime;
 import org.apache.ibatis.datasource.unpooled.UnpooledDataSource;
+import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import java.util.UUID;
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * 使用真实 MySQL 验证商品交易的表结构、事务、租户隔离和状态流转。
+ */
 @Testcontainers
 class CatalogTradeTest {
+    /**
+     * 为商品交易集成测试提供隔离数据库的 MySQL 容器。
+     */
     @Container
     static final MySQLContainer<?> MYSQL = new MySQLContainer<>("mysql:8.0.36");
 
+    /**
+     * 查询数据库元数据并核对商品交易四张表的结构。
+     *
+     * @param source 指向隔离测试 MySQL 的数据源
+     * @throws Exception 无法连接数据库或读取表结构
+     */
+    private static void assertSchema(UnpooledDataSource source) throws Exception {
+        Map<String, Integer> counts = new HashMap<>();
+        try (var connection = source.getConnection();
+             var statement = connection.prepareStatement("""
+                     SELECT TABLE_NAME, COLUMN_COMMENT
+                     FROM information_schema.COLUMNS
+                     WHERE TABLE_SCHEMA = DATABASE()
+                     """);
+             var result = statement.executeQuery()) {
+            while (result.next()) {
+                assertFalse(result.getString("COLUMN_COMMENT").isBlank(), result.getString("TABLE_NAME"));
+                counts.merge(result.getString("TABLE_NAME"), 1, Integer::sum);
+            }
+        }
+        assertEquals(Map.of("goods_spu", 17, "goods_sku", 14, "trade_order", 20, "trade_order_item", 14), counts);
+    }
+
+    /**
+     * 验证规格唯一键冲突会转成领域异常，并回滚同事务中的商品记录。
+     */
     @Test
     void databaseTranslatesDuplicateSkuAndRollsBackItsParent() {
         String tenant = UUID.randomUUID().toString().substring(0, 16);
@@ -50,6 +77,11 @@ class CatalogTradeTest {
                 () -> transactions.execute(tenant, session -> session.goods().findByCode("SECOND")));
     }
 
+    /**
+     * 验证重复启动保留订单快照，且按租户隔离同业务编号的订单。
+     *
+     * @throws Exception 数据库表结构检查失败
+     */
     @Test
     void startupAndRestartPreserveTenantScopedOrderSnapshots() throws Exception {
         String tenant = UUID.randomUUID().toString().substring(0, 16);
@@ -96,6 +128,9 @@ class CatalogTradeTest {
         assertEquals(404, restarted.order(tenant + "x", "O1").getStatus());
     }
 
+    /**
+     * 验证写命令先提交交易事实，投影可直接从交易表重建快照。
+     */
     @Test
     void catalogCommandsWriteBeforeProjectionAndProjectionRebuildsFromTradeTables() {
         String tenant = UUID.randomUUID().toString().substring(0, 16);
@@ -104,8 +139,8 @@ class CatalogTradeTest {
         var cqrs = new CatalogCqrs(api, new DefaultCommandBus(List.of(CatalogCqrs.executor(api))));
         assertEquals(201, cqrs.createGoods(tenant, "G1",
                 """
-                {"spuName":"Lunch","skuCode":"S1","skuName":"Weekday","salePriceCent":1250,"shopId":7}
-                """).getStatus());
+                        {"spuName":"Lunch","skuCode":"S1","skuName":"Weekday","salePriceCent":1250,"shopId":7}
+                        """).getStatus());
         assertEquals(201, cqrs.placeOrder(tenant, "O1", """
                 {"shopId":7,"items":[{"skuCode":"S1","quantity":2}]}
                 """).getStatus());
@@ -122,6 +157,10 @@ class CatalogTradeTest {
         assertEquals(200, rebuilt.project(tenant, "O1").getStatus());
         assertEquals(cqrs.order(tenant, "O1").getPayload(), rebuilt.order(tenant, "O1").getPayload());
     }
+
+    /**
+     * 验证<code>order.getOrderState()</code> 等于 <code>"CONFIRMED"</code>，<code>api.confirmPayment(tenant + "x", "O1", 2500L).getStatus()</code> 等于 <code>404</code>，<code>api.confirmPayment(tenant, "O1", 2499L).getStatus()</code> 等于 <code>409</code>。
+     */
     @Test
     void paymentUpdatesTradeFactsAndPreservesTheOriginalSnapshot() {
         var source = new UnpooledDataSource(MYSQL.getDriverClassName(), MYSQL.getJdbcUrl(), MYSQL.getUsername(), MYSQL.getPassword());
@@ -165,6 +204,9 @@ class CatalogTradeTest {
         assertEquals(2500, event.getPaidAmountCent());
     }
 
+    /**
+     * 验证取消和履约分别修改对应状态字段。
+     */
     @Test
     void cancellationAndFulfillmentUseTheSeparateTradeStates() {
         var source = new UnpooledDataSource(MYSQL.getDriverClassName(), MYSQL.getJdbcUrl(), MYSQL.getUsername(), MYSQL.getPassword());
@@ -190,23 +232,6 @@ class CatalogTradeTest {
         assertEquals("FULFILLED", fulfilled.getPayload().path("fulfillmentState").asText());
         assertEquals(409, api.cancelOrder(tenant, "FULFILL").getStatus());
         assertEquals(404, api.fulfillOrder(tenant + "x", "FULFILL").getStatus());
-    }
-
-    private static void assertSchema(UnpooledDataSource source) throws Exception {
-        Map<String, Integer> counts = new HashMap<>();
-        try (var connection = source.getConnection();
-             var statement = connection.prepareStatement("""
-                     SELECT TABLE_NAME, COLUMN_COMMENT
-                     FROM information_schema.COLUMNS
-                     WHERE TABLE_SCHEMA = DATABASE()
-                     """);
-             var result = statement.executeQuery()) {
-            while (result.next()) {
-                assertFalse(result.getString("COLUMN_COMMENT").isBlank(), result.getString("TABLE_NAME"));
-                counts.merge(result.getString("TABLE_NAME"), 1, Integer::sum);
-            }
-        }
-        assertEquals(Map.of("goods_spu", 17, "goods_sku", 14, "trade_order", 20, "trade_order_item", 14), counts);
     }
 
 }

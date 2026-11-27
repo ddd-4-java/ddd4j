@@ -45,12 +45,33 @@ import java.util.Objects;
  */
 public final class WebOtelSupport {
 
+    /**
+     * Web 请求可选 OpenTelemetry 桥接组件的类名。
+     */
     private static final Class<?> OTEL_INTEGRATION_CLASS;
+    /**
+     * 启动服务端 Span 的反射方法。
+     */
     private static final Method START_SERVER_SPAN;
+    /**
+     * 在当前执行线程激活 Span 的反射方法。
+     */
     private static final Method ACTIVATE;
+    /**
+     * 向服务端 Span 记录错误的反射方法。
+     */
     private static final Method RECORD_ERROR;
+    /**
+     * 以最终 HTTP 状态结束服务端 Span 的反射方法。
+     */
     private static final Method END_SERVER_SPAN;
+    /**
+     * 将跟踪信息写入 HTTP 响应的反射方法。
+     */
     private static final Method INJECT_RESPONSE_CONTEXT;
+    /**
+     * 检查可选 OpenTelemetry 组件是否可用的反射方法。
+     */
     private static final Method IS_AVAILABLE;
 
     static {
@@ -82,14 +103,17 @@ public final class WebOtelSupport {
         IS_AVAILABLE = isAvail;
     }
 
+    /**
+     * 限制调用方直接创建 <code>WebOtelSupport</code> 实例。
+     */
     private WebOtelSupport() {
     }
 
     /**
      * 启动 SERVER span，返回 span 对象（OTel 未就绪时返回 null）。
      *
-     * @param method HTTP 方法
-     * @param path 请求路径
+     * @param method  HTTP 方法
+     * @param path    请求路径
      * @param headers 请求头
      * @return 服务端追踪片段
      */
@@ -131,7 +155,7 @@ public final class WebOtelSupport {
     /**
      * 记录异常到 span。
      *
-     * @param span 追踪片段
+     * @param span  追踪片段
      * @param error Web 错误
      */
     public static void recordError(Object span, Throwable error) {
@@ -148,7 +172,7 @@ public final class WebOtelSupport {
     /**
      * 结束 span 并记录 HTTP 状态码。
      *
-     * @param span 追踪片段
+     * @param span   追踪片段
      * @param status HTTP 状态码
      */
     public static void endServerSpan(Object span, int status) {

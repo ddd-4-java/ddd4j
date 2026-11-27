@@ -21,17 +21,23 @@ import java.io.Serializable;
  */
 public class WebStatusException extends RuntimeException {
 
-    /** HTTP 状态码。 */
+    /**
+     * HTTP 状态码。
+     */
     private final int status;
-    /** 业务错误码。 */
+    /**
+     * 业务错误码。
+     */
     private final Serializable code;
-    /** 错误数据。 */
+    /**
+     * 错误数据。
+     */
     private final Object data;
 
     /**
      * 创建带 HTTP 状态码的 Web 异常。
      *
-     * @param status HTTP 状态码
+     * @param status  HTTP 状态码
      * @param message 错误消息
      */
     public WebStatusException(int status, String message) {
@@ -41,10 +47,10 @@ public class WebStatusException extends RuntimeException {
     /**
      * 创建带业务错误信息的 Web 异常。
      *
-     * @param status HTTP 状态码
-     * @param code 业务错误码
+     * @param status  HTTP 状态码
+     * @param code    业务错误码
      * @param message 错误消息
-     * @param data 错误数据
+     * @param data    错误数据
      */
     public WebStatusException(int status, Serializable code, String message, Object data) {
         super(message);

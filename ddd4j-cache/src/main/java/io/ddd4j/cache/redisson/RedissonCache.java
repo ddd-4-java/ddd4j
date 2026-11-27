@@ -85,10 +85,25 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
                     "  return redis.call('INCRBY', KEYS[1], num); " +
                     "end; " +
                     "return -3;";
+    /**
+     * 用于访问 Redis 缓存和锁的 Redisson 客户端。
+     */
     private final RedissonClient redissonClient;
+    /**
+     * 默认缓存存活时间，单位为秒。
+     */
     private final long expireSeconds;
+    /**
+     * 反序列化缓存条目时使用的值类型。
+     */
     private final Class<V> valueType;
+    /**
+     * 负责在 Redis 或 Memcached 中存储 JSON 值的映射器。
+     */
     private final ObjectMapper objectMapper;
+    /**
+     * 用于隔离当前缓存命名空间的键前缀。
+     */
     private final String keyPrefix;
 
     /**
@@ -134,10 +149,24 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         this(redissonClient, config, valueType, JsonMapper.builder().build());
     }
 
+    /**
+     * 为业务键添加当前缓存命名空间前缀。
+     *
+     * @param key 缓存键
+     * @return 写入后端使用的缓存键
+     */
     private String key(String key) {
         return keyPrefix + key;
     }
 
+    /**
+     * 读取现有缓存值。
+     *
+     * <p>Redisson 实现调用 <code>redissonClient.getBucket(key(key))</code>。</p>
+     *
+     * @param key 当前操作使用的键
+     * @return 根据执行路径返回<code>null</code>、<code>objectMapper.readValue(json, valueType)</code>
+     */
     @Override
     public V getIfPresent(String key) {
         try {
@@ -152,6 +181,15 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         }
     }
 
+    /**
+     * 读取调用指定的当前值。
+     *
+     * <p>Redisson 实现调用 <code>getIfPresent(key)</code>。</p>
+     *
+     * @param key             当前操作使用的键
+     * @param mappingFunction 传给 <code>mappingFunction.apply(key)</code>
+     * @return 实际返回<code>value</code>
+     */
     @Override
     public V get(String key, Function<String, V> mappingFunction) {
         V value = getIfPresent(key);
@@ -164,6 +202,14 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         return value;
     }
 
+    /**
+     * 将给定数据写入当前存储。
+     *
+     * <p>Redisson 实现调用 <code>objectMapper.writeValueAsString(value)</code>。</p>
+     *
+     * @param key   当前操作使用的键
+     * @param value 要写入或作为比较条件传入的值
+     */
     @Override
     public void put(String key, V value) {
         try {
@@ -179,6 +225,13 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         }
     }
 
+    /**
+     * 使指定键的缓存条目失效。
+     *
+     * <p>Redisson 实现调用 <code>redissonClient.getBucket(key(key)).delete()</code>。</p>
+     *
+     * @param key 当前操作使用的键
+     */
     @Override
     public void invalidate(String key) {
         try {
@@ -188,6 +241,9 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         }
     }
 
+    /**
+     * 保留后端现有键。调用方需通过明确的键逐个失效。
+     */
     @Override
     public void invalidateAll() {
         // Redis 不建议 flushAll，需通过 key 前缀逐个删除
@@ -195,16 +251,36 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
 
     // ==================== CacheLock 实现（基于 Redisson 分布式锁） ====================
 
+    /**
+     * 报告当前后端的缓存条目数量是否可用。
+     *
+     * @return 固定返回 -1，表示此适配器不估算条目数
+     */
     @Override
     public long estimatedSize() {
         return -1;
     }
 
+    /**
+     * 返回当前缓存实现记录的统计信息。
+     *
+     * @return 此实现返回<code>null</code>
+     */
     @Override
     public CacheStats stats() {
         return null;
     }
 
+    /**
+     * 尝试获取分布式锁。
+     *
+     * <p>Redisson 实现调用 <code>redissonClient.getLock(keyPrefix + "lock:" + key).tryLock(waitSeconds, leaseSeconds, TimeUnit.SECONDS)</code>。</p>
+     *
+     * @param key          锁键
+     * @param waitSeconds  最多等待时间（秒），0 表示不等待
+     * @param leaseSeconds 持有时间（秒），超过自动释放（防死锁）
+     * @return 根据执行路径返回<code>redissonClient.getLock(keyPrefix + "lock:" + key).tryLock(waitSeconds, leaseSeconds, TimeUnit.SECONDS)</code>、<code>false</code>
+     */
     @Override
     public boolean tryLock(String key, long waitSeconds, long leaseSeconds) {
         try {
@@ -218,6 +294,13 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
 
     // ==================== CasCache 实现（基于 Redisson RBucket CAS） ====================
 
+    /**
+     * 释放锁。
+     *
+     * <p>Redisson 实现调用 <code>redissonClient.getLock(keyPrefix + "lock:" + key).unlock()</code>。</p>
+     *
+     * @param key 锁键
+     */
     @Override
     public void unlock(String key) {
         try {
@@ -237,6 +320,15 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         return redissonClient.getLock(keyPrefix + "lock:" + key);
     }
 
+    /**
+     * 在键尚无缓存值时写入给定值。
+     *
+     * <p>Redisson 实现调用 <code>objectMapper.writeValueAsString(value)</code>。</p>
+     *
+     * @param key   缓存键
+     * @param value 缓存值
+     * @return 根据执行路径返回<code>bucket.setIfAbsent(json, Duration.ofSeconds(expireSeconds))</code>、<code>bucket.setIfAbsent(json)</code>、<code>false</code>
+     */
     @Override
     public boolean putIfAbsent(String key, V value) {
         try {
@@ -253,6 +345,16 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
 
     // ==================== AtomicCache 实现（基于 Redisson RAtomicLong + Lua 库存脚本） ====================
 
+    /**
+     * 使用给定的新值更新数据。
+     *
+     * <p>Redisson 实现调用 <code>objectMapper.writeValueAsString(expected)</code>。</p>
+     *
+     * @param key      缓存键
+     * @param expected 期望的旧值（null 表示期望 key 不存在）
+     * @param newValue 新值
+     * @return 根据执行路径返回<code>bucket.setIfAbsent(newJson)</code>、<code>bucket.compareAndSet(expectedJson, newJson)</code>、<code>false</code>
+     */
     @Override
     public boolean replace(String key, V expected, V newValue) {
         try {
@@ -268,6 +370,15 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         }
     }
 
+    /**
+     * 在缓存值符合预期时删除该键。
+     *
+     * <p>Redisson 实现调用 <code>objectMapper.writeValueAsString(expected)</code>。</p>
+     *
+     * @param key      缓存键
+     * @param expected 期望的旧值
+     * @return 根据执行路径返回<code>bucket.compareAndSet(expectedJson, null)</code>、<code>false</code>
+     */
     @Override
     public boolean removeIf(String key, V expected) {
         try {
@@ -279,6 +390,15 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         }
     }
 
+    /**
+     * 对当前计数或数值执行增加操作。
+     *
+     * <p>满足 <code>delta &lt; 0</code> 时抛出 <code>IllegalArgumentException</code>。 Redisson 实现调用 <code>redissonClient.getAtomicLong(key(key)).addAndGet(delta)</code>。</p>
+     *
+     * @param key   缓存键
+     * @param delta 增量（必须 >= 0）
+     * @return 实际返回<code>redissonClient.getAtomicLong(key(key)).addAndGet(delta)</code>
+     */
     @Override
     public long increment(String key, long delta) {
         if (delta < 0) {
@@ -287,6 +407,16 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         return redissonClient.getAtomicLong(key(key)).addAndGet(delta);
     }
 
+    /**
+     * 对当前计数或数值执行增加操作。
+     *
+     * <p>Redisson 实现调用 <code>increment(key, delta)</code>。</p>
+     *
+     * @param key     缓存键
+     * @param delta   增量（必须 >= 0）
+     * @param seconds 过期时间（秒），仅对首次创建有效
+     * @return 实际返回<code>result</code>
+     */
     @Override
     public long increment(String key, long delta, long seconds) {
         long result = increment(key, delta);
@@ -295,6 +425,15 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         return result;
     }
 
+    /**
+     * 对当前计数或数值执行减少操作。
+     *
+     * <p>满足 <code>delta &lt; 0</code> 时抛出 <code>IllegalArgumentException</code>。 Redisson 实现调用 <code>redissonClient.getAtomicLong(key(key)).addAndGet(-delta)</code>。</p>
+     *
+     * @param key   缓存键
+     * @param delta 减量（必须 >= 0）
+     * @return 实际返回<code>redissonClient.getAtomicLong(key(key)).addAndGet(-delta)</code>
+     */
     @Override
     public long decrement(String key, long delta) {
         if (delta < 0) {
@@ -303,6 +442,15 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         return redissonClient.getAtomicLong(key(key)).addAndGet(-delta);
     }
 
+    /**
+     * 对键对应的数值执行浮点加法。
+     *
+     * <p>满足 <code>delta &lt; 0</code> 时抛出 <code>IllegalArgumentException</code>。 Redisson 实现调用 <code>redissonClient.getScript()</code>。</p>
+     *
+     * @param key   缓存键
+     * @param delta 增量（必须 >= 0）
+     * @return 递增后的值
+     */
     @Override
     public double incrementFloat(String key, double delta) {
         if (delta < 0) {
@@ -317,6 +465,15 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
                 String.valueOf(delta));
     }
 
+    /**
+     * 对键对应的数值执行浮点减法。
+     *
+     * <p>满足 <code>delta &lt; 0</code> 时抛出 <code>IllegalArgumentException</code>。 Redisson 实现调用 <code>incrementFloat(key, -delta)</code>。</p>
+     *
+     * @param key   缓存键
+     * @param delta 减量（必须 >= 0）
+     * @return 实际返回<code>incrementFloat(key, -delta)</code>
+     */
     @Override
     public double decrementFloat(String key, double delta) {
         if (delta < 0) {
@@ -325,6 +482,15 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         return incrementFloat(key, -delta);
     }
 
+    /**
+     * 尝试扣减键对应的库存。
+     *
+     * <p>Redisson 实现调用 <code>redissonClient.getScript()</code>。</p>
+     *
+     * @param key      缓存键
+     * @param quantity 扣减数量（必须 > 0）
+     * @return {@code >= 0} 剩余库存；负数表示失败（见返回值约定）
+     */
     @Override
     public long stockDecrement(String key, long quantity) {
         org.redisson.api.RScript script = redissonClient.getScript();
@@ -333,6 +499,15 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
                 java.util.Collections.singletonList(key(key)), quantity);
     }
 
+    /**
+     * 增加键对应的库存。
+     *
+     * <p>Redisson 实现调用 <code>redissonClient.getScript()</code>。</p>
+     *
+     * @param key      缓存键
+     * @param quantity 回补数量（必须 > 0）
+     * @return {@code >= 0} 回补后的库存；负数表示失败
+     */
     @Override
     public long stockIncrement(String key, long quantity) {
         org.redisson.api.RScript script = redissonClient.getScript();
@@ -343,17 +518,42 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
 
     // ==================== TTL 管理 ====================
 
+    /**
+     * 为指定键更新失效时间。
+     *
+     * <p>Redisson 实现调用 <code>redissonClient.getBucket(key(key)).expire(Duration.ofSeconds(seconds))</code>。</p>
+     *
+     * @param key     当前操作使用的键
+     * @param seconds 传给 <code>redissonClient.getBucket(key(key)).expire(Duration.ofSeconds(seconds))</code>
+     * @return 实际返回<code>redissonClient.getBucket(key(key)).expire(Duration.ofSeconds(seconds))</code>
+     */
     @Override
     public boolean expire(String key, long seconds) {
         return redissonClient.getBucket(key(key)).expire(Duration.ofSeconds(seconds));
     }
 
+    /**
+     * 查询键的剩余有效时间。
+     *
+     * <p>Redisson 实现调用 <code>redissonClient.getBucket(key(key)).remainTimeToLive()</code>。</p>
+     *
+     * @param key 当前操作使用的键
+     * @return 实际返回<code>ttl &lt; 0 ? ttl : ttl / 1000</code>
+     */
     @Override
     public long getExpire(String key) {
         long ttl = redissonClient.getBucket(key(key)).remainTimeToLive();
         return ttl < 0 ? ttl : ttl / 1000;
     }
 
+    /**
+     * 移除指定键上的到期限制。
+     *
+     * <p>Redisson 实现调用 <code>redissonClient.getBucket(key(key)).clearExpire()</code>。</p>
+     *
+     * @param key 当前操作使用的键
+     * @return 实际返回<code>redissonClient.getBucket(key(key)).clearExpire()</code>
+     */
     @Override
     public boolean persist(String key) {
         return redissonClient.getBucket(key(key)).clearExpire();
@@ -370,6 +570,16 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
 
     // ==================== CAS SPI 实现（基于 RBucket.compareAndSet 值比较 + 重试）====================
 
+    /**
+     * 比较缓存中的现值或版本并尝试原子修改。
+     *
+     * <p>Redisson 实现调用 <code>key(key)</code>。</p>
+     *
+     * @param key           当前操作使用的键
+     * @param expireSeconds 传给 <code>bucket.expire(Duration.ofSeconds(expireSeconds))</code>
+     * @param operation     传给 <code>operation.maxRetries()</code>
+     * @return 根据执行路径返回<code>null</code>、<code>newValue</code>
+     */
     @Override
     @SuppressWarnings("unchecked")
     public V compareAndSet(String key, long expireSeconds, CASOperation<V, V> operation) {
@@ -422,6 +632,16 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         return null;
     }
 
+    /**
+     * 比较缓存中的现值或版本并尝试原子修改。
+     *
+     * <p>Redisson 实现调用 <code>key(key)</code>。</p>
+     *
+     * @param key              当前操作使用的键
+     * @param expectedOldValue 传给 <code>serialize(expectedOldValue)</code>
+     * @param newValue         传给 <code>serialize(newValue)</code>
+     * @return 根据执行路径返回<code>bucket.setIfAbsent(newJson)</code>、<code>bucket.compareAndSet(expectedJson, newJson)</code>
+     */
     @Override
     public boolean compareAndSet(String key, V expectedOldValue, V newValue) {
         String cachedKey = key(key);
@@ -434,6 +654,12 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         return bucket.compareAndSet(expectedJson, newJson);
     }
 
+    /**
+     * 保留字符串值原样，将其他非空值编码为 JSON。
+     *
+     * @param value 待写入的缓存值
+     * @return 已编码的字符串，空值或编码失败时返回空引用
+     */
     private String serialize(V value) {
         if (Objects.isNull(value)) {
             return null;
@@ -448,6 +674,12 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         }
     }
 
+    /**
+     * 按照适配器的值类型反序列化缓存文本。
+     *
+     * @param json 从缓存后端读出的字符串
+     * @return 解码后的缓存值，输入为空或解码失败时返回空
+     */
     private V deserialize(String json) {
         if (StrKit.isEmpty(json)) {
             return null;

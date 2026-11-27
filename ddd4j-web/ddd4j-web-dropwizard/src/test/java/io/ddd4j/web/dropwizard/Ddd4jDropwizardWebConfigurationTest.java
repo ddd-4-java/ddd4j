@@ -23,9 +23,14 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/** 校验 Dropwizard Web 配置的默认值和可配置项。 */
+/**
+ * 校验 Dropwizard Web 配置的默认值和可配置项。
+ */
 class Ddd4jDropwizardWebConfigurationTest {
 
+    /**
+     * 验证<code>cfg.getDefaultAuthenticationMode()</code> 等于 <code>AuthenticationMode.REQUIRED</code>，<code>cfg.isIdempotencyEnabled()</code>为真，<code>cfg.isTrustForwardedHeaders()</code>为假。
+     */
     @Test
     void defaults() {
         Ddd4jDropwizardWebConfiguration cfg = new Ddd4jDropwizardWebConfiguration();
@@ -37,6 +42,9 @@ class Ddd4jDropwizardWebConfigurationTest {
         assertFalse(cfg.isTrustForwardedHeaders());
     }
 
+    /**
+     * 验证<code>cfg.getPublicPaths()</code> 等于 <code>Collections.singletonList("/api")</code>，<code>cfg.getDefaultAuthenticationMode()</code> 等于 <code>AuthenticationMode.OPTIONAL</code>，<code>cfg.isIdempotencyEnabled()</code>为假。
+     */
     @Test
     void setters() {
         Ddd4jDropwizardWebConfiguration cfg = new Ddd4jDropwizardWebConfiguration();

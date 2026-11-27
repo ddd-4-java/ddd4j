@@ -25,9 +25,21 @@ import java.util.function.Supplier;
  */
 public final class RuntimeContractAdapter implements RuntimeContract {
 
+    /**
+     * 启动受测运行时的回调。
+     */
     private final Runnable starter;
+    /**
+     * 停止并清理受测运行时的回调。
+     */
     private final Runnable closer;
+    /**
+     * 受测运行时应注册的服务键与接口类型。
+     */
     private final Map<String, Class<?>> services;
+    /**
+     * 获取受测运行时当前就绪报告的回调。
+     */
     private final Supplier<ReadinessReport> readinessSupplier;
 
     /**
@@ -46,21 +58,39 @@ public final class RuntimeContractAdapter implements RuntimeContract {
         this.readinessSupplier = Objects.requireNonNull(readinessSupplier, "readinessSupplier must not be null");
     }
 
+    /**
+     * 启动当前组件并准备其运行资源。
+     *
+     * <p>此实现调用 <code>starter.run()</code>。</p>
+     */
     @Override
     public void start() {
         starter.run();
     }
 
+    /**
+     * 读取<code>services</code>提供给调用方。
+     *
+     * @return 实际返回<code>services</code>，供调用方取得当前值
+     */
     @Override
     public Map<String, Class<?>> services() {
         return services;
     }
 
+    /**
+     * 通过<code>readinessSupplier.get()</code>处理当前调用。
+     *
+     * @return 实际返回<code>readinessSupplier.get()</code>
+     */
     @Override
     public ReadinessReport readiness() {
         return readinessSupplier.get();
     }
 
+    /**
+     * 执行当前被测运行时的清理回调。
+     */
     @Override
     public void close() {
         closer.run();

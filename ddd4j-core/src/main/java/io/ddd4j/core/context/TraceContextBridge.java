@@ -63,6 +63,9 @@ public final class TraceContextBridge {
      */
     public static final String TRACE_ID_MDC_KEY = "traceId";
 
+    /**
+     * 限制调用方直接创建 <code>TraceContextBridge</code> 实例。
+     */
     private TraceContextBridge() {
     }
 
@@ -179,16 +182,34 @@ public final class TraceContextBridge {
          */
         private boolean closed;
 
+        /**
+         * 保存当前线程两个跟踪上下文中的原始跟踪标识。
+         *
+         * @param previousContextTraceId DDD4J 上下文中的原跟踪标识
+         * @param previousMdcTraceId     日志 MDC 中的原跟踪标识
+         */
         private Scope(String previousContextTraceId, String previousMdcTraceId) {
             this(previousContextTraceId, previousMdcTraceId, false);
         }
 
+        /**
+         * 用给定值初始化 <code>Scope</code> 实例。
+         *
+         * @param previousContextTraceId <code>previousContextTraceId</code> 字段
+         * @param previousMdcTraceId     <code>previousMdcTraceId</code> 字段
+         * @param noop                   零操作标记（默认关闭时 close 不得触碰上下文）
+         */
         private Scope(String previousContextTraceId, String previousMdcTraceId, boolean noop) {
             this.previousContextTraceId = previousContextTraceId;
             this.previousMdcTraceId = previousMdcTraceId;
             this.noop = noop;
         }
 
+        /**
+         * 结束当前组件持有的资源。
+         *
+         * <p>此实现调用 <code>ThreadContext.remove(TRACE_ID_CONTEXT_KEY)</code>。</p>
+         */
         @Override
         public void close() {
             if (closed || noop) {

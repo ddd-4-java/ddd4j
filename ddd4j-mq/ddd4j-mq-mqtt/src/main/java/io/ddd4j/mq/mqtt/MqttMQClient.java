@@ -47,9 +47,21 @@ import java.util.function.Consumer;
 @Slf4j(topic = "### DDD4J-MQ : MqttMQClient ###")
 public class MqttMQClient implements MQClient {
 
+    /**
+     * 当前消息代理客户端使用的连接和订阅配置。
+     */
     private final MqttMQProperties properties;
+    /**
+     * 持有当前已创建且可用的原生消息客户端。
+     */
     private final AtomicReference<org.eclipse.paho.client.mqttv3.MqttClient> clientRef = new AtomicReference<>();
+    /**
+     * 协调消息客户端启动、初始化和关闭的生命周期。
+     */
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    /**
+     * 组件的启动状态和启动失败诊断信息。
+     */
     private final MQStartupStatus startupStatus = new MQStartupStatus("mqtt");
 
     /**
@@ -73,6 +85,12 @@ public class MqttMQClient implements MQClient {
         this.properties = Objects.requireNonNull(properties, "properties");
     }
 
+    /**
+     * 取消指定主题的 MQTT 订阅，并处理原生客户端抛出的异常。
+     *
+     * @param client 当前使用的原生代理或 Redis 客户端
+     * @param topic  要发布、订阅或取消订阅的代理主题
+     */
     private static void unsubscribe(org.eclipse.paho.client.mqttv3.MqttClient client, String topic) {
         try {
             client.unsubscribe(topic);
@@ -81,6 +99,11 @@ public class MqttMQClient implements MQClient {
         }
     }
 
+    /**
+     * 断开 MQTT 客户端连接，并处理原生客户端抛出的异常。
+     *
+     * @param client 当前使用的原生代理或 Redis 客户端
+     */
     private static void disconnectClient(org.eclipse.paho.client.mqttv3.MqttClient client) {
         try {
             if (client.isConnected()) {
@@ -91,6 +114,11 @@ public class MqttMQClient implements MQClient {
         }
     }
 
+    /**
+     * 释放原生客户端，并处理原生客户端抛出的异常。
+     *
+     * @param client 当前使用的原生代理或 Redis 客户端
+     */
     private static void closeClient(org.eclipse.paho.client.mqttv3.MqttClient client) {
         try {
             client.close();
@@ -99,11 +127,21 @@ public class MqttMQClient implements MQClient {
         }
     }
 
+    /**
+     * 返回此消息适配器在 DDD4J 中登记的实现名。
+     *
+     * @return 实际返回<code>"mqtt"</code>，供调用方取得当前值
+     */
     @Override
     public String impl() {
         return "mqtt";
     }
 
+    /**
+     * 返回管理连接、生产者和消费者资源的生命周期对象。
+     *
+     * @return 当前消息适配器用于登记和关闭资源的生命周期对象
+     */
     @Override
     public MQClientLifecycle lifecycle() {
         return lifecycle;
@@ -111,6 +149,11 @@ public class MqttMQClient implements MQClient {
 
     // ========================= 生产者 =========================
 
+    /**
+     * 返回消息客户端当前记录的启动状态。
+     *
+     * @return 当前消息适配器记录的启动状态
+     */
     @Override
     public MQStartupStatus startupStatus() {
         return startupStatus;
@@ -118,6 +161,11 @@ public class MqttMQClient implements MQClient {
 
     // ========================= 消费者 =========================
 
+    /**
+     * Broker 默认拼接符（各 broker 决定，建议子类覆写）。
+     *
+     * @return 实际返回<code>"/"</code>，供调用方取得当前值
+     */
     @Override
     public String defaultConcat() {
         return "/";
@@ -125,6 +173,8 @@ public class MqttMQClient implements MQClient {
 
     /**
      * MQTT 无原生 broker-side tag selector，仅 topic 通配 → 强制应用层 {@link TagMatcher} 过滤。
+     *
+     * @return 当前代理是否支持按标签过滤
      */
     @Override
     public boolean supportsBrokerTagFilter() {
@@ -133,6 +183,14 @@ public class MqttMQClient implements MQClient {
 
     // ========================= 连接管理 =========================
 
+    /**
+     * 准备消息生产者并返回可发布事件的入口。
+     *
+     * <p>MQTT 实现调用 <code>connection()</code>。</p>
+     *
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 接收待发布事件的函数
+     */
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         org.eclipse.paho.client.mqttv3.MqttClient client = connection();
@@ -154,6 +212,16 @@ public class MqttMQClient implements MQClient {
         };
     }
 
+    /**
+     * 为监听器建立消息消费所需的订阅和客户端资源。
+     *
+     * <p>MQTT 实现调用 <code>connection()</code>。</p>
+     *
+     * @param listener     监听器定义
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 此实现返回<code>true</code>
+     * @throws Exception 当前框架、存储或底层客户端无法完成此操作时
+     */
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         org.eclipse.paho.client.mqttv3.MqttClient client = connection();
@@ -205,6 +273,10 @@ public class MqttMQClient implements MQClient {
 
     /**
      * 从到达的物理 topic 末段解析 tag（保持与生产者 {@link #resolveTopic} 拼接规则一致）。
+     *
+     * @param message      收到的原生 MQTT 消息
+     * @param arrivedTopic 消息抵达时使用的订阅主题
+     * @return 解析得到的 MQTT 消息标签
      */
     private String readTag(MqttMessage message, String arrivedTopic) {
         int lastSlash = arrivedTopic.lastIndexOf('/');
@@ -216,11 +288,18 @@ public class MqttMQClient implements MQClient {
 
     /**
      * QoS：注入原生客户端时取默认值 1，否则读 properties。
+     *
+     * @return MQTT 发布或订阅使用的服务质量级别
      */
     private int qos() {
         return properties.getQos();
     }
 
+    /**
+     * 取得当前适配器使用的原生连接或客户端，缺少实例时建立连接。
+     *
+     * @return 供发布或消费操作使用的原生连接或客户端
+     */
     private synchronized org.eclipse.paho.client.mqttv3.MqttClient connection() {
         org.eclipse.paho.client.mqttv3.MqttClient c = clientRef.get();
         if (Objects.nonNull(c)) {
@@ -240,6 +319,9 @@ public class MqttMQClient implements MQClient {
         return c;
     }
 
+    /**
+     * 释放消息客户端拥有的运行资源，并在退出时登记组件已停止。
+     */
     @Override
     public void close() {
         try {

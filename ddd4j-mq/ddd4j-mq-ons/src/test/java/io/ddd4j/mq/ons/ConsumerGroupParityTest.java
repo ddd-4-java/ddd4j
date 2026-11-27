@@ -26,6 +26,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * 参数必须在任何 ONS 客户端创建之前完成校验。
  */
 class ConsumerGroupParityTest {
+    /**
+     * 构造 <code>OnsProperties</code> 作为当前测试的输入或结果。
+     *
+     * @return 提供给后续契约断言的 <code>OnsProperties</code> 结果
+     */
     private static OnsProperties guardedProperties() {
         return new OnsProperties() {
             @Override
@@ -35,6 +40,9 @@ class ConsumerGroupParityTest {
         };
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>。
+     */
     @Test
     void whitespaceGroupIsRejectedBeforeCreatingBroker() {
         OnsProperties properties = guardedProperties();
@@ -44,6 +52,9 @@ class ConsumerGroupParityTest {
         assertThrows(IllegalStateException.class, () -> new OnsMQClient(properties).initConsumer(listener, new MQProperties()));
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>。
+     */
     @Test
     void whitespaceTopicIsRejectedBeforeCreatingBroker() {
         OnsProperties properties = guardedProperties();

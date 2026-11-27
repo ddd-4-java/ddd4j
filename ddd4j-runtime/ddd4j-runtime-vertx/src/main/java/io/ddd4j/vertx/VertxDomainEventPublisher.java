@@ -35,8 +35,17 @@ public final class VertxDomainEventPublisher implements DomainEventPublisher {
      * 本地领域事件总线地址。
      */
     public static final String ADDRESS = "ddd4j.domain.events";
+    /**
+     * 用于命名本地事件总线编解码器的前缀。
+     */
     private static final String CODEC_PREFIX = "ddd4j.local-event.";
+    /**
+     * 当前框架组件共享的 Vert.x 实例。
+     */
     private final Vertx vertx;
+    /**
+     * 已为本地事件类型安装的编解码器名称。
+     */
     private final Map<Class<?>, String> codecNames = new ConcurrentHashMap<>();
 
     /**
@@ -48,11 +57,26 @@ public final class VertxDomainEventPublisher implements DomainEventPublisher {
         this.vertx = Objects.requireNonNull(vertx, "vertx must not be null");
     }
 
+    /**
+     * 将传入的事件交给当前发布通道。
+     *
+     * <p>Vert.x 实现调用 <code>publish((Object)event)</code>。</p>
+     *
+     * @param <ID>  实体标识类型
+     * @param event 领域事件
+     */
     @Override
     public <ID extends EntityId> void publish(DomainEvent<ID> event) {
         publish((Object) event);
     }
 
+    /**
+     * 将传入的事件交给当前发布通道。
+     *
+     * <p>Vert.x 实现调用 <code>log.debug("Publishing Vert.x event: {}", event.getClass().getName())</code>。</p>
+     *
+     * @param event 任意事件对象
+     */
     @Override
     public void publish(Object event) {
         if (Objects.nonNull(event)) {
@@ -62,6 +86,12 @@ public final class VertxDomainEventPublisher implements DomainEventPublisher {
         }
     }
 
+    /**
+     * 为运行时事件类型按需登记本地总线编解码器。
+     *
+     * @param eventType 待登记本地编解码器的事件类型
+     * @return 当前事件类型可使用的本地编解码器名称
+     */
     private String registerLocalCodec(Class<?> eventType) {
         String codecName = CODEC_PREFIX + eventType.getName();
         vertx.eventBus().registerCodec(new LocalEventMessageCodec(codecName));

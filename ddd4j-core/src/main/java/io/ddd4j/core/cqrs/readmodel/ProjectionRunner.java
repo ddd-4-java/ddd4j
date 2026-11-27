@@ -52,13 +52,25 @@ public class ProjectionRunner<E> {
      */
     public static final int CONSECUTIVE_FAILURE_THRESHOLD = 5;
 
+    /**
+     * 应用投影事件及维护检查点的共享服务。
+     */
     private final ProjectionService projectionService;
 
+    /**
+     * 按位点分块读取事件的投影组件。
+     */
     private final EventChunkReader<E> chunkReader;
 
+    /**
+     * 接收投影执行结果和处理耗时的指标组件。
+     */
     private final ProjectionMetrics metrics;
 
     // 同一运行器内按检查点标识互斥；不替代跨实例锁或数据库事务。
+    /**
+     * 按检查点标识限制同一执行器内同一流并行运行。
+     */
     private final Set<String> runningStreams = ConcurrentHashMap.newKeySet();
 
     /**
@@ -196,6 +208,12 @@ public class ProjectionRunner<E> {
         }
     }
 
+    /**
+     * 在运行前检查视图及其事件流名称。
+     *
+     * @param view 请求执行的投影视图
+     * @return 校验通过的投影视图
+     */
     private ProjectionView<E> validateView(ProjectionView<E> view) {
         ProjectionView<E> projectionView = Objects.requireNonNull(view, "view must not be null");
         if (StrKit.isBlank(projectionView.getName())) {

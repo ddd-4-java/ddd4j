@@ -72,6 +72,12 @@ public class TradeOrderItem implements Entity<Long> {
 
     /**
      * 从目录报价构造独立的成交快照。
+     *
+     * @param tenant   租户编号
+     * @param lineNo   订单内行号
+     * @param offer    成交时的目录规格及价格
+     * @param quantity 购买数量
+     * @return 新的订单明细
      */
     public static TradeOrderItem fromOffer(String tenant, int lineNo, GoodsSkuOffer offer, Long quantity) {
         if (Objects.isNull(quantity) || quantity <= 0) {
@@ -82,11 +88,23 @@ public class TradeOrderItem implements Entity<Long> {
                 .quantity(quantity).unitPriceCent(offer.getSalePriceCent()).build();
     }
 
+    /**
+     * 读取<code>id</code>提供给调用方。
+     *
+     * @return 实际返回<code>id</code>，供调用方取得当前值
+     */
     @Override
     public Long id() {
         return id;
     }
 
+    /**
+     * 使用成交单价乘以购买件数计算明细小计。
+     *
+     * @return 商品明细小计，单位为人民币分
+     * @throws IllegalArgumentException 购买件数非正或单价缺失、为负
+     * @throws ArithmeticException      乘积超出长整数范围
+     */
     long subtotalCent() {
         if (Objects.isNull(quantity) || quantity <= 0 || Objects.isNull(unitPriceCent) || unitPriceCent < 0) {
             throw new IllegalArgumentException("成交明细须包含正数数量和非负单价");

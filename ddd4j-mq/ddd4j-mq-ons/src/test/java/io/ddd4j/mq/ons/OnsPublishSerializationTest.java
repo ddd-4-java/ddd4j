@@ -20,8 +20,14 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+/**
+ * 通过 <code>mock()</code>、<code>event.setTopic()</code>、<code>event.setMsgId()</code> 验证 <code>OnsPublishSerialization</code> 的运行行为。
+ */
 class OnsPublishSerializationTest {
 
+    /**
+     * 验证<code>publishFailure</code>为空，<code>serializations.get()</code> 等于 <code>1</code>。
+     */
     @Test
     void successfulNativeSendUsesOneSerializationForPayloadAndLog() {
         Producer producer = mock(Producer.class);

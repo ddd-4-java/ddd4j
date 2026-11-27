@@ -21,8 +21,18 @@ import java.lang.reflect.Modifier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * 锁定认证字段及 JWT 声明对调用方公开的字符串。
+ */
 class AuthConstantsTest {
 
+    /**
+     * 核对<code>field.getType()</code> 等于 <code>String.class</code>，<code>field.getModifiers()</code> 等于 <code>Modifier.PUBLIC | Modifier.STATIC | Modifier.FINAL</code>。
+     *
+     * @param name    当前测试指定的对象或属性名称
+     * @param literal 传给 <code>assertEquals()</code> 的 <code>String</code> 输入
+     * @throws ReflectiveOperationException 无法反射访问测试所需的构件
+     */
     private static void assertKey(String name, String literal) throws ReflectiveOperationException {
         Field field = AuthConstants.class.getField(name);
         assertEquals(String.class, field.getType(), name);
@@ -30,6 +40,11 @@ class AuthConstantsTest {
         assertEquals(literal, field.get(null), name);
     }
 
+    /**
+     * 验证认证主体公开字段名保持兼容。
+     *
+     * @throws ReflectiveOperationException 无法反射读取测试要求验证的公开字段
+     */
     @Test
     void publishedFieldKeysKeepTheirLiteralValues() throws ReflectiveOperationException {
         assertKey("FIELD_USER_ID", "uid");
@@ -43,6 +58,11 @@ class AuthConstantsTest {
         assertKey("FIELD_ROLE_TYPE", "roleType");
     }
 
+    /**
+     * 验证认证模块公开的 JWT 声明键保持规定拼写。
+     *
+     * @throws ReflectiveOperationException 无法反射读取测试要求验证的公开字段
+     */
     @Test
     void claimKeysExposeThePublishedJwtNames() throws ReflectiveOperationException {
         assertKey("CLAIM_TENANT_ID", "tenant_id");

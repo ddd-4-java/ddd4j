@@ -29,6 +29,9 @@ public class MicronautProjectionViewManager implements ViewManager {
      * 新 runtime 的显式持久投影开关；不改变旧 GAV 的缺省激活规则。
      */
     public static final String ENABLED = "ddd4j.cqrs.projection.enabled";
+    /**
+     * 实现 Micronaut 投影任务装配后的启动与停止。
+     */
     private final DefaultViewManager<Object> delegate;
 
     /**
@@ -84,6 +87,11 @@ public class MicronautProjectionViewManager implements ViewManager {
         }
     }
 
+    /**
+     * 启动当前组件并准备其运行资源。
+     *
+     * <p>Micronaut 实现调用 <code>delegate.start()</code>。</p>
+     */
     @Override
     public void start() {
         if (Objects.nonNull(delegate)) {
@@ -91,6 +99,11 @@ public class MicronautProjectionViewManager implements ViewManager {
         }
     }
 
+    /**
+     * 停止当前组件并清理已登记的运行资源。
+     *
+     * <p>Micronaut 实现调用 <code>delegate.stop()</code>。</p>
+     */
     @Override
     public void stop() {
         if (Objects.nonNull(delegate)) {
@@ -98,11 +111,23 @@ public class MicronautProjectionViewManager implements ViewManager {
         }
     }
 
+    /**
+     * 检查当前组件是否仍处于运行状态。
+     *
+     * <p>Micronaut 实现调用 <code>delegate.isRunning()</code>。</p>
+     *
+     * @return 实际返回<code>Objects.nonNull(delegate) &amp;&amp; delegate.isRunning()</code>
+     */
     @Override
     public boolean isRunning() {
         return Objects.nonNull(delegate) && delegate.isRunning();
     }
 
+    /**
+     * 请求立即执行指定投影视图的一轮更新。
+     *
+     * <p>Micronaut 实现调用 <code>delegate.triggerOnce()</code>。</p>
+     */
     @Override
     public void triggerOnce() {
         if (Objects.nonNull(delegate)) {
@@ -110,6 +135,14 @@ public class MicronautProjectionViewManager implements ViewManager {
         }
     }
 
+    /**
+     * 汇总当前登记的投影视图及其运行状态。
+     *
+     * <p>Micronaut 实现调用 <code>delegate.getProjectionStatus(streamId)</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     * @return 投影状态快照
+     */
     @Override
     public ProjectionStatus getProjectionStatus(String streamId) {
         return Objects.nonNull(delegate) ? delegate.getProjectionStatus(streamId) : ProjectionStatus.baseline(streamId, false);

@@ -24,6 +24,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * 使用真实 Helidon SE 适配器，原生 MP/JAR/持久恢复另有集成证据。
  */
 class HelidonCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
+    /**
+     * 创建测试中用于操作当前框架的契约适配器。
+     *
+     * <p>测试夹具会调用 <code>ServiceLoader.load(CommandExecutor.class)</code>、<code>HelidonServiceLoader.builder(services).useSystemServiceLoader(false).addService(new StubExecutorA())</code>。</p>
+     *
+     * @return CQRS 运行时契约
+     */
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected CqrsRuntimeContract createContract() {
@@ -64,6 +71,11 @@ class HelidonCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         };
     }
 
+    /**
+     * 验证<code>manager.isRunning()</code>为假，<code>tick.await(3, TimeUnit.SECONDS)</code>为真，<code>reads.get()</code> 等于 <code>stopped</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void realScheduledTaskRunsOncePerRegistrationAndCancelsOnStop() throws Exception {
         HelidonProjectionScheduler scheduler = new HelidonProjectionScheduler();
@@ -93,6 +105,9 @@ class HelidonCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /**
+     * 验证<code>handle.isActive()</code>为真，<code>handle.isActive()</code>为假。
+     */
     @Test
     void shutdownMarksPendingHandlesInactive() {
         HelidonProjectionScheduler scheduler = new HelidonProjectionScheduler();
@@ -103,6 +118,11 @@ class HelidonCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         assertFalse(handle.isActive());
     }
 
+    /**
+     * 验证<code>((java.util.Set&lt;?&gt;) field.get(scheduler)).isEmpty()</code>为真。
+     *
+     * @throws Exception 反射访问被测成员时失败
+     */
     @Test
     void cancellationReleasesSchedulerTaskRegistration() throws Exception {
         HelidonProjectionScheduler scheduler = new HelidonProjectionScheduler();
@@ -118,6 +138,9 @@ class HelidonCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /**
+     * 验证<code>HelidonProjectionScheduler.CronExpression.parse("0 30 2 * * *").next(springGap)</code> 等于 <code>LocalDateTime.of(2026, 3, 29, 2, 30)</code>，<code>HelidonProjectionScheduler.CronExpression.parse("0 0 0 1 1 *") .next(LocalDateTime.of(2026, 2, 1, 0, 0))</code>为空，<code>HelidonProjectionScheduler.CronExpression.parse("*&#47;0 * * * * *")</code> 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void legacyCronKeepsWallClockAndSearchWindowAndRejectsNewDialect() {
         LocalDateTime springGap = LocalDateTime.of(2026, 3, 29, 1, 59, 59);
@@ -130,6 +153,13 @@ class HelidonCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         assertThrows(IllegalArgumentException.class, () -> HelidonProjectionScheduler.CronExpression.parse("*/0 * * * * *"));
     }
 
+    /**
+     * 构造 <code>ProjectionView&lt;&gt;</code> 作为当前测试的输入或结果。
+     *
+     * @param name 当前测试指定的对象或属性名称
+     * @param cron 用于构造本次返回结果的 <code>String</code> 输入
+     * @return 提供给后续契约断言的 <code>ProjectionView&lt;Object&gt;</code> 结果
+     */
     private ProjectionView<Object> view(String name, String cron) {
         return new ProjectionView<>() {
             public String getName() {

@@ -21,12 +21,18 @@ package io.ddd4j.web.core.version;
  */
 public enum ApiVersionSource {
 
-    /** 来自 {@code X-App-Version} 请求头（最高优先级）。 */
+    /**
+     * 来自 {@code X-App-Version} 请求头（最高优先级）。
+     */
     HEADER,
 
-    /** 来自 URL 路径版本段（如 {@code /v2/orders} 中的 {@code v2}）。 */
+    /**
+     * 来自 URL 路径版本段（如 {@code /v2/orders} 中的 {@code v2}）。
+     */
     PATH,
 
-    /** 来自配置的默认版本（双缺失时的兜底）。 */
+    /**
+     * 来自配置的默认版本（双缺失时的兜底）。
+     */
     DEFAULT
 }

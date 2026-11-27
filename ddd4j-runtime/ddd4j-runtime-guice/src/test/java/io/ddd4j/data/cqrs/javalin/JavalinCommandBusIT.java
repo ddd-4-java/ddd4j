@@ -23,13 +23,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.ServiceLoader;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
@@ -67,11 +61,17 @@ class JavalinCommandBusIT {
      */
     private Javalin app;
 
+    /**
+     * 测试执行前执行 <code>Javalin.create()</code> 完成资源准备。
+     */
     @BeforeEach
     void startJavalin() {
         app = Javalin.create(cfg -> cfg.startup.showJavalinBanner = false).start(0);
     }
 
+    /**
+     * 测试结束后执行 <code>app.stop()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void stopJavalin() {
         if (app != null) {
@@ -106,6 +106,9 @@ class JavalinCommandBusIT {
         return executors;
     }
 
+    /**
+     * 验证<code>result.isSuccess()</code>为真，<code>result.data()</code> 包含 <code>SampleCommandHandler.HANDLED</code>。
+     */
     @Test
     void execute_已注册命令_应路由到真实Handler并返回成功() {
         JavalinCommandBus bus = assemble();
@@ -116,6 +119,9 @@ class JavalinCommandBusIT {
         assertThat(result.data()).contains(SampleCommandHandler.HANDLED);
     }
 
+    /**
+     * 验证<code>exception</code>非空，<code>exception.getMessage()</code> 包含 <code>SampleCommand.class.getName()</code>。
+     */
     @Test
     void 装配期冲突_整批拒绝应自工厂传播() {
         // 供入「多类型占位执行器（SampleCommand + CompanionCommand）+ 真实
@@ -133,6 +139,9 @@ class JavalinCommandBusIT {
         assertThat(exception.getMessage()).contains(SampleCommand.class.getName());
     }
 
+    /**
+     * 验证<code>exception</code>非空，<code>exception.getMessage()</code> 包含 <code>UnknownCommand.class.getName()</code>。
+     */
     @Test
     void execute_未注册命令_应抛ISE与ddd4j_core一致() {
         JavalinCommandBus bus = assemble();
@@ -144,9 +153,15 @@ class JavalinCommandBusIT {
         assertThat(exception.getMessage()).contains(UnknownCommand.class.getName());
     }
 
+    /**
+     * 与主要测试命令并行注册的第二种命令样本。
+     */
     static class CompanionCommand implements Command {
     }
 
+    /**
+     * 没有注册执行器的命令样本，用来验证命令分发边界。
+     */
     static class UnknownCommand implements Command {
     }
 
@@ -158,11 +173,26 @@ class JavalinCommandBusIT {
      */
     static class OverlappingMultiTypeHandler implements CommandExecutor<Command> {
 
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>Arrays.asList(SampleCommand.class, CompanionCommand.class)</code>。</p>
+         *
+         * @return 支持的命令类型集合
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(SampleCommand.class, CompanionCommand.class)));
         }
 
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>Result.ok()</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>Result.ok()</code>
+         */
         @Override
         public Result execute(Command command) {
             return Result.ok();

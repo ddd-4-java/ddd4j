@@ -45,30 +45,61 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class TrueLicenseMigrationTest {
 
+    /**
+     * 用于关联测试许可证或测试账号的主题标识。
+     */
     private static final String SUBJECT = "ddd4j-test-product";
 
+    /**
+     * JUnit 为本次测试分配的临时目录。
+     */
     @TempDir
     Path temporaryDirectory;
 
+    /**
+     * 当前许可证测试环境使用的偏好存储。
+     */
     private Preferences preferences;
 
+    /**
+     * 测试执行前执行 <code>LicenseTestPreferencesFactory.isUserRoot()</code>、<code>Preferences.userRoot()</code> 完成资源准备。
+     */
     @BeforeAll
     static void requiresInMemoryPreferencesBeforeAnyLicenseOperation() {
         assertTrue(LicenseTestPreferencesFactory.isUserRoot(Preferences.userRoot()),
                 "Surefire must install LicenseTestPreferencesFactory before running license tests");
     }
 
+    /**
+     * 调用 <code>Files.readAllBytes()</code>、<code>licenseFile.toPath()</code>、<code>Files.write()</code> 执行当前夹具操作。
+     *
+     * @param licenseFile 传给 <code>Files.readAllBytes()</code> 的 <code>File</code> 输入
+     * @throws Exception 准备或读取夹具文件时失败
+     */
     private static void tamper(File licenseFile) throws Exception {
         byte[] bytes = Files.readAllBytes(licenseFile.toPath());
         bytes[bytes.length / 2] ^= 0x01;
         Files.write(licenseFile.toPath(), bytes);
     }
 
+    /**
+     * 核对<code>manager.install(licenseFile)</code> 抛出 <code>LicenseManagementException.class</code>，被测调用 抛出 <code>LicenseManagementException.class</code>。
+     *
+     * @param manager     传给 <code>assertThrows()</code> 的 <code>CustomLicenseManager</code> 输入
+     * @param licenseFile 传给 <code>assertThrows()</code> 的 <code>File</code> 输入
+     */
     private static void assertInstallationFailsAndLeavesNoLicense(CustomLicenseManager manager, File licenseFile) {
         assertThrows(LicenseManagementException.class, () -> manager.install(licenseFile));
         assertThrows(LicenseManagementException.class, manager::verify);
     }
 
+    /**
+     * 读取 <code>param</code> 供当前测试使用。
+     *
+     * @param support     传给 <code>param.setPrivateKeysStorePath()</code> 的 <code>LicenseTestSupport</code> 输入
+     * @param licenseFile 传给 <code>param.setLicensePath()</code> 的 <code>File</code> 输入
+     * @return 当前测试使用的结果，取自 <code>param</code>
+     */
     private static LicenseCreatorParam creatorParam(LicenseTestSupport support, File licenseFile) {
         LicenseCreatorParam param = new LicenseCreatorParam();
         param.setSubject(SUBJECT + '-' + UUID.randomUUID());
@@ -83,6 +114,12 @@ class TrueLicenseMigrationTest {
         return param;
     }
 
+    /**
+     * 读取 <code>license</code> 供当前测试使用。
+     *
+     * @param subject 传给 <code>V1.builder()</code> 的 <code>String</code> 输入
+     * @return 当前测试使用的结果，取自 <code>license</code>
+     */
     private static License validLicense(String subject) {
         License license = V1.builder().subject(subject).build().licenseFactory().license();
         Date now = new Date();
@@ -97,6 +134,12 @@ class TrueLicenseMigrationTest {
         return license;
     }
 
+    /**
+     * 读取 <code>license</code> 供当前测试使用。
+     *
+     * @param subject 传给 <code>validLicense()</code> 的 <code>String</code> 输入
+     * @return 当前测试使用的结果，取自 <code>license</code>
+     */
     private static License expiredLicense(String subject) {
         License license = validLicense(subject);
         license.setIssued(new Date(System.currentTimeMillis() - 7_200_000L));
@@ -105,16 +148,30 @@ class TrueLicenseMigrationTest {
         return license;
     }
 
+    /**
+     * 创建 <code>new LicenseValidationException</code> 供当前测试路径调用。
+     *
+     * @param text 用于构造本次返回结果的 <code>String</code> 输入
+     * @return 当前测试使用的结果，取自 <code>new LicenseValidationException(new TestMessage(text))</code>
+     */
     private static LicenseValidationException testValidationException(String text) {
         return new LicenseValidationException(new TestMessage(text));
     }
 
+    /**
+     * 测试结束后执行 <code>LicenseTestPreferencesFactory.reset()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void removeIsolatedPreferences() {
         LicenseTestPreferencesFactory.reset();
         preferences = null;
     }
 
+    /**
+     * 验证<code>consumer.install(licenseFile).getSubject()</code> 等于 <code>SUBJECT</code>，被测调用 抛出 <code>LicenseManagementException.class</code>。
+     *
+     * @throws Exception 向测试存储读写数据或校验其结果时失败
+     */
     @Test
     void storesInstallsVerifiesAndUninstallsWithRealJksKeys() throws Exception {
         LicenseTestSupport support = new LicenseTestSupport(temporaryDirectory);
@@ -133,6 +190,11 @@ class TrueLicenseMigrationTest {
         assertThrows(LicenseManagementException.class, consumer::verify);
     }
 
+    /**
+     * 在测试框架中执行 <code>temporaryDirectory.resolve()</code>、<code>isolatedPreferences()</code>、<code>support.privateKeyStoreParam()</code>，验证该场景。
+     *
+     * @throws Exception 准备或读取夹具文件时失败
+     */
     @Test
     void rejectsTamperedLicenseAndLeavesNoInstalledLicense() throws Exception {
         LicenseTestSupport support = new LicenseTestSupport(temporaryDirectory);
@@ -149,6 +211,11 @@ class TrueLicenseMigrationTest {
                 new CustomLicenseManager(SUBJECT, support.publicKeyStoreParam(), preferences), licenseFile);
     }
 
+    /**
+     * 在测试框架中执行 <code>temporaryDirectory.resolve()</code>、<code>isolatedPreferences()</code>、<code>signer.privateKeyStoreParam()</code>，验证该场景。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void rejectsLicenseSignedByAnotherKeyAndLeavesNoInstalledLicense() throws Exception {
         LicenseTestSupport signer = new LicenseTestSupport(temporaryDirectory.resolve("signer"));
@@ -162,6 +229,11 @@ class TrueLicenseMigrationTest {
                 new CustomLicenseManager(SUBJECT, other.publicKeyStoreParam(), preferences), licenseFile);
     }
 
+    /**
+     * 在测试框架中执行 <code>temporaryDirectory.resolve()</code>、<code>isolatedPreferences()</code>、<code>support.privateKeyStoreParam()</code>，验证该场景。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void rejectsWrongSubjectAndCleansInstalledState() throws Exception {
         LicenseTestSupport support = new LicenseTestSupport(temporaryDirectory);
@@ -174,6 +246,11 @@ class TrueLicenseMigrationTest {
                 new CustomLicenseManager("another-product", support.publicKeyStoreParam(), preferences), licenseFile);
     }
 
+    /**
+     * 验证<code>manager.verify().getSubject()</code> 等于 <code>SUBJECT</code>，被测调用 抛出 <code>LicenseManagementException.class</code>。
+     *
+     * @throws Exception 向测试存储读写数据或校验其结果时失败
+     */
     @Test
     void sameManagerRejectsWrongSubjectReplacementInsteadOfUsingCachedLicense() throws Exception {
         LicenseTestSupport support = new LicenseTestSupport(temporaryDirectory);
@@ -190,6 +267,11 @@ class TrueLicenseMigrationTest {
         assertThrows(LicenseManagementException.class, manager::verify);
     }
 
+    /**
+     * 验证<code>manager.install(futureFile)</code> 抛出 <code>LicenseManagementException.class</code>，被测调用 抛出 <code>LicenseManagementException.class</code>。
+     *
+     * @throws Exception 向测试存储读写数据或校验其结果时失败
+     */
     @Test
     void sameManagerRejectsFutureReplacementInsteadOfUsingCachedLicense() throws Exception {
         LicenseTestSupport support = new LicenseTestSupport(temporaryDirectory);
@@ -208,6 +290,11 @@ class TrueLicenseMigrationTest {
         assertThrows(LicenseManagementException.class, manager::verify);
     }
 
+    /**
+     * 验证<code>manager.install(licenseFile)</code> 抛出 <code>IllegalArgumentException.class</code>，被测调用 抛出 <code>LicenseManagementException.class</code>。
+     *
+     * @throws Exception 向测试存储读写数据或校验其结果时失败
+     */
     @Test
     void rejectsWrongExplicitSignatureAlgorithmAndLeavesNoInstalledLicense() throws Exception {
         LicenseTestSupport support = new LicenseTestSupport(temporaryDirectory);
@@ -224,6 +311,11 @@ class TrueLicenseMigrationTest {
         assertThrows(LicenseManagementException.class, manager::verify);
     }
 
+    /**
+     * 在测试框架中执行 <code>temporaryDirectory.resolve()</code>、<code>expiredLicense()</code>、<code>isolatedPreferences()</code>，验证该场景。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void rejectsExpiredLicenseAndCleansInstalledState() throws Exception {
         LicenseTestSupport support = new LicenseTestSupport(temporaryDirectory);
@@ -236,6 +328,11 @@ class TrueLicenseMigrationTest {
                 new CustomLicenseManager(SUBJECT, support.publicKeyStoreParam(), preferences), licenseFile);
     }
 
+    /**
+     * 验证<code>manager.install(legacyFile)</code> 抛出 <code>LicenseManagementException.class</code>，被测调用 抛出 <code>LicenseManagementException.class</code>。
+     *
+     * @throws Exception 向测试存储读写数据或校验其结果时失败
+     */
     @Test
     void directManagerInvalidatesAfterFailedInstallEvenWhenRuntimeCleanupFails() throws Exception {
         LicenseTestSupport support = new LicenseTestSupport(temporaryDirectory);
@@ -260,6 +357,11 @@ class TrueLicenseMigrationTest {
                 new CustomLicenseManager(SUBJECT, support.publicKeyStoreParam(), node).verify().getSubject());
     }
 
+    /**
+     * 验证<code>manager.install(legacyFile)</code> 抛出 <code>LicenseManagementException.class</code>，被测调用 抛出 <code>LicenseManagementException.class</code>。
+     *
+     * @throws Exception 向测试存储读写数据或校验其结果时失败
+     */
     @Test
     void directManagerPreservesCheckedInstallFailureAndSuppressesCleanupError() throws Exception {
         LicenseTestSupport support = new LicenseTestSupport(temporaryDirectory);
@@ -283,6 +385,11 @@ class TrueLicenseMigrationTest {
                 new CustomLicenseManager(SUBJECT, support.publicKeyStoreParam(), node).verify().getSubject());
     }
 
+    /**
+     * 验证<code>manager.install(replacementFile)</code> 抛出 <code>IllegalStateException.class</code>，被测调用 抛出 <code>LicenseManagementException.class</code>。
+     *
+     * @throws Exception 向测试存储读写数据或校验其结果时失败
+     */
     @Test
     void directManagerPreservesRuntimeInstallFailureAndSuppressesCleanupError() throws Exception {
         LicenseTestSupport support = new LicenseTestSupport(temporaryDirectory);
@@ -308,6 +415,11 @@ class TrueLicenseMigrationTest {
                 new CustomLicenseManager(SUBJECT, support.publicKeyStoreParam(), node).verify().getSubject());
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，被测调用 抛出 <code>LicenseManagementException.class</code>。
+     *
+     * @throws Exception 向测试存储读写数据或校验其结果时失败
+     */
     @Test
     void directManagerInvalidatesBeforeUninstallEvenWhenDeletionFails() throws Exception {
         LicenseTestSupport support = new LicenseTestSupport(temporaryDirectory);
@@ -327,6 +439,11 @@ class TrueLicenseMigrationTest {
                 new CustomLicenseManager(SUBJECT, support.publicKeyStoreParam(), node).verify().getSubject());
     }
 
+    /**
+     * 验证<code>installConsumerLicense(support, isolatedUserPreferences(), "USER", 1).getConsumerType()</code> 等于 <code>"USER"</code>，<code>installConsumerLicense(support, isolatedUserPreferences(), "server", 1)</code> 抛出 <code>LicenseManagementException.class</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void userPreferencesKeepLegacyConsumerConstraints() throws Exception {
         LicenseTestSupport support = new LicenseTestSupport(temporaryDirectory);
@@ -338,6 +455,11 @@ class TrueLicenseMigrationTest {
                 () -> installConsumerLicense(support, isolatedUserPreferences(), "user", 2));
     }
 
+    /**
+     * 验证<code>installConsumerLicense(support, isolatedSystemPreferences(), "server", 2) .getConsumerAmount()</code> 等于 <code>2</code>，<code>installConsumerLicense(support, isolatedSystemPreferences(), "server", -1)</code> 抛出 <code>LicenseManagementException.class</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void systemPreferencesKeepLegacyConsumerConstraints() throws Exception {
         LicenseTestSupport support = new LicenseTestSupport(temporaryDirectory);
@@ -348,6 +470,11 @@ class TrueLicenseMigrationTest {
                 () -> installConsumerLicense(support, isolatedSystemPreferences(), "server", -1));
     }
 
+    /**
+     * 验证<code>createRejecting.store(validLicense(SUBJECT), licenseFile)</code> 抛出 <code>LicenseManagementException.class</code>，被测调用 抛出 <code>LicenseManagementException.class</code>。
+     *
+     * @throws Exception 向测试存储读写数据或校验其结果时失败
+     */
     @Test
     void customCreateAndConsumerValidationHooksRemainConnected() throws Exception {
         LicenseTestSupport support = new LicenseTestSupport(temporaryDirectory);
@@ -366,6 +493,11 @@ class TrueLicenseMigrationTest {
         assertThrows(LicenseManagementException.class, consumerRejecting::verify);
     }
 
+    /**
+     * 验证<code>licenseFile.isFile()</code>为真。
+     *
+     * @throws Exception 向测试存储读写数据或校验其结果时失败
+     */
     @Test
     void allowsFutureLicenseCreationButRejectsInstallationUntilEffective() throws Exception {
         LicenseTestSupport support = new LicenseTestSupport(temporaryDirectory);
@@ -382,6 +514,11 @@ class TrueLicenseMigrationTest {
                 new CustomLicenseManager(SUBJECT, support.publicKeyStoreParam(), preferences), licenseFile);
     }
 
+    /**
+     * 验证<code>verify.verify()</code>为真，<code>verify.verify()</code>为假。
+     *
+     * @throws Exception 准备或读取夹具文件时失败
+     */
     @Test
     void keepsHighLevelCreatorAndVerifierLifecycle() throws Exception {
         LicenseTestSupport support = new LicenseTestSupport(temporaryDirectory);
@@ -418,6 +555,9 @@ class TrueLicenseMigrationTest {
         }
     }
 
+    /**
+     * 验证<code>param.toString().contains("sensitive-store-password")</code>为假，<code>param.toString().contains("sensitive-key-password")</code>为假。
+     */
     @Test
     void licenseCreatorParamDoesNotExposePasswordsInToString() {
         LicenseCreatorParam param = new LicenseCreatorParam();
@@ -429,6 +569,9 @@ class TrueLicenseMigrationTest {
         assertFalse(param.toString().contains("sensitive-key-password"));
     }
 
+    /**
+     * 验证<code>keyStoreParam.getSignatureAlgorithm()</code> 等于 <code>"SHA1withDSA"</code>，被测调用 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void legacyFiveArgumentApiDefaultsToSha1WithDsa() {
         CustomKeyStoreParam keyStoreParam = new CustomKeyStoreParam(TrueLicenseMigrationTest.class,
@@ -443,6 +586,11 @@ class TrueLicenseMigrationTest {
                 "synthetic.jks", "alias", "store-password", null, "  "));
     }
 
+    /**
+     * 验证<code>manager.install(licenseFile).getSubject()</code> 等于 <code>"ddd4j-legacy-fixture"</code>，<code>manager.verify().getSubject()</code> 等于 <code>"ddd4j-legacy-fixture"</code>。
+     *
+     * @throws Exception 向测试存储读写数据或校验其结果时失败
+     */
     @Test
     void installsSyntheticLicenseGeneratedByTrueLicense133() throws Exception {
         URL licenseResource = TrueLicenseMigrationTest.class.getResource("/truelicense-legacy/legacy-v1.lic");
@@ -460,20 +608,45 @@ class TrueLicenseMigrationTest {
         manager.uninstall();
     }
 
+    /**
+     * 通过 <code>isolatedUserPreferences()</code> 取得当前测试需要的结果。
+     *
+     * @return 当前测试使用的结果，取自 <code>isolatedUserPreferences()</code>
+     */
     private Preferences isolatedPreferences() {
         return isolatedUserPreferences();
     }
 
+    /**
+     * 读取 <code>preferences</code> 供当前测试使用。
+     *
+     * @return 当前测试使用的结果，取自 <code>preferences</code>
+     */
     private Preferences isolatedUserPreferences() {
         preferences = Preferences.userRoot().node("/io/ddd4j/auth/license/test/" + UUID.randomUUID());
         return preferences;
     }
 
+    /**
+     * 读取 <code>preferences</code> 供当前测试使用。
+     *
+     * @return 当前测试使用的结果，取自 <code>preferences</code>
+     */
     private Preferences isolatedSystemPreferences() {
         preferences = Preferences.systemRoot().node("/io/ddd4j/auth/license/test/" + UUID.randomUUID());
         return preferences;
     }
 
+    /**
+     * 通过 <code>manager.install()</code> 取得当前测试需要的结果。
+     *
+     * @param support        传给 <code>support.samePasswordKeyStoreParam()</code> 的 <code>LicenseTestSupport</code> 输入
+     * @param node           本次调用使用的 <code>Preferences</code> 参数 <code>node</code>
+     * @param consumerType   传给 <code>content.setConsumerType()</code> 的 <code>String</code> 输入
+     * @param consumerAmount 传给 <code>content.setConsumerAmount()</code> 的 <code>int</code> 输入
+     * @return 当前测试使用的结果，取自 <code>manager.install(licenseFile)</code>
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     private License installConsumerLicense(LicenseTestSupport support, Preferences node, String consumerType,
                                            int consumerAmount) throws Exception {
         File licenseFile = temporaryDirectory.resolve("consumer-" + UUID.randomUUID() + ".lic").toFile();
@@ -485,23 +658,56 @@ class TrueLicenseMigrationTest {
         return manager.install(licenseFile);
     }
 
+    /**
+     * 实现 <code>CustomLicenseManager</code>，供测试调用 <code>validateCreate()</code> 并观察结果。
+     */
     private static final class ExpiredFixtureManager extends CustomLicenseManager {
 
+        /**
+         * 使用 <code>super()</code> 初始化 <code>ExpiredFixtureManager</code> 测试夹具。
+         *
+         * @param subject       用于初始化 <code>ExpiredFixtureManager</code> 的 <code>String</code> 值
+         * @param keyStoreParam 用于初始化 <code>ExpiredFixtureManager</code> 的 <code>CustomKeyStoreParam</code> 值
+         * @param preferences   用于初始化 <code>ExpiredFixtureManager</code> 的 <code>Preferences</code> 值
+         */
         private ExpiredFixtureManager(String subject, CustomKeyStoreParam keyStoreParam, Preferences preferences) {
             super(subject, keyStoreParam, preferences);
         }
 
+        /**
+         * 检查待创建记录是否满足创建条件。
+         *
+         * @param content 待签发许可证正文
+         */
         @Override
         protected synchronized void validateCreate(License content) {
             Objects.requireNonNull(content, "content");
         }
     }
 
+    /**
+     * 实现 <code>CustomLicenseManager</code>，供测试调用 <code>validateCreate()</code>、<code>validate()</code> 并观察结果。
+     */
     private static final class HookRejectingManager extends CustomLicenseManager {
 
+        /**
+         * 用于令消费者端校验路径拒绝当前许可证的测试控制项。
+         */
         private final boolean rejectConsumer;
+        /**
+         * 用于令签发校验路径拒绝创建当前许可证的测试控制项。
+         */
         private final boolean rejectCreate;
 
+        /**
+         * 使用 <code>super()</code> 初始化 <code>HookRejectingManager</code> 测试夹具。
+         *
+         * @param subject        用于初始化 <code>HookRejectingManager</code> 的 <code>String</code> 值
+         * @param keyStoreParam  用于初始化 <code>HookRejectingManager</code> 的 <code>CustomKeyStoreParam</code> 值
+         * @param preferences    用于初始化 <code>HookRejectingManager</code> 的 <code>Preferences</code> 值
+         * @param rejectCreate   用于初始化 <code>HookRejectingManager</code> 的 <code>boolean</code> 值
+         * @param rejectConsumer 用于初始化 <code>HookRejectingManager</code> 的 <code>boolean</code> 值
+         */
         private HookRejectingManager(String subject, CustomKeyStoreParam keyStoreParam, Preferences preferences,
                                      boolean rejectCreate, boolean rejectConsumer) {
             super(subject, keyStoreParam, preferences);
@@ -509,6 +715,14 @@ class TrueLicenseMigrationTest {
             this.rejectConsumer = rejectConsumer;
         }
 
+        /**
+         * 检查待创建记录是否满足创建条件。
+         *
+         * <p>测试夹具会调用 <code>super.validateCreate(content)</code>、<code>testValidationException("synthetic create hook rejection")</code>。</p>
+         *
+         * @param content 待签发许可证正文
+         * @throws LicenseValidationException 当前操作无法正常完成时
+         */
         @Override
         protected synchronized void validateCreate(License content) throws LicenseValidationException {
             super.validateCreate(content);
@@ -517,6 +731,14 @@ class TrueLicenseMigrationTest {
             }
         }
 
+        /**
+         * 校验当前调用提交的数据。
+         *
+         * <p>测试夹具会调用 <code>super.validate(content)</code>、<code>testValidationException("synthetic consumer hook rejection")</code>。</p>
+         *
+         * @param content 待校验许可证正文
+         * @throws LicenseValidationException 当前操作无法正常完成时
+         */
         @Override
         protected synchronized void validate(License content) throws LicenseValidationException {
             super.validate(content);
@@ -526,18 +748,42 @@ class TrueLicenseMigrationTest {
         }
     }
 
+    /**
+     * 实现 <code>CustomLicenseManager</code>，供测试调用 <code>rejectConsumerValidation()</code>、<code>validate()</code> 并观察结果。
+     */
     private static final class RuntimeRejectingManager extends CustomLicenseManager {
 
+        /**
+         * 用于令消费者端校验路径拒绝当前许可证的测试控制项。
+         */
         private boolean rejectConsumer;
 
+        /**
+         * 使用 <code>super()</code> 初始化 <code>RuntimeRejectingManager</code> 测试夹具。
+         *
+         * @param subject       用于初始化 <code>RuntimeRejectingManager</code> 的 <code>String</code> 值
+         * @param keyStoreParam 用于初始化 <code>RuntimeRejectingManager</code> 的 <code>CustomKeyStoreParam</code> 值
+         * @param preferences   用于初始化 <code>RuntimeRejectingManager</code> 的 <code>Preferences</code> 值
+         */
         private RuntimeRejectingManager(String subject, CustomKeyStoreParam keyStoreParam, Preferences preferences) {
             super(subject, keyStoreParam, preferences);
         }
 
+        /**
+         * 根据本次调用更新 <code>rejectConsumer = true</code>，用于后续测试步骤。
+         */
         private void rejectConsumerValidation() {
             rejectConsumer = true;
         }
 
+        /**
+         * 校验当前调用提交的数据。
+         *
+         * <p>测试夹具会调用 <code>super.validate(content)</code>。</p>
+         *
+         * @param content 待校验许可证正文
+         * @throws LicenseValidationException 当前操作无法正常完成时
+         */
         @Override
         protected synchronized void validate(License content) throws LicenseValidationException {
             super.validate(content);
@@ -547,21 +793,46 @@ class TrueLicenseMigrationTest {
         }
     }
 
+    /**
+     * 提供代理消息协议信息和负载的测试样本。
+     */
     private static final class TestMessage implements Message {
 
+        /**
+         * Java 序列化使用的版本标识。
+         */
         private static final long serialVersionUID = 1L;
 
+        /**
+         * 测试内容映射或响应比较使用的文本。
+         */
         private final String text;
 
+        /**
+         * 设置 <code>text</code>，用于构造 <code>TestMessage</code> 测试实例。
+         *
+         * @param text 用于初始化 <code>TestMessage</code> 的 <code>String</code> 值
+         */
         private TestMessage(String text) {
             this.text = text;
         }
 
+        /**
+         * 生成用于调试和日志的对象描述。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return text;
         }
 
+        /**
+         * 读取 <code>text</code> 供当前测试使用。
+         *
+         * @param locale 本次调用使用的 <code>Locale</code> 参数 <code>locale</code>
+         * @return 当前测试使用的结果，取自 <code>text</code>
+         */
         @Override
         public String toString(Locale locale) {
             return text;

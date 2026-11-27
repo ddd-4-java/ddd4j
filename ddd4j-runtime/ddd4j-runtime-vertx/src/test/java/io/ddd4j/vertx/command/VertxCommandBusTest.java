@@ -23,13 +23,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.ServiceLoader;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -70,11 +64,19 @@ class VertxCommandBusTest {
      */
     private Vertx vertx;
 
+    /**
+     * 测试执行前执行 <code>Vertx.vertx()</code> 完成资源准备。
+     */
     @BeforeEach
     void startVertx() {
         vertx = Vertx.vertx();
     }
 
+    /**
+     * 测试结束后执行 <code>vertx.close()</code> 完成资源回收或状态恢复。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @AfterEach
     void closeVertx() throws Exception {
         if (vertx != null) {
@@ -111,6 +113,11 @@ class VertxCommandBusTest {
         return executors;
     }
 
+    /**
+     * 验证<code>Vertx.currentContext().isEventLoopContext()</code>为真，<code>result.isSuccess()</code>为真，<code>result.data()</code> 包含 <code>SampleCommandHandler.HANDLED</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void execute_已在Vertx上下文线程同步执行_应路由到真实Handler并返回成功() throws Exception {
         VertxCommandBus bus = assemble();
@@ -129,6 +136,9 @@ class VertxCommandBusTest {
         assertThat(result.data()).contains(SampleCommandHandler.HANDLED);
     }
 
+    /**
+     * 验证<code>exception</code>非空，<code>exception.getMessage()</code> 包含 <code>SampleCommand.class.getName()</code>。
+     */
     @Test
     void 装配期冲突_整批拒绝应自工厂传播() {
         // 供入「多类型占位执行器（SampleCommand + CompanionCommand）+ 真实
@@ -146,6 +156,9 @@ class VertxCommandBusTest {
         assertThat(exception.getMessage()).contains(SampleCommand.class.getName());
     }
 
+    /**
+     * 验证<code>exception</code>非空，<code>exception.getMessage()</code> 包含 <code>UnknownCommand.class.getName()</code>。
+     */
     @Test
     void execute_未注册命令_应抛ISE与ddd4j_core一致() {
         VertxCommandBus bus = assemble();
@@ -157,6 +170,9 @@ class VertxCommandBusTest {
         assertThat(exception.getMessage()).contains(UnknownCommand.class.getName());
     }
 
+    /**
+     * 验证<code>bus.execute(new SampleCommand()).isSuccess()</code>为真。
+     */
     @Test
     void factoryCapturesSnapshotAndRejectsRepeatedSameExecutor() {
         List<CommandExecutor<?>> candidates = new ArrayList<>(discover());
@@ -169,6 +185,9 @@ class VertxCommandBusTest {
                 .hasMessageContaining(SampleCommand.class.getName());
     }
 
+    /**
+     * 验证<code>first</code> 等于 <code>second</code>，<code>bus.&lt;String&gt;execute(new SampleCommand()).data()</code> 包含 <code>"sample"</code>，<code>bus.&lt;String&gt;execute(new CompanionCommand()).data()</code> 包含 <code>"companion"</code>。
+     */
     @Test
     void routesDistinctCommandTypesEvenWhenExecutorsCompareEqual() {
         CommandExecutor<?> first = new EqualExecutor(SampleCommand.class, "sample");
@@ -181,41 +200,86 @@ class VertxCommandBusTest {
         assertThat(bus.<String>execute(new CompanionCommand()).data()).contains("companion");
     }
 
+    /**
+     * 接收测试命令并返回可断言结果的执行器替身。
+     */
     private static final class EqualExecutor implements CommandExecutor<Command> {
+        /**
+         * 选择测试命令执行器时使用的命令类型。
+         */
         private final Class<? extends Command> commandType;
+        /**
+         * 执行被测操作后保存的结果。
+         */
         private final String result;
 
+        /**
+         * 设置 <code>commandType</code>、<code>result</code>，用于构造 <code>EqualExecutor</code> 测试实例。
+         *
+         * @param commandType 用于初始化 <code>EqualExecutor</code> 的 <code>Class&lt;? extends Command&gt;</code> 值
+         * @param result      执行被测操作后保存的结果
+         */
         private EqualExecutor(Class<? extends Command> commandType, String result) {
             this.commandType = commandType;
             this.result = result;
         }
 
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>Collections.singleton(commandType)</code>。</p>
+         *
+         * @return 实际返回<code>Collections.singleton(commandType)</code>
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.singleton(commandType);
         }
 
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>Result.ok(result)</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>Result.ok(result)</code>
+         */
         @Override
         public Result<String> execute(Command command) {
             return Result.ok(result);
         }
 
+        /**
+         * 比较两个对象的值是否相等。
+         *
+         * @param other 与当前对象比较的对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object other) {
             return other instanceof EqualExecutor;
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             return EqualExecutor.class.hashCode();
         }
     }
 
-    /** 用于验证多类型处理器撞型拒绝的伴随命令。 */
+    /**
+     * 用于验证多类型处理器撞型拒绝的伴随命令。
+     */
     static class CompanionCommand implements Command {
     }
 
-    /** 用于验证未注册命令错误路径的测试命令。 */
+    /**
+     * 用于验证未注册命令错误路径的测试命令。
+     */
     static class UnknownCommand implements Command {
     }
 
@@ -227,6 +291,13 @@ class VertxCommandBusTest {
      */
     static class OverlappingMultiTypeHandler implements CommandExecutor<Command> {
 
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>Arrays.asList(SampleCommand.class, CompanionCommand.class)</code>。</p>
+         *
+         * @return 支持的命令类型集合
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(SampleCommand.class, CompanionCommand.class)));

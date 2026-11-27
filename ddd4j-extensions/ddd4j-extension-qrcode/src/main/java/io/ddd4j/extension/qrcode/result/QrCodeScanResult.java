@@ -27,14 +27,20 @@ import java.util.List;
 @Getter
 public final class QrCodeScanResult {
 
+    /**
+     * 用于关联同一次操作产生的事件或消息的标识。
+     */
     private final String correlationId;
+    /**
+     * 从输入图像识别出的二维码内容。
+     */
     private final List<QrCodeDecodeResult> results;
 
     /**
      * 创建带关联标识的二维码识别结果。
      *
      * @param correlationId 关联标识
-     * @param results 解码结果
+     * @param results       解码结果
      */
     public QrCodeScanResult(String correlationId, List<QrCodeDecodeResult> results) {
         this.correlationId = correlationId;

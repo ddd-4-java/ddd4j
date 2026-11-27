@@ -36,6 +36,13 @@ public class GuiceCommandBus extends DefaultCommandBus {
         super(Objects.requireNonNull(executors, "executors must not be null"));
     }
 
+    /**
+     * 把命令交给已经完成 Guice 装配的共享执行器。
+     *
+     * @param <R>     当前容器处理的组件或事件类型
+     * @param command 要交给共享核心路由的命令
+     * @return 当前命令的处理结果
+     */
     @Override
     public <R> Result<R> execute(Command command) {
         if (Objects.isNull(command)) {
@@ -44,6 +51,15 @@ public class GuiceCommandBus extends DefaultCommandBus {
         return super.execute(command);
     }
 
+    /**
+     * 为已有动态发现平台提供缺失路由钩子；默认快照模式不发现新执行器。
+     *
+     * <p>此实现调用 <code>candidate.supportedCommands().contains(commandType)</code>。</p>
+     *
+     * @param commandType         未缓存的命令精确类型
+     * @param registeredExecutors 当前路由中执行器的只读实时视图，禁止结构修改
+     * @return 根据执行路径返回<code>candidate</code>、<code>null</code>
+     */
     @Override
     protected CommandExecutor<?> resolveMissingExecutor(Class<? extends Command> commandType,
                                                         Collection<CommandExecutor<?>> registeredExecutors) {

@@ -25,7 +25,13 @@ import reactor.core.publisher.Mono;
 @UtilityClass
 public class Ddd4jWebFluxContext {
 
+    /**
+     * 在框架请求中保存 DDD4J 请求上下文的键。
+     */
     static final Class<WebRequestContext> REQUEST_CONTEXT_KEY = WebRequestContext.class;
+    /**
+     * 在框架请求中保存认证主体的键。
+     */
     static final Class<Subject> SUBJECT_KEY = Subject.class;
 
     /**

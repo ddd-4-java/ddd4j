@@ -31,6 +31,9 @@ import static org.mockito.Mockito.*;
  */
 class DefaultWebMvcConfigurerWebJarsTest {
 
+    /**
+     * 验证<code>resolver.getValue().getClass().getSimpleName().endsWith("WebJarsResourceResolver")</code>为真。
+     */
     @Test
     void registersWebJarsResolverForVersionlessPaths() {
         ResourceHandlerRegistry registry = mock(ResourceHandlerRegistry.class);

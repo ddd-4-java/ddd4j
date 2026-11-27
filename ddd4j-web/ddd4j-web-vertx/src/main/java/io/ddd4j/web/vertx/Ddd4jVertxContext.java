@@ -32,7 +32,13 @@ import java.util.concurrent.Callable;
 @UtilityClass
 public class Ddd4jVertxContext {
 
+    /**
+     * 在框架请求中保存 DDD4J 请求上下文的键。
+     */
     private static final String REQUEST_CONTEXT_KEY = Ddd4jVertxContext.class.getName() + ".request";
+    /**
+     * 在框架请求中保存认证主体的键。
+     */
     private static final String SUBJECT_KEY = Ddd4jVertxContext.class.getName() + ".subject";
 
     /**
@@ -59,9 +65,9 @@ public class Ddd4jVertxContext {
     /**
      * 将请求状态与主体传播到阻塞任务。
      *
-     * @param <T> 任务结果类型
+     * @param <T>     任务结果类型
      * @param context Vert.x 路由上下文
-     * @param task 待执行任务
+     * @param task    待执行任务
      * @return 异步任务结果
      */
     public static <T> Future<T> executeBlocking(RoutingContext context, Callable<T> task) {
@@ -78,10 +84,22 @@ public class Ddd4jVertxContext {
         });
     }
 
+    /**
+     * 将解析后的 DDD4J 请求上下文绑定到当前 Vert.x 路由。
+     *
+     * @param context        当前框架调用所携带的请求上下文
+     * @param requestContext 当前 HTTP 请求已经解析的 DDD4J 上下文
+     */
     static void bindRequest(RoutingContext context, WebRequestContext requestContext) {
         context.put(REQUEST_CONTEXT_KEY, requestContext);
     }
 
+    /**
+     * 将认证主体绑定到当前 Vert.x 路由。
+     *
+     * @param context 当前框架调用所携带的请求上下文
+     * @param subject 当前请求认证后绑定的主体组件
+     */
     static void bindSubject(RoutingContext context, Subject subject) {
         context.put(SUBJECT_KEY, subject);
     }

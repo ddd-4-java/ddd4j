@@ -49,13 +49,27 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class DingTalkClientTest {
 
+    /**
+     * 签发和校验测试令牌固定使用的密钥样本。
+     */
     private static final String SECRET = "SEC1234567890abcdef";
 
+    /**
+     * 当前测试启动并负责释放的本地服务。
+     */
     private HttpServer server;
+    /**
+     * 当前测试服务绑定的本地端口。
+     */
     private int port;
 
     /**
      * 期望签名（与 {@code DingTalkClient#getSign} 等价）。
+     *
+     * @param timestamp 签名使用的时间戳
+     * @param secret    用于计算签名的密钥
+     * @return 用于比较的预期签名
+     * @throws Exception 测试签名算法无法创建或初始化
      */
     private static String expectedSign(long timestamp, String secret) throws Exception {
         Mac mac = Mac.getInstance("HmacSHA256");
@@ -65,6 +79,13 @@ class DingTalkClientTest {
         return java.net.URLEncoder.encode(b64, "UTF-8");
     }
 
+    /**
+     * 读取 <code>out</code> 供当前测试使用。
+     *
+     * @param query 用来读取测试数据的查询对象
+     * @return 当前测试使用的结果，取自 <code>out</code>
+     * @throws java.io.UnsupportedEncodingException 尝试执行当前测试操作失败
+     */
     private static Map<String, String> parseQuery(String query) throws java.io.UnsupportedEncodingException {
         Map<String, String> out = new HashMap<>();
         if (Objects.isNull(query)) {
@@ -80,6 +101,11 @@ class DingTalkClientTest {
         return out;
     }
 
+    /**
+     * 测试前依次启动<code>server</code>。
+     *
+     * @throws IOException 读取或写入测试数据时发生 I/O 错误
+     */
     @BeforeEach
     void startServer() throws IOException {
         // 端口 0 让 OS 分配空闲端口，避免冲突
@@ -89,6 +115,9 @@ class DingTalkClientTest {
         server.start();
     }
 
+    /**
+     * 测试后依次停止<code>server</code>。
+     */
     @AfterEach
     void stopServer() {
         if (Objects.nonNull(server)) {
@@ -96,6 +125,11 @@ class DingTalkClientTest {
         }
     }
 
+    /**
+     * 验证<code>method</code> 等于 <code>"POST"</code>，<code>query</code> 包含 <code>"access_token=access_token_test"</code>，<code>q.get("sign")</code> 等于 <code>expected</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void sendMarkdownShouldPostValidSignedRequest() throws Exception {
         // 客户端指向 mock server，accessToken 由测试自行提供
@@ -132,10 +166,25 @@ class DingTalkClientTest {
      * 简易 recorder，记录最近一次请求的 method / query / body。
      */
     static class Recorder implements HttpHandler {
+        /**
+         * 测试服务器最近收到的 HTTP 方法。
+         */
         static volatile String lastMethod;
+        /**
+         * 测试服务器最近收到的请求查询字符串。
+         */
         static volatile String lastQuery;
+        /**
+         * 测试服务器最近收到的 HTTP 请求正文。
+         */
         static volatile String lastBody;
 
+        /**
+         * 根据本次调用更新 <code>lastMethod = exchange.getRequestMethod()</code>、<code>lastQuery = uri.getRawQuery()</code>，用于后续测试步骤。
+         *
+         * @param exchange 当前 HTTP 请求及响应交换对象
+         * @throws IOException 读取或写入测试数据时发生 I/O 错误
+         */
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             lastMethod = exchange.getRequestMethod();

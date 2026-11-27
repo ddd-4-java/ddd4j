@@ -32,8 +32,14 @@ import java.util.concurrent.*;
  */
 public class HelidonProjectionScheduler implements ViewScheduler {
 
+    /**
+     * 当前已经注册的投影任务及其取消句柄。
+     */
     private final Set<ReschedulingHandle> handles = ConcurrentHashMap.newKeySet();
 
+    /**
+     * 按计划执行当前组件后台任务的定时线程池。
+     */
     private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(
             Runtime.getRuntime().availableProcessors(),
             r -> {
@@ -55,6 +61,16 @@ public class HelidonProjectionScheduler implements ViewScheduler {
         executor.shutdownNow();
     }
 
+    /**
+     * 按给定时间规则安排任务。
+     *
+     * <p>Helidon 实现调用 <code>CronExpression.parse(cron)</code>。</p>
+     *
+     * @param viewName 视图名称（用于日志 / 调试）
+     * @param cron     CRON 表达式
+     * @param task     要执行的任务
+     * @return 实际返回<code>handle</code>
+     */
     @Override
     public synchronized ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
         Objects.requireNonNull(viewName, "viewName must not be null");
@@ -71,8 +87,16 @@ public class HelidonProjectionScheduler implements ViewScheduler {
      * 旧 SE 六段数字语法的薄桥；墙上时间算法交给共享解析器。
      */
     public static class CronExpression {
+        /**
+         * 负责解析 Cron 字段并计算下次触发时间的共用实现。
+         */
         private final ProjectionCron delegate;
 
+        /**
+         * 把已解析的 Cron 计划包装成当前框架的调度表达式。
+         *
+         * @param delegate 执行共享行为的底层实现
+         */
         private CronExpression(ProjectionCron delegate) {
             this.delegate = delegate;
         }
@@ -112,18 +136,43 @@ public class HelidonProjectionScheduler implements ViewScheduler {
      */
     private class ReschedulingHandle implements ViewScheduleHandle, Runnable {
 
+        /**
+         * 按计划执行当前组件后台任务的定时线程池。
+         */
         private final ScheduledExecutorService executor;
+        /**
+         * 用来确定任务下次触发时间的 Cron 表达式。
+         */
         private final CronExpression cron;
+        /**
+         * 由当前调度句柄执行的投影任务。
+         */
         private final Runnable task;
+        /**
+         * 用于跟踪和取消后台调度任务的句柄。
+         */
         private volatile ScheduledFuture<?> future;
+        /**
+         * 任务是否已取消并停止继续安排新的触发。
+         */
         private volatile boolean cancelled = false;
 
+        /**
+         * 用给定值初始化 <code>ReschedulingHandle</code> 实例。
+         *
+         * @param executor 按计划执行当前组件后台任务的定时线程池
+         * @param cron     <code>cron</code> 字段
+         * @param task     <code>task</code> 字段
+         */
         ReschedulingHandle(ScheduledExecutorService executor, CronExpression cron, Runnable task) {
             this.executor = executor;
             this.cron = cron;
             this.task = task;
         }
 
+        /**
+         * 根据 Cron 计算下一次执行时间，并在计划仍有效时向调度线程池注册触发。
+         */
         synchronized void scheduleNext() {
             if (cancelled || executor.isShutdown()) {
                 return;
@@ -140,6 +189,11 @@ public class HelidonProjectionScheduler implements ViewScheduler {
             future = executor.schedule(this, delayMillis, TimeUnit.MILLISECONDS);
         }
 
+        /**
+         * 执行当前组件的任务体。
+         *
+         * <p>此实现调用 <code>executor.isShutdown()</code>。</p>
+         */
         @Override
         public void run() {
             if (cancelled || executor.isShutdown()) {
@@ -152,6 +206,11 @@ public class HelidonProjectionScheduler implements ViewScheduler {
             }
         }
 
+        /**
+         * 撤销当前任务句柄允许撤销的操作。
+         *
+         * <p>此实现调用 <code>handles.remove(this)</code>。</p>
+         */
         @Override
         public synchronized void cancel() {
             cancelled = true;
@@ -162,6 +221,13 @@ public class HelidonProjectionScheduler implements ViewScheduler {
             }
         }
 
+        /**
+         * 检查当前句柄是否仍处于有效状态。
+         *
+         * <p>此实现调用 <code>executor.isShutdown()</code>。</p>
+         *
+         * @return 根据执行路径返回<code>false</code>、<code>Objects.nonNull(f) &amp;&amp; !f.isCancelled() &amp;&amp; !f.isDone()</code>
+         */
         @Override
         public boolean isActive() {
             if (cancelled || executor.isShutdown()) {

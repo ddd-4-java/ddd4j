@@ -30,8 +30,17 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class InMemoryRoleRepository implements RoleRepository {
 
+    /**
+     * 按主键保存当前内存仓储中可读写的示例记录。
+     */
     private final ConcurrentMap<String, RoleRow> rows = new ConcurrentHashMap<>();
 
+    /**
+     * 将领域模型的身份和业务字段映射为内存记录。
+     *
+     * @param role 待保存或对外返回的角色实体
+     * @return 待保存的内存记录
+     */
     private static RoleRow toRow(Role role) {
         RoleRow row = new RoleRow();
         row.roleId = role.id();
@@ -43,6 +52,12 @@ public class InMemoryRoleRepository implements RoleRepository {
         return row;
     }
 
+    /**
+     * 将内存记录恢复为领域模型。
+     *
+     * @param row 当前仓储中的内存数据记录
+     * @return 映射完成的领域聚合
+     */
     private static Role toModel(RoleRow row) {
         Role role = new Role(row.roleId, row.roleCode, row.roleName, row.description, Role.Status.valueOf(row.status));
         if (CollKit.isNotEmpty(row.permissionIds)) {
@@ -51,6 +66,12 @@ public class InMemoryRoleRepository implements RoleRepository {
         return role;
     }
 
+    /**
+     * 按主键在当前内存仓储查找对应聚合。
+     *
+     * @param id 待查询或移除的业务记录标识
+     * @return 已找到的聚合，不存在时返回空结果
+     */
     @Override
     public Optional<Role> findById(String id) {
         if (StrKit.isBlank(id)) {
@@ -59,6 +80,14 @@ public class InMemoryRoleRepository implements RoleRepository {
         return Optional.ofNullable(rows.get(id)).map(InMemoryRoleRepository::toModel);
     }
 
+    /**
+     * 按角色编码查询角色。
+     *
+     * <p>此实现调用 <code>StrKit.isBlank(roleCode)</code>。</p>
+     *
+     * @param roleCode 角色编码
+     * @return 实际返回<code>Optional.empty()</code>
+     */
     @Override
     public Optional<Role> findByRoleCode(String roleCode) {
         if (StrKit.isBlank(roleCode)) {
@@ -70,6 +99,13 @@ public class InMemoryRoleRepository implements RoleRepository {
                 .map(InMemoryRoleRepository::toModel);
     }
 
+    /**
+     * 查询存储中符合条件的记录。
+     *
+     * <p>此实现调用 <code>rows.values().stream()</code>。</p>
+     *
+     * @return 满足条件的结果列表
+     */
     @Override
     public List<Role> findAll() {
         return rows.values().stream()
@@ -77,6 +113,14 @@ public class InMemoryRoleRepository implements RoleRepository {
                 .collect(java.util.stream.Collectors.toList());
     }
 
+    /**
+     * 写入或更新给定的领域对象或存储记录。
+     *
+     * <p>此实现调用 <code>rows.put(aggregate.id(), toRow(aggregate))</code>。</p>
+     *
+     * @param aggregate 传给 <code>rows.put(aggregate.id(), toRow(aggregate))</code>
+     * @return 实际返回<code>aggregate</code>
+     */
     @Override
     public Role save(Role aggregate) {
         Objects.requireNonNull(aggregate, "aggregate must not be null");
@@ -84,6 +128,11 @@ public class InMemoryRoleRepository implements RoleRepository {
         return aggregate;
     }
 
+    /**
+     * 按主键从当前内存仓储移除对应记录。
+     *
+     * @param id 待查询或移除的业务记录标识
+     */
     @Override
     public void deleteById(String id) {
         if (StrKit.isNotBlank(id)) {
@@ -96,11 +145,29 @@ public class InMemoryRoleRepository implements RoleRepository {
      */
     static class RoleRow {
 
+        /**
+         * 角色记录的主键。
+         */
         String roleId;
+        /**
+         * 在主体权限检查中使用的角色业务编码。
+         */
         String roleCode;
+        /**
+         * 角色展示名称。
+         */
         String roleName;
+        /**
+         * 当前角色或权限定义的说明。
+         */
         String description;
+        /**
+         * 当前商品、账号或权限记录的业务状态。
+         */
         String status;
+        /**
+         * 当前角色关联的权限标识列表。
+         */
         List<String> permissionIds;
     }
 }

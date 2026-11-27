@@ -28,23 +28,34 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * 通过 <code>commandBuses.isResolvable()</code>、<code>commandBuses.get()</code>、<code>Executors.newSingleThreadExecutor()</code> 验证 <code>QuarkusCommandBus</code> 的运行行为。
+ */
 @QuarkusTest
 class QuarkusCommandBusIT {
 
+    /**
+     * 保存测试需要比较的命令总线实例。
+     */
     @Inject
     Instance<CommandBus> commandBuses;
 
+    /**
+     * 验证<code>commandBuses.isResolvable()</code>为真，<code>commandBuses.get() instanceof QuarkusCommandBus</code>为真。
+     */
     @Test
     void runtimeBusIsTheUniqueDefaultCdiCommandBus() {
         assertTrue(commandBuses.isResolvable());
         assertTrue(commandBuses.get() instanceof QuarkusCommandBus);
     }
 
+    /**
+     * 验证<code>requestContext.isActive()</code>为假，<code>bus.execute(new SampleCommand()).isSuccess()</code>为真，<code>((QuarkusCommandBus) bus).executeVoid(new SampleCommand()).isSuccess()</code>为真。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void runtimeBusActivatesAndRestoresRequestContext() throws Exception {
         ExecutorService dispatcher = Executors.newSingleThreadExecutor();
@@ -63,6 +74,9 @@ class QuarkusCommandBusIT {
         }
     }
 
+    /**
+     * 验证<code>result.isSuccess()</code>为真，<code>result.getData()</code> 等于 <code>SampleCommandHandler.HANDLED</code>。
+     */
     @Test
     void routesDiscoveredCommandExecutor() {
         Result<String> result = commandBuses.get().execute(new SampleCommand());
@@ -71,6 +85,9 @@ class QuarkusCommandBusIT {
         assertEquals(SampleCommandHandler.HANDLED, result.getData());
     }
 
+    /**
+     * 验证<code>commandBuses.get().execute(new UnknownCommand())</code> 抛出 <code>IllegalStateException.class</code>，<code>failure.getMessage().contains(UnknownCommand.class.getName())</code>为真。
+     */
     @Test
     void rejectsUnknownCommand() {
         IllegalStateException failure = assertThrows(IllegalStateException.class,
@@ -79,6 +96,9 @@ class QuarkusCommandBusIT {
         assertTrue(failure.getMessage().contains(UnknownCommand.class.getName()));
     }
 
+    /**
+     * 没有注册执行器的命令样本，用来验证命令分发边界。
+     */
     static class UnknownCommand implements Command {
     }
 }

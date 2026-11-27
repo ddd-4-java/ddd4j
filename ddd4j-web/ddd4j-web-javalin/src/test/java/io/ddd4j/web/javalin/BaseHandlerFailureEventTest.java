@@ -31,6 +31,16 @@ import static org.mockito.Mockito.*;
  */
 class BaseHandlerFailureEventTest {
 
+    /**
+     * 通过 <code>status + ":" + reader.readLine()</code> 取得当前测试需要的结果。
+     *
+     * @param port     测试服务监听的本地端口
+     * @param method   发给被测服务的 HTTP 方法
+     * @param path     测试请求的资源路径或待访问文件路径
+     * @param override 传给 <code>Objects.nonNull()</code> 的 <code>String</code> 输入
+     * @return 当前测试使用的结果，取自 <code>status + ":" + reader.readLine()</code>
+     * @throws IOException 读取或写入测试数据时发生 I/O 错误
+     */
     private static String request(int port, String method, String path, String override) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port + path).openConnection();
         try {
@@ -52,12 +62,18 @@ class BaseHandlerFailureEventTest {
         }
     }
 
+    /**
+     * 测试结束后执行 <code>BaseContext.remove()</code>、<code>ThreadContext.clear()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void tearDown() {
         BaseContext.remove(SpiKeys.DOMAIN_EVENT_PUBLISHER);
         ThreadContext.clear();
     }
 
+    /**
+     * 验证<code>captured.getValue() instanceof WebRequestFailure</code>为真，<code>event.getMethod()</code> 等于 <code>"POST"</code>，<code>event.getCause()</code> 与…为同一实例 <code>cause</code>。
+     */
     @Test
     void publishesRequestFailureWithStableHttpMethod() {
         DomainEventPublisher publisher = mock(DomainEventPublisher.class);
@@ -80,6 +96,11 @@ class BaseHandlerFailureEventTest {
         assertSame(cause, event.getCause());
     }
 
+    /**
+     * 验证<code>request(app.port(), "GET", "/helpers", null)</code> 等于 <code>"200:custom request:198.51.100.7:true"</code>，<code>request(app.port(), "GET", "/helpers", null)</code> 等于 <code>"200:default request:198.51.100.7:true"</code>，<code>event.getCause()</code> 与…为同一实例 <code>failure</code>。
+     *
+     * @throws IOException 读取或写入测试数据时发生 I/O 错误
+     */
     @Test
     void keepsIncomingHttpMethodWhenNativeRoutingOverridesIt() throws IOException {
         DomainEventPublisher publisher = mock(DomainEventPublisher.class);
@@ -121,11 +142,26 @@ class BaseHandlerFailureEventTest {
         }
     }
 
+    /**
+     * 实现 <code>BaseHandler</code>，供测试调用 <code>helpers()</code>、<code>emit()</code> 并观察结果。
+     */
     private static final class TestHandler extends BaseHandler {
+        /**
+         * 通过 <code>getMessage()</code> 取得当前测试需要的结果。
+         *
+         * @param context 当前框架保存请求或运行时状态的上下文
+         * @return 当前测试使用的结果，取自 <code>getMessage("default {}", "request") + ":" + getClientIp(context) + ":" + isAjax(context)</code>
+         */
         String helpers(Context context) {
             return getMessage("default {}", "request") + ":" + getClientIp(context) + ":" + isAjax(context);
         }
 
+        /**
+         * 调用 <code>logException()</code> 执行当前夹具操作。
+         *
+         * @param context 当前框架保存请求或运行时状态的上下文
+         * @param cause   传给 <code>logException()</code> 的 <code>Exception</code> 输入
+         */
         void emit(Context context, Exception cause) {
             logException(context, cause);
         }

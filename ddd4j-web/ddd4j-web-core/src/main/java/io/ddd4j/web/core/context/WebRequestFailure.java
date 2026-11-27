@@ -14,9 +14,8 @@
  */
 package io.ddd4j.web.core.context;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Objects;
 
@@ -25,13 +24,39 @@ import java.util.Objects;
  */
 public final class WebRequestFailure {
 
+    /**
+     * Java 序列化版本标识。
+     */
     private static final long serialVersionUID = 0L;
 
+    /**
+     * 当前 HTTP 请求的方法。
+     */
     private final String method;
 
+    /**
+     * 当前框架解析出的请求路径。
+     */
     private final String path;
 
+    /**
+     * 导致当前请求无法正常完成的原始异常。
+     */
     private final Throwable cause;
+
+    /**
+     * 创建请求失败记录。
+     *
+     * @param method HTTP 方法
+     * @param path   请求路径
+     * @param cause  原始异常
+     */
+    @JsonCreator()
+    public WebRequestFailure(@JsonProperty("method") String method, @JsonProperty("path") String path, @JsonProperty("cause") Throwable cause) {
+        this.method = method;
+        this.path = path;
+        this.cause = cause;
+    }
 
     /**
      * 返回异常原因。
@@ -64,20 +89,6 @@ public final class WebRequestFailure {
     }
 
     /**
-     * 创建请求失败记录。
-     *
-     * @param method HTTP 方法
-     * @param path 请求路径
-     * @param cause 原始异常
-     */
-    @JsonCreator()
-    public WebRequestFailure(@JsonProperty("method") String method, @JsonProperty("path") String path, @JsonProperty("cause") Throwable cause) {
-        this.method = method;
-        this.path = path;
-        this.cause = cause;
-    }
-
-    /**
      * 返回HTTP 方法。
      *
      * @return HTTP 方法
@@ -107,6 +118,14 @@ public final class WebRequestFailure {
         return cause;
     }
 
+    /**
+     * 根据<code>method</code>、<code>path</code>、<code>cause</code>比较对象的值是否相等。
+     *
+     * <p>只比较运行时类型相同的对象。</p>
+     *
+     * @param obj 用来比较或转换的输入对象
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -119,6 +138,11 @@ public final class WebRequestFailure {
         return Objects.equals(this.method, other.method) && Objects.equals(this.path, other.path) && Objects.equals(this.cause, other.cause);
     }
 
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         int result = 0;
@@ -128,6 +152,11 @@ public final class WebRequestFailure {
         return result;
     }
 
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>method</code>、<code>path</code>、<code>cause</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "WebRequestFailure[method=" + method + ", path=" + path + ", cause=" + cause + "]";

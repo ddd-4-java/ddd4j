@@ -18,13 +18,22 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * 验证 <code>SaTokenSecurityProperties</code> 在<code>validate</code>等操作中的行为契约。
+ */
 class SaTokenSecurityPropertiesTest {
 
+    /**
+     * 验证缺省认证安全配置可直接通过校验。
+     */
     @Test
     void defaultsAreValid() {
         assertDoesNotThrow(new SaTokenSecurityProperties()::validate);
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void validateRejectsInvalidTokenNamespace() {
         SaTokenSecurityProperties properties = new SaTokenSecurityProperties();
@@ -32,6 +41,9 @@ class SaTokenSecurityPropertiesTest {
         assertThrows(IllegalArgumentException.class, properties::validate);
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void validateRejectsInvalidLoginType() {
         SaTokenSecurityProperties properties = new SaTokenSecurityProperties();
@@ -39,6 +51,9 @@ class SaTokenSecurityPropertiesTest {
         assertThrows(IllegalArgumentException.class, properties::validate);
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void validateRejectsNonPositiveTokenTtl() {
         SaTokenSecurityProperties properties = new SaTokenSecurityProperties();
@@ -46,6 +61,9 @@ class SaTokenSecurityPropertiesTest {
         assertThrows(IllegalArgumentException.class, properties::validate);
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void validateRejectsInvalidActiveTimeout() {
         SaTokenSecurityProperties properties = new SaTokenSecurityProperties();
@@ -53,6 +71,9 @@ class SaTokenSecurityPropertiesTest {
         assertThrows(IllegalArgumentException.class, properties::validate);
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void validateRejectsNullAuthenticationMode() {
         SaTokenSecurityProperties properties = new SaTokenSecurityProperties();
@@ -60,6 +81,9 @@ class SaTokenSecurityPropertiesTest {
         assertThrows(IllegalArgumentException.class, properties::validate);
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void validateJwtModeRequiresAudienceAndIssuer() {
         SaTokenSecurityProperties properties = new SaTokenSecurityProperties();
@@ -74,6 +98,9 @@ class SaTokenSecurityPropertiesTest {
         assertThrows(IllegalArgumentException.class, missingIssuer::validate);
     }
 
+    /**
+     * 在测试框架中执行 <code>properties.setAuthenticationMode()</code>、<code>properties.setJwtSecretKey()</code>、<code>properties.setJwtIssuer()</code>，验证该场景。
+     */
     @Test
     void validateJwtModeAcceptsCompleteConfiguration() {
         SaTokenSecurityProperties properties = new SaTokenSecurityProperties();
@@ -84,6 +111,9 @@ class SaTokenSecurityPropertiesTest {
         assertDoesNotThrow(properties::validate);
     }
 
+    /**
+     * 验证默认命名空间与认证域拼接成 ddd4j-token。
+     */
     @Test
     void tokenNameCombinesNamespaceAndLoginType() {
         assertEquals("ddd4j-token", new SaTokenSecurityProperties().tokenName());

@@ -37,15 +37,27 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class QuarkusJpaProjectionPositionRepositoryListTest {
 
+    /**
+     * 用于隔离 <code>Instance&lt;EntityManager&gt;</code> 调用并记录交互的测试替身。
+     */
     @Mock
     Instance<EntityManager> entityManagers;
 
+    /**
+     * 用于隔离 <code>EntityManager</code> 调用并记录交互的测试替身。
+     */
     @Mock
     EntityManager manager;
 
+    /**
+     * 用于隔离 <code>TypedQuery&lt;QuarkusJpaProjectionPosition&gt;</code> 调用并记录交互的测试替身。
+     */
     @Mock
     TypedQuery<QuarkusJpaProjectionPosition> query;
 
+    /**
+     * 验证<code>snapshot</code>为空，<code>repository.findAll()</code> 的大小为 <code>1</code>。
+     */
     @Test
     void findAllReturnsMutableDetachedList() {
         when(entityManagers.get()).thenReturn(manager);
@@ -62,6 +74,9 @@ class QuarkusJpaProjectionPositionRepositoryListTest {
         assertThat(repository.findAll()).hasSize(1);
     }
 
+    /**
+     * 验证<code>repository.save(newPosition)</code> 指向同一实例 <code>newPosition</code>，<code>repository.save(newPosition)</code> 指向同一实例 <code>managed</code>。
+     */
     @Test
     void saveKeepsLegacyEntityIdentityAndMergeResult() {
         when(entityManagers.get()).thenReturn(manager);
@@ -76,6 +91,9 @@ class QuarkusJpaProjectionPositionRepositoryListTest {
         assertThat(repository.save(newPosition)).isSameAs(managed);
     }
 
+    /**
+     * 在测试框架中执行 <code>entityManagers.get()</code>、<code>mock()</code>、<code>manager.createQuery()</code>，验证该场景。
+     */
     @Test
     void missingResetRetainsUpdateOnlySemantics() {
         when(entityManagers.get()).thenReturn(manager);
@@ -91,6 +109,9 @@ class QuarkusJpaProjectionPositionRepositoryListTest {
         verify(manager, never()).clear();
     }
 
+    /**
+     * 在测试框架中执行 <code>entityManagers.get()</code>、<code>repository.deleteByStreamId()</code>、<code>never()</code>，验证该场景。
+     */
     @Test
     void deleteOnlyRemovesAnExistingEntity() {
         when(entityManagers.get()).thenReturn(manager);

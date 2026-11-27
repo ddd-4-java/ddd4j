@@ -110,8 +110,10 @@ RedisStream / ONS / SQS / TDMQ）均在 `ddd4j-mq-spring` 桥接层内统一使�
 
 - [ ] 将各 Broker 适配器（Kafka / RabbitMQ / ...）的 `Message<?>` 引用替换为 `MQMessage<?>`，通过
   `SpringMessageAdapter.fromSpring(...)` 桥接
-- [x] Broker 适配器不直接依赖 spring-messaging；仅 Spring 桥接模块保留该依赖（证据: ddd4j-mq/ddd4j-mq-spring/pom.xml；各 Broker 适配器 pom 均无）
-- [x] ddd4j-quarkus / ddd4j-javalin 用户**直接复用 ddd4j-mq-core**（不需 Spring 桥接）（证据: ddd4j-mq/ddd4j-mq-core/pom.xml、../../ddd4j-quarkus/ddd4j-quarkus-mq/ddd4j-quarkus-mq-core/pom.xml、../../ddd4j-javalin/ddd4j-javalin-mq/ddd4j-javalin-mq-core/pom.xml）
+- [x] Broker 适配器不直接依赖 spring-messaging；仅 Spring 桥接模块保留该依赖（证据: ddd4j-mq/ddd4j-mq-spring/pom.xml；各
+  Broker 适配器 pom 均无）
+- [x] ddd4j-quarkus / ddd4j-javalin 用户 **直接复用 ddd4j-mq-core**（不需 Spring 桥接）（证据:
+  ddd4j-mq/ddd4j-mq-core/pom.xml、../../ddd4j-quarkus/ddd4j-quarkus-mq/ddd4j-quarkus-mq-core/pom.xml、../../ddd4j-javalin/ddd4j-javalin-mq/ddd4j-javalin-mq-core/pom.xml）
 
 ### pom 依赖
 

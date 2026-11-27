@@ -58,18 +58,39 @@ import static org.assertj.core.api.Assertions.catchThrowable;
  */
 class ApiVersionWebFilterTest {
 
+    /**
+     * 使用默认回退模式的 API 版本解析器。
+     */
     private final ApiVersionResolver fallback =
             new ApiVersionResolver(ApiVersion.parse("1.0.0"), ApiVersionMode.FALLBACK);
 
+    /**
+     * 使用严格版本解析模式的 API 版本解析器。
+     */
     private final ApiVersionResolver strict =
             new ApiVersionResolver(ApiVersion.parse("1.0.0"), ApiVersionMode.STRICT);
 
+    /**
+     * 当前用例使用的框架依赖注入容器。
+     */
     private AnnotationConfigApplicationContext applicationContext;
 
+    /**
+     * 通过 <code>(exchange)-&gt;Mono.empty()</code> 取得当前测试需要的结果。
+     *
+     * @return 当前测试使用的结果，取自 <code>(exchange)-&gt;Mono.empty()</code>
+     */
     private static WebFilterChain passThrough() {
         return exchange -> Mono.empty();
     }
 
+    /**
+     * 按 <code>(type.isInstance(current))</code> 等实际条件选择当前用例返回的结果。
+     *
+     * @param thrown 本次调用使用的 <code>Throwable</code> 参数 <code>thrown</code>
+     * @param type   用来解析、检查或构造测试对象的 Java 类型
+     * @return 根据测试条件返回的可能值，包括 <code>current</code>、<code>null</code>
+     */
     private static Throwable findCause(Throwable thrown, Class<? extends Throwable> type) {
         Throwable current = thrown;
         while (Objects.nonNull(current)) {
@@ -81,6 +102,9 @@ class ApiVersionWebFilterTest {
         return null;
     }
 
+    /**
+     * 测试结束后执行 <code>applicationContext.close()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void tearDown() {
         if (Objects.nonNull(applicationContext)) {
@@ -91,6 +115,9 @@ class ApiVersionWebFilterTest {
 
     // ------------------------------ 过滤器单元测试 ------------------------------
 
+    /**
+     * 验证<code>exchange.getAttributes()</code> 含对应条目 <code>ApiVersionWebFilter.API_VERSION_ATTRIBUTE</code>、<code>ApiVersion.parse("2.1.0")</code>。
+     */
     @Test
     void filterStoresResolvedHeaderVersionIntoExchangeAttribute() {
         ApiVersionWebFilter filter = new ApiVersionWebFilter(fallback);
@@ -103,6 +130,9 @@ class ApiVersionWebFilterTest {
                 .containsEntry(ApiVersionWebFilter.API_VERSION_ATTRIBUTE, ApiVersion.parse("2.1.0"));
     }
 
+    /**
+     * 验证<code>exchange.getAttributes()</code> 含对应条目 <code>ApiVersionWebFilter.API_VERSION_ATTRIBUTE</code>、<code>ApiVersion.parse("2.0.0")</code>。
+     */
     @Test
     void filterStoresPathVersionWhenHeaderAbsent() {
         ApiVersionWebFilter filter = new ApiVersionWebFilter(fallback);
@@ -114,6 +144,9 @@ class ApiVersionWebFilterTest {
                 .containsEntry(ApiVersionWebFilter.API_VERSION_ATTRIBUTE, ApiVersion.parse("2.0.0"));
     }
 
+    /**
+     * 验证<code>exchange.getAttributes()</code> 含对应条目 <code>ApiVersionWebFilter.API_VERSION_ATTRIBUTE</code>、<code>ApiVersion.parse("1.0.0")</code>。
+     */
     @Test
     void filterFallsBackToDefaultVersionWhenBothMissing() {
         ApiVersionWebFilter filter = new ApiVersionWebFilter(fallback);
@@ -125,6 +158,9 @@ class ApiVersionWebFilterTest {
                 .containsEntry(ApiVersionWebFilter.API_VERSION_ATTRIBUTE, ApiVersion.parse("1.0.0"));
     }
 
+    /**
+     * 验证<code>filter.isEnabled()</code>为假。
+     */
     @Test
     void filterDisabledLeavesAttributeAbsent() {
         ApiVersionWebFilter filter = new ApiVersionWebFilter(fallback, false);
@@ -137,6 +173,9 @@ class ApiVersionWebFilterTest {
         assertThat(exchange.getAttributes()).doesNotContainKey(ApiVersionWebFilter.API_VERSION_ATTRIBUTE);
     }
 
+    /**
+     * 验证<code>thrown</code>非空，<code>rejected</code>非空，<code>rejected.getMessage()</code> 包含 <code>"2.x"</code>。
+     */
     @Test
     void filterStrictModeRejectsIllegalVersionWith400Signal() {
         ApiVersionWebFilter filter = new ApiVersionWebFilter(strict);
@@ -153,6 +192,9 @@ class ApiVersionWebFilterTest {
         assertThat(exchange.getAttributes()).doesNotContainKey(ApiVersionWebFilter.API_VERSION_ATTRIBUTE);
     }
 
+    /**
+     * 验证 WebFlux 版本过滤器在构造业务请求上下文之前生效。
+     */
     @Test
     void filterOrderPrecedesContextFilter() {
         assertThat(new ApiVersionWebFilter(fallback).getOrder()).isEqualTo(Ordered.HIGHEST_PRECEDENCE);
@@ -190,6 +232,9 @@ class ApiVersionWebFilterTest {
         return request.exchange().expectBody(String.class).returnResult();
     }
 
+    /**
+     * 验证<code>result.getStatus()</code> 等于 <code>HttpStatus.OK</code>，<code>result.getResponseBody()</code> 等于 <code>"2.1.0"</code>。
+     */
     @Test
     void handlerReadsApiVersionFromContext_whenHeaderPresent() {
         WebTestClient client = clientFor(WiredConfiguration.class);
@@ -200,6 +245,9 @@ class ApiVersionWebFilterTest {
         assertThat(result.getResponseBody()).isEqualTo("2.1.0");
     }
 
+    /**
+     * 验证<code>result.getStatus()</code> 等于 <code>HttpStatus.OK</code>，<code>result.getResponseBody()</code> 等于 <code>"2.0.0"</code>。
+     */
     @Test
     void handlerReadsApiVersionFromContext_whenPathVersionPresent() {
         WebTestClient client = clientFor(WiredConfiguration.class);
@@ -210,6 +258,9 @@ class ApiVersionWebFilterTest {
         assertThat(result.getResponseBody()).isEqualTo("2.0.0");
     }
 
+    /**
+     * 验证<code>result.getStatus()</code> 等于 <code>HttpStatus.OK</code>，<code>result.getResponseBody()</code> 等于 <code>"absent"</code>。
+     */
     @Test
     void handlerReadsNullApiVersion_whenVersionFilterNotRegistered() {
         //规格 Scenario：未接线（版本过滤器不注册）零影响，既有请求处理行为不变。
@@ -221,6 +272,9 @@ class ApiVersionWebFilterTest {
         assertThat(result.getResponseBody()).isEqualTo("absent");
     }
 
+    /**
+     * 验证<code>result.getStatus()</code> 等于 <code>HttpStatus.BAD_REQUEST</code>，<code>result.getResponseBody()</code> 包含 <code>"2.x"</code>。
+     */
     @Test
     void strictModeRejectsIllegalVersionWith400Response() {
         WebTestClient client = clientFor(StrictConfiguration.class);
@@ -238,17 +292,32 @@ class ApiVersionWebFilterTest {
     @EnableWebFlux
     static class WiredConfiguration {
 
+        /**
+         * 创建 <code>new ApiVersionWebFilter</code> 供当前测试路径调用。
+         *
+         * @return 当前测试使用的结果，取自 <code>new ApiVersionWebFilter(new ApiVersionResolver(ApiVersion.parse("1.0.0")))</code>
+         */
         @Bean
         ApiVersionWebFilter apiVersionWebFilter() {
             return new ApiVersionWebFilter(new ApiVersionResolver(ApiVersion.parse("1.0.0")));
         }
 
+        /**
+         * 调用 <code>WebAccessPolicy.disabled()</code> 执行当前夹具操作。
+         *
+         * @return 提供给后续契约断言的 <code>Ddd4jWebFluxFilter</code> 结果
+         */
         @Bean
         Ddd4jWebFluxFilter ddd4jWebFluxFilter() {
             return new Ddd4jWebFluxFilter(new WebRequestContextFactory(),
                     new WebRequestLifecycle(new BearerSubjectAuthenticator(), WebAccessPolicy.disabled()), null);
         }
 
+        /**
+         * 创建 <code>new VersionProbeController</code> 供当前测试路径调用。
+         *
+         * @return 当前测试使用的结果，取自 <code>new VersionProbeController()</code>
+         */
         @Bean
         VersionProbeController versionProbeController() {
             return new VersionProbeController();
@@ -262,12 +331,22 @@ class ApiVersionWebFilterTest {
     @EnableWebFlux
     static class UnwiredConfiguration {
 
+        /**
+         * 调用 <code>WebAccessPolicy.disabled()</code> 执行当前夹具操作。
+         *
+         * @return 提供给后续契约断言的 <code>Ddd4jWebFluxFilter</code> 结果
+         */
         @Bean
         Ddd4jWebFluxFilter ddd4jWebFluxFilter() {
             return new Ddd4jWebFluxFilter(new WebRequestContextFactory(),
                     new WebRequestLifecycle(new BearerSubjectAuthenticator(), WebAccessPolicy.disabled()), null);
         }
 
+        /**
+         * 创建 <code>new VersionProbeController</code> 供当前测试路径调用。
+         *
+         * @return 当前测试使用的结果，取自 <code>new VersionProbeController()</code>
+         */
         @Bean
         VersionProbeController versionProbeController() {
             return new VersionProbeController();
@@ -281,23 +360,43 @@ class ApiVersionWebFilterTest {
     @EnableWebFlux
     static class StrictConfiguration {
 
+        /**
+         * 创建 <code>new ApiVersionWebFilter</code> 供当前测试路径调用。
+         *
+         * @return 当前测试使用的结果，取自 <code>new ApiVersionWebFilter(new ApiVersionResolver(ApiVersion.parse("1.0.0"), ApiVersionMode.STRICT))</code>
+         */
         @Bean
         ApiVersionWebFilter apiVersionWebFilter() {
             return new ApiVersionWebFilter(new ApiVersionResolver(ApiVersion.parse("1.0.0"), ApiVersionMode.STRICT));
         }
 
+        /**
+         * 调用 <code>WebAccessPolicy.disabled()</code> 执行当前夹具操作。
+         *
+         * @return 提供给后续契约断言的 <code>Ddd4jWebFluxFilter</code> 结果
+         */
         @Bean
         Ddd4jWebFluxFilter ddd4jWebFluxFilter() {
             return new Ddd4jWebFluxFilter(new WebRequestContextFactory(),
                     new WebRequestLifecycle(new BearerSubjectAuthenticator(), WebAccessPolicy.disabled()), null);
         }
 
+        /**
+         * 创建 <code>new GlobalErrorWebExceptionHandler</code> 供当前测试路径调用。
+         *
+         * @return 当前测试使用的结果，取自 <code>new GlobalErrorWebExceptionHandler(new GlobalErrorAttributes(), new ObjectMapper(), new DefaultWebExceptionTranslator())</code>
+         */
         @Bean
         GlobalErrorWebExceptionHandler globalErrorWebExceptionHandler() {
             return new GlobalErrorWebExceptionHandler(new GlobalErrorAttributes(), new ObjectMapper(),
                     new DefaultWebExceptionTranslator());
         }
 
+        /**
+         * 创建 <code>new VersionProbeController</code> 供当前测试路径调用。
+         *
+         * @return 当前测试使用的结果，取自 <code>new VersionProbeController()</code>
+         */
         @Bean
         VersionProbeController versionProbeController() {
             return new VersionProbeController();
@@ -311,6 +410,11 @@ class ApiVersionWebFilterTest {
     @RestController
     static class VersionProbeController {
 
+        /**
+         * 调用 <code>Ddd4jWebFluxContext.currentRequest()</code>、<code>context.getApiVersion()</code> 执行当前夹具操作。
+         *
+         * @return 提供给后续契约断言的 <code>Mono&lt;String&gt;</code> 结果
+         */
         @GetMapping({"/version", "/v2/version"})
         public Mono<String> version() {
             return Ddd4jWebFluxContext.currentRequest()

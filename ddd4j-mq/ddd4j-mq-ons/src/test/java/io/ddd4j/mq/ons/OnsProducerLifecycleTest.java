@@ -13,19 +13,19 @@ import org.junit.jupiter.api.Test;
 import java.util.Properties;
 import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.doThrow;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
+/**
+ * 验证 <code>OnsProducerLifecycle</code> 在 <code>closedAdapter</code>、<code>producerHandle</code> 等场景中的行为。
+ */
 class OnsProducerLifecycleTest {
 
+    /**
+     * 验证<code>client.initProducer(new MQProperties())</code> 抛出 <code>IllegalStateException.class</code>，<code>failure.getCause()</code> 与…为同一实例 <code>startupFailure</code>。
+     */
     @Test
     void failedOwnedProducerStartShutsDownCreatedProducer() {
         Producer nativeProducer = mock(Producer.class);
@@ -52,6 +52,9 @@ class OnsProducerLifecycleTest {
         verify(nativeProducer, times(1)).shutdown();
     }
 
+    /**
+     * 验证<code>client.initProducer(new MQProperties())</code> 抛出 <code>IllegalStateException.class</code>。
+     */
     @Test
     void failedBorrowedProducerStartDoesNotShutDownProducer() {
         Producer nativeProducer = mock(Producer.class);
@@ -63,6 +66,9 @@ class OnsProducerLifecycleTest {
         verify(nativeProducer, never()).shutdown();
     }
 
+    /**
+     * 验证<code>client.initConsumer(listener, new MQProperties())</code> 抛出 <code>IllegalStateException.class</code>。
+     */
     @Test
     void failedConsumerSubscriptionShutsDownCreatedConsumer() {
         com.aliyun.openservices.ons.api.Consumer nativeConsumer = mock(com.aliyun.openservices.ons.api.Consumer.class);
@@ -88,6 +94,9 @@ class OnsProducerLifecycleTest {
         verify(nativeConsumer, times(1)).shutdown();
     }
 
+    /**
+     * 验证<code>client.initConsumer(listener, new MQProperties())</code> 抛出 <code>IllegalStateException.class</code>。
+     */
     @Test
     void failedConsumerStartShutsDownCreatedConsumer() {
         com.aliyun.openservices.ons.api.Consumer nativeConsumer = mock(com.aliyun.openservices.ons.api.Consumer.class);
@@ -112,6 +121,9 @@ class OnsProducerLifecycleTest {
         verify(nativeConsumer, times(1)).shutdown();
     }
 
+    /**
+     * 在测试框架中执行 <code>mock()</code>、<code>client.initProducer()</code>、<code>client.close()</code>，验证该场景。
+     */
     @Test
     void repeatedInitializationStartsInjectedProducerOnce() {
         Producer producer = mock(Producer.class);
@@ -125,6 +137,9 @@ class OnsProducerLifecycleTest {
         verify(producer, never()).shutdown();
     }
 
+    /**
+     * 验证<code>client.initProducer(new MQProperties())</code> 抛出 <code>IllegalStateException.class</code>。
+     */
     @Test
     void closedAdapterRejectsProducerInitialization() {
         Producer producer = mock(Producer.class);
@@ -137,6 +152,9 @@ class OnsProducerLifecycleTest {
         verify(producer, never()).shutdown();
     }
 
+    /**
+     * 验证<code>client.initConsumer(listener, new MQProperties())</code> 抛出 <code>IllegalStateException.class</code>。
+     */
     @Test
     void closedAdapterRejectsConsumerBeforeCreatingBroker() {
         OnsProperties properties = new OnsProperties() {
@@ -152,6 +170,9 @@ class OnsProducerLifecycleTest {
         assertThrows(IllegalStateException.class, () -> client.initConsumer(listener, new MQProperties()));
     }
 
+    /**
+     * 验证<code>publisher.accept(new MQEvent())</code> 抛出 <code>IllegalStateException.class</code>，<code>failure.getMessage()</code> 等于 <code>"ONS client is closed"</code>。
+     */
     @Test
     void producerHandleRejectsPublishAfterClose() {
         Producer producer = mock(Producer.class);

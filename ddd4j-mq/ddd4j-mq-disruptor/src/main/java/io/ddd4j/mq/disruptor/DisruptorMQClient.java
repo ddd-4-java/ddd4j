@@ -62,15 +62,30 @@ import java.util.function.Consumer;
 @Slf4j(topic = "### DDD4J-MQ : DisruptorMQClient ###")
 public class DisruptorMQClient implements MQClient {
 
+    /**
+     * 当前消息代理客户端使用的连接和订阅配置。
+     */
     private final DisruptorMQProperties properties;
 
     /**
      * 已注册监听器列表（{@link #initConsumer} 时累加，{@link #onEvent} 在 RingBuffer 回调里遍历）。
      */
     private final List<RegisteredListener> listeners = new CopyOnWriteArrayList<>();
+    /**
+     * 协调消息客户端启动、初始化和关闭的生命周期。
+     */
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    /**
+     * 组件的启动状态和启动失败诊断信息。
+     */
     private final MQStartupStatus startupStatus = new MQStartupStatus("disruptor");
+    /**
+     * 执行代理内部事件分发的 Disruptor。
+     */
     private Disruptor<DisruptorEvent> disruptor;
+    /**
+     * 向 Disruptor 工作线程转交消息的环形缓冲区。
+     */
     @Getter
     private RingBuffer<DisruptorEvent> ringBuffer;
 
@@ -95,6 +110,12 @@ public class DisruptorMQClient implements MQClient {
         this.ringBuffer = Objects.requireNonNull(ringBuffer, "DisruptorMQ ringBuffer is required");
     }
 
+    /**
+     * 向上寻找二的幂次缓冲区大小，限制在实现支持的上限。
+     *
+     * @param requested 配置中请求的缓冲区大小
+     * @return 用于创建 Disruptor 的缓冲区大小
+     */
     private static int normalizeBufferSize(int requested) {
         int size = 1;
         while (size < requested && size < (1 << 20)) {
@@ -103,6 +124,11 @@ public class DisruptorMQClient implements MQClient {
         return size;
     }
 
+    /**
+     * 停止当前消息会话或分发器，并清理其拥有的发送资源。
+     *
+     * @param disruptor 待关闭的 Disruptor 实例
+     */
     private static void shutdown(Disruptor<DisruptorEvent> disruptor) {
         try {
             disruptor.shutdown();
@@ -114,16 +140,31 @@ public class DisruptorMQClient implements MQClient {
 
     // ========================= 生产者 =========================
 
+    /**
+     * 返回此消息适配器在 DDD4J 中登记的实现名。
+     *
+     * @return 实际返回<code>"disruptor"</code>，供调用方取得当前值
+     */
     @Override
     public String impl() {
         return "disruptor";
     }
 
+    /**
+     * 返回管理连接、生产者和消费者资源的生命周期对象。
+     *
+     * @return 当前消息适配器用于登记和关闭资源的生命周期对象
+     */
     @Override
     public MQClientLifecycle lifecycle() {
         return lifecycle;
     }
 
+    /**
+     * 返回消息客户端当前记录的启动状态。
+     *
+     * @return 当前消息适配器记录的启动状态
+     */
     @Override
     public MQStartupStatus startupStatus() {
         return startupStatus;
@@ -131,6 +172,12 @@ public class DisruptorMQClient implements MQClient {
 
     // ========================= 消费者 =========================
 
+    /**
+     * 准备消息生产者并返回可发布事件的入口。
+     *
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 接收待发布事件的函数
+     */
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         return event -> {
@@ -153,6 +200,15 @@ public class DisruptorMQClient implements MQClient {
         };
     }
 
+    /**
+     * 为监听器建立消息消费所需的订阅和客户端资源。
+     *
+     * <p>此实现调用 <code>listeners.add(new RegisteredListener(listener, resolveTopic(listener, mqProperties)))</code>。</p>
+     *
+     * @param listener     监听器定义
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 此实现返回<code>true</code>
+     */
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) {
         Objects.requireNonNull(listener, "listener");
@@ -173,6 +229,10 @@ public class DisruptorMQClient implements MQClient {
      *   <li>反序列化 + 反射调用（{@link MQClient#consume} 默认方法）</li>
      * </ol>
      * 不匹配的 listener 跳过，避免跨 namespace/topic/tag 的误派发。
+     *
+     * @param event      环形队列中分配给消费者的事件
+     * @param sequence   Disruptor 环形队列中的事件序号
+     * @param endOfBatch 是否为当前批次的最后一个事件
      */
     private void onEvent(DisruptorEvent event, long sequence, boolean endOfBatch) {
         String eventRouteKey = event.getRouteExpression();   // namespace.topic[.tag]
@@ -206,6 +266,9 @@ public class DisruptorMQClient implements MQClient {
         }
     }
 
+    /**
+     * 提供生命周期启动回调，当前实现的客户端在初始化阶段启动，此处无额外操作。
+     */
     @Override
     public void start() {
         // Disruptor 在双构造 1 立即启动（双构造 2 RingBuffer 已就绪），
@@ -245,7 +308,13 @@ public class DisruptorMQClient implements MQClient {
      */
     @RequiredArgsConstructor
     private static final class RegisteredListener {
+        /**
+         * 当前登记并接收消息的业务监听器。
+         */
         private final MQListener listener;
+        /**
+         * 用于查找当前分发监听器的路由键。
+         */
         private final String routeKey;
     }
 }

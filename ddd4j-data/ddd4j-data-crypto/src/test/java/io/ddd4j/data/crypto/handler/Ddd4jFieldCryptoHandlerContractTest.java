@@ -8,8 +8,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * 验证 <code>Ddd4jFieldCryptoHandler</code> 在<code>handlesNullNonStringAndEmptyValues</code>、<code>encryptsDecryptsAndPreservesInput</code>等操作中的行为契约。
+ */
 class Ddd4jFieldCryptoHandlerContractTest {
 
+    /**
+     * 验证<code>handler.getCryptoStrategy()</code> 与…为同一实例 <code>strategy</code>，<code>handler.encrypt(null)</code>为空，<code>calls.get()</code> 等于 <code>0</code>。
+     */
     @Test
     void handlesNullNonStringAndEmptyValuesWithoutCallingStrategy() {
         AtomicInteger calls = new AtomicInteger();
@@ -26,6 +32,9 @@ class Ddd4jFieldCryptoHandlerContractTest {
         assertEquals(0, calls.get());
     }
 
+    /**
+     * 验证<code>handler.encrypt("hello")</code> 等于 <code>"cipher:hello"</code>，<code>handler.decrypt("cipher:hello")</code> 等于 <code>"hello"</code>，<code>calls.get()</code> 等于 <code>3</code>。
+     */
     @Test
     void encryptsDecryptsAndPreservesInputWhenDecryptFails() {
         AtomicInteger calls = new AtomicInteger();
@@ -38,11 +47,20 @@ class Ddd4jFieldCryptoHandlerContractTest {
         assertEquals(3, calls.get());
     }
 
+    /**
+     * 验证被测调用 抛出 <code>NullPointerException.class</code>。
+     */
     @Test
     void requiresStrategy() {
         assertThrows(NullPointerException.class, () -> new Ddd4jFieldCryptoHandler(null));
     }
 
+    /**
+     * 按 <code>("encrypt".equals(method.getName()))</code> 等实际条件选择当前用例返回的结果。
+     *
+     * @param calls 传给 <code>Proxy.newProxyInstance()</code> 的 <code>AtomicInteger</code> 输入
+     * @return 根据测试条件返回的可能值，包括 <code>"cipher:" + args[0]</code>、<code>value.substring("cipher:".length())</code>
+     */
     private CryptoStrategy strategy(AtomicInteger calls) {
         return (CryptoStrategy) Proxy.newProxyInstance(
                 CryptoStrategy.class.getClassLoader(),

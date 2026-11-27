@@ -52,8 +52,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @DefaultBean
 public class QuarkusJpaViewManager implements ViewManager {
 
+    /**
+     * 选择 Quarkus 投影运行模式的配置项。
+     */
     static final String MODE_KEY = "ddd4j.quarkus.cqrs.projection.mode";
+    /**
+     * 读取 Quarkus 投影调度 Cron 表达式的配置项。
+     */
     static final String CRON_KEY = "ddd4j.quarkus.cqrs.projection.cron";
+    /**
+     * 配置未给定时采用的默认投影 Cron 表达式。
+     */
     static final String DEFAULT_CRON = "*/30 * * * * ?";
     /**
      * 运行状态标志
@@ -69,26 +78,67 @@ public class QuarkusJpaViewManager implements ViewManager {
      */
     @Inject
     Instance<ProjectionMetrics> projectionMetricsInstances;
+    /**
+     * 用于读取投影运行模式和调度配置的 MicroProfile 配置。
+     */
     @Inject
     Config config;
+    /**
+     * 兼容调度路径可使用的投影服务候选集合。
+     */
     @Inject
     Instance<QuarkusJpaProjectionService> legacyServices;
+    /**
+     * CDI 容器提供的投影事件运行器候选集合。
+     */
     @Inject
     Instance<ProjectionRunner<Object>> runners;
+    /**
+     * 由当前运行环境管理和调度的投影视图。
+     */
     @Inject
     Instance<ProjectionView<Object>> views;
+    /**
+     * CDI 容器提供的调度器候选集合。
+     */
     @Inject
     Instance<ViewScheduler> schedulers;
+    /**
+     * CDI 容器提供的视图管理器候选集合。
+     */
     @Inject
     Instance<ViewManager> managers;
+    /**
+     * CDI 容器提供的事件读取器候选集合。
+     */
     @Inject
     Instance<EventChunkReader<Object>> readers;
+    /**
+     * CDI 容器提供的事务管理器候选集合。
+     */
     @Inject
     Instance<TransactionManager> transactionManagers;
+    /**
+     * 采用显式投影视图配置时使用的管理器。
+     */
     private DefaultViewManager<Object> delegate;
+    /**
+     * 用于取消兼容投影调度任务的句柄。
+     */
     private ViewScheduler.ViewScheduleHandle legacyHandle;
+    /**
+     * 当前兼容调度路径实际使用的投影服务。
+     */
     private QuarkusJpaProjectionService legacyService;
 
+    /**
+     * 从 CDI 候选中解析唯一的投影组件。
+     *
+     * @param <T>        当前容器处理的组件或事件类型
+     * @param candidates CDI 容器可提供的候选组件
+     * @param name       当前组件、指标、任务或 Bean 使用的名称
+     * @return 找到的唯一候选，未配置时为空
+     */
     private static <T> T unique(Instance<T> candidates, String name) {
         if (!candidates.isResolvable()) {
             throw new IllegalStateException("A unique " + name + " is required for projection");
@@ -96,6 +146,11 @@ public class QuarkusJpaViewManager implements ViewManager {
         return candidates.get();
     }
 
+    /**
+     * 在 Quarkus 启动后选择并启动投影运行模式。
+     *
+     * @param event 当前框架生命周期或容器启动事件
+     */
     synchronized void onStart(@Observes @jakarta.annotation.Priority(1000) StartupEvent event) {
         if (running.get()) {
             return;
@@ -141,25 +196,49 @@ public class QuarkusJpaViewManager implements ViewManager {
     }
 
     // 先完成能力装配，再由默认优先级初始化器发布 SPI，最后才允许业务任务执行。
+
+    /**
+     * 按显式或兼容投影配置装配调度任务。
+     *
+     * @param event 当前框架生命周期或容器启动事件
+     */
     void launch(@Observes @jakarta.annotation.Priority(4000) StartupEvent event) {
         if (Objects.nonNull(delegate) || Objects.nonNull(legacyService)) {
             start();
         }
     }
 
+    /**
+     * 在停止事件中清理当前管理器启动的投影任务。
+     *
+     * @param event 当前框架生命周期或容器启动事件
+     */
     void onStop(@Observes ShutdownEvent event) {
         stop();
     }
 
+    /**
+     * 关闭由本管理器拥有的显式或兼容投影视图。
+     */
     @jakarta.annotation.PreDestroy
     void destroy() {
         stop();
     }
 
+    /**
+     * 判断当前管理器是否负责管理投影运行状态。
+     *
+     * @return 当前实例拥有投影启停职责时返回 true
+     */
     private boolean ownsLifecycle() {
         return ClientProxy.unwrap(unique(managers, "ViewManager")) == this;
     }
 
+    /**
+     * 启动当前组件并准备其运行资源。
+     *
+     * <p>JPA 实现调用 <code>running.get()</code>。</p>
+     */
     @Override
     public synchronized void start() {
         if (running.get()) {
@@ -186,6 +265,10 @@ public class QuarkusJpaViewManager implements ViewManager {
     }
 
     // 普通 Quartz Job 不经过 @Scheduled invoker，需在真实定时边界恢复其原请求作用域。
+
+    /**
+     * 在已激活的 CDI 请求上下文中执行兼容投影任务。
+     */
     private void runLegacyWithRequestContext() {
         var requestContext = Arc.container().requestContext();
         boolean owner = !requestContext.isActive();
@@ -201,6 +284,11 @@ public class QuarkusJpaViewManager implements ViewManager {
         }
     }
 
+    /**
+     * 停止当前组件并清理已登记的运行资源。
+     *
+     * <p>JPA 实现调用 <code>running.set(false)</code>。</p>
+     */
     @Override
     public synchronized void stop() {
         running.set(false);
@@ -213,11 +301,23 @@ public class QuarkusJpaViewManager implements ViewManager {
         }
     }
 
+    /**
+     * 检查当前组件是否仍处于运行状态。
+     *
+     * <p>JPA 实现调用 <code>running.get()</code>。</p>
+     *
+     * @return 实际返回<code>running.get()</code>
+     */
     @Override
     public boolean isRunning() {
         return running.get();
     }
 
+    /**
+     * 请求立即执行指定投影视图的一轮更新。
+     *
+     * <p>JPA 实现调用 <code>delegate.triggerOnce()</code>。</p>
+     */
     @Override
     public void triggerOnce() {
         if (Objects.nonNull(delegate)) {

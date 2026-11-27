@@ -50,9 +50,18 @@ import java.util.function.Function;
  */
 public class DomainModelInfo<M> {
 
+    /**
+     * 正在分析字段元数据的领域模型类型。
+     */
     @Getter
     private final Class<M> modelType;
+    /**
+     * 当前领域模型参与映射的字段元数据。
+     */
     private final List<DomainFieldInfo> fieldList = new ArrayList<>();
+    /**
+     * 按模型属性名查找字段描述的索引。
+     */
     private final Map<String, DomainFieldInfo> property2Field = new LinkedHashMap<>();
 
     /**
@@ -82,6 +91,11 @@ public class DomainModelInfo<M> {
         return fields;
     }
 
+    /**
+     * 扫描当前模型字段并建立属性与持久化列的映射。
+     *
+     * @param poProperty2ColumnProvider 可选的持久化属性列名解析函数
+     */
     private void build(Function<String, String> poProperty2ColumnProvider) {
         Function<String, String> provider = Objects.nonNull(poProperty2ColumnProvider)
                 ? poProperty2ColumnProvider
@@ -111,6 +125,10 @@ public class DomainModelInfo<M> {
      *   <li>Domain 字段名 = PO 字段名（默认约定）→ 通过 provider 查</li>
      *   <li>fallback：返回 null（调用方做驼峰转下划线）</li>
      * </ol>
+     *
+     * @param field    要解析的对象字段
+     * @param provider 提供字段到列映射的元数据组件
+     * @return 解析得到的持久化列名
      */
     private String resolvePoColumn(Field field, Function<String, String> provider) {
         DomainField annotation = field.getAnnotation(DomainField.class);

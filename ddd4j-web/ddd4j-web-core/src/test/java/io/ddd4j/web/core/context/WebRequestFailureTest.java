@@ -19,8 +19,14 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
+/**
+ * 通过 <code>failure.method()</code>、<code>failure.path()</code>、<code>failure.cause()</code> 验证 <code>WebRequestFailure</code> 的运行行为。
+ */
 class WebRequestFailureTest {
 
+    /**
+     * 验证<code>failure.method()</code> 等于 <code>"POST"</code>，<code>failure.path()</code> 等于 <code>"/api/orders"</code>，<code>failure.getCause()</code> 与…为同一实例 <code>cause</code>。
+     */
     @Test
     void exposesComponents() {
         IllegalStateException cause = new IllegalStateException("boom");

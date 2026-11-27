@@ -16,8 +16,8 @@ package io.ddd4j.quarkus.command;
 
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.Result;
 import io.ddd4j.core.cqrs.command.CommandHandler;
+import io.ddd4j.core.cqrs.command.Result;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.Set;
@@ -40,6 +40,13 @@ class SampleCommandHandler implements CommandExecutor<SampleCommand> {
      */
     static final String HANDLED = "handled-by-quarkus-handler";
 
+    /**
+     * 声明当前处理器可以接收的命令类型。
+     *
+     * <p>测试夹具会调用 <code>java.util.Collections.singleton(SampleCommand.class)</code>。</p>
+     *
+     * @return 实际返回<code>java.util.Collections.singleton(SampleCommand.class)</code>
+     */
     @Override
     public Set<Class<? extends Command>> supportedCommands() {
         return java.util.Collections.singleton(SampleCommand.class);
@@ -47,6 +54,7 @@ class SampleCommandHandler implements CommandExecutor<SampleCommand> {
 
     /**
      * 执行处理逻辑。
+     *
      * @param command command 参数。
      * @return 方法执行结果。
      */

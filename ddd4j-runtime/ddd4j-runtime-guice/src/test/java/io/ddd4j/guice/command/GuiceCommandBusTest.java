@@ -30,8 +30,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * 验证 <code>GuiceCommandBus</code> 在<code>commandBus</code>等操作中的行为契约。
+ */
 class GuiceCommandBusTest {
 
+    /**
+     * 验证<code>commandBus</code>非空，<code>result</code>非空，<code>executed.get()</code>为真。
+     */
     @Test
     void commandBusRoutesToRegisteredExecutor() {
         AtomicBoolean executed = new AtomicBoolean(false);
@@ -57,6 +63,9 @@ class GuiceCommandBusTest {
         assertTrue(executed.get());
     }
 
+    /**
+     * 验证<code>commandBus</code>非空，<code>commandBus.execute(command)</code> 抛出 <code>IllegalStateException.class</code>。
+     */
     @Test
     void commandBusThrowsForUnregisteredCommand() {
         Injector injector = Guice.createInjector(new Ddd4jCommandGuiceModule());
@@ -67,6 +76,9 @@ class GuiceCommandBusTest {
         assertThrows(IllegalStateException.class, () -> commandBus.execute(command));
     }
 
+    /**
+     * 验证<code>commandBus</code>非空，<code>commandBus.execute(null)</code> 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void commandBusThrowsForNullCommand() {
         Injector injector = Guice.createInjector(new Ddd4jCommandGuiceModule());
@@ -76,6 +88,9 @@ class GuiceCommandBusTest {
         assertThrows(IllegalArgumentException.class, () -> commandBus.execute(null));
     }
 
+    /**
+     * 验证<code>commandBus</code>非空，<code>testExecuted.get()</code>为真，<code>anotherExecuted.get()</code>为真。
+     */
     @Test
     void commandBusWithMultipleExecutors() {
         AtomicBoolean testExecuted = new AtomicBoolean(false);
@@ -102,6 +117,9 @@ class GuiceCommandBusTest {
         assertTrue(anotherExecuted.get());
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>。
+     */
     @Test
     void commandBusDuplicateExecutorThrowsException() {
         TestCommandExecutor executor1 = new TestCommandExecutor(new AtomicBoolean());
@@ -111,6 +129,9 @@ class GuiceCommandBusTest {
         assertThrows(IllegalStateException.class, () -> new GuiceCommandBus(java.util.Arrays.asList(executor1, executor2)));
     }
 
+    /**
+     * 验证<code>bus.execute(new AnotherCommand())</code> 与…为同一实例 <code>expected</code>，<code>bus.execute(new TestCommand())</code> 与…为同一实例 <code>expected</code>。
+     */
     @Test
     void dynamicDiscoveryCachesRoutesAndPreservesResultIdentity() {
         Set<Class<? extends Command>> types = new java.util.LinkedHashSet<>();
@@ -133,11 +154,17 @@ class GuiceCommandBusTest {
         assertSame(expected, bus.execute(new TestCommand()));
     }
 
+    /**
+     * 验证<code>io.ddd4j.core.cqrs.command.DefaultCommandBus.class.isAssignableFrom(GuiceCommandBus.class)</code>为真。
+     */
     @Test
     void routingUsesSharedCommandEngine() {
         assertTrue(io.ddd4j.core.cqrs.command.DefaultCommandBus.class.isAssignableFrom(GuiceCommandBus.class));
     }
 
+    /**
+     * 验证<code>bus.execute(new TestCommand())</code> 抛出 <code>IllegalStateException.class</code>，被测调用 抛出 <code>IllegalStateException.class</code>。
+     */
     @Test
     void initiallyEmptyExecutorsStayUndiscoverableAndExceptionsAreUnchanged() {
         Set<Class<? extends Command>> empty = new java.util.HashSet<>();
@@ -167,6 +194,9 @@ class GuiceCommandBusTest {
                 () -> new GuiceCommandBus(java.util.List.of(throwing)).execute(new TestCommand())));
     }
 
+    /**
+     * 验证<code>calls.get()</code> 等于 <code>1</code>，<code>bus.execute(new AnotherCommand()).isSuccess()</code>为真，<code>bus.execute(new TestCommand()).isSuccess()</code>为真。
+     */
     @Test
     void initialSupportedCommandsIsReadOnlyOnceBeforeDynamicMiss() {
         java.util.concurrent.atomic.AtomicInteger calls = new java.util.concurrent.atomic.AtomicInteger();
@@ -188,29 +218,66 @@ class GuiceCommandBusTest {
     }
 
     // Test command classes
+
+    /**
+     * 供命令总线验证类型匹配和分发的命令样本。
+     */
     private static class TestCommand implements Command {
     }
 
+    /**
+     * 供命令总线验证类型匹配和分发的命令样本。
+     */
     private static class AnotherCommand implements Command {
     }
 
+    /**
+     * 供命令总线验证类型匹配和分发的命令样本。
+     */
     private static class UnregisteredCommand implements Command {
     }
 
     // Test executor classes
+
+    /**
+     * 接收测试命令并返回可断言结果的执行器替身。
+     */
     private static class TestCommandExecutor implements CommandExecutor<TestCommand> {
 
+        /**
+         * 标记测试回调或业务操作已经实际执行。
+         */
         private final AtomicBoolean executed;
 
+        /**
+         * 设置 <code>executed</code>，用于构造 <code>TestCommandExecutor</code> 测试实例。
+         *
+         * @param executed 用于初始化 <code>TestCommandExecutor</code> 的 <code>AtomicBoolean</code> 值
+         */
         TestCommandExecutor(AtomicBoolean executed) {
             this.executed = executed;
         }
 
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>Collections.singleton(TestCommand.class)</code>。</p>
+         *
+         * @return 实际返回<code>Collections.singleton(TestCommand.class)</code>
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.singleton(TestCommand.class);
         }
 
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>executed.set(true)</code>、<code>Result.ok()</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>Result.ok()</code>
+         */
         @Override
         public Result execute(TestCommand command) {
             executed.set(true);
@@ -218,19 +285,45 @@ class GuiceCommandBusTest {
         }
     }
 
+    /**
+     * 接收测试命令并返回可断言结果的执行器替身。
+     */
     private static class AnotherCommandExecutor implements CommandExecutor<AnotherCommand> {
 
+        /**
+         * 标记测试回调或业务操作已经实际执行。
+         */
         private final AtomicBoolean executed;
 
+        /**
+         * 设置 <code>executed</code>，用于构造 <code>AnotherCommandExecutor</code> 测试实例。
+         *
+         * @param executed 用于初始化 <code>AnotherCommandExecutor</code> 的 <code>AtomicBoolean</code> 值
+         */
         AnotherCommandExecutor(AtomicBoolean executed) {
             this.executed = executed;
         }
 
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>Collections.singleton(AnotherCommand.class)</code>。</p>
+         *
+         * @return 实际返回<code>Collections.singleton(AnotherCommand.class)</code>
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.singleton(AnotherCommand.class);
         }
 
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>executed.set(true)</code>、<code>Result.ok()</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>Result.ok()</code>
+         */
         @Override
         public Result execute(AnotherCommand command) {
             executed.set(true);

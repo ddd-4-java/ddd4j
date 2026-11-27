@@ -13,18 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.web.vertx;
-import java.util.Optional;
-import java.util.Map;
-import java.util.Locale;
-import java.util.List;
-import java.util.HashMap;
-import io.ddd4j.web.core.context.WebRequestLifecycle;
-import io.ddd4j.web.core.context.WebRequestData;
-import io.ddd4j.web.core.context.WebRequestContextFactory;
-import io.ddd4j.web.core.context.WebRequestContext;
-import io.ddd4j.web.core.context.WebHeaders;
-
-import java.util.Objects;
 
 import io.ddd4j.core.health.RuntimeReadinessRegistry;
 import io.ddd4j.web.core.auth.AuthenticationMode;
@@ -55,14 +43,38 @@ import java.util.function.Function;
 @Slf4j
 public final class Ddd4jVertxWeb {
 
+    /**
+     * 保存 Vert.x 请求处理状态和清理句柄的键。
+     */
     private static final String STATE_KEY = Ddd4jVertxWeb.class.getName() + ".state";
+    /**
+     * 保存框架请求服务端 Span 的键。
+     */
     private static final String OTEL_SPAN_KEY = Ddd4jVertxWeb.class.getName() + ".otelSpan";
 
+    /**
+     * 根据框架请求元数据装配共用 Web 请求上下文。
+     */
     private final WebRequestContextFactory contextFactory;
+    /**
+     * 开启和关闭当前 Web 请求上下文的组件。
+     */
     private final WebRequestLifecycle requestLifecycle;
+    /**
+     * 将框架异常映射为统一 WebError 的转换器。
+     */
     private final WebExceptionTranslator exceptionTranslator;
+    /**
+     * 在请求处理阶段获取及释放幂等保护的组件。
+     */
     private final Optional<WebIdempotencyLifecycle> idempotencyLifecycle;
+    /**
+     * 将 Vert.x 应用结果写成 HTTP JSON 正文的编码器。
+     */
     private final Function<Object, String> jsonEncoder;
+    /**
+     * 提供依赖就绪状态的 Web 端点。
+     */
     private final ReadinessEndpoint readinessEndpoint;
 
     /**
@@ -92,11 +104,11 @@ public final class Ddd4jVertxWeb {
     /**
      * 使用指定 Web 组件和默认就绪注册表创建适配器。
      *
-     * @param contextFactory 请求上下文工厂
-     * @param requestLifecycle 请求生命周期
-     * @param exceptionTranslator 异常翻译器
+     * @param contextFactory       请求上下文工厂
+     * @param requestLifecycle     请求生命周期
+     * @param exceptionTranslator  异常翻译器
      * @param idempotencyLifecycle 幂等生命周期，可为空
-     * @param jsonEncoder JSON 编码器
+     * @param jsonEncoder          JSON 编码器
      */
     public Ddd4jVertxWeb(WebRequestContextFactory contextFactory, WebRequestLifecycle requestLifecycle,
                          WebExceptionTranslator exceptionTranslator,
@@ -109,12 +121,12 @@ public final class Ddd4jVertxWeb {
     /**
      * 使用指定 Web 组件和就绪注册表创建适配器。
      *
-     * @param contextFactory 请求上下文工厂
-     * @param requestLifecycle 请求生命周期
-     * @param exceptionTranslator 异常翻译器
+     * @param contextFactory       请求上下文工厂
+     * @param requestLifecycle     请求生命周期
+     * @param exceptionTranslator  异常翻译器
      * @param idempotencyLifecycle 幂等生命周期，可为空
-     * @param jsonEncoder JSON 编码器
-     * @param readinessRegistry 就绪注册表
+     * @param jsonEncoder          JSON 编码器
+     * @param readinessRegistry    就绪注册表
      */
     public Ddd4jVertxWeb(WebRequestContextFactory contextFactory, WebRequestLifecycle requestLifecycle,
                          WebExceptionTranslator exceptionTranslator,
@@ -132,6 +144,12 @@ public final class Ddd4jVertxWeb {
         this.readinessEndpoint = new ReadinessEndpoint(() -> registry.readiness().ready());
     }
 
+    /**
+     * 收集 HTTP 请求中可用的头名称及其值。
+     *
+     * @param context 当前框架 HTTP 请求或交换上下文
+     * @return 供请求上下文读取的请求头映射
+     */
     private static Map<String, String> extractHeaders(RoutingContext context) {
         Map<String, String> headers = new HashMap<>();
         context.request().headers().forEach(entry -> {
@@ -144,6 +162,12 @@ public final class Ddd4jVertxWeb {
         return headers;
     }
 
+    /**
+     * 激活服务端跟踪上下文后运行当前回调并释放作用域。
+     *
+     * @param span   当前请求的跟踪 Span
+     * @param action 需要在已激活跟踪上下文中执行的操作
+     */
     private static void runWithSpan(Object span, Runnable action) {
         AutoCloseable scope = WebOtelSupport.activate(span);
         try {
@@ -169,6 +193,11 @@ public final class Ddd4jVertxWeb {
         target.get(ReadinessEndpoint.PATH).handler(this::readiness);
     }
 
+    /**
+     * 将当前运行时就绪状态写入 Vert.x 响应。
+     *
+     * @param context 当前框架调用所携带的请求上下文
+     */
     private void readiness(RoutingContext context) {
         ReadinessResponse response = readinessEndpoint.readiness();
         context.response().setStatusCode(response.httpStatus())
@@ -270,6 +299,13 @@ public final class Ddd4jVertxWeb {
         };
     }
 
+    /**
+     * 按路由访问策略解析主体并取得需要的幂等保护。
+     *
+     * @param routingContext 当前 Vert.x 路由请求上下文
+     * @param requestContext 当前 HTTP 请求已经解析的 DDD4J 上下文
+     * @return 认证与可用幂等作用域的组合
+     */
     private AuthenticationResult authenticate(RoutingContext routingContext, WebRequestContext requestContext) {
         Optional<BearerSubjectAuthenticator.Authentication> authentication = requestLifecycle
                 .authenticate(requestContext);
@@ -279,6 +315,12 @@ public final class Ddd4jVertxWeb {
         return new AuthenticationResult(authentication, idempotencyScope);
     }
 
+    /**
+     * 从框架请求提取租户、跟踪标识、认证和路由信息，组装共用上下文。
+     *
+     * @param context 当前框架 HTTP 请求
+     * @return 供上下文和认证处理链使用的请求上下文
+     */
     private WebRequestContext createContext(RoutingContext context) {
         Locale locale = Objects.isNull(context.preferredLanguage())
                 ? Locale.getDefault() : Locale.forLanguageTag(context.preferredLanguage().tag());
@@ -295,6 +337,11 @@ public final class Ddd4jVertxWeb {
                 context.normalizedPath()));
     }
 
+    /**
+     * 根据最终响应结束跟踪并清理 Vert.x 请求作用域。
+     *
+     * @param context 当前框架调用所携带的请求上下文
+     */
     private void finish(RoutingContext context) {
         RequestState state = context.remove(STATE_KEY);
         if (Objects.isNull(state)) {
@@ -313,42 +360,92 @@ public final class Ddd4jVertxWeb {
         }).onFailure(exception -> log.error("Unable to close Vert.x request state", exception));
     }
 
+    /**
+     * 保存 Vert.x 当前请求的认证结果及已取得的幂等作用域。
+     */
     private static final class AuthenticationResult {
 
+        /**
+         * 当前请求的认证结果，公开路由可以不携带主体。
+         */
         private final Optional<BearerSubjectAuthenticator.Authentication> authentication;
 
+        /**
+         * 当前请求取得的幂等处理作用域。
+         */
         private final Optional<WebIdempotencyLifecycle.Scope> idempotencyScope;
 
+        /**
+         * 将进入路由前取得的认证结果和幂等作用域一起保存。
+         *
+         * @param authentication   当前请求已取得的认证结果
+         * @param idempotencyScope 当前请求获取的可选幂等作用域
+         */
         private AuthenticationResult(Optional<BearerSubjectAuthenticator.Authentication> authentication,
                                      Optional<WebIdempotencyLifecycle.Scope> idempotencyScope) {
             this.authentication = authentication;
             this.idempotencyScope = idempotencyScope;
         }
 
+        /**
+         * 读取<code>authentication</code> 字段。
+         *
+         * @return <code>authentication</code> 字段
+         */
         private Optional<BearerSubjectAuthenticator.Authentication> authentication() {
             return authentication;
         }
 
+        /**
+         * 读取<code>idempotencyScope</code> 字段。
+         *
+         * @return <code>idempotencyScope</code> 字段
+         */
         private Optional<WebIdempotencyLifecycle.Scope> idempotencyScope() {
             return idempotencyScope;
         }
 
     }
 
+    /**
+     * 在一次 HTTP 请求的处理阶段之间保存幂等状态及清理进度。
+     */
     private static final class RequestState {
 
+        /**
+         * 当前请求取得的幂等处理作用域。
+         */
         private WebIdempotencyLifecycle.Scope idempotencyScope;
+        /**
+         * 当前请求处理链是否已经报告失败。
+         */
         private boolean failed;
+        /**
+         * 标记当前请求的幂等作用域是否已经关闭。
+         */
         private boolean idempotencyClosed;
 
+        /**
+         * 设置<code>idempotencyScope</code> 字段。
+         *
+         * @param scope 要写入的值
+         */
         private void idempotencyScope(WebIdempotencyLifecycle.Scope scope) {
             this.idempotencyScope = scope;
         }
 
+        /**
+         * 标记当前请求不能以成功状态完成幂等处理。
+         */
         private void failed() {
             failed = true;
         }
 
+        /**
+         * 按请求最终状态关闭幂等及其他请求作用域。
+         *
+         * @param successful 请求是否按正常业务结果完成
+         */
         private void close(boolean successful) {
             if (idempotencyClosed) {
                 return;

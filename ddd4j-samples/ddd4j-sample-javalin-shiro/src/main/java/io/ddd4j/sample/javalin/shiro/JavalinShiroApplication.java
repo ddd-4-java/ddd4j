@@ -102,6 +102,15 @@ public class JavalinShiroApplication {
         }, CatalogRuntime.start());
     }
 
+    /**
+     * 组装原生认证过滤器和商品交易路由，然后启动 Javalin。
+     *
+     * @param port      当前 HTTP 示例要监听的端口
+     * @param observer  观察请求结束后原生认证上下文的回调
+     * @param configure 调整 Javalin 启动配置的回调
+     * @param catalog   当前商品交易入口
+     * @return 已启动的 Javalin 认证示例
+     */
     static Application start(int port, Consumer<Optional<String>> observer,
                              Consumer<io.javalin.config.JavalinConfig> configure, CatalogEndpoints catalog) {
         // ==================== 1. 初始化 RBAC + Shiro SecurityManager ====================
@@ -241,8 +250,16 @@ public class JavalinShiroApplication {
      * 可关闭的实际 Javalin/Guice 应用句柄。
      */
     public static final class Application implements AutoCloseable {
+        /**
+         * 当前示例拥有和关闭原生认证资源的生命周期组件。
+         */
         private final NativeAuthLifecycle lifecycle;
 
+        /**
+         * 把认证生命周期关联到可停止的 Javalin 应用包装器。
+         *
+         * @param lifecycle 由当前应用持有并在关闭时回收的认证生命周期
+         */
         private Application(NativeAuthLifecycle lifecycle) {
             this.lifecycle = lifecycle;
         }
@@ -254,6 +271,11 @@ public class JavalinShiroApplication {
             return lifecycle.app();
         }
 
+        /**
+         * 结束当前组件持有的资源。
+         *
+         * <p>此实现调用 <code>lifecycle.close()</code>。</p>
+         */
         @Override
         public void close() {
             lifecycle.close();

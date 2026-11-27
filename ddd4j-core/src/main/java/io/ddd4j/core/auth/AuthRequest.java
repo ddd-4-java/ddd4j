@@ -128,6 +128,11 @@ public class AuthRequest {
         return this;
     }
 
+    /**
+     * 仅在请求显式覆盖会话超时时写出 JSON 超时字段。
+     *
+     * @return 显式设置的会话超时，沿用默认值时返回空
+     */
     @JsonGetter("timeout")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Long serializedTimeout() {
@@ -171,6 +176,14 @@ public class AuthRequest {
         return this;
     }
 
+    /**
+     * 根据<code>loginId</code>比较对象的值是否相等。
+     *
+     * <p>只比较运行时类型相同的对象。</p>
+     *
+     * @param o 用来比较的另一个对象，允许为空
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -183,11 +196,21 @@ public class AuthRequest {
         return Objects.equals(loginId, that.loginId);
     }
 
+    /**
+     * 用<code>loginId</code>计算哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         return Objects.hash(loginId);
     }
 
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>loginId</code>、<code>realm</code>、<code>sessionConfig</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "AuthRequest{loginId=" + loginId

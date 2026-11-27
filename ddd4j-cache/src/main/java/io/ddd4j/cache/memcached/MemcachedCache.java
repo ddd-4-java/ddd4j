@@ -51,9 +51,21 @@ import java.util.function.Function;
 @Slf4j
 public class MemcachedCache<K, V> implements Cache<K, V> {
 
+    /**
+     * 用于访问 Memcached 服务器的客户端。
+     */
     private final MemcachedClient memcachedClient;
+    /**
+     * 默认缓存存活时间，单位为秒。
+     */
     private final int expireSeconds;
+    /**
+     * 反序列化缓存条目时使用的值类型。
+     */
     private final Class<V> valueType;
+    /**
+     * 负责在 Redis 或 Memcached 中存储 JSON 值的映射器。
+     */
     private final ObjectMapper objectMapper;
 
     /**
@@ -97,10 +109,24 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
         this(memcachedClient, config, valueType, JsonMapper.builder().build());
     }
 
+    /**
+     * 将 Memcached 缓存键转换为字符串形式。
+     *
+     * @param key 缓存键
+     * @return 写入 Memcached 使用的键
+     */
     private String serializeKey(K key) {
         return String.valueOf(key);
     }
 
+    /**
+     * 读取现有缓存值。
+     *
+     * <p>此实现调用 <code>memcachedClient.get(serializeKey(key))</code>。</p>
+     *
+     * @param key 缓存键
+     * @return 根据执行路径返回<code>null</code>、<code>objectMapper.readValue(json, valueType)</code>
+     */
     @Override
     public V getIfPresent(K key) {
         try {
@@ -115,6 +141,15 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
         }
     }
 
+    /**
+     * 读取调用指定的当前值。
+     *
+     * <p>此实现调用 <code>getIfPresent(key)</code>。</p>
+     *
+     * @param key             缓存键
+     * @param mappingFunction 值加载函数
+     * @return 实际返回<code>value</code>
+     */
     @Override
     public V get(K key, Function<K, V> mappingFunction) {
         V value = getIfPresent(key);
@@ -127,6 +162,14 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
         return value;
     }
 
+    /**
+     * 将给定数据写入当前存储。
+     *
+     * <p>此实现调用 <code>objectMapper.writeValueAsString(value)</code>。</p>
+     *
+     * @param key   缓存键
+     * @param value 缓存值
+     */
     @Override
     public void put(K key, V value) {
         try {
@@ -137,6 +180,13 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
         }
     }
 
+    /**
+     * 使指定键的缓存条目失效。
+     *
+     * <p>此实现调用 <code>memcachedClient.delete(serializeKey(key))</code>。</p>
+     *
+     * @param key 缓存键
+     */
     @Override
     public void invalidate(K key) {
         try {
@@ -146,16 +196,29 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
         }
     }
 
+    /**
+     * 保留后端现有键。调用方需通过明确的键逐个失效。
+     */
     @Override
     public void invalidateAll() {
         log.warn("Memcached 不支持全局 invalidateAll（flushAll 危险操作），请通过明确的 key 逐个删除");
     }
 
+    /**
+     * 报告当前后端的缓存条目数量是否可用。
+     *
+     * @return 固定返回 -1，表示此适配器不估算条目数
+     */
     @Override
     public long estimatedSize() {
         return -1;
     }
 
+    /**
+     * 返回当前缓存实现记录的统计信息。
+     *
+     * @return 此实现返回<code>null</code>
+     */
     @Override
     public CacheStats stats() {
         return null;
@@ -170,6 +233,12 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
         return memcachedClient;
     }
 
+    /**
+     * 按照适配器的值类型反序列化缓存文本。
+     *
+     * @param json 从缓存后端读出的字符串
+     * @return 解码后的缓存值，输入为空或解码失败时返回空
+     */
     @SuppressWarnings("unchecked")
     private V deserialize(String json) {
         if (StrKit.isBlank(json)) {
@@ -184,6 +253,16 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
 
     // ==================== CAS SPI 实现（基于 xmemcached 原生 cas 版本号）====================
 
+    /**
+     * 比较缓存中的现值或版本并尝试原子修改。
+     *
+     * <p>此实现调用 <code>serializeKey(key)</code>。</p>
+     *
+     * @param key           缓存键
+     * @param expireSeconds 过期时间（秒），0 表示不修改 TTL
+     * @param operation     CAS 操作回调（基于当前值计算新值）
+     * @return 根据执行路径返回<code>null</code>、<code>newValue</code>
+     */
     @Override
     @SuppressWarnings("unchecked")
     public V compareAndSet(K key, long expireSeconds, CASOperation<V, V> operation) {
@@ -249,6 +328,16 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
         return null;
     }
 
+    /**
+     * 比较缓存中的现值或版本并尝试原子修改。
+     *
+     * <p>此实现调用 <code>serializeKey(key)</code>。</p>
+     *
+     * @param key             缓存键
+     * @param newValue        新值
+     * @param expectedVersion 期望的版本号（来自 Memcached {@code gets} 返回的 cas 值）
+     * @return 根据执行路径返回<code>false</code>、<code>memcachedClient.cas(cachedKey, 0, newJson, expectedVersion)</code>
+     */
     @Override
     @SuppressWarnings("unchecked")
     public boolean compareAndSet(K key, V newValue, long expectedVersion) {
@@ -266,6 +355,16 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
         }
     }
 
+    /**
+     * 比较缓存中的现值或版本并尝试原子修改。
+     *
+     * <p>此实现调用 <code>serializeKey(key)</code>。</p>
+     *
+     * @param key              缓存键
+     * @param expectedOldValue 期望的旧值（null 表示仅当 key 不存在时写入 = putIfAbsent）
+     * @param newValue         新值
+     * @return 根据执行路径返回<code>memcachedClient.add(cachedKey, expireSeconds, newJson)</code>、<code>false</code>、<code>memcachedClient.cas(cachedKey, 0, newJson, current.getCas())</code>
+     */
     @Override
     public boolean compareAndSet(K key, V expectedOldValue, V newValue) {
         // Memcached 的 CAS 基于版本号而非值比较；这里降级为 gets + 版本号 cas

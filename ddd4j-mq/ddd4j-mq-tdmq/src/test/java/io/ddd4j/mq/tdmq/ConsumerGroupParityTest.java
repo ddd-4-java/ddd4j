@@ -29,6 +29,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * 通过真实订阅入口观察 group，不访问外部 Broker。
  */
 class ConsumerGroupParityTest {
+    /**
+     * 在测试框架中执行 <code>properties.setDefaultGroup()</code>、<code>client.setBrokerSubscriber()</code>、<code>groups.add()</code>，验证该场景。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void whitespaceGroupFallsBackAndExplicitGroupIsPreserved() throws Exception {
         TdmqProperties properties = new TdmqProperties();
@@ -51,6 +56,9 @@ class ConsumerGroupParityTest {
     }
 
 
+    /**
+     * 验证<code>closeCount.get()</code> 等于 <code>1</code>。
+     */
     @Test
     void closesEverySubscriptionOnlyOnce() {
         TdmqProperties properties = new TdmqProperties();

@@ -27,21 +27,42 @@ import java.util.Set;
 @ApplicationPath("/")
 public class HelidonCqrsJaxRsApplication extends Application {
 
+    /**
+     * 注册到 JAX-RS 的 CQRS 商品交易资源集合。
+     */
     private final Set<Object> catalog;
 
+    /**
+     * 注册默认的商品交易 CQRS 资源。
+     */
     public HelidonCqrsJaxRsApplication() {
         this(new CatalogTradeResource());
     }
 
+    /**
+     * 保存当前 JAX-RS 示例需注册的商品交易资源。
+     *
+     * @param resource 待登记的商品交易资源
+     */
     HelidonCqrsJaxRsApplication(CatalogTradeResource resource) {
         catalog = Set.of(resource);
     }
 
+    /**
+     * 读取<code>catalog</code> 字段。
+     *
+     * @return <code>catalog</code> 字段
+     */
     @Override
     public Set<Object> getSingletons() {
         return catalog;
     }
 
+    /**
+     * 声明由 JAX-RS 框架创建的资源、过滤器或异常映射器。
+     *
+     * @return 当前应用的 JAX-RS 组件类型
+     */
     @Override
     public Set<Class<?>> getClasses() {
         return Set.of(Ddd4jHelidonExceptionMapper.class, Ddd4jHelidonIllegalStateExceptionMapper.class);

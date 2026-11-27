@@ -48,12 +48,27 @@ public enum RankSortTypeEnum {
      */
     NATURAL("同分非并列", 3);
 
+    /**
+     * 并列项之后不留空位的默认排名方式。
+     */
     private static final RankSortTypeEnum DEFAULT_SORT_TYPE = RankSortTypeEnum.SAME_CONTINUOUS;
 
+    /**
+     * 排名规则的显示名称。
+     */
     private final String name;
 
+    /**
+     * 排名规则的数值编码。
+     */
     private final Integer value;
 
+    /**
+     * 注册一种排名规则的名称和编码。
+     *
+     * @param name  排名规则的显示名称
+     * @param value 排名规则的数值编码
+     */
     RankSortTypeEnum(String name, Integer value) {
         this.name = name;
         this.value = value;
@@ -127,6 +142,11 @@ public enum RankSortTypeEnum {
         return this.compareTo(sortType) == 0;
     }
 
+    /**
+     * 生成用于调试和日志的对象描述。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return name + " -> " + value;

@@ -37,13 +37,19 @@ import java.util.Objects;
  */
 public final class ApiVersion implements Comparable<ApiVersion> {
 
-    /** 主版本号。 */
+    /**
+     * 主版本号。
+     */
     private final int major;
 
-    /** 次版本号，书写缺失时为 0。 */
+    /**
+     * 次版本号，书写缺失时为 0。
+     */
     private final int minor;
 
-    /** 修订号，书写缺失时为 0。 */
+    /**
+     * 修订号，书写缺失时为 0。
+     */
     private final int patch;
 
     /**
@@ -116,7 +122,7 @@ public final class ApiVersion implements Comparable<ApiVersion> {
      * 解析单个版本段，仅接受非空十进制数字序列。
      *
      * @param segment 版本段原文
-     * @param text 拼接错误信息用的完整原文
+     * @param text    拼接错误信息用的完整原文
      * @return 该段数值
      * @throws IllegalArgumentException 段为空、含非数字字符或数值溢出时抛出
      */

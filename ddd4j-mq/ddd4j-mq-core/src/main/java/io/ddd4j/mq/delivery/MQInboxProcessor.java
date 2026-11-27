@@ -30,14 +30,23 @@ import java.util.function.Consumer;
 @Slf4j
 public final class MQInboxProcessor {
 
+    /**
+     * 检查并记录消息消费处理状态的收件箱存储。
+     */
     private final MQInboxStore store;
+    /**
+     * 此收件箱处理器所属的逻辑消费者标识。
+     */
     private final String consumerId;
+    /**
+     * 接收消息投递或运行状态变化的回调。
+     */
     private final MQDeliveryObserver observer;
 
     /**
      * 创建使用默认观察器的 Inbox 处理器。
      *
-     * @param store Inbox 持久化端口
+     * @param store      Inbox 持久化端口
      * @param consumerId 稳定消费者标识
      */
     public MQInboxProcessor(MQInboxStore store, String consumerId) {
@@ -88,6 +97,11 @@ public final class MQInboxProcessor {
         }
     }
 
+    /**
+     * 通知投递观察器并记录其运行时异常，避免影响实际投递路径。
+     *
+     * @param action 要在当前观察器上调用的通知动作
+     */
     private void notifyObserver(Consumer<MQDeliveryObserver> action) {
         try {
             action.accept(observer);

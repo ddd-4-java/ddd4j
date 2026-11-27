@@ -33,16 +33,27 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Testcontainers
 class TdmqPulsarProtocolIntegrationTest {
 
+    /**
+     * 为当前集成测试提供独立 Pulsar 服务的容器。
+     */
     @Container
     static final PulsarContainer PULSAR = new PulsarContainer(DockerImageName.parse("apachepulsar/pulsar:4.2.4"))
             .withTmpFs(MapKit.builder("/pulsar/data", "rw,mode=1777")
                     .put("/pulsar/logs", "rw,mode=1777").build());
 
+    /**
+     * 测试结束后执行 <code>BaseContext.clear()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void clearContext() {
         BaseContext.clear();
     }
 
+    /**
+     * 验证<code>delivered.await(30, TimeUnit.SECONDS)</code>为真，<code>received.get().getMsgId()</code> 等于 <code>event.getMsgId()</code>，<code>received.get().getCausationId()</code> 等于 <code>event.getCausationId()</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void configuredBrokerDeliversBetweenIndependentClientsWithCausality() throws Exception {
         String topic = "tdmq-" + UUID.randomUUID();
@@ -100,6 +111,11 @@ class TdmqPulsarProtocolIntegrationTest {
         }
     }
 
+    /**
+     * 验证<code>retried.await(30, TimeUnit.SECONDS)</code>为真，<code>attempts.get()</code> 等于 <code>2</code>，<code>redeliveredId.get()</code> 等于 <code>event.getMsgId()</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void failedConsumerIsRedeliveredWithStableBusinessId() throws Exception {
         String topic = "tdmq-retry-" + UUID.randomUUID();

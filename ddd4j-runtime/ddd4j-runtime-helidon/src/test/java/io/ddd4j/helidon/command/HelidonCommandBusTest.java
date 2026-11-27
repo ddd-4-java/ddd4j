@@ -16,8 +16,8 @@ package io.ddd4j.helidon.command;
 
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.Result;
 import io.ddd4j.core.cqrs.command.CommandRegistry;
+import io.ddd4j.core.cqrs.command.Result;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -65,6 +65,9 @@ class HelidonCommandBusTest {
         return HelidonCommandBus.discover(new CommandRegistry());
     }
 
+    /**
+     * 验证<code>result.isSuccess()</code>为真，<code>result.data()</code> 包含 <code>SampleCommandHandler.HANDLED</code>。
+     */
     @Test
     void execute_已注册命令_应路由到真实Handler并返回成功() {
         HelidonCommandBus bus = assemble();
@@ -75,6 +78,9 @@ class HelidonCommandBusTest {
         assertThat(result.data()).contains(SampleCommandHandler.HANDLED);
     }
 
+    /**
+     * 验证<code>exception</code>非空，<code>exception.getMessage()</code> 包含 <code>SampleCommand.class.getName()</code>。
+     */
     @Test
     void 装配期冲突_整批拒绝应自构造器传播() {
         // 预注册多类型占位执行器（SampleCommand + CompanionCommand），再以真实
@@ -91,6 +97,9 @@ class HelidonCommandBusTest {
         assertThat(exception.getMessage()).contains(SampleCommand.class.getName());
     }
 
+    /**
+     * 验证<code>exception</code>非空，<code>exception.getMessage()</code> 包含 <code>UnknownCommand.class.getName()</code>。
+     */
     @Test
     void execute_未注册命令_应抛ISE与ddd4j_core一致() {
         HelidonCommandBus bus = assemble();
@@ -102,11 +111,15 @@ class HelidonCommandBusTest {
         assertThat(exception.getMessage()).contains(UnknownCommand.class.getName());
     }
 
-    /** 用于验证多类型处理器撞型拒绝的伴随命令。 */
+    /**
+     * 用于验证多类型处理器撞型拒绝的伴随命令。
+     */
     static class CompanionCommand implements Command {
     }
 
-    /** 用于验证未注册命令错误路径的测试命令。 */
+    /**
+     * 用于验证未注册命令错误路径的测试命令。
+     */
     static class UnknownCommand implements Command {
     }
 
@@ -118,6 +131,13 @@ class HelidonCommandBusTest {
      */
     static class OverlappingMultiTypeHandler implements CommandExecutor<Command> {
 
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>java.util.Arrays.asList(SampleCommand.class, CompanionCommand.class)</code>。</p>
+         *
+         * @return 支持的命令类型集合
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return java.util.Collections.unmodifiableSet(new java.util.LinkedHashSet<>(

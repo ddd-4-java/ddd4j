@@ -19,8 +19,18 @@ import io.ddd4j.runtime.testkit.RuntimeContract;
 import io.ddd4j.runtime.testkit.RuntimeContractAdapter;
 import io.ddd4j.runtime.testkit.RuntimeFixtures;
 
+/**
+ * 实现 <code>AbstractRuntimeContractTest</code>，供测试调用 <code>createRuntime()</code> 并观察结果。
+ */
 class Ddd4jQuarkusRuntimeTest extends AbstractRuntimeContractTest {
 
+    /**
+     * 为契约测试构造当前框架的运行实例。
+     *
+     * <p>测试夹具会调用 <code>fixtures.publisher()</code>、<code>fixtures.subjectProvider()</code>。</p>
+     *
+     * @return 待验证的运行时适配器
+     */
     @Override
     protected RuntimeContract createRuntime() {
         RuntimeFixtures fixtures = new RuntimeFixtures();

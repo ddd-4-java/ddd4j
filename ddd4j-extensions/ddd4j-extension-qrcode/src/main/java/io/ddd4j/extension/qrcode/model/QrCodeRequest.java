@@ -25,9 +25,18 @@ import org.apache.commons.lang3.StringUtils;
 @Builder
 public final class QrCodeRequest {
 
+    /**
+     * 编码到二维码中的文本内容。
+     */
     private final String content;
+    /**
+     * 在编码或绘制时使用的像素宽度。
+     */
     @Builder.Default
     private final int width = 300;
+    /**
+     * 在编码或绘制时使用的像素高度。
+     */
     @Builder.Default
     private final int height = 300;
 
@@ -35,8 +44,8 @@ public final class QrCodeRequest {
      * 创建指定内容与尺寸的二维码请求。
      *
      * @param content 二维码内容
-     * @param width 图像宽度
-     * @param height 图像高度
+     * @param width   图像宽度
+     * @param height  图像高度
      */
     public QrCodeRequest(String content, int width, int height) {
         if (StringUtils.isBlank(content)) {

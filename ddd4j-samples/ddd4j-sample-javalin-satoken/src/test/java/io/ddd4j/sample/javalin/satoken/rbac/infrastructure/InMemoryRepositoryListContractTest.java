@@ -19,6 +19,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class InMemoryRepositoryListContractTest {
 
+    /**
+     * 验证<code>repository.findAll().size()</code> 等于 <code>1</code>。
+     */
     @Test
     void roleQueriesReturnDetachedMutableLists() {
         InMemoryRoleRepository repository = new InMemoryRoleRepository();
@@ -30,6 +33,9 @@ class InMemoryRepositoryListContractTest {
         assertEquals(1, repository.findAll().size());
     }
 
+    /**
+     * 验证<code>repository.findAll().size()</code> 等于 <code>1</code>，<code>repository.findByStatus(User.Status.ENABLED).size()</code> 等于 <code>1</code>。
+     */
     @Test
     void userQueriesReturnDetachedMutableLists() {
         InMemoryUserRepository repository = new InMemoryUserRepository();
@@ -44,6 +50,9 @@ class InMemoryRepositoryListContractTest {
         assertEquals(1, repository.findByStatus(User.Status.ENABLED).size());
     }
 
+    /**
+     * 验证<code>repository.findAll().size()</code> 等于 <code>1</code>，<code>repository.findByModule("order").size()</code> 等于 <code>1</code>。
+     */
     @Test
     void permissionQueriesReturnDetachedMutableLists() {
         InMemoryPermissionRepository repository = new InMemoryPermissionRepository();

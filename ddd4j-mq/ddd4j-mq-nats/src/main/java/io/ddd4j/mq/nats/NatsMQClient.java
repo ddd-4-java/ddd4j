@@ -17,12 +17,12 @@ package io.ddd4j.mq.nats;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
+import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
 import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.MessageHeaders;
-import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import io.ddd4j.mq.util.TagMatcher;
 import io.nats.client.*;
 import io.nats.client.impl.Headers;
@@ -49,9 +49,21 @@ import java.util.function.Consumer;
 @Slf4j(topic = "### DDD4J-MQ : NatsMQClient ###")
 public class NatsMQClient implements MQClient {
 
+    /**
+     * 当前消息代理客户端使用的连接和订阅配置。
+     */
     private final NatsProperties properties;
+    /**
+     * 用于延迟创建并复用代理连接的引用。
+     */
     private final AtomicReference<Connection> connectionRef = new AtomicReference<>();
+    /**
+     * 协调消息客户端启动、初始化和关闭的生命周期。
+     */
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    /**
+     * 组件的启动状态和启动失败诊断信息。
+     */
     private final MQStartupStatus startupStatus = new MQStartupStatus("nats");
 
     /**
@@ -75,6 +87,11 @@ public class NatsMQClient implements MQClient {
         this.properties = Objects.requireNonNull(properties, "properties");
     }
 
+    /**
+     * 等待 NATS 连接中的待处理操作排空，并处理原生客户端抛出的异常。
+     *
+     * @param connection 待释放或等待完成的原生连接
+     */
     private static void drainConnection(Connection connection) {
         try {
             connection.drain(Duration.ofSeconds(5)).get();
@@ -83,6 +100,11 @@ public class NatsMQClient implements MQClient {
         }
     }
 
+    /**
+     * 关闭原生代理连接，并处理原生客户端抛出的异常。
+     *
+     * @param connection 待释放或等待完成的原生连接
+     */
     private static void closeConnection(Connection connection) {
         try {
             connection.close();
@@ -92,6 +114,12 @@ public class NatsMQClient implements MQClient {
         }
     }
 
+    /**
+     * 从 DDD4J 事件组装 NATS 传输侧消息头。
+     *
+     * @param event 当前发布或待补齐元数据的 DDD4J 消息事件
+     * @return 发送给 NATS 的头字段集合
+     */
     static Headers messageHeaders(MQEvent event) {
         Headers headers = new Headers();
         for (Map.Entry<String, String> header : event.headerMap().entrySet()) {
@@ -103,6 +131,12 @@ public class NatsMQClient implements MQClient {
         return headers;
     }
 
+    /**
+     * 优先从原生消息的标准头读取消息标识，缺少时回退到兼容头。
+     *
+     * @param headers 消息随协议附带的头字段
+     * @return 用于后续消费确认的业务消息标识，头均缺失时为空
+     */
     static String messageId(Headers headers) {
         if (Objects.isNull(headers)) {
             return null;
@@ -115,12 +149,24 @@ public class NatsMQClient implements MQClient {
 
     // ========================= 生产者 =========================
 
+    /**
+     * 在成功取到原生业务标识时将其恢复到事件。
+     *
+     * @param event     当前发布或待补齐元数据的 DDD4J 消息事件
+     * @param messageId 从原生代理消息解析出的标识
+     */
     private static void restoreMessageId(MQEvent event, String messageId) {
         if (StrKit.isNotEmpty(messageId)) {
             event.setMsgId(messageId);
         }
     }
 
+    /**
+     * 将原生消息的关联标识和因果标识恢复到领域消息。
+     *
+     * @param event   当前发布或待补齐元数据的 DDD4J 消息事件
+     * @param headers 消息随协议附带的头字段
+     */
     private static void restoreCausality(MQEvent event, Headers headers) {
         if (Objects.isNull(headers)) {
             return;
@@ -137,11 +183,21 @@ public class NatsMQClient implements MQClient {
 
     // ========================= 消费者 =========================
 
+    /**
+     * 返回此消息适配器在 DDD4J 中登记的实现名。
+     *
+     * @return 实际返回<code>"nats"</code>，供调用方取得当前值
+     */
     @Override
     public String impl() {
         return "nats";
     }
 
+    /**
+     * 返回管理连接、生产者和消费者资源的生命周期对象。
+     *
+     * @return 当前消息适配器用于登记和关闭资源的生命周期对象
+     */
     @Override
     public MQClientLifecycle lifecycle() {
         return lifecycle;
@@ -149,6 +205,11 @@ public class NatsMQClient implements MQClient {
 
     // ========================= 连接管理 =========================
 
+    /**
+     * 返回消息客户端当前记录的启动状态。
+     *
+     * @return 当前消息适配器记录的启动状态
+     */
     @Override
     public MQStartupStatus startupStatus() {
         return startupStatus;
@@ -156,12 +217,22 @@ public class NatsMQClient implements MQClient {
 
     /**
      * NATS 无原生 broker-side tag selector，仅 subject 通配 → 强制应用层 {@link TagMatcher} 过滤。
+     *
+     * @return 当前代理是否支持按标签过滤
      */
     @Override
     public boolean supportsBrokerTagFilter() {
         return false;
     }
 
+    /**
+     * 准备消息生产者并返回可发布事件的入口。
+     *
+     * <p>此实现调用 <code>connection()</code>。</p>
+     *
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 接收待发布事件的函数
+     */
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         Connection conn = connection();
@@ -189,6 +260,16 @@ public class NatsMQClient implements MQClient {
         };
     }
 
+    /**
+     * 为监听器建立消息消费所需的订阅和客户端资源。
+     *
+     * <p>此实现调用 <code>connection()</code>。</p>
+     *
+     * @param listener     监听器定义
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 此实现返回<code>true</code>
+     * @throws Exception 当前框架、存储或底层客户端无法完成此操作时
+     */
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         Connection conn = connection();
@@ -223,6 +304,12 @@ public class NatsMQClient implements MQClient {
         return true;
     }
 
+    /**
+     * 解码 NATS 消息、恢复消息元数据并转交当前监听器。
+     *
+     * @param natsMessage 由 NATS 原生订阅回调交付的消息
+     * @param listener    当前代理订阅对应的 DDD4J 消息监听器
+     */
     private void onMessage(Message natsMessage, MQListener listener) {
         try {
             String payload = new String(natsMessage.getData(), StandardCharsets.UTF_8);
@@ -265,6 +352,11 @@ public class NatsMQClient implements MQClient {
         }
     }
 
+    /**
+     * 取得当前适配器使用的原生连接或客户端，缺少实例时建立连接。
+     *
+     * @return 供发布或消费操作使用的原生连接或客户端
+     */
     private synchronized Connection connection() {
         Connection c = connectionRef.get();
         if (Objects.isNull(c)) {
@@ -277,6 +369,9 @@ public class NatsMQClient implements MQClient {
         return c;
     }
 
+    /**
+     * 释放消息客户端拥有的运行资源，并在退出时登记组件已停止。
+     */
     @Override
     public void close() {
         try {

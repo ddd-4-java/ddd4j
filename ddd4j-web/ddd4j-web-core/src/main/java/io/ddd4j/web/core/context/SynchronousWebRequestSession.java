@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.web.core.context;
-import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
 
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator.Authentication;
@@ -29,11 +28,30 @@ import java.util.Optional;
  */
 public final class SynchronousWebRequestSession implements AutoCloseable {
 
+    /**
+     * 当前 HTTP 请求解析后用于跨层传递的上下文。
+     */
     private final WebRequestContext requestContext;
+    /**
+     * 当前请求获得的 DDD4J 线程上下文作用域。
+     */
     private final WebContextScope contextScope;
+    /**
+     * 当前请求取得的幂等处理作用域。
+     */
     private final Optional<WebIdempotencyLifecycle.Scope> idempotencyScope;
+    /**
+     * 当前实例是否已关闭。
+     */
     private boolean closed;
 
+    /**
+     * 保存同步请求的上下文以及结束时要清理的相关作用域。
+     *
+     * @param requestContext   当前 HTTP 请求已经解析的 DDD4J 上下文
+     * @param contextScope     管理当前线程请求资源的作用域
+     * @param idempotencyScope 当前请求获取的可选幂等作用域
+     */
     private SynchronousWebRequestSession(WebRequestContext requestContext, WebContextScope contextScope,
                                          Optional<WebIdempotencyLifecycle.Scope> idempotencyScope) {
         this.requestContext = requestContext;
@@ -44,10 +62,10 @@ public final class SynchronousWebRequestSession implements AutoCloseable {
     /**
      * 打开同步请求会话，完成上下文绑定、认证和幂等租约获取。
      *
-     * @param requestContext 请求上下文
-     * @param requestLifecycle 请求认证生命周期
+     * @param requestContext       请求上下文
+     * @param requestLifecycle     请求认证生命周期
      * @param idempotencyLifecycle 幂等生命周期；可为空
-     * @param idempotencyKey 幂等键
+     * @param idempotencyKey       幂等键
      * @return 已打开的请求会话
      */
     public static SynchronousWebRequestSession open(WebRequestContext requestContext,
@@ -95,6 +113,11 @@ public final class SynchronousWebRequestSession implements AutoCloseable {
         }
     }
 
+    /**
+     * 结束当前组件持有的资源。
+     *
+     * <p>此实现调用 <code>contextScope.close()</code>。</p>
+     */
     @Override
     public void close() {
         if (closed) {

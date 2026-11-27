@@ -4,22 +4,29 @@ import cn.dev33.satoken.stp.StpUtil;
 import io.ddd4j.annotation.api.RawResponse;
 import io.ddd4j.core.subject.SubjectProvider;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
-/** 演示账号登录入口；认证会话、令牌校验与注销由原生 Sa-Token 管理。 */
+/**
+ * 演示账号登录入口；认证会话、令牌校验与注销由原生 Sa-Token 管理。
+ */
 @RestController
 public class AuthenticationController {
+    /**
+     * 解析请求认证主体的提供器或管理其注册生命周期的作用域。
+     */
     private final SubjectProvider subjects;
+
     /**
      * @param subjects 外部 Boot 装配的实际 Sa-Token 主体适配器
      */
     public AuthenticationController(SubjectProvider subjects) {
         this.subjects = subjects;
     }
+
     /**
      * @param username 演示账号
      * @param password 演示密码
@@ -34,6 +41,7 @@ public class AuthenticationController {
         StpUtil.login(username);
         return StpUtil.getTokenValue();
     }
+
     /**
      * @return 当前已认证主体标识
      */
@@ -42,6 +50,7 @@ public class AuthenticationController {
     public String me() {
         return subjects.getSubject().getLoginIdAsString();
     }
+
     /**
      * @return 注销结果
      */

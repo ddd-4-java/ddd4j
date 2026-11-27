@@ -22,16 +22,28 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+/**
+ * 验证 <code>Ddd4jTenantRequestContextContract</code> 在 <code>sharesTenantAndRestoresNestedScopes</code>、<code>removesTemporaryTenant</code> 等场景中的行为。
+ */
 class Ddd4jTenantRequestContextContractTest {
 
+    /**
+     * 用于检查当前请求上下文是否保留或已清除的标记。
+     */
     private static final String REQUEST_MARKER = Ddd4jTenantRequestContextContractTest.class.getName();
 
+    /**
+     * 测试后依次移除<code>ThreadContext</code>。
+     */
     @AfterEach
     void restoreRequestContext() {
         ThreadContext.remove(ContextConstants.TENANT_ID);
         ThreadContext.remove(REQUEST_MARKER);
     }
 
+    /**
+     * 验证<code>first.getCurrentTenantId()</code> 等于 <code>"request-tenant"</code>，<code>second.getCurrentTenantId()</code> 等于 <code>"request-tenant"</code>，<code>first.getCurrentTenantId()</code> 等于 <code>"outer-tenant"</code>。
+     */
     @Test
     void sharesTenantAndRestoresNestedScopesWithoutClearingRequestData() {
         Ddd4jTenantContext first = new Ddd4jTenantContext();
@@ -57,6 +69,9 @@ class Ddd4jTenantRequestContextContractTest {
         assertEquals("existing-request", ThreadContext.get(REQUEST_MARKER));
     }
 
+    /**
+     * 验证<code>ThreadContext.get(ContextConstants.TENANT_ID)</code> 等于 <code>"temporary-tenant"</code>，<code>ThreadContext.get(ContextConstants.TENANT_ID)</code>为空。
+     */
     @Test
     void removesTemporaryTenantWhenRequestStartedWithoutOne() {
         Ddd4jTenantContext context = new Ddd4jTenantContext();

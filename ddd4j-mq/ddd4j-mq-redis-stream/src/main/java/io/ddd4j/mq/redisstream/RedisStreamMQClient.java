@@ -72,7 +72,13 @@ import java.util.stream.Collectors;
 @Slf4j(topic = "### DDD4J-MQ : redisStreamMQClient ###")
 public class RedisStreamMQClient implements MQClient {
 
+    /**
+     * 运行 Redis Stream 订阅读取循环的执行器集合。
+     */
     private final List<ExecutorService> consumerExecutors = new CopyOnWriteArrayList<>();
+    /**
+     * 注册工作循环时由当前适配器拥有的消费者连接。
+     */
     private final List<UnifiedJedis> ownedConsumerClients = new CopyOnWriteArrayList<>();
 
     /**
@@ -83,7 +89,13 @@ public class RedisStreamMQClient implements MQClient {
      * 双构造：构造方法 2 持有 properties，第一次调用时 lazy 构造 Jedis。
      */
     private final RedisStreamMQProperties properties;
+    /**
+     * 协调消息客户端启动、初始化和关闭的生命周期。
+     */
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    /**
+     * 组件的启动状态和启动失败诊断信息。
+     */
     private final MQStartupStatus startupStatus = new MQStartupStatus("redisStream");
     /**
      * lazy 构造的 Jedis（volatile 保证发布可见性）。
@@ -110,11 +122,23 @@ public class RedisStreamMQClient implements MQClient {
         this.properties = properties;
     }
 
+    /**
+     * 检查 Redis Stream 读取结果是否包含至少一条消息。
+     *
+     * @param messages Redis 返回的按 Stream 分组的读取结果
+     * @return 存在可处理条目时返回 true
+     */
     private static boolean hasEntries(List<Map.Entry<String, List<StreamEntry>>> messages) {
         return Objects.nonNull(messages) && messages.stream()
                 .anyMatch(entry -> Objects.nonNull(entry.getValue()) && !entry.getValue().isEmpty());
     }
 
+    /**
+     * 优先从原生消息的标准头读取消息标识，缺少时回退到兼容头。
+     *
+     * @param fields 当前 Redis Stream 条目的字段映射
+     * @return 用于后续消费确认的业务消息标识，头均缺失时为空
+     */
     static String messageId(Map<String, String> fields) {
         String messageId = fields.get(MessageHeaders.HEADER_MESSAGE_ID);
         return StrKit.isNotEmpty(messageId)
@@ -124,6 +148,8 @@ public class RedisStreamMQClient implements MQClient {
 
     /**
      * 获取当前实例使用的 Jedis 客户端（注入优先，否则 lazy 构造）。
+     *
+     * @return 当前适配器使用的 Jedis 客户端
      */
     private UnifiedJedis jedis() {
         if (Objects.nonNull(injectedJedis)) {
@@ -144,11 +170,21 @@ public class RedisStreamMQClient implements MQClient {
         return j;
     }
 
+    /**
+     * 返回此消息适配器在 DDD4J 中登记的实现名。
+     *
+     * @return 实际返回<code>"redisStream"</code>，供调用方取得当前值
+     */
     @Override
     public String impl() {
         return "redisStream";
     }
 
+    /**
+     * 返回管理连接、生产者和消费者资源的生命周期对象。
+     *
+     * @return 当前消息适配器用于登记和关闭资源的生命周期对象
+     */
     @Override
     public MQClientLifecycle lifecycle() {
         return lifecycle;
@@ -156,6 +192,11 @@ public class RedisStreamMQClient implements MQClient {
 
     // ========================= 生产者 =========================
 
+    /**
+     * 返回消息客户端当前记录的启动状态。
+     *
+     * @return 当前消息适配器记录的启动状态
+     */
     @Override
     public MQStartupStatus startupStatus() {
         return startupStatus;
@@ -165,12 +206,20 @@ public class RedisStreamMQClient implements MQClient {
 
     /**
      * Redis Stream 默认拼接符 {@code :}（Redis 命名习惯）。
+     *
+     * @return 默认的流名称连接字符串
      */
     @Override
     public String defaultConcat() {
         return ":";
     }
 
+    /**
+     * 准备消息生产者并返回可发布事件的入口。
+     *
+     * @param properties MQ 配置
+     * @return 接收待发布事件的函数
+     */
     @Override
     public Consumer<MQEvent> initProducer(MQProperties properties) {
         return mqEvent -> {
@@ -192,6 +241,16 @@ public class RedisStreamMQClient implements MQClient {
         };
     }
 
+    /**
+     * 为监听器建立消息消费所需的订阅和客户端资源。
+     *
+     * <p>此实现调用 <code>streamProperties.getConsumerName()</code>。</p>
+     *
+     * @param listener   监听器定义
+     * @param properties MQ 配置
+     * @return 消费者完成注册时为真
+     * @throws Exception 当前框架、存储或底层客户端无法完成此操作时
+     */
     @Override
     public boolean initConsumer(MQListener listener, MQProperties properties) throws Exception {
         RedisStreamMQProperties streamProperties = this.properties;
@@ -351,6 +410,9 @@ public class RedisStreamMQClient implements MQClient {
         return true;
     }
 
+    /**
+     * 释放消息客户端拥有的运行资源，并在退出时登记组件已停止。
+     */
     @Override
     public void close() {
         try {

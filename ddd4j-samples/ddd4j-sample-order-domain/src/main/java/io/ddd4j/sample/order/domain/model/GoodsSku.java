@@ -71,6 +71,15 @@ public class GoodsSku implements Entity<Long> {
      */
     Integer deleted;
 
+    /**
+     * 创建不限库存的可售商品规格。
+     *
+     * @param tenant    租户编号
+     * @param code      业务编号
+     * @param name      业务名称
+     * @param priceCent 销售单价，单位为分
+     * @return 新的规格实体
+     */
     public static GoodsSku unlimited(String tenant, String code, String name, Long priceCent) {
         GoodsSpu.requireText(code, 64);
         GoodsSpu.requireText(name, 256);
@@ -81,6 +90,11 @@ public class GoodsSku implements Entity<Long> {
                 .salePriceCent(priceCent).stockMode("UNLIMITED").build();
     }
 
+    /**
+     * 读取<code>id</code>提供给调用方。
+     *
+     * @return 实际返回<code>id</code>，供调用方取得当前值
+     */
     @Override
     public Long id() {
         return id;

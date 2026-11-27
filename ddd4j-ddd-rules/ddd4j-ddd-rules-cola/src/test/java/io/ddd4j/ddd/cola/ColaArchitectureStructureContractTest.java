@@ -31,9 +31,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class ColaArchitectureStructureContractTest {
 
+    /**
+     * JUnit 为本次测试分配的临时目录。
+     */
     @TempDir
     Path temporary;
 
+    /**
+     * 验证 COLA 目录结构说明与约定文本逐行一致，并且末尾不含换行。
+     */
     @Test
     void expectedStructureHasExactTextWithoutTrailingLineBreak() {
         String description = new ColaArchitectureChecker("example").getExpectedStructure();
@@ -59,6 +65,11 @@ class ColaArchitectureStructureContractTest {
                 "    └── common/"), description);
     }
 
+    /**
+     * 构造缺少分层目录的 COLA 项目并核对违规项顺序。
+     *
+     * @throws Exception 创建测试目录或读取扫描结果失败
+     */
     @Test
     void missingLayerViolationsFollowDocumentedLayerOrder() throws Exception {
         Files.createDirectories(temporary.resolve("example"));

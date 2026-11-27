@@ -25,6 +25,12 @@ import lombok.Getter;
 @Builder
 public final class QrCodeBatchItem {
 
+    /**
+     * 关联批量请求项和对应生成结果的调用方标识。
+     */
     private final String itemId;
+    /**
+     * 当前批量项目要执行的二维码生成命令。
+     */
     private final GenerateQrCodeCommand command;
 }

@@ -53,16 +53,40 @@ import java.util.Objects;
 @Priority(Priorities.AUTHENTICATION)
 public class SaTokenRequestFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
+    /**
+     * 记录进入认证过滤器之前线程绑定的请求属性键。
+     */
     private static final String PREVIOUS = SaTokenRequestFilter.class.getName() + ".previous";
+    /**
+     * 从认证请求头提取令牌时识别的协议前缀。
+     */
     private static final String BEARER_PREFIX = "Bearer ";
 
+    /**
+     * 读取已匹配 JAX-RS 资源和方法的注解信息。
+     */
     @Context
     ResourceInfo resourceInfo;
 
+    /**
+     * 从当前被检查元素读取同类鉴权注解。
+     *
+     * @param <A>     当前示例所使用的数据或框架类型
+     * @param element 当前被检查注解的资源方法或类
+     * @param type    需要查找的原生鉴权注解类型
+     * @return 类型匹配的注解，缺少时为空
+     */
     private static <A extends java.lang.annotation.Annotation> A getAnnotation(AnnotatedElement element, Class<A> type) {
         return Objects.nonNull(element) ? element.getAnnotation(type) : null;
     }
 
+    /**
+     * 将认证失败状态和说明组装为示例错误响应。
+     *
+     * @param status  商品状态条件文本
+     * @param message 供调用方诊断拒绝原因的响应正文
+     * @return 当前请求的错误 HTTP 响应
+     */
     private static Response failure(Response.Status status, String message) {
         return Response.status(status)
                 .type(MediaType.APPLICATION_JSON_TYPE)
@@ -70,6 +94,12 @@ public class SaTokenRequestFilter implements ContainerRequestFilter, ContainerRe
                 .build();
     }
 
+    /**
+     * 在 JAX-RS 调用资源方法之前装配并验证当前原生认证上下文。
+     *
+     * @param requestContext 当前 JAX-RS 请求上下文
+     * @throws IOException 装配示例或处理当前 HTTP 请求失败
+     */
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
         var context = SaManager.getSaTokenContext();
@@ -120,6 +150,13 @@ public class SaTokenRequestFilter implements ContainerRequestFilter, ContainerRe
         }
     }
 
+    /**
+     * 在 JAX-RS 生成响应后清理当前请求的原生认证绑定。
+     *
+     * @param requestContext  当前 JAX-RS 请求上下文
+     * @param responseContext 当前 JAX-RS 响应上下文
+     * @throws IOException 装配示例或处理当前 HTTP 请求失败
+     */
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
         Runnable cleanup = (Runnable) requestContext.getProperty(PREVIOUS + ".cleanup");
@@ -128,6 +165,11 @@ public class SaTokenRequestFilter implements ContainerRequestFilter, ContainerRe
         }
     }
 
+    /**
+     * 按已匹配资源的认证、角色和权限注解执行访问检查。
+     *
+     * @return 未通过授权时用于终止请求的响应
+     */
     private Response authorize() {
         Class<?> resourceClass = resourceInfo.getResourceClass();
         if (Objects.nonNull(resourceClass) && CatalogTradeResource.class.isAssignableFrom(resourceClass)) {
@@ -161,6 +203,12 @@ public class SaTokenRequestFilter implements ContainerRequestFilter, ContainerRe
         return null;
     }
 
+    /**
+     * 按原生注解的匹配模式检查当前账号角色。
+     *
+     * @param check 原生 Sa-Token 角色或权限注解
+     * @return 角色要求满足时返回 true
+     */
     private boolean matchesRoles(SaCheckRole check) {
         List<String> roles = Arrays.asList(check.value());
         if (roles.isEmpty()) {
@@ -171,6 +219,12 @@ public class SaTokenRequestFilter implements ContainerRequestFilter, ContainerRe
                 : roles.stream().anyMatch(StpUtil::hasRole);
     }
 
+    /**
+     * 按原生注解的匹配模式检查当前账号权限。
+     *
+     * @param check 原生 Sa-Token 角色或权限注解
+     * @return 权限要求满足时返回 true
+     */
     private boolean matchesPermissions(SaCheckPermission check) {
         List<String> permissions = Arrays.asList(check.value());
         if (permissions.isEmpty()) {
@@ -181,6 +235,13 @@ public class SaTokenRequestFilter implements ContainerRequestFilter, ContainerRe
                 : permissions.stream().anyMatch(StpUtil::hasPermission);
     }
 
+    /**
+     * 在匹配到的资源方法和类上查找指定鉴权注解。
+     *
+     * @param <A>  当前示例所使用的数据或框架类型
+     * @param type 需要查找的原生鉴权注解类型
+     * @return 匹配到的鉴权注解，没有声明时为空
+     */
     private <A extends java.lang.annotation.Annotation> A findAnnotation(Class<A> type) {
         A methodAnnotation = getAnnotation(resourceInfo.getResourceMethod(), type);
         return Objects.nonNull(methodAnnotation)

@@ -45,6 +45,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 @Testcontainers(disabledWithoutDocker = true)
 class EsdbEventStoreIT {
+    /**
+     * 为当前集成测试提供隔离服务的容器。
+     */
     @Container
     static final GenericContainer<?> ESDB = new GenericContainer<>(DockerImageName.parse("eventstore/eventstore:24.10.0-bookworm-slim"))
             .withExposedPorts(2113)
@@ -59,10 +62,22 @@ class EsdbEventStoreIT {
             .waitingFor(Wait.forHttp("/health/live").forPort(2113)
                     .forStatusCodeMatching(status -> status >= 200 && status < 300))
             .withStartupTimeout(Duration.ofMinutes(2));
+    /**
+     * 测试事件流中使用的聚合类型名称。
+     */
     private static final String ORDER_TYPE = "Order";
+    /**
+     * 发送与接收测试请求的客户端。
+     */
     private static EventStoreDBClient client;
+    /**
+     * 保存测试数据的内存存储。
+     */
     private EventStore store;
 
+    /**
+     * 测试前依次初始化<code>client</code>。
+     */
     @BeforeAll
     static void createClient() {
         client = EventStoreDBClient.create(EventStoreDBConnectionString.parseOrThrow(
@@ -70,16 +85,25 @@ class EsdbEventStoreIT {
                         + "?tls=false&maxDiscoverAttempts=3"));
     }
 
+    /**
+     * 测试后依次关闭<code>client</code>。
+     */
     @AfterAll
     static void closeClient() {
         if (client != null) client.shutdown();
     }
 
+    /**
+     * 测试前依次初始化<code>store</code>。
+     */
     @BeforeEach
     void setUp() {
         store = new EsdbEventStore(client, "it-" + System.nanoTime() + "-");
     }
 
+    /**
+     * 验证<code>event.aggregateType()</code> 等于 <code>ORDER_TYPE</code>。
+     */
     @Test
     void appendReadRangeAndGlobalReadFollowStrongContract() {
         TestId id = new TestId("order-1");
@@ -90,6 +114,9 @@ class EsdbEventStoreIT {
         assertThat(store.readAll(0, 10)).allSatisfy(event -> assertThat(event.aggregateType()).isEqualTo(ORDER_TYPE));
     }
 
+    /**
+     * 验证<code>store.append(ORDER_TYPE, id, List.of(new TestEvent(id)), 0)</code> 抛出 <code>AggregateVersionConflictException.class</code>，<code>conflict.expectedVersion()</code> 等于 <code>0L</code>，<code>conflict.actualVersion()</code> 等于 <code>1L</code>。
+     */
     @Test
     void staleVersionRejectsWithoutPartialWrites() {
         TestId id = new TestId("order-conflict");
@@ -105,6 +132,9 @@ class EsdbEventStoreIT {
         assertThat(store.read(ORDER_TYPE, id)).extracting(StoredEvent::version).containsExactly(1L);
     }
 
+    /**
+     * 验证<code>events</code> 的大小为 <code>2</code>，<code>events.get(0).correlationId()</code>为空，<code>events.get(1).causationId()</code> 等于 <code>root.getEventId()</code>。
+     */
     @Test
     void causalityMetadataRoundTripsThroughEventStoreDb() {
         TestId id = new TestId("order-causality");
@@ -126,8 +156,17 @@ class EsdbEventStoreIT {
      */
     final static class TestId implements AggregateRootId {
 
+        /**
+         * Java 序列化使用的版本标识。
+         */
         private static final long serialVersionUID = 0L;
+        /**
+         * 测试聚合注册和反序列化所用的实体类型标识。
+         */
         private static final EntityType TYPE = new StringEntityType("Order");
+        /**
+         * 用于组成测试标识的原始值。
+         */
         private final String value;
 
         /**
@@ -170,11 +209,24 @@ class EsdbEventStoreIT {
             return TYPE.asString() + ":" + value;
         }
 
+        /**
+         * 读取<code>value</code> 字段。
+         *
+         * @return <code>value</code> 字段
+         */
         @JsonProperty("value")
         public String value() {
             return value;
         }
 
+        /**
+         * 根据<code>value</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -187,6 +239,11 @@ class EsdbEventStoreIT {
             return Objects.equals(this.value, other.value);
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 0;
@@ -194,6 +251,11 @@ class EsdbEventStoreIT {
             return result;
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>value</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "TestId[value=" + value + "]";
@@ -207,14 +269,28 @@ class EsdbEventStoreIT {
      * @since 3.0.x
      */
     static final class TestEvent extends DomainEvent<TestId> {
+        /**
+         * 使用 <code>super()</code> 初始化 <code>TestEvent</code> 测试夹具。
+         */
         TestEvent() {
             super();
         }
 
+        /**
+         * 使用 <code>super()</code> 初始化 <code>TestEvent</code> 测试夹具。
+         *
+         * @param id 当前要查找的测试记录标识
+         */
         TestEvent(TestId id) {
             super(new EntityIdPath(id));
         }
 
+        /**
+         * 使用 <code>super()</code> 初始化 <code>TestEvent</code> 测试夹具。
+         *
+         * @param id        当前要查找的测试记录标识
+         * @param respondTo 用于初始化 <code>TestEvent</code> 的 <code>DomainEvent&lt;TestId&gt;</code> 值
+         */
         TestEvent(TestId id, DomainEvent<TestId> respondTo) {
             super(new EntityIdPath(id), respondTo);
         }

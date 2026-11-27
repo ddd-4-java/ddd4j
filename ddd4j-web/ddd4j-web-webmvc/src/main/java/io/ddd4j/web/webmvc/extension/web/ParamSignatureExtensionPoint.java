@@ -34,7 +34,7 @@ public interface ParamSignatureExtensionPoint extends ExtensionPoint {
      * 计算请求参数签名。
      *
      * @param request HTTP 请求
-     * @param params 请求参数
+     * @param params  请求参数
      * @throws PluginRuntimeException 插件处理失败时抛出
      */
     void sign(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException;

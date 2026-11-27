@@ -11,6 +11,9 @@ import java.util.Objects;
  */
 public class Ddd4jTenantContext {
 
+    /**
+     * 上游 ORM 增强组件提供的租户上下文委托。
+     */
     private final TenantContext delegate = new TenantContext() {
         @Override
         public Object getCurrentTenantId() {
@@ -82,8 +85,16 @@ public class Ddd4jTenantContext {
      */
     public static final class Scope implements AutoCloseable {
 
+        /**
+         * 上游租户作用域，关闭时恢复进入前的租户状态。
+         */
         private final com.baomidou.mybatisplus.enhance.context.TenantContext.Scope delegateScope;
 
+        /**
+         * 包装上游租户作用域以便随 DDD4J 上下文关闭。
+         *
+         * @param scope 上游 ORM 租户上下文作用域
+         */
         private Scope(com.baomidou.mybatisplus.enhance.context.TenantContext.Scope scope) {
             this.delegateScope = scope;
         }

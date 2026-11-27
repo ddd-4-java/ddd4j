@@ -43,17 +43,34 @@ import java.util.Objects;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class QuarkusCommandBus implements CommandBus {
 
+    /**
+     * 框架容器中需要登记到命令总线的执行器。
+     */
     @Inject
     Instance<CommandExecutor<?>> executors;
 
+    /**
+     * 用 CDI 收集的执行器装配的共享命令总线。
+     */
     private volatile DefaultCommandBus delegate = createDelegate(List.of());
 
+    /**
+     * 在应用启动后收集 CDI 执行器，并创建共享命令总线。
+     *
+     * @param event 当前框架生命周期或容器启动事件
+     */
     void onStart(@Observes @jakarta.annotation.Priority(900) StartupEvent event) {
         List<CommandExecutor<?>> snapshot = new java.util.ArrayList<>();
         executors.forEach(snapshot::add);
         delegate = createDelegate(snapshot);
     }
 
+    /**
+     * 根据 CDI 快照装配共享命令总线。
+     *
+     * @param snapshot 从 CDI 容器取得的执行器快照
+     * @return 绑定当前执行器的共享命令总线
+     */
     private DefaultCommandBus createDelegate(Collection<CommandExecutor<?>> snapshot) {
         return new DefaultCommandBus(snapshot) {
             @Override

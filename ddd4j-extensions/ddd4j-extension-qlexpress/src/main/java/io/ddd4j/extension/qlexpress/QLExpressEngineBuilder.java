@@ -31,11 +31,29 @@ import java.util.Objects;
  */
 public final class QLExpressEngineBuilder {
 
+    /**
+     * 构造引擎前按插入顺序登记的具名函数。
+     */
     private final Map<String, NamedQLFunction> functions = new LinkedHashMap<>();
+    /**
+     * 是否注册框架提供的内置表达式函数。
+     */
     private boolean builtInFunctions = true;
+    /**
+     * 初始化表达式执行器时是否允许访问非公开成员。
+     */
     private boolean allowPrivateAccess;
+    /**
+     * 初始化执行器时是否开启表达式跟踪。
+     */
     private boolean traceExpression;
+    /**
+     * 控制表达式可访问对象和行为的引擎安全策略。
+     */
     private QLSecurityStrategy securityStrategy = QLSecurityStrategy.isolation();
+    /**
+     * 调用方未提供执行选项时采用的默认配置。
+     */
     private QLExpressExecutionOptions defaultExecutionOptions = QLExpressExecutionOptions.defaults();
 
     /**

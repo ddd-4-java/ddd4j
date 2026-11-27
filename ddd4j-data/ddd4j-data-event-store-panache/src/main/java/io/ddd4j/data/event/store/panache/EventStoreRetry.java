@@ -29,7 +29,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * <p>检测范围（按顺序短路）：
  * <ol>
  *   <li>{@link IllegalStateException}（乐观锁版本冲突）— 立即抛，不重试</li>
- *   <li>{@link PersistenceException} 嵌套 {@link ConstraintViolationException} 或 {@link SQLException}</li>
+ *   <li>{@link PersistenceException} 嵌套 {@link org.hibernate.exception.ConstraintViolationException} 或 {@link SQLException}</li>
  *   <li>任何 cause 链中的 {@link SQLIntegrityConstraintViolationException}</li>
  *   <li>消息含 "uk_position"/"unique constraint"/"duplicate key"/"duplicate entry" 的 SQLException</li>
  * </ol>
@@ -40,17 +40,45 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 final class EventStoreRetry {
 
+    /**
+     * 重试策略允许执行操作的默认最大次数。
+     */
     static final int DEFAULT_MAX_ATTEMPTS = 5;
+    /**
+     * 指数退避及随机抖动使用的基准毫秒数。
+     */
     static final long BASE_DELAY_MILLIS = 10L;
+    /**
+     * 用于记录事件存储重试和失败的日志记录器。
+     */
     private static final Logger LOG = LoggerFactory.getLogger(EventStoreRetry.class);
+    /**
+     * 当前策略允许执行一次事件写入的最多尝试次数。
+     */
     private final int maxAttempts;
+    /**
+     * 重试相邻尝试之间的基础延时，单位为毫秒。
+     */
     private final long baseDelayMillis;
+    /**
+     * 在两次重试之间执行等待的函数。
+     */
     private final Sleeper sleeper;
 
+    /**
+     * 以默认尝试次数、退避配置和线程等待行为装配重试策略。
+     */
     EventStoreRetry() {
         this(DEFAULT_MAX_ATTEMPTS, BASE_DELAY_MILLIS, Thread::sleep);
     }
 
+    /**
+     * 按给定次数和等待策略创建事件追加重试逻辑。
+     *
+     * @param maxAttempts     操作最多允许尝试的次数
+     * @param baseDelayMillis 计算退避的基础毫秒数
+     * @param sleeper         执行重试等待的组件
+     */
     EventStoreRetry(int maxAttempts, long baseDelayMillis, Sleeper sleeper) {
         if (maxAttempts < 1) {
             throw new IllegalArgumentException("maxAttempts must be >= 1");
@@ -66,6 +94,9 @@ final class EventStoreRetry {
     /**
      * 拆包 checked 异常：如果异常本身是 RuntimeException 或 Error 直接返回；否则包装。
      * 包装时优先保留 cause（用于 isRetriable 遍历 cause 链）。
+     *
+     * @param raw 底层操作抛出的原始异常
+     * @return 解包后的运行时异常，必要时包装原异常
      */
     private static RuntimeException unwrapToRuntime(Exception raw) {
         if (raw instanceof RuntimeException) {
@@ -74,6 +105,12 @@ final class EventStoreRetry {
         return new RuntimeException(raw);
     }
 
+    /**
+     * 将按尝试次数增长的指数退避与随机抖动相加。
+     *
+     * @param attempt 当前执行失败后用于计算退避的尝试编号，从 1 开始
+     * @return 下次尝试前等待的毫秒数
+     */
     static long computeDelay(int attempt) {
         long expDelay = BASE_DELAY_MILLIS << (attempt - 1);
         long jitter = ThreadLocalRandom.current().nextLong(BASE_DELAY_MILLIS + 1);
@@ -82,6 +119,9 @@ final class EventStoreRetry {
 
     /**
      * 判定异常是否为可重试的 {@code uk_position} 冲突。
+     *
+     * @param t 检查是否可重试的异常
+     * @return 异常链包含允许重试的异常时返回 true
      */
     static boolean isRetriable(Throwable t) {
         if (t == null) {
@@ -121,6 +161,13 @@ final class EventStoreRetry {
         return false;
     }
 
+    /**
+     * 沿异常因果链查找指定类型。
+     *
+     * @param t      要检查的异常或其异常链入口
+     * @param target 要匹配的异常类型
+     * @return 存在匹配的异常时返回 true
+     */
     private static boolean containsCause(Throwable t, Class<? extends Throwable> target) {
         Throwable current = t;
         while (current != null) {
@@ -142,6 +189,10 @@ final class EventStoreRetry {
      * Hibernate 唯一约束冲突时由 JPA {@code PersistenceException} 包装，但模块的
      * compile classpath 不含 hibernate-core（在 test scope）。运行时的 hibernate-core
      * 来自 {@code quarkus-hibernate-orm-panache} 传递依赖。
+     *
+     * @param t               异常链起点
+     * @param simpleClassName 待匹配的异常简单类名
+     * @return 异常链包含指定简单类名时返回 true
      */
     private static boolean containsCauseByName(Throwable t, String simpleClassName) {
         Throwable current = t;
@@ -194,13 +245,30 @@ final class EventStoreRetry {
         throw lastException != null ? lastException : new IllegalStateException("unreachable");
     }
 
+    /**
+     * 表示一次可能抛出异常、由事件存储重试逻辑调用的操作。
+     */
     @FunctionalInterface
     interface RetryableAction {
+        /**
+         * 执行一次需要纳入事件存储重试策略的写入。
+         *
+         * @throws Exception 本次事件写入操作失败
+         */
         void run() throws Exception;
     }
 
+    /**
+     * 抽象事件存储两次重试之间的等待，便于测试替换。
+     */
     @FunctionalInterface
     interface Sleeper {
+        /**
+         * 在两次写入尝试之间等待给定时长。
+         *
+         * @param millis 等待毫秒数
+         * @throws InterruptedException 等待期间线程被中断
+         */
         void sleep(long millis) throws InterruptedException;
     }
 }

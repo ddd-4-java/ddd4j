@@ -34,17 +34,50 @@ import java.util.stream.Collectors;
 @Setter
 public class Ddd4jQuarkusWebConfiguration {
 
+    /**
+     * Quarkus Web 访问相关配置前缀。
+     */
     private static final String PREFIX = "ddd4j.web.";
+    /**
+     * 兼容旧 Quarkus 鉴权配置的属性前缀。
+     */
     private static final String LEGACY_PREFIX = "ddd4j.quarkus.web.";
 
+    /**
+     * 跳过默认认证拦截的公开路径配置。
+     */
     private List<String> publicPaths = new ArrayList<>(java.util.Arrays.asList("/health", "/q/health/**"));
+    /**
+     * 未单独配置路径时采用的默认鉴权模式。
+     */
     private AuthenticationMode defaultAuthenticationMode = AuthenticationMode.REQUIRED;
+    /**
+     * 是否已经配置新的统一 Web 访问策略。
+     */
     private boolean standardAccessConfigured;
+    /**
+     * 兼容配置是否要求携带 Bearer 令牌。
+     */
     private boolean legacyBearerRequired;
+    /**
+     * 旧版配置中启用认证的路径前缀。
+     */
     private String legacyProtectedPathPrefix = "/";
+    /**
+     * 是否允许用反向代理转发头解析客户端地址。
+     */
     private boolean trustForwardedHeaders;
+    /**
+     * 是否给匹配路由启用幂等防护。
+     */
     private boolean idempotencyEnabled = true;
+    /**
+     * 幂等检查查找的本地缓存注册名。
+     */
     private String idempotencyCacheName = "ddd4j-web-idempotency";
+    /**
+     * 幂等条目在缓存中的存活时间配置。
+     */
     private Duration idempotencyTtl = Duration.ofMinutes(5);
 
     /**

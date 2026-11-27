@@ -48,31 +48,61 @@ import java.util.Set;
 @ApplicationScoped
 public class ShiroRuntimeConfig {
 
+    /**
+     * 读取和保存用户的仓储。
+     */
     @Inject
     InMemoryUserRepository userRepository;
 
+    /**
+     * 读取和保存角色的仓储。
+     */
     @Inject
     InMemoryRoleRepository roleRepository;
 
+    /**
+     * 安装当前认证管理器前存在的原实例。
+     */
     private SecurityManager previous;
+    /**
+     * 由当前示例安装的原生安全管理器。
+     */
     private DefaultSecurityManager owned;
 
+    /**
+     * 读取进程目前登记的 Shiro 安全管理器。
+     *
+     * @return 当前 Shiro 安全管理器
+     */
     private static SecurityManager processManager() {
         // Shiro 的公开 getter 会优先返回线程绑定；这里只读取 setter 修改的静态槽。
         return (SecurityManager) ReflectUtil.getStaticFieldValue(Objects.requireNonNull(
                 ReflectUtil.getField(SecurityUtils.class, "securityManager")));
     }
 
+    /**
+     * 在 Quarkus 应用启动时装配并登记 Shiro 安全管理器。
+     *
+     * @param event 启动、停止或请求处理期间的框架事件
+     */
     void onStart(@Observes StartupEvent event) {
         previous = processManager();
         owned = new DefaultSecurityManager(new RbacRealm(userRepository, roleRepository));
         SecurityUtils.setSecurityManager(owned);
     }
 
+    /**
+     * 在 Quarkus 应用停止时撤销本示例拥有的 Shiro 注册。
+     *
+     * @param event 启动、停止或请求处理期间的框架事件
+     */
     void onStop(@Observes ShutdownEvent event) {
         destroy();
     }
 
+    /**
+     * 清理当前示例拥有的安全管理器并恢复旧管理器。
+     */
     @PreDestroy
     void destroy() {
         DefaultSecurityManager current = owned;
@@ -89,17 +119,38 @@ public class ShiroRuntimeConfig {
         }
     }
 
+    /**
+     * 根据示例账号、角色和权限配置执行 Shiro 认证与授权。
+     */
     private static final class RbacRealm extends AuthorizingRealm {
 
+        /**
+         * 读取和保存用户的仓储。
+         */
         private final InMemoryUserRepository userRepository;
+        /**
+         * 读取和保存角色的仓储。
+         */
         private final InMemoryRoleRepository roleRepository;
 
+        /**
+         * 用给定值初始化 <code>RbacRealm</code> 实例。
+         *
+         * @param userRepository 读取和保存用户的仓储
+         * @param roleRepository 读取和保存角色的仓储
+         */
         private RbacRealm(InMemoryUserRepository userRepository, InMemoryRoleRepository roleRepository) {
             this.userRepository = userRepository;
             this.roleRepository = roleRepository;
             setName("ddd4j-quarkus-rbac");
         }
 
+        /**
+         * 查找当前主体对应的角色和权限并返回给 Shiro。
+         *
+         * @param principals 当前 Shiro 会话中已认证的身份信息
+         * @return 用于角色和权限检查的授权信息
+         */
         @Override
         protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
             String userId = String.valueOf(principals.getPrimaryPrincipal());
@@ -115,6 +166,13 @@ public class ShiroRuntimeConfig {
             return authorization;
         }
 
+        /**
+         * 根据提交的凭据创建 Shiro 可校验的认证信息。
+         *
+         * @param token 由 Shiro 传入用于认证的原生登录令牌
+         * @return 与示例账号对应的认证信息
+         * @throws AuthenticationException 装配示例或处理当前 HTTP 请求失败
+         */
         @Override
         protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
             var user = userRepository.findById(String.valueOf(token.getPrincipal()))

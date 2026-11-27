@@ -32,16 +32,25 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class HttpSpanTest {
 
+    /**
+     * 测试执行前执行 <code>OpenTelemetrySdkSetter.set()</code>、<code>OpenTelemetry.noop()</code> 完成资源准备。
+     */
     @BeforeEach
     void setUp() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
     }
 
+    /**
+     * 测试结束后执行 <code>OpenTelemetrySdkSetter.set()</code>、<code>OpenTelemetry.noop()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void tearDown() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
     }
 
+    /**
+     * 验证<code>span</code>非空，<code>span.getSpanContext().isValid()</code>为假。
+     */
     @Test
     void serverSpan_shouldReturnInvalidWhenOtelNotAvailable() {
         Span span = HttpSpan.serverSpan("GET", "/api/users", io.opentelemetry.context.Context.current());
@@ -49,12 +58,18 @@ class HttpSpanTest {
         assertThat(span.getSpanContext().isValid()).isFalse();
     }
 
+    /**
+     * 验证<code>ctx</code>非空。
+     */
     @Test
     void extractContext_withNullHeaders_shouldReturnCurrentContext() {
         io.opentelemetry.context.Context ctx = HttpSpan.extractContext(null);
         assertThat(ctx).isNotNull();
     }
 
+    /**
+     * 验证<code>ctx</code>非空。
+     */
     @Test
     void extractContext_withEmptyHeaders_shouldReturnCurrentContext() {
         Map<String, String> headers = new HashMap<>();
@@ -62,6 +77,9 @@ class HttpSpanTest {
         assertThat(ctx).isNotNull();
     }
 
+    /**
+     * 验证<code>ctx</code>非空。
+     */
     @Test
     void extractContext_withTraceparent_shouldNotThrow() {
         Map<String, String> headers = new HashMap<>();
@@ -71,6 +89,9 @@ class HttpSpanTest {
         assertThat(ctx).isNotNull();
     }
 
+    /**
+     * 验证<code>true</code>为真。
+     */
     @Test
     void endServerSpan_withNullSpan_shouldNotThrow() {
         HttpSpan.endServerSpan(null, 200);
@@ -78,30 +99,45 @@ class HttpSpanTest {
         assertThat(true).isTrue();
     }
 
+    /**
+     * 验证<code>true</code>为真。
+     */
     @Test
     void endServerSpan_withInvalidSpan_shouldNotThrow() {
         HttpSpan.endServerSpan(Span.getInvalid(), 404);
         assertThat(true).isTrue();
     }
 
+    /**
+     * 验证<code>true</code>为真。
+     */
     @Test
     void recordError_withNullSpan_shouldNotThrow() {
         HttpSpan.recordError(null, new RuntimeException("test"));
         assertThat(true).isTrue();
     }
 
+    /**
+     * 验证<code>true</code>为真。
+     */
     @Test
     void recordError_withNullThrowable_shouldNotThrow() {
         HttpSpan.recordError(Span.getInvalid(), null);
         assertThat(true).isTrue();
     }
 
+    /**
+     * 验证<code>true</code>为真。
+     */
     @Test
     void injectContext_withNullHeaders_shouldNotThrow() {
         HttpSpan.injectContext(null);
         assertThat(true).isTrue();
     }
 
+    /**
+     * 验证<code>headers</code>非空。
+     */
     @Test
     void injectContext_withEmptyHeaders_shouldNotThrow() {
         Map<String, String> headers = new HashMap<>();
@@ -109,6 +145,9 @@ class HttpSpanTest {
         assertThat(headers).isNotNull();
     }
 
+    /**
+     * 验证<code>scope</code>非空。
+     */
     @Test
     void makeCurrent_withInvalidSpan_shouldReturnNoopScope() {
         io.opentelemetry.context.Scope scope = HttpSpan.makeCurrent(Span.getInvalid());
@@ -116,6 +155,9 @@ class HttpSpanTest {
         scope.close();
     }
 
+    /**
+     * 验证<code>scope</code>非空。
+     */
     @Test
     void makeCurrent_withNullSpan_shouldReturnNoopScope() {
         io.opentelemetry.context.Scope scope = HttpSpan.makeCurrent(null);
@@ -123,6 +165,9 @@ class HttpSpanTest {
         scope.close();
     }
 
+    /**
+     * 验证<code>HttpSpan.ATTR_HTTP_METHOD.getKey()</code> 等于 <code>"http.request.method"</code>，<code>HttpSpan.ATTR_HTTP_ROUTE.getKey()</code> 等于 <code>"http.route"</code>，<code>HttpSpan.ATTR_DDD4J_TENANT_ID.getKey()</code> 等于 <code>"ddd4j.tenant.id"</code>。
+     */
     @Test
     void attributeKeys_shouldHaveCorrectNames() {
         assertThat(HttpSpan.ATTR_HTTP_METHOD.getKey()).isEqualTo("http.request.method");

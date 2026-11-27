@@ -14,8 +14,8 @@
  */
 package io.ddd4j.web.webmvc.core;
 
-import io.ddd4j.core.api.R;
 import io.ddd4j.core.api.ApiCode;
+import io.ddd4j.core.api.R;
 import io.ddd4j.core.exception.AuthenticationException;
 import io.ddd4j.core.exception.AuthorizationException;
 import io.ddd4j.core.exception.BizRuntimeException;
@@ -27,10 +27,10 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -51,10 +51,11 @@ public class GlobalRestExceptionAdvice {
 
     /**
      * 处理参数绑定异常。
-     * @return 标准错误响应
+     *
      * @param request HTTP 请求
-     * @param model 视图模型
-     * @param e 捕获的异常
+     * @param model   视图模型
+     * @param e       捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({BindException.class})
     public R<String> bindException(HttpServletRequest request, Model model, BindException e) {
@@ -66,9 +67,10 @@ public class GlobalRestExceptionAdvice {
 
     /**
      * 处理参数校验异常。
-     * @return 标准错误响应
+     *
      * @param request HTTP 请求
-     * @param e 捕获的异常
+     * @param e       捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({ValidateException.class})
     public R<String> validatorException(HttpServletRequest request, ValidateException e) {
@@ -79,9 +81,10 @@ public class GlobalRestExceptionAdvice {
 
     /**
      * 处理方法参数无效异常。
-     * @return 标准错误响应
+     *
      * @param request HTTP 请求
-     * @param e 捕获的异常
+     * @param e       捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public R<String> methodArgumentNotValidExceptionHandler(HttpServletRequest request, MethodArgumentNotValidException e) {
@@ -93,9 +96,10 @@ public class GlobalRestExceptionAdvice {
 
     /**
      * 处理 404 地址未找到异常。
-     * @return 标准错误响应
+     *
      * @param request HTTP 请求
-     * @param e 捕获的异常
+     * @param e       捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler(NoHandlerFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -128,9 +132,10 @@ public class GlobalRestExceptionAdvice {
 
     /**
      * 处理业务运行时异常。
-     * @return 标准错误响应
+     *
      * @param request HTTP 请求
-     * @param e 捕获的异常
+     * @param e       捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({BizRuntimeException.class})
     public R<String> serviceException(HttpServletRequest request, BizRuntimeException e) {
@@ -140,9 +145,10 @@ public class GlobalRestExceptionAdvice {
 
     /**
      * 处理空指针异常。
-     * @return 标准错误响应
+     *
      * @param request HTTP 请求
-     * @param e 捕获的异常
+     * @param e       捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({NullPointerException.class})
     public R<String> nullPointerException(HttpServletRequest request, NullPointerException e) {
@@ -153,9 +159,10 @@ public class GlobalRestExceptionAdvice {
 
     /**
      * 处理通用运行时异常。
-     * @return 标准错误响应
+     *
      * @param request HTTP 请求
-     * @param e 捕获的异常
+     * @param e       捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({RuntimeException.class})
     public R<String> runTimeException(HttpServletRequest request, RuntimeException e) {

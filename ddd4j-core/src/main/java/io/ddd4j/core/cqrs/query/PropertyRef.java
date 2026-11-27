@@ -34,6 +34,9 @@ import java.util.Objects;
  */
 public final class PropertyRef implements Serializable {
 
+    /**
+     * Java 序列化版本标识。
+     */
     private static final long serialVersionUID = -3906849612189306727L;
 
     /**
@@ -100,6 +103,14 @@ public final class PropertyRef implements Serializable {
         return new PropertyRef(PropertySpace.PERSISTENCE, ownerType, LambdaKit.resolve(function));
     }
 
+    /**
+     * 构造属性声明类型与当前查询作用域不兼容的错误。
+     *
+     * @param space        领域或持久化属性空间
+     * @param ownerType    属性声明所在的 Java 类型
+     * @param expectedType 当前作用域接受的类型
+     * @return 描述属性类型不兼容的参数异常
+     */
     private static IllegalArgumentException incompatible(PropertySpace space, Class<?> ownerType,
                                                          Class<?> expectedType) {
         return new IllegalArgumentException("Query " + space + " property owner " + ownerType.getName()
@@ -214,6 +225,14 @@ public final class PropertyRef implements Serializable {
         }
     }
 
+    /**
+     * 根据<code>space</code>、<code>ownerType</code>、<code>property</code>比较对象的值是否相等。
+     *
+     * <p>只比较运行时类型相同的对象。</p>
+     *
+     * @param obj 用来比较或转换的输入对象
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -228,6 +247,11 @@ public final class PropertyRef implements Serializable {
                 && Objects.equals(property, other.property);
     }
 
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         int result = 0;
@@ -237,6 +261,11 @@ public final class PropertyRef implements Serializable {
         return result;
     }
 
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>space</code>、<code>ownerType</code>、<code>property</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "PropertyRef[space=" + space + ", ownerType=" + ownerType + ", property=" + property + "]";

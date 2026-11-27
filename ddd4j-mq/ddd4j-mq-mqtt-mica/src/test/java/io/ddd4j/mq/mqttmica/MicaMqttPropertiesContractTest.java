@@ -24,6 +24,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class MicaMqttPropertiesContractTest {
 
+    /**
+     * 验证<code>properties.mqttQoS()</code> 等于 <code>MqttQoS.QOS1</code>，<code>properties.mqttQoS()</code> 等于 <code>MqttQoS.QOS0</code>，<code>properties.mqttQoS()</code> 等于 <code>MqttQoS.QOS2</code>。
+     */
     @Test
     void qosMapsKnownValuesAndFallsBackToLevelOne() {
         MicaMqttProperties properties = new MicaMqttProperties();
@@ -36,6 +39,9 @@ class MicaMqttPropertiesContractTest {
         assertEquals(MqttQoS.QOS1, properties.mqttQoS());
     }
 
+    /**
+     * 验证<code>first.startsWith("orders-")</code>为真，<code>second.startsWith("orders-")</code>为真，<code>properties.newClientId().startsWith("ddd4j-mica-")</code>为真。
+     */
     @Test
     void clientIdUsesConfiguredPrefixAndRemainsUnique() {
         MicaMqttProperties properties = new MicaMqttProperties();

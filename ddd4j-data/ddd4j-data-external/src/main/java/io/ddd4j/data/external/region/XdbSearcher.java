@@ -28,6 +28,9 @@ public final class XdbSearcher {
      */
     public static final RegionAddress NOT_MATCH_REGION_ADDRESS = new RegionAddress(NOT_MATCH.split("\\|"));
 
+    /**
+     * 限制调用方直接创建 <code>XdbSearcher</code> 实例。
+     */
     private XdbSearcher() {
     }
 }

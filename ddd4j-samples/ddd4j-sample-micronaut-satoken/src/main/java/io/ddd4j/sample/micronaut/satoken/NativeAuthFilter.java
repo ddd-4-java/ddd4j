@@ -19,6 +19,9 @@ import io.micronaut.web.router.RouteAttributes;
 @ServerFilter("/**")
 @Order(-100)
 public final class NativeAuthFilter {
+    /**
+     * 解析请求认证主体的提供器或管理其注册生命周期的作用域。
+     */
     private final SubjectProvider subjects;
 
     /**

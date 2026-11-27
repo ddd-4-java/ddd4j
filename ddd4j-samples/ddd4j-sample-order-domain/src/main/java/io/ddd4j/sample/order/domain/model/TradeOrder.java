@@ -1,6 +1,10 @@
 package io.ddd4j.sample.order.domain.model;
 
 import io.ddd4j.core.ddd.model.AggregateRoot;
+import io.ddd4j.sample.order.domain.event.TradeOrderCancelled;
+import io.ddd4j.sample.order.domain.event.TradeOrderFulfilled;
+import io.ddd4j.sample.order.domain.event.TradeOrderPaymentConfirmed;
+import io.ddd4j.sample.order.domain.exception.TradeOrderStateConflict;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -9,9 +13,6 @@ import lombok.Value;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import io.ddd4j.sample.order.domain.event.TradeOrderPaymentConfirmed;
-import io.ddd4j.sample.order.domain.event.TradeOrderCancelled;
-import io.ddd4j.sample.order.domain.event.TradeOrderFulfilled;
 
 /**
  * 订单聚合，保留成交时的金额和明细。
@@ -100,10 +101,19 @@ public class TradeOrder extends AggregateRoot<Long> {
      * 逻辑删除：0 正常，1 已删除。
      */
     private Integer deleted;
+    /**
+     * 订单持有的明细快照。
+     */
     private List<TradeOrderItem> items;
 
     /**
      * 下单金额由成交明细计算，状态由交易聚合初始化。
+     *
+     * @param tenant  租户编号
+     * @param orderNo 租户内订单编号
+     * @param shopId  门店主键
+     * @param items   订单明细快照
+     * @return 新建的待支付订单
      */
     public static TradeOrder place(String tenant, String orderNo, long shopId, List<TradeOrderItem> items) {
         GoodsSpu.requireText(tenant, 32);
@@ -125,51 +135,31 @@ public class TradeOrder extends AggregateRoot<Long> {
     }
 
     /**
-     * 确认支付金额。相同支付事实的重复确认复用已保存状态。
+     * 从已持久化数据恢复聚合，保留表结构允许的历史空值。
+     *
+     * @param id                   数据库主键
+     * @param tenantId             租户编号
+     * @param orderNo              租户内订单编号
+     * @param orderKind            订单类型
+     * @param fulfillmentMode      履约方式
+     * @param shopId               门店主键
+     * @param buyerId              买家编号
+     * @param orderState           订单状态
+     * @param fulfillmentState     履约状态
+     * @param refundState          退款状态
+     * @param placedTime           下单时间
+     * @param paidTime             支付时间
+     * @param grossAmountCent      订单总额，单位为分
+     * @param merchantDiscountCent 商家优惠，单位为分
+     * @param paidAmountCent       实付金额，单位为分
+     * @param createdBy            创建者编号
+     * @param createdTime          创建时间
+     * @param updatedBy            最近更新者编号
+     * @param updatedTime          最近更新时间
+     * @param deleted              逻辑删除标记
+     * @param items                订单明细快照
+     * @return 恢复的订单聚合
      */
-    public TradeOrder confirmPayment(long amountCent, LocalDateTime paidAt) {
-        if ("CONFIRMED".equals(orderState) && Objects.equals(paidAmountCent, amountCent)) {
-            return this;
-        }
-        long discount = Objects.requireNonNullElse(merchantDiscountCent, 0L);
-        if (!"AWAITING_PAYMENT".equals(orderState) || Objects.isNull(grossAmountCent)
-                || discount > grossAmountCent || amountCent != grossAmountCent - discount) {
-            throw new TradeOrderStateConflict("订单状态或支付金额与待支付交易不符");
-        }
-        TradeOrder confirmed = toBuilder().orderState("CONFIRMED").paidAmountCent(amountCent)
-                .paidTime(Objects.requireNonNull(paidAt, "支付时间")).build();
-        confirmed.registerEvent(new TradeOrderPaymentConfirmed(tenantId, id, orderNo, paidAt, amountCent));
-        return confirmed;
-    }
-
-    public TradeOrder cancel() {
-        if ("CANCELLED".equals(orderState)) {
-            return this;
-        }
-        if ("FULFILLED".equals(fulfillmentState) || !("AWAITING_PAYMENT".equals(orderState)
-                || "CREATED".equals(orderState) || "CONFIRMED".equals(orderState))) {
-            throw new TradeOrderStateConflict("当前订单不可取消");
-        }
-        String refund = "CONFIRMED".equals(orderState) && Objects.nonNull(paidAmountCent) && paidAmountCent > 0
-                ? "PROCESSING" : refundState;
-        TradeOrder cancelled = toBuilder().orderState("CANCELLED").refundState(refund).build();
-        cancelled.registerEvent(new TradeOrderCancelled(tenantId, id, orderNo));
-        return cancelled;
-    }
-
-    public TradeOrder fulfill() {
-        if ("CONFIRMED".equals(orderState) && "FULFILLED".equals(fulfillmentState)) {
-            return this;
-        }
-        if (!"CONFIRMED".equals(orderState) || !("PENDING".equals(fulfillmentState) || "PARTIAL".equals(fulfillmentState))) {
-            throw new TradeOrderStateConflict("当前订单不可确认履约");
-        }
-        TradeOrder fulfilled = toBuilder().fulfillmentState("FULFILLED").build();
-        fulfilled.registerEvent(new TradeOrderFulfilled(tenantId, id, orderNo));
-        return fulfilled;
-    }
-
-    /** 从已持久化数据恢复聚合，保留表结构允许的历史空值。 */
     public static TradeOrder restore(
             Long id, String tenantId, String orderNo,
             String orderKind, String fulfillmentMode, Long shopId,
@@ -194,6 +184,70 @@ public class TradeOrder extends AggregateRoot<Long> {
                 .build();
     }
 
+    /**
+     * 确认支付金额。相同支付事实的重复确认复用已保存状态。
+     *
+     * @param amountCent 支付金额，单位为分
+     * @param paidAt     支付时间
+     * @return 支付确认后的订单
+     */
+    public TradeOrder confirmPayment(long amountCent, LocalDateTime paidAt) {
+        if ("CONFIRMED".equals(orderState) && Objects.equals(paidAmountCent, amountCent)) {
+            return this;
+        }
+        long discount = Objects.requireNonNullElse(merchantDiscountCent, 0L);
+        if (!"AWAITING_PAYMENT".equals(orderState) || Objects.isNull(grossAmountCent)
+                || discount > grossAmountCent || amountCent != grossAmountCent - discount) {
+            throw new TradeOrderStateConflict("订单状态或支付金额与待支付交易不符");
+        }
+        TradeOrder confirmed = toBuilder().orderState("CONFIRMED").paidAmountCent(amountCent)
+                .paidTime(Objects.requireNonNull(paidAt, "支付时间")).build();
+        confirmed.registerEvent(new TradeOrderPaymentConfirmed(tenantId, id, orderNo, paidAt, amountCent));
+        return confirmed;
+    }
+
+    /**
+     * 取消仍可取消的订单。
+     *
+     * @return 取消后的订单
+     */
+    public TradeOrder cancel() {
+        if ("CANCELLED".equals(orderState)) {
+            return this;
+        }
+        if ("FULFILLED".equals(fulfillmentState) || !("AWAITING_PAYMENT".equals(orderState)
+                || "CREATED".equals(orderState) || "CONFIRMED".equals(orderState))) {
+            throw new TradeOrderStateConflict("当前订单不可取消");
+        }
+        String refund = "CONFIRMED".equals(orderState) && Objects.nonNull(paidAmountCent) && paidAmountCent > 0
+                ? "PROCESSING" : refundState;
+        TradeOrder cancelled = toBuilder().orderState("CANCELLED").refundState(refund).build();
+        cancelled.registerEvent(new TradeOrderCancelled(tenantId, id, orderNo));
+        return cancelled;
+    }
+
+    /**
+     * 登记已确认订单的履约结果。
+     *
+     * @return 履约后的订单
+     */
+    public TradeOrder fulfill() {
+        if ("CONFIRMED".equals(orderState) && "FULFILLED".equals(fulfillmentState)) {
+            return this;
+        }
+        if (!"CONFIRMED".equals(orderState) || !("PENDING".equals(fulfillmentState) || "PARTIAL".equals(fulfillmentState))) {
+            throw new TradeOrderStateConflict("当前订单不可确认履约");
+        }
+        TradeOrder fulfilled = toBuilder().fulfillmentState("FULFILLED").build();
+        fulfilled.registerEvent(new TradeOrderFulfilled(tenantId, id, orderNo));
+        return fulfilled;
+    }
+
+    /**
+     * 读取<code>id</code>提供给调用方。
+     *
+     * @return 实际返回<code>id</code>，供调用方取得当前值
+     */
     @Override
     public Long id() {
         return id;

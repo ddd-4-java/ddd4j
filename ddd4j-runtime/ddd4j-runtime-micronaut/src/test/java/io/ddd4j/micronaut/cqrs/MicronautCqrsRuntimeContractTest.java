@@ -38,8 +38,17 @@ import static org.junit.jupiter.api.Assertions.*;
  * Micronaut 真实原生容器与共享命令、视图契约；持久恢复另以当前 JAR 探针验证。
  */
 class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
+    /**
+     * 用来复现启动中途失败或未完成的测试配置。
+     */
     private static final String PARTIAL_START = "r14.micronaut.partial-start";
 
+    /**
+     * 构造 <code>ProjectionView&lt;Object&gt;</code> 作为当前测试的输入或结果。
+     *
+     * @param name 当前测试指定的对象或属性名称
+     * @return 提供给后续契约断言的 <code>ProjectionView&lt;Object&gt;</code> 结果
+     */
     private static ProjectionView<Object> unscheduledView(String name) {
         return new ProjectionView<Object>() {
             @Override
@@ -64,6 +73,9 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         };
     }
 
+    /**
+     * 验证<code>context.containsBean(CommandRegistry.class)</code>为真，<code>context.getBean(CommandBus.class).getClass()</code> 等于 <code>MicronautCommandBus.class</code>，<code>context.containsBean(ViewScheduler.class)</code>为假。
+     */
     @Test
     void nativeBasicContextUsesSnapshotBusAndNoProjection() {
         try (ApplicationContext context = ApplicationContext.run()) {
@@ -76,6 +88,9 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /**
+     * 验证<code>BaseContext.get(SpiKeys.COMMAND_BUS, CommandBus.class).orElseThrow()</code> 等于 <code>context.getBean(CommandBus.class)</code>，<code>BaseContext.get(SpiKeys.COMMAND_BUS, CommandBus.class).orElseThrow()</code> 等于 <code>prior</code>。
+     */
     @Test
     void nativeContextCloseRestoresPriorSpi() {
         CommandBus prior = new DefaultCommandBus(List.of());
@@ -90,6 +105,9 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /**
+     * 验证<code>context.getBeansOfType(CommandBus.class).size()</code> 等于 <code>1</code>，<code>bus.execute(new NativeCommand()).data().orElseThrow()</code> 等于 <code>"native"</code>，<code>bus.execute(new NativeCommand())</code> 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void generatedHandlerDiscoveryPreservesSnapshotAndFailureIdentity() {
         try (ApplicationContext context = ApplicationContext.run(Map.of("r09.command", true))) {
@@ -118,6 +136,9 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，<code>failure.getMessage().contains(NativeCommand.class.getName())</code>为真。
+     */
     @Test
     void generatedHandlerDiscoveryRejectsOverlappingCommands() {
         try (ApplicationContext context = ApplicationContext.run(Map.of("r09.command", true))) {
@@ -141,6 +162,9 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>RuntimeException.class</code>。
+     */
     @Test
     void explicitProjectionWithoutDependenciesFailsAtNativeStartup() {
         ApplicationContext context = ApplicationContext.builder()
@@ -152,6 +176,9 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>RuntimeException.class</code>，<code>failure.getMessage().contains("durable positions")</code>为真。
+     */
     @Test
     void explicitProjectionRejectsMemoryAndNoopBeforeScheduling() {
         ApplicationContext context = ApplicationContext.builder()
@@ -166,6 +193,9 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>Throwable.class</code>，<code>failure</code> 与…为同一实例 <code>startup</code>，<code>startup.getSuppressed()[0]</code> 与…为同一实例 <code>firstCancel</code>。
+     */
     @Test
     void nativePartialStartupRetriesCancellationAndPreservesPriorSpi() {
         CommandBus prior = new DefaultCommandBus(Collections.emptyList());
@@ -233,6 +263,9 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /**
+     * 验证<code>MicronautProjectionScheduler.CronExpression.parse("0 0 0 1 1 *").next(from)</code> 等于 <code>LocalDateTime.of(2027, 1, 1, 0, 0)</code>，<code>MicronautProjectionScheduler.CronExpression.parse("0 0 0 ? * *")</code> 抛出 <code>IllegalArgumentException.class</code>，<code>MicronautProjectionScheduler.CronExpression.parse("0/0 * * * * *")</code> 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void sharedCronRetainsNumericGrammarAndFindsAnnualSchedule() {
         LocalDateTime from = LocalDateTime.of(2026, 2, 1, 0, 0);
@@ -244,6 +277,9 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
                 () -> MicronautProjectionScheduler.CronExpression.parse("0/0 * * * * *"));
     }
 
+    /**
+     * 在测试框架中执行 <code>TimeZone.getDefault()</code>、<code>TimeZone.setDefault()</code>、<code>TimeZone.getTimeZone()</code>，验证该场景。
+     */
     @Test
     void cronRetainsLegacyLocalWallTimeAtDstGap() {
         TimeZone original = TimeZone.getDefault();
@@ -257,6 +293,13 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /**
+     * 创建测试中用于操作当前框架的契约适配器。
+     *
+     * <p>测试夹具会调用 <code>ApplicationContext.builder().build()</code>、<code>ApplicationContext.builder()</code>。</p>
+     *
+     * @return CQRS 运行时契约
+     */
     @Override
     protected CqrsRuntimeContract createContract() {
         ApplicationContext context = ApplicationContext.builder().build();
@@ -303,41 +346,98 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         };
     }
 
+    /**
+     * 实现 <code>EventChunkReader</code>，供测试调用 <code>read()</code> 并观察结果。
+     */
     @Singleton
     @Requires(property = PARTIAL_START, value = "true")
     static class UnusedReader implements EventChunkReader<Object> {
+        /**
+         * 读取调用指定的数据或事件流。
+         *
+         * @param stream Redis Stream 的名称
+         * @param from   用于此操作的 <code>from</code>（<code>long</code>）
+         * @param size   用于此操作的 <code>size</code>（<code>int</code>）
+         * @param types  用于此操作的 <code>types</code>（<code>Collection&lt;String&gt;</code>）
+         * @return 事件块
+         */
         @Override
         public EventChunk<Object> read(String stream, long from, int size, Collection<String> types) {
             throw new AssertionError("failed startup must not read events");
         }
     }
 
+    /**
+     * 模拟投影位点存储并控制写入行为。
+     */
     private static final class UnusedRepository implements ProjectionPositionRepository {
+        /**
+         * 查询指定事件流的投影检查点。
+         *
+         * <p>测试夹具会调用 <code>unexpectedAccess()</code>。</p>
+         *
+         * @param streamId 投影流 ID
+         * @return 投影位置（不存在时返回 {@code Optional#empty()}）
+         */
         @Override
         public Optional<ProjectionPosition> findByStreamId(String streamId) {
             throw unexpectedAccess();
         }
 
+        /**
+         * 查询存储中符合条件的记录。
+         *
+         * <p>测试夹具会调用 <code>unexpectedAccess()</code>。</p>
+         *
+         * @return 全部投影位置
+         */
         @Override
         public List<ProjectionPosition> findAll() {
             throw unexpectedAccess();
         }
 
+        /**
+         * 写入或更新给定的领域对象或存储记录。
+         *
+         * <p>测试夹具会调用 <code>unexpectedAccess()</code>。</p>
+         *
+         * @param position 投影位置
+         * @return 持久化后的投影位置
+         */
         @Override
         public ProjectionPosition save(ProjectionPosition position) {
             throw unexpectedAccess();
         }
 
+        /**
+         * 删除指定事件流的投影检查点。
+         *
+         * <p>测试夹具会调用 <code>unexpectedAccess()</code>。</p>
+         *
+         * @param streamId 投影流 ID
+         */
         @Override
         public void deleteByStreamId(String streamId) {
             throw unexpectedAccess();
         }
 
+        /**
+         * 将指定流的投影检查点重置为零。
+         *
+         * <p>测试夹具会调用 <code>unexpectedAccess()</code>。</p>
+         *
+         * @param streamId 投影流 ID
+         */
         @Override
         public void resetToZero(String streamId) {
             throw unexpectedAccess();
         }
 
+        /**
+         * 创建 <code>new AssertionError</code> 供当前测试路径调用。
+         *
+         * @return 当前测试使用的结果，取自 <code>new AssertionError("failed startup must not use projection positions")</code>
+         */
         private AssertionError unexpectedAccess() {
             return new AssertionError("failed startup must not use projection positions");
         }
@@ -361,14 +461,35 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
     @Singleton
     @Requires(property = "r09.command", value = "true")
     static class NativeExecutor implements CommandExecutor<NativeCommand> {
+        /**
+         * 当前失败路径所用或观察到的原始异常。
+         */
         final IllegalArgumentException failure = new IllegalArgumentException("handler failure");
+        /**
+         * 令当前替身在指定测试路径中返回失败。
+         */
         boolean fail;
 
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>Set.of(NativeCommand.class)</code>。</p>
+         *
+         * @return 实际返回<code>Set.of(NativeCommand.class)</code>
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Set.of(NativeCommand.class);
         }
 
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>Result.ok("native")</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>Result.ok("native")</code>
+         */
         @Override
         public Result execute(NativeCommand command) {
             if (fail) {

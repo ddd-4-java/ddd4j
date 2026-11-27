@@ -23,8 +23,14 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * 验证 <code>AsyncCleanupInterceptor</code> 在<code>invokeClearsThreadContextEven</code>等操作中的行为契约。
+ */
 class AsyncCleanupInterceptorTest {
 
+    /**
+     * 验证<code>ThreadContext.get("async-key")</code>为空。
+     */
     @Test
     void invokeClearsThreadContextAfterProceed() {
         Injector injector = Guice.createInjector(new AbstractModule() {
@@ -41,6 +47,9 @@ class AsyncCleanupInterceptorTest {
         assertNull(ThreadContext.get("async-key"));
     }
 
+    /**
+     * 验证<code>injector.getInstance(BoomWorker.class).boom()</code> 抛出 <code>IllegalStateException.class</code>，<code>ThreadContext.get("async-key")</code>为空。
+     */
     @Test
     void invokeClearsThreadContextEvenWhenProceedThrows() {
         Injector injector = Guice.createInjector(new AbstractModule() {
@@ -56,15 +65,27 @@ class AsyncCleanupInterceptorTest {
         assertNull(ThreadContext.get("async-key"));
     }
 
+    /**
+     * 提供 <code>work()</code> 等供当前测试使用的独立操作。
+     */
     public static class Worker {
 
+        /**
+         * 为异步拦截器测试提供正常结束并可被调用的方法。
+         */
         public void work() {
             assertTrue(true);
         }
     }
 
+    /**
+     * 提供 <code>boom()</code> 等供当前测试使用的独立操作。
+     */
     public static class BoomWorker {
 
+        /**
+         * 构造 <code>IllegalStateException</code> 作为当前测试的输入或结果。
+         */
         public void boom() {
             throw new IllegalStateException("boom");
         }

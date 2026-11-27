@@ -64,6 +64,7 @@ public class RocketMQProperties extends MQProperties {
      * 硬失败，直接中断 consumer 启动。默认放大到 30s 以吞下冷建连。
      */
     private int mqClientApiTimeoutMillis = 30_000;
+
     /**
      * 构造 RocketMQ 配置（各字段带默认值，可经配置绑定覆盖）。
      */

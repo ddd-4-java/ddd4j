@@ -34,6 +34,15 @@ import java.util.UUID;
  */
 public class Slf4jMDCInterceptor implements HandlerInterceptor {
 
+    /**
+     * 把请求标识和请求路径绑定到日志 MDC。
+     *
+     * @param request  当前进入调用链的 HTTP 请求
+     * @param response 当前准备写出的 HTTP 响应
+     * @param handler  MVC 当前匹配的请求处理器
+     * @return 允许请求进入后续 MVC 处理链时返回 true
+     * @throws Exception 当前框架请求处理、消息读写或参数转换失败
+     */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
@@ -54,11 +63,29 @@ public class Slf4jMDCInterceptor implements HandlerInterceptor {
         return true;
     }
 
+    /**
+     * 保留 MVC 视图渲染前仍需使用的 MDC 上下文。
+     *
+     * @param request      当前进入调用链的 HTTP 请求
+     * @param response     当前准备写出的 HTTP 响应
+     * @param handler      MVC 当前匹配的请求处理器
+     * @param modelAndView 请求处理器返回的视图及模型
+     * @throws Exception 当前框架请求处理、消息读写或参数转换失败
+     */
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
                            ModelAndView modelAndView) throws Exception {
     }
 
+    /**
+     * 清除当前请求线程上的 MDC 信息。
+     *
+     * @param request   当前进入调用链的 HTTP 请求
+     * @param response  当前准备写出的 HTTP 响应
+     * @param handler   MVC 当前匹配的请求处理器
+     * @param exception 当前请求处理时抛出的异常
+     * @throws Exception 当前框架请求处理、消息读写或参数转换失败
+     */
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
                                 Exception exception) throws Exception {

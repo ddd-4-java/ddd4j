@@ -26,6 +26,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * 真实 runtime 命令/调度适配器的契约；内存仓储仅是隔离测试夹具。
  */
 class DropwizardCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
+    /**
+     * 构造 <code>ProjectionView&lt;&gt;</code> 作为当前测试的输入或结果。
+     *
+     * @param name    当前测试指定的对象或属性名称
+     * @param cron    用于构造本次返回结果的 <code>String</code> 输入
+     * @param handler 处理当前测试请求或事件的组件
+     * @return 提供给后续契约断言的 <code>ProjectionView&lt;Object&gt;</code> 结果
+     */
     private static ProjectionView<Object> view(String name, String cron, Runnable handler) {
         return new ProjectionView<>() {
             public String getName() {
@@ -46,6 +54,13 @@ class DropwizardCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest 
         };
     }
 
+    /**
+     * 创建测试中用于操作当前框架的契约适配器。
+     *
+     * <p>测试夹具会调用 <code>List.of(new StubExecutorA(), new StubExecutorB())</code>、<code>DropwizardProjectionScheduler.create(new Environment("contract"), List.of(), runner)</code>。</p>
+     *
+     * @return CQRS 运行时契约
+     */
     @Override
     protected CqrsRuntimeContract createContract() {
         DropwizardCommandBus bus = new DropwizardCommandBus(List.of(new StubExecutorA(), new StubExecutorB()));
@@ -81,6 +96,9 @@ class DropwizardCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest 
         };
     }
 
+    /**
+     * 验证<code>bus.execute(new CmdB(1))</code> 抛出 <code>IllegalStateException.class</code>，被测调用 抛出 <code>IllegalStateException.class</code>，被测调用 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void commandSnapshotDuplicateAndHandlerFailure() {
         List<CommandExecutor<?>> candidates = new ArrayList<>(List.of(new StubExecutorA()));
@@ -102,6 +120,9 @@ class DropwizardCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest 
                 () -> new DropwizardCommandBus(List.of(executor)).execute(new CmdA("x"))));
     }
 
+    /**
+     * 验证<code>manager.isRunning()</code>为假，被测调用 抛出 <code>IllegalArgumentException.class</code>，<code>manager.getProjectionStatus("orders").nextEventNumber()</code> 等于 <code>20</code>。
+     */
     @Test
     void sourceCursorRetryAndOwnedRestartUseSharedRunner() {
         InMemoryProjectionPositionRepository positions = new InMemoryProjectionPositionRepository();
@@ -139,6 +160,9 @@ class DropwizardCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest 
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalArgumentException.class</code>，<code>second.get()</code> 等于 <code>0</code>，<code>DropwizardProjectionViewManager.create(new Environment("duplicate"), List.of(first, first), runner)</code> 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void sharedManagerKeepsRunAllFailFastAndRejectsDuplicateViews() {
         AtomicInteger second = new AtomicInteger();
@@ -156,6 +180,9 @@ class DropwizardCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest 
         manager.stop();
     }
 
+    /**
+     * 验证<code>DropwizardProjectionScheduler.CronExpression.parse("*&#47;120 * * * * *").next(from)</code> 等于 <code>from.withMinute(1).withSecond(0)</code>，<code>DropwizardProjectionScheduler.CronExpression.parse("5-7,9 * * * * *").next(from)</code> 等于 <code>from.withSecond(5)</code>，<code>DropwizardProjectionScheduler.CronExpression.parse(cron)</code> 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void numericDialectAndMillionSecondWindowRemainCompatible() {
         LocalDateTime from = LocalDateTime.of(2026, 1, 1, 0, 0, 1);
@@ -167,6 +194,11 @@ class DropwizardCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest 
         }
     }
 
+    /**
+     * 验证<code>entered.await(3, TimeUnit.SECONDS)</code>为真，<code>interrupted.await(3, TimeUnit.SECONDS)</code>为真，<code>callback.await(3, TimeUnit.SECONDS)</code>为真。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void ownedShutdownWaitsForEnteredTaskAndBorrowedSchedulerRemainsUsable() throws Exception {
         ProjectionRunner<Object> runner = new ProjectionRunner<>(new DefaultProjectionService(new InMemoryProjectionPositionRepository()), new NoopEventChunkReader<>());
@@ -214,6 +246,11 @@ class DropwizardCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest 
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>LinkageError.class</code>，<code>created.get()</code>非空，<code>manager.isRunning()</code>为假。
+     *
+     * @throws Exception 反射访问被测成员时失败
+     */
     @Test
     void ownedSchedulerTerminatesAfterSecondViewThrowsLinkageError() throws Exception {
         LinkageError failure = new LinkageError("projection linkage failure");

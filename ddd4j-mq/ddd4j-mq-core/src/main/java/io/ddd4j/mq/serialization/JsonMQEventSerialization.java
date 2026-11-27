@@ -59,6 +59,18 @@ public class JsonMQEventSerialization implements MQEventSerialization {
         return mapper;
     }
 
+    /**
+     * 从消息通道载荷还原事件。
+     *
+     * <p>此实现调用 <code>String.valueOf(src)</code>。</p>
+     *
+     * @param <S>  源类型
+     * @param <T>  目标类型
+     * @param src  原始消息体
+     * @param dist 目标类型
+     * @return 根据执行路径返回<code>null</code>、<code>DOMAIN_EVENT_OBJECT_MAPPER.readValue(text, dist)</code>
+     * @throws RuntimeException 当前操作无法正常完成时
+     */
     @Override
     public <S, T> T deserialize(S src, Class<T> dist) throws RuntimeException {
         if (Objects.isNull(src)) {
@@ -82,6 +94,16 @@ public class JsonMQEventSerialization implements MQEventSerialization {
         }
     }
 
+    /**
+     * 将传入消息编码为发布通道使用的格式。
+     *
+     * <p>此实现调用 <code>toJsonString(src)</code>。</p>
+     *
+     * @param <T> 序列化结果类型
+     * @param src 源对象
+     * @return 实际返回<code>(T)toJsonString(src)</code>
+     * @throws RuntimeException 当前操作无法正常完成时
+     */
     @Override
     @SuppressWarnings("unchecked")
     public <T> T serialize(Object src) throws RuntimeException {

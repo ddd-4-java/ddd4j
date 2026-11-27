@@ -35,25 +35,49 @@ import org.springframework.transaction.support.DefaultTransactionStatus;
  */
 class NoopTransactionManager extends AbstractPlatformTransactionManager {
 
+    /**
+     * 构造供当前测试使用的 <code>NoopTransactionManager</code> 实例。
+     */
     NoopTransactionManager() {
         // 默认 SYNCHRONIZATION_ALWAYS：begin 即初始化同步并置活动事务标志
     }
 
+    /**
+     * 创建 <code>new Object</code> 供当前测试路径调用。
+     *
+     * @return 当前测试使用的结果，取自 <code>new Object()</code>
+     */
     @Override
     protected Object doGetTransaction() {
         return new Object();
     }
 
+    /**
+     * 由 Spring 事务状态记录开始动作，不创建实际事务资源。
+     *
+     * @param transaction 当前测试事务管理器维护的事务对象
+     * @param definition  测试执行所声明的事务配置
+     */
     @Override
     protected void doBegin(Object transaction, TransactionDefinition definition) {
         // 无资源：事务状态由父类簿记，无需动作
     }
 
+    /**
+     * 结束测试占用的事务状态，无外部事务资源需要提交。
+     *
+     * @param status 当前测试事务的执行状态
+     */
     @Override
     protected void doCommit(DefaultTransactionStatus status) {
         // 无资源：提交为空操作
     }
 
+    /**
+     * 结束测试占用的事务状态，无外部事务资源需要回滚。
+     *
+     * @param status 当前测试事务的执行状态
+     */
     @Override
     protected void doRollback(DefaultTransactionStatus status) {
         // 无资源：回滚为空操作

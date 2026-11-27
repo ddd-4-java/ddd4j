@@ -15,6 +15,7 @@
 package io.ddd4j.sample.javalin;
 
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.google.common.eventbus.EventBus;
 import io.ddd4j.cache.subject.InMemorySubject;
 import io.ddd4j.cache.subject.InMemorySubjectProvider;
 import io.ddd4j.core.auth.AuthPrincipal;
@@ -25,9 +26,8 @@ import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
-import io.ddd4j.sample.javalin.spi.DefaultI18nProvider;
-import com.google.common.eventbus.EventBus;
 import io.ddd4j.guice.event.GuiceDomainEventPublisher;
+import io.ddd4j.sample.javalin.spi.DefaultI18nProvider;
 import io.ddd4j.sample.order.adapter.http.CatalogEndpoints;
 import io.ddd4j.sample.order.start.CatalogRuntime;
 import io.ddd4j.web.core.auth.AuthenticationMode;
@@ -49,6 +49,9 @@ import java.util.Objects;
 @Slf4j
 public final class JavalinSample {
 
+    /**
+     * 限制调用方直接创建 <code>JavalinSample</code> 实例。
+     */
     private JavalinSample() {
     }
 
@@ -78,6 +81,14 @@ public final class JavalinSample {
         return start(port, CatalogRuntime.start(), false);
     }
 
+    /**
+     * 装配商品交易路由并启动 Javalin，可启用内存认证演示。
+     *
+     * @param port     监听端口
+     * @param catalog  已装配的商品交易操作
+     * @param demoAuth 是否启用内存认证演示
+     * @return 持有 HTTP 服务和运行资源的应用实例
+     */
     public static JavalinApplication start(int port, CatalogEndpoints catalog, boolean demoAuth) {
         DomainEventPublisher eventPublisher = new GuiceDomainEventPublisher(new EventBus("catalog-trade"));
         String token = "";
@@ -117,6 +128,12 @@ public final class JavalinSample {
         }
     }
 
+    /**
+     * 停止 Javalin 应用并释放当前示例的组件注册。
+     *
+     * @param app      当前拥有路由的 Javalin 应用
+     * @param spiScope 持有应用所注册底层组件的作用域
+     */
     private static void stop(Javalin app, SpiRegistrationScope spiScope) {
         try (ThreadContext.Scope callerContext = ThreadContext.open();
              SpiRegistrationScope registrations = spiScope) {
@@ -131,10 +148,19 @@ public final class JavalinSample {
      */
     public final static class JavalinApplication implements AutoCloseable {
 
+        /**
+         * 当前示例拥有的 Javalin 应用。
+         */
         private final Javalin app;
 
+        /**
+         * 当前示例签发或返回客户端的会话令牌。
+         */
         private final String token;
 
+        /**
+         * 管理当前示例或测试所拥有的 SPI 注册资源。
+         */
         private final SpiRegistrationScope spiScope;
 
         /**
@@ -151,6 +177,11 @@ public final class JavalinSample {
             this.spiScope = spiScope;
         }
 
+        /**
+         * 结束当前组件持有的资源。
+         *
+         * <p>Javalin 实现调用 <code>stop(app, spiScope)</code>。</p>
+         */
         @Override
         public void close() {
             stop(app, spiScope);
@@ -177,6 +208,14 @@ public final class JavalinSample {
             return spiScope;
         }
 
+        /**
+         * 根据<code>app</code>、<code>token</code>、<code>spiScope</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -189,6 +228,11 @@ public final class JavalinSample {
             return Objects.equals(this.app, other.app) && Objects.equals(this.token, other.token) && Objects.equals(this.spiScope, other.spiScope);
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 0;
@@ -198,6 +242,11 @@ public final class JavalinSample {
             return result;
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>app</code>、<code>token</code>、<code>spiScope</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "JavalinApplication[app=" + app + ", token=[REDACTED], spiScope=" + spiScope + "]";

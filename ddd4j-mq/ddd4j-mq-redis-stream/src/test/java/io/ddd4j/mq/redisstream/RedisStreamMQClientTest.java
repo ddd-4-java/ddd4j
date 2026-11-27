@@ -49,35 +49,59 @@ import static org.mockito.Mockito.*;
  */
 class RedisStreamMQClientTest {
 
+    /**
+     * 测试 Redis 操作时注入了外部 Jedis 的客户端。
+     */
     private RedisStreamMQClient clientWithInjectedJedis;
+    /**
+     * 装配隔离测试运行环境时使用的配置属性。
+     */
     private RedisStreamMQProperties properties;
 
+    /**
+     * 根据本次调用更新 <code>properties = new RedisStreamMQProperties()</code>、<code>clientWithInjectedJedis = new RedisStreamMQClient((redis.clients.jedis.UnifiedJedis)null)</code>，用于后续测试步骤。
+     */
     @BeforeEach
     void setUp() {
         properties = new RedisStreamMQProperties();
         clientWithInjectedJedis = new RedisStreamMQClient((redis.clients.jedis.UnifiedJedis) null);
     }
 
+    /**
+     * 测试结束后执行 <code>BaseContext.clear()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void clearContext() {
         BaseContext.clear();
     }
 
+    /**
+     * 验证<code>clientWithInjectedJedis.impl()</code> 等于 <code>"redisStream"</code>。
+     */
     @Test
     void impl_shouldReturnRedisStream() {
         assertEquals("redisStream", clientWithInjectedJedis.impl());
     }
 
+    /**
+     * 验证<code>clientWithInjectedJedis.defaultConcat()</code> 等于 <code>":"</code>。
+     */
     @Test
     void defaultConcat_shouldReturnColon() {
         assertEquals(":", clientWithInjectedJedis.defaultConcat());
     }
 
+    /**
+     * 验证<code>clientWithInjectedJedis.tagHeaderKey()</code> 等于 <code>"ddd4jTag"</code>。
+     */
     @Test
     void tagHeaderKey_shouldReturnDdd4jTag() {
         assertEquals("ddd4jTag", clientWithInjectedJedis.tagHeaderKey());
     }
 
+    /**
+     * 验证<code>client</code>非空，<code>client.impl()</code> 等于 <code>"redisStream"</code>。
+     */
     @Test
     void propertiesConstructor_shouldNotThrow() {
         RedisStreamMQClient client = new RedisStreamMQClient(properties);
@@ -85,6 +109,9 @@ class RedisStreamMQClientTest {
         assertEquals("redisStream", client.impl());
     }
 
+    /**
+     * 验证<code>client</code>非空，<code>client.impl()</code> 等于 <code>"redisStream"</code>。
+     */
     @Test
     void injectedJedisConstructor_shouldNotThrow() {
         RedisStreamMQClient client = new RedisStreamMQClient((redis.clients.jedis.UnifiedJedis) null);
@@ -92,6 +119,9 @@ class RedisStreamMQClientTest {
         assertEquals("redisStream", client.impl());
     }
 
+    /**
+     * 验证<code>props</code>非空，<code>props.getNamespace()</code>非空。
+     */
     @Test
     void defaultProperties_shouldHaveSensibleValues() {
         RedisStreamMQProperties props = new RedisStreamMQProperties();
@@ -99,11 +129,17 @@ class RedisStreamMQClientTest {
         assertNotNull(props.getNamespace());
     }
 
+    /**
+     * 验证<code>properties.getNamespace()</code>非空。
+     */
     @Test
     void namespaceDefault_shouldNotBeNull() {
         assertNotNull(properties.getNamespace());
     }
 
+    /**
+     * 验证<code>RedisStreamMQClient.messageId(headers)</code> 等于 <code>"stable-id"</code>。
+     */
     @Test
     void messageId_shouldPreferStableHeaderAndReadLegacyHeader() {
         Map<String, String> headers = new HashMap<>();
@@ -114,6 +150,9 @@ class RedisStreamMQClientTest {
                 MessageHeaders.LEGACY_HEADER_MESSAGE_ID, "legacy-id")));
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>。
+     */
     @Test
     @SuppressWarnings("unchecked")
     void publish_shouldPropagateXaddFailure() {
@@ -161,6 +200,9 @@ class RedisStreamMQClientTest {
         verify(jedis, never()).close();
     }
 
+    /**
+     * 验证<code>fields.getValue().get(MQDeliveryHeaders.CORRELATION_ID)</code> 等于 <code>"correlation-1"</code>，<code>fields.getValue().get(MQDeliveryHeaders.CAUSATION_ID)</code> 等于 <code>"causation-1"</code>。
+     */
     @Test
     @SuppressWarnings("unchecked")
     void publish_shouldWriteCausalityIntoNativeStreamFields() {

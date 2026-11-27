@@ -15,6 +15,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class JdbiInitializationRetryTest {
 
+    /**
+     * 验证<code>store.readAll(0, 10)</code> 抛出 <code>RuntimeException.class</code>，<code>store.readAll(0, 10).isEmpty()</code>为真，<code>attempts.get()</code> 等于 <code>2</code>。
+     */
     @Test
     void failedSchemaCreationShouldRetryOnNextOperation() {
         Jdbi jdbi = Jdbi.create("jdbc:h2:mem:jdbi_init_retry_" + System.nanoTime() + ";DB_CLOSE_DELAY=-1");

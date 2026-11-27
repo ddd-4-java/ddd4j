@@ -44,6 +44,9 @@ import lombok.extern.slf4j.Slf4j;
 @ApplicationScoped
 public class GoodsConfig {
 
+    /**
+     * 读写当前示例商品的内存仓储。
+     */
     private final InMemoryGoodsRepository productRepository;
 
     /**

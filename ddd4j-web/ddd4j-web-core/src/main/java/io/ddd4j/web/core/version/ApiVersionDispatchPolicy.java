@@ -38,7 +38,9 @@ import java.util.Objects;
  */
 public final class ApiVersionDispatchPolicy {
 
-    /** 请求低于最低可用版本时的处理模式。 */
+    /**
+     * 请求低于最低可用版本时的处理模式。
+     */
     private final ApiVersionMode mode;
 
     /**
@@ -70,8 +72,8 @@ public final class ApiVersionDispatchPolicy {
      * 按冻结规则分发请求版本到注册表中的可用处理器。
      *
      * @param requested 解析出的请求版本（非 null）
-     * @param registry 版本注册表（非 null）
-     * @param <T> 处理器类型
+     * @param registry  版本注册表（非 null）
+     * @param <T>       处理器类型
      * @return 分发结果，携带命中版本、是否回落与 HTTP 语义状态码
      */
     public <T> ApiVersionDispatchResult<T> dispatch(ApiVersion requested, ApiVersionRegistry<T> registry) {

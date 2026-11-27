@@ -38,8 +38,17 @@ import java.util.Objects;
  */
 public final class Ddd4jGuiceRuntime implements AutoCloseable {
 
+    /**
+     * 为当前 Guice 运行时提供服务的注入器。
+     */
     private final Injector injector;
+    /**
+     * 管理当前示例或测试所拥有的 SPI 注册资源。
+     */
     private final SpiRegistrationScope registrations;
+    /**
+     * 汇总当前组件就绪状态的注册表。
+     */
     private final RuntimeReadinessRegistry readinessRegistry;
 
     /**
@@ -107,6 +116,11 @@ public final class Ddd4jGuiceRuntime implements AutoCloseable {
         return readinessRegistry;
     }
 
+    /**
+     * 结束当前组件持有的资源。
+     *
+     * <p>此实现调用 <code>injector.getExistingBinding(Key.get(GuiceViewManager.class))</code>。</p>
+     */
     @Override
     public void close() {
         try {

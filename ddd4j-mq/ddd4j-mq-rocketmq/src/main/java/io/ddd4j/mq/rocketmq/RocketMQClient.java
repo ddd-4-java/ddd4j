@@ -80,7 +80,13 @@ public class RocketMQClient implements MQClient {
      * 懒构造使用的配置（构造方法 2 传入）
      */
     private final RocketMQProperties properties;
+    /**
+     * 协调消息客户端启动、初始化和关闭的生命周期。
+     */
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    /**
+     * 组件的启动状态和启动失败诊断信息。
+     */
     private final MQStartupStatus startupStatus = new MQStartupStatus("rocket");
     /**
      * 已注入或懒构造的 RocketMQ producer
@@ -137,6 +143,12 @@ public class RocketMQClient implements MQClient {
 
     // ========================= 生产者 =========================
 
+    /**
+     * 优先从原生消息的标准头读取消息标识，缺少时回退到兼容头。
+     *
+     * @param message 当前接收的原生代理消息
+     * @return 用于后续消费确认的业务消息标识，头均缺失时为空
+     */
     static String messageId(MessageExt message) {
         String messageId = message.getUserProperty(MessageHeaders.HEADER_MESSAGE_ID);
         return StrKit.isNotEmpty(messageId)
@@ -144,6 +156,12 @@ public class RocketMQClient implements MQClient {
                 : message.getUserProperty(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
     }
 
+    /**
+     * 将原生消息的关联标识和因果标识恢复到领域消息。
+     *
+     * @param message 当前接收的原生代理消息
+     * @param event   当前发布或待补齐元数据的 DDD4J 消息事件
+     */
     static void restoreCausality(MessageExt message, MQEvent event) {
         String correlationId = message.getUserProperty(MQDeliveryHeaders.CORRELATION_ID);
         if (StrKit.isNotEmpty(correlationId)) {
@@ -155,26 +173,54 @@ public class RocketMQClient implements MQClient {
         }
     }
 
+    /**
+     * 返回此消息适配器在 DDD4J 中登记的实现名。
+     *
+     * @return 实际返回<code>"rocket"</code>，供调用方取得当前值
+     */
     @Override
     public String impl() {
         return "rocket";
     }
 
+    /**
+     * Broker 默认拼接符（各 broker 决定，建议子类覆写）。
+     *
+     * @return 实际返回<code>"_"</code>，供调用方取得当前值
+     */
     @Override
     public String defaultConcat() {
         return "_";
     }
 
+    /**
+     * 返回管理连接、生产者和消费者资源的生命周期对象。
+     *
+     * @return 当前消息适配器用于登记和关闭资源的生命周期对象
+     */
     @Override
     public MQClientLifecycle lifecycle() {
         return lifecycle;
     }
 
+    /**
+     * 返回消息客户端当前记录的启动状态。
+     *
+     * @return 当前消息适配器记录的启动状态
+     */
     @Override
     public MQStartupStatus startupStatus() {
         return startupStatus;
     }
 
+    /**
+     * 准备消息生产者并返回可发布事件的入口。
+     *
+     * <p>RocketMQ 实现调用 <code>this.properties.getUsername()</code>。</p>
+     *
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 此实现返回<code>null</code>
+     */
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         try {
@@ -248,6 +294,9 @@ public class RocketMQClient implements MQClient {
      * <p>RocketMQ 借 {@link MessageQueueSelector} 保证同 key 进同 MessageQueue → 同 tag / 同租户消息严格顺序。
      * <p>TAG_TENANT/TAG/TENANT 三种复用父类默认行为；NONE 返回 null；
      * CUSTOM 时应由子类覆写 {@link #partitionKey(MQEvent)} 自定义。
+     *
+     * @param event 决定消息路由的发布事件
+     * @return 发送消息时使用的路由键
      */
     @Override
     public String partitionKey(MQEvent event) {
@@ -263,6 +312,16 @@ public class RocketMQClient implements MQClient {
         };
     }
 
+    /**
+     * 为监听器建立消息消费所需的订阅和客户端资源。
+     *
+     * <p>RocketMQ 实现调用 <code>this.properties.newConsumer(listener.getGroup())</code>。</p>
+     *
+     * @param listener     监听器定义
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 此实现返回<code>true</code>
+     * @throws Exception 当前框架、存储或底层客户端无法完成此操作时
+     */
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         DefaultMQPushConsumer consumer;
@@ -340,6 +399,9 @@ public class RocketMQClient implements MQClient {
 
     // ========================= 消费者 =========================
 
+    /**
+     * 释放消息客户端拥有的运行资源，并在退出时登记组件已停止。
+     */
     @Override
     public void close() {
         try {
@@ -354,14 +416,31 @@ public class RocketMQClient implements MQClient {
      */
     public static final class SendLogCallback implements SendCallback {
 
+        /**
+         * 消息投递或订阅的主题。
+         */
         private final String topic;
+        /**
+         * 消息转移或发送时使用的序列化负载。
+         */
         private final String payload;
 
+        /**
+         * 用给定值初始化 <code>SendLogCallback</code> 实例。
+         *
+         * @param topic   消息投递或订阅的主题
+         * @param payload <code>payload</code> 字段
+         */
         SendLogCallback(String topic, String payload) {
             this.topic = topic;
             this.payload = payload;
         }
 
+        /**
+         * 记录 RocketMQ 原生发布结果用于跟踪发送。
+         *
+         * @param sendResult RocketMQ 返回的原生发布结果
+         */
         @Override
         public void onSuccess(org.apache.rocketmq.client.producer.SendResult sendResult) {
             if (log.isDebugEnabled()) {
@@ -369,6 +448,11 @@ public class RocketMQClient implements MQClient {
             }
         }
 
+        /**
+         * 记录 RocketMQ 发布失败及相关诊断信息。
+         *
+         * @param e 发送失败时代理回调附带的异常
+         */
         @Override
         public void onException(Throwable e) {
             log.error("RocketMQ send failed: topic={}, payload={}", topic, payload, e);

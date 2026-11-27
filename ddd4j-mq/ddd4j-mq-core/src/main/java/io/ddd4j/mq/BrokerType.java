@@ -25,25 +25,41 @@ import java.util.Locale;
  */
 public enum BrokerType {
 
-    /** 未启用 Broker。 */
+    /**
+     * 未启用 Broker。
+     */
     NONE,
     /**
      * 进程内 LMAX Disruptor 本地队列（非分布式 MQ）。
      */
     DISRUPTOR,
-    /** RabbitMQ。 */
+    /**
+     * RabbitMQ。
+     */
     RABBIT,
-    /** Kafka。 */
+    /**
+     * Kafka。
+     */
     KAFKA,
-    /** RocketMQ。 */
+    /**
+     * RocketMQ。
+     */
     ROCKET,
-    /** Pulsar。 */
+    /**
+     * Pulsar。
+     */
     PULSAR,
-    /** Redis Stream。 */
+    /**
+     * Redis Stream。
+     */
     REDIS_STREAM,
-    /** ActiveMQ。 */
+    /**
+     * ActiveMQ。
+     */
     ACTIVEMQ,
-    /** NATS。 */
+    /**
+     * NATS。
+     */
     NATS,
     /**
      * Eclipse Paho MQTT 客户端（连接外部 Broker，非嵌入式服务端）。
@@ -53,11 +69,17 @@ public enum BrokerType {
      * mica-mqtt AIO 客户端（sample mqtt-client2，连接外部 Broker）。
      */
     MQTT_MICA,
-    /** 阿里云 ONS。 */
+    /**
+     * 阿里云 ONS。
+     */
     ONS,
-    /** 腾讯云 TDMQ。 */
+    /**
+     * 腾讯云 TDMQ。
+     */
     TDMQ,
-    /** AWS SQS。 */
+    /**
+     * AWS SQS。
+     */
     SQS;
 
     /**

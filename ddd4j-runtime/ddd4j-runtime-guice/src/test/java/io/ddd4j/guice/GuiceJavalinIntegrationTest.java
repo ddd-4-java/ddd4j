@@ -27,6 +27,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * 真实 Javalin HTTP 到 Guice 命令路由；事务由执行器拥有。
  */
 class GuiceJavalinIntegrationTest {
+    /**
+     * 验证<code>response.statusCode()</code> 等于 <code>200</code>，<code>response.body()</code> 等于 <code>"committed"</code>，<code>bus.execute(new TxCommand("throw"))</code> 抛出 <code>IllegalStateException.class</code>。
+     *
+     * @throws Exception 发起测试请求时失败
+     */
     @Test
     void httpDispatchAndExecutorOwnedTransactions() throws Exception {
         JdbcDataSource source = new JdbcDataSource();
@@ -66,8 +71,16 @@ class GuiceJavalinIntegrationTest {
      * 事务测试命令，不改变总线事务边界。
      */
     static final class TxCommand implements Command {
+        /**
+         * 当前用例用于切换鉴权、投影或处理行为的测试模式。
+         */
         private final String mode;
 
+        /**
+         * 设置 <code>mode</code>，用于构造 <code>TxCommand</code> 测试实例。
+         *
+         * @param mode 用于初始化 <code>TxCommand</code> 的 <code>String</code> 值
+         */
         TxCommand(String mode) {
             this.mode = mode;
         }
@@ -77,19 +90,48 @@ class GuiceJavalinIntegrationTest {
      * 模拟应用既有事务拥有者，失败 Result 和异常均由执行器回滚。
      */
     static final class TxExecutor implements CommandExecutor<TxCommand> {
+        /**
+         * 当前转换或复制测试使用的输入对象。
+         */
         private final JdbcDataSource source;
+        /**
+         * 记录受测调用最终是否失败。
+         */
         private final Result<String> failed = Result.fail("rejected");
+        /**
+         * 当前失败路径所用或观察到的原始异常。
+         */
         private final IllegalStateException failure = new IllegalStateException("executor failure");
 
+        /**
+         * 设置 <code>source</code>，用于构造 <code>TxExecutor</code> 测试实例。
+         *
+         * @param source 测试中待转换、读取或传播的数据来源
+         */
         TxExecutor(JdbcDataSource source) {
             this.source = source;
         }
 
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>Set.of(TxCommand.class)</code>。</p>
+         *
+         * @return 实际返回<code>Set.of(TxCommand.class)</code>
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Set.of(TxCommand.class);
         }
 
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>source.getConnection()</code>、<code>connection.setAutoCommit(false)</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 根据执行路径返回<code>failed</code>、<code>Result.ok("committed")</code>
+         */
         @Override
         public Result<String> execute(TxCommand command) {
             try (Connection connection = source.getConnection()) {

@@ -52,6 +52,9 @@ import java.util.Objects;
  */
 public final class ExcelFiller {
 
+    /**
+     * 限制调用方直接创建 <code>ExcelFiller</code> 实例。
+     */
     private ExcelFiller() {
     }
 
@@ -155,6 +158,10 @@ public final class ExcelFiller {
 
     /**
      * 把模板流包装为可重复读的内存流（填充场景下 easyexcel 会多次读取）。
+     *
+     * @param in 由调用方管理的输入流
+     * @return 可读取原始输入且关闭时保留外部输入的流
+     * @throws IOException 读取原始输入流失败
      */
     private static InputStream toNonClosingStream(InputStream in) throws IOException {
         if (in instanceof ByteArrayInputStream) {

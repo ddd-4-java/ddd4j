@@ -43,6 +43,9 @@ import java.util.Objects;
  */
 public class Goods extends AggregateRoot<Long> implements Serializable {
 
+    /**
+     * Java 序列化版本标识。
+     */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -108,6 +111,11 @@ public class Goods extends AggregateRoot<Long> implements Serializable {
         this.updateTime = updateTime;
     }
 
+    /**
+     * 读取商品主键 ID。
+     *
+     * @return 商品主键 ID
+     */
     @Override
     public Long id() {
         return id;
@@ -218,6 +226,12 @@ public class Goods extends AggregateRoot<Long> implements Serializable {
         this.updateTime = updateTime;
     }
 
+    /**
+     * 根据<code>id</code>比较对象的值是否相等。
+     *
+     * @param o 用来比较的另一个对象，允许为空
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -230,11 +244,21 @@ public class Goods extends AggregateRoot<Long> implements Serializable {
         return Objects.equals(id, product.id);
     }
 
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
     }
 
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>id</code>、<code>code</code>、<code>name</code>、<code>price</code>、<code>stock</code>、<code>status</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "Goods{id=" + id + ", code='" + code + "', name='" + name + "', price=" + price

@@ -41,11 +41,29 @@ import java.util.Objects;
  */
 public class Saga {
 
+    /**
+     * 按执行顺序登记的业务操作及其补偿步骤。
+     */
     private final List<SagaStep> steps = new ArrayList<>();
+    /**
+     * 已成功执行的步骤对应的补偿栈。
+     */
     private final List<String> executedCompensations = new ArrayList<>();
+    /**
+     * 当前 Saga 的执行状态。
+     */
     private SagaState state = SagaState.RUNNING;
+    /**
+     * 触发本次 Saga 失败的异常。
+     */
     private RuntimeException failure;
+    /**
+     * 当前 Saga 是否已经开始这一次执行。
+     */
     private boolean started;
+    /**
+     * 失败回滚期间是否出现补偿操作失败。
+     */
     private boolean compensationFailed;
 
     /**
@@ -134,6 +152,11 @@ public class Saga {
         }
     }
 
+    /**
+     * 检查当前 Saga 是否还允许修改步骤或开始执行。
+     *
+     * @throws IllegalStateException 当前 Saga 已经开始执行
+     */
     private void requireNotStarted() {
         if (started) {
             throw new IllegalStateException("Saga instance is one-shot; create a new Saga to execute again");

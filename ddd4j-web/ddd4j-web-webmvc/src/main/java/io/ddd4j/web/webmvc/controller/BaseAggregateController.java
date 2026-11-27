@@ -32,7 +32,7 @@ import java.io.Serializable;
  *   <li>{@code Q}：查询参数对象</li>
  *   <li>{@code ID}：主键类型</li>
  * </ul>
- *
+ * <p>
  * 标准路由：
  * <pre>
  *   GET    /                  - 分页列表
@@ -53,10 +53,11 @@ public abstract class BaseAggregateController<M extends AggregateRoot<?>, Q, ID 
 
     /**
      * 分页查询
-     * @return 分页查询响应
-     * @param query 查询条件
+     *
+     * @param query    查询条件
      * @param pageSize 每页数量
-     * @param pageNum 页码
+     * @param pageNum  页码
+     * @return 分页查询响应
      */
     @GetMapping
     public R<Page<M>> page(@RequestParam(defaultValue = "1") int pageNum,
@@ -67,8 +68,9 @@ public abstract class BaseAggregateController<M extends AggregateRoot<?>, Q, ID 
 
     /**
      * 详情
-     * @return 聚合根详情响应
+     *
      * @param id 聚合根标识
+     * @return 聚合根详情响应
      */
     @GetMapping("/{id}")
     public R<M> getById(@PathVariable ID id) {
@@ -77,8 +79,9 @@ public abstract class BaseAggregateController<M extends AggregateRoot<?>, Q, ID 
 
     /**
      * 新增
-     * @return 创建后的聚合根响应
+     *
      * @param model 聚合根模型
+     * @return 创建后的聚合根响应
      */
     @PostMapping
     public R<M> create(@RequestBody M model) {
@@ -87,9 +90,10 @@ public abstract class BaseAggregateController<M extends AggregateRoot<?>, Q, ID 
 
     /**
      * 修改
-     * @return 更新后的聚合根响应
+     *
      * @param model 聚合根模型
-     * @param id 聚合根标识
+     * @param id    聚合根标识
+     * @return 更新后的聚合根响应
      */
     @PutMapping("/{id}")
     public R<M> update(@PathVariable("id") ID id, @RequestBody M model) {
@@ -98,8 +102,9 @@ public abstract class BaseAggregateController<M extends AggregateRoot<?>, Q, ID 
 
     /**
      * 删除
-     * @return 删除操作响应
+     *
      * @param id 聚合根标识
+     * @return 删除操作响应
      */
     @DeleteMapping("/{id}")
     public R<Void> delete(@PathVariable("id") ID id) {
@@ -109,8 +114,9 @@ public abstract class BaseAggregateController<M extends AggregateRoot<?>, Q, ID 
 
     /**
      * 业务行为：禁用（聚合根业务行为）
-     * @return 禁用后的聚合根响应
+     *
      * @param id 聚合根标识
+     * @return 禁用后的聚合根响应
      */
     @PostMapping("/{id}:disable")
     public R<M> disable(@PathVariable("id") ID id) {
@@ -119,8 +125,9 @@ public abstract class BaseAggregateController<M extends AggregateRoot<?>, Q, ID 
 
     /**
      * 业务行为：启用
-     * @return 启用后的聚合根响应
+     *
      * @param id 聚合根标识
+     * @return 启用后的聚合根响应
      */
     @PostMapping("/{id}:enable")
     public R<M> enable(@PathVariable("id") ID id) {
@@ -132,9 +139,9 @@ public abstract class BaseAggregateController<M extends AggregateRoot<?>, Q, ID 
     /**
      * 分页查询聚合根。
      *
-     * @param pageNum 页码
+     * @param pageNum  页码
      * @param pageSize 每页数量
-     * @param query 查询条件
+     * @param query    查询条件
      * @return 聚合根分页结果
      */
     protected abstract Page<M> listPage(int pageNum, int pageSize, Q query);
@@ -158,7 +165,7 @@ public abstract class BaseAggregateController<M extends AggregateRoot<?>, Q, ID 
     /**
      * 修改聚合根。
      *
-     * @param id 聚合根标识
+     * @param id    聚合根标识
      * @param model 聚合根名称或模型
      * @return 修改后的聚合根
      */

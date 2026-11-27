@@ -53,6 +53,9 @@ import java.util.function.Function;
  */
 public class LettuceCache<V> implements Cache<String, V> {
 
+    /**
+     * 在 Redis 服务端比较当前缓存值并按过期配置原子更新的脚本。
+     */
     private static final String LUA_CAS =
             "local cur = redis.call('GET', KEYS[1]) " +
                     "if cur == ARGV[1] then " +
@@ -61,10 +64,25 @@ public class LettuceCache<V> implements Cache<String, V> {
                     "  return 1 " +
                     "end " +
                     "return 0";
+    /**
+     * 执行 Redis 命令的 Lettuce 同步接口。
+     */
     private final RedisCommands<String, String> commands;
+    /**
+     * 缓存写入时使用的默认生存时长。
+     */
     private final Duration expireDuration;
+    /**
+     * 反序列化缓存条目时使用的值类型。
+     */
     private final Class<V> valueType;
+    /**
+     * 负责在 Redis 或 Memcached 中存储 JSON 值的映射器。
+     */
     private final ObjectMapper objectMapper;
+    /**
+     * 用于隔离当前缓存命名空间的键前缀。
+     */
     private final String keyPrefix;
 
     /**
@@ -109,10 +127,24 @@ public class LettuceCache<V> implements Cache<String, V> {
         this(commands, config, valueType, JsonMapper.builder().build());
     }
 
+    /**
+     * 为业务键添加当前缓存命名空间前缀。
+     *
+     * @param key 缓存键
+     * @return 写入后端使用的缓存键
+     */
     private String key(String key) {
         return keyPrefix + key;
     }
 
+    /**
+     * 读取现有缓存值。
+     *
+     * <p>Lettuce 实现调用 <code>commands.get(key(key))</code>。</p>
+     *
+     * @param key 缓存键
+     * @return 根据执行路径返回<code>null</code>、<code>(V)json</code>、<code>objectMapper.readValue(json, valueType)</code>
+     */
     @Override
     @SuppressWarnings("unchecked")
     public V getIfPresent(String key) {
@@ -130,6 +162,15 @@ public class LettuceCache<V> implements Cache<String, V> {
         }
     }
 
+    /**
+     * 读取调用指定的当前值。
+     *
+     * <p>Lettuce 实现调用 <code>getIfPresent(key)</code>。</p>
+     *
+     * @param key             缓存键
+     * @param mappingFunction 值加载函数
+     * @return 实际返回<code>value</code>
+     */
     @Override
     public V get(String key, Function<String, V> mappingFunction) {
         V value = getIfPresent(key);
@@ -142,6 +183,14 @@ public class LettuceCache<V> implements Cache<String, V> {
         return value;
     }
 
+    /**
+     * 将给定数据写入当前存储。
+     *
+     * <p>Lettuce 实现调用 <code>objectMapper.writeValueAsString(value)</code>。</p>
+     *
+     * @param key   缓存键
+     * @param value 缓存值
+     */
     @Override
     public void put(String key, V value) {
         try {
@@ -156,6 +205,13 @@ public class LettuceCache<V> implements Cache<String, V> {
         }
     }
 
+    /**
+     * 使指定键的缓存条目失效。
+     *
+     * <p>Lettuce 实现调用 <code>commands.del(key(key))</code>。</p>
+     *
+     * @param key 缓存键
+     */
     @Override
     public void invalidate(String key) {
         try {
@@ -165,11 +221,19 @@ public class LettuceCache<V> implements Cache<String, V> {
         }
     }
 
+    /**
+     * 保留后端现有键。调用方需通过明确的键逐个失效。
+     */
     @Override
     public void invalidateAll() {
         // Redis 不建议 flushAll，需通过 key 前缀逐个删除
     }
 
+    /**
+     * 报告当前后端的缓存条目数量是否可用。
+     *
+     * @return 固定返回 -1，表示此适配器不估算条目数
+     */
     @Override
     public long estimatedSize() {
         return -1;
@@ -177,11 +241,26 @@ public class LettuceCache<V> implements Cache<String, V> {
 
     // ==================== CAS SPI 实现（基于 Redis Lua 脚本原子操作）====================
 
+    /**
+     * 返回当前缓存实现记录的统计信息。
+     *
+     * @return 此实现返回<code>null</code>
+     */
     @Override
     public CacheStats stats() {
         return null;
     }
 
+    /**
+     * 比较缓存中的现值或版本并尝试原子修改。
+     *
+     * <p>Lettuce 实现调用 <code>key(key)</code>。</p>
+     *
+     * @param key           缓存键
+     * @param expireSeconds 过期时间（秒），0 表示不修改 TTL
+     * @param operation     CAS 操作回调（基于当前值计算新值）
+     * @return 根据执行路径返回<code>null</code>、<code>newValue</code>
+     */
     @Override
     public V compareAndSet(String key, long expireSeconds, CASOperation<V, V> operation) {
         String cachedKey = key(key);
@@ -220,6 +299,16 @@ public class LettuceCache<V> implements Cache<String, V> {
         return null;
     }
 
+    /**
+     * 比较缓存中的现值或版本并尝试原子修改。
+     *
+     * <p>Lettuce 实现调用 <code>key(key)</code>。</p>
+     *
+     * @param key              缓存键
+     * @param expectedOldValue 期望的旧值（null 表示仅当 key 不存在时写入 = putIfAbsent）
+     * @param newValue         新值
+     * @return 实际返回<code>"1".equals(result)</code>
+     */
     @Override
     public boolean compareAndSet(String key, V expectedOldValue, V newValue) {
         String cachedKey = key(key);
@@ -229,6 +318,12 @@ public class LettuceCache<V> implements Cache<String, V> {
         return "1".equals(result);
     }
 
+    /**
+     * 保留字符串值原样，将其他非空值编码为 JSON。
+     *
+     * @param value 待写入的缓存值
+     * @return 已编码的字符串，空值或编码失败时返回空字符串
+     */
     private String serialize(V value) {
         if (Objects.isNull(value)) {
             return "";
@@ -243,6 +338,12 @@ public class LettuceCache<V> implements Cache<String, V> {
         }
     }
 
+    /**
+     * 按照适配器的值类型反序列化缓存文本。
+     *
+     * @param json 从缓存后端读出的字符串
+     * @return 解码后的缓存值，输入为空或解码失败时返回空
+     */
     private V deserialize(String json) {
         if (StrKit.isEmpty(json)) {
             return null;

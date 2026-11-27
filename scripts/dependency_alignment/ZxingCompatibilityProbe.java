@@ -7,6 +7,9 @@ import com.google.zxing.model.QrCodeOutput;
 public class ZxingCompatibilityProbe {
     /**
      * 使用固定中英文输入验证编码解码及尺寸、格式输出；仅在 JDK 17/21 运行。
+     *
+     *
+     * @param args 命令行参数，探针使用内置输入
      */
     public static void main(String[] args) {
         for (String content : new String[]{"ddd4j-jdk-parity", "中文二维码-2026", "https://example.invalid/path?a=1"}) {

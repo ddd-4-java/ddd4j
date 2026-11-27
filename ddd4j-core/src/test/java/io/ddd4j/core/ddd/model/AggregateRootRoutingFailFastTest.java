@@ -37,6 +37,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class AggregateRootRoutingFailFastTest {
 
+    /**
+     * 验证<code>order.apply(new PathEvent(new EntityIdPath(new PlainId("order-1"))))</code> 抛出 <code>IllegalStateException.class</code>，<code>exception.getMessage().contains("AggregateRootId")</code>为真。
+     */
     @Test
     void applyRejectsPlainEntityIdRootSegment() {
         Order order = new Order("order-1");
@@ -48,6 +51,9 @@ class AggregateRootRoutingFailFastTest {
                 "fail-fast message should name the expected root segment type");
     }
 
+    /**
+     * 验证<code>order.apply(new PathEvent(new EntityIdPath(new StringEntityId("order-1"))))</code> 抛出 <code>IllegalStateException.class</code>，<code>exception.getMessage().contains("AggregateRootId")</code>为真。
+     */
     @Test
     void applyRejectsStringEntityIdRootSegment() {
         Order order = new Order("order-1");
@@ -59,6 +65,9 @@ class AggregateRootRoutingFailFastTest {
                 "StringEntityId convenience root segment must also be rejected");
     }
 
+    /**
+     * 验证<code>order.loadFromHistory(Arrays.asList(new PathEvent(new EntityIdPath(new PlainId("order-1")))))</code> 抛出 <code>IllegalStateException.class</code>，<code>exception.getMessage().contains("AggregateRootId")</code>为真。
+     */
     @Test
     void loadFromHistoryRejectsNonAggregateRootIdRootSegment() {
         Order order = new Order("order-1");
@@ -70,6 +79,9 @@ class AggregateRootRoutingFailFastTest {
                 "replay path must fail fast on the same assertion");
     }
 
+    /**
+     * 验证<code>order.handled</code> 等于 <code>1</code>，<code>order.domainEvents().contains(event)</code>为真。
+     */
     @Test
     void applyAcceptsAggregateRootIdRootSegment() {
         Order order = new Order("order-1");
@@ -81,6 +93,9 @@ class AggregateRootRoutingFailFastTest {
         assertTrue(order.domainEvents().contains(event), "applied event should be registered");
     }
 
+    /**
+     * 验证<code>order.handled</code> 等于 <code>1</code>。
+     */
     @Test
     void applyAcceptsSubEntityPathRootedAtAggregateRootId() {
         Order order = new Order("order-1");
@@ -96,29 +111,63 @@ class AggregateRootRoutingFailFastTest {
      */
     static final class PlainId implements EntityId {
 
+        /**
+         * 测试聚合注册和反序列化所用的实体类型标识。
+         */
         private static final EntityType TYPE = new StringEntityType("Plain");
 
+        /**
+         * 组成测试标识的原始值。
+         */
         private final String value;
 
+        /**
+         * 设置 <code>value</code>，用于构造 <code>PlainId</code> 测试实例。
+         *
+         * @param value 组成测试标识的原始值
+         */
         PlainId(String value) {
             this.value = value;
         }
 
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 实际返回<code>TYPE</code>，供调用方取得当前值
+         */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 实际返回<code>value</code>，供调用方取得当前值
+         */
         @Override
         public String asString() {
             return value;
         }
 
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * <p>测试夹具会调用 <code>TYPE.asString()</code>。</p>
+         *
+         * @return 实际返回<code>TYPE.asString() + ":" + value</code>
+         */
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
         }
 
+        /**
+         * 根据<code>value</code>比较对象的值是否相等。
+         *
+         * @param o 用来比较的另一个对象，允许为空
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object o) {
             if (this == o) {
@@ -131,11 +180,21 @@ class AggregateRootRoutingFailFastTest {
             return Objects.equals(this.value, other.value);
         }
 
+        /**
+         * 用<code>value</code>计算哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             return Objects.hash(value);
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>value</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "PlainId{" + "value=" + value + "}";
@@ -147,29 +206,63 @@ class AggregateRootRoutingFailFastTest {
      */
     static final class RootId implements AggregateRootId {
 
+        /**
+         * 测试聚合注册和反序列化所用的实体类型标识。
+         */
         private static final EntityType TYPE = new StringEntityType("Order");
 
+        /**
+         * 组成测试标识的原始值。
+         */
         private final String value;
 
+        /**
+         * 设置 <code>value</code>，用于构造 <code>RootId</code> 测试实例。
+         *
+         * @param value 组成测试标识的原始值
+         */
         RootId(String value) {
             this.value = value;
         }
 
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 实际返回<code>TYPE</code>，供调用方取得当前值
+         */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 实际返回<code>value</code>，供调用方取得当前值
+         */
         @Override
         public String asString() {
             return value;
         }
 
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * <p>测试夹具会调用 <code>TYPE.asString()</code>。</p>
+         *
+         * @return 实际返回<code>TYPE.asString() + ":" + value</code>
+         */
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
         }
 
+        /**
+         * 根据<code>value</code>比较对象的值是否相等。
+         *
+         * @param o 用来比较的另一个对象，允许为空
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object o) {
             if (this == o) {
@@ -182,11 +275,21 @@ class AggregateRootRoutingFailFastTest {
             return Objects.equals(this.value, other.value);
         }
 
+        /**
+         * 用<code>value</code>计算哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             return Objects.hash(value);
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>value</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "RootId{" + "value=" + value + "}";
@@ -199,6 +302,11 @@ class AggregateRootRoutingFailFastTest {
      */
     static final class PathEvent extends DomainEvent<EntityId> {
 
+        /**
+         * 使用 <code>super()</code> 初始化 <code>PathEvent</code> 测试夹具。
+         *
+         * @param path 测试请求的资源路径或待访问文件路径
+         */
         PathEvent(EntityIdPath path) {
             super(path);
         }
@@ -209,19 +317,40 @@ class AggregateRootRoutingFailFastTest {
      */
     static final class Order extends AggregateRoot<String> {
 
+        /**
+         * 订单标识。
+         */
         private final String orderId;
 
+        /**
+         * 当前测试中已经交给处理器的记录。
+         */
         int handled;
 
+        /**
+         * 用给定值初始化 <code>Order</code> 实例。
+         *
+         * @param orderId 订单标识
+         */
         Order(String orderId) {
             this.orderId = orderId;
         }
 
+        /**
+         * 读取订单标识。
+         *
+         * @return 订单标识
+         */
         @Override
         public String id() {
             return orderId;
         }
 
+        /**
+         * 记录聚合对一条路径事件的处理次数。
+         *
+         * @param event 由聚合或监听器收到的测试事件
+         */
         @EventHandler
         void on(PathEvent event) {
             this.handled++;

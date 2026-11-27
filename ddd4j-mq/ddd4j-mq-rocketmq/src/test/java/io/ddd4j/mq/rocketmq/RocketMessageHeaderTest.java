@@ -42,11 +42,17 @@ import static org.mockito.Mockito.*;
  */
 class RocketMessageHeaderTest {
 
+    /**
+     * 测试结束后执行 <code>BaseContext.clear()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void clearContext() {
         BaseContext.clear();
     }
 
+    /**
+     * 验证<code>RocketMQClient.messageId(stableMessage)</code> 等于 <code>"stable-id"</code>，<code>RocketMQClient.messageId(legacyMessage)</code> 等于 <code>"legacy-id"</code>。
+     */
     @Test
     void shouldPreferStableHeaderAndReadLegacyHeader() {
         MessageExt stableMessage = new MessageExt();
@@ -59,6 +65,9 @@ class RocketMessageHeaderTest {
         assertEquals("legacy-id", RocketMQClient.messageId(legacyMessage));
     }
 
+    /**
+     * 在测试框架中执行 <code>mock()</code>、<code>client.close()</code>、<code>never()</code>，验证该场景。
+     */
     @Test
     void shouldNotShutdownExternallyInjectedProducer() {
         DefaultMQProducer producer = mock(DefaultMQProducer.class);
@@ -70,6 +79,11 @@ class RocketMessageHeaderTest {
         verify(producer, never()).shutdown();
     }
 
+    /**
+     * 验证<code>sent.getValue().getTopic()</code> 等于 <code>"tenant_orders"</code>，<code>sent.getValue().getTags()</code> 等于 <code>"paid"</code>。
+     *
+     * @throws Exception 发起测试请求时失败
+     */
     @Test
     void shouldPublishToNamespacedTopicWithoutAppendingNativeTag() throws Exception {
         DefaultMQProducer producer = mock(DefaultMQProducer.class);
@@ -104,6 +118,11 @@ class RocketMessageHeaderTest {
         client.close();
     }
 
+    /**
+     * 在测试框架中执行 <code>mock()</code>、<code>spy()</code>、<code>properties.setNamespace()</code>，验证该场景。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void shouldSubscribeToNamespacedTopicWithNativeTagFilter() throws Exception {
         DefaultMQPushConsumer consumer = mock(DefaultMQPushConsumer.class);
@@ -120,6 +139,11 @@ class RocketMessageHeaderTest {
         client.close();
     }
 
+    /**
+     * 验证<code>messages.getValue().getUserProperty(MQDeliveryHeaders.MESSAGE_ID)</code> 等于 <code>"plain-id"</code>，<code>messages.getValue().getUserProperty(MQDeliveryHeaders.CORRELATION_ID)</code>为空，<code>sent.getUserProperty(MQDeliveryHeaders.CAUSATION_ID)</code> 等于 <code>"causation-id"</code>。
+     *
+     * @throws Exception 发起测试请求时失败
+     */
     @Test
     void shouldPublishOnlyPresentCausalityInNativeProperties() throws Exception {
         DefaultMQProducer producer = mock(DefaultMQProducer.class);
@@ -165,6 +189,9 @@ class RocketMessageHeaderTest {
         client.close();
     }
 
+    /**
+     * 验证<code>event.getCorrelationId()</code> 等于 <code>"native-correlation"</code>，<code>event.getCausationId()</code> 等于 <code>"native-causation"</code>。
+     */
     @Test
     void shouldRestoreNativeCausalityOverPayloadMirror() {
         MessageExt message = new MessageExt();
@@ -180,6 +207,9 @@ class RocketMessageHeaderTest {
         assertEquals("native-causation", event.getCausationId());
     }
 
+    /**
+     * 验证<code>event.getCorrelationId()</code> 等于 <code>"native-correlation"</code>，<code>event.getCausationId()</code> 等于 <code>"payload-causation"</code>。
+     */
     @Test
     void shouldPreservePayloadWhenNativeCausalityIsAbsent() {
         MessageExt message = new MessageExt();
@@ -194,6 +224,9 @@ class RocketMessageHeaderTest {
         assertEquals("payload-causation", event.getCausationId());
     }
 
+    /**
+     * 在测试框架中执行 <code>nativeMessage.setKeys()</code>、<code>nativeMessage.putUserProperty()</code>、<code>legacyMessage.setKeys()</code>，验证该场景。
+     */
     @Test
     void shouldExposeNativeCorrelationInAcknowledgmentWithLegacyFallback() {
         MessageExt nativeMessage = new MessageExt();

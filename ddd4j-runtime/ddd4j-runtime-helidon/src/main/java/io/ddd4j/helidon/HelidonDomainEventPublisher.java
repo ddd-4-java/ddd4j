@@ -28,6 +28,9 @@ import java.util.Objects;
 @Slf4j
 public final class HelidonDomainEventPublisher implements DomainEventPublisher {
 
+    /**
+     * 解析 CDI Bean 并触发容器事件的管理器。
+     */
     private final BeanManager beanManager;
 
     /**
@@ -39,11 +42,26 @@ public final class HelidonDomainEventPublisher implements DomainEventPublisher {
         this.beanManager = Objects.requireNonNull(beanManager, "beanManager must not be null");
     }
 
+    /**
+     * 将传入的事件交给当前发布通道。
+     *
+     * <p>Helidon 实现调用 <code>publish((Object)event)</code>。</p>
+     *
+     * @param <ID>  实体标识类型
+     * @param event 领域事件
+     */
     @Override
     public <ID extends EntityId> void publish(DomainEvent<ID> event) {
         publish((Object) event);
     }
 
+    /**
+     * 将传入的事件交给当前发布通道。
+     *
+     * <p>Helidon 实现调用 <code>log.debug("Publishing Helidon CDI event: {}", event.getClass().getName())</code>。</p>
+     *
+     * @param event 任意事件对象
+     */
     @Override
     public void publish(Object event) {
         if (Objects.nonNull(event)) {

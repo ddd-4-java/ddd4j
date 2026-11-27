@@ -25,9 +25,24 @@ import lombok.Getter;
 @Builder
 public final class QrCodeBatchItemResult {
 
+    /**
+     * 关联批量请求项和对应生成结果的调用方标识。
+     */
     private final String itemId;
+    /**
+     * 当前批量项目是否成功生成二维码。
+     */
     private final boolean success;
+    /**
+     * 成功生成的二维码制品及其模板信息。
+     */
     private final QrCodeArtifact artifact;
+    /**
+     * 当前项目失败时返回的错误类别。
+     */
     private final String errorCode;
+    /**
+     * 当前项目失败时返回的错误说明。
+     */
     private final String errorMessage;
 }

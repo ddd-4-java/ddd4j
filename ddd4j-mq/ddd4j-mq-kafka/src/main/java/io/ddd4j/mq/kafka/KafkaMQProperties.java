@@ -52,9 +52,21 @@ public class KafkaMQProperties extends MQProperties {
      * Kafka broker bootstrap servers（独立于父类 server 以遵循 Kafka 命名约定）。
      */
     private String bootstrapServers = "localhost:9092";
+    /**
+     * 连接 Kafka 客户端时使用的标识。
+     */
     private String clientId = "ddd4j-mq-kafka";
+    /**
+     * 拼接逻辑消费者组 ID 时使用的名称前缀。
+     */
     private String groupIdPrefix = "ddd4j";
+    /**
+     * 每次 Kafka 轮询消息所用的超时。
+     */
     private Duration pollTimeout = Duration.ofSeconds(1);
+    /**
+     * 是否在初始化后自动启动 Kafka 消费循环。
+     */
     private boolean autoStartConsumers = true;
 
     /**

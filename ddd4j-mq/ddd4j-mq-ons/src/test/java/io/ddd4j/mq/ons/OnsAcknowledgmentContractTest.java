@@ -23,8 +23,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * 通过 <code>mock()</code>、<code>message.getMsgID()</code>、<code>acknowledgment.nack()</code> 验证 <code>OnsAcknowledgmentContract</code> 的运行行为。
+ */
 class OnsAcknowledgmentContractTest {
 
+    /**
+     * 验证<code>acknowledgment.action()</code> 等于 <code>com.aliyun.openservices.ons.api.Action.ReconsumeLater</code>，<code>acknowledgment.isAcknowledged()</code>为真。
+     */
     @Test
     void shouldMapNackToProtocolRetryAction() {
         Message message = mock(Message.class);

@@ -47,12 +47,29 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  */
 class JpaEventStoreMysqlIT {
 
+    /**
+     * 测试事件流中使用的聚合类型名称。
+     */
     private static final String ORDER_TYPE = "Order";
 
+    /**
+     * 用于创建 JPA 实体管理器的工厂。
+     */
     private static EntityManagerFactory entityManagerFactory;
+    /**
+     * 执行 JPA 查询和持久化操作的实体管理器。
+     */
     private EntityManager entityManager;
+    /**
+     * 读取及追加领域事件的事件存储。
+     */
     private EventStore eventStore;
 
+    /**
+     * 测试前依次初始化<code>entityManagerFactory</code>。
+     *
+     * @throws Exception 执行数据库操作时失败
+     */
     @BeforeAll
     static void startContainerAndCreateEntityManagerFactory() throws Exception {
         // 进程级单例夹具：Docker 不可用则整组跳过
@@ -92,6 +109,9 @@ class JpaEventStoreMysqlIT {
         System.out.println("MYSQL_IT_CONTAINER=started image=" + MysqlEventStoreContainerSupport.MYSQL.getDockerImageName());
     }
 
+    /**
+     * 测试后依次关闭<code>entityManagerFactory</code>。
+     */
     @AfterAll
     static void closeEntityManagerFactory() {
         if (entityManagerFactory != null && entityManagerFactory.isOpen()) {
@@ -100,12 +120,20 @@ class JpaEventStoreMysqlIT {
         // 进程级单例容器不在此关闭：同一 JVM 内可能还有其它 IT 复用（JVM 退出时由 Ryuk 回收）
     }
 
+    /**
+     * 测试前依次初始化<code>entityManager</code>、初始化<code>eventStore</code>。
+     */
     @BeforeEach
     void setUp() {
         entityManager = entityManagerFactory.createEntityManager();
         eventStore = new JpaEventStore(entityManager);
     }
 
+    /**
+     * 测试后依次关闭<code>entityManager</code>。
+     *
+     * @throws Exception 执行数据库操作时失败
+     */
     @AfterEach
     void tearDown() throws Exception {
         EntityTransaction tx = entityManager.getTransaction();
@@ -120,6 +148,9 @@ class JpaEventStoreMysqlIT {
         }
     }
 
+    /**
+     * 验证<code>events.size()</code> 等于 <code>2</code>，<code>events.get(0).version()</code> 等于 <code>1L</code>，<code>events.get(0).aggregateId().asString()</code> 等于 <code>orderId.asString()</code>。
+     */
     @Test
     void appendAndReadShouldRoundTripTypedEventOnMysql() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-mysql-1");
@@ -136,6 +167,9 @@ class JpaEventStoreMysqlIT {
         System.out.println("MYSQL_IT_ROUNDTRIP=events:" + events.size());
     }
 
+    /**
+     * 验证被测调用 抛出 <code>AggregateVersionConflictException.class</code>，<code>conflict.expectedVersion()</code> 等于 <code>0L</code>，<code>eventStore.read(ORDER_TYPE, orderId).size()</code> 等于 <code>1</code>。
+     */
     @Test
     void appendWithStaleVersionShouldRejectOnMysql() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-mysql-2");
@@ -152,6 +186,11 @@ class JpaEventStoreMysqlIT {
         System.out.println("MYSQL_IT_CONFLICT=expected:0,actual:1");
     }
 
+    /**
+     * 验证<code>rs.next()</code>为真，<code>rs.getString("data_type")</code> 等于 <code>"text"</code>。
+     *
+     * @throws Exception 执行数据库操作时失败
+     */
     @Test
     void payloadColumnShouldUsePortableTextTypeOnMysql() throws Exception {
         // 先 append 一次确保表已建
@@ -172,26 +211,57 @@ class JpaEventStoreMysqlIT {
         System.out.println("MYSQL_IT_SCHEMA=payload:text");
     }
 
+    /**
+     * 测试专用聚合根标识，供仓储、事件序列化或命令路由构造独立的聚合实例。
+     */
     private static final class TestAggregateRootId implements AggregateRootId {
 
+        /**
+         * 测试聚合注册和反序列化所用的实体类型标识。
+         */
         private static final EntityType TYPE = new StringEntityType("Order");
 
+        /**
+         * 用于组成测试标识的原始值。
+         */
         private final String value;
 
+        /**
+         * 以给定状态构造 <code>TestAggregateRootId</code> 测试对象。
+         *
+         * @param value 用于组成测试标识的原始值
+         */
         private TestAggregateRootId(String value) {
             this.value = value;
         }
 
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 实际返回<code>TYPE</code>，供调用方取得当前值
+         */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 实际返回<code>value</code>，供调用方取得当前值
+         */
         @Override
         public String asString() {
             return value;
         }
 
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * <p>测试夹具会调用 <code>TYPE.asString()</code>。</p>
+         *
+         * @return 实际返回<code>TYPE.asString() + ":" + value</code>
+         */
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
@@ -203,21 +273,42 @@ class JpaEventStoreMysqlIT {
      */
     public static final class OrderCreatedEvent extends DomainEvent<TestAggregateRootId> {
 
+        /**
+         * 本用例写入或读取的事件事实。
+         */
         private String fact;
 
+        /**
+         * 使用 <code>super()</code> 初始化 <code>OrderCreatedEvent</code> 测试夹具。
+         */
         public OrderCreatedEvent() {
             super();
         }
 
+        /**
+         * 以给定状态构造 <code>OrderCreatedEvent</code> 测试对象。
+         *
+         * @param fact 本用例写入或读取的事件事实
+         */
         private OrderCreatedEvent(String fact) {
             super(new EntityIdPath(new TestAggregateRootId("order-1")));
             this.fact = fact;
         }
 
+        /**
+         * 读取<code>fact</code> 字段。
+         *
+         * @return <code>fact</code> 字段
+         */
         public String getFact() {
             return fact;
         }
 
+        /**
+         * 设置<code>fact</code> 字段。
+         *
+         * @param fact 要写入的值
+         */
         public void setFact(String fact) {
             this.fact = fact;
         }

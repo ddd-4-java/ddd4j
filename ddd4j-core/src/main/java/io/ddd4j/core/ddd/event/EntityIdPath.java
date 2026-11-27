@@ -32,6 +32,9 @@ public final class EntityIdPath implements Serializable {
      * 路径分隔符。
      */
     public static final String PATH_SEPARATOR = "/";
+    /**
+     * Java 序列化版本标识。
+     */
     @Serial
     private static final long serialVersionUID = 1L;
     /**
@@ -132,6 +135,14 @@ public final class EntityIdPath implements Serializable {
         return new EntityIdPath(parsed);
     }
 
+    /**
+     * 解析单个带类型的实体标识路径段。
+     *
+     * @param segment 从路径中取得的实体标识段
+     * @param path    用于诊断的原始路径
+     * @return 通过标识工厂恢复的实体标识
+     * @throws IllegalArgumentException 路径段为空或类型和标识分隔格式无效
+     */
     private static EntityId parseSegment(String segment, String path) {
         if (!StrKit.hasText(segment)) {
             throw new IllegalArgumentException(
@@ -158,6 +169,9 @@ public final class EntityIdPath implements Serializable {
      *
      * <p>仅在字符串包含 {@code /} 或 {@code \} 时才插入转义符；简单值
      * （如 {@code "String:order-1"} 或 {@code "OrderId:o-1"}）保持原样输出。
+     *
+     * @param value 待编码的标识字符串
+     * @return 可作为路径段使用的编码标识
      */
     private static String escape(String value) {
         if (value.indexOf('\\') < 0 && value.indexOf('/') < 0) {
@@ -176,6 +190,9 @@ public final class EntityIdPath implements Serializable {
 
     /**
      * 反转义段分隔符（{@link #escape(String)} 的对偶）。
+     *
+     * @param value 待解码的路径段
+     * @return 解码后的原始标识
      */
     private static String unescape(String value) {
         if (value.indexOf('\\') < 0) {
@@ -291,6 +308,13 @@ public final class EntityIdPath implements Serializable {
                 .collect(java.util.stream.Collectors.joining(PATH_SEPARATOR));
     }
 
+    /**
+     * 按索引区间截取连续实体标识。
+     *
+     * @param fromIndex 起始索引，包含该位置
+     * @param toIndex   结束索引，不含该位置
+     * @return 标识子路径，区间为空时返回空
+     */
     private EntityIdPath subPath(int fromIndex, int toIndex) {
         if (toIndex - fromIndex <= 0) {
             return null;
@@ -298,6 +322,12 @@ public final class EntityIdPath implements Serializable {
         return new EntityIdPath(entityIds.subList(fromIndex, toIndex));
     }
 
+    /**
+     * 根据<code>entityIds</code>比较对象的值是否相等。
+     *
+     * @param object 用于此操作的 <code>object</code>（<code>Object</code>）
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object object) {
         if (this == object) {
@@ -309,11 +339,21 @@ public final class EntityIdPath implements Serializable {
         return Objects.equals(entityIds, that.entityIds);
     }
 
+    /**
+     * 用<code>entityIds</code>计算哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         return Objects.hash(entityIds);
     }
 
+    /**
+     * 生成用于调试和日志的对象描述。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return asString();

@@ -96,6 +96,13 @@ public class SpringCommandBus extends DefaultCommandBus {
         super(collect(context, registry));
     }
 
+    /**
+     * 从运行容器中收集命令执行器并登记共享命令路由。
+     *
+     * @param context  当前框架传入的执行或容器上下文
+     * @param registry 接收命令执行器的共享注册表
+     * @return 构造完成的共享命令执行组件
+     */
     private static Collection<CommandExecutor<?>> collect(ApplicationContext context, CommandRegistry registry) {
         Objects.requireNonNull(context, "context must not be null");
         Objects.requireNonNull(registry, "registry must not be null");

@@ -7,8 +7,16 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 
-/** 测试用真实 SPI 内容规则：拒绝带 blocked 标记的 PDF。 */
+/**
+ * 测试用真实 SPI 内容规则：拒绝带 blocked 标记的 PDF。
+ */
 public final class PdfContentProvider implements FileContentCheckProvider {
+    /**
+     * 调用 <code>file.getBytes()</code> 执行当前夹具操作。
+     *
+     * @param file 传给 <code>new String</code> 的 <code>UploadFile</code> 输入
+     * @return 当前测试使用的结果，取自 <code>!new String(file.getBytes(), StandardCharsets.US_ASCII).contains("blocked")</code>
+     */
     @Override
     public Boolean check(UploadFile file) {
         try {
@@ -18,6 +26,11 @@ public final class PdfContentProvider implements FileContentCheckProvider {
         }
     }
 
+    /**
+     * 为当前用例提供固定的 <code>support</code> 返回值。
+     *
+     * @return <code>"pdf"</code>
+     */
     @Override
     public String support() {
         return "pdf";

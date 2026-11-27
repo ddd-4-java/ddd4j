@@ -44,9 +44,9 @@ public abstract class BaseAdminAggregateController<V, Q> {
     /**
      * 分页查询聚合根。
      *
-     * @param pageNum 页码
+     * @param pageNum  页码
      * @param pageSize 每页数量
-     * @param query 查询条件
+     * @param query    查询条件
      * @return 聚合根分页结果
      */
     @GetMapping
@@ -60,9 +60,9 @@ public abstract class BaseAdminAggregateController<V, Q> {
     /**
      * 分页查询管理视图。
      *
-     * @param pageNum 页码
+     * @param pageNum  页码
      * @param pageSize 每页数量
-     * @param query 查询条件
+     * @param query    查询条件
      * @return 管理视图分页结果
      */
     protected abstract Page<V> adminListPage(int pageNum, int pageSize, Q query);

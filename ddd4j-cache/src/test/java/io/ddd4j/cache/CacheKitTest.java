@@ -35,19 +35,31 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class CacheKitTest {
 
+    /**
+     * 测试期间注册及清理的业务缓存名称。
+     */
     private static final String BIZ = "cache-kit-test";
 
+    /**
+     * 清理同名缓存并把本地缓存实现恢复为 Caffeine。
+     */
     @BeforeEach
     void setUp() {
         CacheKit.unregister(BIZ);
         CacheKit.setDefaultType(LocalCacheType.CAFFEINE);
     }
 
+    /**
+     * 注销当前用例使用的业务缓存。
+     */
     @AfterEach
     void tearDown() {
         CacheKit.unregister(BIZ);
     }
 
+    /**
+     * 验证<code>CacheKit.getCacheNames()</code> 包含 <code>BIZ</code>。
+     */
     @Test
     void build_shouldCreateLocalCache() {
         CacheKit.build(BIZ, 300);
@@ -55,6 +67,9 @@ class CacheKitTest {
         assertThat(CacheKit.getCacheNames()).contains(BIZ);
     }
 
+    /**
+     * 验证<code>CacheKit.getCache(BIZ)</code>非空。
+     */
     @Test
     void build_withBuilder_shouldCreateLocalCache() {
         CacheKit.build(BIZ, b -> b.maximumSize(10).expireAfterWriteSeconds(60));
@@ -62,6 +77,9 @@ class CacheKitTest {
         assertThat(CacheKit.getCache(BIZ)).isNotNull();
     }
 
+    /**
+     * 验证<code>CacheKit.getCache(BIZ)</code>非空，<code>CacheKit.getCacheNames()</code> 包含 <code>BIZ</code>。
+     */
     @Test
     void build_withGuavaType_shouldCreateGuavaCache() {
         CacheKit.build(BIZ, b -> b.maximumSize(10), LocalCacheType.GUAVA);
@@ -70,6 +88,9 @@ class CacheKitTest {
         assertThat(CacheKit.getCacheNames()).contains(BIZ);
     }
 
+    /**
+     * 验证<code>CacheKit.getCache(BIZ)</code>非空。
+     */
     @Test
     void build_withHutoolType_shouldCreateHutoolCache() {
         CacheKit.build(BIZ, b -> b.maximumSize(10), LocalCacheType.HUTOOL);
@@ -77,6 +98,9 @@ class CacheKitTest {
         assertThat(CacheKit.getCache(BIZ)).isNotNull();
     }
 
+    /**
+     * 验证<code>(String) CacheKit.get(BIZ, "k1")</code> 等于 <code>"v1"</code>。
+     */
     @Test
     void putAndGet_shouldStoreAndRetrieveValue() {
         CacheKit.build(BIZ, 300);
@@ -85,6 +109,9 @@ class CacheKitTest {
         assertThat((String) CacheKit.get(BIZ, "k1")).isEqualTo("v1");
     }
 
+    /**
+     * 验证<code>(Object) CacheKit.get(BIZ, "missing")</code>为空。
+     */
     @Test
     void get_shouldReturnNullForMissingKey() {
         CacheKit.build(BIZ, 300);
@@ -92,11 +119,17 @@ class CacheKitTest {
         assertThat((Object) CacheKit.get(BIZ, "missing")).isNull();
     }
 
+    /**
+     * 验证<code>(Object) CacheKit.get("non-existent-biz", "k")</code>为空。
+     */
     @Test
     void get_shouldReturnNullWhenBizNotRegistered() {
         assertThat((Object) CacheKit.get("non-existent-biz", "k")).isNull();
     }
 
+    /**
+     * 验证<code>value</code> 等于 <code>"loaded"</code>，<code>loadCount.get()</code> 等于 <code>1</code>。
+     */
     @Test
     void getWithLoader_shouldLoadOnMiss() {
         CacheKit.build(BIZ, 300);
@@ -118,6 +151,9 @@ class CacheKitTest {
         assertThat(loadCount.get()).isEqualTo(1);
     }
 
+    /**
+     * 验证<code>(Object) CacheKit.get(BIZ, "k1")</code>为空，<code>(String) CacheKit.get(BIZ, "k2")</code> 等于 <code>"v2"</code>。
+     */
     @Test
     void invalidate_shouldRemoveSingleKey() {
         CacheKit.build(BIZ, 300);
@@ -130,6 +166,9 @@ class CacheKitTest {
         assertThat((String) CacheKit.get(BIZ, "k2")).isEqualTo("v2");
     }
 
+    /**
+     * 验证<code>(Object) CacheKit.get(BIZ, "k1")</code>为空，<code>(Object) CacheKit.get(BIZ, "k2")</code>为空。
+     */
     @Test
     void invalidateAll_shouldClearAllKeys() {
         CacheKit.build(BIZ, 300);
@@ -142,6 +181,9 @@ class CacheKitTest {
         assertThat((Object) CacheKit.get(BIZ, "k2")).isNull();
     }
 
+    /**
+     * 验证<code>CacheKit.exists(BIZ, "k1")</code>为真，<code>CacheKit.exists(BIZ, "missing")</code>为假，<code>CacheKit.exists("non-existent-biz", "k1")</code>为假。
+     */
     @Test
     void exists_shouldReportPresence() {
         CacheKit.build(BIZ, 300);
@@ -152,6 +194,9 @@ class CacheKitTest {
         assertThat(CacheKit.exists("non-existent-biz", "k1")).isFalse();
     }
 
+    /**
+     * 验证<code>stats</code>非空，<code>stats.hitCount()</code> 大于或等于 <code>1</code>。
+     */
     @Test
     void getStats_shouldReturnNonNullWhenRecordStatsEnabled() {
         CacheKit.build(BIZ, b -> b.maximumSize(10).recordStats(true));
@@ -164,6 +209,9 @@ class CacheKitTest {
         assertThat(stats.hitCount()).isGreaterThanOrEqualTo(1);
     }
 
+    /**
+     * 验证<code>CacheKit.getCacheNames()</code> 包含 <code>BIZ</code>，<code>CacheKit.getCache(BIZ)</code> 指向同一实例 <code>cache</code>。
+     */
     @Test
     void register_shouldRegisterExternalCache() {
         Map<String, Object> store = new HashMap<>();
@@ -175,18 +223,27 @@ class CacheKitTest {
         assertThat(CacheKit.getCache(BIZ)).isSameAs(cache);
     }
 
+    /**
+     * 验证<code>CacheKit.register(null, new InMemoryCache(new HashMap&lt;&gt;()))</code> 抛出 <code>NullPointerException.class</code>。
+     */
     @Test
     void register_shouldRejectNullBiz() {
         assertThatThrownBy(() -> CacheKit.register(null, new InMemoryCache(new HashMap<>())))
                 .isInstanceOf(NullPointerException.class);
     }
 
+    /**
+     * 验证<code>CacheKit.register(BIZ, null)</code> 抛出 <code>NullPointerException.class</code>。
+     */
     @Test
     void register_shouldRejectNullCache() {
         assertThatThrownBy(() -> CacheKit.register(BIZ, null))
                 .isInstanceOf(NullPointerException.class);
     }
 
+    /**
+     * 验证<code>CacheKit.getCacheNames()</code> 包含 <code>BIZ</code>，<code>CacheKit.getCacheNames()</code> 不包含 <code>BIZ</code>。
+     */
     @Test
     void unregister_shouldRemoveCache() {
         CacheKit.build(BIZ, 300);
@@ -197,6 +254,9 @@ class CacheKitTest {
         assertThat(CacheKit.getCacheNames()).doesNotContain(BIZ);
     }
 
+    /**
+     * 验证<code>value</code> 等于 <code>"auto-k1"</code>。
+     */
     @Test
     void buildWithLoader_shouldAutoLoadOnGet() {
         CacheKit.buildWithLoader(BIZ, key -> "auto-" + key,
@@ -207,6 +267,9 @@ class CacheKitTest {
         assertThat(value).isEqualTo("auto-k1");
     }
 
+    /**
+     * 验证<code>CacheKit.putIfAbsent(BIZ, "k1", "v1")</code> 抛出 <code>UnsupportedOperationException.class</code>。
+     */
     @Test
     void putIfAbsent_shouldRejectWhenCacheNotCasCapable() {
         // Hutool cache does not implement CasCache
@@ -216,6 +279,9 @@ class CacheKitTest {
                 .isInstanceOf(UnsupportedOperationException.class);
     }
 
+    /**
+     * 验证<code>CacheKit.getDefaultType()</code> 等于 <code>LocalCacheType.GUAVA</code>。
+     */
     @Test
     void setDefaultType_shouldUpdateDefaultType() {
         CacheKit.setDefaultType(LocalCacheType.GUAVA);
@@ -223,6 +289,11 @@ class CacheKitTest {
         assertThat(CacheKit.getDefaultType()).isEqualTo(LocalCacheType.GUAVA);
     }
 
+    /**
+     * 验证<code>owners</code> 的大小为 <code>1</code>，<code>CacheKit.getCache(BIZ)</code> 指向同一实例 <code>owners.get(0)</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void concurrentBuildersReturnExactlyOneOwnedRegistration() throws Exception {
         int clients = 8;
@@ -250,6 +321,9 @@ class CacheKitTest {
         }
     }
 
+    /**
+     * 验证<code>CacheKit.buildLocalIfAbsent(BIZ, 300)</code>为空，<code>CacheKit.getCache(BIZ)</code> 指向同一实例 <code>replacement</code>，<code>(Object) CacheKit.get(BIZ, "key")</code> 等于 <code>"external"</code>。
+     */
     @Test
     void releasingOldOwnerPreservesReplacementAndItsData() {
         Cache<String, Object> owned = CacheKit.buildLocalIfAbsent(BIZ, 300);
@@ -264,6 +338,9 @@ class CacheKitTest {
         assertThat((Object) CacheKit.get(BIZ, "key")).isEqualTo("external");
     }
 
+    /**
+     * 验证<code>CacheKit.getCache(BIZ)</code> 指向同一实例 <code>owned</code>，<code>CacheKit.getCache(BIZ)</code> 指向同一实例 <code>loading</code>，<code>CacheKit.buildLocalIfAbsent(BIZ, 300)</code>为空。
+     */
     @Test
     void releasingOrdinaryCacheExposesAndBorrowsSameNameLoadingCache() {
         Cache<String, Object> owned = CacheKit.buildLocalIfAbsent(BIZ, 300);
@@ -284,42 +361,99 @@ class CacheKitTest {
      * Minimal in-memory Cache used to test the {@code register()} path.
      */
     static class InMemoryCache implements io.ddd4j.core.cache.Cache<String, Object> {
+        /**
+         * 保存测试数据的内存存储。
+         */
         private final Map<String, Object> store;
 
+        /**
+         * 用给定值初始化 <code>InMemoryCache</code> 实例。
+         *
+         * @param store 保存测试数据的内存存储
+         */
         InMemoryCache(Map<String, Object> store) {
             this.store = store;
         }
 
+        /**
+         * 读取现有缓存值。
+         *
+         * <p>测试夹具会调用 <code>store.get(key)</code>。</p>
+         *
+         * @param key 缓存键
+         * @return 实际返回<code>store.get(key)</code>
+         */
         @Override
         public Object getIfPresent(String key) {
             return store.get(key);
         }
 
+        /**
+         * 读取调用指定的当前值。
+         *
+         * <p>测试夹具会调用 <code>store.computeIfAbsent(key, mappingFunction)</code>。</p>
+         *
+         * @param key             缓存键
+         * @param mappingFunction 值加载函数
+         * @return 实际返回<code>store.computeIfAbsent(key, mappingFunction)</code>
+         */
         @Override
         public Object get(String key, java.util.function.Function<String, Object> mappingFunction) {
             return store.computeIfAbsent(key, mappingFunction);
         }
 
+        /**
+         * 将给定数据写入当前存储。
+         *
+         * <p>测试夹具会调用 <code>store.put(key, value)</code>。</p>
+         *
+         * @param key   缓存键
+         * @param value 缓存值
+         */
         @Override
         public void put(String key, Object value) {
             store.put(key, value);
         }
 
+        /**
+         * 使指定键的缓存条目失效。
+         *
+         * <p>测试夹具会调用 <code>store.remove(key)</code>。</p>
+         *
+         * @param key 缓存键
+         */
         @Override
         public void invalidate(String key) {
             store.remove(key);
         }
 
+        /**
+         * 使当前缓存中的全部条目失效。
+         *
+         * <p>测试夹具会调用 <code>store.clear()</code>。</p>
+         */
         @Override
         public void invalidateAll() {
             store.clear();
         }
 
+        /**
+         * 返回当前缓存条目规模的估算值。
+         *
+         * <p>测试夹具会调用 <code>store.size()</code>。</p>
+         *
+         * @return 实际返回<code>store.size()</code>
+         */
         @Override
         public long estimatedSize() {
             return store.size();
         }
 
+        /**
+         * 返回当前缓存实现记录的统计信息。
+         *
+         * @return 此实现返回<code>null</code>
+         */
         @Override
         public CacheStats stats() {
             return null;

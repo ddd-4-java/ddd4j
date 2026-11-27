@@ -31,8 +31,17 @@ import java.util.Objects;
  */
 public class PanacheEventStore implements EventStore {
 
+    /**
+     * 执行 JPA 查询和持久化操作的实体管理器。
+     */
     private final EntityManager entityManager;
+    /**
+     * 在数据库可重试故障后重新执行操作的策略。
+     */
     private final EventStoreRetry retry;
+    /**
+     * 将领域事件负载写为存储格式并从存储格式恢复的序列化器。
+     */
     private final EventPayloadSerializer serializer;
 
     /**
@@ -55,6 +64,13 @@ public class PanacheEventStore implements EventStore {
         this(entityManager, retry, new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()));
     }
 
+    /**
+     * 用给定值初始化 <code>PanacheEventStore</code> 实例。
+     *
+     * @param entityManager 执行 JPA 查询和持久化操作的实体管理器
+     * @param retry         <code>retry</code> 字段
+     * @param serializer    <code>serializer</code> 字段
+     */
     PanacheEventStore(EntityManager entityManager, EventStoreRetry retry, EventPayloadSerializer serializer) {
         this.entityManager = Objects.requireNonNull(entityManager, "entityManager must not be null");
         this.retry = Objects.requireNonNull(retry, "retry must not be null");
@@ -64,6 +80,11 @@ public class PanacheEventStore implements EventStore {
     /**
      * 以聚合类型和聚合标识追加事件；版本冲突使用统一异常表示，位置号冲突可重试。
      * 追加操作自行管理资源本地事务，调用时 EntityManager 的事务须处于空闲状态。
+     *
+     * @param aggregateType   聚合类型
+     * @param aggregateId     聚合根标识
+     * @param events          按顺序追加或回放的领域事件
+     * @param expectedVersion 预期的当前聚合版本
      */
     @Override
     public void append(String aggregateType, AggregateRootId aggregateId,
@@ -121,6 +142,10 @@ public class PanacheEventStore implements EventStore {
 
     /**
      * 按版本升序读取一个聚合流。
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId   聚合根标识
+     * @return 按版本顺序返回的领域事件流
      */
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId) {
@@ -140,6 +165,12 @@ public class PanacheEventStore implements EventStore {
 
     /**
      * 按闭合版本区间读取一个聚合流。
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId   聚合根标识
+     * @param fromVersion   读取起始版本
+     * @param toVersion     读取结束版本
+     * @return 按版本顺序返回的领域事件流
      */
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId,
@@ -163,6 +194,10 @@ public class PanacheEventStore implements EventStore {
 
     /**
      * 按全局 position 升序分页读取事件。
+     *
+     * @param fromPosition 起始流位置
+     * @param limit        本次最多读取的记录数
+     * @return 按全局位置排序的事件
      */
     @Override
     public List<StoredEvent> readAll(long fromPosition, int limit) {
@@ -178,6 +213,13 @@ public class PanacheEventStore implements EventStore {
                 .toList();
     }
 
+    /**
+     * 统计该聚合已持久化的事件以获得当前版本。
+     *
+     * @param aggregateType 聚合类型名称
+     * @param aggregateId   聚合根标识
+     * @return 用于乐观锁校验的聚合当前版本
+     */
     private long findCurrentVersion(String aggregateType, String aggregateId) {
         try {
             Long count = entityManager.createQuery(
@@ -193,6 +235,11 @@ public class PanacheEventStore implements EventStore {
         }
     }
 
+    /**
+     * 在事件表最大全局位置的基础上生成下一位置。
+     *
+     * @return 准备写入事件的位置
+     */
     private long nextPosition() {
         try {
             Long maximum = entityManager.createQuery(
@@ -204,6 +251,12 @@ public class PanacheEventStore implements EventStore {
         }
     }
 
+    /**
+     * 读取持久化行的事件类型并解码负载，恢复存储事件。
+     *
+     * @param entity 数据库返回的持久化实体
+     * @return 供事件读取入口返回的存储事件
+     */
     private StoredEvent toStoredEvent(PanacheStoredEventEntity entity) {
         DomainEvent<?> payload = serializer.deserialize(entity.payload, resolveEventType(entity.eventType));
         return new StoredEvent(
@@ -218,6 +271,12 @@ public class PanacheEventStore implements EventStore {
                 EventId.valueOf(entity.causationId));
     }
 
+    /**
+     * 按持久化的全限定类名解析事件负载类型。
+     *
+     * @param eventType 事件的 Java 类型或持久化类型名称
+     * @return 用于反序列化的领域事件类
+     */
     @SuppressWarnings("unchecked")
     private Class<? extends DomainEvent<?>> resolveEventType(String eventType) {
         try {
@@ -227,38 +286,85 @@ public class PanacheEventStore implements EventStore {
         }
     }
 
+    /**
+     * 将事件存储中的字符串标识适配为聚合根标识。
+     */
     private final static class StringAggregateRootId implements AggregateRootId {
 
+        /**
+         * Java 序列化版本标识。
+         */
         private static final long serialVersionUID = 0L;
+        /**
+         * 用于描述字符串聚合标识的实体类型。
+         */
         private static final StringEntityType TYPE = new StringEntityType("String");
+        /**
+         * 从存储记录中读取的原始字符串标识。
+         */
         private final String value;
 
+        /**
+         * 从持久化字符串恢复聚合根标识。
+         *
+         * @param value 原始标识文本
+         */
         @JsonCreator()
         private StringAggregateRootId(@JsonProperty("value") String value) {
             this.value = value;
         }
 
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 实际返回<code>TYPE</code>，供调用方取得当前值
+         */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 不含类型标记的业务标识
+         */
         @Override
         @JsonValue
         public String asString() {
             return value;
         }
 
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * <p>此实现调用 <code>TYPE.asString()</code>。</p>
+         *
+         * @return 包含类型标记的标识
+         */
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
         }
 
+        /**
+         * 读取<code>value</code> 字段。
+         *
+         * @return <code>value</code> 字段
+         */
         @JsonProperty("value")
         public String value() {
             return value;
         }
 
+        /**
+         * 根据<code>value</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -271,6 +377,11 @@ public class PanacheEventStore implements EventStore {
             return Objects.equals(this.value, other.value);
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 0;
@@ -278,6 +389,11 @@ public class PanacheEventStore implements EventStore {
             return result;
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>value</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "StringAggregateRootId[value=" + value + "]";

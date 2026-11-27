@@ -27,12 +27,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -79,6 +74,9 @@ public class MQEvent implements Serializable {
      * 用于获取 defaultTopic / namespace / broker 默认值。
      */
     public static final String MQ_PROPERTIES = "MQProperties";
+    /**
+     * Java 序列化版本标识。
+     */
     private static final long serialVersionUID = 1L;
     /**
      * 消息 ID，默认当前时间戳
@@ -128,6 +126,7 @@ public class MQEvent implements Serializable {
 
     /**
      * 策略匹配：supports 参数来源于 {@code @MQEventListener.supports}。
+     *
      * @param supports 是否支持的开关
      * @return 满足条件时返回 true，否则返回 false
      */
@@ -162,6 +161,7 @@ public class MQEvent implements Serializable {
 
     /**
      * 策略匹配项，默认 {@code "*"}（匹配所有监听器），子类可覆写。
+     *
      * @return 匹配的字符串内容
      */
     public String match() {
@@ -170,13 +170,16 @@ public class MQEvent implements Serializable {
 
     // ========================= 发布 =========================
 
-    /** 按事件自身的主题、标签和租户发布。 */
+    /**
+     * 按事件自身的主题、标签和租户发布。
+     */
     public void publish() {
         publish(getTopic(), getTag(), getTenantId());
     }
 
     /**
      * 发布到指定主题。
+     *
      * @param topic 发布主题
      */
     public void publish(String topic) {
@@ -185,8 +188,9 @@ public class MQEvent implements Serializable {
 
     /**
      * 发布到指定主题和标签。
+     *
      * @param topic 发布主题
-     * @param tag 消息标签
+     * @param tag   消息标签
      */
     public void publish(String topic, String tag) {
         publish(topic, tag, getTenantId());
@@ -203,8 +207,9 @@ public class MQEvent implements Serializable {
      *   <li>仅注册了一个 broker → 直接用（便捷场景）</li>
      *   <li>都找不到 → warn 日志，事件不发布</li>
      * </ol>
-     * @param topic 消息主题
-     * @param tag 标签
+     *
+     * @param topic    消息主题
+     * @param tag      标签
      * @param tenantId 租户标识
      */
     public void publish(String topic, String tag, String tenantId) {
@@ -246,7 +251,8 @@ public class MQEvent implements Serializable {
 
     /**
      * 链式设置租户 ID。
-     * @param <T> 数据元素类型
+     *
+     * @param <T>      数据元素类型
      * @param tenantId 租户标识
      * @return 返回的 T 结果
      */
@@ -258,7 +264,7 @@ public class MQEvent implements Serializable {
     /**
      * 链式设置目标 broker。
      *
-     * @param <T> 数据元素类型
+     * @param <T>    数据元素类型
      * @param broker broker 标识（如 {@code "kafka"} / {@code "rocket"} / {@code "redisStream"}）
      * @return this
      */

@@ -21,6 +21,11 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class PconlineRegionHttpContractTest {
 
+    /**
+     * 验证<code>first.isPresent()</code>为真，<code>second</code> 等于 <code>first</code>，<code>cache.ttl</code> 等于 <code>Duration.ofMinutes(30)</code>。
+     *
+     * @throws IOException 读取或写入测试数据时发生 I/O 错误
+     */
     @Test
     void successfulLookupCachesForThirtyMinutes() throws IOException {
         AtomicInteger requests = new AtomicInteger();
@@ -42,6 +47,11 @@ class PconlineRegionHttpContractTest {
         }
     }
 
+    /**
+     * 验证<code>template.getLocationByIp("127.0.0.1").isPresent()</code>为假，<code>requests.get()</code> 等于 <code>2</code>，<code>cache.writes</code> 等于 <code>0</code>。
+     *
+     * @throws IOException 读取或写入测试数据时发生 I/O 错误
+     */
     @Test
     void blankAddressAndHttpFailureAreNotCached() throws IOException {
         for (int status : new int[]{200, 503}) {
@@ -62,6 +72,11 @@ class PconlineRegionHttpContractTest {
         }
     }
 
+    /**
+     * 验证<code>template.getLocationByIp(null)</code> 抛出 <code>NullPointerException.class</code>，<code>template.getLocationByIp("not-ip")</code> 抛出 <code>IllegalArgumentException.class</code>，<code>requests.get()</code> 等于 <code>0</code>。
+     *
+     * @throws IOException 读取或写入测试数据时发生 I/O 错误
+     */
     @Test
     void invalidIpFailsBeforeHttpRequest() throws IOException {
         AtomicInteger requests = new AtomicInteger();
@@ -76,6 +91,11 @@ class PconlineRegionHttpContractTest {
         }
     }
 
+    /**
+     * 验证<code>template.getRegionAddress("127.0.0.1").getCountry()</code> 等于 <code>"Fictionland"</code>，<code>requests.get()</code> 等于 <code>1</code>。
+     *
+     * @throws IOException 读取或写入测试数据时发生 I/O 错误
+     */
     @Test
     void regionAddressStripsUnicodeWhitespace() throws IOException {
         AtomicInteger requests = new AtomicInteger();
@@ -90,11 +110,27 @@ class PconlineRegionHttpContractTest {
         }
     }
 
+    /**
+     * 创建 <code>new PconlineRegionTemplate</code> 供当前测试路径调用。
+     *
+     * @param server 传给 <code>server.getAddress()</code> 的 <code>HttpServer</code> 输入
+     * @param cache  用于构造本次返回结果的 <code>RegionCache</code> 输入
+     * @return 当前测试使用的结果，取自 <code>new PconlineRegionTemplate(cache, "http://127.0.0.1:" + server.getAddress().getPort() + "/ip?json=true&amp;ip=%s")</code>
+     */
     private PconlineRegionTemplate template(HttpServer server, RegionCache cache) {
         return new PconlineRegionTemplate(cache,
                 "http://127.0.0.1:" + server.getAddress().getPort() + "/ip?json=true&ip=%s");
     }
 
+    /**
+     * 读取 <code>server</code> 供当前测试使用。
+     *
+     * @param status   当前 HTTP 或业务流程的状态
+     * @param body     当前请求或响应中要读取的正文
+     * @param requests 传给 <code>server.createContext()</code> 的 <code>AtomicInteger</code> 输入
+     * @return 当前测试使用的结果，取自 <code>server</code>
+     * @throws IOException 读取或写入测试数据时发生 I/O 错误
+     */
     private HttpServer server(int status, String body, AtomicInteger requests) throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
         server.createContext("/ip", exchange -> reply(exchange, status, body, requests));
@@ -102,6 +138,15 @@ class PconlineRegionHttpContractTest {
         return server;
     }
 
+    /**
+     * 调用 <code>requests.incrementAndGet()</code>、<code>body.getBytes()</code>、<code>exchange.getResponseHeaders()</code> 执行当前夹具操作。
+     *
+     * @param exchange 当前 HTTP 请求及响应交换对象
+     * @param status   当前 HTTP 或业务流程的状态
+     * @param body     当前请求或响应中要读取的正文
+     * @param requests 传给 <code>requests.incrementAndGet()</code> 的 <code>AtomicInteger</code> 输入
+     * @throws IOException 读取或写入测试数据时发生 I/O 错误
+     */
     private void reply(HttpExchange exchange, int status, String body, AtomicInteger requests) throws IOException {
         requests.incrementAndGet();
         byte[] bytes = body.getBytes(StandardCharsets.UTF_8);
@@ -112,16 +157,45 @@ class PconlineRegionHttpContractTest {
         }
     }
 
+    /**
+     * 记录缓存操作，供测试验证调用结果或顺序。
+     */
     private static final class RecordingCache implements RegionCache {
+        /**
+         * 供测试线程安全保存当前观察结果的引用。
+         */
         private final AtomicReference<String> value = new AtomicReference<>();
+        /**
+         * 用于验证实际写入动作或写入次数的记录。
+         */
         private int writes;
+        /**
+         * 测试存储使用或记录的到期时长。
+         */
         private Duration ttl;
 
+        /**
+         * 读取缓存字符串。
+         *
+         * <p>测试夹具会调用 <code>value.get()</code>。</p>
+         *
+         * @param key 缓存键
+         * @return 实际返回<code>value.get()</code>
+         */
         @Override
         public String getString(String key) {
             return value.get();
         }
 
+        /**
+         * 写入带有效期的缓存字符串。
+         *
+         * <p>测试夹具会调用 <code>value.set(stored)</code>。</p>
+         *
+         * @param key      缓存键
+         * @param stored   传给 <code>value.set(stored)</code>
+         * @param duration 用于此操作的 <code>duration</code>（<code>Duration</code>）
+         */
         @Override
         public void set(String key, String stored, Duration duration) {
             value.set(stored);

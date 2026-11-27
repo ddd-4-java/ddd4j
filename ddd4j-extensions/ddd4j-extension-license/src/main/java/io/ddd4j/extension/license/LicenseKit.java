@@ -48,7 +48,13 @@ import java.util.Objects;
 @Slf4j
 public class LicenseKit {
 
+    /**
+     * 读取许可证签发和验证行为的扩展配置。
+     */
     private final LicenseProperties properties;
+    /**
+     * 当前许可证的安装状态及验证入口。
+     */
     private final LicenseVerify verify;
 
     /**
@@ -231,6 +237,8 @@ public class LicenseKit {
 
     /**
      * 默认失效时间：当前时间 + 1 年。
+     *
+     * @return 默认许可证到期时间
      */
     private Date defaultExpiry() {
         Calendar c = Calendar.getInstance();

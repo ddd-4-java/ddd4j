@@ -18,12 +18,27 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * 验证 <code>NativeAuthLifecycle</code> 在<code>restoresCallerBindings</code>等操作中的行为契约。
+ */
 class NativeAuthLifecycleTest {
+    /**
+     * 调用 <code>type.cast()</code>、<code>Proxy.newProxyInstance()</code>、<code>type.getClassLoader()</code> 执行当前夹具操作。
+     *
+     * @param <T>  当前契约测试所使用的 Java 类型
+     * @param type 用来解析、检查或构造测试对象的 Java 类型
+     * @return 提供给后续契约断言的 <code>T</code> 结果
+     */
     private static <T> T servletProxy(Class<T> type) {
         return type.cast(Proxy.newProxyInstance(type.getClassLoader(), new Class<?>[]{type},
                 (proxy, method, args) -> fail("unexpected servlet call: " + method)));
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，<code>actual</code> 与…为同一实例 <code>failure</code>，<code>observations</code> 等于 <code>List.of(Optional.of("framework-context-present"))</code>。
+     *
+     * @throws Exception 反射访问被测成员时失败
+     */
     @Test
     void restoresCallerBindingsWhenSubjectProviderThrows() throws Exception {
         List<Optional<String>> observations = new ArrayList<>();

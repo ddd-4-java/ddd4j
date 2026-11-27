@@ -13,18 +13,36 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * 验证 <code>ProjectionRunnerFailureContract</code> 在 <code>positionReadFailureReportsMetric</code>、<code>handlerFailureReportsMetric</code> 等场景中的行为。
+ */
 @ExtendWith(MockitoExtension.class)
 class ProjectionRunnerFailureContractTest {
 
+    /**
+     * 用于隔离 <code>ProjectionService</code> 调用并记录交互的测试替身。
+     */
     @Mock
     private ProjectionService positions;
 
+    /**
+     * 用于隔离 <code>EventChunkReader&lt;String&gt;</code> 调用并记录交互的测试替身。
+     */
     @Mock
     private EventChunkReader<String> reader;
 
+    /**
+     * 用于隔离 <code>ProjectionMetrics</code> 调用并记录交互的测试替身。
+     */
     @Mock
     private ProjectionMetrics metrics;
 
+    /**
+     * 构造 <code>ProjectionView&lt;String&gt;</code> 作为当前测试的输入或结果。
+     *
+     * @param failure 触发当前测试错误处理路径的失败
+     * @return 提供给后续契约断言的 <code>ProjectionView&lt;String&gt;</code> 结果
+     */
     private static ProjectionView<String> view(RuntimeException failure) {
         return new ProjectionView<String>() {
             @Override
@@ -51,6 +69,9 @@ class ProjectionRunnerFailureContractTest {
         };
     }
 
+    /**
+     * 验证未调用 <code>reader</code>。
+     */
     @Test
     void positionReadFailureReportsMetricWithoutAdvancing() {
         IllegalStateException failure = new IllegalStateException("position unavailable");
@@ -65,6 +86,9 @@ class ProjectionRunnerFailureContractTest {
         verifyNoInteractions(reader);
     }
 
+    /**
+     * 在测试框架中执行 <code>positions.readProjectionPosition()</code>、<code>reader.read()</code>、<code>eq()</code>，验证该场景。
+     */
     @Test
     void handlerFailureReportsMetricWithoutAdvancing() {
         IllegalStateException failure = new IllegalStateException("handler failed");
@@ -79,6 +103,9 @@ class ProjectionRunnerFailureContractTest {
         verify(positions, never()).updateProjectionPosition(any(), anyLong());
     }
 
+    /**
+     * 验证<code>service.readProjectionPosition("orders")</code> 等于 <code>10</code>，<code>runner.getProjectionStatus("orders").running()</code>为假，<code>service.readProjectionPosition("orders")</code> 等于 <code>20</code>。
+     */
     @Test
     void gapFailureDoesNotCommitSourceEndAndReleasesGuard() {
         ProjectionService service = new DefaultProjectionService(new InMemoryProjectionPositionRepository());
@@ -93,6 +120,9 @@ class ProjectionRunnerFailureContractTest {
         assertThat(service.readProjectionPosition("orders")).isEqualTo(20);
     }
 
+    /**
+     * 验证<code>persisted.readProjectionPosition("orders")</code> 等于 <code>10</code>，<code>effects</code> 的大小为 <code>2</code>，<code>persisted.readProjectionPosition("orders")</code> 等于 <code>20</code>。
+     */
     @Test
     void checkpointFailureReplaysBlockAndConsumerIdempotencyAvoidsDuplicateEffects() {
         InMemoryProjectionPositionRepository repository = new InMemoryProjectionPositionRepository();

@@ -14,6 +14,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class JsonKitTypeContractTest {
 
+    /**
+     * 验证<code>JsonKit.buildCollectionType(List.class, Integer.class).getRawClass()</code> 等于 <code>List.class</code>，<code>JsonKit.buildCollectionType(List.class, Integer.class) .getContentType().getRawClass()</code> 等于 <code>Integer.class</code>，<code>JsonKit.toObject("[1,2]", JsonKit.buildCollectionType(List.class, Integer.class))</code> 等于 <code>Arrays.asList(1, 2)</code>。
+     */
     @Test
     void collectionTypeRetainsElementTypeAndReadsValues() {
         assertEquals(List.class, JsonKit.buildCollectionType(List.class, Integer.class).getRawClass());
@@ -23,6 +26,9 @@ class JsonKitTypeContractTest {
                 JsonKit.toObject("[1,2]", JsonKit.buildCollectionType(List.class, Integer.class)));
     }
 
+    /**
+     * 验证<code>JsonKit.buildMapType(Map.class, String.class, Integer.class).getRawClass()</code> 等于 <code>Map.class</code>，<code>JsonKit.buildMapType(Map.class, String.class, Integer.class) .getKeyType().getRawClass()</code> 等于 <code>String.class</code>，<code>JsonKit.toObject("{\"a\":2}", JsonKit.buildMapType(Map.class, String.class, Integer.class))</code> 等于 <code>expected</code>。
+     */
     @Test
     void mapTypeRetainsKeyAndValueTypesAndReadsValues() {
         assertEquals(Map.class, JsonKit.buildMapType(Map.class, String.class, Integer.class).getRawClass());
@@ -36,6 +42,9 @@ class JsonKitTypeContractTest {
                 JsonKit.buildMapType(Map.class, String.class, Integer.class)));
     }
 
+    /**
+     * 验证<code>JsonKit.toPojo("\"value\"", JsonKit.STRING_TYPE)</code> 等于 <code>"value"</code>。
+     */
     @Test
     void stringTypeReferenceReadsTheSameValue() {
         assertEquals("value", JsonKit.toPojo("\"value\"", JsonKit.STRING_TYPE));

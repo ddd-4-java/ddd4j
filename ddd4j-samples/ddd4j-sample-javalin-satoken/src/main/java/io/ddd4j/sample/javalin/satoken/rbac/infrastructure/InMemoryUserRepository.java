@@ -40,6 +40,12 @@ public class InMemoryUserRepository implements UserRepository {
      */
     private final ConcurrentMap<String, UserRow> rows = new ConcurrentHashMap<>();
 
+    /**
+     * 将领域模型的身份和业务字段映射为内存记录。
+     *
+     * @param user 待保存或对外返回的账号实体
+     * @return 待保存的内存记录
+     */
     private static UserRow toRow(User user) {
         UserRow row = new UserRow();
         row.userId = user.id();
@@ -51,6 +57,12 @@ public class InMemoryUserRepository implements UserRepository {
         return row;
     }
 
+    /**
+     * 将内存记录恢复为领域模型。
+     *
+     * @param row 当前仓储中的内存数据记录
+     * @return 映射完成的领域聚合
+     */
     private static User toModel(UserRow row) {
         User user = new User(row.userId, row.username, row.password, row.realName, User.Status.valueOf(row.status));
         if (CollKit.isNotEmpty(row.roleIds)) {
@@ -59,6 +71,12 @@ public class InMemoryUserRepository implements UserRepository {
         return user;
     }
 
+    /**
+     * 按主键在当前内存仓储查找对应聚合。
+     *
+     * @param id 待查询或移除的业务记录标识
+     * @return 已找到的聚合，不存在时返回空结果
+     */
     @Override
     public Optional<User> findById(String id) {
         if (StrKit.isBlank(id)) {
@@ -67,6 +85,14 @@ public class InMemoryUserRepository implements UserRepository {
         return Optional.ofNullable(rows.get(id)).map(InMemoryUserRepository::toModel);
     }
 
+    /**
+     * 按用户名查找用户。
+     *
+     * <p>此实现调用 <code>StrKit.isBlank(username)</code>。</p>
+     *
+     * @param username 用户名
+     * @return 实际返回<code>Optional.empty()</code>
+     */
     @Override
     public Optional<User> findByUsername(String username) {
         if (StrKit.isBlank(username)) {
@@ -78,6 +104,14 @@ public class InMemoryUserRepository implements UserRepository {
                 .map(InMemoryUserRepository::toModel);
     }
 
+    /**
+     * 查询匹配指定状态的记录。
+     *
+     * <p>此实现调用 <code>rows.values().stream()</code>。</p>
+     *
+     * @param status 状态
+     * @return 用户列表
+     */
     @Override
     public List<User> findByStatus(User.Status status) {
         return rows.values().stream()
@@ -86,6 +120,13 @@ public class InMemoryUserRepository implements UserRepository {
                 .collect(java.util.stream.Collectors.toList());
     }
 
+    /**
+     * 查询存储中符合条件的记录。
+     *
+     * <p>此实现调用 <code>rows.values().stream()</code>。</p>
+     *
+     * @return 满足条件的结果列表
+     */
     @Override
     public List<User> findAll() {
         return rows.values().stream()
@@ -95,6 +136,14 @@ public class InMemoryUserRepository implements UserRepository {
 
     // ============================ 模型与行转换 ============================
 
+    /**
+     * 写入或更新给定的领域对象或存储记录。
+     *
+     * <p>此实现调用 <code>rows.put(aggregate.id(), toRow(aggregate))</code>。</p>
+     *
+     * @param aggregate 传给 <code>rows.put(aggregate.id(), toRow(aggregate))</code>
+     * @return 实际返回<code>aggregate</code>
+     */
     @Override
     public User save(User aggregate) {
         Objects.requireNonNull(aggregate, "aggregate must not be null");
@@ -102,6 +151,11 @@ public class InMemoryUserRepository implements UserRepository {
         return aggregate;
     }
 
+    /**
+     * 按主键从当前内存仓储移除对应记录。
+     *
+     * @param id 待查询或移除的业务记录标识
+     */
     @Override
     public void deleteById(String id) {
         if (StrKit.isNotBlank(id)) {
@@ -114,11 +168,29 @@ public class InMemoryUserRepository implements UserRepository {
      */
     static class UserRow {
 
+        /**
+         * 账号身份或用户记录的主键。
+         */
         String userId;
+        /**
+         * 当前身份凭据使用的用户名。
+         */
         String username;
+        /**
+         * 内存账号记录用于检查凭据的口令字段。
+         */
         String password;
+        /**
+         * 账号资料中的真实姓名。
+         */
         String realName;
+        /**
+         * 当前商品、账号或权限记录的业务状态。
+         */
         String status;
+        /**
+         * 要关联到账号的角色标识列表。
+         */
         List<String> roleIds;
     }
 }

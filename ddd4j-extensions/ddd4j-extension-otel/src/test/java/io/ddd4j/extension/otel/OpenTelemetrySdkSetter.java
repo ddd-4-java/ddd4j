@@ -27,9 +27,17 @@ import io.opentelemetry.api.OpenTelemetry;
  */
 final class OpenTelemetrySdkSetter {
 
+    /**
+     * 限制调用方直接创建 <code>OpenTelemetrySdkSetter</code> 实例。
+     */
     private OpenTelemetrySdkSetter() {
     }
 
+    /**
+     * 调用 <code>GlobalOpenTelemetry.resetForTest()</code>、<code>GlobalOpenTelemetry.set()</code> 执行当前夹具操作。
+     *
+     * @param instance 传给 <code>GlobalOpenTelemetry.set()</code> 的 <code>OpenTelemetry</code> 输入
+     */
     static void set(OpenTelemetry instance) {
         try {
             GlobalOpenTelemetry.resetForTest();

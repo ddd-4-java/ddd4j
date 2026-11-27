@@ -24,17 +24,33 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Testcontainers
 class NativeAuthOwnershipTest {
+    /**
+     * 为当前集成测试提供独立 MySQL 服务的容器。
+     */
     @Container
     static final MySQLContainer<?> MYSQL = new MySQLContainer<>("mysql:8.0.36");
 
+    /**
+     * 调用 <code>ReflectUtil.getStaticFieldValue()</code>、<code>ReflectUtil.getField()</code> 执行当前夹具操作。
+     *
+     * @return 当前测试使用的结果，取自 <code>(SaTokenDao)ReflectUtil.getStaticFieldValue(ReflectUtil.getField(SaManager.class, "saTokenDao"))</code>
+     */
     private static SaTokenDao currentDao() {
         return (SaTokenDao) ReflectUtil.getStaticFieldValue(ReflectUtil.getField(SaManager.class, "saTokenDao"));
     }
 
+    /**
+     * 调用 <code>ReflectUtil.getStaticFieldValue()</code>、<code>ReflectUtil.getField()</code> 执行当前夹具操作。
+     *
+     * @return 当前测试使用的结果，取自 <code>(StpInterface)ReflectUtil.getStaticFieldValue(ReflectUtil.getField(SaManager.class, "stpInterface"))</code>
+     */
     private static StpInterface currentPermissions() {
         return (StpInterface) ReflectUtil.getStaticFieldValue(ReflectUtil.getField(SaManager.class, "stpInterface"));
     }
 
+    /**
+     * 验证<code>SaManager.getSaTokenContext().getModelBox()</code> 与…为不同的实例 <code>before</code>，<code>SaManager.getSaTokenContext().getModelBox()</code> 与…为同一实例 <code>before</code>。
+     */
     @Test
     void nestedWorkerScopesRestoreTheExactEnclosingRequest() {
         NativeAuth app = new NativeAuth();
@@ -50,10 +66,19 @@ class NativeAuthOwnershipTest {
         }
     }
 
+    /**
+     * 通过 <code>ReflectUtil.getStaticFieldValue()</code> 取得当前测试需要的结果。
+     *
+     * @param name 当前测试指定的对象或属性名称
+     * @return 当前测试使用的结果，取自 <code>ReflectUtil.getStaticFieldValue(Objects.requireNonNull(ReflectUtil.getField(SaManager.class, name)))</code>
+     */
     private Object field(String name) {
         return ReflectUtil.getStaticFieldValue(Objects.requireNonNull(ReflectUtil.getField(SaManager.class, name)));
     }
 
+    /**
+     * 验证<code>SaManager.config</code> 与…为同一实例 <code>config</code>，<code>field("stpInterface")</code> 与…为同一实例 <code>permissions</code>，<code>SubjectKit.dataProvider</code> 与…为同一实例 <code>data</code>。
+     */
     @Test
     void restoresExactNullableOwners() {
         var config = SaManager.config;
@@ -70,6 +95,9 @@ class NativeAuthOwnershipTest {
         assertSame(data, SubjectKit.dataProvider);
     }
 
+    /**
+     * 验证<code>SaManager.config</code> 与…为同一实例 <code>replacement</code>，<code>field("stpInterface")</code> 与…为同一实例 <code>null</code>，<code>SubjectKit.dataProvider</code> 与…为同一实例 <code>null</code>。
+     */
     @Test
     void preservesReplacementOwner() {
         var originalConfig = SaManager.config;
@@ -92,6 +120,9 @@ class NativeAuthOwnershipTest {
         }
     }
 
+    /**
+     * 验证<code>currentDao()</code> 与…为同一实例 <code>caller</code>，<code>caller.get("caller-session")</code> 等于 <code>"kept"</code>，<code>caller.destructions</code> 等于 <code>0</code>。
+     */
     @Test
     void preservesCallerDaoAndItsData() {
         SaTokenDao previous = currentDao();
@@ -116,6 +147,9 @@ class NativeAuthOwnershipTest {
         }
     }
 
+    /**
+     * 验证<code>currentDao()</code>为空，被测调用 抛出 <code>IllegalStateException.class</code>，<code>SubjectKit.dataProvider</code> 与…为同一实例 <code>provider</code>。
+     */
     @Test
     void rollsBackWhenNativeDaoRegistrationFails() {
         assertNull(currentDao());
@@ -149,6 +183,9 @@ class NativeAuthOwnershipTest {
         }
     }
 
+    /**
+     * 验证<code>currentDao()</code>为空，被测调用 抛出 <code>IllegalStateException.class</code>，<code>SubjectKit.dataProvider</code> 与…为同一实例 <code>provider</code>。
+     */
     @Test
     void completesCleanupWhenPermissionListenerFailsOnClose() {
         assertNull(currentDao());
@@ -184,6 +221,9 @@ class NativeAuthOwnershipTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>java.util.concurrent.ExecutionException.class</code>，<code>actual.getCause()</code> 与…为同一实例 <code>failure</code>，<code>SubjectKit.subjectProvider</code> 与…为同一实例 <code>previous</code>。
+     */
     @Test
     void appRestoresRegistrationsAfterNativeStartupFailure() {
         Object previous = SubjectKit.subjectProvider;
@@ -209,6 +249,11 @@ class NativeAuthOwnershipTest {
         }
     }
 
+    /**
+     * 验证<code>app.close().toCompletionStage().toCompletableFuture().get(15, java.util.concurrent.TimeUnit.SECONDS)</code> 抛出 <code>java.util.concurrent.ExecutionException.class</code>，<code>actual.getCause()</code> 与…为同一实例 <code>failure</code>，<code>SubjectKit.subjectProvider</code> 与…为同一实例 <code>previous</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void appRestoresRegistrationsAfterNativeShutdownFailure() throws Exception {
         Object previous = SubjectKit.subjectProvider;
@@ -235,15 +280,30 @@ class NativeAuthOwnershipTest {
         }
     }
 
+    /**
+     * 记录 DAO 操作，供测试验证调用次数或参数。
+     */
     private static final class TrackingDao extends SaTokenDaoDefaultImpl {
+        /**
+         * 记录会话存储执行初始化的次数。
+         */
         private int initializations;
+        /**
+         * 跟踪当前夹具资源被销毁的次数。
+         */
         private int destructions;
 
+        /**
+         * 记录当前会话存储执行了一次初始化，用于检查重复装配。
+         */
         @Override
         public void init() {
             initializations++;
         }
 
+        /**
+         * 调用 <code>delete()</code>、<code>super.destroy()</code> 执行当前夹具操作。
+         */
         @Override
         public void destroy() {
             destructions++;

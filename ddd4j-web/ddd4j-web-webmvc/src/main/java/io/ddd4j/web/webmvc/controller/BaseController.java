@@ -83,7 +83,7 @@ public class BaseController implements ApplicationEventPublisherAware, Applicati
      * 创建 BaseController 实例。
      *
      * @param messageSource 消息源
-     * @param beanMapper Bean 映射器
+     * @param beanMapper    Bean 映射器
      */
     public BaseController(NestedMessageSource messageSource, Mapper beanMapper) {
         this.messageSource = messageSource;
@@ -92,8 +92,9 @@ public class BaseController implements ApplicationEventPublisherAware, Applicati
 
     /**
      * 统一处理异常，并抛出异常事件方便进行统一的日志实现
+     *
      * @param source 源对象
-     * @param ex 捕获的异常
+     * @param ex     捕获的异常
      */
     protected void logException(Object source, Exception ex) {
         getEventPublisher().publishEvent(new AppExceptionEvent(source, ex));
@@ -113,8 +114,8 @@ public class BaseController implements ApplicationEventPublisherAware, Applicati
     /**
      * 创建成功响应。
      *
-     * @param <T> 返回或请求的类型
-     * @param key 消息键
+     * @param <T>  返回或请求的类型
+     * @param key  消息键
      * @param args 消息参数
      * @return 成功响应
      */
@@ -125,8 +126,8 @@ public class BaseController implements ApplicationEventPublisherAware, Applicati
     /**
      * 创建失败响应。
      *
-     * @param <T> 返回或请求的类型
-     * @param key 消息键
+     * @param <T>  返回或请求的类型
+     * @param key  消息键
      * @param args 消息参数
      * @return 失败响应
      */
@@ -137,8 +138,8 @@ public class BaseController implements ApplicationEventPublisherAware, Applicati
     /**
      * 创建错误响应。
      *
-     * @param <T> 返回或请求的类型
-     * @param key 消息键
+     * @param <T>  返回或请求的类型
+     * @param key  消息键
      * @param args 消息参数
      * @return 错误响应
      */
@@ -146,16 +147,32 @@ public class BaseController implements ApplicationEventPublisherAware, Applicati
         return R.of(ApiCode.SERVER_ERROR.getCode(), getMessage(key, args));
     }
 
+    /**
+     * 保存 Spring 提供的容器上下文供控制器查询组件。
+     *
+     * @param applicationContext Spring 容器提供的应用上下文
+     * @throws BeansException 当前框架请求处理、消息读写或参数转换失败
+     */
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.context = applicationContext;
     }
 
+    /**
+     * 设置应用事件发布器。
+     *
+     * @param applicationEventPublisher 要写入的值
+     */
     @Override
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
         this.eventPublisher = applicationEventPublisher;
     }
 
+    /**
+     * 设置嵌入式值解析器。
+     *
+     * @param resolver 要写入的值
+     */
     @Override
     public void setEmbeddedValueResolver(StringValueResolver resolver) {
         this.valueResolver = resolver;

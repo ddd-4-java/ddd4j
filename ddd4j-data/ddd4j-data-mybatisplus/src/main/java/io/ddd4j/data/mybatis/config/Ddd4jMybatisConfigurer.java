@@ -1,42 +1,54 @@
 package io.ddd4j.data.mybatis.config;
 
-import com.baomidou.mybatisplus.enhance.plugins.MybatisPlusEnhanceInterceptor;
-import com.baomidou.mybatisplus.enhance.plugins.inner.DataEncryptionInnerInterceptor;
-import com.baomidou.mybatisplus.enhance.plugins.inner.DataDecryptionInnerInterceptor;
-import com.baomidou.mybatisplus.enhance.plugins.inner.DataSignatureInnerInterceptor;
-import com.baomidou.mybatisplus.enhance.plugins.inner.SqlObservationInnerInterceptor;
-import com.baomidou.mybatisplus.enhance.crypto.handler.DefaultDataSignatureHandler;
 import com.baomidou.mybatisplus.enhance.context.TenantContext;
-import com.baomidou.mybatisplus.enhance.tenant.DefaultTenantLineHandler;
-import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.inner.BlockAttackInnerInterceptor;
-import io.ddd4j.data.mybatis.context.Ddd4jTenantContext;
-import com.baomidou.mybatisplus.enhance.datascope.handler.SqlDataScopeHandler;
-import com.baomidou.mybatisplus.extension.plugins.handler.MultiDataPermissionHandler;
+import com.baomidou.mybatisplus.enhance.crypto.handler.DefaultDataSignatureHandler;
 import com.baomidou.mybatisplus.enhance.crypto.handler.EncryptedFieldHandler;
-import com.baomidou.mybatisplus.extension.plugins.inner.DataPermissionInterceptor;
-import com.baomidou.mybatisplus.enhance.plugins.inner.QueryResultCallbackInterceptor;
+import com.baomidou.mybatisplus.enhance.datascope.handler.SqlDataScopeHandler;
+import com.baomidou.mybatisplus.enhance.plugins.MybatisPlusEnhanceInterceptor;
+import com.baomidou.mybatisplus.enhance.plugins.inner.*;
+import com.baomidou.mybatisplus.enhance.tenant.DefaultTenantLineHandler;
+import com.baomidou.mybatisplus.extension.plugins.handler.MultiDataPermissionHandler;
+import com.baomidou.mybatisplus.extension.plugins.inner.*;
+import io.ddd4j.data.mybatis.context.Ddd4jTenantContext;
 import io.ddd4j.data.mybatis.repository.AggregateQueryResultFiller;
 
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-/** 框架中立的 MyBatis-Plus 增强链装配器；安全策略由应用显式提供。 */
+/**
+ * 框架中立的 MyBatis-Plus 增强链装配器；安全策略由应用显式提供。
+ */
 public final class Ddd4jMybatisConfigurer {
+    /**
+     * SQL 租户隔离使用的列名称。
+     */
     private String tenantColumn;
+    /**
+     * 判断某张表是否应跳过租户过滤的规则。
+     */
     private Predicate<String> ignoredTable;
+    /**
+     * 为数据权限条件提供当前访问范围的组件。
+     */
     private Function<String, String> scopeProvider;
+    /**
+     * 生成 MyBatis-Plus 数据权限条件的处理器。
+     */
     private MultiDataPermissionHandler permissionHandler;
+    /**
+     * ORM 适配器使用的字段加解密处理器。
+     */
     private EncryptedFieldHandler crypto;
+    /**
+     * 对持久化字段执行签名相关处理的组件。
+     */
     private boolean signature;
 
     /**
      * 配置租户列与共享表白名单。
      *
-     * @param column 用于租户隔离的列名
+     * @param column  用于租户隔离的列名
      * @param ignored 判断表是否可以跳过租户过滤的谓词
      * @return 当前装配器
      */
@@ -62,6 +74,7 @@ public final class Ddd4jMybatisConfigurer {
 
     /**
      * 配置官方多表权限处理器。
+     *
      * @param handler 应用按语句和表提供的权限表达式处理器
      * @return 当前装配器
      */

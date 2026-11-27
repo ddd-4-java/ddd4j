@@ -56,14 +56,41 @@ import java.util.function.Consumer;
 @Slf4j(topic = "### DDD4J-MQ : SqsMQClient ###")
 public class SqsMQClient implements MQClient {
 
+    /**
+     * 当前消息代理客户端使用的连接和订阅配置。
+     */
     private final SqsProperties properties;
+    /**
+     * 负责轮询 SQS 队列的消费者任务。
+     */
     private final List<ScheduledExecutorService> pollers = new CopyOnWriteArrayList<>();
+    /**
+     * 协调消息客户端启动、初始化和关闭的生命周期。
+     */
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    /**
+     * 组件的启动状态和启动失败诊断信息。
+     */
     private final MQStartupStatus startupStatus = new MQStartupStatus("sqs");
+    /**
+     * 保证发送操作与 SQS 客户端关闭之间的互斥。
+     */
     private final ReentrantReadWriteLock sendLifecycleLock = new ReentrantReadWriteLock(true);
+    /**
+     * 保证接收操作与 SQS 客户端关闭之间的互斥。
+     */
     private final ReentrantReadWriteLock receiveLifecycleLock = new ReentrantReadWriteLock(true);
+    /**
+     * 用来发送和接收 SQS 消息的原生客户端。
+     */
     private volatile SqsClient client;
+    /**
+     * 是否已在生命周期中登记等待进行中消费结束的动作。
+     */
     private boolean receiveDrainRegistered;
+    /**
+     * 当前实例是否已关闭。
+     */
     private volatile boolean closed;
 
     /**
@@ -85,10 +112,23 @@ public class SqsMQClient implements MQClient {
         this.properties = new SqsProperties();
     }
 
+    /**
+     * 将文本包装成 SQS 字符串消息属性。
+     *
+     * @param value 当前要写入代理属性的数据
+     * @return 可写入代理请求的消息属性值
+     */
     private static MessageAttributeValue attrValue(String value) {
         return MessageAttributeValue.builder().dataType("String").stringValue(value).build();
     }
 
+    /**
+     * 查找 SQS 原生消息的指定字符串属性。
+     *
+     * @param message 当前接收的原生代理消息
+     * @param key     待查询的消息头或属性名称
+     * @return 匹配到的字符串属性值，缺少时为空
+     */
     static String attr(Message message, String key) {
         if (Objects.isNull(message.messageAttributes())) {
             return null;
@@ -97,6 +137,12 @@ public class SqsMQClient implements MQClient {
         return Objects.isNull(v) ? null : v.stringValue();
     }
 
+    /**
+     * 优先从原生消息的标准头读取消息标识，缺少时回退到兼容头。
+     *
+     * @param message 当前接收的原生代理消息
+     * @return 用于后续消费确认的业务消息标识，头均缺失时为空
+     */
     static String messageId(Message message) {
         String messageId = attr(message, MessageHeaders.HEADER_MESSAGE_ID);
         if (Objects.isNull(messageId)) {
@@ -107,16 +153,31 @@ public class SqsMQClient implements MQClient {
 
     // ========================= 生产者 =========================
 
+    /**
+     * 返回此消息适配器在 DDD4J 中登记的实现名。
+     *
+     * @return 实际返回<code>"sqs"</code>，供调用方取得当前值
+     */
     @Override
     public String impl() {
         return "sqs";
     }
 
+    /**
+     * 返回管理连接、生产者和消费者资源的生命周期对象。
+     *
+     * @return 当前消息适配器用于登记和关闭资源的生命周期对象
+     */
     @Override
     public MQClientLifecycle lifecycle() {
         return lifecycle;
     }
 
+    /**
+     * 返回消息客户端当前记录的启动状态。
+     *
+     * @return 当前消息适配器记录的启动状态
+     */
     @Override
     public MQStartupStatus startupStatus() {
         return startupStatus;
@@ -125,6 +186,8 @@ public class SqsMQClient implements MQClient {
     /**
      * SQS 无原生 tag selector 机制，tag 过滤只能在应用层用 {@link TagMatcher#match} 完成
      * （不匹配的消息直接 {@code deleteMessage} 丢弃，避免无限重投）。故覆写返回 false。
+     *
+     * @return 当前代理是否支持按标签过滤
      */
     @Override
     public boolean supportsBrokerTagFilter() {
@@ -133,12 +196,26 @@ public class SqsMQClient implements MQClient {
 
     // ========================= 消费者 =========================
 
+    /**
+     * 准备消息生产者并返回可发布事件的入口。
+     *
+     * <p>此实现调用 <code>initializeClient()</code>。</p>
+     *
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 接收待发布事件的函数
+     */
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         SqsClient publisherClient = initializeClient();
         return event -> publish(publisherClient, event);
     }
 
+    /**
+     * 把序列化事件和消息元数据发送到指定的原生代理。
+     *
+     * @param publisherClient 用来发送当前事件的 SQS 客户端
+     * @param event           当前发布或待补齐元数据的 DDD4J 消息事件
+     */
     private void publish(SqsClient publisherClient, MQEvent event) {
         if (closed || client != publisherClient) {
             throw new IllegalStateException("SQS client is closed");
@@ -183,6 +260,16 @@ public class SqsMQClient implements MQClient {
         }
     }
 
+    /**
+     * 为监听器建立消息消费所需的订阅和客户端资源。
+     *
+     * <p>此实现调用 <code>listener.getTopic()</code>。</p>
+     *
+     * @param listener     监听器定义
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 此实现返回<code>true</code>
+     * @throws Exception 当前框架、存储或底层客户端无法完成此操作时
+     */
     @Override
     public synchronized boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         String queueUrl = listener.getTopic();
@@ -239,6 +326,14 @@ public class SqsMQClient implements MQClient {
         return true;
     }
 
+    /**
+     * 解码接收的 SQS 消息并交给监听器处理，同时保留队列确认信息。
+     *
+     * @param consumerClient 轮询当前队列的 SQS 客户端
+     * @param message        当前接收的原生代理消息
+     * @param queueUrl       当前消费的 SQS 队列 URL
+     * @param listener       当前代理订阅对应的 DDD4J 消息监听器
+     */
     private void handleMessage(SqsClient consumerClient, Message message, String queueUrl, MQListener listener) {
         String tag = attr(message, tagHeaderKey());
         if (!TagMatcher.match(tag, listener.getTags())) {
@@ -302,6 +397,9 @@ public class SqsMQClient implements MQClient {
         }
     }
 
+    /**
+     * 提供生命周期启动回调，当前实现的客户端在初始化阶段启动，此处无额外操作。
+     */
     @Override
     public void start() {
         // SQS 守护线程在 initConsumer 已 scheduleWithFixedDelay
@@ -309,6 +407,8 @@ public class SqsMQClient implements MQClient {
 
     /**
      * 首次使用生产者或消费者时创建自有客户端，避免两条初始化路径重复创建。
+     *
+     * @return 供当前适配器使用的 SQS 客户端
      */
     private synchronized SqsClient initializeClient() {
         if (closed) {
@@ -347,6 +447,9 @@ public class SqsMQClient implements MQClient {
 
     // ========================= 关闭 =========================
 
+    /**
+     * 释放消息客户端拥有的运行资源，并在退出时登记组件已停止。
+     */
     @Override
     public synchronized void close() {
         sendLifecycleLock.writeLock().lock();

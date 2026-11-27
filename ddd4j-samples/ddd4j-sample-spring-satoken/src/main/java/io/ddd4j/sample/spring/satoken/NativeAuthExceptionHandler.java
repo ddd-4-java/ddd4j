@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
-/** 将原生安全失败优先转换为 HTTP 状态，避免被通用 Web 异常处理器映射为 500。 */
+/**
+ * 将原生安全失败优先转换为 HTTP 状态，避免被通用 Web 异常处理器映射为 500。
+ */
 @RestControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class NativeAuthExceptionHandler {
@@ -21,6 +23,7 @@ public class NativeAuthExceptionHandler {
     public ResponseEntity<String> authentication(NotLoginException failure) {
         return ResponseEntity.status(401).body("authentication required");
     }
+
     /**
      * @param failure 原生授权异常
      * @return 禁止访问响应
@@ -29,6 +32,7 @@ public class NativeAuthExceptionHandler {
     public ResponseEntity<String> authorization(NotPermissionException failure) {
         return ResponseEntity.status(403).body("permission denied");
     }
+
     /**
      * @param failure 入口明确的状态异常
      * @return 保留 HTTP 状态的响应

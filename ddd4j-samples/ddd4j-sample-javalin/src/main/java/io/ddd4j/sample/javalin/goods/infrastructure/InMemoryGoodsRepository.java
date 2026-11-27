@@ -47,10 +47,19 @@ import java.util.stream.Collectors;
  */
 public class InMemoryGoodsRepository implements GoodsRepository, Repository<Goods, Long> {
 
+    /**
+     * 按主键保存当前内存仓储中可读写的示例记录。
+     */
     private final ConcurrentMap<Long, Goods> rows = new ConcurrentHashMap<>();
 
     // ========================= GoodsRepository =========================
 
+    /**
+     * 按主键在当前内存仓储查找对应聚合。
+     *
+     * @param id 待查询或移除的业务记录标识
+     * @return 已找到的聚合，不存在时返回空结果
+     */
     @Override
     public Optional<Goods> findById(Long id) {
         if (Objects.isNull(id)) {
@@ -59,6 +68,14 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
         return Optional.ofNullable(rows.get(id)).map(this::copy);
     }
 
+    /**
+     * 写入或更新给定的领域对象或存储记录。
+     *
+     * <p>此实现调用 <code>aggregate.id()</code>。</p>
+     *
+     * @param aggregate 待处理聚合根
+     * @return 实际返回<code>copy(aggregate)</code>
+     */
     @Override
     public Goods save(Goods aggregate) {
         Objects.requireNonNull(aggregate, "aggregate must not be null");
@@ -67,6 +84,11 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
         return copy(aggregate);
     }
 
+    /**
+     * 按主键从当前内存仓储移除对应记录。
+     *
+     * @param id 待查询或移除的业务记录标识
+     */
     @Override
     public void deleteById(Long id) {
         if (Objects.nonNull(id)) {
@@ -74,6 +96,14 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
         }
     }
 
+    /**
+     * 按业务编码查找对应记录。
+     *
+     * <p>此实现调用 <code>StrKit.isBlank(code)</code>。</p>
+     *
+     * @param code 商品编码
+     * @return 实际返回<code>Optional.empty()</code>
+     */
     @Override
     public Optional<Goods> findByCode(String code) {
         if (StrKit.isBlank(code)) {
@@ -85,6 +115,14 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
                 .map(this::copy);
     }
 
+    /**
+     * 查询匹配指定状态的记录。
+     *
+     * <p>此实现调用 <code>Collections.emptyList()</code>。</p>
+     *
+     * @param status 商品状态
+     * @return 实际返回<code>Collections.emptyList()</code>
+     */
     @Override
     public List<Goods> findByStatus(GoodsStatus status) {
         if (Objects.isNull(status)) {
@@ -98,16 +136,38 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
 
     // ========================= Repository =========================
 
+    /**
+     * 读取满足条件的第一条记录。
+     *
+     * <p>此实现调用 <code>rows.values().stream().findFirst()</code>。</p>
+     *
+     * @return 第一个匹配条件的结果
+     */
     @Override
     public Optional<Goods> findFirst() {
         return rows.values().stream().findFirst().map(this::copy);
     }
 
+    /**
+     * 查询存储中符合条件的记录。
+     *
+     * <p>此实现调用 <code>rows.values().stream()</code>。</p>
+     *
+     * @return 满足条件的结果列表
+     */
     @Override
     public List<Goods> findAll() {
         return rows.values().stream().map(this::copy).collect(Collectors.toList());
     }
 
+    /**
+     * 根据分页参数和查询条件读取结果。
+     *
+     * <p>此实现调用 <code>filter(query)</code>。</p>
+     *
+     * @param query 查询条件
+     * @return 实际返回<code>Page.succeed(pageData, total, current, size)</code>
+     */
     @Override
     public Page<Goods> page(Query<Goods> query) {
         Objects.requireNonNull(query, "query must not be null");
@@ -125,24 +185,57 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
         return Page.succeed(pageData, total, current, size);
     }
 
+    /**
+     * 统计符合查询范围的数据数量。
+     *
+     * <p>此实现调用 <code>filter(query).size()</code>。</p>
+     *
+     * @param query 查询条件
+     * @return 满足筛选条件的记录数量
+     */
     @Override
     public long count(Query<Goods> query) {
         Objects.requireNonNull(query, "query must not be null");
         return filter(query).size();
     }
 
+    /**
+     * 读取满足条件的第一条记录。
+     *
+     * <p>此实现调用 <code>filter(query).stream().findFirst()</code>。</p>
+     *
+     * @param query 查询条件
+     * @return 第一个匹配条件的结果
+     */
     @Override
     public Optional<Goods> findFirst(Query<Goods> query) {
         Objects.requireNonNull(query, "query must not be null");
         return filter(query).stream().findFirst().map(this::copy);
     }
 
+    /**
+     * 按查询条件读取记录列表。
+     *
+     * <p>此实现调用 <code>filter(query)</code>。</p>
+     *
+     * @param query 查询条件
+     * @return 满足条件的结果列表
+     */
     @Override
     public List<Goods> findList(Query<Goods> query) {
         Objects.requireNonNull(query, "query must not be null");
         return filter(query);
     }
 
+    /**
+     * 更新已经存在的记录。
+     *
+     * <p>此实现调用 <code>save((Goods)aggregate)</code>。</p>
+     *
+     * @param aggregate 待处理聚合根
+     * @param query     查询条件
+     * @return 根据执行路径返回<code>true</code>、<code>false</code>
+     */
     @Override
     public boolean update(AggregateRoot<?> aggregate, Query<Goods> query) {
         // 内存实现：单条更新走 save，按条件更新简化为 find + save
@@ -153,6 +246,14 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
         return false;
     }
 
+    /**
+     * 删除匹配查询条件的记录。
+     *
+     * <p>此实现调用 <code>filter(query)</code>。</p>
+     *
+     * @param query 查询条件
+     * @return 实际返回<code>!matched.isEmpty()</code>
+     */
     @Override
     public boolean deleteByQuery(Query<Goods> query) {
         Objects.requireNonNull(query, "query must not be null");
@@ -161,6 +262,12 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
         return !matched.isEmpty();
     }
 
+    /**
+     * 接收<code>fill</code>回调，当前实现无需在此步骤更新状态。
+     *
+     * @param query 查询条件
+     * @param model 待填充聚合根
+     */
     @Override
     public void fill(Query<Goods> query, AggregateRoot<?> model) {
         // 内存实现无关联聚合，no-op
@@ -173,6 +280,9 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
      * <p>
      * 演示 ddd4j Query 的充血过滤：业务侧只需定义查询字段，
      * 仓储实现根据字段值进行匹配。
+     *
+     * @param query 用于生成筛选条件的聚合查询
+     * @return 满足查询条件的商品流
      */
     private List<Goods> filter(Query<Goods> query) {
         GoodsQuery goodsQuery = (query instanceof GoodsQuery) ? (GoodsQuery) query : new GoodsQuery();
@@ -183,6 +293,13 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 根据商品查询的编码、名称、价格或状态条件判定记录是否可见。
+     *
+     * @param goods 需要与查询条件比较的商品
+     * @param query 待应用的商品筛选和排序条件
+     * @return 当前商品满足已提供条件时返回 true
+     */
     private boolean matches(Goods goods, GoodsQuery query) {
         if (StrKit.isNotBlank(query.getCode()) && !Objects.equals(query.getCode(), goods.getCode())) {
             return false;
@@ -205,6 +322,12 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
         return true;
     }
 
+    /**
+     * 构造商品结果的组合比较器，没有排序条件时按主键顺序。
+     *
+     * @param query 待应用的商品筛选和排序条件
+     * @return 用于整理内存查询结果的比较器
+     */
     private Comparator<Goods> orderBy(GoodsQuery query) {
         List<LambdaCondition> orderByConditions = query.getOrderByConditions();
         if (orderByConditions.isEmpty()) {
@@ -249,6 +372,9 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
 
     /**
      * 浅拷贝：避免返回内部状态的引用（防御性复制）。
+     *
+     * @param source 被复制的商品对象
+     * @return 独立的商品副本
      */
     private Goods copy(Goods source) {
         return Goods.builder()

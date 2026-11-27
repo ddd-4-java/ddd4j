@@ -65,6 +65,8 @@ public class BaseWebConfig implements WebMvcConfigurer {
 
     /**
      * 注册格式化器（日期、日期时间、时间）。
+     *
+     * @param registry MVC 格式化器注册器
      */
     public void addFormatters(FormatterRegistry registry) {
         registry.addFormatter(new DateFormatter("yyyy-MM-dd HH:mm:ss"));
@@ -74,6 +76,7 @@ public class BaseWebConfig implements WebMvcConfigurer {
 
     /**
      * MVC ObjectMapper（自定义日期时间格式）。
+     *
      * @return 配置或处理后的组件
      */
     @Bean
@@ -86,6 +89,7 @@ public class BaseWebConfig implements WebMvcConfigurer {
      * 自定义 Jackson 2 JSON 消息转换器。
      * <p>2.0.x 使用 Jackson 2 ObjectMapper；本 Bean 避免将 MVC 转换器实现
      * 与 Spring 默认转换器的内部配置耦合。</p>
+     *
      * @return 配置或处理后的组件
      */
     @Bean
@@ -98,6 +102,7 @@ public class BaseWebConfig implements WebMvcConfigurer {
 
     /**
      * 全局 REST 异常通知处理器。
+     *
      * @return 配置或处理后的组件
      */
     @Bean
@@ -108,6 +113,7 @@ public class BaseWebConfig implements WebMvcConfigurer {
 
     /**
      * 全局请求体通知处理器。
+     *
      * @return 配置或处理后的组件
      */
     @Bean
@@ -118,6 +124,7 @@ public class BaseWebConfig implements WebMvcConfigurer {
 
     /**
      * 全局响应包装通知处理器。
+     *
      * @return 配置或处理后的组件
      */
     @Bean
@@ -128,6 +135,8 @@ public class BaseWebConfig implements WebMvcConfigurer {
 
     /**
      * 注册拦截器。
+     *
+     * @param registry MVC 请求拦截器注册器
      */
     public void addInterceptors(InterceptorRegistry registry) {
         if (Objects.nonNull(baseWebInterceptors) && !baseWebInterceptors.isEmpty()) {

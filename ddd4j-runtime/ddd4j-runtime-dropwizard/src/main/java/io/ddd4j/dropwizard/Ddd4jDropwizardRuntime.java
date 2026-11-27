@@ -36,9 +36,21 @@ import java.util.Optional;
  */
 public final class Ddd4jDropwizardRuntime implements Managed, AutoCloseable {
 
+    /**
+     * 负责在应用生命周期内管理投影任务的组件。
+     */
     private final DropwizardProjectionViewManager projectionManager;
+    /**
+     * 管理当前示例或测试所拥有的 SPI 注册资源。
+     */
     private final SpiRegistrationScope registrations;
+    /**
+     * 管理当前运行时注册的认证主体提供器及其恢复动作。
+     */
     private final SubjectKitRegistrationScope subjectRegistration;
+    /**
+     * 汇总当前组件就绪状态的注册表。
+     */
     private final RuntimeReadinessRegistry readinessRegistry;
 
     /**
@@ -93,6 +105,9 @@ public final class Ddd4jDropwizardRuntime implements Managed, AutoCloseable {
         this.readinessRegistry = new RuntimeReadinessRegistry(readinessContributors);
     }
 
+    /**
+     * 启动 DDD4J 运行时并接入已装配的投影管理器。
+     */
     @Override
     public synchronized void start() {
         try {
@@ -129,11 +144,19 @@ public final class Ddd4jDropwizardRuntime implements Managed, AutoCloseable {
         return readinessRegistry;
     }
 
+    /**
+     * 停止投影任务并关闭当前运行时。
+     */
     @Override
     public void stop() {
         close();
     }
 
+    /**
+     * 结束当前组件持有的资源。
+     *
+     * <p>Dropwizard 实现调用 <code>projectionManager.stop()</code>。</p>
+     */
     @Override
     public synchronized void close() {
         try {

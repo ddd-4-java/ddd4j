@@ -31,6 +31,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class SqlSpanTest {
 
+    /**
+     * 通过 <code>sb.toString()</code> 取得当前测试需要的结果。
+     *
+     * @param s     传给 <code>s.length()</code> 的 <code>String</code> 输入
+     * @param times 本次调用使用的 <code>int</code> 参数 <code>times</code>
+     * @return 当前测试使用的结果，取自 <code>sb.toString()</code>
+     */
     private static String replicate(String s, int times) {
         StringBuilder sb = new StringBuilder(s.length() * times);
         for (int i = 0; i < times; i++) {
@@ -39,16 +46,25 @@ class SqlSpanTest {
         return sb.toString();
     }
 
+    /**
+     * 测试执行前执行 <code>OpenTelemetrySdkSetter.set()</code>、<code>OpenTelemetry.noop()</code> 完成资源准备。
+     */
     @BeforeEach
     void setUp() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
     }
 
+    /**
+     * 测试结束后执行 <code>OpenTelemetrySdkSetter.set()</code>、<code>OpenTelemetry.noop()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void tearDown() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
     }
 
+    /**
+     * 验证<code>executed</code>为真。
+     */
     @Test
     void execute_shouldExecuteRunnable() {
         AtomicBoolean executed = new AtomicBoolean(false);
@@ -59,6 +75,9 @@ class SqlSpanTest {
         assertThat(executed).isTrue();
     }
 
+    /**
+     * 验证<code>result</code> 等于 <code>"user-data"</code>。
+     */
     @Test
     void execute_withSupplier_shouldReturnValue() {
         String result = SqlSpan.execute("jpa", "SELECT u FROM User u", () -> "user-data");
@@ -66,6 +85,9 @@ class SqlSpanTest {
         assertThat(result).isEqualTo("user-data");
     }
 
+    /**
+     * 验证<code>true</code>为真。
+     */
     @Test
     void execute_withNullStatement_shouldNotThrow() {
         SqlSpan.execute("mybatis", null, () -> {
@@ -73,6 +95,9 @@ class SqlSpanTest {
         assertThat(true).isTrue();
     }
 
+    /**
+     * 验证<code>true</code>为真。
+     */
     @Test
     void execute_withVeryLongStatement_shouldNotThrow() {
         String longSql = "SELECT * FROM huge_table WHERE " + replicate("a = 1 AND ", 100) + "b = 2";
@@ -81,6 +106,9 @@ class SqlSpanTest {
         assertThat(true).isTrue();
     }
 
+    /**
+     * 验证<code>executed</code>为真。
+     */
     @Test
     void execute_whenOtelNotAvailable_shouldStillExecute() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -93,6 +121,9 @@ class SqlSpanTest {
         assertThat(executed).isTrue();
     }
 
+    /**
+     * 验证被测调用 抛出 <code>RuntimeException.class</code>。
+     */
     @Test
     void execute_onException_shouldPropagateException() {
         assertThatThrownBy(() -> SqlSpan.execute("mybatis", "SELECT 1", () -> {
@@ -101,6 +132,9 @@ class SqlSpanTest {
                 .hasMessage("SQL error");
     }
 
+    /**
+     * 验证被测调用 抛出 <code>RuntimeException.class</code>。
+     */
     @Test
     void execute_supplierOnException_shouldPropagateException() {
         assertThatThrownBy(() -> SqlSpan.execute("mybatis", "SELECT 1", () -> {

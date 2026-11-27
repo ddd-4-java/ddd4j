@@ -60,6 +60,9 @@ import static io.javalin.apibuilder.ApiBuilder.*;
  */
 public class GoodsController {
 
+    /**
+     * 处理商品创建、维护和查询操作的应用服务。
+     */
     private final GoodsApplicationService applicationService;
 
     /**
@@ -71,6 +74,9 @@ public class GoodsController {
 
     /**
      * 从 Javalin Context 手动绑定 {@link GoodsQuery}（Javalin 7.x 不支持自动绑定 query 字段到 JavaBean）。
+     *
+     * @param ctx 提供查询参数的当前请求
+     * @return 根据当前请求参数绑定的商品查询
      */
     private static GoodsQuery bindQuery(Context ctx) {
         GoodsQuery query = new GoodsQuery();
@@ -108,6 +114,12 @@ public class GoodsController {
         return query;
     }
 
+    /**
+     * 解析请求排序表达式并追加到当前商品查询。
+     *
+     * @param query   待应用的商品筛选和排序条件
+     * @param orderBy 请求中传入的排序表达式
+     */
     private static void addOrderBy(GoodsQuery query, String orderBy) {
         String[] tokens = orderBy.trim().split("_");
         if (tokens.length != 2) {
@@ -224,14 +236,29 @@ public class GoodsController {
      */
     public static class CreateGoodsRequest {
 
+        /**
+         * Java 序列化版本标识。
+         */
         private static final long serialVersionUID = 0L;
 
+        /**
+         * 当前请求或结果使用的业务编码。
+         */
         private String code;
 
+        /**
+         * 当前请求或结果使用的显示名称。
+         */
         private String name;
 
+        /**
+         * 商品示例使用的销售价格。
+         */
         private BigDecimal price;
 
+        /**
+         * 示例商品可用的库存数量。
+         */
         private Integer stock;
 
         /**
@@ -352,6 +379,12 @@ public class GoodsController {
             return other instanceof CreateGoodsRequest;
         }
 
+        /**
+         * 比较两个对象的值是否相等。
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -370,6 +403,11 @@ public class GoodsController {
                     && Objects.equals(getStock(), other.getStock());
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 1;
@@ -380,6 +418,11 @@ public class GoodsController {
             return result;
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>code</code>、<code>name</code>、<code>price</code>、<code>stock</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "GoodsController.CreateGoodsRequest(code=" + getCode() + ", name=" + getName() + ", price=" + getPrice() + ", stock=" + getStock() + ")";
@@ -391,10 +434,19 @@ public class GoodsController {
      */
     public static class UpdateGoodsRequest {
 
+        /**
+         * Java 序列化版本标识。
+         */
         private static final long serialVersionUID = 0L;
 
+        /**
+         * 当前请求或结果使用的显示名称。
+         */
         private String name;
 
+        /**
+         * 用于替换商品当前销售价的请求字段。
+         */
         private BigDecimal price;
 
         /**
@@ -467,6 +519,12 @@ public class GoodsController {
             return other instanceof UpdateGoodsRequest;
         }
 
+        /**
+         * 比较两个对象的值是否相等。
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -483,6 +541,11 @@ public class GoodsController {
                     && Objects.equals(getPrice(), other.getPrice());
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 1;
@@ -491,6 +554,11 @@ public class GoodsController {
             return result;
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>name</code>、<code>price</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "GoodsController.UpdateGoodsRequest(name=" + getName() + ", price=" + getPrice() + ")";

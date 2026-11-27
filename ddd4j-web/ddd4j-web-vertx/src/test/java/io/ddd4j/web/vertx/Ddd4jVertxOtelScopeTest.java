@@ -13,9 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.web.vertx;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.ddd4j.extension.otel.Ddd4jOtel;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
@@ -45,8 +42,16 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * 通过 <code>resetOpenTelemetry()</code>、<code>SdkTracerProvider.builder()</code>、<code>SimpleSpanProcessor.create()</code> 验证 <code>Ddd4jVertxOtelScope</code> 的运行行为。
+ */
 class Ddd4jVertxOtelScopeTest {
 
+    /**
+     * 调用 <code>GlobalOpenTelemetry.resetForTest()</code>、<code>Ddd4jOtel.class.getDeclaredField()</code>、<code>field.setAccessible()</code> 执行当前夹具操作。
+     *
+     * @throws Exception 反射访问被测成员时失败
+     */
     private static void resetOpenTelemetry() throws Exception {
         GlobalOpenTelemetry.resetForTest();
         for (String fieldName : new String[]{"TRACER_CACHE", "METER_CACHE"}) {
@@ -59,6 +64,11 @@ class Ddd4jVertxOtelScopeTest {
         available.setBoolean(null, false);
     }
 
+    /**
+     * 验证<code>connection.getResponseCode()</code> 等于 <code>200</code>，<code>nextTick.await(5, TimeUnit.SECONDS)</code>为真，<code>activeAfterNextEventLoopTick.get()</code>为假。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void responseEndMustCloseOtelScopeOnEventLoop() throws Exception {
         resetOpenTelemetry();

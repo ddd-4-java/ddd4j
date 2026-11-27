@@ -81,8 +81,17 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
     @Setter
     protected MP baseMapper;
 
+    /**
+     * 仓储管理的聚合模型类型。
+     */
     private Class<M> modelClass;
+    /**
+     * 映射到数据表的持久化对象类型。
+     */
     private Class<P> persistenceObjectClass;
+    /**
+     * 当前仓储可处理的查询类型。
+     */
     private Class<? extends Query<M>> queryClass;
 
     /**
@@ -129,6 +138,12 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         this.registerToRepositoryRegistry();
     }
 
+    /**
+     * 将驼峰属性名转换为下划线列名。
+     *
+     * @param camel 待转换的驼峰名称
+     * @return 下划线命名的属性
+     */
     private static String toUnderline(String camel) {
         if (StrKit.isEmpty(camel)) {
             return camel;
@@ -217,6 +232,9 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
      * 手动构造 Repository 或在轻量运行时中使用时没有该前置步骤，因此这里
      * 以独立 MyBatis 配置完成兜底初始化。之后接入真实 Configuration 时，
      * MyBatis-Plus 会按其自身规则重新绑定元数据。
+     *
+     * @param type 持久化实体类型
+     * @return 对应实体的 MyBatis 表元数据
      */
     private TableInfo resolveTableInfo(Class<P> type) {
         if (Objects.isNull(type)) {
@@ -318,6 +336,12 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return translateProperty(condition.property());
     }
 
+    /**
+     * 按持久化映射解析领域属性对应的 SQL 列。
+     *
+     * @param property 用于定位 SQL 列的 Java 属性名
+     * @return 持久化列名称
+     */
     private String persistenceColumn(String property) {
         TableInfo persistenceTableInfo = tableInfo();
         if (Objects.equals(property, persistenceTableInfo.getKeyProperty())) {
@@ -445,6 +469,12 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return count;
     }
 
+    /**
+     * 将批量写入输入整理为支持位置对应的列表。
+     *
+     * @param aggregates 本次批量写入的聚合对象
+     * @return 当前批次的聚合对象列表
+     */
     private List<M> batchModels(Collection<M> aggregates) {
         if (Objects.isNull(aggregates)) {
             return Collections.emptyList();
@@ -453,6 +483,12 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return List.copyOf(aggregates);
     }
 
+    /**
+     * 把持久化对象中的生成值回填到对应的领域模型。
+     *
+     * @param values 批量操作所用的持久化对象列表
+     * @param models 本次写入或查询对应的领域模型列表
+     */
     private void completeBatch(List<P> values, List<M> models) {
         // 组件批量写入使用独立会话，清除原会话缓存以保证下一次查询可见。
         MybatisUtils.getMapperProxy(getBaseMapper()).getSqlSession().clearCache();
@@ -461,6 +497,12 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         }
     }
 
+    /**
+     * 汇总底层批处理结果中的受影响行数。
+     *
+     * @param results MyBatis 批处理返回的结果集合
+     * @return 本次批量写入影响的行数
+     */
     private int affectedRows(List<BatchResult> results) {
         int total = 0;
         // SqlHelper.retBool 只有布尔结果；领域接口需要计数并接受未命中更新的 0。
@@ -478,6 +520,14 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return total;
     }
 
+    /**
+     * 按主键读取领域对象或持久化记录。
+     *
+     * <p>MyBatis 实现调用 <code>Optional.empty()</code>。</p>
+     *
+     * @param id 聚合根标识
+     * @return 根据执行路径返回<code>Optional.empty()</code>、<code>Optional.of(toModel(persistenceObject))</code>
+     */
     @Override
     public Optional<M> findById(ID id) {
         if (Objects.isNull(id)) {
@@ -490,11 +540,27 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return Optional.of(toModel(persistenceObject));
     }
 
+    /**
+     * 检查指定主键是否存在。
+     *
+     * <p>MyBatis 实现调用 <code>getBaseMapper().selectById(id)</code>。</p>
+     *
+     * @param id 聚合根标识
+     * @return 实际返回<code>Objects.nonNull(id) &amp;&amp; Objects.nonNull(getBaseMapper().selectById(id))</code>
+     */
     @Override
     public boolean existsById(ID id) {
         return Objects.nonNull(id) && Objects.nonNull(getBaseMapper().selectById(id));
     }
 
+    /**
+     * 写入或更新给定的领域对象或存储记录。
+     *
+     * <p>MyBatis 实现调用 <code>toPersistenceObject(aggregate)</code>。</p>
+     *
+     * @param aggregate 待处理聚合根
+     * @return 实际返回<code>aggregate</code>
+     */
     @Override
     public M save(M aggregate) {
         Objects.requireNonNull(aggregate, "aggregate must not be null");
@@ -512,6 +578,9 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
 
     /**
      * 仅按主键更新（不插入），对齐 {@code BaseMapper.updateById}。
+     *
+     * @param aggregate 待写入的聚合
+     * @return 更新后的聚合
      */
     @Override
     public M updateById(M aggregate) {
@@ -523,6 +592,13 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return aggregate;
     }
 
+    /**
+     * 按主键删除记录。
+     *
+     * <p>MyBatis 实现调用 <code>getBaseMapper().deleteById(id)</code>。</p>
+     *
+     * @param id 聚合根标识
+     */
     @Override
     public void deleteById(ID id) {
         if (Objects.nonNull(id)) {
@@ -541,6 +617,13 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return Objects.isNull(id) || Objects.isNull(getBaseMapper().selectById(id));
     }
 
+    /**
+     * 读取满足条件的第一条记录。
+     *
+     * <p>MyBatis 实现调用 <code>getDefaultWrapper(false)</code>。</p>
+     *
+     * @return 第一个匹配条件的结果
+     */
     @Override
     public Optional<M> findFirst() {
         QueryWrapper<P> wrapper = getDefaultWrapper(false);
@@ -552,17 +635,39 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return Optional.of(toModel(persistenceObjects.get(0)));
     }
 
+    /**
+     * 查询存储中符合条件的记录。
+     *
+     * <p>MyBatis 实现调用 <code>convert(getBaseMapper().selectList(getDefaultWrapper(false)))</code>。</p>
+     *
+     * @return 满足条件的结果列表
+     */
     @Override
     public List<M> findAll() {
         return convert(getBaseMapper().selectList(getDefaultWrapper(false)));
     }
 
+    /**
+     * 统计符合查询范围的数据数量。
+     *
+     * <p>MyBatis 实现调用 <code>getBaseMapper().selectCount(getDefaultWrapper(false))</code>。</p>
+     *
+     * @return 满足筛选条件的记录数量
+     */
     @Override
     public long count() {
         Long count = getBaseMapper().selectCount(getDefaultWrapper(false));
         return Objects.nonNull(count) ? count : 0L;
     }
 
+    /**
+     * 根据分页参数和查询条件读取结果。
+     *
+     * <p>MyBatis 实现调用 <code>getBaseWrapper(query)</code>。</p>
+     *
+     * @param query 查询条件
+     * @return 实际返回<code>page</code>
+     */
     @Override
     public Page<M> page(Query<M> query) {
         QueryWrapper<P> wrapper = getBaseWrapper(query);
@@ -583,12 +688,28 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return page;
     }
 
+    /**
+     * 统计符合查询范围的数据数量。
+     *
+     * <p>MyBatis 实现调用 <code>getBaseMapper().selectCount(getBaseWrapper(query))</code>。</p>
+     *
+     * @param query 查询条件
+     * @return 满足筛选条件的记录数量
+     */
     @Override
     public long count(Query<M> query) {
         Long count = getBaseMapper().selectCount(getBaseWrapper(query));
         return Objects.nonNull(count) ? count : 0L;
     }
 
+    /**
+     * 读取满足条件的第一条记录。
+     *
+     * <p>MyBatis 实现调用 <code>getBaseWrapper(query)</code>。</p>
+     *
+     * @param query 查询条件
+     * @return 第一个匹配条件的结果
+     */
     @Override
     public Optional<M> findFirst(Query<M> query) {
         QueryWrapper<P> wrapper = getBaseWrapper(query);
@@ -602,6 +723,14 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return Optional.of(model);
     }
 
+    /**
+     * 按查询条件读取记录列表。
+     *
+     * <p>MyBatis 实现调用 <code>convert(getBaseMapper().selectList(getBaseWrapper(query)))</code>。</p>
+     *
+     * @param query 查询条件
+     * @return 满足条件的结果列表
+     */
     @Override
     public List<M> findList(Query<M> query) {
         List<M> models = convert(getBaseMapper().selectList(getBaseWrapper(query)));
@@ -609,11 +738,28 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return models;
     }
 
+    /**
+     * 按条件查询 Map 列表（对应 {@code selectMaps(Wrapper)}）。
+     *
+     * <p>MyBatis 实现调用 <code>getBaseMapper().selectMaps(getBaseWrapper(query))</code>。</p>
+     *
+     * @param query 查询条件
+     * @return 实际返回<code>getBaseMapper().selectMaps(getBaseWrapper(query))</code>
+     */
     @Override
     public List<Map<String, Object>> maps(Query<M> query) {
         return getBaseMapper().selectMaps(getBaseWrapper(query));
     }
 
+    /**
+     * 更新已经存在的记录。
+     *
+     * <p>MyBatis 实现调用 <code>toPersistenceObject(modelClass().cast(aggregate))</code>。</p>
+     *
+     * @param aggregate 待处理聚合根
+     * @param query     查询条件
+     * @return 实际返回<code>updated</code>
+     */
     @Override
     public boolean update(AggregateRoot<?> aggregate, Query<M> query) {
         Objects.requireNonNull(aggregate, "aggregate must not be null");
@@ -626,6 +772,14 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return updated;
     }
 
+    /**
+     * 删除匹配查询条件的记录。
+     *
+     * <p>MyBatis 实现调用 <code>SqlHelper.retBool(getBaseMapper().delete(getBaseWrapper(query)))</code>。</p>
+     *
+     * @param query 查询条件
+     * @return 实际返回<code>SqlHelper.retBool(getBaseMapper().delete(getBaseWrapper(query)))</code>
+     */
     @Override
     public boolean deleteByQuery(Query<M> query) {
         return SqlHelper.retBool(getBaseMapper().delete(getBaseWrapper(query)));
@@ -678,6 +832,14 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return convert(getBaseMapper().selectList(getKeyWrapper(keys)));
     }
 
+    /**
+     * 为目标对象填充此适配器负责的数据。
+     *
+     * <p>MyBatis 实现调用 <code>modelClass().isInstance(model)</code>。</p>
+     *
+     * @param query 查询条件
+     * @param model 待填充聚合根
+     */
     @Override
     public void fill(Query<M> query, AggregateRoot<?> model) {
         if (modelClass().isInstance(model)) {
@@ -685,10 +847,24 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         }
     }
 
+    /**
+     * 接收<code>fill</code>回调，当前实现无需在此步骤更新状态。
+     *
+     * @param query  查询条件
+     * @param models 聚合根列表
+     */
     @Override
     public void fill(Query<M> query, List<M> models) {
     }
 
+    /**
+     * 将持久化对象转换为领域模型。
+     *
+     * <p>MyBatis 实现调用 <code>BeanKit.copy(persistenceObject, modelClass())</code>。</p>
+     *
+     * @param persistenceObject persistence object
+     * @return 由持久化数据构造的领域模型
+     */
     @Override
     public M toModel(P persistenceObject) {
         if (Objects.isNull(persistenceObject)) {
@@ -697,6 +873,14 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return BeanKit.copy(persistenceObject, modelClass());
     }
 
+    /**
+     * 将领域模型转换为仓储使用的持久化对象。
+     *
+     * <p>MyBatis 实现调用 <code>BeanKit.copy(model, persistenceObjectClass())</code>。</p>
+     *
+     * @param model domain model
+     * @return 由领域模型生成的持久化对象
+     */
     @Override
     public P toPersistenceObject(M model) {
         if (Objects.isNull(model)) {
@@ -760,6 +944,9 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
 
     /**
      * 将 Query.getWhereConditions() 转换为 MyBatis-Plus QueryWrapper 条件。
+     *
+     * @param wrapper 接收生成条件的 MyBatis 查询封装器
+     * @param query   用于生成筛选条件的聚合查询
      */
     private void applyConditions(QueryWrapper<P> wrapper, Query<M> query) {
         for (LambdaCondition condition : query.getWhereConditions()) {
@@ -785,6 +972,9 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
 
     /**
      * 将 Query.getOrderByConditions() 转换为 QueryWrapper 排序。
+     *
+     * @param query   用于生成筛选条件的聚合查询
+     * @param wrapper 接收生成条件的 MyBatis 查询封装器
      */
     private void applyOrderBy(Query<M> query, QueryWrapper<P> wrapper) {
         for (LambdaCondition orderBy : query.getOrderByConditions()) {
@@ -829,6 +1019,10 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
 
     /**
      * 在 TableInfo.fieldList 中查找标注了指定注解的字段。
+     *
+     * @param ti             对应持久化实体的 MyBatis 表元数据
+     * @param annotationType 待匹配的字段注解类型
+     * @return 匹配注解的字段元数据
      */
     private TableFieldInfo findFieldInfoByAnnotation(TableInfo ti, Class<? extends java.lang.annotation.Annotation> annotationType) {
         if (Objects.isNull(ti)) {
@@ -844,6 +1038,10 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
 
     /**
      * 在 TableInfo.fieldList 中查找指定 PO 字段（反射）。
+     *
+     * @param ti             对应持久化实体的 MyBatis 表元数据
+     * @param annotationType 用于定位目标属性的注解类型
+     * @return 匹配属性的字段元数据
      */
     private Field findFieldByProperty(TableInfo ti, Class<? extends java.lang.annotation.Annotation> annotationType) {
         if (Objects.isNull(ti)) {
@@ -857,6 +1055,12 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return null;
     }
 
+    /**
+     * 把业务查询指定的投影列写入 MyBatis-Plus 包装器。
+     *
+     * @param query   业务查询及其筛选、投影或排序条件
+     * @param wrapper 接收生成 SQL 条件和排序的 MyBatis-Plus 查询包装器
+     */
     private void applySelect(Query<M> query, QueryWrapper<P> wrapper) {
         if (query.hasSelect()) {
             for (Object obj : query.getSelectColumns()) {
@@ -867,6 +1071,12 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         }
     }
 
+    /**
+     * 为包装器追加业务查询指定的分组列。
+     *
+     * @param query   业务查询及其筛选、投影或排序条件
+     * @param wrapper 接收生成 SQL 条件和排序的 MyBatis-Plus 查询包装器
+     */
     private void applyGroupBy(Query<M> query, QueryWrapper<P> wrapper) {
         if (query.hasGroupBy()) {
             for (Object obj : query.getGroupByColumns()) {
@@ -877,6 +1087,12 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         }
     }
 
+    /**
+     * 为已分组的查询追加聚合筛选条件。
+     *
+     * @param query   业务查询及其筛选、投影或排序条件
+     * @param wrapper 接收生成 SQL 条件和排序的 MyBatis-Plus 查询包装器
+     */
     private void having(Query<M> query, QueryWrapper<P> wrapper) {
         if (Objects.nonNull(query) && Objects.nonNull(query.getHaving()) && StrKit.hasText(query.getHaving())) {
             wrapper.having(query.getHaving());
@@ -905,6 +1121,12 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         }
     }
 
+    /**
+     * 按主键重新读取写入结果并回填聚合。
+     *
+     * @param persistenceObject 数据库持久化对象
+     * @param aggregate         需要持久化或回填的聚合对象
+     */
     private void copyUpdatedPersistenceObject(P persistenceObject, AggregateRoot<?> aggregate) {
         TableInfo ti = tableInfo();
         if (Objects.isNull(ti.getKeyProperty())) {
@@ -919,12 +1141,23 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         }
     }
 
+    /**
+     * 在查询开启结果填充时对返回模型补齐扩展字段。
+     *
+     * @param query  业务查询及其筛选、投影或排序条件
+     * @param models 本次写入或查询对应的领域模型列表
+     */
     private void fillIfNecessary(Query<M> query, List<M> models) {
         if (Objects.nonNull(models) && !models.isEmpty()) {
             fill(query, models);
         }
     }
 
+    /**
+     * 补齐插入前需要写入的时间和审计上下文字段。
+     *
+     * @param persistenceObject 数据库持久化对象
+     */
     private void insertFill(P persistenceObject) {
         try {
             TableInfo ti = tableInfo();
@@ -942,6 +1175,11 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         }
     }
 
+    /**
+     * 补齐更新前需要写入的时间和审计上下文字段。
+     *
+     * @param persistenceObject 数据库持久化对象
+     */
     private void updateFill(P persistenceObject) {
         try {
             for (Field field : FieldUtils.getAllFieldsList(persistenceObjectClass())) {
@@ -954,6 +1192,14 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         }
     }
 
+    /**
+     * 在字段和值均存在时，转换并写入支持的上下文值。
+     *
+     * @param field             待处理的 Java 反射字段
+     * @param persistenceObject 数据库持久化对象
+     * @param value             当前条件操作数或待写入字段值
+     * @throws IllegalAccessException 无法写入目标反射字段
+     */
     private void fillContextValue(Field field, P persistenceObject, String value) throws IllegalAccessException {
         if (Objects.isNull(field) || Objects.isNull(value)) {
             return;
@@ -967,6 +1213,12 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         }
     }
 
+    /**
+     * 按 MyBatis-Plus 表元数据初始化逻辑删除标记。
+     *
+     * @param persistenceObject 数据库持久化对象
+     * @throws IllegalAccessException 无法访问逻辑删除字段
+     */
     private void fillLogicDeleteValue(P persistenceObject) throws IllegalAccessException {
         TableInfo ti = tableInfo();
         if (Objects.isNull(ti) || !ti.isWithLogicDelete()) {
@@ -995,6 +1247,13 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         }
     }
 
+    /**
+     * 仅向未赋值的受支持时间字段写入当前时间。
+     *
+     * @param field             待处理的 Java 反射字段
+     * @param persistenceObject 数据库持久化对象
+     * @throws IllegalAccessException 无法读写目标反射字段
+     */
     private void fillDateField(Field field, P persistenceObject) throws IllegalAccessException {
         if (Objects.nonNull(FieldUtils.readField(field, persistenceObject, true))) {
             return;

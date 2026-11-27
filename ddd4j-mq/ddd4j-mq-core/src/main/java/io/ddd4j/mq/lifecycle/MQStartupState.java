@@ -8,16 +8,28 @@ package io.ddd4j.mq.lifecycle;
  * MQ客户端启动状态。
  */
 public enum MQStartupState {
-    /** 尚未启动。 */
+    /**
+     * 尚未启动。
+     */
     NEW,
-    /** 正在启动。 */
+    /**
+     * 正在启动。
+     */
     STARTING,
-    /** 已就绪。 */
+    /**
+     * 已就绪。
+     */
     READY,
-    /** 部分监听器启动失败。 */
+    /**
+     * 部分监听器启动失败。
+     */
     DEGRADED,
-    /** 启动失败。 */
+    /**
+     * 启动失败。
+     */
     FAILED,
-    /** 已停止。 */
+    /**
+     * 已停止。
+     */
     STOPPED
 }

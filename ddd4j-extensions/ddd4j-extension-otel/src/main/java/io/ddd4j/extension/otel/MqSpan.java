@@ -39,6 +39,9 @@ import java.util.Objects;
  */
 public final class MqSpan {
 
+    /**
+     * 将跟踪上下文写入 HTTP 或消息传输头的传播适配器。
+     */
     private static final TextMapSetter<Map<String, String>> SETTER = new TextMapSetter<Map<String, String>>() {
         @Override
         public void set(Map<String, String> carrier, String key, String value) {
@@ -47,6 +50,9 @@ public final class MqSpan {
             }
         }
     };
+    /**
+     * 从 HTTP 或消息传输头读取跟踪上下文的传播适配器。
+     */
     private static final TextMapGetter<Map<String, String>> GETTER = new TextMapGetter<Map<String, String>>() {
         @Override
         public Iterable<String> keys(Map<String, String> carrier) {
@@ -70,6 +76,9 @@ public final class MqSpan {
         }
     };
 
+    /**
+     * 限制调用方直接创建 <code>MqSpan</code> 实例。
+     */
     private MqSpan() {
     }
 
@@ -157,6 +166,11 @@ public final class MqSpan {
         endConsumer(span, null);
     }
 
+    /**
+     * 把当前追踪上下文写入消息传输头。
+     *
+     * @param headers 传播追踪信息使用的传输头字段
+     */
     private static void injectContext(Map<String, String> headers) {
         if (Objects.isNull(headers)) {
             return;
@@ -172,6 +186,12 @@ public final class MqSpan {
         }
     }
 
+    /**
+     * 从消息头恢复调用链传播上下文。
+     *
+     * @param headers 传播追踪信息使用的传输头字段
+     * @return 消息中传递的 OpenTelemetry 上下文
+     */
     private static Context extractContext(Map<String, String> headers) {
         if (Objects.isNull(headers)) {
             return Context.current();

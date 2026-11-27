@@ -29,7 +29,7 @@ public class QrCodeTemplateBinder {
      * Creates a new immutable frame and leaves the registered template unchanged.
      *
      * @param definition template definition
-     * @param variables placeholder values
+     * @param variables  placeholder values
      * @return bound immutable frame
      */
     public QrCodeFrame bind(QrCodeTemplateDefinition definition, Map<String, ?> variables) {
@@ -44,6 +44,13 @@ public class QrCodeTemplateBinder {
         return target.build();
     }
 
+    /**
+     * 复制模板元素及其布局，并把文本元素中的占位符替换为给定变量。
+     *
+     * @param element   要复制和绑定的模板元素
+     * @param variables 从变量名到替换值的映射
+     * @return 绑定后的模板元素
+     */
     private QrCodeFrameElement copy(QrCodeFrameElement element, Map<String, ?> variables) {
         if (element instanceof QrCodeTextElement) {
             QrCodeTextElement text = (QrCodeTextElement) element;
@@ -71,6 +78,13 @@ public class QrCodeTemplateBinder {
         return element;
     }
 
+    /**
+     * 替换文本中已提供变量对应的占位符，空变量值转成空字符串。
+     *
+     * @param template  包含变量占位符的文本
+     * @param variables 由调用方提供的变量映射
+     * @return 替换已知变量后的文本
+     */
     private String bindText(String template, Map<String, ?> variables) {
         String bound = template;
         for (Map.Entry<String, ?> variable : variables.entrySet()) {

@@ -44,7 +44,13 @@ import java.util.Objects;
 @Slf4j
 public class GlobalErrorWebExceptionHandler extends BaseErrorConfiguration implements WebExceptionHandler {
 
+    /**
+     * 读取 WebFlux 请求错误及其属性的组件。
+     */
     private final GlobalErrorAttributes errorAttributes;
+    /**
+     * 用于读写 JSON 数据的 Jackson 映射器。
+     */
     private final ObjectMapper objectMapper;
 
     /**
@@ -59,6 +65,11 @@ public class GlobalErrorWebExceptionHandler extends BaseErrorConfiguration imple
         this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper must not be null");
     }
 
+    /**
+     * 返回当前适配实现对应的运行框架名称。
+     *
+     * @return 框架标识
+     */
     @Override
     protected String frameworkName() {
         return "WebFlux";
@@ -66,6 +77,10 @@ public class GlobalErrorWebExceptionHandler extends BaseErrorConfiguration imple
 
     /**
      * 捕获未处理异常，并按统一异常语义写入 HTTP 状态和响应体。
+     *
+     * @param exchange 正在处理的 WebFlux 请求和响应
+     * @param ex       待处理的 WebFlux 请求异常
+     * @return 在错误响应提交后完成的响应式信号
      */
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {

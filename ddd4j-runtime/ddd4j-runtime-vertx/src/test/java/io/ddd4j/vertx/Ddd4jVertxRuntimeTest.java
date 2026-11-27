@@ -20,8 +20,18 @@ import io.ddd4j.runtime.testkit.RuntimeContractAdapter;
 import io.ddd4j.runtime.testkit.RuntimeFixtures;
 import io.vertx.core.Vertx;
 
+/**
+ * 实现 <code>AbstractRuntimeContractTest</code>，供测试调用 <code>createRuntime()</code> 并观察结果。
+ */
 class Ddd4jVertxRuntimeTest extends AbstractRuntimeContractTest {
 
+    /**
+     * 为契约测试构造当前框架的运行实例。
+     *
+     * <p>测试夹具会调用 <code>Vertx.vertx()</code>、<code>fixtures.publisher()</code>。</p>
+     *
+     * @return 待验证的运行时适配器
+     */
     @Override
     protected RuntimeContract createRuntime() {
         RuntimeFixtures fixtures = new RuntimeFixtures();

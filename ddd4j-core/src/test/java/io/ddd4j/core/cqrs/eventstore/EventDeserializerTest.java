@@ -34,6 +34,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class EventDeserializerTest {
 
+    /**
+     * 测试结束后执行 <code>EventDeserializer.setFilter()</code>、<code>EventDeserializer.defaultFilter()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void resetFilter() {
         EventDeserializer.setFilter(EventDeserializer.defaultFilter());
@@ -45,29 +48,44 @@ class EventDeserializerTest {
     @Nested
     class ClassNameValidation {
 
+        /**
+         * 验证<code>EventDeserializer.isValidClassName("io.ddd4j.event.OrderCreated")</code>为真，<code>EventDeserializer.isValidClassName("com.example.$Inner$Class")</code>为真。
+         */
         @Test
         void 合法全限定类名_返回true() {
             assertThat(EventDeserializer.isValidClassName("io.ddd4j.event.OrderCreated")).isTrue();
             assertThat(EventDeserializer.isValidClassName("com.example.$Inner$Class")).isTrue();
         }
 
+        /**
+         * 验证<code>EventDeserializer.isValidClassName(null)</code>为假，<code>EventDeserializer.isValidClassName("")</code>为假。
+         */
         @Test
         void 空字符串或null_返回false() {
             assertThat(EventDeserializer.isValidClassName(null)).isFalse();
             assertThat(EventDeserializer.isValidClassName("")).isFalse();
         }
 
+        /**
+         * 验证<code>EventDeserializer.isValidClassName("OrderCreated")</code>为假。
+         */
         @Test
         void 仅一个包段_返回false() {
             assertThat(EventDeserializer.isValidClassName("OrderCreated")).isFalse();
         }
 
+        /**
+         * 验证<code>EventDeserializer.isValidClassName("1io.ddd4j.Foo")</code>为假，<code>EventDeserializer.isValidClassName("io.1dd4j.Foo")</code>为假。
+         */
         @Test
         void 包段以数字开头_返回false() {
             assertThat(EventDeserializer.isValidClassName("1io.ddd4j.Foo")).isFalse();
             assertThat(EventDeserializer.isValidClassName("io.1dd4j.Foo")).isFalse();
         }
 
+        /**
+         * 验证<code>EventDeserializer.isValidClassName("io.ddd4j;exec.Foo")</code>为假，<code>EventDeserializer.isValidClassName("io.ddd4j.Foo Bar")</code>为假，<code>EventDeserializer.isValidClassName("io.ddd4j.Foo[]")</code>为假。
+         */
         @Test
         void 含特殊字符_返回false() {
             assertThat(EventDeserializer.isValidClassName("io.ddd4j;exec.Foo")).isFalse();
@@ -82,6 +100,9 @@ class EventDeserializerTest {
     @Nested
     class DeserializeFallback {
 
+        /**
+         * 验证<code>result</code> 的类型为 <code>Map.class</code>，<code>(Map&lt;String, Object&gt;) result</code> 含对应条目 <code>"a"</code>、<code>1</code>。
+         */
         @Test
         void 类名格式非法_回退Map() {
             Object result = EventDeserializer.deserialize("{\"a\":1}", "1io.bad.class");
@@ -89,6 +110,9 @@ class EventDeserializerTest {
             assertThat((Map<String, Object>) result).containsEntry("a", 1);
         }
 
+        /**
+         * 验证<code>result</code> 的类型为 <code>Map.class</code>，<code>(Map&lt;String, Object&gt;) result</code> 含对应条目 <code>"x"</code>、<code>"y"</code>。
+         */
         @Test
         void 类不存在_回退Map() {
             Object result = EventDeserializer.deserialize("{\"x\":\"y\"}", "io.ddd4j.NonexistentEventClass_12345");
@@ -103,12 +127,18 @@ class EventDeserializerTest {
     @Nested
     class ClassNameFilterSPI {
 
+        /**
+         * 验证<code>EventDeserializer.defaultFilter().allows("io.ddd4j.X")</code>为真，<code>EventDeserializer.defaultFilter().allows("java.lang.String")</code>为真。
+         */
         @Test
         void 默认过滤器_允许所有合法格式() {
             assertThat(EventDeserializer.defaultFilter().allows("io.ddd4j.X")).isTrue();
             assertThat(EventDeserializer.defaultFilter().allows("java.lang.String")).isTrue();
         }
 
+        /**
+         * 验证<code>allowed</code> 的类型为 <code>Map.class</code>，<code>(Map&lt;String, Object&gt;) allowed</code> 含对应条目 <code>"k"</code>、<code>"v"</code>，<code>(Map&lt;String, Object&gt;) blocked</code> 含对应条目 <code>"k"</code>、<code>"v"</code>。
+         */
         @Test
         void 注册白名单_拒绝不在白名单内的类名() {
             Set<String> allowedPrefixes = new HashSet<>(Arrays.asList("io.ddd4j.", "com.example."));
@@ -124,12 +154,18 @@ class EventDeserializerTest {
             assertThat((Map<String, Object>) blocked).containsEntry("k", "v");
         }
 
+        /**
+         * 验证<code>EventDeserializer.setFilter(null)</code> 抛出 <code>NullPointerException.class</code>。
+         */
         @Test
         void 注册null_抛NullPointerException() {
             assertThatThrownBy(() -> EventDeserializer.setFilter(null))
                     .isInstanceOf(NullPointerException.class);
         }
 
+        /**
+         * 验证<code>EventDeserializer.filter()</code> 指向同一实例 <code>EventDeserializer.defaultFilter()</code>，<code>EventDeserializer.filter()</code> 指向同一实例 <code>custom</code>。
+         */
         @Test
         void filter_getter返回当前生效过滤器() {
             assertThat(EventDeserializer.filter()).isSameAs(EventDeserializer.defaultFilter());

@@ -34,6 +34,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class EventStoreRetryTest {
 
+    /**
+     * 验证<code>sleeper.calls</code>为空。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void 首次成功_不调用Sleeper() throws Exception {
         RecordingSleeper sleeper = new RecordingSleeper();
@@ -44,6 +49,11 @@ class EventStoreRetryTest {
         assertThat(sleeper.calls).isEmpty();
     }
 
+    /**
+     * 验证<code>sleeper.calls</code> 的大小为 <code>1</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void 第二次成功_调用一次Sleeper() throws Exception {
         RecordingSleeper sleeper = new RecordingSleeper();
@@ -59,6 +69,9 @@ class EventStoreRetryTest {
         assertThat(sleeper.calls).hasSize(1);
     }
 
+    /**
+     * 验证被测调用 抛出 <code>RuntimeException.class</code>，<code>sleeper.calls</code> 的大小为 <code>2</code>。
+     */
     @Test
     void 可重试异常_耗尽所有重试后抛出() {
         RecordingSleeper sleeper = new RecordingSleeper();
@@ -76,6 +89,9 @@ class EventStoreRetryTest {
         assertThat(sleeper.calls).hasSize(2);
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，<code>attempts.get()</code> 等于 <code>1</code>，<code>sleeper.calls</code>为空。
+     */
     @Test
     void IllegalStateException_乐观锁失败_不重试_立即抛出() {
         RecordingSleeper sleeper = new RecordingSleeper();
@@ -91,6 +107,9 @@ class EventStoreRetryTest {
         assertThat(sleeper.calls).isEmpty();
     }
 
+    /**
+     * 验证<code>EventStoreRetry.isRetriable(wrapper)</code>为真。
+     */
     @Test
     void JPA_PersistenceException_嵌套SQLException_含uk_position_可重试() {
         SQLException sqlCause = new SQLException("uk_position violation");
@@ -99,6 +118,9 @@ class EventStoreRetryTest {
         assertThat(EventStoreRetry.isRetriable(wrapper)).isTrue();
     }
 
+    /**
+     * 验证<code>EventStoreRetry.isRetriable(new RuntimeException("other"))</code>为假，<code>EventStoreRetry.isRetriable(new NullPointerException())</code>为假，<code>EventStoreRetry.isRetriable(new IllegalArgumentException("bad input"))</code>为假。
+     */
     @Test
     void 任意RuntimeException_非IllegalState_不可重试() {
         assertThat(EventStoreRetry.isRetriable(new RuntimeException("other"))).isFalse();
@@ -106,11 +128,17 @@ class EventStoreRetryTest {
         assertThat(EventStoreRetry.isRetriable(new IllegalArgumentException("bad input"))).isFalse();
     }
 
+    /**
+     * 验证<code>EventStoreRetry.isRetriable(new SQLException("connection lost"))</code>为假。
+     */
     @Test
     void SQLException_不含关键字_不可重试() {
         assertThat(EventStoreRetry.isRetriable(new SQLException("connection lost"))).isFalse();
     }
 
+    /**
+     * 在测试框架中执行 <code>EventStoreRetry.computeDelay()</code>，验证该场景。
+     */
     @Test
     void 退避延迟_指数增长() {
         assertThat(EventStoreRetry.computeDelay(1)).isBetween(10L, 20L);
@@ -120,6 +148,9 @@ class EventStoreRetryTest {
         assertThat(EventStoreRetry.computeDelay(5)).isBetween(160L, 170L);
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void maxAttempts_小于1_构造失败() {
         assertThatThrownBy(() -> new EventStoreRetry(0, 1L, ms -> {
@@ -128,6 +159,9 @@ class EventStoreRetryTest {
                 .hasMessageContaining("maxAttempts");
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void baseDelayMillis_负数_构造失败() {
         assertThatThrownBy(() -> new EventStoreRetry(3, -1L, ms -> {
@@ -136,9 +170,20 @@ class EventStoreRetryTest {
                 .hasMessageContaining("baseDelayMillis");
     }
 
+    /**
+     * 收集收到的等待时长，供测试验证重试间隔。
+     */
     static final class RecordingSleeper implements EventStoreRetry.Sleeper {
+        /**
+         * 记录被测入口实际触发的调用。
+         */
         final List<Long> calls = new ArrayList<>();
 
+        /**
+         * 调用 <code>calls.add()</code> 执行当前夹具操作。
+         *
+         * @param millis 等待或推进的毫秒数
+         */
         @Override
         public void sleep(long millis) {
             calls.add(millis);

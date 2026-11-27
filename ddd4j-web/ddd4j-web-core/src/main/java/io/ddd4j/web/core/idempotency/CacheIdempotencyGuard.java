@@ -32,13 +32,26 @@ import java.util.UUID;
  */
 public final class CacheIdempotencyGuard implements IdempotencyGuard {
 
-    /** 常量值 {@code "ddd4j-web-idempotency"}。 */
+    /**
+     * 常量值 {@code "ddd4j-web-idempotency"}。
+     */
     public static final String DEFAULT_CACHE_NAME = "ddd4j-web-idempotency";
+    /**
+     * 幂等记录表示请求尚在执行中的状态。
+     */
     private static final String PROCESSING = "PROCESSING";
+    /**
+     * 幂等记录表示请求已经成功完成的状态。
+     */
     private static final String COMPLETED = "COMPLETED";
+    /**
+     * 用于注册或定位缓存实例的名称。
+     */
     private final String cacheName;
 
-    /** 使用默认缓存业务名创建幂等守卫。 */
+    /**
+     * 使用默认缓存业务名创建幂等守卫。
+     */
     public CacheIdempotencyGuard() {
         this(DEFAULT_CACHE_NAME);
     }
@@ -55,6 +68,34 @@ public final class CacheIdempotencyGuard implements IdempotencyGuard {
         this.cacheName = cacheName;
     }
 
+    /**
+     * 要求租约时长为正，并把不足一秒的部分向上取整。
+     *
+     * @param ttl 请求的幂等记录保留时间
+     * @return 缓存使用的超时秒数
+     * @throws IllegalArgumentException 租约时长为零或负数
+     */
+    private static long expirySeconds(Duration ttl) {
+        Duration effectiveTtl = Objects.requireNonNull(ttl, "ttl must not be null");
+        if (effectiveTtl.isZero() || effectiveTtl.isNegative()) {
+            throw new IllegalArgumentException("ttl must be positive");
+        }
+        long seconds = effectiveTtl.getSeconds();
+        if (effectiveTtl.getNano() > 0 && seconds < Long.MAX_VALUE) {
+            return seconds + 1;
+        }
+        return seconds;
+    }
+
+    /**
+     * 尝试获取幂等键。
+     *
+     * <p>此实现调用 <code>requireKey(key)</code>。</p>
+     *
+     * @param key 幂等键
+     * @param ttl 有效期
+     * @return 实际返回<code>acquired</code>
+     */
     @Override
     public boolean acquire(String key, Duration ttl) {
         requireKey(key);
@@ -67,6 +108,15 @@ public final class CacheIdempotencyGuard implements IdempotencyGuard {
         return acquired;
     }
 
+    /**
+     * 获取带所有者标识的幂等租约。
+     *
+     * <p>此实现调用 <code>requireKey(key)</code>。</p>
+     *
+     * @param key 幂等键
+     * @param ttl 有效期
+     * @return 根据执行路径返回<code>Optional.empty()</code>、<code>Optional.of(new IdempotencyLease(key, ownerToken, ttl))</code>
+     */
     @Override
     public Optional<IdempotencyLease> acquireLease(String key, Duration ttl) {
         requireKey(key);
@@ -80,12 +130,26 @@ public final class CacheIdempotencyGuard implements IdempotencyGuard {
         return Optional.of(new IdempotencyLease(key, ownerToken, ttl));
     }
 
+    /**
+     * 标记指定幂等键的业务处理已完成。
+     *
+     * <p>此实现调用 <code>requireKey(key)</code>。</p>
+     *
+     * @param key 幂等键
+     */
     @Override
     public void complete(String key) {
         requireKey(key);
         CacheKit.replace(cacheName, key, PROCESSING, COMPLETED);
     }
 
+    /**
+     * 完成指定租约。默认实现兼容旧的按 key 完成语义。
+     *
+     * <p>此实现调用 <code>effectiveLease.ownerToken()</code>。</p>
+     *
+     * @param lease 幂等租约
+     */
     @Override
     public void complete(IdempotencyLease lease) {
         IdempotencyLease effectiveLease = Objects.requireNonNull(lease, "lease must not be null");
@@ -99,12 +163,26 @@ public final class CacheIdempotencyGuard implements IdempotencyGuard {
         }
     }
 
+    /**
+     * 释放指定幂等键，允许重试。
+     *
+     * <p>此实现调用 <code>requireKey(key)</code>。</p>
+     *
+     * @param key 幂等键
+     */
     @Override
     public void release(String key) {
         requireKey(key);
         CacheKit.removeIf(cacheName, key, PROCESSING);
     }
 
+    /**
+     * 释放指定租约。默认实现兼容旧的按 key 释放语义。
+     *
+     * <p>此实现调用 <code>effectiveLease.ownerToken()</code>。</p>
+     *
+     * @param lease 幂等租约
+     */
     @Override
     public void release(IdempotencyLease lease) {
         IdempotencyLease effectiveLease = Objects.requireNonNull(lease, "lease must not be null");
@@ -115,6 +193,9 @@ public final class CacheIdempotencyGuard implements IdempotencyGuard {
         CacheKit.removeIf(cacheName, effectiveLease.key(), effectiveLease.ownerToken());
     }
 
+    /**
+     * 取得支持原子更新的幂等缓存。
+     */
     private void requireCasCapableCache() {
         Cache<String, Object> cache = CacheKit.getCache(cacheName);
         if (Objects.isNull(cache)) {
@@ -125,18 +206,12 @@ public final class CacheIdempotencyGuard implements IdempotencyGuard {
         }
     }
 
-    private static long expirySeconds(Duration ttl) {
-        Duration effectiveTtl = Objects.requireNonNull(ttl, "ttl must not be null");
-        if (effectiveTtl.isZero() || effectiveTtl.isNegative()) {
-            throw new IllegalArgumentException("ttl must be positive");
-        }
-        long seconds = effectiveTtl.getSeconds();
-        if (effectiveTtl.getNano() > 0 && seconds < Long.MAX_VALUE) {
-            return seconds + 1;
-        }
-        return seconds;
-    }
-
+    /**
+     * 要求幂等键包含有效文本。
+     *
+     * @param key 当前写入的上下文键、幂等键或属性名
+     * @throws IllegalArgumentException 幂等键为空白
+     */
     private void requireKey(String key) {
         if (StrKit.isBlank(key)) {
             throw new IllegalArgumentException("idempotency key must not be blank");

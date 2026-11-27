@@ -29,8 +29,15 @@ import java.util.Objects;
  * 跨版本真实值对象契约探针：只使用 JDK，不替换业务实现。
  */
 public final class ValueContractProbe {
+    /** 探针运行期间记录的契约断言失败次数。 */
     private static int failures;
 
+    /**
+     * 反射核对三条版本线的值对象构造器、访问器和相等性契约。
+     *
+     * @param args 命令行参数，探针使用内置测试数据
+     * @throws Exception 无法反射加载或调用待检查的 Java 类型
+     */
     public static void main(String[] args) throws Exception {
         check("io.ddd4j.core.cqrs.readmodel.ProjectionRunInfo",
                 new Class<?>[]{Instant.class, int.class, String.class},
@@ -60,6 +67,16 @@ public final class ValueContractProbe {
         }
     }
 
+    /**
+     * 验证一个值对象在正常值及空值下的访问器和相等性行为。
+     *
+     * @param name 类型的全限定名
+     * @param types 构造器形参类型
+     * @param values 首个样本的构造实参
+     * @param nullValues 含空值的构造实参
+     * @param getters 各属性对应的访问器名
+     * @throws Exception 无法加载类型、创建样本或调用访问器
+     */
     private static void check(String name, Class<?>[] types, Object[] values,
                               Object[] nullValues, String[][] getters) throws Exception {
         Class<?> type = Class.forName(name);
@@ -116,6 +133,12 @@ public final class ValueContractProbe {
         System.out.println("TEXT " + name + "=" + a.toString());
     }
 
+    /**
+     * 断言条件成立，失败时累计计数并输出诊断。
+     *
+     * @param condition 要验证的条件
+     * @param message 失败时写入标准错误的信息
+     */
     private static void require(boolean condition, String message) {
         if (!condition) {
             failures++;
@@ -123,6 +146,13 @@ public final class ValueContractProbe {
         }
     }
 
+    /**
+     * 为受支持的字段类型构造一个不同值，用于检验相等性判断。
+     *
+     * @param type 构造器参数类型
+     * @param value 原始参数值
+     * @return 与原始参数不同的测试值
+     */
     private static Object differentValue(Class<?> type, Object value) {
         if (type == boolean.class) {
             return !((Boolean) value);

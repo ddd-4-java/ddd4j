@@ -24,6 +24,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class ApiVersionJsonContractTest {
 
+    /**
+     * 验证<code>mapper.writeValueAsString(version)</code> 等于 <code>"\"2.1.0\""</code>，<code>mapper.readValue("\"2.1.0\"", ApiVersion.class)</code> 等于 <code>version</code>。
+     *
+     * @throws Exception 处理测试数据的序列化时失败
+     */
     @Test
     void serializesAndDeserializesAsNormalizedString() throws Exception {
         ObjectMapper mapper = new ObjectMapper();

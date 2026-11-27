@@ -20,6 +20,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class GlobalExceptionHandlerDependencyTest {
 
+    /**
+     * 验证<code>context.getBean(GlobalExceptionHandler.class).getMessageSource()</code> 与…为同一实例 <code>context.getBean(NestedMessageSource.class)</code>。
+     */
     @Test
     void injectsConfiguredNestedMessageSource() {
         try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext()) {
@@ -32,6 +35,9 @@ class GlobalExceptionHandlerDependencyTest {
         }
     }
 
+    /**
+     * 验证<code>response.getCode()</code> 等于 <code>ApiCode.REQUEST_TOO_LONG.getCode()</code>，<code>response.getMsg().contains("单个文件超过允许的最大限制")</code>为真。
+     */
     @Test
     void reportsPerFileUploadLimit() {
         try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext()) {

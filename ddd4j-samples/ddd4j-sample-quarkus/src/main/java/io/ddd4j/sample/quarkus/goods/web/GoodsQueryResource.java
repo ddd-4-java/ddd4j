@@ -62,6 +62,9 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class GoodsQueryResource extends TenantAwareResource {
 
+    /**
+     * 处理商品创建、维护和查询操作的应用服务。
+     */
     private final GoodsApplicationService applicationService;
 
     /**

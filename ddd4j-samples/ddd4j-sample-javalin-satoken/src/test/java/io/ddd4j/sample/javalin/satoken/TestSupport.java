@@ -56,6 +56,9 @@ import io.javalin.json.JavalinJackson;
  */
 public final class TestSupport {
 
+    /**
+     * 限制调用方直接创建 <code>TestSupport</code> 实例。
+     */
     private TestSupport() {
     }
 
@@ -123,6 +126,8 @@ public final class TestSupport {
     /**
      * 兼容层：保留 Guice injector 入口供需要 SubjectProvider 的代码使用（实际未使用）。
      * 真实测试都通过 {@link #start()} 直接构造实例。
+     *
+     * @return 注册示例认证依赖的 Guice 注入器
      */
     @SuppressWarnings("unused")
     public static Injector createInjector() {
@@ -138,14 +143,33 @@ public final class TestSupport {
         });
     }
 
+    /**
+     * 把领域事件交给可检查的测试替身。
+     */
     private static final class NoopDomainEventPublisher implements DomainEventPublisher {
+        /**
+         * 提供测试替身回调，调用时保持夹具状态。
+         *
+         * @param <ID>  实体标识类型
+         * @param event 领域事件
+         */
         @Override
         public <ID extends EntityId> void publish(io.ddd4j.core.ddd.event.DomainEvent<ID> event) {
             // noop：测试不需要真实发布领域事件
         }
     }
 
+    /**
+     * 返回用于校验本地化入口的固定消息。
+     */
     private static final class NoopI18nProvider implements I18nProvider {
+        /**
+         * 按提供的条件读取或解析消息文本。
+         *
+         * @param key  消息 key
+         * @param args 格式化参数
+         * @return 实际返回<code>key</code>，供调用方取得当前值
+         */
         @Override
         public String getMessage(String key, Object... args) {
             return key;

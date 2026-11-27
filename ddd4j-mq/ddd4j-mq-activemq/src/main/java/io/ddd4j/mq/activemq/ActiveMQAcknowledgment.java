@@ -67,6 +67,9 @@ public class ActiveMQAcknowledgment implements Acknowledgment {
      * 关联 ID
      */
     private final String correlationId;
+    /**
+     * 记录已确认消息的状态或结果。
+     */
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 
     /**
@@ -87,51 +90,108 @@ public class ActiveMQAcknowledgment implements Acknowledgment {
         this.correlationId = correlationId;
     }
 
+    /**
+     * 返回本次消息投递的标识。
+     *
+     * @return 当前投递的标记值
+     */
     @Override
     public long deliveryTag() {
         return deliveryId;
     }
 
+    /**
+     * 返回收到的消息标识。
+     *
+     * @return 当前消息的标识
+     */
     @Override
     public String messageId() {
         return messageId;
     }
 
+    /**
+     * 返回消息所属链路的关联标识。
+     *
+     * @return 当前消息关联的请求或事件标识
+     */
     @Override
     public String correlationId() {
         return correlationId;
     }
 
+    /**
+     * 检查当前投递的确认对象是否仍可用。
+     *
+     * <p>ActiveMQ 实现调用 <code>acknowledged.get()</code>。</p>
+     *
+     * @return 实际返回<code>Objects.nonNull(session) &amp;&amp; !acknowledged.get()</code>
+     */
     @Override
     public boolean isOpen() {
         return Objects.nonNull(session) && !acknowledged.get();
     }
 
+    /**
+     * 判断当前投递是否已完成确认处理。
+     *
+     * <p>ActiveMQ 实现调用 <code>acknowledged.get()</code>。</p>
+     *
+     * @return 此投递已经进入确认终态时为真
+     */
     @Override
     public boolean isAcknowledged() {
         return acknowledged.get();
     }
 
+    /**
+     * 返回当前投递所使用的消息中间件类型。
+     *
+     * @return 客户端或投递协议对应的 broker 枚举值
+     */
     @Override
     public BrokerType brokerType() {
         return BrokerType.ACTIVEMQ;
     }
 
+    /**
+     * 确认本次投递或将已处理的位置通知 broker。
+     *
+     * <p>ActiveMQ 实现调用 <code>ack(false)</code>。</p>
+     */
     @Override
     public void ack() {
         ack(false);
     }
 
+    /**
+     * 通过底层消息会话更新当前投递的确认状态。
+     *
+     * @param multiple 是否批量确认至当前 tag
+     */
     @Override
     public void ack(boolean multiple) {
         runOnce(message::acknowledge);
     }
 
+    /**
+     * 向底层客户端报告本次投递处理失败，并按调用选项决定是否请求重新投递。
+     *
+     * <p>ActiveMQ 实现调用 <code>nack(false, requeue)</code>。</p>
+     *
+     * @param requeue 是否重新入队
+     */
     @Override
     public void nack(boolean requeue) {
         nack(false, requeue);
     }
 
+    /**
+     * 通过底层消息会话更新当前投递的确认状态。
+     *
+     * @param multiple 是否批量否定
+     * @param requeue  是否重新入队
+     */
     @Override
     public void nack(boolean multiple, boolean requeue) {
         // JMS 没有 native 的 nack(requeue)，通过 Session.recover() 把已消费但未 ack 的消息重投
@@ -143,16 +203,37 @@ public class ActiveMQAcknowledgment implements Acknowledgment {
         }
     }
 
+    /**
+     * 拒绝当前投递，并按约定处理是否重新入队。
+     *
+     * <p>ActiveMQ 实现调用 <code>nack(false, requeue)</code>。</p>
+     *
+     * @param requeue 是否重新入队
+     */
     @Override
     public void reject(boolean requeue) {
         nack(false, requeue);
     }
 
+    /**
+     * 请求底层消息会话恢复未处理的投递。
+     *
+     * @param requeue 是否重新入队
+     */
     @Override
     public void recover(boolean requeue) {
         runOnce(session::recover);
     }
 
+    /**
+     * 取出适配器持有的底层投递或客户端对象。
+     *
+     * <p>ActiveMQ 实现调用 <code>Optional.empty()</code>。</p>
+     *
+     * @param <T>        类型参数
+     * @param nativeType 原生类型
+     * @return 根据执行路径返回<code>Optional.empty()</code>、<code>Optional.of(nativeType.cast(session))</code>、<code>Optional.of(nativeType.cast(message))</code>
+     */
     @Override
     public <T> Optional<T> unwrap(Class<T> nativeType) {
         if (Objects.isNull(nativeType)) {
@@ -171,11 +252,11 @@ public class ActiveMQAcknowledgment implements Acknowledgment {
     }
 
     /**
-     * 确保确认操作只执行一次，防止重复 ack/nack。
+     * 执行一次原生消息确认动作，代理调用失败时释放确认标记。
      *
-     * @param op 要执行的 IO 操作
-     * @throws UnsupportedOperationException 如果消息已被确认
-     * @throws IllegalStateException         如果确认操作失败
+     * @param op 待执行的代理确认或拒绝动作
+     * @throws UnsupportedOperationException 当前消息的确认机会已被占用
+     * @throws IllegalStateException         原生代理调用失败
      */
     private void runOnce(IoOperation op) {
         if (!acknowledged.compareAndSet(false, true)) {

@@ -32,12 +32,23 @@ import java.util.Set;
 @ApplicationPath("/")
 public class HelidonOrderApplication extends Application {
 
+    /**
+     * 向 JAX-RS 应用登记的示例资源集合。
+     */
     private final Set<Object> resources;
 
+    /**
+     * 从运行配置组装默认商品交易 API，供 Helidon 路由注册。
+     */
     public HelidonOrderApplication() {
         this(CatalogRuntime.start());
     }
 
+    /**
+     * 保存当前 JAX-RS 示例需注册的商品交易资源。
+     *
+     * @param catalog 当前商品交易入口
+     */
     private HelidonOrderApplication(CatalogEndpoints catalog) {
         resources = Set.of(new CatalogTradeResource(catalog));
     }
@@ -52,10 +63,24 @@ public class HelidonOrderApplication extends Application {
         return start(port, new HelidonOrderApplication());
     }
 
+    /**
+     * 使用给定资源和端口启动 Helidon 商品交易示例的 HTTP 服务。
+     *
+     * @param port    当前 HTTP 示例要监听的端口
+     * @param catalog 当前商品交易入口
+     * @return 已启动的 Helidon 服务
+     */
     static Server start(int port, CatalogEndpoints catalog) {
         return start(port, new HelidonOrderApplication(catalog));
     }
 
+    /**
+     * 使用给定资源和端口启动 Helidon 商品交易示例的 HTTP 服务。
+     *
+     * @param port        当前 HTTP 示例要监听的端口
+     * @param application 已装配商品交易资源的 JAX-RS 应用
+     * @return 已启动的 Helidon 服务
+     */
     private static Server start(int port, HelidonOrderApplication application) {
         Server server = Server.builder().port(port).addApplication(application).build();
         try {
@@ -82,11 +107,21 @@ public class HelidonOrderApplication extends Application {
         Runtime.getRuntime().addShutdownHook(new Thread(server::stop, "helidon-order-shutdown"));
     }
 
+    /**
+     * 读取<code>resources</code> 字段。
+     *
+     * @return <code>resources</code> 字段
+     */
     @Override
     public Set<Object> getSingletons() {
         return resources;
     }
 
+    /**
+     * 声明由 JAX-RS 框架创建的资源、过滤器或异常映射器。
+     *
+     * @return 当前应用的 JAX-RS 组件类型
+     */
     @Override
     public Set<Class<?>> getClasses() {
         return Set.of(HelidonTokenResource.class, Ddd4jHelidonRequestFilter.class,

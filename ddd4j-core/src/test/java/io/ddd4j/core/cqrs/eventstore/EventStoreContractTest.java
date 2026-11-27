@@ -41,6 +41,9 @@ public abstract class EventStoreContractTest {
      */
     protected abstract EventStore createEventStore();
 
+    /**
+     * 验证<code>events</code> 的大小为 <code>2</code>，<code>events.get(0).aggregateType()</code> 等于 <code>ORDER_TYPE</code>，<code>events.get(1).payload()</code> 指向同一实例 <code>second</code>。
+     */
     @Test
     void appendAndReadShouldPreserveTypedDomainEvents() {
         EventStore store = createEventStore();
@@ -58,6 +61,9 @@ public abstract class EventStoreContractTest {
         assertThat(events).extracting(StoredEvent::version).containsExactly(1L, 2L);
     }
 
+    /**
+     * 验证<code>store.append(ORDER_TYPE, ORDER_1, Arrays.asList(new TestEvent((TestAggregateRootId) ORDER_1)), 0)</code> 抛出 <code>AggregateVersionConflictException.class</code>，<code>conflict.aggregateType()</code> 等于 <code>ORDER_TYPE</code>，<code>conflict.actualVersion()</code> 等于 <code>1</code>。
+     */
     @Test
     void appendWithStaleVersionShouldExposeTypedConflict() {
         EventStore store = createEventStore();
@@ -74,6 +80,9 @@ public abstract class EventStoreContractTest {
                 });
     }
 
+    /**
+     * 在测试框架中执行 <code>createEventStore()</code>、<code>store.append()</code>、<code>Arrays.asList()</code>，验证该场景。
+     */
     @Test
     void readWithVersionRangeShouldReturnInclusiveSlice() {
         EventStore store = createEventStore();
@@ -84,6 +93,9 @@ public abstract class EventStoreContractTest {
         assertThat(events).extracting(StoredEvent::version).containsExactly(1L, 2L);
     }
 
+    /**
+     * 在测试框架中执行 <code>createEventStore()</code>、<code>store.append()</code>、<code>Arrays.asList()</code>，验证该场景。
+     */
     @Test
     void readAllShouldPreserveGlobalPositionOrderAcrossAggregates() {
         EventStore store = createEventStore();
@@ -101,8 +113,17 @@ public abstract class EventStoreContractTest {
      */
     protected final static class TestAggregateRootId implements AggregateRootId {
 
+        /**
+         * Java 序列化使用的版本标识。
+         */
         private static final long serialVersionUID = 0L;
+        /**
+         * 测试聚合注册和反序列化所用的实体类型标识。
+         */
         private static final EntityType TYPE = new StringEntityType("Order");
+        /**
+         * 组成测试标识的原始值。
+         */
         private final String value;
 
         /**
@@ -145,11 +166,24 @@ public abstract class EventStoreContractTest {
             return TYPE.asString() + ":" + value;
         }
 
+        /**
+         * 读取<code>value</code> 字段。
+         *
+         * @return <code>value</code> 字段
+         */
         @JsonProperty("value")
         public String value() {
             return value;
         }
 
+        /**
+         * 根据<code>value</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -162,6 +196,11 @@ public abstract class EventStoreContractTest {
             return Objects.equals(this.value, other.value);
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 0;
@@ -169,6 +208,11 @@ public abstract class EventStoreContractTest {
             return result;
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>value</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "TestAggregateRootId[value=" + value + "]";
@@ -183,6 +227,11 @@ public abstract class EventStoreContractTest {
      */
     protected static final class TestEvent extends DomainEvent<TestAggregateRootId> {
 
+        /**
+         * 使用 <code>super()</code> 初始化 <code>TestEvent</code> 测试夹具。
+         *
+         * @param aggregateId 用于定位被测聚合的标识
+         */
         private TestEvent(TestAggregateRootId aggregateId) {
             super(new EntityIdPath(aggregateId));
         }

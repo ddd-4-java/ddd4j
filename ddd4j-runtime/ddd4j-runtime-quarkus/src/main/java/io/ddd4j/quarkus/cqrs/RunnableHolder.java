@@ -28,19 +28,42 @@ import java.util.concurrent.ConcurrentMap;
  */
 final class RunnableHolder {
 
+    /**
+     * 供 Quartz 任务按身份定位实际投影回调的共享注册表。
+     */
     private static final ConcurrentMap<String, Runnable> TASKS = new ConcurrentHashMap<>();
 
+    /**
+     * 限制调用方直接创建 <code>RunnableHolder</code> 实例。
+     */
     private RunnableHolder() {
     }
 
+    /**
+     * 把投影任务登记到 Quartz 可依据任务标识读取的内存表。
+     *
+     * @param identity 用于让调度任务找到视图回调的唯一标识
+     * @param task     实际执行一次投影的回调
+     */
     static void put(String identity, Runnable task) {
         TASKS.put(identity, task);
     }
 
+    /**
+     * 读取指定调度任务对应的投影回调。
+     *
+     * @param identity 用于让调度任务找到视图回调的唯一标识
+     * @return 已登记的投影任务，没有登记时返回空
+     */
     static Runnable get(String identity) {
         return TASKS.get(identity);
     }
 
+    /**
+     * 从任务表移除指定身份的原投影回调。
+     *
+     * @param identity 用于让调度任务找到视图回调的唯一标识
+     */
     static void remove(String identity) {
         TASKS.remove(identity);
     }

@@ -74,11 +74,25 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * 验证 <code>Ddd4jWebFluxContract</code> 在 <code>shouldWriteCustomHttpStatus</code>、<code>shouldReleaseIdempotencyLease</code> 等场景中的行为。
+ */
 class Ddd4jWebFluxContractTest {
 
+    /**
+     * 观察当前请求结束时关闭的 OpenTelemetry Span。
+     */
     private final CompletableFuture<SpanData> endedSpan = new CompletableFuture<>();
+    /**
+     * 为测试收集 OpenTelemetry 跟踪信息的提供器。
+     */
     private SdkTracerProvider tracerProvider;
 
+    /**
+     * 调用 <code>GlobalOpenTelemetry.resetForTest()</code>、<code>Class.forName()</code>、<code>ddd4jOtel.getDeclaredField()</code> 执行当前夹具操作。
+     *
+     * @throws Exception 反射访问被测成员时失败
+     */
     private static void resetOpenTelemetry() throws Exception {
         GlobalOpenTelemetry.resetForTest();
         Class<?> ddd4jOtel = Class.forName("io.ddd4j.extension.otel.Ddd4jOtel");
@@ -92,6 +106,11 @@ class Ddd4jWebFluxContractTest {
         available.setBoolean(null, false);
     }
 
+    /**
+     * 测试执行前执行 <code>resetOpenTelemetry()</code>、<code>SdkTracerProvider.builder()</code>、<code>OpenTelemetrySdk.builder()</code>、<code>ContextPropagators.create()</code> 完成资源准备。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @BeforeEach
     void setUpOpenTelemetry() throws Exception {
         resetOpenTelemetry();
@@ -122,6 +141,11 @@ class Ddd4jWebFluxContractTest {
                 .buildAndRegisterGlobal();
     }
 
+    /**
+     * 测试结束后执行 <code>tracerProvider.close()</code>、<code>resetOpenTelemetry()</code> 完成资源回收或状态恢复。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @AfterEach
     void tearDownOpenTelemetry() throws Exception {
         if (tracerProvider != null) {
@@ -130,6 +154,9 @@ class Ddd4jWebFluxContractTest {
         resetOpenTelemetry();
     }
 
+    /**
+     * 验证<code>requestContext</code>非空，<code>requestContext.tenantId()</code> 等于 <code>"tenant-a"</code>，<code>exchange.getResponse().getHeaders().getFirst(WebHeaders.REQUEST_ID)</code> 等于 <code>requestContext.requestId()</code>。
+     */
     @Test
     void shouldPropagateRequestThroughReactorContext() {
         Ddd4jWebFluxFilter filter = new Ddd4jWebFluxFilter(new BearerSubjectAuthenticator(),
@@ -147,6 +174,9 @@ class Ddd4jWebFluxContractTest {
         assertEquals(requestContext.requestId(), exchange.getResponse().getHeaders().getFirst(WebHeaders.REQUEST_ID));
     }
 
+    /**
+     * 验证<code>exchange.getResponse().getStatusCode()</code> 等于 <code>HttpStatus.BAD_REQUEST</code>，<code>body</code>非空，<code>body.contains("400")</code>为真。
+     */
     @Test
     void shouldUseTranslatedHttpStatusAndResponseBody() {
         GlobalErrorWebExceptionHandler handler = new GlobalErrorWebExceptionHandler(new GlobalErrorAttributes(),
@@ -162,6 +192,11 @@ class Ddd4jWebFluxContractTest {
         assertTrue(body.contains("400"));
     }
 
+    /**
+     * 验证<code>exchange.getResponse().getStatusCode().value()</code> 等于 <code>599</code>，<code>body</code>非空，<code>span.getStatus().getStatusCode()</code> 等于 <code>StatusCode.ERROR</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void shouldWriteCustomHttpStatusWithoutLosingErrorBody() throws Exception {
         GlobalErrorWebExceptionHandler handler = new GlobalErrorWebExceptionHandler(new GlobalErrorAttributes(),
@@ -186,6 +221,11 @@ class Ddd4jWebFluxContractTest {
         assertEquals(StatusCode.ERROR, span.getStatus().getStatusCode());
     }
 
+    /**
+     * 验证<code>headers.get("traceparent")</code> 等于 <code>"00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01"</code>，<code>headers.get("X-Multi")</code> 等于 <code>"first"</code>。
+     *
+     * @throws Exception 反射访问被测成员时失败
+     */
     @Test
     @SuppressWarnings("unchecked")
     void shouldExtractRequestHeadersForTracePropagation() throws Exception {
@@ -203,6 +243,9 @@ class Ddd4jWebFluxContractTest {
         assertEquals("first", headers.get("X-Multi"));
     }
 
+    /**
+     * 验证<code>Ddd4jOtel.isAvailable()</code>为真，<code>assemblyThreadLeaked</code>为假，<code>Span.current().getSpanContext().isValid()</code>为假。
+     */
     @Test
     void shouldActivateServerSpanOnlyAtWebFluxChainBoundary() {
         assertTrue(Ddd4jOtel.isAvailable());
@@ -225,6 +268,11 @@ class Ddd4jWebFluxContractTest {
         assertFalse(Span.current().getSpanContext().isValid());
     }
 
+    /**
+     * 验证<code>firstContext.get()</code>非空，<code>firstContext.get().tenantId()</code> 等于 <code>"tenant-a"</code>，<code>Ddd4jWebFluxContext.currentSubject().block()</code>为空。
+     *
+     * @throws InterruptedException 等待测试操作时被中断
+     */
     @Test
     void shouldReleaseIdempotencyLeaseAndRequestContextOnCancellation() throws InterruptedException {
         AtomicInteger completed = new AtomicInteger();
@@ -276,6 +324,11 @@ class Ddd4jWebFluxContractTest {
         assertNull(Ddd4jWebFluxContext.currentSubject().block());
     }
 
+    /**
+     * 验证<code>acquiring.await(3, TimeUnit.SECONDS)</code>为真，<code>acquired.await(3, TimeUnit.SECONDS)</code>为真，<code>released.await(3, TimeUnit.SECONDS)</code>为真。
+     *
+     * @throws InterruptedException 等待测试操作时被中断
+     */
     @Test
     void shouldReleaseIdempotencyLeaseWhenCancelledDuringAcquisition() throws InterruptedException {
         CountDownLatch acquiring = new CountDownLatch(1);
@@ -327,6 +380,9 @@ class Ddd4jWebFluxContractTest {
     }
 
 
+    /**
+     * 验证<code>captured.get()</code> 与…为同一实例 <code>subject</code>，<code>anonymousHasSubject.get()</code>为假，<code>Ddd4jWebFluxContext.currentSubject().block()</code>为空。
+     */
     @Test
     void shouldClearAuthenticatedSubjectAfterCancellationAndRejectMissingBearer() {
         Subject subject = mock(Subject.class);

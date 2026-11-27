@@ -43,9 +43,20 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class GuiceJdbcProjectionPositionRepositoryTest {
 
+    /**
+     * 被测 JDBC 组件访问的测试数据源。
+     */
     private JdbcDataSource dataSource;
+    /**
+     * 用于当前读取或写入断言的测试仓储。
+     */
     private GuiceJdbcProjectionPositionRepository repository;
 
+    /**
+     * 测试执行前执行 <code>dataSource.setURL()</code>、<code>System.nanoTime()</code>、<code>dataSource.getConnection()</code>、<code>conn.createStatement()</code> 完成资源准备。
+     *
+     * @throws Exception 执行数据库操作时失败
+     */
     @BeforeEach
     void setUp() throws Exception {
         dataSource = new JdbcDataSource();
@@ -58,6 +69,9 @@ class GuiceJdbcProjectionPositionRepositoryTest {
         repository = new GuiceJdbcProjectionPositionRepository(dataSource);
     }
 
+    /**
+     * 验证<code>saved.getStreamId()</code> 等于 <code>"stream-1"</code>，<code>saved.getNextEventNumber()</code> 等于 <code>5L</code>，<code>repository.findByStreamId("missing").isPresent()</code>为假。
+     */
     @Test
     void saveAndFindByStreamId() {
         DefaultProjectionPosition position = new DefaultProjectionPosition("stream-1", 5L);
@@ -74,6 +88,9 @@ class GuiceJdbcProjectionPositionRepositoryTest {
         assertFalse(repository.findByStreamId("missing").isPresent());
     }
 
+    /**
+     * 验证<code>found.isPresent()</code>为真，<code>found.get().getNextEventNumber()</code> 等于 <code>99L</code>。
+     */
     @Test
     void saveOverwritesExistingPosition() {
         repository.save(new DefaultProjectionPosition("stream-1", 1L));
@@ -84,6 +101,9 @@ class GuiceJdbcProjectionPositionRepositoryTest {
         assertEquals(99L, found.get().getNextEventNumber());
     }
 
+    /**
+     * 验证<code>all.size()</code> 等于 <code>3</code>。
+     */
     @Test
     void findAllReturnsAllPositions() {
         repository.save(new DefaultProjectionPosition("stream-1", 1L));
@@ -95,6 +115,9 @@ class GuiceJdbcProjectionPositionRepositoryTest {
         assertEquals(3, all.size());
     }
 
+    /**
+     * 验证<code>repository.findByStreamId("stream-1").isPresent()</code>为假。
+     */
     @Test
     void deleteByStreamIdRemovesPosition() {
         repository.save(new DefaultProjectionPosition("stream-1", 1L));
@@ -104,12 +127,18 @@ class GuiceJdbcProjectionPositionRepositoryTest {
         assertFalse(repository.findByStreamId("stream-1").isPresent());
     }
 
+    /**
+     * 验证<code>repository.deleteByStreamId("nonexistent")</code> 正常返回。
+     */
     @Test
     void deleteByStreamIdNonexistentIsNoOp() {
         // 删除不存在的 streamId 不应抛异常
         assertDoesNotThrow(() -> repository.deleteByStreamId("nonexistent"));
     }
 
+    /**
+     * 验证<code>found.isPresent()</code>为真，<code>found.get().getNextEventNumber()</code> 等于 <code>0L</code>。
+     */
     @Test
     void resetToZeroResetsExistingPosition() {
         repository.save(new DefaultProjectionPosition("stream-1", 42L));
@@ -121,6 +150,9 @@ class GuiceJdbcProjectionPositionRepositoryTest {
         assertEquals(0L, found.get().getNextEventNumber());
     }
 
+    /**
+     * 验证<code>found.isPresent()</code>为真，<code>found.get().getNextEventNumber()</code> 等于 <code>0L</code>。
+     */
     @Test
     void resetToZeroCreatesPositionIfNotExists() {
         // resetToZero 在 streamId 不存在时应创建一个 zero 位置
@@ -131,6 +163,11 @@ class GuiceJdbcProjectionPositionRepositoryTest {
         assertEquals(0L, found.get().getNextEventNumber());
     }
 
+    /**
+     * 验证<code>successCount.get()</code> 等于 <code>threadCount * updatesPerThread</code>，<code>repository.findAll().size()</code> 等于 <code>threadCount</code>，<code>found.get().getNextEventNumber()</code> 等于 <code>t * 1000L + updatesPerThread - 1</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void concurrentUpdatesOnSeparateStreamsDoNotThrow() throws Exception {
         // 每个线程操作独立 streamId，无行级锁竞争
@@ -173,6 +210,11 @@ class GuiceJdbcProjectionPositionRepositoryTest {
         }
     }
 
+    /**
+     * 验证<code>successCount.get()</code> 等于 <code>threadCount * updatesPerThread</code>，<code>found.isPresent()</code>为真，<code>found.get().getNextEventNumber() &gt;= 0</code>为真。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void concurrentUpdatesOnSameStreamDoNotThrow() throws Exception {
         // 少量线程并发更新同一 streamId，验证 last-writer-wins 语义
@@ -212,6 +254,9 @@ class GuiceJdbcProjectionPositionRepositoryTest {
         assertTrue(found.get().getNextEventNumber() >= 0);
     }
 
+    /**
+     * 验证<code>found.isPresent()</code>为真，<code>found.get().getNextEventNumber()</code> 等于 <code>5L</code>。
+     */
     @Test
     void duplicateUpdatesAreIdempotent() {
         // 重复写入相同值不应抛异常

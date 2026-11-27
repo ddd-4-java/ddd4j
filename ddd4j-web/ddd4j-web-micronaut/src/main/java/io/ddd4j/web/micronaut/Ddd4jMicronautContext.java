@@ -33,10 +33,19 @@ import java.util.Optional;
  */
 public final class Ddd4jMicronautContext implements ThreadPropagatedContextElement<WebContextScope> {
 
+    /**
+     * Java 序列化版本标识。
+     */
     private static final long serialVersionUID = 0L;
 
+    /**
+     * 当前 HTTP 请求解析后用于跨层传递的上下文。
+     */
     private final WebRequestContext requestContext;
 
+    /**
+     * 当前请求所绑定的主体操作入口。
+     */
     private final Optional<Subject> subject;
 
     /**
@@ -62,6 +71,11 @@ public final class Ddd4jMicronautContext implements ThreadPropagatedContextEleme
         return PropagatedContext.getOrEmpty().find(Ddd4jMicronautContext.class);
     }
 
+    /**
+     * 把当前 Micronaut 请求上下文传播到工作线程。
+     *
+     * @return 恢复旧线程状态所需的作用域
+     */
     @Override
     public WebContextScope updateThreadContext() {
         WebContextScope scope = WebContextScope.open(requestContext);
@@ -69,6 +83,11 @@ public final class Ddd4jMicronautContext implements ThreadPropagatedContextEleme
         return scope;
     }
 
+    /**
+     * 恢复传播当前请求之前的线程状态。
+     *
+     * @param oldState 建立请求绑定前保存的线程作用域
+     */
     @Override
     public void restoreThreadContext(WebContextScope oldState) {
         oldState.close();
@@ -112,6 +131,12 @@ public final class Ddd4jMicronautContext implements ThreadPropagatedContextEleme
         return subject;
     }
 
+    /**
+     * 反序列化后重建完整的认证请求上下文对象。
+     *
+     * @return 重建并经过校验的 Micronaut 请求上下文
+     * @throws ObjectStreamException 反序列化数据不能形成有效的请求上下文
+     */
     private Object readResolve() throws ObjectStreamException {
         try {
             return new Ddd4jMicronautContext(requestContext, subject);
@@ -122,6 +147,14 @@ public final class Ddd4jMicronautContext implements ThreadPropagatedContextEleme
         }
     }
 
+    /**
+     * 根据<code>requestContext</code>、<code>subject</code>比较对象的值是否相等。
+     *
+     * <p>只比较运行时类型相同的对象。</p>
+     *
+     * @param obj 用来比较或转换的输入对象
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -134,6 +167,11 @@ public final class Ddd4jMicronautContext implements ThreadPropagatedContextEleme
         return Objects.equals(this.requestContext, other.requestContext) && Objects.equals(this.subject, other.subject);
     }
 
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         int result = 0;
@@ -142,6 +180,11 @@ public final class Ddd4jMicronautContext implements ThreadPropagatedContextEleme
         return result;
     }
 
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>requestContext</code>、<code>subject</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "Ddd4jMicronautContext[requestContext=" + requestContext + ", subject=" + subject + "]";

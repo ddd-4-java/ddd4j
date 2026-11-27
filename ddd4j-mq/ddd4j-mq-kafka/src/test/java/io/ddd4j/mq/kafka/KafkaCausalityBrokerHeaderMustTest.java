@@ -50,11 +50,17 @@ import static org.mockito.Mockito.*;
  */
 class KafkaCausalityBrokerHeaderMustTest {
 
+    /**
+     * 测试结束后执行 <code>BaseContext.clear()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void clearContext() {
         BaseContext.clear();
     }
 
+    /**
+     * 验证<code>correlationHeader</code>非空，<code>causationHeader</code>非空。
+     */
     @Test
     @SuppressWarnings("unchecked")
     void kafkaRecordMustCarryCausalityHeadersForNonJavaConsumers() {
@@ -85,6 +91,11 @@ class KafkaCausalityBrokerHeaderMustTest {
                 new String(causationHeader.value(), StandardCharsets.UTF_8));
     }
 
+    /**
+     * 读取 <code>properties</code> 供当前测试使用。
+     *
+     * @return 当前测试使用的结果，取自 <code>properties</code>
+     */
     private MQProperties properties() {
         MQProperties properties = new MQProperties();
         properties.setEnabled(true);
@@ -93,6 +104,11 @@ class KafkaCausalityBrokerHeaderMustTest {
         return properties;
     }
 
+    /**
+     * 构造 <code>MQEventSerialization</code> 作为当前测试的输入或结果。
+     *
+     * @return 提供给后续契约断言的 <code>MQEventSerialization</code> 结果
+     */
     private MQEventSerialization serialization() {
         return new MQEventSerialization() {
             @Override
@@ -114,6 +130,11 @@ class KafkaCausalityBrokerHeaderMustTest {
      * 供 MQListener.of 反射使用的占位监听器（对齐既有契约测试写法）。
      */
     public static final class OrdersHandler {
+        /**
+         * 注册测试用的订单主题监听器，消费时不改变断言状态。
+         *
+         * @param event 由聚合或监听器收到的测试事件
+         */
         @MQEventListener(topic = "orders", tags = "*")
         public void handle(MQEvent event) {
             // 测试占位：不参与断言

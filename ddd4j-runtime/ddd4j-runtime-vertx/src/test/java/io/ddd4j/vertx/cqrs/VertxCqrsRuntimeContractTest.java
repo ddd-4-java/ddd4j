@@ -30,6 +30,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * 共享命令/位置契约与实际 Vert.x timer、worker、上下文、生命周期边界。
  */
 class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
+    /**
+     * 构造 <code>ProjectionView&lt;&gt;</code> 作为当前测试的输入或结果。
+     *
+     * @param name    当前测试指定的对象或属性名称
+     * @param cron    用于构造本次返回结果的 <code>String</code> 输入
+     * @param handler 处理当前测试请求或事件的组件
+     * @return 提供给后续契约断言的 <code>ProjectionView&lt;Object&gt;</code> 结果
+     */
     private static ProjectionView<Object> view(String name, String cron, Runnable handler) {
         return new ProjectionView<>() {
             public String getName() {
@@ -50,6 +58,13 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         };
     }
 
+    /**
+     * 通过 <code>result.toCompletionStage()</code> 取得当前测试需要的结果。
+     *
+     * @param <T>    当前契约测试所使用的 Java 类型
+     * @param result 传给 <code>result.toCompletionStage()</code> 的 <code>Future&lt;T&gt;</code> 输入
+     * @return 当前测试使用的结果，取自 <code>result.toCompletionStage().toCompletableFuture().get(8, TimeUnit.SECONDS)</code>
+     */
     private static <T> T await(Future<T> result) {
         try {
             return result.toCompletionStage().toCompletableFuture().get(8, TimeUnit.SECONDS);
@@ -58,6 +73,13 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /**
+     * 创建测试中用于操作当前框架的契约适配器。
+     *
+     * <p>测试夹具会调用 <code>Vertx.vertx()</code>、<code>VertxCommandBus.create(vertx, List.of(new StubExecutorA(), new StubExecutorB()))</code>。</p>
+     *
+     * @return CQRS 运行时契约
+     */
     @Override
     protected CqrsRuntimeContract createContract() {
         Vertx vertx = Vertx.vertx();
@@ -96,6 +118,9 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         };
     }
 
+    /**
+     * 验证<code>basic.projectionManager()</code>为空，被测调用 抛出 <code>NullPointerException.class</code>，<code>BaseContext.get(SpiKeys.COMMAND_BUS, CommandBus.class)</code> 等于 <code>before</code>。
+     */
     @Test
     void basicModeHasNoProjectionAndMissingExplicitDependenciesPublishNothing() {
         Vertx vertx = Vertx.vertx();
@@ -116,6 +141,11 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /**
+     * 验证<code>runtime.projectionManager().orElseThrow().isRunning()</code>为假，被测调用 抛出 <code>IllegalArgumentException.class</code>，<code>borrowedStillWorks.await(3, TimeUnit.SECONDS)</code>为真。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void explicitFactoryBorrowsSchedulerAndRetainsStrictStorageValidation() throws Exception {
         Vertx vertx = Vertx.vertx();
@@ -155,6 +185,11 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /**
+     * 验证<code>Context.isOnWorkerThread()</code>为真，<code>(Object) ThreadContext.get("request")</code> 等于 <code>"r11"</code>，<code>heartbeat.get(2, TimeUnit.SECONDS)</code>为真。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void workerPropagatesRestoresAndReportsFailureWithoutBlockingActualEventLoop() throws Exception {
         Vertx vertx = Vertx.vertx(new VertxOptions().setWorkerPoolSize(1));
@@ -201,6 +236,11 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /**
+     * 验证<code>entered.await(5, TimeUnit.SECONDS)</code>为真，<code>handle.isActive()</code>为假，被测调用 抛出 <code>IllegalStateException.class</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void cancellingQueuedWorkPreventsExecutionAndCloseKeepsBorrowedVertx() throws Exception {
         Vertx vertx = Vertx.vertx(new VertxOptions().setWorkerPoolSize(1));
@@ -235,6 +275,11 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /**
+     * 验证<code>release.await(5, TimeUnit.SECONDS)</code>为真，<code>entered.await(5, TimeUnit.SECONDS)</code>为真，<code>handle.isActive()</code>为假。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void cancellationDoesNotPretendToRollbackAlreadyExecutingWork() throws Exception {
         Vertx vertx = Vertx.vertx();
@@ -269,6 +314,11 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalArgumentException.class</code>，<code>runtime.projectionManager().orElseThrow().isRunning()</code>为假，<code>BaseContext.get(SpiKeys.COMMAND_BUS, CommandBus.class)</code> 等于 <code>before</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void failedStartAfterOwnedTimerRollsBackWithoutPublishingSpi() throws Exception {
         Vertx vertx = Vertx.vertx();
@@ -298,6 +348,9 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /**
+     * 验证<code>active</code>为假，<code>startupFailure.getSuppressed()</code> 按顺序仅包含 <code>cancellationFailure</code>，<code>BaseContext.get(SpiKeys.COMMAND_BUS, CommandBus.class)</code> 等于 <code>previous</code>。
+     */
     @Test
     void linkageFailureClosesRuntimeAndRetriesFailedBorrowedHandle() {
         Vertx vertx = Vertx.vertx();
@@ -342,6 +395,11 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /**
+     * 验证<code>manager.isRunning()</code>为假，被测调用 抛出 <code>IllegalStateException.class</code>，<code>fired.await(3, TimeUnit.SECONDS)</code>为真。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void manualManagerRestartsAndDoesNotOwnBorrowedScheduler() throws Exception {
         Vertx vertx = Vertx.vertx();
@@ -377,6 +435,9 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /**
+     * 验证<code>positions.findByStreamId("history").orElseThrow().getNextEventNumber()</code> 等于 <code>10</code>，<code>reads</code> 按顺序仅包含 <code>10L</code>、<code>10L</code>、<code>20L</code>，<code>positions.findByStreamId("history").orElseThrow().getNextEventNumber()</code> 等于 <code>20</code>。
+     */
     @Test
     void failureDoesNotAdvanceAndRetryUsesSourceCursor() {
         Vertx vertx = Vertx.vertx();
@@ -408,6 +469,9 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /**
+     * 验证<code>VertxProjectionScheduler.CronExpression.parse("*&#47;5 * * * * *").next(from)</code> 等于 <code>from.plusSeconds(5)</code>，<code>VertxProjectionScheduler.CronExpression.parse("5/120,59/2147483647 * * * * *").next(from)</code> 等于 <code>from.plusSeconds(5)</code>，<code>VertxProjectionScheduler.CronExpression.parse("*&#47;0 * * * * *")</code> 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void cronPreservesNumericDialectLocalClockAndMillionSecondWindow() {
         LocalDateTime from = LocalDateTime.of(2026, 11, 18, 12, 0);
@@ -440,24 +504,54 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
      * 仅测试显式装配的存储替身；真实历史 H2 持久化在独立 native 进程验证。
      */
     private static final class TestPositions implements ProjectionPositionRepository {
+        /**
+         * 供测试替身转发实际行为的底层实现。
+         */
         private final InMemoryProjectionPositionRepository delegate = new InMemoryProjectionPositionRepository();
 
+        /**
+         * 通过 <code>delegate.findByStreamId()</code> 取得当前测试需要的结果。
+         *
+         * @param stream 传给 <code>delegate.findByStreamId()</code> 的 <code>String</code> 输入
+         * @return 当前测试使用的结果，取自 <code>delegate.findByStreamId(stream)</code>
+         */
         public Optional<ProjectionPosition> findByStreamId(String stream) {
             return delegate.findByStreamId(stream);
         }
 
+        /**
+         * 通过 <code>delegate.findAll()</code> 取得当前测试需要的结果。
+         *
+         * @return 当前测试使用的结果，取自 <code>delegate.findAll()</code>
+         */
         public List<ProjectionPosition> findAll() {
             return delegate.findAll();
         }
 
+        /**
+         * 通过 <code>delegate.save()</code> 取得当前测试需要的结果。
+         *
+         * @param position 测试用的事件读取位点
+         * @return 当前测试使用的结果，取自 <code>delegate.save(position)</code>
+         */
         public ProjectionPosition save(ProjectionPosition position) {
             return delegate.save(position);
         }
 
+        /**
+         * 调用 <code>delegate.deleteByStreamId()</code> 执行当前夹具操作。
+         *
+         * @param stream 传给 <code>delegate.deleteByStreamId()</code> 的 <code>String</code> 输入
+         */
         public void deleteByStreamId(String stream) {
             delegate.deleteByStreamId(stream);
         }
 
+        /**
+         * 调用 <code>delegate.resetToZero()</code> 执行当前夹具操作。
+         *
+         * @param stream 传给 <code>delegate.resetToZero()</code> 的 <code>String</code> 输入
+         */
         public void resetToZero(String stream) {
             delegate.resetToZero(stream);
         }

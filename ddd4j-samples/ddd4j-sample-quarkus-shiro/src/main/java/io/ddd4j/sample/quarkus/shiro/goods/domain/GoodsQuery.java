@@ -33,6 +33,9 @@ import java.math.BigDecimal;
 @EqualsAndHashCode(callSuper = true)
 public class GoodsQuery extends Query<Goods> {
 
+    /**
+     * Java 序列化版本标识。
+     */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -84,6 +87,12 @@ public class GoodsQuery extends Query<Goods> {
         return this;
     }
 
+    /**
+     * 按方向为商品查询追加领域属性排序条件。
+     *
+     * @param desc     是否按降序排列
+     * @param property 商品排序所使用的领域属性引用
+     */
     private void applyOrder(boolean desc, io.ddd4j.kit.lang.SFunction<Goods, ?> property) {
         if (desc) {
             orderByDesc(property);
@@ -92,6 +101,13 @@ public class GoodsQuery extends Query<Goods> {
         orderByAsc(property);
     }
 
+    /**
+     * 返回当前用例依赖的仓储。
+     *
+     * <p>此实现调用 <code>RepositoryRegistry.repository(Goods.class)</code>。</p>
+     *
+     * @return 实际返回<code>RepositoryRegistry.repository(Goods.class)</code>
+     */
     @Override
     public Repository<Goods, Long> repository() {
         return RepositoryRegistry.repository(Goods.class);

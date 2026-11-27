@@ -9,6 +9,9 @@ import java.util.Objects;
  * 复用增强组件的租户作用域，将唯一租户来源桥接到 DDD4J 请求上下文。
  */
 public class Ddd4jTenantContext {
+    /**
+     * 上游 ORM 增强组件提供的租户上下文委托。
+     */
     private final org.apache.ibatis.enhance.context.TenantContext delegate = new org.apache.ibatis.enhance.context.TenantContext() {
         @Override
         public Object getCurrentTenantId() {
@@ -78,12 +81,25 @@ public class Ddd4jTenantContext {
      * 兼容既有 Ddd4jTenantContext.Scope 的薄包装。
      */
     public static final class Scope implements AutoCloseable {
+        /**
+         * 上游租户作用域，关闭时恢复进入前的租户状态。
+         */
         private final org.apache.ibatis.enhance.context.TenantContext.Scope delegateScope;
 
+        /**
+         * 包装上游租户作用域以便随 DDD4J 上下文关闭。
+         *
+         * @param scope 上游 ORM 租户上下文作用域
+         */
         private Scope(org.apache.ibatis.enhance.context.TenantContext.Scope scope) {
             this.delegateScope = scope;
         }
 
+        /**
+         * 在创建线程恢复原租户；同线程重复关闭不再改变上下文。
+         *
+         * @throws IllegalStateException 由其他线程关闭，包括已经关闭的作用域
+         */
         @Override
         public void close() {
             delegateScope.close();

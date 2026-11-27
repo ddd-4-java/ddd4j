@@ -29,6 +29,8 @@ public interface UserRepository extends Repository<User, String> {
 
     /**
      * 查询全部用户。
+     *
+     * @return 仓储中已有的用户集合
      */
     List<User> findAll();
 

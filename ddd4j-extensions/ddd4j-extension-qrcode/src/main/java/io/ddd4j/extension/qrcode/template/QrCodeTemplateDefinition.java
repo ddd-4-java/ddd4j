@@ -25,13 +25,19 @@ import java.util.Objects;
 @Getter
 public final class QrCodeTemplateDefinition {
 
+    /**
+     * 用于登记和检索模板定义的标识。
+     */
     private final String id;
+    /**
+     * 描述模板画布和叠加元素的配置。
+     */
     private final QrCodeFrame frame;
 
     /**
      * 创建命名的外框模板。
      *
-     * @param id 模板 ID
+     * @param id    模板 ID
      * @param frame 外框定义
      */
     public QrCodeTemplateDefinition(String id, QrCodeFrame frame) {

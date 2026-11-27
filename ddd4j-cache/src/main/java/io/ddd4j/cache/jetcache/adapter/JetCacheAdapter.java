@@ -49,6 +49,9 @@ import java.util.function.Function;
 @Slf4j
 public class JetCacheAdapter<K, V> implements Cache<K, V> {
 
+    /**
+     * 被适配为 DDD4J 缓存接口的 JetCache 实例。
+     */
     private final com.alicp.jetcache.Cache<K, V> jetCache;
 
     /**
@@ -70,6 +73,14 @@ public class JetCacheAdapter<K, V> implements Cache<K, V> {
         return jetCache;
     }
 
+    /**
+     * 读取现有缓存值。
+     *
+     * <p>此实现调用 <code>jetCache.GET(key)</code>。</p>
+     *
+     * @param key 缓存键
+     * @return 根据执行路径返回<code>result.getValue()</code>、<code>null</code>
+     */
     @Override
     public V getIfPresent(K key) {
         CacheGetResult<V> result = jetCache.GET(key);
@@ -79,12 +90,29 @@ public class JetCacheAdapter<K, V> implements Cache<K, V> {
         return null;
     }
 
+    /**
+     * 读取调用指定的当前值。
+     *
+     * <p>此实现调用 <code>jetCache.computeIfAbsent(key, mappingFunction)</code>。</p>
+     *
+     * @param key             缓存键
+     * @param mappingFunction 值加载函数
+     * @return 实际返回<code>jetCache.computeIfAbsent(key, mappingFunction)</code>
+     */
     @Override
     public V get(K key, Function<K, V> mappingFunction) {
         // 使用 JetCache 的 computeIfAbsent，内置防穿透保护
         return jetCache.computeIfAbsent(key, mappingFunction);
     }
 
+    /**
+     * 读取调用指定的当前值。
+     *
+     * <p>此实现调用 <code>jetCache.get(key)</code>。</p>
+     *
+     * @param key 缓存键
+     * @return 根据执行路径返回<code>jetCache.get(key)</code>、<code>null</code>
+     */
     @Override
     public V get(K key) {
         // JetCache 的 get 方法在配置了 loader 时自动加载，否则等价于 getIfPresent
@@ -96,6 +124,14 @@ public class JetCacheAdapter<K, V> implements Cache<K, V> {
         }
     }
 
+    /**
+     * 将给定数据写入当前存储。
+     *
+     * <p>此实现调用 <code>jetCache.PUT(key, value)</code>。</p>
+     *
+     * @param key   缓存键
+     * @param value 缓存值
+     */
     @Override
     public void put(K key, V value) {
         CacheResult result = jetCache.PUT(key, value);
@@ -104,6 +140,13 @@ public class JetCacheAdapter<K, V> implements Cache<K, V> {
         }
     }
 
+    /**
+     * 批量设置缓存值。
+     *
+     * <p>此实现调用 <code>jetCache.PUT_ALL(map)</code>。</p>
+     *
+     * @param map 缓存键值对
+     */
     @Override
     public void putAll(Map<K, V> map) {
         CacheResult result = jetCache.PUT_ALL(map);
@@ -112,6 +155,13 @@ public class JetCacheAdapter<K, V> implements Cache<K, V> {
         }
     }
 
+    /**
+     * 使指定键的缓存条目失效。
+     *
+     * <p>此实现调用 <code>jetCache.REMOVE(key)</code>。</p>
+     *
+     * @param key 缓存键
+     */
     @Override
     public void invalidate(K key) {
         CacheResult result = jetCache.REMOVE(key);
@@ -120,12 +170,26 @@ public class JetCacheAdapter<K, V> implements Cache<K, V> {
         }
     }
 
+    /**
+     * 刷新当前实现所持有的数据或状态。
+     *
+     * <p>此实现调用 <code>jetCache.REMOVE(key)</code>。</p>
+     *
+     * @param key 缓存键
+     */
     @Override
     public void refresh(K key) {
         // JetCache 支持配置 RefreshPolicy 时自动刷新；手动刷新通过 remove + 下次 get 触发
         jetCache.REMOVE(key);
     }
 
+    /**
+     * 使当前缓存中的全部条目失效。
+     *
+     * <p>此实现调用 <code>keyList.isEmpty()</code>。</p>
+     *
+     * @param keys 缓存键集合
+     */
     @Override
     public void invalidateAll(Iterable<K> keys) {
         List<K> keyList = new ArrayList<>();
@@ -135,6 +199,9 @@ public class JetCacheAdapter<K, V> implements Cache<K, V> {
         }
     }
 
+    /**
+     * 尝试关闭 JetCache 实例。需要移除后端数据时，应提供明确的缓存键。
+     */
     @Override
     public void invalidateAll() {
         // JetCache 的 Cache 接口没有全局 clear 方法（因为远程缓存如 Redis 不适合遍历清除）
@@ -147,6 +214,11 @@ public class JetCacheAdapter<K, V> implements Cache<K, V> {
         }
     }
 
+    /**
+     * 报告当前后端的缓存条目数量是否可用。
+     *
+     * @return 固定返回 -1，表示此适配器不估算条目数
+     */
     @Override
     public long estimatedSize() {
         // JetCache 的本地缓存可获取大小，远程缓存无法精确估算
@@ -161,6 +233,11 @@ public class JetCacheAdapter<K, V> implements Cache<K, V> {
         return -1;
     }
 
+    /**
+     * 返回当前缓存实现记录的统计信息。
+     *
+     * @return 此实现返回<code>null</code>
+     */
     @Override
     public CacheStats stats() {
         // JetCache 统计通过 DefaultCacheMonitor 收集，适配器层暂不映射

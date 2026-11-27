@@ -30,6 +30,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class FeishuRobotSenderContractTest {
 
+    /**
+     * 在测试框架中执行 <code>HttpServer.create()</code>、<code>server.createContext()</code>、<code>exchange.getRequestBody()</code>，验证该场景。
+     *
+     * @throws Exception 准备或读取夹具文件、发起测试请求时失败
+     */
     @Test
     void sendsMarkdownAsPostParagraph() throws Exception {
         AtomicReference<String> body = new AtomicReference<>();

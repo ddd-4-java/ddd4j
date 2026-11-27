@@ -55,25 +55,46 @@ public class GuiceJdbcProjectionPositionRepository implements ProjectionPosition
      */
     private static final String TABLE_NAME = ProjectionConstants.TABLE_NAME;
 
+    /**
+     * 更新已有投影流检查点的 SQL。
+     */
     private static final String UPSERT_UPDATE =
             "UPDATE " + TABLE_NAME + " SET " + ProjectionConstants.COLUMN_NEXT_EVENT_NUMBER + " = ? WHERE " + ProjectionConstants.COLUMN_STREAM_ID + " = ?";
 
+    /**
+     * 插入尚不存在的投影流检查点的 SQL。
+     */
     private static final String UPSERT_INSERT =
             "INSERT INTO " + TABLE_NAME + " (" + ProjectionConstants.COLUMN_STREAM_ID + ", " + ProjectionConstants.COLUMN_NEXT_EVENT_NUMBER + ") VALUES (?, ?)";
 
+    /**
+     * 根据事件流标识读取一个检查点的 SQL。
+     */
     private static final String SELECT_BY_STREAM_ID =
             "SELECT " + ProjectionConstants.COLUMN_STREAM_ID + ", " + ProjectionConstants.COLUMN_NEXT_EVENT_NUMBER + " FROM " + TABLE_NAME + " WHERE " + ProjectionConstants.COLUMN_STREAM_ID + " = ?";
 
+    /**
+     * 读取所有已登记投影位点的 SQL。
+     */
     private static final String SELECT_ALL =
             "SELECT " + ProjectionConstants.COLUMN_STREAM_ID + ", " + ProjectionConstants.COLUMN_NEXT_EVENT_NUMBER + " FROM " + TABLE_NAME;
 
+    /**
+     * 删除一个事件流位点的 SQL。
+     */
     private static final String DELETE_BY_STREAM_ID =
             "DELETE FROM " + TABLE_NAME + " WHERE " + ProjectionConstants.COLUMN_STREAM_ID + " = ?";
 
+    /**
+     * 确保当前数据库存在投影检查点表的 SQL。
+     */
     private static final String CREATE_TABLE_IF_NOT_EXISTS =
             "CREATE TABLE IF NOT EXISTS " + TABLE_NAME
                     + " (" + ProjectionConstants.COLUMN_STREAM_ID + " VARCHAR(255) PRIMARY KEY, " + ProjectionConstants.COLUMN_NEXT_EVENT_NUMBER + " BIGINT NOT NULL DEFAULT 0)";
 
+    /**
+     * 执行投影位点 SQL 的 JDBC 数据源。
+     */
     private final DataSource dataSource;
 
     /**
@@ -86,6 +107,14 @@ public class GuiceJdbcProjectionPositionRepository implements ProjectionPosition
         ensureTable();
     }
 
+    /**
+     * 查询指定事件流的投影检查点。
+     *
+     * <p>此实现调用 <code>dataSource.getConnection()</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     * @return 与给定流标识对应的投影检查点
+     */
     @Override
     public Optional<ProjectionPosition> findByStreamId(String streamId) {
         try (Connection conn = dataSource.getConnection();
@@ -102,6 +131,13 @@ public class GuiceJdbcProjectionPositionRepository implements ProjectionPosition
         }
     }
 
+    /**
+     * 查询存储中符合条件的记录。
+     *
+     * <p>此实现调用 <code>dataSource.getConnection()</code>。</p>
+     *
+     * @return 满足条件的结果列表
+     */
     @Override
     public List<ProjectionPosition> findAll() {
         try (Connection conn = dataSource.getConnection();
@@ -117,6 +153,14 @@ public class GuiceJdbcProjectionPositionRepository implements ProjectionPosition
         }
     }
 
+    /**
+     * 在持久化存储中写入指定事件流的投影检查点。
+     *
+     * <p>此实现调用 <code>position.getStreamId()</code>。</p>
+     *
+     * @param position 投影位置
+     * @return 根据执行路径返回<code>position</code>、<code>save(position)</code>
+     */
     @Override
     public ProjectionPosition save(ProjectionPosition position) {
         Objects.requireNonNull(position, "position must not be null");
@@ -158,11 +202,21 @@ public class GuiceJdbcProjectionPositionRepository implements ProjectionPosition
      * H2: SQL state 23505（Unique index or primary key violation）
      * PostgreSQL: SQL state 23505
      * MySQL: error code 1062
+     *
+     * @param e 数据库写入抛出的异常
+     * @return 异常表示唯一键冲突时返回 true
      */
     private boolean isDuplicateKeyException(SQLException e) {
         return "23505".equals(e.getSQLState()) || e.getErrorCode() == 1062;
     }
 
+    /**
+     * 删除指定事件流的投影检查点。
+     *
+     * <p>此实现调用 <code>dataSource.getConnection()</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     */
     @Override
     public void deleteByStreamId(String streamId) {
         try (Connection conn = dataSource.getConnection();
@@ -175,6 +229,13 @@ public class GuiceJdbcProjectionPositionRepository implements ProjectionPosition
         }
     }
 
+    /**
+     * 将指定流的投影检查点重置为零。
+     *
+     * <p>此实现调用 <code>save(DefaultProjectionPosition.zero(streamId))</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     */
     @Override
     public void resetToZero(String streamId) {
         save(DefaultProjectionPosition.zero(streamId));
@@ -195,6 +256,10 @@ public class GuiceJdbcProjectionPositionRepository implements ProjectionPosition
 
     /**
      * 从 ResultSet 读取一行投影位置。
+     *
+     * @param rs 包含投影位点查询结果的 JDBC 结果集
+     * @return 根据结果行恢复的投影位点
+     * @throws SQLException 从数据库结果行读取投影位点失败
      */
     private ProjectionPosition readPosition(ResultSet rs) throws SQLException {
         return new DefaultProjectionPosition(rs.getString(ProjectionConstants.COLUMN_STREAM_ID), rs.getLong(ProjectionConstants.COLUMN_NEXT_EVENT_NUMBER));

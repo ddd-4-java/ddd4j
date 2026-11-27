@@ -39,11 +39,25 @@ import java.util.Objects;
 @Slf4j
 public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
 
-    /** Authorization 请求头名称。 */
+    /**
+     * Authorization 请求头名称。
+     */
     public static final String AUTHORIZATION_HEADER = "Authorization";
-    /** Bearer 令牌前缀。 */
+    /**
+     * Bearer 令牌前缀。
+     */
     public static final String BEARER_PREFIX = "Bearer ";
 
+    /**
+     * 从请求中获取认证令牌。
+     *
+     * <p>此实现调用 <code>request.getHeader(AUTHORIZATION_HEADER)</code>。</p>
+     *
+     * @param request HTTP 请求
+     * @param params  请求参数
+     * @return 根据执行路径返回<code>null</code>、<code>authHeader.substring(BEARER_PREFIX.length()).trim()</code>、<code>tokenParam.trim()</code>
+     * @throws PluginRuntimeException 当前操作无法正常完成时
+     */
     @Override
     public String getToken(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException {
         if (Objects.isNull(request)) {
@@ -60,6 +74,15 @@ public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
         return null;
     }
 
+    /**
+     * 处理认证请求头。
+     *
+     * <p>此实现调用 <code>request.getHeaderNames()</code>。</p>
+     *
+     * @param request HTTP 请求
+     * @param params  请求参数
+     * @throws PluginRuntimeException 当前操作无法正常完成时
+     */
     @Override
     public void handleHeader(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException {
         if (Objects.isNull(request) || Objects.isNull(params)) {
@@ -74,6 +97,15 @@ public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
         }
     }
 
+    /**
+     * 处理认证请求。
+     *
+     * <p>此实现调用 <code>request.getParameterMap()</code>。</p>
+     *
+     * @param request HTTP 请求
+     * @param params  请求参数
+     * @throws PluginRuntimeException 当前操作无法正常完成时
+     */
     @Override
     public void handleRequest(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException {
         if (Objects.isNull(request) || Objects.isNull(params)) {
@@ -90,6 +122,13 @@ public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
         }
     }
 
+    /**
+     * 处理认证结果。
+     *
+     * @param res 处理结果
+     * @return 实际返回<code>res</code>，供调用方取得当前值
+     * @throws PluginRuntimeException 当前操作无法正常完成时
+     */
     @Override
     public Object handleResult(Object res) throws PluginRuntimeException {
         return res;

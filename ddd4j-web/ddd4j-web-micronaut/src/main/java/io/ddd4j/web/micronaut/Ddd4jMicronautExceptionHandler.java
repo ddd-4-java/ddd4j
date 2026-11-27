@@ -37,6 +37,9 @@ import java.util.Objects;
 public final class Ddd4jMicronautExceptionHandler extends BaseErrorConfiguration implements ExceptionHandler<Throwable, HttpResponse<?>> {
 
     // 为 Netty 默认 4096 字节状态行预留 HTTP 版本、状态码和分隔符。
+    /**
+     * HTTP 状态原因短语允许的长度上限。
+     */
     private static final int MAX_REASON_LENGTH = 4080;
 
     /**
@@ -56,11 +59,23 @@ public final class Ddd4jMicronautExceptionHandler extends BaseErrorConfiguration
         super(translator);
     }
 
+    /**
+     * 返回当前适配实现对应的运行框架名称。
+     *
+     * @return 框架标识
+     */
     @Override
     protected String frameworkName() {
         return "Micronaut";
     }
 
+    /**
+     * 将 Micronaut 请求异常转换为带状态和正文的响应。
+     *
+     * @param request   当前进入调用链的 HTTP 请求
+     * @param exception 当前请求处理时抛出的异常
+     * @return 统一的 Micronaut HTTP 错误响应
+     */
     @Override
     public HttpResponse<?> handle(HttpRequest request, Throwable exception) {
         WebError error = translate(exception);

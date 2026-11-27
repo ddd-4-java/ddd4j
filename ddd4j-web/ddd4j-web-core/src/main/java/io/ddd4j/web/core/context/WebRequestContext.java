@@ -28,13 +28,37 @@ import java.util.Objects;
  */
 public final class WebRequestContext {
 
+    /**
+     * 当前请求的标识。
+     */
     private final String requestId;
+    /**
+     * 用于关联一条调用链的跟踪标识。
+     */
     private final String traceId;
+    /**
+     * 当前业务数据所属的租户标识。
+     */
     private final String tenantId;
+    /**
+     * 当前请求中用于认证的 Authorization 头原值。
+     */
     private final String authorization;
+    /**
+     * 当前请求使用的语言及区域配置。
+     */
     private final Locale locale;
+    /**
+     * 根据原生连接和可信转发头解析的客户端地址。
+     */
     private final String clientIp;
+    /**
+     * 当前 HTTP 请求的方法。
+     */
     private final String method;
+    /**
+     * 当前框架解析出的请求路径。
+     */
     private final String path;
 
     /**
@@ -58,14 +82,14 @@ public final class WebRequestContext {
      * 未携带 API 版本的兼容构造器：委托九参构造器并传入 null 版本，
      * 旧调用方行为与接线前完全一致。
      *
-     * @param requestId 请求标识
-     * @param traceId 链路追踪标识
-     * @param tenantId 租户标识
+     * @param requestId     请求标识
+     * @param traceId       链路追踪标识
+     * @param tenantId      租户标识
      * @param authorization 授权信息
-     * @param locale 区域与语言设置
-     * @param clientIp 客户端 IP
-     * @param method HTTP 方法
-     * @param path 路径
+     * @param locale        区域与语言设置
+     * @param clientIp      客户端 IP
+     * @param method        HTTP 方法
+     * @param path          路径
      */
     public WebRequestContext(String requestId, String traceId, String tenantId, String authorization,
                              Locale locale, String clientIp, String method, String path) {
@@ -75,15 +99,15 @@ public final class WebRequestContext {
     /**
      * 携带 API 版本的完整构造器。
      *
-     * @param requestId 请求标识
-     * @param traceId 链路追踪标识
-     * @param tenantId 租户标识
+     * @param requestId     请求标识
+     * @param traceId       链路追踪标识
+     * @param tenantId      租户标识
      * @param authorization 授权信息
-     * @param locale 区域与语言设置
-     * @param clientIp 客户端 IP
-     * @param method HTTP 方法
-     * @param path 路径
-     * @param apiVersion 请求解析出的 API 版本，可为 null（未接线时）
+     * @param locale        区域与语言设置
+     * @param clientIp      客户端 IP
+     * @param method        HTTP 方法
+     * @param path          路径
+     * @param apiVersion    请求解析出的 API 版本，可为 null（未接线时）
      */
     @JsonCreator
     public WebRequestContext(@JsonProperty("requestId") String requestId, @JsonProperty("traceId") String traceId,
@@ -102,22 +126,61 @@ public final class WebRequestContext {
         this.apiVersion = apiVersion;
     }
 
-    /** @return 请求标识 */
-    public String requestId() { return requestId; }
-    /** @return 追踪标识 */
-    public String traceId() { return traceId; }
-    /** @return 租户标识 */
-    public String tenantId() { return tenantId; }
-    /** @return 授权头 */
-    public String authorization() { return authorization; }
-    /** @return 语言区域 */
-    public Locale locale() { return locale; }
-    /** @return 客户端 IP */
-    public String clientIp() { return clientIp; }
-    /** @return HTTP 方法 */
-    public String method() { return method; }
-    /** @return 请求路径 */
-    public String path() { return path; }
+    /**
+     * @return 请求标识
+     */
+    public String requestId() {
+        return requestId;
+    }
+
+    /**
+     * @return 追踪标识
+     */
+    public String traceId() {
+        return traceId;
+    }
+
+    /**
+     * @return 租户标识
+     */
+    public String tenantId() {
+        return tenantId;
+    }
+
+    /**
+     * @return 授权头
+     */
+    public String authorization() {
+        return authorization;
+    }
+
+    /**
+     * @return 语言区域
+     */
+    public Locale locale() {
+        return locale;
+    }
+
+    /**
+     * @return 客户端 IP
+     */
+    public String clientIp() {
+        return clientIp;
+    }
+
+    /**
+     * @return HTTP 方法
+     */
+    public String method() {
+        return method;
+    }
+
+    /**
+     * @return 请求路径
+     */
+    public String path() {
+        return path;
+    }
 
     /**
      * 请求解析出的 API 版本（函数式风格访问器）。
@@ -138,42 +201,58 @@ public final class WebRequestContext {
         return apiVersion;
     }
 
-    /** @return 请求标识 */
+    /**
+     * @return 请求标识
+     */
     public String getRequestId() {
         return requestId;
     }
 
-    /** @return 追踪标识 */
+    /**
+     * @return 追踪标识
+     */
     public String getTraceId() {
         return traceId;
     }
 
-    /** @return 租户标识 */
+    /**
+     * @return 租户标识
+     */
     public String getTenantId() {
         return tenantId;
     }
 
-    /** @return 授权头 */
+    /**
+     * @return 授权头
+     */
     public String getAuthorization() {
         return authorization;
     }
 
-    /** @return 语言区域 */
+    /**
+     * @return 语言区域
+     */
     public Locale getLocale() {
         return locale;
     }
 
-    /** @return 客户端 IP */
+    /**
+     * @return 客户端 IP
+     */
     public String getClientIp() {
         return clientIp;
     }
 
-    /** @return HTTP 方法 */
+    /**
+     * @return HTTP 方法
+     */
     public String getMethod() {
         return method;
     }
 
-    /** @return 请求路径 */
+    /**
+     * @return 请求路径
+     */
     public String getPath() {
         return path;
     }

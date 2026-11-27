@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.mq.ons;
-import java.util.ArrayList;
 
 import com.aliyun.openservices.ons.api.Message;
 import com.aliyun.openservices.ons.api.ONSFactory;
@@ -31,10 +30,10 @@ import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Properties;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -53,12 +52,33 @@ import java.util.function.Consumer;
 @Slf4j(topic = "### DDD4J-MQ : OnsMQClient ###")
 public class OnsMQClient implements MQClient {
 
+    /**
+     * 当前消息代理客户端使用的连接和订阅配置。
+     */
     private final OnsProperties properties;
+    /**
+     * 当前适配器已建立的原生消费者。
+     */
     private final List<com.aliyun.openservices.ons.api.Consumer> consumers = new CopyOnWriteArrayList<>();
+    /**
+     * 协调消息客户端启动、初始化和关闭的生命周期。
+     */
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    /**
+     * 组件的启动状态和启动失败诊断信息。
+     */
     private final MQStartupStatus startupStatus = new MQStartupStatus("ons");
+    /**
+     * 由调用方注入且生命周期由外部控制的生产者。
+     */
     private final Producer injectedProducer;
+    /**
+     * 协调代理生产者及其在途发送的会话。
+     */
     private volatile ProducerSession producerSession;
+    /**
+     * 当前实例是否已关闭。
+     */
     private volatile boolean closed;
 
     /**
@@ -83,6 +103,12 @@ public class OnsMQClient implements MQClient {
         this.injectedProducer = producer;
     }
 
+    /**
+     * 优先从原生消息的标准头读取消息标识，缺少时回退到兼容头。
+     *
+     * @param message 当前接收的原生代理消息
+     * @return 用于后续消费确认的业务消息标识，头均缺失时为空
+     */
     static String messageId(Message message) {
         String messageId = message.getUserProperties(MessageHeaders.HEADER_MESSAGE_ID);
         return StrKit.isNotEmpty(messageId)
@@ -90,6 +116,12 @@ public class OnsMQClient implements MQClient {
                 : message.getUserProperties(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
     }
 
+    /**
+     * 将 DDD4J 消息元数据写入 ONS 原生消息用户属性。
+     *
+     * @param message 当前接收的原生代理消息
+     * @param event   当前发布或待补齐元数据的 DDD4J 消息事件
+     */
     static void applyNativeHeaders(Message message, MQEvent event) {
         String tenantId = message.getUserProperties(MessageHeaders.HEADER_TENANT_ID);
         if (StrKit.isNotEmpty(tenantId)) {
@@ -111,11 +143,21 @@ public class OnsMQClient implements MQClient {
         }
     }
 
+    /**
+     * 返回此消息适配器在 DDD4J 中登记的实现名。
+     *
+     * @return 实际返回<code>"ons"</code>，供调用方取得当前值
+     */
     @Override
     public String impl() {
         return "ons";
     }
 
+    /**
+     * 返回管理连接、生产者和消费者资源的生命周期对象。
+     *
+     * @return 当前消息适配器用于登记和关闭资源的生命周期对象
+     */
     @Override
     public MQClientLifecycle lifecycle() {
         return lifecycle;
@@ -123,6 +165,11 @@ public class OnsMQClient implements MQClient {
 
     // ========================= 生产者 =========================
 
+    /**
+     * 返回消息客户端当前记录的启动状态。
+     *
+     * @return 当前消息适配器记录的启动状态
+     */
     @Override
     public MQStartupStatus startupStatus() {
         return startupStatus;
@@ -130,10 +177,24 @@ public class OnsMQClient implements MQClient {
 
     // ========================= 消费者 =========================
 
+    /**
+     * 用指定会话属性创建 ONS 发布客户端。
+     *
+     * @param sessionProperties 当前 ONS 客户端的会话属性
+     * @return 尚待启动的原生生产者
+     */
     Producer createProducer(Properties sessionProperties) {
         return ONSFactory.createProducer(sessionProperties);
     }
 
+    /**
+     * 准备消息生产者并返回可发布事件的入口。
+     *
+     * <p>满足 <code>closed</code> 时抛出 <code>IllegalStateException</code>。 此实现调用 <code>producerSession.isActive()</code>。</p>
+     *
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 接收待发布事件的函数
+     */
     @Override
     public synchronized Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         if (closed) {
@@ -182,6 +243,11 @@ public class OnsMQClient implements MQClient {
         }
     }
 
+    /**
+     * 初始化并启动现有或本实例创建的 ONS 发布客户端。
+     *
+     * @return 已经启动的原生生产会话
+     */
     private ProducerSession startProducer() {
         boolean owned = Objects.isNull(injectedProducer);
         Producer producer = owned
@@ -211,10 +277,26 @@ public class OnsMQClient implements MQClient {
         return session;
     }
 
+    /**
+     * 用指定会话属性创建 ONS 消费客户端。
+     *
+     * @param sessionProperties 当前 ONS 客户端的会话属性
+     * @return 尚待订阅的原生消费者
+     */
     com.aliyun.openservices.ons.api.Consumer createConsumer(Properties sessionProperties) {
         return ONSFactory.createConsumer(sessionProperties);
     }
 
+    /**
+     * 为监听器建立消息消费所需的订阅和客户端资源。
+     *
+     * <p>满足 <code>closed</code> 时抛出 <code>IllegalStateException</code>。 此实现调用 <code>StrKit.hasText(listener.getGroup())</code>。</p>
+     *
+     * @param listener     监听器定义
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 此实现返回<code>true</code>
+     * @throws Exception 当前框架、存储或底层客户端无法完成此操作时
+     */
     @Override
     public synchronized boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         if (closed) {
@@ -280,11 +362,17 @@ public class OnsMQClient implements MQClient {
 
     // ========================= 关闭 =========================
 
+    /**
+     * 提供生命周期启动回调，当前实现的客户端在初始化阶段启动，此处无额外操作。
+     */
     @Override
     public void start() {
         // ONS producer/consumer 在各自创建时已启动；此方法留作 future 扩展。
     }
 
+    /**
+     * 释放消息客户端拥有的运行资源，并在退出时登记组件已停止。
+     */
     @Override
     public synchronized void close() {
         if (closed) {
@@ -300,21 +388,52 @@ public class OnsMQClient implements MQClient {
         }
     }
 
+    /**
+     * 跟踪 ONS 生产者在途发送，并在关闭时协调发送完成。
+     */
     private final class ProducerSession {
+        /**
+         * 当前会话管理的 ONS 生产者。
+         */
         private final Producer producer;
+        /**
+         * 保护生产者状态和在途发送计数的锁。
+         */
         private final ReentrantLock sendLock = new ReentrantLock();
+        /**
+         * 等待生产者在途发送完成的条件变量。
+         */
         private final Condition sendsFinished = sendLock.newCondition();
+        /**
+         * 生产者会话是否仍接受新的发送操作。
+         */
         private volatile boolean active = true;
+        /**
+         * 当前尚未结束的消息发送数量。
+         */
         private int inFlight;
 
+        /**
+         * 以指定生产者创建可跟踪在途发送的会话。
+         *
+         * @param producer 本次操作涉及的原生生产者
+         */
         private ProducerSession(Producer producer) {
             this.producer = producer;
         }
 
+        /**
+         * 读取<code>active</code> 字段。
+         *
+         * @return <code>active</code> 字段
+         */
         private boolean isActive() {
             return active;
         }
 
+        /**
+         * 检查生产者会话是否还接受发送动作。
+         */
         private void checkAvailable() {
             if (closed) {
                 throw new IllegalStateException("ONS client is closed");
@@ -324,6 +443,9 @@ public class OnsMQClient implements MQClient {
             }
         }
 
+        /**
+         * 在生产者会话仍可用时登记一次在途发送。
+         */
         private void beginSend() {
             sendLock.lock();
             try {
@@ -335,6 +457,9 @@ public class OnsMQClient implements MQClient {
             }
         }
 
+        /**
+         * 结束已登记的发送，并在没有在途发送时通知等待关闭的线程。
+         */
         private void endSend() {
             sendLock.lock();
             try {
@@ -347,6 +472,9 @@ public class OnsMQClient implements MQClient {
             }
         }
 
+        /**
+         * 停止当前消息会话或分发器，并清理其拥有的发送资源。
+         */
         private void shutdown() {
             sendLock.lock();
             try {

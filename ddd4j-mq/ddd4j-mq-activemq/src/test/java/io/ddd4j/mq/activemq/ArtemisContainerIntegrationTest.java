@@ -35,6 +35,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @Testcontainers(disabledWithoutDocker = true)
 class ArtemisContainerIntegrationTest {
 
+    /**
+     * 为集成测试提供隔离 <code>Generic</code> 服务的容器。
+     */
     @Container
     static final GenericContainer<?> ARTEMIS = new GenericContainer<>(
             DockerImageName.parse("apache/activemq-artemis:2.44.0-alpine"))
@@ -45,6 +48,11 @@ class ArtemisContainerIntegrationTest {
             .waitingFor(Wait.forLogMessage(".*AMQ221007: Server is now active.*", 1))
             .withStartupTimeout(Duration.ofMinutes(2));
 
+    /**
+     * 验证<code>client.initConsumer(listener, properties)</code>为真，<code>raw</code>非空，<code>lastAcknowledgment.get().correlationId()</code> 等于 <code>"native-correlation"</code>。
+     *
+     * @throws Exception 发起测试请求时失败
+     */
     @Test
     void nativeJmsCausalPropertiesShouldRoundTripThroughClient() throws Exception {
         String suffix = UUID.randomUUID().toString().replace("-", "");
@@ -150,6 +158,11 @@ class ArtemisContainerIntegrationTest {
         }
     }
 
+    /**
+     * 验证<code>client.initConsumer(listener, properties)</code>为真，<code>brokerMessage</code>非空，<code>client.initProducer(properties).accept(afterClose)</code> 抛出 <code>RuntimeException.class</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void failedHandlerIsRedeliveredAndPublishedMessageKeepsItsId() throws Exception {
         String suffix = UUID.randomUUID().toString().replace("-", "");
@@ -211,11 +224,28 @@ class ArtemisContainerIntegrationTest {
         assertThrows(RuntimeException.class, () -> client.initProducer(properties).accept(afterClose));
     }
 
+    /**
+     * 将 <code>attempts</code>、<code>secondAttempt</code>、<code>messageId</code> 等状态一起传入当前测试，供调用或结果断言使用。
+     */
     public static class FailsOnceListener {
+        /**
+         * 跟踪测试操作的调用或重试次数。
+         */
         private final AtomicInteger attempts = new AtomicInteger();
+        /**
+         * 协调测试线程在指定执行阶段等待或继续的门闩。
+         */
         private final CountDownLatch secondAttempt = new CountDownLatch(1);
+        /**
+         * 消息标识。
+         */
         private volatile String messageId;
 
+        /**
+         * 根据本次调用更新 <code>messageId = event.getMsgId()</code>，用于后续测试步骤。
+         *
+         * @param event 交给被测入口处理的测试领域事件
+         */
         public void handle(MQEvent event) {
             messageId = event.getMsgId();
             if (attempts.incrementAndGet() == 1) {
@@ -225,9 +255,20 @@ class ArtemisContainerIntegrationTest {
         }
     }
 
+    /**
+     * 将 <code>events</code> 等状态一起传入当前测试，供调用或结果断言使用。
+     */
     public static class CausalListener {
+        /**
+         * 当前测试期间收集的领域事件，供断言比较发布内容或顺序。
+         */
         private final LinkedBlockingQueue<MQEvent> events = new LinkedBlockingQueue<>();
 
+        /**
+         * 调用 <code>events.add()</code> 执行当前夹具操作。
+         *
+         * @param event 交给被测入口处理的测试领域事件
+         */
         public void handle(MQEvent event) {
             events.add(event);
         }

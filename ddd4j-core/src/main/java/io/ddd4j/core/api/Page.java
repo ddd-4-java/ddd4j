@@ -94,16 +94,31 @@ public class Page<T> implements Iterable<T> {
         return new Page<>(new ArrayList<>(), 0L, 0L, 0L, Collections.emptyMap());
     }
 
+    /**
+     * 通过<code>this.records.isEmpty()</code>、<code>this.records.iterator()</code>处理当前调用。
+     *
+     * @return 此操作产生的<code>Iterator&lt;T&gt;</code>结果
+     */
     @Override
     public Iterator<T> iterator() {
         return Objects.nonNull(this.records) && !this.records.isEmpty() ? this.records.iterator() : Collections.emptyIterator();
     }
 
+    /**
+     * 对当前页记录提供拆分迭代器。
+     *
+     * @return 记录列表的拆分迭代器，未设置记录时为空迭代器
+     */
     @Override
     public Spliterator<T> spliterator() {
         return Objects.nonNull(this.records) ? this.records.spliterator() : Spliterators.emptySpliterator();
     }
 
+    /**
+     * 对当前页记录按列表顺序执行给定操作。
+     *
+     * @param action 接收每条记录的操作
+     */
     @Override
     public void forEach(Consumer<? super T> action) {
         if (Objects.nonNull(this.records)) {

@@ -44,6 +44,9 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class QuarkusJpaProjectionPosition implements ProjectionPosition, Serializable {
 
+    /**
+     * Java 序列化版本标识。
+     */
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -60,6 +63,11 @@ public class QuarkusJpaProjectionPosition implements ProjectionPosition, Seriali
     @Column(name = ProjectionConstants.COLUMN_NEXT_EVENT_NUMBER, nullable = false, updatable = true)
     private long nextEventNumber;
 
+    /**
+     * 返回投影从事件流继续读取时使用的位置。
+     *
+     * @return 继续读取时使用的事件位置
+     */
     @Override
     public long getNextEventNumber() {
         return nextEventNumber;

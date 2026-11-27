@@ -45,7 +45,7 @@ public abstract class BaseHandler {
     /**
      * 记录请求异常并发布失败事件。
      *
-     * @param context Javalin 请求上下文
+     * @param context   Javalin 请求上下文
      * @param exception 捕获的异常
      */
     protected void logException(Context context, Exception exception) {

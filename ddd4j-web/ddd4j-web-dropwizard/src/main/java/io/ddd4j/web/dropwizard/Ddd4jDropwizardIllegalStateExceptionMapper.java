@@ -24,9 +24,14 @@ import java.util.Objects;
  */
 public final class Ddd4jDropwizardIllegalStateExceptionMapper implements ExceptionMapper<IllegalStateException> {
 
+    /**
+     * 执行实际异常转换的框架映射器。
+     */
     private final Ddd4jDropwizardExceptionMapper delegate;
 
-    /** 使用默认 ddd4j 异常映射器。 */
+    /**
+     * 使用默认 ddd4j 异常映射器。
+     */
     public Ddd4jDropwizardIllegalStateExceptionMapper() {
         this(new Ddd4jDropwizardExceptionMapper());
     }
@@ -40,6 +45,12 @@ public final class Ddd4jDropwizardIllegalStateExceptionMapper implements Excepti
         this.delegate = Objects.requireNonNull(delegate, "delegate must not be null");
     }
 
+    /**
+     * 把异常交给共用框架映射器生成 HTTP 错误响应。
+     *
+     * @param exception 待映射的请求异常
+     * @return 由共用映射器返回的 HTTP 响应
+     */
     @Override
     public Response toResponse(IllegalStateException exception) {
         return delegate.toResponse(exception);

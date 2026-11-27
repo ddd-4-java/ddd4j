@@ -29,6 +29,11 @@ import java.util.Objects;
  */
 public final class Ddd4jDropwizardResponseFilter implements ContainerResponseFilter {
 
+    /**
+     * 尝试关闭请求作用域，清理故障不打断响应处理。
+     *
+     * @param scope 需要在当前请求结束后关闭的作用域
+     */
     private static void closeScope(Object scope) {
         if (scope instanceof AutoCloseable closeable) {
             try {
@@ -40,7 +45,8 @@ public final class Ddd4jDropwizardResponseFilter implements ContainerResponseFil
 
     /**
      * 过滤数据。
-     * @param request 请求对象。
+     *
+     * @param request  请求对象。
      * @param response 响应对象。
      */
     @Override

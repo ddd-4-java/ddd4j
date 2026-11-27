@@ -13,11 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.mq.nats;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.doThrow;
 
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.mq.MQProperties;
@@ -38,21 +33,27 @@ import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
+/**
+ * 验证 <code>NatsAcknowledgment</code> 在<code>nativeHeaders</code>等操作中的行为契约。
+ */
 class NatsAcknowledgmentContractTest {
 
+    /**
+     * 测试结束后执行 <code>BaseContext.clear()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void clearContext() {
         BaseContext.clear();
     }
 
+    /**
+     * 验证<code>acknowledgment.isAcknowledged()</code>为真。
+     */
     @Test
     void shouldMapNackToJetStreamNakForRedelivery() {
         Message message = mock(Message.class);
@@ -64,6 +65,9 @@ class NatsAcknowledgmentContractTest {
         assertTrue(acknowledgment.isAcknowledged());
     }
 
+    /**
+     * 在测试框架中执行 <code>mock()</code>、<code>headers.put()</code>、<code>message.getHeaders()</code>，验证该场景。
+     */
     @Test
     void shouldPreferNativeCorrelationHeaderInAcknowledgment() {
         Message message = mock(Message.class);
@@ -78,6 +82,11 @@ class NatsAcknowledgmentContractTest {
         assertEquals("legacy-reply", new NatsAcknowledgment(message).correlationId());
     }
 
+    /**
+     * 验证<code>handler.received</code> 与…为同一实例 <code>event</code>，<code>handler.received.getCorrelationId()</code> 等于 <code>"native-correlation"</code>，<code>handler.received.getTag()</code> 等于 <code>"priority"</code>。
+     *
+     * @throws Exception 反射访问被测成员时失败
+     */
     @Test
     void nativeHeadersShouldOverridePayloadBeforeListener() throws Exception {
         Connection connection = mock(Connection.class);
@@ -125,15 +134,11 @@ class NatsAcknowledgmentContractTest {
         client.close();
     }
 
-    public static final class CapturingHandler {
-        private MQEvent received;
-
-        @MQEventListener(topic = "orders", tags = "priority")
-        public void handle(MQEvent event) {
-            received = event;
-        }
-    }
-
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>。
+     *
+     * @throws Exception 准备或释放被测运行资源时失败
+     */
     @Test
     @SuppressWarnings("unchecked")
     void shouldFailInsteadOfFallingBackToNonDurableCorePublish() throws Exception {
@@ -167,5 +172,25 @@ class NatsAcknowledgmentContractTest {
         client.close();
         verify(connection, never()).close();
         verify(connection, never()).drain(any(java.time.Duration.class));
+    }
+
+    /**
+     * 将 <code>received</code> 等状态一起传入当前测试，供调用或结果断言使用。
+     */
+    public static final class CapturingHandler {
+        /**
+         * 当前测试接收的数据，供断言核对投递内容或次数。
+         */
+        private MQEvent received;
+
+        /**
+         * 根据本次调用更新 <code>received = event</code>，用于后续测试步骤。
+         *
+         * @param event 交给被测入口处理的测试领域事件
+         */
+        @MQEventListener(topic = "orders", tags = "priority")
+        public void handle(MQEvent event) {
+            received = event;
+        }
     }
 }

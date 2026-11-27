@@ -45,6 +45,13 @@ import java.lang.reflect.Field;
  */
 class QuarkusCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
 
+    /**
+     * 创建测试中用于操作当前框架的契约适配器。
+     *
+     * <p>测试夹具会调用 <code>injectExecutors(commandBus, new StubExecutorA(), new StubExecutorB())</code>。</p>
+     *
+     * @return CQRS 运行时契约
+     */
     @Override
     protected CqrsRuntimeContract createContract() {
         QuarkusCommandBus commandBus = new QuarkusCommandBus();
@@ -89,6 +96,9 @@ class QuarkusCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
 
     /**
      * 通过反射注入 CDI Instance，绕过 CDI Instance 依赖。
+     *
+     * @param commandBus 待注入模拟 CDI 执行器的命令总线
+     * @param executors  待注入命令总线的命令执行器
      */
     @SuppressWarnings("unchecked")
     private void injectExecutors(QuarkusCommandBus commandBus, CommandExecutor<?>... executors) {
@@ -109,6 +119,14 @@ class QuarkusCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
      */
     private static class NoopViewScheduler implements ViewScheduler {
 
+        /**
+         * 按给定时间规则安排任务。
+         *
+         * @param viewName 视图名称（用于日志 / 调试）
+         * @param cron     CRON 表达式
+         * @param task     要执行的任务
+         * @return 任务句柄，可用于取消
+         */
         @Override
         public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
             return new ViewScheduleHandle() {

@@ -49,10 +49,24 @@ public class DddInitializer {
      */
     @Inject
     SubjectProvider subjectProvider;
+    /**
+     * 框架扩展是否已完成运行时初始化。
+     */
     private boolean started;
+    /**
+     * 安装框架主体提供器前已存在的全局提供器。
+     */
     private SubjectProvider previousSubjectProvider;
+    /**
+     * 安装框架国际化组件前已存在的消息提供器。
+     */
     private I18nProvider previousI18nProvider;
 
+    /**
+     * 把 CDI 应用的主体及国际化组件安装到共享入口。
+     *
+     * @param event 当前框架生命周期或容器启动事件
+     */
     synchronized void onStart(@Observes StartupEvent event) {
         if (started) {
             return;
@@ -67,10 +81,18 @@ public class DddInitializer {
         started = true;
     }
 
+    /**
+     * 在 Quarkus 停止时撤销当前初始化器拥有的注册。
+     *
+     * @param event 当前框架生命周期或容器启动事件
+     */
     synchronized void onStop(@Observes ShutdownEvent event) {
         restoreProviders();
     }
 
+    /**
+     * 恢复当前初始化器替换前的主体和国际化提供器。
+     */
     @PreDestroy
     synchronized void restoreProviders() {
         if (!started) {

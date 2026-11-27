@@ -43,6 +43,13 @@ import java.util.Objects;
  */
 class GuiceCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
 
+    /**
+     * 构造 <code>io.ddd4j.core.cqrs.readmodel.ProjectionView&lt;&gt;</code> 作为当前测试的输入或结果。
+     *
+     * @param name 当前测试指定的对象或属性名称
+     * @param cron 用于构造本次返回结果的 <code>String</code> 输入
+     * @return 提供给后续契约断言的 <code>io.ddd4j.core.cqrs.readmodel.ProjectionView&lt;Object&gt;</code> 结果
+     */
     private static io.ddd4j.core.cqrs.readmodel.ProjectionView<Object> startupView(String name, String cron) {
         return new io.ddd4j.core.cqrs.readmodel.ProjectionView<>() {
             public String getName() {
@@ -62,6 +69,13 @@ class GuiceCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         };
     }
 
+    /**
+     * 根据本次调用更新 <code>previous = com.google.inject.Guice.createInjector(new io.ddd4j.guice.Ddd4jGuiceModule())</code>、<code>priorRuntime = previous.getInstance(io.ddd4j.guice.Ddd4jGuiceRuntime.class)</code>，用于后续测试步骤。
+     *
+     * @param prior           传给 <code>"empty".equals(prior)</code> 的 <code>String</code> 输入
+     * @param projectionFirst 传给 <code>org.junit.jupiter.api.Assertions.assertThrows()</code> 的 <code>boolean</code> 输入
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @org.junit.jupiter.params.ParameterizedTest
     @org.junit.jupiter.params.provider.CsvSource({"empty,false", "empty,true", "registrations,false", "registrations,true", "runtime,false", "runtime,true"})
     void failedProjectionStartupPreservesGlobalsAndReleasesOwnedResources(String prior, boolean projectionFirst) throws Exception {
@@ -166,6 +180,9 @@ class GuiceCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /**
+     * 验证<code>basic.getExistingBinding(com.google.inject.Key.get(ProjectionPositionRepository.class))</code>为空，<code>basic.getExistingBinding(com.google.inject.Key.get(ViewManager.class))</code>为空，<code>basic.getInstance(CommandBus.class)</code>非空。
+     */
     @org.junit.jupiter.api.Test
     void basicHasNoProjectionAndLegacyKeepsMemoryDefault() {
         com.google.inject.Injector basic = com.google.inject.Guice.createInjector(io.ddd4j.guice.Ddd4jGuiceModule.basic());
@@ -184,6 +201,9 @@ class GuiceCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>com.google.inject.CreationException.class</code>。
+     */
     @org.junit.jupiter.api.Test
     void explicitProjectionRejectsMissingRepositoryAndReaderAtInjectorCreation() {
         for (boolean supplyRepository : new boolean[]{false, true}) {
@@ -204,6 +224,11 @@ class GuiceCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /**
+     * 验证<code>checkpoint</code>非空，<code>injector.getInstance(ViewManager.class)</code> 与…为同一实例 <code>manager</code>，<code>handle.isActive()</code>为假。
+     *
+     * @throws Exception 准备或读取夹具文件时失败
+     */
     @org.junit.jupiter.api.Test
     void explicitProjectionRestoresFrozenPositionProcessesEventsAndClosesTasks() throws Exception {
         org.h2.jdbcx.JdbcDataSource source = new org.h2.jdbcx.JdbcDataSource();
@@ -261,6 +286,13 @@ class GuiceCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         org.junit.jupiter.api.Assertions.assertFalse(handle.isActive());
     }
 
+    /**
+     * 创建测试中用于操作当前框架的契约适配器。
+     *
+     * <p>测试夹具会调用 <code>Arrays.asList(executorA, executorB)</code>。</p>
+     *
+     * @return CQRS 运行时契约
+     */
     @Override
     protected CqrsRuntimeContract createContract() {
         StubExecutorA executorA = new StubExecutorA();

@@ -173,15 +173,19 @@ public final class MQMessages {
 
     // ── 便捷读取 ──
     public static String headerAsString(MQMessage<?> message, String key);
+
     public static Object header(MQMessage<?> message, String key);
 
     // ── 构建方法 ──
     public static <T> MQMessage<T> of(T payload, Map<String, Object> headers);
+
     public static <T> MQMessage<T> of(T payload, Map<String, Object> headers, String messageId);
 
     // ── Header 提取 ──
     public static String extractMessageId(MQMessage<?> message);
+
     public static String extractCorrelationId(MQMessage<?> message);
+
     public static String extractTenantId(MQMessage<?> message);
 }
 ```
@@ -633,26 +637,43 @@ public void onOrder(OrderEvent event, MQConsumerContext context) {
 public interface MessageAcknowledgment {
     // ── 元数据 ──
     long deliveryTag();
+
     String messageId();
+
     String correlationId();
+
     boolean isOpen();
+
     boolean isAcknowledged();
+
     MQBrokerType brokerType();
 
     // ── 确认成功 ──
     void ack();
+
     void ack(boolean multiple);
 
     // ── 否定确认 ──
     void nack(boolean requeue);
+
     void nack(boolean multiple, boolean requeue);
+
     void reject(boolean requeue);
+
     void recover(boolean requeue);
 
     // ── 便捷方法 ──
-    default void ackSingle() { ack(false); }
-    default void discard() { nack(false); }
-    default void requeue() { nack(true); }
+    default void ackSingle() {
+        ack(false);
+    }
+
+    default void discard() {
+        nack(false);
+    }
+
+    default void requeue() {
+        nack(true);
+    }
 
     // ── 原生逃逸 ──
     <T> Optional<T> unwrap(Class<T> nativeType);

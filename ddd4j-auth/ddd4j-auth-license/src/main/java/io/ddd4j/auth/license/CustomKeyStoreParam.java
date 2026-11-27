@@ -36,9 +36,21 @@ public class CustomKeyStoreParam {
      * 公钥/私钥在磁盘上的存储路径
      */
     private final String storePath;
+    /**
+     * 从密钥库中选择证书或密钥条目的别名。
+     */
     private final String alias;
+    /**
+     * 打开密钥库所需的存储口令。
+     */
     private final String storePwd;
+    /**
+     * 解锁密钥库中签名私钥条目的口令。
+     */
     private final String keyPwd;
+    /**
+     * 用于签发或验证许可证的签名算法。
+     */
     private final String signatureAlgorithm;
 
     /**

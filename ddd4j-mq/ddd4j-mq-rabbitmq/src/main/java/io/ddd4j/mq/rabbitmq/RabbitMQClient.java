@@ -13,32 +13,13 @@
  * limitations under the License.
  */
 package io.ddd4j.mq.rabbitmq;
-import java.util.concurrent.TimeoutException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.Set;
-import java.util.Objects;
-import java.util.Map;
-import java.util.List;
-import java.util.HashMap;
-import java.util.ArrayList;
-import com.rabbitmq.client.Return;
-import com.rabbitmq.client.DeliverCallback;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
 
 import com.rabbitmq.client.*;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
-import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.delivery.MQDeliveryHeaders;
+import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
 import io.ddd4j.mq.listener.MQListener;
@@ -84,7 +65,13 @@ public class RabbitMQClient implements MQClient {
      * 懒构造使用的配置（构造方法 2 传入）
      */
     private final RabbitMQProperties properties;
+    /**
+     * 协调消息客户端启动、初始化和关闭的生命周期。
+     */
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    /**
+     * 组件的启动状态和启动失败诊断信息。
+     */
     private final MQStartupStatus startupStatus = new MQStartupStatus("rabbit");
 
     /**
@@ -109,6 +96,9 @@ public class RabbitMQClient implements MQClient {
 
     /**
      * 优先读取 ddd4j 标准消息 ID，兼容旧键，最后回退到 AMQP 原生 messageId。
+     *
+     * @param properties 收到的 AMQP 消息属性
+     * @return AMQP 消息属性携带的标识
      */
     static String messageId(AMQP.BasicProperties properties) {
         Map<String, Object> headers = properties.getHeaders();
@@ -124,6 +114,11 @@ public class RabbitMQClient implements MQClient {
         return properties.getMessageId();
     }
 
+    /**
+     * 关闭 RabbitMQ 信道，并处理原生客户端抛出的异常。
+     *
+     * @param channel 待关闭的 RabbitMQ 信道
+     */
     private static void closeChannel(Channel channel) {
         try {
             if (channel.isOpen()) {
@@ -134,6 +129,11 @@ public class RabbitMQClient implements MQClient {
         }
     }
 
+    /**
+     * 关闭原生代理连接，并处理原生客户端抛出的异常。
+     *
+     * @param connection 待释放或等待完成的原生连接
+     */
     private static void closeConnection(Connection connection) {
         try {
             if (connection.isOpen()) {
@@ -146,6 +146,11 @@ public class RabbitMQClient implements MQClient {
 
     // ========================= 生产者 =========================
 
+    /**
+     * 返回此消息适配器在 DDD4J 中登记的实现名。
+     *
+     * @return 实际返回<code>"rabbit"</code>，供调用方取得当前值
+     */
     @Override
     public String impl() {
         return "rabbit";
@@ -153,11 +158,21 @@ public class RabbitMQClient implements MQClient {
 
     // ========================= 消费者 =========================
 
+    /**
+     * 返回管理连接、生产者和消费者资源的生命周期对象。
+     *
+     * @return 当前消息适配器用于登记和关闭资源的生命周期对象
+     */
     @Override
     public MQClientLifecycle lifecycle() {
         return lifecycle;
     }
 
+    /**
+     * 返回消息客户端当前记录的启动状态。
+     *
+     * @return 当前消息适配器记录的启动状态
+     */
     @Override
     public MQStartupStatus startupStatus() {
         return startupStatus;
@@ -165,6 +180,14 @@ public class RabbitMQClient implements MQClient {
 
     // ========================= 生命周期 =========================
 
+    /**
+     * 准备消息生产者并返回可发布事件的入口。
+     *
+     * <p>RabbitMQ 实现调用 <code>rabbitProperties.isPublisherConfirmRequired()</code>。</p>
+     *
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 接收待发布事件的函数
+     */
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         RabbitMQProperties rabbitProperties = mqProperties instanceof RabbitMQProperties
@@ -278,6 +301,16 @@ public class RabbitMQClient implements MQClient {
 
     // ========================= 连接管理（双构造共享的最小辅助）=========================
 
+    /**
+     * 为监听器建立消息消费所需的订阅和客户端资源。
+     *
+     * <p>RabbitMQ 实现调用 <code>connection()</code>。</p>
+     *
+     * @param listener     监听器定义
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 此实现返回<code>true</code>
+     * @throws Exception 当前框架、存储或底层客户端无法完成此操作时
+     */
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         Connection connection = connection();
@@ -397,6 +430,9 @@ public class RabbitMQClient implements MQClient {
         return true;
     }
 
+    /**
+     * 释放消息客户端拥有的运行资源，并在退出时登记组件已停止。
+     */
     @Override
     public void close() {
         try {
@@ -406,6 +442,11 @@ public class RabbitMQClient implements MQClient {
         }
     }
 
+    /**
+     * 取得当前适配器使用的原生连接或客户端，缺少实例时建立连接。
+     *
+     * @return 供发布或消费操作使用的原生连接或客户端
+     */
     private Connection connection() {
         Connection c = connectionRef.get();
         if (Objects.isNull(c)) {

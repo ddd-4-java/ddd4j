@@ -28,22 +28,49 @@ import java.util.Objects;
  */
 public final class GoodsResponse {
 
+    /**
+     * Java 序列化版本标识。
+     */
     private static final long serialVersionUID = 0L;
 
+    /**
+     * 示例商品的主键。
+     */
     private final Long id;
 
+    /**
+     * 当前请求或结果使用的业务编码。
+     */
     private final String code;
 
+    /**
+     * 当前请求或结果使用的显示名称。
+     */
     private final String name;
 
+    /**
+     * 商品示例使用的销售价格。
+     */
     private final BigDecimal price;
 
+    /**
+     * 示例商品可用的库存数量。
+     */
     private final Integer stock;
 
+    /**
+     * 当前商品、账号或权限记录的业务状态。
+     */
     private final GoodsStatus status;
 
+    /**
+     * 商品创建时间。
+     */
     private final LocalDateTime createTime;
 
+    /**
+     * 最近一次更新示例商品的时间。
+     */
     private final LocalDateTime updateTime;
 
     /**
@@ -141,6 +168,14 @@ public final class GoodsResponse {
         return updateTime;
     }
 
+    /**
+     * 根据<code>id</code>、<code>code</code>、<code>name</code>、<code>price</code>、<code>stock</code>、<code>status</code>比较对象的值是否相等。
+     *
+     * <p>只比较运行时类型相同的对象。</p>
+     *
+     * @param obj 用来比较或转换的输入对象
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -153,6 +188,11 @@ public final class GoodsResponse {
         return Objects.equals(this.id, other.id) && Objects.equals(this.code, other.code) && Objects.equals(this.name, other.name) && Objects.equals(this.price, other.price) && Objects.equals(this.stock, other.stock) && Objects.equals(this.status, other.status) && Objects.equals(this.createTime, other.createTime) && Objects.equals(this.updateTime, other.updateTime);
     }
 
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         int result = 0;
@@ -167,6 +207,11 @@ public final class GoodsResponse {
         return result;
     }
 
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>id</code>、<code>code</code>、<code>name</code>、<code>price</code>、<code>stock</code>、<code>status</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "GoodsResponse[id=" + id + ", code=" + code + ", name=" + name + ", price=" + price + ", stock=" + stock + ", status=" + status + ", createTime=" + createTime + ", updateTime=" + updateTime + "]";

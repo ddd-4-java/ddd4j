@@ -40,6 +40,9 @@ import java.util.function.Supplier;
  */
 public final class CacheSpan {
 
+    /**
+     * 限制调用方直接创建 <code>CacheSpan</code> 实例。
+     */
     private CacheSpan() {
     }
 

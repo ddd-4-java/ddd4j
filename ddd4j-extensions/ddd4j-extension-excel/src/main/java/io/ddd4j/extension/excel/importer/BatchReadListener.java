@@ -48,8 +48,17 @@ import java.util.function.Consumer;
 @Slf4j
 public class BatchReadListener<T> implements ReadListener<T> {
 
+    /**
+     * 达到该记录数时立即提交一批数据。
+     */
     private final int batchSize;
+    /**
+     * 接收已解析记录批次的消费回调。
+     */
     private final Consumer<List<T>> batchConsumer;
+    /**
+     * 暂存尚未提交给批次回调的记录。
+     */
     private final List<T> cached;
 
     /**
@@ -67,6 +76,12 @@ public class BatchReadListener<T> implements ReadListener<T> {
         this.cached = new ArrayList<>(batchSize);
     }
 
+    /**
+     * 缓存当前行并在达到批次大小时交给消费回调。
+     *
+     * @param data    当前解析的行
+     * @param context 提供工作表及行号的读取上下文
+     */
     @Override
     public void invoke(T data, AnalysisContext context) {
         cached.add(data);
@@ -75,18 +90,32 @@ public class BatchReadListener<T> implements ReadListener<T> {
         }
     }
 
+    /**
+     * 提交读取结束时尚未消费的尾批记录。
+     *
+     * @param context 提供工作表及行号的读取上下文
+     */
     @Override
     public void doAfterAllAnalysed(AnalysisContext context) {
         flush();
         log.debug("BatchReadListener finished, sheet={}", context.readSheetHolder().getSheetName());
     }
 
+    /**
+     * 记录坏行的索引和异常信息，继续读取后续行。
+     *
+     * @param exception 当前行解析异常
+     * @param context   提供工作表及行号的读取上下文
+     */
     @Override
     public void onException(Exception exception, AnalysisContext context) {
         // 单行失败不影响整批；记录日志后继续。如需精细错误收集，请使用 ErrorCollectingReadListener
         log.warn("Row {} parse failed, skipped: {}", context.readRowHolder().getRowIndex(), exception.getMessage());
     }
 
+    /**
+     * 把暂存记录的副本交给批次回调，并在回调结束后清空暂存列表。
+     */
     private void flush() {
         if (cached.isEmpty()) {
             return;

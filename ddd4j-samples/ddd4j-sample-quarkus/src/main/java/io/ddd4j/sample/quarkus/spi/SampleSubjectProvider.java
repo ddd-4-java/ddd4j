@@ -30,7 +30,13 @@ import lombok.extern.slf4j.Slf4j;
 @ApplicationScoped
 public class SampleSubjectProvider implements SubjectProvider {
 
+    /**
+     * 当前运行认证逻辑使用的原生主体。
+     */
     private final InMemorySubject subject;
+    /**
+     * 当前示例签发或返回客户端的会话令牌。
+     */
     private final String token;
 
     /**
@@ -44,6 +50,11 @@ public class SampleSubjectProvider implements SubjectProvider {
                 .setPerms(new java.util.HashSet<>(java.util.Arrays.asList("order:read", "order:write")))));
     }
 
+    /**
+     * 取得当前请求使用的认证主体接口。
+     *
+     * @return 本次调用使用的认证主体接口
+     */
     @Override
     public Subject getSubject() {
         return subject;

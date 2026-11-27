@@ -28,15 +28,24 @@ import java.util.stream.Collectors;
  */
 public final class PathWebAccessPolicy implements WebAccessPolicy {
 
+    /**
+     * 用于识别前缀式路径规则的模式。
+     */
     private static final String PREFIX_PATTERN = "/**";
+    /**
+     * 脱离默认认证要求的请求路径模式。
+     */
     private final List<String> disabledPatterns;
+    /**
+     * 当请求没有匹配显式访问策略时使用的认证模式。
+     */
     private final AuthenticationMode defaultMode;
 
     /**
      * 创建基于路径模式的访问策略。
      *
      * @param disabledPatterns 免认证路径模式
-     * @param defaultMode 其他路径的默认认证模式
+     * @param defaultMode      其他路径的默认认证模式
      */
     public PathWebAccessPolicy(Collection<String> disabledPatterns, AuthenticationMode defaultMode) {
         Objects.requireNonNull(disabledPatterns, "disabledPatterns must not be null");
@@ -61,6 +70,13 @@ public final class PathWebAccessPolicy implements WebAccessPolicy {
                 ? AuthenticationMode.DISABLED : defaultMode;
     }
 
+    /**
+     * 依据显式路径和通配规则检查请求是否命中配置。
+     *
+     * @param path    当前被处理的 HTTP 请求路径
+     * @param pattern 当前要匹配的访问策略路径规则
+     * @return 请求路径符合当前访问路径规则时返回 true
+     */
     private boolean matches(String path, String pattern) {
         if (pattern.endsWith(PREFIX_PATTERN)) {
             String prefix = pattern.substring(0, pattern.length() - PREFIX_PATTERN.length());

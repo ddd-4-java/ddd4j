@@ -27,10 +27,19 @@ import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * 通过 <code>engine.execute()</code>、<code>Collections.singletonMap()</code>、<code>Date.from()</code> 验证 <code>FormatDateFunctionContract</code> 的运行行为。
+ */
 class FormatDateFunctionContractTest {
 
+    /**
+     * 当前用例调用的表达式或业务执行引擎。
+     */
     private final QLExpressEngine engine = QLExpress.create();
 
+    /**
+     * 验证<code>result</code> 等于 <code>"2026-10-18 09:30"</code>。
+     */
     @Test
     void formatsJavaTimeValue() {
         LocalDateTime value = LocalDateTime.of(2026, 10, 18, 9, 30);
@@ -40,6 +49,9 @@ class FormatDateFunctionContractTest {
         assertEquals("2026-10-18 09:30", result);
     }
 
+    /**
+     * 验证<code>result</code> 等于 <code>expected</code>。
+     */
     @Test
     void formatsLegacyDateUsingSystemZone() {
         Date value = Date.from(Instant.parse("2026-10-18T01:30:00Z"));

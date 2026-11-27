@@ -51,15 +51,42 @@ import java.util.function.Consumer;
 @Slf4j(topic = "### DDD4J-MQ : TdmqMQClient ###")
 public class TdmqMQClient implements MQClient {
 
+    /**
+     * 当前消息代理客户端使用的连接和订阅配置。
+     */
     private final TdmqProperties properties;
+    /**
+     * 当前 TDMQ 客户端维护的消费订阅。
+     */
     private final List<Subscription> subscriptions = new CopyOnWriteArrayList<>();
+    /**
+     * 按消息主题记录当前订阅及其监听器。
+     */
     private final java.util.Map<String, java.util.List<Consumer<DeliveredMessage>>> topicSubscribers =
             new java.util.concurrent.ConcurrentHashMap<>();
+    /**
+     * 协调消息客户端启动、初始化和关闭的生命周期。
+     */
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    /**
+     * 组件的启动状态和启动失败诊断信息。
+     */
     private final MQStartupStatus startupStatus = new MQStartupStatus("tdmq");
+    /**
+     * 用于原生连接模式的 Pulsar 客户端适配器。
+     */
     private final PulsarMQClient nativePulsar;
+    /**
+     * 测试或自定义代理的消息发布入口。
+     */
     private BrokerPublisher brokerPublisher;
+    /**
+     * 测试或自定义代理的消息订阅入口。
+     */
     private BrokerSubscriber brokerSubscriber;
+    /**
+     * 当前实例是否已关闭。
+     */
     private volatile boolean closed;
 
     /**
@@ -92,6 +119,12 @@ public class TdmqMQClient implements MQClient {
         this.nativePulsar = null;
     }
 
+    /**
+     * 将 TDMQ 配置映射成原生 Pulsar 适配器属性。
+     *
+     * @param source 用来生成 Pulsar 配置的 TDMQ 连接属性
+     * @return 供 Pulsar 直接连接的配置
+     */
     private static PulsarProperties pulsarProperties(TdmqProperties source) {
         PulsarProperties target = new PulsarProperties();
         target.setEnabled(source.isEnabled());
@@ -110,6 +143,11 @@ public class TdmqMQClient implements MQClient {
         return target;
     }
 
+    /**
+     * 检查发布和订阅是否都由原生 Pulsar 适配器负责。
+     *
+     * @return 仅使用原生适配器时返回 true
+     */
     private boolean nativeMode() {
         return Objects.nonNull(nativePulsar) && Objects.isNull(brokerPublisher)
                 && Objects.isNull(brokerSubscriber);
@@ -133,16 +171,35 @@ public class TdmqMQClient implements MQClient {
         this.brokerSubscriber = subscriber;
     }
 
+    /**
+     * 返回此消息适配器在 DDD4J 中登记的实现名。
+     *
+     * @return 实际返回<code>"tdmq"</code>，供调用方取得当前值
+     */
     @Override
     public String impl() {
         return "tdmq";
     }
 
+    /**
+     * 返回管理连接、生产者和消费者资源的生命周期对象。
+     *
+     * <p>此实现调用 <code>nativeMode()</code>。</p>
+     *
+     * @return 当前消息适配器用于登记和关闭资源的生命周期对象
+     */
     @Override
     public MQClientLifecycle lifecycle() {
         return nativeMode() ? nativePulsar.lifecycle() : lifecycle;
     }
 
+    /**
+     * 返回消息客户端当前记录的启动状态。
+     *
+     * <p>此实现调用 <code>nativeMode()</code>。</p>
+     *
+     * @return 当前消息适配器记录的启动状态
+     */
     @Override
     public MQStartupStatus startupStatus() {
         return nativeMode() ? nativePulsar.startupStatus() : startupStatus;
@@ -150,6 +207,14 @@ public class TdmqMQClient implements MQClient {
 
     // ========================= 生产者 =========================
 
+    /**
+     * 准备消息生产者并返回可发布事件的入口。
+     *
+     * <p>满足 <code>closed</code> 时抛出 <code>IllegalStateException</code>。 此实现调用 <code>nativeMode()</code>。</p>
+     *
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 接收待发布事件的函数
+     */
     @Override
     public synchronized Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         if (closed) {
@@ -189,6 +254,15 @@ public class TdmqMQClient implements MQClient {
 
     // ========================= 消费者 =========================
 
+    /**
+     * 为监听器建立消息消费所需的订阅和客户端资源。
+     *
+     * <p>满足 <code>closed</code> 时抛出 <code>IllegalStateException</code>。 此实现调用 <code>properties.isAutoStartConsumers()</code>。</p>
+     *
+     * @param listener     监听器定义
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 消费者完成注册时为真
+     */
     @Override
     public synchronized boolean initConsumer(MQListener listener, MQProperties mqProperties) {
         if (closed) {
@@ -276,6 +350,11 @@ public class TdmqMQClient implements MQClient {
         return true;
     }
 
+    /**
+     * 启动当前组件并准备其运行资源。
+     *
+     * <p>此实现调用 <code>nativeMode()</code>。</p>
+     */
     @Override
     public void start() {
         if (nativeMode()) {
@@ -285,6 +364,9 @@ public class TdmqMQClient implements MQClient {
 
     // ========================= 关闭 =========================
 
+    /**
+     * 释放消息客户端拥有的运行资源，并在退出时登记组件已停止。
+     */
     @Override
     public synchronized void close() {
         if (closed) {
@@ -423,6 +505,9 @@ public class TdmqMQClient implements MQClient {
     @FunctionalInterface
     public interface Subscription extends AutoCloseable {
 
+        /**
+         * 结束当前组件持有的资源。
+         */
         @Override
         void close();
     }
@@ -432,16 +517,34 @@ public class TdmqMQClient implements MQClient {
      */
     public final static class DeliveredMessage {
 
+        /**
+         * Java 序列化版本标识。
+         */
         private static final long serialVersionUID = 0L;
 
+        /**
+         * 消息标识。
+         */
         private final String messageId;
 
+        /**
+         * 用于关联同一次操作产生的事件或消息的标识。
+         */
         private final String correlationId;
 
+        /**
+         * 消息转移或发送时使用的序列化负载。
+         */
         private final byte[] payload;
 
+        /**
+         * 在原生代理消息和 DDD4J 之间透传的头字段。
+         */
         private final Map<String, String> headers;
 
+        /**
+         * 原生代理暴露的投递确认回调。
+         */
         private final java.util.function.Consumer<Boolean> ackCallback;
 
         /**
@@ -520,6 +623,14 @@ public class TdmqMQClient implements MQClient {
             return ackCallback;
         }
 
+        /**
+         * 根据<code>messageId</code>、<code>correlationId</code>、<code>payload</code>、<code>headers</code>、<code>ackCallback</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -532,6 +643,11 @@ public class TdmqMQClient implements MQClient {
             return Objects.equals(this.messageId, other.messageId) && Objects.equals(this.correlationId, other.correlationId) && Objects.equals(this.payload, other.payload) && Objects.equals(this.headers, other.headers) && Objects.equals(this.ackCallback, other.ackCallback);
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 0;
@@ -543,6 +659,11 @@ public class TdmqMQClient implements MQClient {
             return result;
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>messageId</code>、<code>correlationId</code>、<code>payload</code>、<code>headers</code>、<code>ackCallback</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "DeliveredMessage[messageId=" + messageId + ", correlationId=" + correlationId + ", payload=" + payload + ", headers=" + headers + ", ackCallback=" + ackCallback + "]";
@@ -554,17 +675,48 @@ public class TdmqMQClient implements MQClient {
      */
     static final class InMemoryBrokerPublisher implements BrokerPublisher {
 
+        /**
+         * 按消息主题记录当前订阅及其监听器。
+         */
         private final java.util.Map<String, java.util.List<Consumer<DeliveredMessage>>> topicSubscribers;
 
+        /**
+         * 用共享订阅表创建内存发布端。
+         *
+         * @param topicSubscribers 按代理主题保存的内存订阅回调映射
+         */
         InMemoryBrokerPublisher(java.util.Map<String, java.util.List<Consumer<DeliveredMessage>>> topicSubscribers) {
             this.topicSubscribers = topicSubscribers;
         }
 
+        /**
+         * 将传入的事件交给当前发布通道。
+         *
+         * <p>此实现调用 <code>publish(topic, tag, tenantId, key, payload, Collections.emptyMap())</code>。</p>
+         *
+         * @param topic    物理 topic（含 namespace 前缀）
+         * @param tag      tag，可为 null
+         * @param tenantId 租户 ID
+         * @param key      业务 Key
+         * @param payload  序列化字节流
+         */
         @Override
         public void publish(String topic, String tag, String tenantId, String key, byte[] payload) {
             publish(topic, tag, tenantId, key, payload, Collections.emptyMap());
         }
 
+        /**
+         * 将传入的事件交给当前发布通道。
+         *
+         * <p>此实现调用 <code>topicSubscribers.get(topic)</code>。</p>
+         *
+         * @param topic    物理 topic
+         * @param tag      tag
+         * @param tenantId 租户 ID
+         * @param key      业务 Key
+         * @param payload  序列化内容
+         * @param headers  broker 消息头
+         */
         @Override
         public void publish(String topic, String tag, String tenantId, String key,
                             byte[] payload, Map<String, String> headers) {
@@ -590,12 +742,29 @@ public class TdmqMQClient implements MQClient {
      */
     static final class InMemoryBrokerSubscriber implements BrokerSubscriber {
 
+        /**
+         * 按消息主题记录当前订阅及其监听器。
+         */
         private final java.util.Map<String, java.util.List<Consumer<DeliveredMessage>>> topicSubscribers;
 
+        /**
+         * 用共享订阅表创建内存订阅端。
+         *
+         * @param topicSubscribers 按代理主题保存的内存订阅回调映射
+         */
         InMemoryBrokerSubscriber(java.util.Map<String, java.util.List<Consumer<DeliveredMessage>>> topicSubscribers) {
             this.topicSubscribers = topicSubscribers;
         }
 
+        /**
+         * 按给定条件注册消费监听。
+         *
+         * @param topic         物理 topic
+         * @param tagExpression tag 表达式
+         * @param group         订阅组
+         * @param handler       容器已匹配的请求处理器
+         * @return 订阅句柄
+         */
         @Override
         public Subscription subscribe(String topic, String tagExpression, String group,
                                       MessageHandler handler) {
@@ -604,6 +773,17 @@ public class TdmqMQClient implements MQClient {
                             handler.onMessage(messageId, correlationId, payload, ackCallback));
         }
 
+        /**
+         * 按给定条件注册消费监听。
+         *
+         * <p>此实现调用 <code>entries.add(consumer)</code>。</p>
+         *
+         * @param topic         物理 topic
+         * @param tagExpression tag 表达式
+         * @param group         消费组
+         * @param handler       容器已匹配的请求处理器
+         * @return 订阅句柄
+         */
         @Override
         public Subscription subscribe(String topic, String tagExpression, String group,
                                       HeaderMessageHandler handler) {

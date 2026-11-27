@@ -43,9 +43,16 @@ import java.util.Objects;
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class CRUDController<M extends AggregateRoot<?>, Q extends Query<M>> {
 
-    /** 聚合根持久化仓库。 */
+    /**
+     * 聚合根持久化仓库。
+     */
     protected Repository<M, Serializable> repository;
 
+    /**
+     * 从泛型模型类型查找并缓存当前控制器使用的仓储。
+     *
+     * @return 当前聚合仓储，未注册时为空
+     */
     private Repository<M, Serializable> getRepository() {
         if (Objects.isNull(this.repository)) {
             Class<M> modelClass = ReflectKit.getSuperClassGenericType(this.getClass(), 0);

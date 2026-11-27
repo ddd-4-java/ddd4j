@@ -29,6 +29,7 @@ public interface MQEventSerialization {
      * @param <S>  源类型
      * @param <T>  目标类型
      * @return 反序列化结果
+     * @throws RuntimeException 事件载荷无法反序列化
      */
     <S, T> T deserialize(S src, Class<T> dist) throws RuntimeException;
 
@@ -38,6 +39,7 @@ public interface MQEventSerialization {
      * @param src 源对象
      * @param <T> 序列化结果类型
      * @return 序列化结果
+     * @throws RuntimeException 事件无法序列化
      */
     <T> T serialize(Object src) throws RuntimeException;
 }

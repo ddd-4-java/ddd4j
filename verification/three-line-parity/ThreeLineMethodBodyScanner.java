@@ -29,10 +29,16 @@ import java.util.Objects;
 /** 从当前 Java 源码语法树定位方法体，不读取 CodeGraph 索引。 */
 public final class ThreeLineMethodBodyScanner {
 
+    /** 限制调用方直接创建 <code>ThreeLineMethodBodyScanner</code> 实例。 */
     private ThreeLineMethodBodyScanner() {
     }
 
-    /** 标准输入为相对源码路径，输出 path/key/start/end/base64-body 的 TSV。 */
+    /**
+     *  标准输入为相对源码路径，输出 path/key/start/end/base64-body 的 TSV。
+     *
+     * @param args 唯一参数为待扫描源码的根目录
+     * @throws Exception 无法读取扫描路径或 Java 源文件
+     */
     public static void main(String[] args) throws Exception {
         if (args.length != 1) {
             throw new IllegalArgumentException("expected exactly one source root");
@@ -81,14 +87,30 @@ public final class ThreeLineMethodBodyScanner {
         }
     }
 
+    /** 遍历编译单元并输出每个显式方法体的源码位置和内容。 */
     private static final class BodyVisitor extends TreeScanner<Void, Void> {
+        /** 当前遍历的 Java 编译单元。 */
         private final CompilationUnitTree unit;
+        /** 用于获取方法体起止偏移的源码位置服务。 */
         private final SourcePositions positions;
+        /** 扫描记录中输出的相对源码路径。 */
         private final String path;
+        /** 用来构造类型全限定名的包名。 */
         private final String packageName;
+        /** 提取方法体原文时使用的完整 Java 源码。 */
         private final String source;
+        /** 从外到内记录当前正在遍历的类型名。 */
         private final Deque<String> types = new ArrayDeque<>();
 
+        /**
+         * 为指定编译单元创建源码扫描器。
+         *
+         * @param unit 当前编译单元
+         * @param positions 从编译器获取的源码位置服务
+         * @param path 输出记录使用的相对源码路径
+         * @param packageName 源码声明的包名
+         * @param source 用于截取方法体的源码原文
+         */
         private BodyVisitor(CompilationUnitTree unit, SourcePositions positions, String path,
                             String packageName, String source) {
             this.unit = unit;
@@ -98,6 +120,13 @@ public final class ThreeLineMethodBodyScanner {
             this.source = source;
         }
 
+        /**
+         * 将当前具名类型加入访问路径并遍历其成员，随后恢复外围类型状态。
+         *
+         * @param type 当前类型声明
+         * @param ignored 未使用的扫描参数
+         * @return 不返回聚合结果
+         */
         @Override
         public Void visitClass(ClassTree type, Void ignored) {
             String name = type.getSimpleName().toString();
@@ -110,6 +139,13 @@ public final class ThreeLineMethodBodyScanner {
             return null;
         }
 
+        /**
+         * 记录具名类型中带方法体的方法及其源码范围，继续遍历嵌套节点。
+         *
+         * @param method 正在访问的方法声明
+         * @param ignored 未使用的扫描参数
+         * @return 不返回聚合结果
+         */
         @Override
         public Void visitMethod(MethodTree method, Void ignored) {
             if (!types.isEmpty() && Objects.nonNull(method.getBody())) {

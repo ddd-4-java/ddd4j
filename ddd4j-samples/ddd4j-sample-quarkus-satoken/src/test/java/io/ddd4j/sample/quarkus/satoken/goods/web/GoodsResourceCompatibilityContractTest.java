@@ -28,17 +28,41 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @QuarkusTest
 @io.quarkus.test.junit.TestProfile(io.ddd4j.sample.quarkus.satoken.GoodsStandaloneProfile.class)
 class GoodsResourceCompatibilityContractTest {
+    /**
+     * 记录示例测试数据是否已经准备完成。
+     */
     private final List<Goods> seeded = new ArrayList<>();
+    /**
+     * 处理商品创建、维护和查询操作的应用服务。
+     */
     private GoodsApplicationService applicationService;
+    /**
+     * 将当前测试查询转交给应用服务的 HTTP 资源。
+     */
     private GoodsQueryResource queryResource;
+    /**
+     * 用于当前读取或写入断言的测试仓储。
+     */
     private InMemoryGoodsRepository repository;
+    /**
+     * 测试创建路由或业务标识时使用的前缀。
+     */
     private String prefix;
 
+    /**
+     * 核对<code>Arrays.stream()</code>、<code>method.getParameters()</code>、<code>parameter.getName()</code> 返回的测试结果。
+     *
+     * @param method   发给被测服务的 HTTP 方法
+     * @param expected 当前用例设定的期望值
+     */
     private static void assertNames(Method method, String... expected) {
         assertArrayEquals(expected, Arrays.stream(method.getParameters())
                 .map(parameter -> parameter.getName()).toArray(String[]::new));
     }
 
+    /**
+     * 测试执行前执行 <code>Arc.container()</code>、<code>UUID.randomUUID()</code>、<code>seeded.add()</code>、<code>applicationService.create()</code> 完成资源准备。
+     */
     @BeforeEach
     void seedActualRepository() {
         applicationService = Arc.container().instance(GoodsApplicationService.class).get();
@@ -50,6 +74,9 @@ class GoodsResourceCompatibilityContractTest {
         seeded.add(applicationService.create(prefix + "-high", prefix + " item", new BigDecimal("30"), 1));
     }
 
+    /**
+     * 测试结束后执行 <code>repository.deleteById()</code>、<code>goods.getId()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void removeOnlyOurRows() {
         if (Objects.nonNull(repository)) {
@@ -59,6 +86,9 @@ class GoodsResourceCompatibilityContractTest {
         }
     }
 
+    /**
+     * 验证<code>page.getTotal()</code> 等于 <code>2L</code>，<code>page.getCurrent()</code> 等于 <code>2L</code>，<code>page.getRecords().get(0).getCode()</code> 等于 <code>prefix + "-middle"</code>。
+     */
     @Test
     void oldJavaConstructorsAndQueryMethodsUseRealFiltersAndPagination() {
         GoodsResource resource = new GoodsResource(applicationService, queryResource);
@@ -78,6 +108,9 @@ class GoodsResourceCompatibilityContractTest {
                 new BigDecimal("15"), new BigDecimal("30")).getData());
     }
 
+    /**
+     * 请求 <code>GET /api/goods/count</code>，确认 HTTP 响应状态为 200，响应中的 <code>data</code> 等于 <code>2</code>。
+     */
     @Test
     void cdiAndHttpPreserveTheSinglePageListCountEndpoints() {
         GoodsResource resource = Arc.container().instance(GoodsResource.class).get();
@@ -104,6 +137,11 @@ class GoodsResourceCompatibilityContractTest {
                 .when().get("/api/goods/count").then().statusCode(200).body("data", equalTo(2));
     }
 
+    /**
+     * 验证<code>candidate.getParameterTypes()</code> 与…的元素逐项相同 <code>constructor.getParameterTypes()</code>，<code>injected</code> 等于 <code>1</code>，<code>bindings</code> 等于 <code>1</code>。
+     *
+     * @throws Exception 反射访问被测成员时失败
+     */
     @Test
     void constructorParameterNamesAndHttpBindingOwnershipRemainExact() throws Exception {
         Constructor<GoodsResource> constructor = GoodsResource.class.getConstructor(

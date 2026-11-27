@@ -41,12 +41,18 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * 通过 <code>Vertx.vertx()</code>、<code>Router.router()</code>、<code>router.route()</code> 验证 <code>Ddd4jVertxEarlyResponse</code> 的运行行为。
+ */
 class Ddd4jVertxEarlyResponseTest {
 
+    /**
+     * 验证<code>client.getResponseCode()</code> 等于 <code>204</code>，<code>releasedOnWorker.get(5, TimeUnit.SECONDS)</code>为真，<code>dispatched.get()</code>为假。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void serverSideEarlyResponseReleasesUnusedLeaseOnWorker() throws Exception {
         Vertx vertx = Vertx.vertx();
@@ -110,6 +116,11 @@ class Ddd4jVertxEarlyResponseTest {
         }
     }
 
+    /**
+     * 验证<code>serverObservedTermination.get(5, TimeUnit.SECONDS)</code>为真，<code>releasedOnWorker.get(5, TimeUnit.SECONDS)</code> 等于 <code>disconnectedLease</code>，<code>dispatched.get()</code> 等于 <code>1</code>。
+     *
+     * @throws Exception 准备或读取夹具文件、等待并发操作、发起测试请求时失败
+     */
     @Test
     void tcpResetDuringIdempotencyAcquisitionReleasesLeaseAndAllowsSameKeyRetry() throws Exception {
         String cacheName = "vertx-tcp-reset";
@@ -223,6 +234,14 @@ class Ddd4jVertxEarlyResponseTest {
         }
     }
 
+    /**
+     * 通过 <code>client.getResponseCode()</code> 取得当前测试需要的结果。
+     *
+     * @param port 测试服务监听的本地端口
+     * @param key  用于在测试上下文或缓存中索引数据的键
+     * @return 当前测试使用的结果，取自 <code>client.getResponseCode()</code>
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     private int postWithIdempotencyKey(int port, String key) throws Exception {
         HttpURLConnection client = (HttpURLConnection) new URL("http://127.0.0.1:" + port + "/reset")
                 .openConnection();

@@ -33,6 +33,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class ReplayCausalityPreservedMustTest {
 
+    /**
+     * 验证<code>replayDerived.getCorrelationId().asString()</code> 等于 <code>second.getCorrelationId().asString()</code>，<code>replayDerived.getCausationId().asString()</code> 等于 <code>replayedSource.getEventId().asString()</code>，<code>replayedStored.causationId().asString()</code> 等于 <code>second.getCausationId().asString()</code>。
+     */
     @Test
     void derivedEventMustPreserveOriginalCorrelationAndPointToReplaySource() {
         InMemoryEventStore store = new InMemoryEventStore();
@@ -65,6 +68,9 @@ class ReplayCausalityPreservedMustTest {
                 "事件存储持久化的因果快照必须保留 causationId");
     }
 
+    /**
+     * 验证<code>derived.getCorrelationId().asString()</code> 等于 <code>source.getEventId().asString()</code>，<code>derived.getCausationId().asString()</code> 等于 <code>source.getEventId().asString()</code>。
+     */
     @Test
     void derivedEventWithoutCausalSourceMustFallBackToSourceEventId() {
         InMemoryEventStore store = new InMemoryEventStore();
@@ -90,22 +96,45 @@ class ReplayCausalityPreservedMustTest {
      */
     private static final class TestAggregateRootId implements AggregateRootId {
 
+        /**
+         * 组成测试标识的原始值。
+         */
         private final String value;
 
+        /**
+         * 设置 <code>value</code>，用于构造 <code>TestAggregateRootId</code> 测试实例。
+         *
+         * @param value 组成测试标识的原始值
+         */
         private TestAggregateRootId(String value) {
             this.value = Objects.requireNonNull(value, "value must not be null");
         }
 
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 此操作产生的<code>EntityType</code>结果
+         */
         @Override
         public EntityType getType() {
             return new StringEntityType("Order");
         }
 
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 实际返回<code>value</code>，供调用方取得当前值
+         */
         @Override
         public String asString() {
             return value;
         }
 
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * @return 实际返回<code>"Order:" + value</code>，供调用方取得当前值
+         */
         @Override
         public String asTypedString() {
             return "Order:" + value;
@@ -117,6 +146,11 @@ class ReplayCausalityPreservedMustTest {
      */
     private static final class RootEvent extends DomainEvent<TestAggregateRootId> {
 
+        /**
+         * 使用 <code>super()</code> 初始化 <code>RootEvent</code> 测试夹具。
+         *
+         * @param aggregateId 用于定位被测聚合的标识
+         */
         private RootEvent(TestAggregateRootId aggregateId) {
             super(new EntityIdPath(aggregateId));
         }
@@ -127,6 +161,12 @@ class ReplayCausalityPreservedMustTest {
      */
     private static final class DerivedEvent extends DomainEvent<TestAggregateRootId> {
 
+        /**
+         * 使用 <code>super()</code> 初始化 <code>DerivedEvent</code> 测试夹具。
+         *
+         * @param aggregateId 用于定位被测聚合的标识
+         * @param respondTo   用于初始化 <code>DerivedEvent</code> 的 <code>DomainEvent&lt;?&gt;</code> 值
+         */
         private DerivedEvent(TestAggregateRootId aggregateId, DomainEvent<?> respondTo) {
             super(new EntityIdPath(new StringEntityId(aggregateId.asString())), respondTo);
         }

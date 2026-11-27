@@ -32,13 +32,24 @@ import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * 验证 <code>Ddd4jWebMvcInterceptor</code> 在<code>shouldRestoreContext</code>等操作中的行为契约。
+ */
 class Ddd4jWebMvcInterceptorTest {
 
+    /**
+     * 测试结束后执行 <code>ThreadContext.clear()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void clearContext() {
         ThreadContext.clear();
     }
 
+    /**
+     * 验证<code>interceptor.preHandle(request, response, new Object())</code>为真，<code>ThreadContext.getResources().isEmpty()</code>为假。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void shouldBindAndClearPublicRequestContext() throws Exception {
         Ddd4jWebMvcInterceptor interceptor = new Ddd4jWebMvcInterceptor(new BearerSubjectAuthenticator(),
@@ -55,6 +66,9 @@ class Ddd4jWebMvcInterceptorTest {
         assertTrue(ThreadContext.getResources().isEmpty());
     }
 
+    /**
+     * 验证<code>interceptor.preHandle(request, response, new Object())</code>为真，<code>ThreadContext.get("tenant-id")</code> 等于 <code>"inner-tenant"</code>，<code>ThreadContext.get("tenant-id")</code> 等于 <code>"outer-tenant"</code>。
+     */
     @Test
     void shouldRestoreContextWhenIdempotencyCompletionFails() {
         IdempotencyGuard guard = new IdempotencyGuard() {

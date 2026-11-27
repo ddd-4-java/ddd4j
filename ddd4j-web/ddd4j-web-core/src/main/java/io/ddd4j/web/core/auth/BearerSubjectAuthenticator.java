@@ -14,10 +14,8 @@
  */
 package io.ddd4j.web.core.auth;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.Contexts;
@@ -33,6 +31,9 @@ import java.util.Optional;
  */
 public final class BearerSubjectAuthenticator {
 
+    /**
+     * 从 HTTP Authorization 头读取 Bearer 令牌的组件。
+     */
     private final BearerTokenResolver tokenResolver;
 
     /**
@@ -86,6 +87,12 @@ public final class BearerSubjectAuthenticator {
         return tokenResolver.resolve(authorization).map(this::authenticateToken);
     }
 
+    /**
+     * 校验 Bearer 令牌并解析当前请求主体。
+     *
+     * @param token 从 Authorization 读取的 Bearer 访问令牌
+     * @return 令牌有效时的认证结果
+     */
     private Authentication authenticateToken(String token) {
         SubjectProvider provider = Contexts.get(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class)
                 .orElseThrow(() -> new WebStatusException(401, "Subject provider is unavailable"));
@@ -102,13 +109,39 @@ public final class BearerSubjectAuthenticator {
      */
     public final static class Authentication {
 
+        /**
+         * Java 序列化版本标识。
+         */
         private static final long serialVersionUID = 0L;
 
+        /**
+         * 已从当前请求读出并校验的认证令牌。
+         */
         private final String token;
 
+        /**
+         * 当前请求认证后的业务主体信息。
+         */
         private final AuthPrincipal principal;
 
+        /**
+         * 当前请求所绑定的主体操作入口。
+         */
         private final Subject subject;
+
+        /**
+         * 构造认证结果。
+         *
+         * @param token     通过校验的 Bearer Token
+         * @param principal 认证通过的主体
+         * @param subject   完成校验的 Subject SPI
+         */
+        @JsonCreator()
+        public Authentication(@JsonProperty("token") String token, @JsonProperty("principal") AuthPrincipal principal, @JsonProperty("subject") Subject subject) {
+            this.token = token;
+            this.principal = principal;
+            this.subject = subject;
+        }
 
         /**
          * 获取通过校验的 Bearer Token。
@@ -135,20 +168,6 @@ public final class BearerSubjectAuthenticator {
          */
         public Subject getSubject() {
             return subject;
-        }
-
-        /**
-         * 构造认证结果。
-         *
-         * @param token     通过校验的 Bearer Token
-         * @param principal 认证通过的主体
-         * @param subject   完成校验的 Subject SPI
-         */
-        @JsonCreator()
-        public Authentication(@JsonProperty("token") String token, @JsonProperty("principal") AuthPrincipal principal, @JsonProperty("subject") Subject subject) {
-            this.token = token;
-            this.principal = principal;
-            this.subject = subject;
         }
 
         /**
@@ -181,6 +200,14 @@ public final class BearerSubjectAuthenticator {
             return subject;
         }
 
+        /**
+         * 根据<code>token</code>、<code>principal</code>、<code>subject</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -193,6 +220,11 @@ public final class BearerSubjectAuthenticator {
             return Objects.equals(this.token, other.token) && Objects.equals(this.principal, other.principal) && Objects.equals(this.subject, other.subject);
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 0;
@@ -202,6 +234,11 @@ public final class BearerSubjectAuthenticator {
             return result;
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>token</code>、<code>principal</code>、<code>subject</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "Authentication[token=" + token + ", principal=" + principal + ", subject=" + subject + "]";

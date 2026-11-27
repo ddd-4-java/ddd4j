@@ -23,13 +23,22 @@ import java.util.ServiceLoader;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * 通过 <code>ServiceLoader.load()</code>、<code>sink.accept()</code>、<code>Class.forName()</code> 验证 <code>Ddd4jSqlObservationSink</code> 的运行行为。
+ */
 class Ddd4jSqlObservationSinkTest {
 
+    /**
+     * 测试后依次清除<code>ThreadContext</code>。
+     */
     @AfterEach
     void cleanup() {
         ThreadContext.clear();
     }
 
+    /**
+     * 验证<code>ThreadContext.&lt;Object&gt;get(ContextConstants.PREPARING_SQL)</code> 等于 <code>"SELECT * FROM orders"</code>，<code>ThreadContext.&lt;Object&gt;get(ContextConstants.LAST_SQL_SPENDS)</code> 等于 <code>3L</code>。
+     */
     @Test
     void shouldStoreNormalizedSqlAndElapsedTime() {
         SqlObservation observation = new SqlObservation(
@@ -43,6 +52,9 @@ class Ddd4jSqlObservationSinkTest {
                 .isEqualTo(3L);
     }
 
+    /**
+     * 验证<code>discovered</code>为真。
+     */
     @Test
     void shouldBeDiscoverableThroughServiceLoader() {
         boolean discovered = false;
@@ -56,6 +68,9 @@ class Ddd4jSqlObservationSinkTest {
         assertThat(discovered).isTrue();
     }
 
+    /**
+     * 验证<code>ThreadContext.&lt;Object&gt;get(ContextConstants.PREPARING_SQL)</code> 等于 <code>"SELECT * FROM orders"</code>，<code>ThreadContext.&lt;Object&gt;get(ContextConstants.LAST_SQL_SPENDS)</code> 等于 <code>3L</code>。
+     */
     @Test
     void shouldForwardObservationDiscoveredThroughUpstreamServiceLoader() {
         com.baomidou.mybatisplus.enhance.observation.SqlObservationSink sink = ServiceLoader
@@ -74,6 +89,11 @@ class Ddd4jSqlObservationSinkTest {
         assertThat(ThreadContext.<Object>get(ContextConstants.LAST_SQL_SPENDS)).isEqualTo(3L);
     }
 
+    /**
+     * 验证<code>sinkType.isInstance(new Ddd4jSqlObservationSink())</code>为真。
+     *
+     * @throws Exception 反射访问被测成员时失败
+     */
     @Test
     void upstreamObservationMustReachDdd4jContext() throws Exception {
         Class<?> sinkType = Class.forName("com.baomidou.mybatisplus.enhance.observation.SqlObservationSink");

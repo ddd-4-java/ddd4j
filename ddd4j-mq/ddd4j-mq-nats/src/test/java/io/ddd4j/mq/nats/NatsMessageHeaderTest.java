@@ -14,16 +14,22 @@
  */
 package io.ddd4j.mq.nats;
 
-import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.delivery.MQDeliveryHeaders;
+import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.nats.client.impl.Headers;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * 验证 <code>NatsMessageHeader</code> 在 <code>shouldWriteStableHeaderAndPreferIt</code> 等场景中的行为。
+ */
 class NatsMessageHeaderTest {
 
+    /**
+     * 验证<code>headers.getFirst(MessageHeaders.HEADER_MESSAGE_ID)</code> 等于 <code>"stable-id"</code>，<code>headers.getFirst(MQDeliveryHeaders.CORRELATION_ID)</code> 等于 <code>"correlation-1"</code>，<code>NatsMQClient.messageId(legacyHeaders)</code> 等于 <code>"legacy-id"</code>。
+     */
     @Test
     void shouldWriteStableHeaderAndPreferItWhenReading() {
         MQEvent event = new MQEvent();

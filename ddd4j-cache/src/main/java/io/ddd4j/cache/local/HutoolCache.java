@@ -38,8 +38,16 @@ import java.util.function.Function;
  */
 public class HutoolCache<K, V> implements Cache<K, V> {
 
+    /**
+     * 保存本地缓存条目的 Hutool 缓存。
+     */
     private final cn.hutool.cache.impl.TimedCache<K, V> cache;
 
+    /**
+     * 封装已构造的 Hutool 本地缓存。
+     *
+     * @param cache 用于存放键值的底层缓存
+     */
     private HutoolCache(cn.hutool.cache.impl.TimedCache<K, V> cache) {
         this.cache = Objects.requireNonNull(cache);
     }
@@ -62,11 +70,28 @@ public class HutoolCache<K, V> implements Cache<K, V> {
         return new HutoolCache<>(timed);
     }
 
+    /**
+     * 读取现有缓存值。
+     *
+     * <p>此实现调用 <code>cache.get(key)</code>。</p>
+     *
+     * @param key 缓存键
+     * @return 实际返回<code>cache.get(key)</code>
+     */
     @Override
     public V getIfPresent(K key) {
         return cache.get(key);
     }
 
+    /**
+     * 读取调用指定的当前值。
+     *
+     * <p>此实现调用 <code>cache.get(key)</code>。</p>
+     *
+     * @param key             缓存键
+     * @param mappingFunction 值加载函数
+     * @return 实际返回<code>value</code>
+     */
     @Override
     public V get(K key, Function<K, V> mappingFunction) {
         V value = cache.get(key);
@@ -79,36 +104,78 @@ public class HutoolCache<K, V> implements Cache<K, V> {
         return value;
     }
 
+    /**
+     * 将给定数据写入当前存储。
+     *
+     * <p>此实现调用 <code>cache.put(key, value)</code>。</p>
+     *
+     * @param key   缓存键
+     * @param value 缓存值
+     */
     @Override
     public void put(K key, V value) {
         cache.put(key, value);
     }
 
+    /**
+     * 批量设置缓存值。
+     *
+     * @param map 缓存键值对
+     */
     @Override
     public void putAll(Map<K, V> map) {
         map.forEach(this::put);
     }
 
+    /**
+     * 使指定键的缓存条目失效。
+     *
+     * <p>此实现调用 <code>cache.remove(key)</code>。</p>
+     *
+     * @param key 缓存键
+     */
     @Override
     public void invalidate(K key) {
         cache.remove(key);
     }
 
+    /**
+     * 使当前缓存中的全部条目失效。
+     *
+     * <p>此实现调用 <code>cache.clear()</code>。</p>
+     */
     @Override
     public void invalidateAll() {
         cache.clear();
     }
 
+    /**
+     * 使当前缓存中的全部条目失效。
+     *
+     * @param keys 缓存键集合
+     */
     @Override
     public void invalidateAll(Iterable<K> keys) {
         keys.forEach(this::invalidate);
     }
 
+    /**
+     * 返回当前缓存条目规模的估算值。
+     *
+     * <p>此实现调用 <code>cache.size()</code>。</p>
+     *
+     * @return 实际返回<code>cache.size()</code>
+     */
     @Override
     public long estimatedSize() {
         return cache.size();
     }
 
+    /**
+     * 返回当前缓存实现记录的统计信息。
+     *
+     * @return 此实现返回<code>null</code>
+     */
     @Override
     public CacheStats stats() {
         return null;

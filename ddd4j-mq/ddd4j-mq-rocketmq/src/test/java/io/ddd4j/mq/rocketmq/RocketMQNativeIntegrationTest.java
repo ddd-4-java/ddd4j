@@ -50,12 +50,32 @@ import static org.junit.jupiter.api.Assertions.*;
 @Testcontainers(disabledWithoutDocker = true)
 class RocketMQNativeIntegrationTest {
 
+    /**
+     * 测试使用的容器镜像或图像样本。
+     */
     private static final String IMAGE = "apache/rocketmq:5.3.2";
+    /**
+     * 构造本组测试输入时复用的固定标识或名称。
+     */
     private static final String TOPIC = "tenant_orders";
+    /**
+     * 供测试读取或约束网络信息的夹具。
+     */
     private static Network network;
+    /**
+     * 测试客户端连接的消息代理名称服务地址。
+     */
     private static GenericContainer<?> nameServer;
+    /**
+     * 用于验证消息投递路径的逻辑代理。
+     */
     private static FixedHostPortGenericContainer<?> broker;
 
+    /**
+     * 测试执行前执行 <code>Network.newNetwork()</code>、<code>Wait.forLogMessage()</code>、<code>nameServer.start()</code>、<code>socket.getLocalPort()</code> 完成资源准备。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @BeforeAll
     static void startBroker() throws Exception {
         network = Network.newNetwork();
@@ -107,6 +127,9 @@ class RocketMQNativeIntegrationTest {
         assertTrue(created.getStdout().contains("create topic"), created.getStdout() + created.getStderr());
     }
 
+    /**
+     * 测试结束后执行 <code>broker.stop()</code>、<code>nameServer.stop()</code>、<code>network.close()</code> 完成资源回收或状态恢复。
+     */
     @AfterAll
     static void stopBroker() {
         if (broker != null) {
@@ -120,11 +143,19 @@ class RocketMQNativeIntegrationTest {
         }
     }
 
+    /**
+     * 测试结束后执行 <code>BaseContext.clear()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void clearContext() {
         BaseContext.clear();
     }
 
+    /**
+     * 验证<code>delivered.await(30, TimeUnit.SECONDS)</code>为真，<code>nativeMessage.get()</code>非空，<code>received.get().getCausationId()</code> 等于 <code>event.getCausationId()</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void namespacedTaggedMessageRoundTripsWithNativeHeaders() throws Exception {
         String nameServerAddress = nameServer.getHost() + ":" + nameServer.getMappedPort(9876);
@@ -172,6 +203,11 @@ class RocketMQNativeIntegrationTest {
         }
     }
 
+    /**
+     * 验证<code>retried.await(90, TimeUnit.SECONDS)</code>为真，<code>attempts.get()</code> 等于 <code>2</code>，<code>receivedMessageId.get()</code> 等于 <code>event.getMsgId()</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void failedListenerIsRedeliveredByNativeBroker() throws Exception {
         String nameServerAddress = nameServer.getHost() + ":" + nameServer.getMappedPort(9876);

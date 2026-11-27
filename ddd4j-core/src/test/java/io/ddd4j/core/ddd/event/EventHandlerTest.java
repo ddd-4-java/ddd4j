@@ -36,6 +36,11 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class EventHandlerTest {
 
+    /**
+     * 验证<code>annotation</code>非空，<code>annotation.ignoreOnReplay()</code>为假。
+     *
+     * @throws NoSuchMethodException 反射定位被测方法失败
+     */
     @Test
     void annotationIsRuntimeVisible() throws NoSuchMethodException {
         Method method = SampleHandler.class.getDeclaredMethod("onOrderCreated", OrderCreatedEvent.class);
@@ -45,6 +50,11 @@ class EventHandlerTest {
         assertFalse(annotation.ignoreOnReplay(), "ignoreOnReplay should default to false");
     }
 
+    /**
+     * 验证<code>annotation</code>非空，<code>annotation.ignoreOnReplay()</code>为真。
+     *
+     * @throws NoSuchMethodException 反射定位被测方法失败
+     */
     @Test
     void ignoreOnReplayAttributeIsReadableAtRuntime() throws NoSuchMethodException {
         Method method = SampleHandler.class.getDeclaredMethod("onOrderDiscarded", OrderCreatedEvent.class);
@@ -54,6 +64,9 @@ class EventHandlerTest {
         assertTrue(annotation.ignoreOnReplay(), "ignoreOnReplay should be readable when set to true");
     }
 
+    /**
+     * 验证<code>target</code>非空，<code>retention</code>非空，<code>retention.value()</code> 等于 <code>RetentionPolicy.RUNTIME</code>。
+     */
     @Test
     void annotationDeclarationIsMethodTargetedAndRuntimeRetained() {
         Target target = EventHandler.class.getAnnotation(Target.class);
@@ -96,16 +109,36 @@ class EventHandlerTest {
      */
     static class OrderCreatedEvent extends DomainEvent<OrderCreatedEvent.OrderId> {
 
+        /**
+         * 使用 <code>super()</code> 初始化 <code>OrderCreatedEvent</code> 测试夹具。
+         */
         OrderCreatedEvent() {
             super(new EntityIdPath(new OrderId("order-1")));
         }
 
+        /**
+         * 订单测试聚合的标识类型。
+         */
         final static class OrderId implements EntityId {
 
+            /**
+             * Java 序列化使用的版本标识。
+             */
             private static final long serialVersionUID = 0L;
+            /**
+             * 测试聚合注册和反序列化所用的实体类型标识。
+             */
             private static final EntityType TYPE = new StringEntityType("Order");
+            /**
+             * 组成测试标识的原始值。
+             */
             private final String value;
 
+            /**
+             * 设置 <code>value</code>，用于构造 <code>OrderId</code> 测试实例。
+             *
+             * @param value 组成测试标识的原始值
+             */
             @JsonCreator()
             OrderId(@JsonProperty("value") String value) {
                 this.value = value;
@@ -141,11 +174,24 @@ class EventHandlerTest {
                 return TYPE.asString() + ":" + value;
             }
 
+            /**
+             * 读取<code>value</code> 字段。
+             *
+             * @return <code>value</code> 字段
+             */
             @JsonProperty("value")
             public String value() {
                 return value;
             }
 
+            /**
+             * 根据<code>value</code>比较对象的值是否相等。
+             *
+             * <p>只比较运行时类型相同的对象。</p>
+             *
+             * @param obj 用来比较或转换的输入对象
+             * @return 对象满足此实现的相等条件时为真
+             */
             @Override
             public boolean equals(Object obj) {
                 if (this == obj) {
@@ -158,6 +204,11 @@ class EventHandlerTest {
                 return Objects.equals(this.value, other.value);
             }
 
+            /**
+             * 计算与对象相等条件一致的哈希值。
+             *
+             * @return 由参与相等比较的状态计算出的哈希值
+             */
             @Override
             public int hashCode() {
                 int result = 0;
@@ -165,6 +216,11 @@ class EventHandlerTest {
                 return result;
             }
 
+            /**
+             * 生成用于调试和日志的对象描述，包含<code>value</code>。
+             *
+             * @return 表示当前对象状态的字符串
+             */
             @Override
             public String toString() {
                 return "OrderId[value=" + value + "]";

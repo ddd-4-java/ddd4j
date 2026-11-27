@@ -18,13 +18,27 @@ import static org.assertj.core.api.Assertions.assertThat;
 @QuarkusTest
 @TestProfile(QuarkusLegacyCronExecutionTest.Profile.class)
 class QuarkusLegacyCronExecutionTest {
+    /**
+     * 当前测试调用或验证生命周期的应用服务。
+     */
     @Inject
     QuarkusLegacyServiceTest.LegacyBusinessService service;
+    /**
+     * 测试使用或记录的多条投影位点。
+     */
     @Inject
     ProjectionPositionRepository positions;
+    /**
+     * 当前测试使用并负责释放的视图或认证管理器。
+     */
     @Inject
     QuarkusJpaViewManager manager;
 
+    /**
+     * 验证<code>service.awaitCall()</code>为真，<code>service.calls()</code> 大于 <code>before</code>，<code>service.calls()</code> 等于 <code>stopped</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void nativeQuartzTriggersAndCancellationStopsFurtherRuns() throws Exception {
         positions.save(new DefaultProjectionPosition("legacy-timer", 7));
@@ -42,7 +56,15 @@ class QuarkusLegacyCronExecutionTest {
         assertThat(service.calls()).isEqualTo(stopped);
     }
 
+    /**
+     * 实现 <code>QuarkusTestProfile</code>，供测试调用 <code>getConfigOverrides()</code> 并观察结果。
+     */
     public static class Profile implements QuarkusTestProfile {
+        /**
+         * 启用遗留投影调度路径并覆盖测试使用的 Cron 配置。
+         *
+         * @return 覆盖到 Quarkus 测试应用的配置项
+         */
         @Override
         public Map<String, String> getConfigOverrides() {
             return Map.of("r08.legacy-subclass", "true",

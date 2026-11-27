@@ -35,6 +35,13 @@ import io.ddd4j.kit.lang.IdKit;
  */
 public class UuidIdStrategy implements IdGenerationStrategy<String> {
 
+    /**
+     * 生成调用所需的标识或结果。
+     *
+     * <p>此实现调用 <code>IdKit.simpleUUID()</code>。</p>
+     *
+     * @return 实际返回<code>IdKit.simpleUUID()</code>
+     */
     @Override
     public String generate() {
         return IdKit.simpleUUID();

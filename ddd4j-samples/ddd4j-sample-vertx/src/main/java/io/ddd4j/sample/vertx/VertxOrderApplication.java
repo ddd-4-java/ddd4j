@@ -14,12 +14,12 @@
  */
 package io.ddd4j.sample.vertx;
 
+import io.ddd4j.sample.order.adapter.http.CatalogEndpoints;
+import io.ddd4j.sample.order.start.CatalogRuntime;
 import io.ddd4j.vertx.Ddd4jVertxRuntime;
 import io.ddd4j.web.core.auth.AuthenticationMode;
 import io.ddd4j.web.core.error.WebStatusException;
 import io.ddd4j.web.vertx.Ddd4jVertxContext;
-import io.ddd4j.sample.order.adapter.http.CatalogEndpoints;
-import io.ddd4j.sample.order.start.CatalogRuntime;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
@@ -34,16 +34,36 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 
-/** 基于 MySQL 的商品交易示例。 */
+/**
+ * 基于 MySQL 的商品交易示例。
+ */
 @Slf4j
 public final class VertxOrderApplication {
 
+    /**
+     * 为当前示例提供 HTTP 服务及工作线程的 Vert.x 实例。
+     */
     private final Vertx vertx = Vertx.vertx();
+    /**
+     * 当前应用已接受并须等待结束的请求处理信号。
+     */
     private final Set<CompletableFuture<Void>> accepted = new HashSet<>();
+    /**
+     * 当前示例已装配的 Vert.x DDD4J 运行时。
+     */
     private Ddd4jVertxRuntime runtime;
+    /**
+     * 由当前应用持有并在停止时关闭的 Vert.x HTTP 服务器。
+     */
     private HttpServer server;
+    /**
+     * 保存当前应用异步关闭结果的完成信号。
+     */
     private CompletableFuture<Void> closing;
 
+    /**
+     * 限制调用方直接创建 <code>VertxOrderApplication</code> 实例。
+     */
     private VertxOrderApplication() {
     }
 
@@ -57,6 +77,13 @@ public final class VertxOrderApplication {
         return start(port, CatalogRuntime.start());
     }
 
+    /**
+     * 启动包含商品交易路由的 Vert.x HTTP 服务。
+     *
+     * @param port    当前 HTTP 示例要监听的端口
+     * @param catalog 当前商品交易入口
+     * @return 应用启动后的运行实例或其异步结果
+     */
     static Future<VertxOrderApplication> start(int port, CatalogEndpoints catalog) {
         VertxOrderApplication app = new VertxOrderApplication();
         Promise<VertxOrderApplication> started = Promise.promise();
@@ -78,6 +105,28 @@ public final class VertxOrderApplication {
         return started.future();
     }
 
+    /**
+     * 启动默认示例，端口可由 sample.port 设置。
+     *
+     * @param args 保留的启动参数
+     * @throws Exception 启动失败
+     */
+    public static void main(String[] args) throws Exception {
+        VertxOrderApplication app = start(Integer.getInteger("sample.port", 8084))
+                .toCompletionStage().toCompletableFuture().get();
+        log.info("Vert.x default listening {} (catalog-trade)", app.port());
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            app.close().toCompletionStage().toCompletableFuture().join();
+            log.info("VERTX_DEFAULT_CLOSED");
+        }, "ddd4j-vertx-order-shutdown"));
+    }
+
+    /**
+     * 启动失败时清理部分装配的资源，再报告原始失败。
+     *
+     * @param started 报告当前应用是否成功启动的异步句柄
+     * @param failure 导致应用无法完成启动的原始异常
+     */
     private void failStart(Promise<VertxOrderApplication> started, Throwable failure) {
         close().onComplete(cleaned -> {
             if (cleaned.failed() && cleaned.cause() != failure) {
@@ -87,11 +136,21 @@ public final class VertxOrderApplication {
         });
     }
 
-    /** @return 实际监听端口 */
+    /**
+     * @return 实际监听端口
+     */
     public int port() {
         return server.actualPort();
     }
 
+    /**
+     * 拒绝关闭后到达的请求，并追踪已接收的操作直至执行完成。
+     *
+     * @param <T>       当前示例所使用的数据或框架类型
+     * @param context   当前 Vert.x 路由上下文
+     * @param operation 当前请求的商品交易操作或待执行的工作回调
+     * @return 表示请求操作执行结果的异步对象
+     */
     synchronized <T> Future<T> execute(RoutingContext context, Callable<T> operation) {
         if (Objects.nonNull(closing)) {
             return Future.failedFuture(new WebStatusException(503, "application closing"));
@@ -108,6 +167,11 @@ public final class VertxOrderApplication {
         }
     }
 
+    /**
+     * 移除已完成的请求登记并唤醒等待清理的应用生命周期。
+     *
+     * @param completed 请求处理完成时调用的观察回调或完成信号
+     */
     private synchronized void finish(CompletableFuture<Void> completed) {
         accepted.remove(completed);
         completed.complete(null);
@@ -141,21 +205,5 @@ public final class VertxOrderApplication {
             });
         }
         return Future.fromCompletionStage(closing);
-    }
-
-    /**
-     * 启动默认示例，端口可由 sample.port 设置。
-     *
-     * @param args 保留的启动参数
-     * @throws Exception 启动失败
-     */
-    public static void main(String[] args) throws Exception {
-        VertxOrderApplication app = start(Integer.getInteger("sample.port", 8084))
-                .toCompletionStage().toCompletableFuture().get();
-        log.info("Vert.x default listening {} (catalog-trade)", app.port());
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            app.close().toCompletionStage().toCompletableFuture().join();
-            log.info("VERTX_DEFAULT_CLOSED");
-        }, "ddd4j-vertx-order-shutdown"));
     }
 }

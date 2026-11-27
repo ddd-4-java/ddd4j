@@ -25,6 +25,9 @@ import java.util.Objects;
 @Getter
 public final class QrCodeOutput {
 
+    /**
+     * 生成的二维码图像字节。
+     */
     private final byte[] bytes;
 
     /**

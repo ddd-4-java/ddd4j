@@ -2,7 +2,8 @@
 
 ## 当前商品交易入口
 
-此模块以 普通 DDD 方式运行共享商品交易。先按[示例总览](../README.md#启动默认订单示例)配置 MySQL。以下命令从仓库根目录运行，使用实际 Maven 版本替换 `<version>`。
+此模块以 普通 DDD 方式运行共享商品交易。先按[示例总览](../README.md#启动默认订单示例)配置 MySQL。以下命令从仓库根目录运行，使用实际
+Maven 版本替换 `<version>`。
 
 ```bash
 module=ddd4j-samples/ddd4j-sample-javalin
@@ -10,22 +11,28 @@ module=ddd4j-samples/ddd4j-sample-javalin
 java -cp "$module/target/ddd4j-sample-javalin-<version>.jar:$(cat "$module/target/runtime-classpath.txt")" io.ddd4j.sample.javalin.JavalinSample
 ```
 
-业务请求携带 `X-Tenant-Id`。商品地址为 `/api/goods/{spuCode}`，订单地址为 `/api/orders/{orderNo}`。支付、取消和履约分别使用订单子路径 `/payment`、`/cancel`、`/fulfill`。
+业务请求携带 `X-Tenant-Id`。商品地址为 `/api/goods/{spuCode}`，订单地址为 `/api/orders/{orderNo}`。支付、取消和履约分别使用订单子路径
+`/payment`、`/cancel`、`/fulfill`。
 
 <details>
 <summary>商品交易迁移前的说明</summary>
 
 ## 默认商品交易入口
 
-默认启动原生应用时，Flyway 先迁移专用 MySQL 库。应用随后提供商品、规格、订单及成交明细的读写示例。[商品交易的数据库配置、四个接口与验证命令](../README.md#启动默认订单示例)。
+默认启动原生应用时，Flyway 先迁移专用 MySQL
+库。应用随后提供商品、规格、订单及成交明细的读写示例。[商品交易的数据库配置、四个接口与验证命令](../README.md#启动默认订单示例)。
 
 ## 兼容订单入口与组件示例
 
-显式调用 `JavalinSample.startBasic(port)`，装配共享 Order，并关闭认证。该入口使用内存存储，无需登录、CommandBus、事件存储、投影调度或 MQ。历史 `start(int)` 入口提供演示 Bearer 认证。`startJdbc(int, JdbcOrderSampleRuntime)` 接收已启动的 JDBC 运行实例，关闭应用句柄时一并停止 Outbox 工作器。
+显式调用 `JavalinSample.startBasic(port)`，装配共享 Order，并关闭认证。该入口使用内存存储，无需登录、CommandBus、事件存储、投影调度或
+MQ。历史 `start(int)` 入口提供演示 Bearer 认证。`startJdbc(int, JdbcOrderSampleRuntime)` 接收已启动的 JDBC
+运行实例，关闭应用句柄时一并停止 Outbox 工作器。
 
-`JavalinBasicContractTest` 通过真实匿名 HTTP 请求验证订单创建、添加订单行、支付和查询。`JavalinJdbcOrderIntegrationTest` 使用 PostgreSQL 验证持久化、发布重试和支付幂等。
+`JavalinBasicContractTest` 通过真实匿名 HTTP 请求验证订单创建、添加订单行、支付和查询。`JavalinJdbcOrderIntegrationTest` 使用
+PostgreSQL 验证持久化、发布重试和支付幂等。
 
-本模块包含两种 DDD 建模示例。兼容入口运行 **Order 充血模型**。单独装配 `GoodsController` 和商品仓储即可运行 **Goods Model/Query**，现有 `GoodsControllerTest` 演示了这组装配。
+本模块包含两种 DDD 建模示例。兼容入口运行 **Order 充血模型**。单独装配 `GoodsController` 和商品仓储即可运行 **Goods
+Model/Query**，现有 `GoodsControllerTest` 演示了这组装配。
 
 ## 🎯 示例目标
 

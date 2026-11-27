@@ -17,18 +17,19 @@ package io.ddd4j.mq.delivery;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/** 验证 Outbox 消息身份、消息头和不可修改快照契约。 */
+/**
+ * 验证 Outbox 消息身份、消息头和不可修改快照契约。
+ */
 class MQOutboxRecordTest {
 
+    /**
+     * 验证<code>record.status()</code> 等于 <code>MQOutboxStatus.PENDING</code>，<code>record.attempts()</code> 等于 <code>0</code>，<code>record.headers().get("tenant")</code> 等于 <code>"tenant-1"</code>。
+     */
     @Test
     void pending_shouldUsePendingStateAndEnforceStableMessageIdHeader() {
         Map<String, String> headers = new LinkedHashMap<>();
@@ -43,6 +44,9 @@ class MQOutboxRecordTest {
         assertEquals("tenant-1", record.headers().get("tenant"));
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void constructor_shouldRejectBlankIdentityAndDestination() {
         assertThrows(IllegalArgumentException.class, () -> MQOutboxRecord.pending("", "orders.created", "{}",
@@ -51,6 +55,9 @@ class MQOutboxRecordTest {
                 Collections.emptyMap(), Instant.EPOCH));
     }
 
+    /**
+     * 验证<code>record.headers().put("other", "value")</code> 抛出 <code>UnsupportedOperationException.class</code>，被测调用 抛出 <code>NullPointerException.class</code>。
+     */
     @Test
     void headers_shouldKeepInputOrderAndRejectNullEntries() {
         Map<String, String> headers = new LinkedHashMap<>();
@@ -73,6 +80,9 @@ class MQOutboxRecordTest {
                 "message-3", "orders.created", "{}", headers, Instant.EPOCH));
     }
 
+    /**
+     * 在测试框架中执行 <code>MQOutboxRecord.pending()</code>、<code>Collections.emptyMap()</code>，验证该场景。
+     */
     @Test
     void toString_shouldMatchRecordValueSemanticsForEveryComponent() {
         MQOutboxRecord record = MQOutboxRecord.pending(

@@ -46,14 +46,41 @@ public class MqttMQProperties extends MQProperties {
      * QoS level: 0 (at most once), 1 (at least once), 2 (exactly once).
      */
     private int qos = 1;
+    /**
+     * 连接代理时是否使用新的 MQTT 会话。
+     */
     private boolean cleanSession = true;
+    /**
+     * MQTT 心跳间隔，单位为秒。
+     */
     private int keepAliveSeconds = 30;
+    /**
+     * 等待 MQTT 连接建立的秒数。
+     */
     private int connectionTimeoutSeconds = 30;
+    /**
+     * MQTT 断线后是否自动尝试重连。
+     */
     private boolean automaticReconnect = true;
+    /**
+     * 单个客户端允许同时未完成的 MQTT 流程数。
+     */
     private int maxInflight = 100;
+    /**
+     * MQTT 遗嘱消息的目标主题。
+     */
     private String willTopic;
+    /**
+     * 客户端异常断开时代理发布的遗嘱内容。
+     */
     private String willPayload;
+    /**
+     * MQTT 遗嘱消息的服务质量等级。
+     */
     private int willQos = 0;
+    /**
+     * 代理是否保留 MQTT 遗嘱消息。
+     */
     private boolean willRetained = false;
 
     /**

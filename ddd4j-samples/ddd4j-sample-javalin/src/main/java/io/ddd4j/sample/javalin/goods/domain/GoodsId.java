@@ -26,6 +26,9 @@ import java.util.Objects;
  */
 public class GoodsId implements Serializable {
 
+    /**
+     * Java 序列化版本标识。
+     */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -33,6 +36,11 @@ public class GoodsId implements Serializable {
      */
     private final Long value;
 
+    /**
+     * 用持久化主键创建商品标识。
+     *
+     * @param value 构造标识或配置对象的原值
+     */
     private GoodsId(Long value) {
         if (Objects.isNull(value) || value <= 0) {
             throw new IllegalArgumentException("goodsId must be positive");
@@ -59,6 +67,12 @@ public class GoodsId implements Serializable {
         return value;
     }
 
+    /**
+     * 根据<code>value</code>比较对象的值是否相等。
+     *
+     * @param o 用来比较的另一个对象，允许为空
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -71,11 +85,21 @@ public class GoodsId implements Serializable {
         return Objects.equals(value, that.value);
     }
 
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         return Objects.hashCode(value);
     }
 
+    /**
+     * 生成用于调试和日志的对象描述。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "GoodsId{" + value + '}';

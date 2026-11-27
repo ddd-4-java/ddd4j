@@ -24,10 +24,18 @@ import java.util.Objects;
  */
 public final class WebRequestContextFactory {
 
+    /**
+     * 为缺少请求标识的调用生成默认值的组件。
+     */
     private final RequestIdGenerator requestIdGenerator;
+    /**
+     * 解析原生连接来源和可信转发地址的组件。
+     */
     private final ClientIpResolver clientIpResolver;
 
-    /** 使用 UUID 请求标识与远端地址解析器创建工厂。 */
+    /**
+     * 使用 UUID 请求标识与远端地址解析器创建工厂。
+     */
     public WebRequestContextFactory() {
         this(RequestIdGenerator.uuid(), ClientIpResolver.remoteAddressOnly());
     }
@@ -36,7 +44,7 @@ public final class WebRequestContextFactory {
      * 使用指定请求标识和客户端 IP 解析器创建工厂。
      *
      * @param requestIdGenerator 请求标识生成器
-     * @param clientIpResolver 客户端 IP 解析器
+     * @param clientIpResolver   客户端 IP 解析器
      */
     public WebRequestContextFactory(RequestIdGenerator requestIdGenerator, ClientIpResolver clientIpResolver) {
         this.requestIdGenerator = Objects.requireNonNull(requestIdGenerator, "requestIdGenerator must not be null");
@@ -56,7 +64,7 @@ public final class WebRequestContextFactory {
     /**
      * 将原始请求数据及已解析的 API 版本规范化为请求上下文。
      *
-     * @param data 原始请求数据
+     * @param data       原始请求数据
      * @param apiVersion 已解析的 API 版本，可为空
      * @return 规范化后的请求上下文
      */

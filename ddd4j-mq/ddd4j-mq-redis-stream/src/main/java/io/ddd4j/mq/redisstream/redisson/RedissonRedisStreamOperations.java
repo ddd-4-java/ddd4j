@@ -36,7 +36,13 @@ import java.util.*;
  */
 public class RedissonRedisStreamOperations implements RedisStreamOperations {
 
+    /**
+     * 执行 Redis Stream 操作的 Redisson 客户端。
+     */
     private final RedissonClient redisson;
+    /**
+     * 关闭适配器时是否应关闭当前 Redisson 客户端。
+     */
     private final boolean closeClient;
 
     /**
@@ -68,12 +74,24 @@ public class RedissonRedisStreamOperations implements RedisStreamOperations {
         this.closeClient = closeClient;
     }
 
+    /**
+     * 按给定地址创建当前适配器使用的 Redis 客户端。
+     *
+     * @param redisUrl Redis 连接地址
+     * @return 新建的原生 Redis 客户端
+     */
     private static RedissonClient createClient(String redisUrl) {
         Config config = new Config();
         config.useSingleServer().setAddress(redisUrl);
         return Redisson.create(config);
     }
 
+    /**
+     * 将时间部分和序号部分组成的文本转换为 Redisson Stream 标识。
+     *
+     * @param entryId Redis Stream 条目的文本标识
+     * @return 对应的 Redisson 消息标识
+     */
     private static StreamMessageId messageId(String entryId) {
         String[] parts = entryId.split("-", 2);
         long id0 = Long.parseLong(parts[0]);
@@ -81,11 +99,28 @@ public class RedissonRedisStreamOperations implements RedisStreamOperations {
         return new StreamMessageId(id0, id1);
     }
 
+    /**
+     * 向 Redis Stream 添加消息。
+     *
+     * <p>Redisson 实现调用 <code>stream(stream).add(StreamAddArgs.entries(fields)).toString()</code>。</p>
+     *
+     * @param stream Stream 名称
+     * @param fields 消息字段
+     * @return 实际返回<code>stream(stream).add(StreamAddArgs.entries(fields)).toString()</code>
+     */
     @Override
     public String add(String stream, Map<String, String> fields) {
         return stream(stream).add(StreamAddArgs.entries(fields)).toString();
     }
 
+    /**
+     * 创建 Redis Stream 消费者组。
+     *
+     * <p>Redisson 实现调用 <code>stream(stream).createGroup(StreamCreateGroupArgs.name(group).id(StreamMessageId.NEWEST).makeStream())</code>。</p>
+     *
+     * @param stream Stream 名称
+     * @param group  消费者组名
+     */
     @Override
     public void createGroup(String stream, String group) {
         try {
@@ -99,6 +134,18 @@ public class RedissonRedisStreamOperations implements RedisStreamOperations {
         }
     }
 
+    /**
+     * 以指定消费者组和消费者身份读取 Redis Stream 消息。
+     *
+     * <p>Redisson 实现调用 <code>stream(stream)</code>。</p>
+     *
+     * @param group       消费者组名
+     * @param consumer    消费者名称
+     * @param count       每次读取的最大条数
+     * @param blockMillis 阻塞等待毫秒数
+     * @param streams     要读取的 Stream 集合
+     * @return 实际返回<code>result</code>
+     */
     @Override
     public Map<String, List<RedisStreamRecord>> readGroup(
             String group,
@@ -124,16 +171,33 @@ public class RedissonRedisStreamOperations implements RedisStreamOperations {
         return result;
     }
 
+    /**
+     * 确认本次投递或将已处理的位置通知 broker。
+     *
+     * <p>Redisson 实现调用 <code>stream(stream).ack(group, messageId(entryId))</code>。</p>
+     *
+     * @param stream  Stream 名称
+     * @param group   消费者组名
+     * @param entryId 消息条目 ID
+     */
     @Override
     public void ack(String stream, String group, String entryId) {
         stream(stream).ack(group, messageId(entryId));
     }
 
+    /**
+     * 返回此适配器持有的原生客户端。
+     *
+     * @return 底层客户端实例
+     */
     @Override
     public Object nativeClient() {
         return redisson;
     }
 
+    /**
+     * 仅在拥有客户端时关闭 Redisson。
+     */
     @Override
     public void close() {
         if (closeClient) {
@@ -141,6 +205,12 @@ public class RedissonRedisStreamOperations implements RedisStreamOperations {
         }
     }
 
+    /**
+     * 取得当前 Redis Stream 对应的 Redisson 句柄。
+     *
+     * @param stream 要访问的 Redis Stream 键
+     * @return 给定 Redis Stream 的原生操作对象
+     */
     private RStream<String, String> stream(String stream) {
         return redisson.getStream(stream);
     }

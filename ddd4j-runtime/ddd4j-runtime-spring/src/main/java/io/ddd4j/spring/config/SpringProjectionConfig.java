@@ -18,6 +18,12 @@ import java.util.Collection;
  * 不创建内存仓储、事件源或线程池。已有旧入口或用户管理器时复用它。
  */
 public final class SpringProjectionConfig implements DeferredImportSelector {
+    /**
+     * 选择当前配置导入的 Spring 组件定义。
+     *
+     * @param metadata 框架传入的注解元数据
+     * @return 需要由 Spring 导入的配置类名数组
+     */
     @Override
     public String[] selectImports(AnnotationMetadata metadata) {
         return new String[]{ProjectionConfiguration.class.getName()};
@@ -60,10 +66,22 @@ public final class SpringProjectionConfig implements DeferredImportSelector {
      * 在 Bean 注册阶段检查平台调度器。
      */
     public static final class MissingScheduler implements ConfigurationCondition {
+        /**
+         * 选择评估缺失 Bean 条件的配置阶段。
+         *
+         * @return Spring 注册配置 Bean 时评估的阶段
+         */
         public ConfigurationPhase getConfigurationPhase() {
             return ConfigurationPhase.REGISTER_BEAN;
         }
 
+        /**
+         * 检查当前容器是否需要注册相应的默认组件。
+         *
+         * @param context  当前框架传入的执行或容器上下文
+         * @param metadata 框架传入的注解元数据
+         * @return 满足默认组件的注册条件时返回 true
+         */
         public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
             return context.getBeanFactory().getBeanNamesForType(ViewScheduler.class, true, false).length == 0;
         }
@@ -73,10 +91,22 @@ public final class SpringProjectionConfig implements DeferredImportSelector {
      * 在 Bean 注册阶段检查已有视图管理器。
      */
     public static final class MissingManager implements ConfigurationCondition {
+        /**
+         * 选择评估缺失 Bean 条件的配置阶段。
+         *
+         * @return Spring 注册配置 Bean 时评估的阶段
+         */
         public ConfigurationPhase getConfigurationPhase() {
             return ConfigurationPhase.REGISTER_BEAN;
         }
 
+        /**
+         * 检查当前容器是否需要注册相应的默认组件。
+         *
+         * @param context  当前框架传入的执行或容器上下文
+         * @param metadata 框架传入的注解元数据
+         * @return 满足默认组件的注册条件时返回 true
+         */
         public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
             return context.getBeanFactory().getBeanNamesForType(ViewManager.class, true, false).length == 0;
         }

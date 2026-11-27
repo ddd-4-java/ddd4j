@@ -46,10 +46,22 @@ import static org.junit.jupiter.api.Assertions.*;
 @org.junit.jupiter.api.parallel.Execution(org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD)
 class AuthControllerTest {
 
+    /**
+     * 由当前测试启动和关闭的应用实例。
+     */
     private static Javalin app;
+    /**
+     * 用于发送 HTTP 请求的客户端。
+     */
     private static HttpClient httpClient;
+    /**
+     * 当前服务的 HTTP 基础地址。
+     */
     private static String baseUrl;
 
+    /**
+     * 测试执行前执行 <code>TestSupport.start()</code>、<code>app.port()</code>、<code>HttpClient.newBuilder()</code>、<code>Duration.ofSeconds()</code> 完成资源准备。
+     */
     @BeforeAll
     void startServer() {
         app = TestSupport.start();
@@ -57,6 +69,9 @@ class AuthControllerTest {
         httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
     }
 
+    /**
+     * 测试结束后执行 <code>app.stop()</code> 完成资源回收或状态恢复。
+     */
     @AfterAll
     void stopServer() {
         if (Objects.nonNull(app)) {
@@ -78,6 +93,14 @@ class AuthControllerTest {
 
     // ------------------- HTTP 助手 -------------------
 
+    /**
+     * 调用 <code>httpClient.send()</code>、<code>HttpRequest.newBuilder()</code>、<code>URI.create()</code> 执行当前夹具操作。
+     *
+     * @param path 测试请求的资源路径或待访问文件路径
+     * @param body 当前请求或响应中要读取的正文
+     * @return 提供给后续契约断言的 <code>HttpResponse&lt;String&gt;</code> 结果
+     * @throws Exception 发起测试请求时失败
+     */
     private HttpResponse<String> postJson(String path, String body) throws Exception {
         return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
                         .header("Content-Type", "application/json")
@@ -85,6 +108,14 @@ class AuthControllerTest {
                 HttpResponse.BodyHandlers.ofString());
     }
 
+    /**
+     * 调用 <code>httpClient.send()</code>、<code>HttpRequest.newBuilder()</code>、<code>URI.create()</code> 执行当前夹具操作。
+     *
+     * @param path 测试请求的资源路径或待访问文件路径
+     * @param body 当前请求或响应中要读取的正文
+     * @return 提供给后续契约断言的 <code>HttpResponse&lt;String&gt;</code> 结果
+     * @throws Exception 发起测试请求时失败
+     */
     private HttpResponse<String> putJson(String path, String body) throws Exception {
         return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
                         .header("Content-Type", "application/json")
@@ -92,11 +123,25 @@ class AuthControllerTest {
                 HttpResponse.BodyHandlers.ofString());
     }
 
+    /**
+     * 通过 <code>httpClient.send()</code> 取得当前测试需要的结果。
+     *
+     * @param path 测试请求的资源路径或待访问文件路径
+     * @return 当前测试使用的结果，取自 <code>httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).DELETE().build(), HttpResponse.BodyHandlers.ofString())</code>
+     * @throws Exception 发起测试请求时失败
+     */
     private HttpResponse<String> delete(String path) throws Exception {
         return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).DELETE().build(),
                 HttpResponse.BodyHandlers.ofString());
     }
 
+    /**
+     * 通过 <code>httpClient.send()</code> 取得当前测试需要的结果。
+     *
+     * @param path 测试请求的资源路径或待访问文件路径
+     * @return 当前测试使用的结果，取自 <code>httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).GET().build(), HttpResponse.BodyHandlers.ofString())</code>
+     * @throws Exception 发起测试请求时失败
+     */
     private HttpResponse<String> get(String path) throws Exception {
         return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).GET().build(),
                 HttpResponse.BodyHandlers.ofString());
@@ -104,6 +149,11 @@ class AuthControllerTest {
 
     /**
      * 登录并返回 token（每个测试用独立会话）。
+     *
+     * @param username 用于登录的测试账号
+     * @param password 用于登录的测试密码
+     * @return 本次测试登录签发的会话令牌
+     * @throws Exception 登录请求或响应解析失败
      */
     private String login(String username, String password) throws Exception {
         HttpResponse<String> r = postJson("/auth/login",
@@ -121,21 +171,48 @@ class AuthControllerTest {
 
     /**
      * 登出（避免多 token 在全局 SaToken 状态中残留）。
+     *
+     * @param token 当前测试会话的登录令牌
+     * @throws Exception 注销 HTTP 请求失败
      */
     private void logout(String token) throws Exception {
         authPost(token, "/auth/logout", "");
     }
 
+    /**
+     * 通过 <code>HttpRequest.newBuilder()</code> 取得当前测试需要的结果。
+     *
+     * @param token 从测试登录获得的会话凭据
+     * @param path  测试请求的资源路径或待访问文件路径
+     * @return 当前测试使用的结果，取自 <code>HttpRequest.newBuilder(URI.create(baseUrl + path)).header("satoken", token)</code>
+     */
     private HttpRequest.Builder authReq(String token, String path) {
         // sa-token 默认从 header "satoken" 读取 token；mock 上下文未注入 Authorization 支持。
         return HttpRequest.newBuilder(URI.create(baseUrl + path))
                 .header("satoken", token);
     }
 
+    /**
+     * 通过 <code>httpClient.send()</code> 取得当前测试需要的结果。
+     *
+     * @param token 从测试登录获得的会话凭据
+     * @param path  测试请求的资源路径或待访问文件路径
+     * @return 当前测试使用的结果，取自 <code>httpClient.send(authReq(token, path).GET().build(), HttpResponse.BodyHandlers.ofString())</code>
+     * @throws Exception 发起测试请求时失败
+     */
     private HttpResponse<String> authGet(String token, String path) throws Exception {
         return httpClient.send(authReq(token, path).GET().build(), HttpResponse.BodyHandlers.ofString());
     }
 
+    /**
+     * 调用 <code>httpClient.send()</code>、<code>authReq()</code>、<code>HttpRequest.BodyPublishers.ofString()</code> 执行当前夹具操作。
+     *
+     * @param token 从测试登录获得的会话凭据
+     * @param path  测试请求的资源路径或待访问文件路径
+     * @param body  当前请求或响应中要读取的正文
+     * @return 提供给后续契约断言的 <code>HttpResponse&lt;String&gt;</code> 结果
+     * @throws Exception 发起测试请求时失败
+     */
     private HttpResponse<String> authPost(String token, String path, String body) throws Exception {
         return httpClient.send(authReq(token, path)
                         .header("Content-Type", "application/json")
@@ -143,12 +220,25 @@ class AuthControllerTest {
                 HttpResponse.BodyHandlers.ofString());
     }
 
+    /**
+     * 通过 <code>httpClient.send()</code> 取得当前测试需要的结果。
+     *
+     * @param token 从测试登录获得的会话凭据
+     * @param path  测试请求的资源路径或待访问文件路径
+     * @return 当前测试使用的结果，取自 <code>httpClient.send(authReq(token, path).DELETE().build(), HttpResponse.BodyHandlers.ofString())</code>
+     * @throws Exception 发起测试请求时失败
+     */
     private HttpResponse<String> authDelete(String token, String path) throws Exception {
         return httpClient.send(authReq(token, path).DELETE().build(), HttpResponse.BodyHandlers.ofString());
     }
 
     // =================== 1) 登录 / 登出 / 当前用户 / 状态 / 踢人（5）====================
 
+    /**
+     * 验证<code>token</code>非空，<code>token.length() &gt; 0</code>为真。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void login_asAdmin_shouldReturnToken() throws Exception {
         String token = login("admin", "admin");
@@ -156,6 +246,11 @@ class AuthControllerTest {
         assertTrue(token.length() > 0);
     }
 
+    /**
+     * 验证<code>token</code>非空，<code>token.length() &gt; 0</code>为真。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void login_asUser_shouldReturnToken() throws Exception {
         String token = login("user", "user");
@@ -163,6 +258,11 @@ class AuthControllerTest {
         assertTrue(token.length() > 0);
     }
 
+    /**
+     * 口令无效时请求 <code>POST /auth/login</code>，确认 HTTP 响应状态为 401。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void login_withWrongPassword_shouldReturn401() throws Exception {
         HttpResponse<String> r = postJson("/auth/login",
@@ -170,6 +270,11 @@ class AuthControllerTest {
         assertEquals(401, r.statusCode());
     }
 
+    /**
+     * 请求 <code>POST /auth/login</code>，确认 HTTP 响应状态为 401。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void login_disabledUser_shouldReturn401() throws Exception {
         HttpResponse<String> r = postJson("/auth/login",
@@ -177,6 +282,11 @@ class AuthControllerTest {
         assertEquals(401, r.statusCode());
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("\"authenticated\":false")</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void me_unauthenticated_shouldReturnOkWithFalse() throws Exception {
         HttpResponse<String> r = get("/auth/me");
@@ -184,6 +294,11 @@ class AuthControllerTest {
         assertTrue(r.body().contains("\"authenticated\":false"));
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("\"login\":false")</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void status_unauthenticated_shouldReturnOk() throws Exception {
         HttpResponse<String> r = get("/auth/status");
@@ -193,6 +308,11 @@ class AuthControllerTest {
 
     // =================== 2) 角色鉴权 /auth/admin 和 /auth/manager（6）====================
 
+    /**
+     * 使用管理员会话时请求 <code>GET /auth/admin</code>，确认 HTTP 响应状态为 200。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void adminArea_asAdmin_shouldBeOk() throws Exception {
         String token = login("admin", "admin");
@@ -201,6 +321,11 @@ class AuthControllerTest {
         assertTrue(r.body().contains("admin area accessed"));
     }
 
+    /**
+     * 使用普通用户会话时请求 <code>GET /auth/admin</code>，确认 HTTP 响应状态为 403。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void adminArea_asUser_shouldBeForbidden() throws Exception {
         String token = login("user", "user");
@@ -208,12 +333,22 @@ class AuthControllerTest {
         assertEquals(403, r.statusCode());
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>401</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void adminArea_unauthenticated_shouldBe401() throws Exception {
         HttpResponse<String> r = get("/auth/admin");
         assertEquals(401, r.statusCode());
     }
 
+    /**
+     * 使用管理员会话时请求 <code>GET /auth/manager</code>，确认 HTTP 响应状态为 403。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void managerArea_asAdmin_shouldBeForbidden() throws Exception {
         // admin 不是 manager 角色
@@ -222,6 +357,11 @@ class AuthControllerTest {
         assertEquals(403, r.statusCode());
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>401</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void managerArea_unauthenticated_shouldBe401() throws Exception {
         HttpResponse<String> r = get("/auth/manager");
@@ -230,6 +370,11 @@ class AuthControllerTest {
 
     // =================== 3) 权限鉴权 /auth/users /auth/orders/{id}/pay（6）====================
 
+    /**
+     * 使用管理员会话时请求 <code>GET /auth/users</code>，确认 HTTP 响应状态为 200。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void usersList_asAdmin_shouldBeOk() throws Exception {
         String token = login("admin", "admin");
@@ -238,6 +383,11 @@ class AuthControllerTest {
         assertTrue(r.body().contains("user list accessed"));
     }
 
+    /**
+     * 使用普通用户会话时请求 <code>GET /auth/users</code>，确认 HTTP 响应状态为 200。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void usersList_asUser_shouldBeOk() throws Exception {
         // user 角色拥有 user:list 权限
@@ -246,12 +396,22 @@ class AuthControllerTest {
         assertEquals(200, r.statusCode());
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>401</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void usersList_unauthenticated_shouldBe401() throws Exception {
         HttpResponse<String> r = get("/auth/users");
         assertEquals(401, r.statusCode());
     }
 
+    /**
+     * 使用管理员会话时请求 <code>POST /auth/orders/abc/pay</code>，确认 HTTP 响应状态为 200。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void orderPay_asAdmin_shouldBeOk() throws Exception {
         // admin 拥有 order:pay
@@ -261,6 +421,11 @@ class AuthControllerTest {
         assertTrue(r.body().contains("order paid"));
     }
 
+    /**
+     * 使用普通用户会话时请求 <code>POST /auth/orders/abc/pay</code>，确认 HTTP 响应状态为 403。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void orderPay_asUser_shouldBeForbidden() throws Exception {
         // user 没有 order:pay
@@ -269,6 +434,11 @@ class AuthControllerTest {
         assertEquals(403, r.statusCode());
     }
 
+    /**
+     * 已登录时请求 <code>POST /auth/orders/abc/pay</code>，确认 HTTP 响应状态为 401。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void orderPay_unauthenticated_shouldBe401() throws Exception {
         HttpResponse<String> r = postJson("/auth/orders/abc/pay", "");
@@ -277,6 +447,11 @@ class AuthControllerTest {
 
     // =================== 4) 组合鉴权 admin + user:delete（4）====================
 
+    /**
+     * 使用管理员会话时请求 <code>DELETE /auth/users/10002</code>，确认 HTTP 响应状态为 200。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void deleteUser_asAdmin_shouldBeOk() throws Exception {
         String token = login("admin", "admin");
@@ -285,6 +460,11 @@ class AuthControllerTest {
         assertTrue(r.body().contains("\"success\":true"));
     }
 
+    /**
+     * 使用普通用户会话时请求 <code>DELETE /auth/users/10001</code>，确认 HTTP 响应状态为 403。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void deleteUser_asUser_shouldBeForbidden() throws Exception {
         // user 没有 admin 角色
@@ -293,12 +473,22 @@ class AuthControllerTest {
         assertEquals(403, r.statusCode());
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>401</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void deleteUser_unauthenticated_shouldBe401() throws Exception {
         HttpResponse<String> r = delete("/auth/users/10001");
         assertEquals(401, r.statusCode());
     }
 
+    /**
+     * 使用管理员会话时请求 <code>POST /auth/check/role</code>，确认 HTTP 响应状态为 200。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void checkRole_asAdmin_shouldReturnTrueForAdmin() throws Exception {
         String token = login("admin", "admin");
@@ -307,6 +497,11 @@ class AuthControllerTest {
         assertTrue(r.body().contains("\"has\":true"));
     }
 
+    /**
+     * 使用普通用户会话时请求 <code>POST /auth/check/role</code>，确认 HTTP 响应状态为 200。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void checkRole_asUser_shouldReturnFalseForAdmin() throws Exception {
         String token = login("user", "user");
@@ -317,6 +512,11 @@ class AuthControllerTest {
 
     // =================== 5) RBAC 资源管理（10）====================
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("admin")</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void listUsers_shouldReturn3SeedUsers() throws Exception {
         HttpResponse<String> r = get("/rbac/admin/users");
@@ -326,6 +526,11 @@ class AuthControllerTest {
         assertTrue(r.body().contains("disabled"));
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("admin")</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void getUser_byId_shouldReturnUser() throws Exception {
         HttpResponse<String> r = get("/rbac/admin/users/10001");
@@ -333,6 +538,11 @@ class AuthControllerTest {
         assertTrue(r.body().contains("admin"));
     }
 
+    /**
+     * 请求 <code>POST /rbac/admin/users</code>，确认 HTTP 响应状态为 201。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void createUser_shouldReturn201() throws Exception {
         HttpResponse<String> r = postJson("/rbac/admin/users",
@@ -341,6 +551,11 @@ class AuthControllerTest {
         assertTrue(r.body().contains("20001"));
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void updateUser_shouldReturn200() throws Exception {
         HttpResponse<String> r = putJson("/rbac/admin/users/10001",
@@ -348,6 +563,11 @@ class AuthControllerTest {
         assertEquals(200, r.statusCode());
     }
 
+    /**
+     * 请求 <code>POST /rbac/admin/users</code>，确认 HTTP 响应状态为 200。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void deleteUser_byRbacAdmin_shouldReturn200() throws Exception {
         // 先创建一个新用户，再删它
@@ -357,6 +577,11 @@ class AuthControllerTest {
         assertEquals(200, r.statusCode());
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("admin")</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void listRoles_shouldReturn3SeedRoles() throws Exception {
         HttpResponse<String> r = get("/rbac/admin/roles");
@@ -366,6 +591,11 @@ class AuthControllerTest {
         assertTrue(r.body().contains("manager"));
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("admin")</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void getRole_byId_shouldReturnRole() throws Exception {
         HttpResponse<String> r = get("/rbac/admin/roles/R001");
@@ -373,6 +603,11 @@ class AuthControllerTest {
         assertTrue(r.body().contains("admin"));
     }
 
+    /**
+     * 请求 <code>POST /rbac/admin/roles</code>，确认 HTTP 响应状态为 201。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void createRole_shouldReturn201() throws Exception {
         HttpResponse<String> r = postJson("/rbac/admin/roles",
@@ -381,6 +616,11 @@ class AuthControllerTest {
         assertTrue(r.body().contains("R100"));
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("user:add")</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void listPermissions_shouldReturn6SeedPermissions() throws Exception {
         HttpResponse<String> r = get("/rbac/admin/permissions");
@@ -393,6 +633,11 @@ class AuthControllerTest {
         assertTrue(r.body().contains("order:pay"));
     }
 
+    /**
+     * 请求 <code>POST /rbac/admin/users/10002/roles</code>，确认 HTTP 响应状态为 200。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void assignRolesToUser_shouldReturn200() throws Exception {
         // 把 user 用户（10002）的角色改成 manager
@@ -402,6 +647,11 @@ class AuthControllerTest {
         assertTrue(r.body().contains("10002"));
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("user:add")</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void getUserPermissions_adminShouldHaveAll() throws Exception {
         HttpResponse<String> r = get("/rbac/admin/users/10001/permissions");
@@ -414,6 +664,11 @@ class AuthControllerTest {
         assertTrue(r.body().contains("order:pay"));
     }
 
+    /**
+     * 验证<code>r.statusCode()</code> 等于 <code>200</code>，<code>r.body().contains("user:add")</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void getRolePermissions_adminShouldHaveAll() throws Exception {
         HttpResponse<String> r = get("/rbac/admin/roles/R001/permissions");
@@ -422,6 +677,11 @@ class AuthControllerTest {
         assertTrue(r.body().contains("order:pay"));
     }
 
+    /**
+     * 请求 <code>POST /rbac/admin/roles/R002/permissions</code>，确认 HTTP 响应状态为 200。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void assignPermissionsToRole_shouldReturn200() throws Exception {
         // 给 user 角色加 order:pay
@@ -431,6 +691,11 @@ class AuthControllerTest {
         assertTrue(r.body().contains("R002"));
     }
 
+    /**
+     * 请求 <code>POST /auth/kickout</code>，确认 HTTP 响应状态为 200。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void kickout_shouldReturn200() throws Exception {
         HttpResponse<String> r = postJson("/auth/kickout", "{\"userId\":\"10002\"}");

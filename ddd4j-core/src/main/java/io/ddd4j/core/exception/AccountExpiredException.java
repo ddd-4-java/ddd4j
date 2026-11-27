@@ -31,6 +31,9 @@ import java.io.Serial;
  */
 public class AccountExpiredException extends AuthenticationException {
 
+    /**
+     * Java 序列化版本标识。
+     */
     @Serial
     private static final long serialVersionUID = 1L;
 

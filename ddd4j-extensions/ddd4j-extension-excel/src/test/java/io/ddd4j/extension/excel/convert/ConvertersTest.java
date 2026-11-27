@@ -32,6 +32,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class ConvertersTest {
 
+    /**
+     * 验证<code>cell.getStringValue()</code> 等于 <code>"2026-07-13"</code>，<code>parsed</code> 等于 <code>original</code>。
+     */
     @Test
     void localDateConverter_should_roundtrip_iso_format() {
         LocalDateConverter c = new LocalDateConverter();
@@ -49,6 +52,9 @@ class ConvertersTest {
         assertThat(parsed).isEqualTo(original);
     }
 
+    /**
+     * 验证<code>cell.getStringValue()</code> 等于 <code>"2026/07/13"</code>。
+     */
     @Test
     void localDateConverter_should_support_custom_pattern() {
         LocalDateConverter c = new LocalDateConverter("yyyy/MM/dd");
@@ -57,6 +63,9 @@ class ConvertersTest {
         assertThat(cell.getStringValue()).isEqualTo("2026/07/13");
     }
 
+    /**
+     * 验证<code>c.convertToJavaData(rcd, null, new GlobalConfiguration())</code>为空，<code>c.convertToExcelData(null, null, new GlobalConfiguration()).getStringValue()</code>为空。
+     */
     @Test
     void localDateConverter_null_input_should_return_null() {
         LocalDateConverter c = new LocalDateConverter();
@@ -66,6 +75,9 @@ class ConvertersTest {
         assertThat(c.convertToExcelData(null, null, new GlobalConfiguration()).getStringValue()).isEmpty();
     }
 
+    /**
+     * 验证<code>cell.getStringValue()</code> 等于 <code>"2026-07-13 14:30:00"</code>，<code>c.convertToJavaData(rcd, null, new GlobalConfiguration())</code> 等于 <code>original</code>。
+     */
     @Test
     void localDateTimeConverter_should_roundtrip_default_pattern() {
         LocalDateTimeConverter c = new LocalDateTimeConverter();
@@ -78,6 +90,9 @@ class ConvertersTest {
         assertThat(c.convertToJavaData(rcd, null, new GlobalConfiguration())).isEqualTo(original);
     }
 
+    /**
+     * 验证<code>cell.getStringValue()</code> 等于 <code>"1,234,567.89"</code>。
+     */
     @Test
     void bigDecimalStringConverter_should_roundtrip_with_thousands() {
         BigDecimalStringConverter c = new BigDecimalStringConverter();
@@ -94,6 +109,9 @@ class ConvertersTest {
         assertThat(parsed).isEqualByComparingTo(original);
     }
 
+    /**
+     * 验证<code>cell.getStringValue()</code> 等于 <code>"ACTIVE"</code>，<code>c.convertToJavaData(rcd, null, new GlobalConfiguration())</code> 等于 <code>TestEnum.INACTIVE</code>。
+     */
     @Test
     void enumNameConverter_should_roundtrip_by_name() {
         TestEnumConverter c = new TestEnumConverter();
@@ -106,6 +124,9 @@ class ConvertersTest {
         assertThat(c.convertToJavaData(rcd, null, new GlobalConfiguration())).isEqualTo(TestEnum.INACTIVE);
     }
 
+    /**
+     * 验证<code>c.convertToJavaData(rcd, null, new GlobalConfiguration())</code> 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void enumNameConverter_unknown_label_should_throw() {
         TestEnumConverter c = new TestEnumConverter();
@@ -116,12 +137,31 @@ class ConvertersTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    enum TestEnum {ACTIVE, INACTIVE, PENDING}
+    /**
+     * 将 <code>ACTIVE</code>、<code>INACTIVE</code>、<code>PENDING</code> 等状态一起传入当前测试，供调用或结果断言使用。
+     */
+    enum TestEnum {
+        /**
+         * 当前测试枚举用于覆盖分支的 <code>ACTIVE</code> 值。
+         */
+        ACTIVE,
+        /**
+         * 当前测试枚举用于覆盖分支的 <code>INACTIVE</code> 值。
+         */
+        INACTIVE,
+        /**
+         * 当前测试枚举用于覆盖分支的 <code>PENDING</code> 值。
+         */
+        PENDING
+    }
 
     /**
      * 用户自定义枚举 converter 子类（典型用法样板）。
      */
     static class TestEnumConverter extends EnumNameConverter<TestEnum> {
+        /**
+         * 使用 <code>super()</code> 初始化 <code>TestEnumConverter</code> 测试夹具。
+         */
         TestEnumConverter() {
             super(TestEnum.class);
         }

@@ -27,7 +27,9 @@ import io.ddd4j.web.core.error.WebStatusException;
  */
 public class ApiVersionRejectedException extends WebStatusException {
 
-    /** 客户端错误状态码（400 Bad Request）。 */
+    /**
+     * 客户端错误状态码（400 Bad Request）。
+     */
     public static final int STATUS = 400;
 
     /**

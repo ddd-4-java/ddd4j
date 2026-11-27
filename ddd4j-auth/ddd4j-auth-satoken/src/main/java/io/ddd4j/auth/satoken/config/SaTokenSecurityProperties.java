@@ -32,22 +32,49 @@ import java.util.Objects;
 @Data
 public class SaTokenSecurityProperties {
 
+    /**
+     * JWT 签名密钥允许的最小 UTF-8 字节数。
+     */
     private static final int MINIMUM_JWT_SECRET_BYTES = 32;
 
+    /**
+     * 当前应用隔离令牌使用的命名空间。
+     */
     private String tokenNamespace = "ddd4j";
 
+    /**
+     * 登录与校验使用的 Sa-Token 账号域。
+     */
     private String loginType = "login";
 
+    /**
+     * 设置令牌有效期的秒数。
+     */
     private long tokenTtlSeconds = 7_200L;
 
+    /**
+     * 令牌连续无访问时的失效秒数。
+     */
     private long activeTimeoutSeconds = -1L;
 
+    /**
+     * 当前启用的认证模式。
+     */
     private SaTokenAuthenticationMode authenticationMode = SaTokenAuthenticationMode.SESSION;
 
+    /**
+     * 用于签发和验签的 JWT 密钥配置。
+     */
     private String jwtSecretKey;
 
+    /**
+     * JWT 中约定的签发方。
+     */
     private String jwtIssuer;
 
+    /**
+     * JWT 中约定的接收方。
+     */
     private String jwtAudience;
 
     /**
@@ -83,6 +110,11 @@ public class SaTokenSecurityProperties {
         }
     }
 
+    /**
+     * 校验 JWT 密钥字节长度和必填签发声明。
+     *
+     * @throws IllegalArgumentException JWT 配置不满足密钥长度或声明要求
+     */
     private void validateJwtConfiguration() {
         if (StrKit.isBlank(jwtSecretKey)
                 || jwtSecretKey.getBytes(StandardCharsets.UTF_8).length < MINIMUM_JWT_SECRET_BYTES) {

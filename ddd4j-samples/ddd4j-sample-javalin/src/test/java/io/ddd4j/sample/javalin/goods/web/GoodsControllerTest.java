@@ -58,12 +58,27 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class GoodsControllerTest {
 
+    /**
+     * 负责转换测试或协议正文中 JSON 数据的 Jackson 映射器。
+     */
     private static final ObjectMapper JSON = new ObjectMapper();
 
+    /**
+     * 由当前测试启动和关闭的应用实例。
+     */
     private static Javalin app;
+    /**
+     * 用于发送 HTTP 请求的客户端。
+     */
     private static HttpClient httpClient;
+    /**
+     * 当前服务的 HTTP 基础地址。
+     */
     private static String baseUrl;
 
+    /**
+     * 测试执行前执行 <code>BaseContext.inject()</code>、<code>RepositoryRegistry.register()</code>、<code>Javalin.create()</code>、<code>cfg.jsonMapper()</code> 完成资源准备。
+     */
     @BeforeAll
     static void startApp() {
         BaseContext.inject(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, new NoOpDomainEventPublisher());
@@ -86,6 +101,9 @@ class GoodsControllerTest {
         httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
     }
 
+    /**
+     * 测试结束后执行 <code>app.stop()</code> 完成资源回收或状态恢复。
+     */
     @AfterAll
     static void stopApp() {
         if (Objects.nonNull(app)) {
@@ -93,6 +111,12 @@ class GoodsControllerTest {
         }
     }
 
+    /**
+     * 通过 <code>body.substring()</code> 取得当前测试需要的结果。
+     *
+     * @param body 当前请求或响应中要读取的正文
+     * @return 当前测试使用的结果，取自 <code>body.substring(start, end)</code>
+     */
     private static String extractId(String body) {
         int idx = body.indexOf("\"id\":");
         if (idx < 0) {
@@ -110,6 +134,13 @@ class GoodsControllerTest {
         return body.substring(start, end);
     }
 
+    /**
+     * 通过 <code>body.path()</code> 取得当前测试需要的结果。
+     *
+     * @param response 当前请求已收到的响应
+     * @return 当前测试使用的结果，取自 <code>body.path("data")</code>
+     * @throws Exception 处理测试数据的序列化时失败
+     */
     private JsonNode queryData(HttpResponse<String> response) throws Exception {
         assertEquals(200, response.statusCode(), response.body());
         JsonNode body = JSON.readTree(response.body());
@@ -117,6 +148,15 @@ class GoodsControllerTest {
         return body.path("data");
     }
 
+    /**
+     * 通过 <code>extractId()</code> 取得当前测试需要的结果。
+     *
+     * @param code  用于定位目标测试记录的业务编码
+     * @param name  当前测试指定的对象或属性名称
+     * @param price 传给 <code>postJson()</code> 的 <code>String</code> 输入
+     * @return 当前测试使用的结果，取自 <code>extractId(created.body())</code>
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     private String createFixture(String code, String name, String price) throws Exception {
         HttpResponse<String> created = postJson("/api/goods",
                 "{\"code\":\"" + code + "\",\"name\":\"" + name + "\",\"price\":" + price + ",\"stock\":1}");
@@ -124,6 +164,14 @@ class GoodsControllerTest {
         return extractId(created.body());
     }
 
+    /**
+     * 调用 <code>httpClient.send()</code>、<code>HttpRequest.newBuilder()</code>、<code>URI.create()</code> 执行当前夹具操作。
+     *
+     * @param path 测试请求的资源路径或待访问文件路径
+     * @param body 当前请求或响应中要读取的正文
+     * @return 提供给后续契约断言的 <code>HttpResponse&lt;String&gt;</code> 结果
+     * @throws Exception 发起测试请求时失败
+     */
     private HttpResponse<String> postJson(String path, String body) throws Exception {
         return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
                         .header("Content-Type", "application/json")
@@ -131,6 +179,14 @@ class GoodsControllerTest {
                 HttpResponse.BodyHandlers.ofString());
     }
 
+    /**
+     * 调用 <code>httpClient.send()</code>、<code>HttpRequest.newBuilder()</code>、<code>URI.create()</code> 执行当前夹具操作。
+     *
+     * @param path 测试请求的资源路径或待访问文件路径
+     * @param body 当前请求或响应中要读取的正文
+     * @return 提供给后续契约断言的 <code>HttpResponse&lt;String&gt;</code> 结果
+     * @throws Exception 发起测试请求时失败
+     */
     private HttpResponse<String> putJson(String path, String body) throws Exception {
         return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
                         .header("Content-Type", "application/json")
@@ -138,11 +194,25 @@ class GoodsControllerTest {
                 HttpResponse.BodyHandlers.ofString());
     }
 
+    /**
+     * 调用 <code>httpClient.send()</code>、<code>HttpRequest.newBuilder()</code>、<code>URI.create()</code> 执行当前夹具操作。
+     *
+     * @param path 测试请求的资源路径或待访问文件路径
+     * @return 提供给后续契约断言的 <code>HttpResponse&lt;String&gt;</code> 结果
+     * @throws Exception 发起测试请求时失败
+     */
     private HttpResponse<String> put(String path) throws Exception {
         return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).PUT(HttpRequest.BodyPublishers.noBody()).build(),
                 HttpResponse.BodyHandlers.ofString());
     }
 
+    /**
+     * 通过 <code>httpClient.send()</code> 取得当前测试需要的结果。
+     *
+     * @param path 测试请求的资源路径或待访问文件路径
+     * @return 当前测试使用的结果，取自 <code>httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).DELETE().build(), HttpResponse.BodyHandlers.ofString())</code>
+     * @throws Exception 发起测试请求时失败
+     */
     private HttpResponse<String> delete(String path) throws Exception {
         return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).DELETE().build(),
                 HttpResponse.BodyHandlers.ofString());
@@ -150,11 +220,23 @@ class GoodsControllerTest {
 
     // ---------- 1) create ----------
 
+    /**
+     * 通过 <code>httpClient.send()</code> 取得当前测试需要的结果。
+     *
+     * @param path 测试请求的资源路径或待访问文件路径
+     * @return 当前测试使用的结果，取自 <code>httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).GET().build(), HttpResponse.BodyHandlers.ofString())</code>
+     * @throws Exception 发起测试请求时失败
+     */
     private HttpResponse<String> get(String path) throws Exception {
         return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).GET().build(),
                 HttpResponse.BodyHandlers.ofString());
     }
 
+    /**
+     * 请求 <code>POST /api/goods</code>，确认 HTTP 响应状态为 201。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void createGoods_shouldReturn201() throws Exception {
         HttpResponse<String> resp = postJson("/api/goods",
@@ -164,6 +246,11 @@ class GoodsControllerTest {
         assertTrue(resp.body().contains("\"status\":\"DRAFT\""));
     }
 
+    /**
+     * 验证<code>dup.statusCode() &gt;= 400</code>为真。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void createGoods_duplicateCode_shouldReturn4xxOr5xx() throws Exception {
         postJson("/api/goods", "{\"code\":\"SKU-DUP\",\"name\":\"A\",\"price\":1.00,\"stock\":1}");
@@ -172,6 +259,11 @@ class GoodsControllerTest {
         assertTrue(dup.statusCode() >= 400);
     }
 
+    /**
+     * 验证<code>resp.statusCode() &gt;= 400</code>为真。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void createGoods_blankCode_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> resp = postJson("/api/goods",
@@ -179,6 +271,11 @@ class GoodsControllerTest {
         assertTrue(resp.statusCode() >= 400);
     }
 
+    /**
+     * 验证<code>resp.statusCode() &gt;= 400</code>为真。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void createGoods_negativePrice_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> resp = postJson("/api/goods",
@@ -188,6 +285,11 @@ class GoodsControllerTest {
 
     // ---------- 2) update ----------
 
+    /**
+     * 验证<code>resp.statusCode() &gt;= 400</code>为真。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void createGoods_negativeStock_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> resp = postJson("/api/goods",
@@ -195,6 +297,11 @@ class GoodsControllerTest {
         assertTrue(resp.statusCode() >= 400);
     }
 
+    /**
+     * 请求 <code>POST /api/goods</code>，确认 HTTP 响应状态为 200。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void updateGoods_shouldChangeNameAndPrice() throws Exception {
         HttpResponse<String> create = postJson("/api/goods",
@@ -208,6 +315,11 @@ class GoodsControllerTest {
         assertTrue(resp.body().contains("\"price\":20"));
     }
 
+    /**
+     * 验证<code>resp.statusCode() &gt;= 400</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void updateGoods_unknownId_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> resp = putJson("/api/goods/999999999",
@@ -220,6 +332,11 @@ class GoodsControllerTest {
     // Javalin 没有内置 enum 转换器，所有命中该路由的请求都会返回 500 (MissingConverterException)。
     // 这是预存在的业务代码 bug（不允许修改业务代码），以下测试断言当前行为。
 
+    /**
+     * 验证<code>resp.statusCode() &gt;= 400</code>为真。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void updateGoods_deletedGoods_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> create = postJson("/api/goods",
@@ -231,6 +348,11 @@ class GoodsControllerTest {
         assertTrue(resp.statusCode() >= 400);
     }
 
+    /**
+     * 验证<code>resp.statusCode() == 500</code>为真。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void changeStatus_toOnSale_shouldReturn200() throws Exception {
         HttpResponse<String> create = postJson("/api/goods",
@@ -241,6 +363,11 @@ class GoodsControllerTest {
                 "expected MissingConverterException (500) for enum query param, actual=" + resp.statusCode());
     }
 
+    /**
+     * 验证<code>resp.statusCode() &gt;= 400</code>为真。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void changeStatus_invalidStatus_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> create = postJson("/api/goods",
@@ -250,6 +377,11 @@ class GoodsControllerTest {
         assertTrue(resp.statusCode() >= 400);
     }
 
+    /**
+     * 验证<code>resp.statusCode() == 500</code>为真。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void changeStatus_offSale_shouldReturn200() throws Exception {
         HttpResponse<String> create = postJson("/api/goods",
@@ -263,12 +395,22 @@ class GoodsControllerTest {
 
     // ---------- 4) delete ----------
 
+    /**
+     * 验证<code>resp.statusCode() &gt;= 400</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void changeStatus_unknownId_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> resp = put("/api/goods/999999999/status?status=ON_SALE");
         assertTrue(resp.statusCode() >= 400);
     }
 
+    /**
+     * 请求 <code>POST /api/goods</code>，确认 HTTP 响应状态为 200。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void deleteGoods_shouldReturn200() throws Exception {
         HttpResponse<String> create = postJson("/api/goods",
@@ -278,6 +420,11 @@ class GoodsControllerTest {
         assertEquals(200, resp.statusCode());
     }
 
+    /**
+     * 验证<code>resp.statusCode() &gt;= 400</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void deleteGoods_unknownId_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> resp = delete("/api/goods/999999999");
@@ -286,6 +433,11 @@ class GoodsControllerTest {
 
     // ---------- 5) getById ----------
 
+    /**
+     * 验证<code>delete("/api/goods/" + id).statusCode()</code> 等于 <code>200</code>，<code>goods.path("code").asText()</code> 等于 <code>"SKU-SOFT"</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void deleteGoods_thenGetByCode_shouldReturnDeletedStatus() throws Exception {
         String id = createFixture("SKU-SOFT", "x", "1.00");
@@ -295,6 +447,11 @@ class GoodsControllerTest {
         assertEquals("DELETED", goods.path("status").asText());
     }
 
+    /**
+     * 请求 <code>POST /api/goods</code>，确认 HTTP 响应状态为 200。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void getById_shouldReturnGoods() throws Exception {
         HttpResponse<String> create = postJson("/api/goods",
@@ -307,12 +464,22 @@ class GoodsControllerTest {
 
     // ---------- 6) getByCode ----------
 
+    /**
+     * 验证<code>resp.statusCode() &gt;= 400</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void getById_unknownId_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> resp = get("/api/goods/999999999");
         assertTrue(resp.statusCode() >= 400);
     }
 
+    /**
+     * 验证<code>goods.path("id").asText()</code> 等于 <code>id</code>，<code>goods.path("code").asText()</code> 等于 <code>"SKU-BC"</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void getByCode_shouldReturnGoods() throws Exception {
         String id = createFixture("SKU-BC", "x", "1.00");
@@ -321,6 +488,11 @@ class GoodsControllerTest {
         assertEquals("SKU-BC", goods.path("code").asText());
     }
 
+    /**
+     * 验证<code>resp.statusCode()</code> 等于 <code>400</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void getByCode_missingParam_shouldHandle() throws Exception {
         HttpResponse<String> resp = get("/api/goods/by-code");
@@ -329,12 +501,22 @@ class GoodsControllerTest {
 
     // ---------- 7) page / list / count 充血查询 ----------
 
+    /**
+     * 验证<code>resp.statusCode()</code> 等于 <code>400</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void getByCode_unknownCode_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> resp = get("/api/goods/by-code?code=missing");
         assertEquals(400, resp.statusCode(), resp.body());
     }
 
+    /**
+     * 验证<code>page.path("current").asInt(-1)</code> 等于 <code>1</code>，<code>page.path("size").asInt(-1)</code> 等于 <code>10</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void pageQuery_defaultPage_shouldReturnOk() throws Exception {
         createFixture("SKU-P0", "FirstPage", "1.00");
@@ -347,6 +529,11 @@ class GoodsControllerTest {
         assertEquals("SKU-P0", rows.path(0).path("code").asText());
     }
 
+    /**
+     * 验证<code>delete("/api/goods/" + deletedId).statusCode()</code> 等于 <code>200</code>，<code>rows.size()</code> 等于 <code>1</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void pageQuery_byStatus_shouldReturnOk() throws Exception {
         createFixture("SKU-PS", "PageStatus", "1.00");
@@ -359,6 +546,11 @@ class GoodsControllerTest {
         assertEquals("DRAFT", rows.path(0).path("status").asText());
     }
 
+    /**
+     * 验证<code>rows.size()</code> 等于 <code>1</code>，<code>rows.path(0).path("code").asText()</code> 等于 <code>"SKU-PR"</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void pageQuery_byPriceRange_shouldReturnOk() throws Exception {
         createFixture("SKU-PR", "PagePrice", "50.00");
@@ -369,6 +561,11 @@ class GoodsControllerTest {
         assertEquals("SKU-PR", rows.path(0).path("code").asText());
     }
 
+    /**
+     * 验证<code>rows.size()</code> 等于 <code>1</code>，<code>rows.path(0).path("code").asText()</code> 等于 <code>"SKU-NL"</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void pageQuery_byNameLike_shouldReturnOk() throws Exception {
         createFixture("SKU-NL", "ProCameraX", "1.00");
@@ -378,6 +575,11 @@ class GoodsControllerTest {
         assertEquals("SKU-NL", rows.path(0).path("code").asText());
     }
 
+    /**
+     * 验证<code>rows.size()</code> 等于 <code>1</code>，<code>rows.path(0).path("code").asText()</code> 等于 <code>"SKU-EX"</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void pageQuery_byCodeExact_shouldReturnOk() throws Exception {
         createFixture("SKU-EX", "Exact", "1.00");
@@ -387,6 +589,11 @@ class GoodsControllerTest {
         assertEquals("SKU-EX", rows.path(0).path("code").asText());
     }
 
+    /**
+     * 验证<code>goods.isArray()</code>为真。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void listQuery_shouldReturnOk() throws Exception {
         createFixture("SKU-LS", "List", "1.00");
@@ -396,6 +603,11 @@ class GoodsControllerTest {
                 .anyMatch(goodsItem -> "SKU-LS".equals(goodsItem.path("code").asText())));
     }
 
+    /**
+     * 验证<code>delete("/api/goods/" + deletedId).statusCode()</code> 等于 <code>200</code>，<code>goods.size()</code> 等于 <code>1</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void listQuery_byStatus_shouldReturnOk() throws Exception {
         createFixture("SKU-LS-DRAFT", "ListStatus", "1.00");
@@ -407,6 +619,11 @@ class GoodsControllerTest {
         assertEquals("SKU-LS-DRAFT", goods.path(0).path("code").asText());
     }
 
+    /**
+     * 验证<code>count &gt;= 0</code>为真，<code>queryData(get(path)).asLong(-1)</code> 等于 <code>count + 1</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void countQuery_shouldReturnOk() throws Exception {
         String path = "/api/goods/count";
@@ -418,6 +635,11 @@ class GoodsControllerTest {
 
     // ---------- 综合 ----------
 
+    /**
+     * 验证<code>delete("/api/goods/" + deletedId).statusCode()</code> 等于 <code>200</code>，<code>queryData(get("/api/goods/count?nameLike=CountStatus")).asLong(-1)</code> 等于 <code>2</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void countQuery_byStatus_shouldReturnOk() throws Exception {
         createFixture("SKU-CT-DRAFT", "CountStatus", "1.00");
@@ -427,6 +649,11 @@ class GoodsControllerTest {
         assertEquals(1, queryData(get("/api/goods/count?nameLike=CountStatus&status=DRAFT")).asLong(-1));
     }
 
+    /**
+     * 请求 <code>POST /api/goods</code>，确认 HTTP 响应状态为 200。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void fullCrudLifecycle() throws Exception {
         HttpResponse<String> create = postJson("/api/goods",
@@ -458,6 +685,11 @@ class GoodsControllerTest {
         assertEquals("DELETED", goods.path("status").asText());
     }
 
+    /**
+     * 请求 <code>POST /api/goods</code>，确认 HTTP 响应状态为 201。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void multipleCreates_allShouldSucceed() throws Exception {
         for (int i = 0; i < 3; i++) {
@@ -467,6 +699,11 @@ class GoodsControllerTest {
         }
     }
 
+    /**
+     * 验证<code>firstPage.path("current").asInt(-1)</code> 等于 <code>1</code>，<code>thirdPage.path("current").asInt(-1)</code> 等于 <code>3</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void pageQuery_withPagination_shouldReturnOk() throws Exception {
         for (int i = 0; i < 15; i++) {
@@ -487,6 +724,11 @@ class GoodsControllerTest {
         assertEquals("SKU-PG10", thirdRows.path(0).path("code").asText());
     }
 
+    /**
+     * 验证<code>resp.statusCode() &gt;= 400</code>为真。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void updateGoods_blankName_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> create = postJson("/api/goods",
@@ -497,6 +739,11 @@ class GoodsControllerTest {
         assertTrue(resp.statusCode() >= 400);
     }
 
+    /**
+     * 请求 <code>POST /api/goods</code>，确认 HTTP 响应状态为 201。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void createGoods_zeroStock_shouldReturn201() throws Exception {
         HttpResponse<String> resp = postJson("/api/goods",
@@ -504,6 +751,11 @@ class GoodsControllerTest {
         assertEquals(201, resp.statusCode());
     }
 
+    /**
+     * 验证<code>rows.size()</code> 等于 <code>2</code>，<code>rows.path(0).path("code").asText()</code> 等于 <code>"SKU-ORDER-HIGH"</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void pageQuery_withOrderBys_shouldReturnOk() throws Exception {
         createFixture("SKU-ORDER-LOW", "PageOrder", "1.00");
@@ -514,6 +766,11 @@ class GoodsControllerTest {
         assertEquals("SKU-ORDER-LOW", rows.path(1).path("code").asText());
     }
 
+    /**
+     * 验证<code>page.statusCode()</code> 等于 <code>400</code>，<code>list.statusCode()</code> 等于 <code>400</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void queryInvalidNumber_shouldReturnBadRequest() throws Exception {
         HttpResponse<String> page = get("/api/goods/page?current=bad");
@@ -524,6 +781,11 @@ class GoodsControllerTest {
         assertEquals(400, count.statusCode(), count.body());
     }
 
+    /**
+     * 验证<code>resp.statusCode()</code> 等于 <code>400</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void pageQuery_invalidStatusEnum_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> resp = get("/api/goods/page?status=BAD&current=1&size=10");

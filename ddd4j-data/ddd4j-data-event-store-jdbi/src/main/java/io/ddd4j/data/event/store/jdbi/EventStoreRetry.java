@@ -40,17 +40,46 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 final class EventStoreRetry {
 
+    /**
+     * 重试策略允许执行操作的默认最大次数。
+     */
     static final int DEFAULT_MAX_ATTEMPTS = 5;
+    /**
+     * 指数退避及随机抖动使用的基准毫秒数。
+     */
     static final long BASE_DELAY_MILLIS = 10L;
+    /**
+     * 记录事件写入重试和退避信息的日志记录器。
+     */
     private static final Logger LOG = LoggerFactory.getLogger(EventStoreRetry.class);
+    /**
+     * 当前策略允许执行一次事件写入的最多尝试次数。
+     */
     private final int maxAttempts;
+    /**
+     * 重试相邻尝试之间的基础延时，单位为毫秒。
+     */
     private final long baseDelayMillis;
+    /**
+     * 在两次重试之间执行等待的函数。
+     */
     private final Sleeper sleeper;
 
+    /**
+     * 用默认尝试次数和基准延时创建重试策略，实际等待由当前线程执行。
+     */
     EventStoreRetry() {
         this(DEFAULT_MAX_ATTEMPTS, BASE_DELAY_MILLIS, Thread::sleep);
     }
 
+    /**
+     * 创建参数可控的事件追加重试策略。
+     *
+     * @param maxAttempts     最多执行次数，至少为一次
+     * @param baseDelayMillis 首次退避的基准时间，单位为毫秒
+     * @param sleeper         执行重试等待的组件
+     * @throws IllegalArgumentException 尝试次数小于一次或基准延时为负数
+     */
     EventStoreRetry(int maxAttempts, long baseDelayMillis, Sleeper sleeper) {
         if (maxAttempts < 1) {
             throw new IllegalArgumentException("maxAttempts must be >= 1, was " + maxAttempts);
@@ -63,6 +92,12 @@ final class EventStoreRetry {
         this.sleeper = sleeper;
     }
 
+    /**
+     * 将按尝试次数增长的指数退避与随机抖动相加。
+     *
+     * @param attempt 当前执行失败后用于计算退避的尝试编号，从 1 开始
+     * @return 下次尝试前等待的毫秒数
+     */
     static long computeDelay(int attempt) {
         long expDelay = BASE_DELAY_MILLIS << (attempt - 1);
         long jitter = ThreadLocalRandom.current().nextLong(BASE_DELAY_MILLIS + 1);
@@ -79,6 +114,9 @@ final class EventStoreRetry {
      *   <li>顶层或任何 cause 的 message 含 "uk_position"/"unique constraint"/"unique index"/"duplicate key"/"duplicate entry" → true</li>
      *   <li>类名为 "ConstraintViolationException" 的 cause（兼容 Hibernate，避免编译期依赖） → true</li>
      * </ol>
+     *
+     * @param t 检查是否可重试的异常
+     * @return 异常链包含允许重试的异常时返回 true
      */
     static boolean isRetriable(Throwable t) {
         if (t == null) {
@@ -118,6 +156,13 @@ final class EventStoreRetry {
         return false;
     }
 
+    /**
+     * 沿异常因果链查找指定类型。
+     *
+     * @param t      要检查的异常或其异常链入口
+     * @param target 要匹配的异常类型
+     * @return 存在匹配的异常时返回 true
+     */
     private static boolean containsCause(Throwable t, Class<? extends Throwable> target) {
         Throwable current = t;
         while (current != null) {
@@ -134,6 +179,10 @@ final class EventStoreRetry {
 
     /**
      * 通过类名匹配识别 cause 链中的特定异常（避免硬依赖 Hibernate）。
+     *
+     * @param t               异常链起点
+     * @param simpleClassName 待匹配的异常简单类名
+     * @return 异常链包含指定简单类名时返回 true
      */
     private static boolean containsCauseByName(Throwable t, String simpleClassName) {
         Throwable current = t;

@@ -18,11 +18,11 @@ import io.ddd4j.core.constant.XHeaders;
 import io.ddd4j.web.core.version.ApiVersion;
 import io.ddd4j.web.core.version.ApiVersionResolver;
 import io.ddd4j.web.core.version.ApiVersionResult;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.util.Objects;
 
 /**
@@ -45,13 +45,19 @@ import java.util.Objects;
  */
 public class ApiVersionWebInterceptor implements HandlerInterceptor, Ordered {
 
-    /** 解析出的 API 版本在请求属性中的挂载键，供 {@code Ddd4jWebMvcInterceptor} 读取。 */
+    /**
+     * 解析出的 API 版本在请求属性中的挂载键，供 {@code Ddd4jWebMvcInterceptor} 读取。
+     */
     public static final String API_VERSION_ATTRIBUTE = ApiVersionWebInterceptor.class.getName() + ".apiVersion";
 
-    /** 版本解析器。 */
+    /**
+     * 版本解析器。
+     */
     private final ApiVersionResolver resolver;
 
-    /** 是否启用；false 时 preHandle 直接放行且不挂载任何属性。 */
+    /**
+     * 是否启用；false 时 preHandle 直接放行且不挂载任何属性。
+     */
     private final boolean enabled;
 
     /**
@@ -67,7 +73,7 @@ public class ApiVersionWebInterceptor implements HandlerInterceptor, Ordered {
      * 创建拦截器。
      *
      * @param resolver 版本解析器（非 null）
-     * @param enabled 是否启用；false 时完全旁路解析逻辑
+     * @param enabled  是否启用；false 时完全旁路解析逻辑
      */
     public ApiVersionWebInterceptor(ApiVersionResolver resolver, boolean enabled) {
         this.resolver = Objects.requireNonNull(resolver, "resolver must not be null");
@@ -96,9 +102,9 @@ public class ApiVersionWebInterceptor implements HandlerInterceptor, Ordered {
     /**
      * 解析 API 版本并挂载请求属性。
      *
-     * @param request 当前请求
+     * @param request  当前请求
      * @param response 当前响应
-     * @param handler 已匹配的处理器
+     * @param handler  已匹配的处理器
      * @return 恒为 {@code true}（放行后续拦截器与处理器）
      * @throws io.ddd4j.web.core.version.ApiVersionRejectedException 严格模式下版本值非法时抛出
      */

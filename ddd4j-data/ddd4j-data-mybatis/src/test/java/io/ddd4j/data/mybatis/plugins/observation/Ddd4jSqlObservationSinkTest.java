@@ -25,14 +25,22 @@ import java.util.ServiceLoader;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/** SQL 观测写入线程上下文的契约测试。 */
+/**
+ * SQL 观测写入线程上下文的契约测试。
+ */
 class Ddd4jSqlObservationSinkTest {
 
+    /**
+     * 测试后依次清除<code>ThreadContext</code>。
+     */
     @AfterEach
     void cleanup() {
         ThreadContext.clear();
     }
 
+    /**
+     * 验证<code>ThreadContext.&lt;Object&gt;get(ContextConstants.PREPARING_SQL)</code> 等于 <code>"SELECT * FROM orders"</code>，<code>ThreadContext.&lt;Object&gt;get(ContextConstants.SQL_PARAMS)</code> 等于 <code>params</code>，<code>ThreadContext.&lt;Object&gt;get(ContextConstants.LAST_SQL_SPENDS)</code> 等于 <code>8L</code>。
+     */
     @Test
     void shouldStoreSqlObservationInThreadContext() {
         List<String> params = Arrays.asList("PAID", "2024");
@@ -46,6 +54,9 @@ class Ddd4jSqlObservationSinkTest {
         assertThat(ThreadContext.<Object>get(ContextConstants.LAST_SQL_SPENDS)).isEqualTo(8L);
     }
 
+    /**
+     * 验证<code>discovered</code>为真。
+     */
     @Test
     void shouldBeDiscoverableThroughServiceLoader() {
         boolean discovered = false;
@@ -59,6 +70,9 @@ class Ddd4jSqlObservationSinkTest {
         assertThat(discovered).isTrue();
     }
 
+    /**
+     * 验证<code>ThreadContext.&lt;Object&gt;get(ContextConstants.PREPARING_SQL)</code> 等于 <code>"SELECT * FROM orders WHERE state = ?"</code>，<code>ThreadContext.&lt;Object&gt;get(ContextConstants.SQL_PARAMS)</code> 等于 <code>params</code>，<code>ThreadContext.&lt;Object&gt;get(ContextConstants.LAST_SQL_SPENDS)</code> 等于 <code>8L</code>。
+     */
     @Test
     void shouldForwardObservationDiscoveredThroughUpstreamServiceLoader() {
         org.apache.ibatis.enhance.spi.SqlObservationSink sink = ServiceLoader

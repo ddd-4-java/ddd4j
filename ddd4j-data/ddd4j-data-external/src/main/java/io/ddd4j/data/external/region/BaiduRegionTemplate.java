@@ -52,6 +52,9 @@ public class BaiduRegionTemplate {
      * HTTP 客户端
      */
     private final HttpClient httpClient;
+    /**
+     * 当前地区查询适配器使用的请求地址模板。
+     */
     private final String urlTemplate;
     /**
      * 缓存服务
@@ -98,10 +101,25 @@ public class BaiduRegionTemplate {
         this(ak, httpClient, regionCache, GET_LOCATION_BY_IP_URL);
     }
 
+    /**
+     * 装配使用百度接口查询 IP 归属地区的实现。
+     *
+     * @param ak          百度定位接口密钥
+     * @param regionCache 读取和缓存 IP 地区查询结果的组件
+     * @param urlTemplate 可替换的地区查询地址模板
+     */
     BaiduRegionTemplate(String ak, RegionCache regionCache, String urlTemplate) {
         this(ak, HttpClient.newHttpClient(), regionCache, urlTemplate);
     }
 
+    /**
+     * 装配使用百度接口查询 IP 归属地区的实现。
+     *
+     * @param ak          百度定位接口密钥
+     * @param httpClient  发起地区查询的 HTTP 客户端
+     * @param regionCache 读取和缓存 IP 地区查询结果的组件
+     * @param urlTemplate 可替换的地区查询地址模板
+     */
     private BaiduRegionTemplate(String ak, HttpClient httpClient,
                                 RegionCache regionCache, String urlTemplate) {
         this.ak = ak;
@@ -124,6 +142,11 @@ public class BaiduRegionTemplate {
         log.debug(mapLL2.get().toJSONString());
     }
 
+    /**
+     * 计算本地时区当前时刻到次日零点的间隔。
+     *
+     * @return 到次日零点剩余的秒数
+     */
     private static long secondsUntilNextDay() {
         LocalDateTime tomorrowStart = LocalDate.now().plusDays(1).atStartOfDay();
         return Duration.between(LocalDateTime.now(), tomorrowStart).getSeconds();

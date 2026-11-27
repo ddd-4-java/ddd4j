@@ -35,7 +35,12 @@
             <artifactId>ddd4j-sample-order-start</artifactId>
             <version>${revision}</version>
         </dependency>
-                <dependency><groupId>io.ddd4j</groupId><artifactId>ddd4j-sample-order-testkit</artifactId><version>${revision}</version><scope>test</scope></dependency>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-sample-order-testkit</artifactId>
+            <version>${revision}</version>
+            <scope>test</scope>
+        </dependency>
         <!-- ddd4j core：核心 DDD/CQRS 抽象（API、Page、Repository、AggregateRoot 等） -->
         <dependency>
             <groupId>io.ddd4j</groupId>

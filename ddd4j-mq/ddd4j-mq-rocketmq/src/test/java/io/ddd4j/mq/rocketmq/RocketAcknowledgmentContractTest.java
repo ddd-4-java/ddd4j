@@ -34,13 +34,22 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 
+/**
+ * 通过 <code>message.setMsgId()</code>、<code>acknowledgment.nack()</code>、<code>acknowledgment.isAcknowledged()</code> 验证 <code>RocketAcknowledgmentContract</code> 的运行行为。
+ */
 class RocketAcknowledgmentContractTest {
 
+    /**
+     * 测试结束后执行 <code>BaseContext.clear()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void clearContext() {
         BaseContext.clear();
     }
 
+    /**
+     * 验证<code>acknowledgment.isAcknowledged()</code>为真，<code>acknowledgment.shouldReconsume()</code>为真。
+     */
     @Test
     void shouldRequestBrokerReconsumeOnNack() {
         MessageExt message = new MessageExt();
@@ -53,6 +62,11 @@ class RocketAcknowledgmentContractTest {
         assertTrue(acknowledgment.shouldReconsume());
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>。
+     *
+     * @throws Exception 发起测试请求时失败
+     */
     @Test
     void shouldPropagateBrokerSendFailureToPublisher() throws Exception {
         DefaultMQProducer producer = mock(DefaultMQProducer.class);

@@ -27,6 +27,9 @@ public final class ReadinessEndpoint {
      */
     public static final String PATH = "/-/ready";
 
+    /**
+     * 当前调用使用的运行时就绪状态提供函数。
+     */
     private final BooleanSupplier readinessSupplier;
 
     /**

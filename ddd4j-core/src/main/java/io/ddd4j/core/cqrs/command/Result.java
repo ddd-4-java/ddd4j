@@ -44,10 +44,26 @@ public final class Result<T> {
      */
     public static final int FAILURE = 1;
 
+    /**
+     * 命令结果的数值状态码。
+     */
     private final int code;
+    /**
+     * 命令执行的说明或失败原因。
+     */
     private final String message;
+    /**
+     * 命令执行返回的业务数据。
+     */
     private final T data;
 
+    /**
+     * 创建包含业务状态、说明和可选数据的命令结果。
+     *
+     * @param code    业务状态码
+     * @param message 执行结果说明
+     * @param data    业务返回数据
+     */
     private Result(int code, String message, T data) {
         this.code = code;
         this.message = message;

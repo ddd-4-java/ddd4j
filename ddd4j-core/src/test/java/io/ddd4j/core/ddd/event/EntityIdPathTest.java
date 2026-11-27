@@ -34,6 +34,11 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
  */
 class EntityIdPathTest {
 
+    /**
+     * 验证<code>descriptor.getName()</code> 不等于 <code>"java.util.CollSer"</code>，<code>input.readObject()</code> 等于 <code>path</code>。
+     *
+     * @throws Exception 准备或读取夹具文件时失败
+     */
     @Test
     void serializedPathUsesListTypesReadableOnJava8() throws Exception {
         EntityIdPath path = new EntityIdPath(new StringEntityId("order/1"), new StringEntityId("line:1"));
@@ -53,6 +58,9 @@ class EntityIdPathTest {
         }
     }
 
+    /**
+     * 验证<code>path.first().asString()</code> 等于 <code>"order-1"</code>，<code>path.size()</code> 等于 <code>2</code>，<code>path.asString()</code> 等于 <code>"String:order-1/String:line-1"</code>。
+     */
     @Test
     void sourceListAndReturnedIteratorCannotMutateThePath() {
         List<EntityId> source = new ArrayList<>(Arrays.asList(
@@ -69,6 +77,9 @@ class EntityIdPathTest {
         assertThat(path.asString()).isEqualTo("String:order-1/String:line-1");
     }
 
+    /**
+     * 测试结束后执行 <code>EntityIdRegistry.unregister()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void cleanup() {
         // 清理注册表，避免污染其他测试
@@ -76,6 +87,9 @@ class EntityIdPathTest {
         EntityIdRegistry.unregister("CustomerId");
     }
 
+    /**
+     * 验证<code>single.size()</code> 等于 <code>1</code>，<code>single.last().asString()</code> 等于 <code>"order-1"</code>，<code>multi.last().asString()</code> 等于 <code>"item-9"</code>。
+     */
     @Test
     void valueOfParsesSingleAndMultiSegmentPaths() {
         EntityIdPath single = EntityIdPath.valueOf("String:order-1");
@@ -88,6 +102,9 @@ class EntityIdPathTest {
         assertThat(multi.last().asString()).isEqualTo("item-9");
     }
 
+    /**
+     * 验证<code>EntityIdPath.valueOf("")</code> 抛出 <code>IllegalArgumentException</code>，<code>EntityIdPath.valueOf("String:")</code> 抛出 <code>IllegalArgumentException</code>。
+     */
     @Test
     void valueOfRejectsMalformedPaths() {
         // 空串 / 空白
@@ -111,6 +128,9 @@ class EntityIdPathTest {
                 .withMessageContaining("String:");
     }
 
+    /**
+     * 验证<code>EntityIdPath.valueOf(original.asString()).asString()</code> 等于 <code>original.asString()</code>。
+     */
     @Test
     void valueOfIsIdempotentForSerializedForm() {
         EntityIdPath original = new EntityIdPath(new StringEntityId("order-1"), new StringEntityId("item-9"));
@@ -118,6 +138,9 @@ class EntityIdPathTest {
         assertThat(EntityIdPath.valueOf(original.asString()).asString()).isEqualTo(original.asString());
     }
 
+    /**
+     * 验证<code>path.size()</code> 等于 <code>1</code>，<code>(Object) path.last()</code> 的类型为 <code>StringEntityId.class</code>，<code>path.last().asString()</code> 等于 <code>"abc-123"</code>。
+     */
     @Test
     void unregisteredTypeFallsBackToStringEntityId() {
         EntityIdPath path = EntityIdPath.valueOf("Unknown:abc-123");
@@ -127,6 +150,9 @@ class EntityIdPathTest {
         assertThat(path.last().asString()).isEqualTo("abc-123");
     }
 
+    /**
+     * 验证<code>path.size()</code> 等于 <code>1</code>，<code>(Object) path.last()</code> 的类型为 <code>TestOrderId.class</code>，<code>path.last().getType().asString()</code> 等于 <code>"TestOrder"</code>。
+     */
     @Test
     void registeredCustomEntityIdIsRestored() {
         // 注册自定义 OrderId 工厂
@@ -140,6 +166,9 @@ class EntityIdPathTest {
         assertThat(path.last().getType().asString()).isEqualTo("TestOrder");
     }
 
+    /**
+     * 验证<code>restored.size()</code> 等于 <code>2</code>，<code>(Object) restored.first()</code> 的类型为 <code>TestOrderId.class</code>，<code>restored.last().asString()</code> 等于 <code>"c-9"</code>。
+     */
     @Test
     void registeredCustomEntityIdRoundTrips() {
         EntityIdRegistry.register("OrderId", value -> new TestOrderId(value));
@@ -158,6 +187,9 @@ class EntityIdPathTest {
         assertThat(restored.last().asString()).isEqualTo("c-9");
     }
 
+    /**
+     * 验证<code>serialized</code> 不包含 <code>"\\"</code>，<code>restored.last().asString()</code> 等于 <code>"o:1"</code>。
+     */
     @Test
     void valuesContainingColonAreNotEscaped() {
         // 值内含 ':' 无需转义——通过「首个 ':' 切分」约定天然支持
@@ -171,6 +203,9 @@ class EntityIdPathTest {
         assertThat(restored.last().asString()).isEqualTo("o:1");
     }
 
+    /**
+     * 验证<code>serialized</code> 等于 <code>"OrderId:o-1"</code>，<code>serialized</code> 不包含 <code>"\\"</code>。
+     */
     @Test
     void simplePathsAreNotEscaped() {
         // 简单路径（值不含段分隔符 / 或反斜杠）保持原样输出，无视觉噪音
@@ -181,6 +216,9 @@ class EntityIdPathTest {
         assertThat(serialized).doesNotContain("\\");
     }
 
+    /**
+     * 验证<code>serialized</code> 包含 <code>"\\/"</code>，<code>restored.last().asString()</code> 等于 <code>"o/1"</code>。
+     */
     @Test
     void valuesContainingPathSeparatorAreEscapedAndRecovered() {
         // 值内含 '/'（段分隔符）：序列化转义为 '\/'，反序列化还原
@@ -194,6 +232,9 @@ class EntityIdPathTest {
         assertThat(restored.last().asString()).isEqualTo("o/1");
     }
 
+    /**
+     * 验证<code>serialized</code> 包含 <code>"\\\\"</code>，<code>restored.last().asString()</code> 等于 <code>"a\\b"</code>。
+     */
     @Test
     void valuesContainingBackslashAreEscapedAndRecovered() {
         EntityIdPath path = new EntityIdPath(new TestOrderId("a\\b"));
@@ -206,6 +247,9 @@ class EntityIdPathTest {
         assertThat(restored.last().asString()).isEqualTo("a\\b");
     }
 
+    /**
+     * 验证<code>restored.size()</code> 等于 <code>3</code>，<code>restored</code> 等于 <code>original</code>。
+     */
     @Test
     void separatorAfterEscapedBackslashesKeepsEachEntitySegment() {
         EntityIdPath original = new EntityIdPath(
@@ -219,6 +263,9 @@ class EntityIdPathTest {
         assertThat(restored).isEqualTo(original);
     }
 
+    /**
+     * 验证<code>EntityIdPath.isValid(validPath)</code>为真，<code>EntityIdPath.isValid(malformedPath)</code>为假。
+     */
     @Test
     void separatorAfterEscapedBackslashesStillRejectsTrailingEmptySegment() {
         String validPath = new EntityIdPath(new StringEntityId("order\\")).asString();
@@ -230,6 +277,9 @@ class EntityIdPathTest {
                 .withMessageContaining("blank segment");
     }
 
+    /**
+     * 验证<code>EntityIdRegistry.isRegistered("String")</code>为真。
+     */
     @Test
     void registryRefusesToUnregisterBuiltinStringType() {
         // 试图移除 StringEntityId 不应生效
@@ -237,12 +287,18 @@ class EntityIdPathTest {
         assertThat(EntityIdRegistry.isRegistered("String")).isTrue();
     }
 
+    /**
+     * 验证<code>EntityIdRegistry.isRegistered("String")</code>为真，<code>EntityIdRegistry.isRegistered("string")</code>为假。
+     */
     @Test
     void registryIsCaseSensitive() {
         assertThat(EntityIdRegistry.isRegistered("String")).isTrue();
         assertThat(EntityIdRegistry.isRegistered("string")).isFalse();
     }
 
+    /**
+     * 验证<code>EntityIdPath.isValid("String:order-1")</code>为真，<code>EntityIdPath.isValid("String:order-1/String:item-9")</code>为真，<code>EntityIdPath.isValid("String:a\\/b")</code>为真。
+     */
     @Test
     void isValidAcceptsWellFormedPaths() {
         // 单段与多段
@@ -254,6 +310,9 @@ class EntityIdPathTest {
         assertThat(EntityIdPath.isValid("String:a\\/b")).isTrue();
     }
 
+    /**
+     * 验证<code>EntityIdPath.isValid(null)</code>为假，<code>EntityIdPath.isValid("")</code>为假，<code>EntityIdPath.isValid("String:a//b")</code>为假。
+     */
     @Test
     void isValidRejectsMalformedPaths() {
         assertThat(EntityIdPath.isValid(null)).isFalse();
@@ -270,6 +329,9 @@ class EntityIdPathTest {
         assertThat(EntityIdPath.isValid("String:a//b")).isFalse();
     }
 
+    /**
+     * 验证<code>EntityIdPath.isValid(input)</code>为假。
+     */
     @Test
     void isValidNeverThrowsOnGarbageInput() {
         String[] garbage = {"/", "\\", "::", "::::", "/:", "String:order-1//", "a/b/c", "\\:", "x\\/:y/"};
@@ -278,6 +340,9 @@ class EntityIdPathTest {
         }
     }
 
+    /**
+     * 验证<code>EntityIdPath.isValid(valid)</code>为真，<code>EntityIdPath.valueOf(valid).asString()</code> 等于 <code>valid</code>。
+     */
     @Test
     void isValidAgreesWithValueOf() {
         String valid = "String:order-1/String:item-9";
@@ -286,6 +351,9 @@ class EntityIdPathTest {
         assertThat(EntityIdPath.valueOf(valid).asString()).isEqualTo(valid);
     }
 
+    /**
+     * 验证<code>path.size()</code> 等于 <code>2</code>，<code>path.first().asString()</code> 等于 <code>"order-1"</code>，<code>path.parent().asString()</code> 等于 <code>"String:order-1"</code>。
+     */
     @Test
     void navigationAlgebraFollowsEventRoutingContract() {
         EntityIdPath path = EntityIdPath.valueOf("String:order-1/String:item-9");
@@ -299,6 +367,9 @@ class EntityIdPathTest {
         assertThat(path.parent().asString()).isEqualTo("String:order-1");
     }
 
+    /**
+     * 验证<code>single.size()</code> 等于 <code>1</code>，<code>single.rest()</code>为空，<code>single.parent()</code>为空。
+     */
     @Test
     void singleElementPathReturnsNullForRestAndParent() {
         EntityIdPath single = EntityIdPath.valueOf("String:order-1");
@@ -309,48 +380,100 @@ class EntityIdPathTest {
     }
     // === Test Fixtures ===
 
+    /**
+     * 为测试实体提供独立标识的值对象。
+     */
     private static final class TestOrderId implements EntityId {
 
+        /**
+         * 组成测试标识的原始值。
+         */
         private final String value;
 
+        /**
+         * 设置 <code>value</code>，用于构造 <code>TestOrderId</code> 测试实例。
+         *
+         * @param value 组成测试标识的原始值
+         */
         TestOrderId(String value) {
             this.value = value;
         }
 
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 实体类型
+         */
         @Override
         public EntityType getType() {
             return new StringEntityType("TestOrder");
         }
 
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 实际返回<code>value</code>，供调用方取得当前值
+         */
         @Override
         public String asString() {
             return value;
         }
 
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * @return 实际返回<code>"OrderId:" + value</code>，供调用方取得当前值
+         */
         @Override
         public String asTypedString() {
             return "OrderId:" + value;
         }
     }
 
+    /**
+     * 为测试实体提供独立标识的值对象。
+     */
     private static final class TestCustomerId implements EntityId {
 
+        /**
+         * 组成测试标识的原始值。
+         */
         private final String value;
 
+        /**
+         * 设置 <code>value</code>，用于构造 <code>TestCustomerId</code> 测试实例。
+         *
+         * @param value 组成测试标识的原始值
+         */
         TestCustomerId(String value) {
             this.value = value;
         }
 
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 实体类型
+         */
         @Override
         public EntityType getType() {
             return new StringEntityType("TestCustomer");
         }
 
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 实际返回<code>value</code>，供调用方取得当前值
+         */
         @Override
         public String asString() {
             return value;
         }
 
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * @return 实际返回<code>"CustomerId:" + value</code>，供调用方取得当前值
+         */
         @Override
         public String asTypedString() {
             return "CustomerId:" + value;

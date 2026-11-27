@@ -55,11 +55,27 @@ import java.util.Objects;
 @Slf4j
 public class ContextWebInterceptor implements WebInterceptor {
 
+    /**
+     * 返回拦截器执行顺序。
+     *
+     * @return 实际返回<code>-400</code>，供调用方取得当前值
+     */
     @Override
     public int getOrder() {
         return -400;
     }
 
+    /**
+     * 在业务处理器执行前处理当前请求。
+     *
+     * <p>此实现调用 <code>io.ddd4j.kit.lang.StrKit.isNotEmpty(tenantId)</code>。</p>
+     *
+     * @param request  HTTP 请求
+     * @param response HTTP 响应
+     * @param handler  目标处理器
+     * @return 此实现返回<code>true</code>
+     * @throws Exception 当前框架、存储或底层客户端无法完成此操作时
+     */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 提取租户 ID（兼容三种 header 命名）
@@ -113,6 +129,17 @@ public class ContextWebInterceptor implements WebInterceptor {
         return true;
     }
 
+    /**
+     * 处理请求完成后的资源释放或上下文清理。
+     *
+     * <p>此实现调用 <code>ThreadContext.clear()</code>。</p>
+     *
+     * @param request  HTTP 请求
+     * @param response HTTP 响应
+     * @param handler  目标处理器
+     * @param ex       捕获的异常
+     * @throws Exception 当前框架、存储或底层客户端无法完成此操作时
+     */
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         ThreadContext.clear();
@@ -139,6 +166,10 @@ public class ContextWebInterceptor implements WebInterceptor {
 
     /**
      * 从请求头中提取值，支持多个 header 名称（按优先级）。
+     *
+     * @param request 当前 Web 请求
+     * @param names   按顺序尝试的请求头名称
+     * @return 首个可用的请求头值
      */
     private String extractHeader(HttpServletRequest request, String... names) {
         for (String name : names) {

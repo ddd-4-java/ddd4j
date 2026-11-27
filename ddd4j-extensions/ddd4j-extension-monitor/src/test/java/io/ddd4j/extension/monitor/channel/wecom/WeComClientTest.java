@@ -45,9 +45,20 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class WeComClientTest {
 
+    /**
+     * 当前测试启动并负责释放的本地服务。
+     */
     private HttpServer server;
+    /**
+     * 当前测试服务绑定的本地端口。
+     */
     private int port;
 
+    /**
+     * 测试前依次启动<code>server</code>。
+     *
+     * @throws IOException 读取或写入测试数据时发生 I/O 错误
+     */
     @BeforeEach
     void startServer() throws IOException {
         server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
@@ -56,6 +67,9 @@ class WeComClientTest {
         server.start();
     }
 
+    /**
+     * 测试后依次停止<code>server</code>。
+     */
     @AfterEach
     void stopServer() {
         if (Objects.nonNull(server)) {
@@ -63,6 +77,11 @@ class WeComClientTest {
         }
     }
 
+    /**
+     * 验证<code>method</code> 等于 <code>"POST"</code>，<code>query</code> 等于 <code>"key=wehook_key_test"</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void sendMarkdownShouldPostValidJsonPayload() throws Exception {
         // 客户端指向 mock server，key 自定
@@ -88,10 +107,25 @@ class WeComClientTest {
      * 简易 recorder，记录最近一次请求的 method / query / body。
      */
     static class Recorder implements HttpHandler {
+        /**
+         * 测试服务器最近收到的 HTTP 方法。
+         */
         static volatile String lastMethod;
+        /**
+         * 测试服务器最近收到的请求查询字符串。
+         */
         static volatile String lastQuery;
+        /**
+         * 测试服务器最近收到的 HTTP 请求正文。
+         */
         static volatile String lastBody;
 
+        /**
+         * 根据本次调用更新 <code>lastMethod = exchange.getRequestMethod()</code>、<code>lastQuery = uri.getRawQuery()</code>，用于后续测试步骤。
+         *
+         * @param exchange 当前 HTTP 请求及响应交换对象
+         * @throws IOException 读取或写入测试数据时发生 I/O 错误
+         */
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             lastMethod = exchange.getRequestMethod();

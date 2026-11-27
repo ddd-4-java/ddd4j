@@ -38,7 +38,13 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * 通过 <code>source.setURL()</code>、<code>Guice.createInjector()</code>、<code>module.initRepositories()</code> 验证 <code>Ddd4jMybatisGuiceModule</code> 的运行行为。
+ */
 class Ddd4jMybatisGuiceModuleTest {
+    /**
+     * 验证<code>injector.getInstance(InjectedRepository.class).getBaseMapper().ping()</code> 等于 <code>1</code>。
+     */
     @Test
     void injectsMapperIntoTheSingleAggregateRepository() {
         JdbcDataSource source = new JdbcDataSource();
@@ -51,31 +57,9 @@ class Ddd4jMybatisGuiceModuleTest {
         assertThat(injector.getInstance(InjectedRepository.class).getBaseMapper().ping()).isEqualTo(1);
     }
 
-    public interface RepositoryMapper extends BaseMapper<RepositoryPo> {
-        @Select("SELECT 1")
-        int ping();
-    }
-
-    public static class RepositoryModel extends AggregateRoot<Long> {
-        @Override
-        public Long id() { return 1L; }
-    }
-
-    public static class RepositoryQuery extends Query<RepositoryModel> { }
-
-    @Getter
-    @Setter
-    public static class RepositoryPo {
-        @TableId
-        private Long id;
-    }
-
-    public static class InjectedRepository extends BaseRepositoryImpl<
-            RepositoryMapper, RepositoryModel, RepositoryPo, RepositoryQuery, Long> {
-        public InjectedRepository() { super(); }
-    }
-
-
+    /**
+     * 验证<code>factory.getConfiguration().getInterceptors()</code> 的大小为 <code>1</code>，<code>factory.getConfiguration().getInterceptors().get(0)</code> 的类型为 <code>MybatisPlusEnhanceInterceptor.class</code>，<code>query.filled.get(0)</code> 指向同一实例 <code>results.get(0)</code>。
+     */
     @Test
     void fillsMapperAggregateThroughTheEnhanceQueryChain() {
         JdbcDataSource dataSource = new JdbcDataSource();
@@ -98,6 +82,9 @@ class Ddd4jMybatisGuiceModuleTest {
         }
     }
 
+    /**
+     * 验证<code>session</code> 的类型为 <code>org.apache.ibatis.session.SqlSessionManager.class</code>，<code>mapper.count()</code>为零，<code>mapper.count()</code> 等于 <code>1</code>。
+     */
     @Test
     void injectedSessionMustManageAndRollbackTransaction() {
         JdbcDataSource dataSource = new JdbcDataSource();
@@ -127,6 +114,11 @@ class Ddd4jMybatisGuiceModuleTest {
         assertThat(mapper.count()).isEqualTo(1);
     }
 
+    /**
+     * 验证<code>session.getMapper(ScopedMapper.class).find(1)</code> 等于 <code>"a"</code>，<code>session.getMapper(ScopedMapper.class).find(2)</code>为空，<code>(Object) io.ddd4j.core.context.ThreadContext.get(io.ddd4j.core.constant.ContextConstants.PREPARING_SQL)</code>非空。
+     *
+     * @throws Exception 反射访问被测成员、执行数据库操作时失败
+     */
     @Test
     void unifiedConfigurerMustScopeMapperByIdAndPublishExecution() throws Exception {
         JdbcDataSource dataSource = new JdbcDataSource();
@@ -157,6 +149,11 @@ class Ddd4jMybatisGuiceModuleTest {
         }
     }
 
+    /**
+     * 验证<code>mapper.selectById(1).getSecret()</code> 等于 <code>"13800138000"</code>，<code>rows.next()</code>为真，<code>session.getMapper(CryptoMapper.class).selectById(1)</code> 抛出 <code>org.apache.ibatis.exceptions.PersistenceException.class</code>。
+     *
+     * @throws Exception 执行数据库操作时失败
+     */
     @Test
     void configuredComponentMustEncryptSignAndKeepCachedCiphertext() throws Exception {
         JdbcDataSource source = new JdbcDataSource();
@@ -200,63 +197,215 @@ class Ddd4jMybatisGuiceModuleTest {
         }
     }
 
-    public interface CryptoMapper extends com.baomidou.mybatisplus.core.mapper.BaseMapper<CryptoEntry> { }
+    /**
+     * 用于替代持久化 Mapper 以验证仓储参数或回填结果。
+     */
+    public interface RepositoryMapper extends BaseMapper<RepositoryPo> {
+        /**
+         * 执行一次无外部数据依赖的 SQL 用于验证 Mapper 注册。
+         *
+         * @return 查询常量 1
+         */
+        @Select("SELECT 1")
+        int ping();
+    }
 
+
+    /**
+     * 用于替代持久化 Mapper 以验证仓储参数或回填结果。
+     */
+    public interface CryptoMapper extends com.baomidou.mybatisplus.core.mapper.BaseMapper<CryptoEntry> {
+    }
+
+    /**
+     * 提供 <code>find()</code>、<code>remove()</code> 等供当前测试使用的独立操作。
+     */
+    public interface ScopedMapper {
+        /**
+         * 按映射 SQL 读取测试记录并返回租户列。
+         *
+         * @param id 被查找、写入或删除的夹具记录主键
+         * @return 与查询匹配的映射结果
+         */
+        @Select("SELECT tenant_id FROM tenant_entry WHERE id = #{id}")
+        String find(int id);
+
+        /**
+         * 依据主键条件移除测试表中匹配的记录。
+         *
+         * @param id 被查找、写入或删除的夹具记录主键
+         * @return 删除操作影响的行数
+         */
+        @org.apache.ibatis.annotations.Delete("DELETE FROM tenant_entry WHERE id = #{id}")
+        int remove(int id);
+    }
+
+    /**
+     * 提供 <code>create()</code>、<code>insert()</code>、<code>count()</code> 等供当前测试使用的独立操作。
+     */
+    public interface WriteMapper {
+        /**
+         * 在测试开始前确保会话测试表存在。
+         */
+        @org.apache.ibatis.annotations.Update("CREATE TABLE IF NOT EXISTS session_entry(id INT PRIMARY KEY)")
+        void create();
+
+        /**
+         * 把给定夹具数据插入当前测试表。
+         *
+         * @param id 被查找、写入或删除的夹具记录主键
+         */
+        @org.apache.ibatis.annotations.Insert("INSERT INTO session_entry VALUES(#{id})")
+        void insert(int id);
+
+        /**
+         * 统计当前测试表中符合条件的记录数。
+         *
+         * @return 满足映射查询条件的行数
+         */
+        @Select("SELECT COUNT(*) FROM session_entry")
+        int count();
+    }
+
+    /**
+     * 提供 <code>find()</code> 等供当前测试使用的独立操作。
+     */
+    public interface AggregateMapper {
+
+        /**
+         * 按映射 SQL 读取测试记录。
+         *
+         * @param query 随映射查询传入的测试领域条件
+         * @return 与查询匹配的映射结果
+         */
+        @Select("SELECT 'aggregate-1' AS id")
+        List<TestAggregate> find(@Param("query") TrackingQuery query);
+    }
+
+    /**
+     * 供测试验证事件应用和持久化的聚合样本。
+     */
+    public static class RepositoryModel extends AggregateRoot<Long> {
+        /**
+         * 为当前用例提供固定的 <code>id</code> 返回值。
+         *
+         * @return <code>1L</code>
+         */
+        @Override
+        public Long id() {
+            return 1L;
+        }
+    }
+
+    /**
+     * 用于控制查询条件或路由类型的测试查询。
+     */
+    public static class RepositoryQuery extends Query<RepositoryModel> {
+    }
+
+    /**
+     * 将 <code>id</code> 等状态一起传入当前测试，供调用或结果断言使用。
+     */
+    @Getter
+    @Setter
+    public static class RepositoryPo {
+        /**
+         * 标识当前测试对象的主键或事件标识。
+         */
+        @TableId
+        private Long id;
+    }
+
+    /**
+     * 供容器注入测试解析的示例仓储。
+     */
+    public static class InjectedRepository extends BaseRepositoryImpl<
+            RepositoryMapper, RepositoryModel, RepositoryPo, RepositoryQuery, Long> {
+        /**
+         * 使用 <code>super()</code> 初始化 <code>InjectedRepository</code> 测试夹具。
+         */
+        public InjectedRepository() {
+            super();
+        }
+    }
+
+    /**
+     * 将 <code>id</code>、<code>secret</code>、<code>signature</code> 等状态一起传入当前测试，供调用或结果断言使用。
+     */
     @lombok.Data
     @com.baomidou.mybatisplus.annotation.TableName("crypto_entry")
     @org.apache.ibatis.enhance.annotation.crypto.EncryptedTable
     @org.apache.ibatis.enhance.annotation.crypto.TableSignature
     public static class CryptoEntry {
+        /**
+         * 标识当前测试对象的主键或事件标识。
+         */
         @com.baomidou.mybatisplus.annotation.TableId
         private Integer id;
+        /**
+         * 当前签名、加密或令牌校验测试使用的密钥样本。
+         */
         @org.apache.ibatis.enhance.annotation.crypto.EncryptedField
         @org.apache.ibatis.enhance.annotation.crypto.TableSignatureField
         private String secret;
+        /**
+         * 验签、加密字段或持久化往返测试使用的签名值。
+         */
         @org.apache.ibatis.enhance.annotation.crypto.TableSignatureField(stored = true)
         private String signature;
     }
 
-    public interface ScopedMapper {
-        @Select("SELECT tenant_id FROM tenant_entry WHERE id = #{id}")
-        String find(int id);
-        @org.apache.ibatis.annotations.Delete("DELETE FROM tenant_entry WHERE id = #{id}")
-        int remove(int id);
-    }
-
-    public interface WriteMapper {
-        @org.apache.ibatis.annotations.Update("CREATE TABLE IF NOT EXISTS session_entry(id INT PRIMARY KEY)")
-        void create();
-        @org.apache.ibatis.annotations.Insert("INSERT INTO session_entry VALUES(#{id})")
-        void insert(int id);
-        @Select("SELECT COUNT(*) FROM session_entry")
-        int count();
-    }
-
-    public interface AggregateMapper {
-
-        @Select("SELECT 'aggregate-1' AS id")
-        List<TestAggregate> find(@Param("query") TrackingQuery query);
-    }
-
+    /**
+     * 测试专用聚合，供验证聚合标识和仓储或事件处理行为。
+     */
     public static final class TestAggregate extends AggregateRoot<String> {
 
+        /**
+         * 标识当前测试对象的主键或事件标识。
+         */
         private String id;
 
+        /**
+         * 读取<code>id</code> 字段。
+         *
+         * @return <code>id</code> 字段
+         */
         @Override
         public String id() {
             return id;
         }
 
+        /**
+         * 设置<code>id</code> 字段。
+         *
+         * @param id 要写入的值
+         */
         public void setId(String id) {
             this.id = id;
         }
     }
 
+    /**
+     * 记录或暴露筛选条件的查询替身。
+     */
     public static final class TrackingQuery extends Query<TestAggregate> {
 
+        /**
+         * 记录 ORM 结果填充逻辑实际执行的次数。
+         */
         private int fillCount;
+        /**
+         * 保存已交给 ORM 结果填充入口的数据。
+         */
         private List<? extends AggregateRoot<?>> filled;
 
+        /**
+         * 补充当前查询执行所需的参数。
+         *
+         * <p>此实现更新<code>filled = models</code>。</p>
+         *
+         * @param models 待填充的聚合根列表
+         */
         @Override
         public void doFills(List<? extends AggregateRoot<?>> models) {
             fillCount++;

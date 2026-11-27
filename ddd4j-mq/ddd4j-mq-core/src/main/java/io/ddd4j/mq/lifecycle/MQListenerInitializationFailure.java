@@ -11,22 +11,40 @@ import java.util.Objects;
  */
 public final class MQListenerInitializationFailure {
 
+    /**
+     * 当前消息代理的注册名称。
+     */
     private final String broker;
+    /**
+     * 消息投递或订阅的主题。
+     */
     private final String topic;
+    /**
+     * 初始化失败监听器所属的消费者组。
+     */
     private final String group;
+    /**
+     * 用于定位初始化失败的监听方法标识。
+     */
     private final String listenerMethod;
+    /**
+     * 启动消息组件失败时是否阻止应用就绪。
+     */
     private final boolean required;
+    /**
+     * 可报告的监听器初始化失败原因。
+     */
     private final String reason;
 
     /**
      * 保存监听器初始化失败的诊断信息。
      *
-     * @param broker Broker 标识
-     * @param topic 消息主题
-     * @param group 消费组
+     * @param broker         Broker 标识
+     * @param topic          消息主题
+     * @param group          消费组
      * @param listenerMethod 监听方法
-     * @param required 是否为必需监听器
-     * @param reason 失败原因
+     * @param required       是否为必需监听器
+     * @param reason         失败原因
      */
     public MQListenerInitializationFailure(String broker, String topic, String group,
                                            String listenerMethod, boolean required, String reason) {

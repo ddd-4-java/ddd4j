@@ -46,8 +46,17 @@ import java.util.*;
  */
 public class RbacService implements SubjectDataProvider {
 
+    /**
+     * 读取和保存用户的仓储。
+     */
     private final UserRepository userRepository;
+    /**
+     * 读取和保存角色的仓储。
+     */
     private final RoleRepository roleRepository;
+    /**
+     * 查询和维护权限定义的仓储。
+     */
     private final PermissionRepository permissionRepository;
 
     /**
@@ -466,6 +475,14 @@ public class RbacService implements SubjectDataProvider {
 
     // ============================ SubjectDataProvider 实现 ============================
 
+    /**
+     * 读取与当前用户或角色关联的权限列表。
+     *
+     * <p>此实现调用 <code>principal.getUserId()</code>。</p>
+     *
+     * @param principal 认证主体
+     * @return 实际返回<code>List.of()</code>
+     */
     @Override
     public List<String> getPermissionList(AuthPrincipal principal) {
         Objects.requireNonNull(principal, "principal must not be null");
@@ -476,6 +493,14 @@ public class RbacService implements SubjectDataProvider {
         return new ArrayList<>(listPermissionCodesOfUser(String.valueOf(userId)));
     }
 
+    /**
+     * 读取与当前账号关联的角色列表。
+     *
+     * <p>此实现调用 <code>principal.getUserId()</code>。</p>
+     *
+     * @param principal 认证主体
+     * @return 实际返回<code>List.of()</code>
+     */
     @Override
     public List<String> getRoleList(AuthPrincipal principal) {
         Objects.requireNonNull(principal, "principal must not be null");
@@ -488,6 +513,12 @@ public class RbacService implements SubjectDataProvider {
 
     // ============================ 私有辅助 ============================
 
+    /**
+     * 根据角色编码查找角色并构造认证主体所需的角色信息。
+     *
+     * @param roleCodes 当前账号拥有的角色编码集合
+     * @return 用于权限计算的角色信息列表
+     */
     private List<AuthPrincipal.RolePair> buildRolePairs(Set<String> roleCodes) {
         List<AuthPrincipal.RolePair> pairs = new ArrayList<>();
         for (String code : roleCodes) {

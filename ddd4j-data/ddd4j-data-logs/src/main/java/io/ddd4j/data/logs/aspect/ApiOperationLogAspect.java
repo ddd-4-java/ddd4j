@@ -106,12 +106,23 @@ public class ApiOperationLogAspect {
         }
     }
 
+    /**
+     * 仅在计时器处于运行状态时停止计时。
+     *
+     * @param stopwatch 当前 API 调用的计时器
+     */
     private void stop(Stopwatch stopwatch) {
         if (stopwatch.isRunning()) {
             stopwatch.stop();
         }
     }
 
+    /**
+     * 执行审计日志回调并记录其运行时异常，保留原 API 结果。
+     *
+     * @param callback 当前阶段的日志回调
+     * @param phase    用于定位日志异常的回调阶段
+     */
     private void invokeSafely(Runnable callback, String phase) {
         try {
             callback.run();

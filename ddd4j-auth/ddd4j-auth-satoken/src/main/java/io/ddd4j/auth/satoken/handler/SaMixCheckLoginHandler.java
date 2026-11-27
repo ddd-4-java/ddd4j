@@ -51,6 +51,12 @@ public class SaMixCheckLoginHandler implements SaAnnotationHandlerInterface<SaMi
         return SaMixCheckLogin.class;
     }
 
+    /**
+     * 按注解要求验证请求临时令牌或已登录会话。
+     *
+     * @param at      声明当前入口认证要求的注解
+     * @param element 触发认证检查的注解元素
+     */
     @Override
     public void checkMethod(SaMixCheckLogin at, AnnotatedElement element) {
         // 获取前端请求提交的临时验证码
@@ -110,6 +116,7 @@ public class SaMixCheckLoginHandler implements SaAnnotationHandlerInterface<SaMi
      *
      * @param value 临时 Token 对象
      * @return Token 扩展数据 Map
+     * @throws SaTokenException 原生令牌载荷无法读取
      */
     public Map<String, Object> getTokenPayload(SaTempToken value) throws SaTokenException {
         return new HashMap<String, Object>() {{
@@ -124,6 +131,7 @@ public class SaMixCheckLoginHandler implements SaAnnotationHandlerInterface<SaMi
      *
      * @param value 临时 Token 对象
      * @return 终端扩展数据 Map
+     * @throws SaTokenException 当前登录终端载荷无法读取
      */
     public Map<String, Object> getTerminalPayload(SaTempToken value) throws SaTokenException {
         return new HashMap<String, Object>() {{

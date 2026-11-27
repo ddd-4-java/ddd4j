@@ -48,13 +48,13 @@ ddd4j 通用基础层的架构分层遵循一个 **铁律**：
 └──────────────────────────────────────────────────────────────────┘
 ```
 
-| 维度         | 数据                                                                   |
-|--------------|------------------------------------------------------------------------|
-| **路径**     | `ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/`    |
-| **代码量**   | 26 个 Java 文件 / 2,980 行                                             |
-| **核心定位** | SPI 接口的 Spring 实现 + 上下文门面                                    |
+| 维度         | 数据                                                                                   |
+|--------------|----------------------------------------------------------------------------------------|
+| **路径**     | `ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/`                    |
+| **代码量**   | 26 个 Java 文件 / 2,980 行                                                             |
+| **核心定位** | SPI 接口的 Spring 实现 + 上下文门面                                                    |
 | **强依赖**   | `ddd4j-core` / `ddd4j-kit` / `ddd4j-annotation` + 本发行线 BOM 管理的 Spring Framework |
-| **禁止内容** | `META-INF/spring.factories`、`@AutoConfiguration`、starter             |
+| **禁止内容** | `META-INF/spring.factories`、`@AutoConfiguration`、starter                             |
 
 ---
 
@@ -71,7 +71,8 @@ public class ApplicationConfiguration {
 ```
 
 需要投影时加入 `SpringProjectionConfig`，提供业务视图，并将 `ProjectionRunner` 接到实际的事件读取器和投影位点仓储。
-使用默认投影调度适配器时，提供 Spring 的 `TaskScheduler`。配置会复用调用方声明的 `CommandBus`、`ViewManager` 或 `ViewScheduler`。
+使用默认投影调度适配器时，提供 Spring 的 `TaskScheduler`。配置会复用调用方声明的 `CommandBus`、`ViewManager` 或
+`ViewScheduler`。
 使用默认装配且缺少所需的 Bean 时，应用启动会报错。容器关闭时停止由 runtime 创建的投影任务。
 
 这些入口可用于纯 Spring 和 Spring Boot 应用。若应用通过外部 `ddd4j-boot-*` starter 启用 DDD，沿用该 starter 的接入方式。
@@ -158,7 +159,8 @@ public class SpringSubjectProvider implements SubjectProvider {
 
 ## 四、外部 Spring Boot starter 的历史装配示例
 
-本节记录早期外部 `ddd4j-boot-*` starter 的装配方案。下面的 `@EnableDdd4j`、属性名和扫描器用于说明历史接法，当前 starter 用法以其自身文档为准。运行时的当前入口见[激活方式](#二激活方式)。
+本节记录早期外部 `ddd4j-boot-*` starter 的装配方案。下面的 `@EnableDdd4j`、属性名和扫描器用于说明历史接法，当前 starter
+用法以其自身文档为准。运行时的当前入口见[激活方式](#二激活方式)。
 
 ### 4.1 默认内存 EventStore（零配置启动）
 
@@ -450,7 +452,8 @@ public class Application {
 }
 ```
 
-Spring Boot 应用可以在已有启动类上添加 `@Import(SpringCoreConfig.class)`。需要命令或投影时按[激活方式](#二激活方式)添加相应配置。
+Spring Boot 应用可以在已有启动类上添加 `@Import(SpringCoreConfig.class)`。需要命令或投影时按[激活方式](#二激活方式)
+添加相应配置。
 
 ### 10.3 运行完整样例
 

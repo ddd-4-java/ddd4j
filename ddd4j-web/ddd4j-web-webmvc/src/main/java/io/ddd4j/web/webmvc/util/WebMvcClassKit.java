@@ -30,8 +30,8 @@ public class WebMvcClassKit {
     /**
      * 查询处理方法上的注解。
      *
-     * @param <A> 注解类型
-     * @param handlerMethod 处理器方法
+     * @param <A>            注解类型
+     * @param handlerMethod  处理器方法
      * @param annotationType 注解类型
      * @return 匹配的注解
      */

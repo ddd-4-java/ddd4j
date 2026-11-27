@@ -26,6 +26,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class SecuritySubjectProviderTest {
 
+    /**
+     * 验证<code>subject</code>非空。
+     */
     @Test
     void getSubject_shouldReturnNonNullSubject() {
         SecuritySubjectProvider provider = new SecuritySubjectProvider();
@@ -35,6 +38,9 @@ class SecuritySubjectProviderTest {
         assertThat(subject).isNotNull();
     }
 
+    /**
+     * 验证<code>subject</code> 的类型为 <code>SecuritySubject.class</code>。
+     */
     @Test
     void getSubject_shouldReturnSecuritySubjectInstance() {
         SecuritySubjectProvider provider = new SecuritySubjectProvider();
@@ -44,6 +50,9 @@ class SecuritySubjectProviderTest {
         assertThat(subject).isInstanceOf(SecuritySubject.class);
     }
 
+    /**
+     * 验证<code>first</code> 指向不同实例 <code>second</code>。
+     */
     @Test
     void getSubject_shouldReturnNewInstanceEachCall() {
         SecuritySubjectProvider provider = new SecuritySubjectProvider();

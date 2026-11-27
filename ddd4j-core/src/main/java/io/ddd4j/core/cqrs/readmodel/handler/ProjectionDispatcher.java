@@ -55,14 +55,29 @@ import java.util.stream.Collectors;
  */
 public class ProjectionDispatcher {
 
+    /**
+     * 读取投影处理器及事件订阅的注册表。
+     */
     private final ProjectionHandlerRegistry registry;
 
+    /**
+     * 按位点分块读取事件的投影组件。
+     */
     private final EventChunkReader<DomainEvent<?>> chunkReader;
 
+    /**
+     * 读取并保存投影消费位置的仓储。
+     */
     private final ProjectionPositionRepository positions;
 
+    /**
+     * 读取事件和推进投影检查点的服务。
+     */
     private final ProjectionService service;
 
+    /**
+     * 执行单次分批投影任务的运行器。
+     */
     private final ProjectionRunner<DomainEvent<?>> runner;
 
     /**
@@ -203,6 +218,13 @@ public class ProjectionDispatcher {
         };
     }
 
+    /**
+     * 从当前检查点开始按处理器订阅的事件类型分批读取。
+     *
+     * @param eventType 事件的 Java 类型或持久化类型名称
+     * @param handler   当前执行的投影处理器
+     * @return 交给旧兼容投影入口的事件流
+     */
     private Flux<DomainEvent<?>> pullChunks(Class<?> eventType, ProjectionHandler handler) {
         String streamId = streamIdOf(handler);
         int chunkSize = actualChunkSize(handler);
@@ -241,6 +263,14 @@ public class ProjectionDispatcher {
      * 生成器单步推进：先在当前块内游标后移找下一个匹配事件（每个生成步只发一个
      * {@code next}——{@link SynchronousSink} 契约），当前块扫尽再拉下一块；
      * 事件耗尽或位置不再前进即 {@code complete}。
+     *
+     * @param eventType  事件负载的 Java 类型
+     * @param streamId   投影事件流标识
+     * @param chunkSize  单批最多请求的事件数量
+     * @param eventNames 订阅的事件名称
+     * @param cursor     本次拉取使用的流游标
+     * @param sink       接收拉取事件的下游
+     * @return 本次分批拉取后的游标状态
      */
     private Cursor pullStep(Class<?> eventType, String streamId, int chunkSize, Collection<String> eventNames,
                             Cursor cursor, SynchronousSink<DomainEvent<?>> sink) {
@@ -270,21 +300,44 @@ public class ProjectionDispatcher {
         }
     }
 
+    /**
+     * 在旧的逐事件投影入口中将当前位置推进一个序号。
+     *
+     * @param streamId 投影事件流标识
+     */
     private void commitPosition(String streamId) {
         ProjectionPosition current = positions.findByStreamId(streamId)
                 .orElseGet(() -> DefaultProjectionPosition.zero(streamId));
         positions.save(current.withNextEventNumber(current.getNextEventNumber() + 1));
     }
 
+    /**
+     * 使用投影处理器名称作为事件流标识。
+     *
+     * @param handler 当前执行的投影处理器
+     * @return 依处理器注册的事件流标识
+     */
     private String streamIdOf(ProjectionHandler handler) {
         return handler.getName();
     }
 
+    /**
+     * 选择处理器声明的正批量大小，缺省时取 100。
+     *
+     * @param handler 当前执行的投影处理器
+     * @return 每次读取的最大事件数
+     */
     private int actualChunkSize(ProjectionHandler handler) {
         int chunkSize = handler.getChunkSize();
         return chunkSize > 0 ? chunkSize : 100;
     }
 
+    /**
+     * 将处理器订阅的事件类型转换成简单类名。
+     *
+     * @param handler 当前执行的投影处理器
+     * @return 不可变的事件名称集合
+     */
     private Collection<String> eventTypeNames(ProjectionHandler handler) {
         return Collections.unmodifiableList(handler.eventTypes().stream()
                 .map(Class::getSimpleName)
@@ -295,42 +348,95 @@ public class ProjectionDispatcher {
      * 流式拉取的生成器状态：投影位置 + 当前事件块 + 块内游标。
      */
     private static final class Cursor {
+        /**
+         * 尚未交给下游读取的源事件位置。
+         */
         private final long position;
+        /**
+         * 当前从源位置读取的事件批次。
+         */
         private final EventChunk<DomainEvent<?>> chunk;
+        /**
+         * 当前批次中下一条要处理的事件索引。
+         */
         private final int index;
 
+        /**
+         * 构造指向指定源位置及批次偏移的拉取游标。
+         *
+         * @param position 当前源事件位置
+         * @param chunk    已读取的批次，首次读取前为空
+         * @param index    批次中即将处理的事件索引
+         */
         Cursor(long position, EventChunk<DomainEvent<?>> chunk, int index) {
             this.position = position;
             this.chunk = chunk;
             this.index = index;
         }
 
+        /**
+         * 为指定源位置创建尚未取得任何事件批次的游标。
+         *
+         * @param position 事件源中的起始位置
+         * @return 用来发起第一次拉取的游标
+         */
         static Cursor start(long position) {
             return new Cursor(position, null, 0);
         }
 
+        /**
+         * 读取<code>position</code> 字段。
+         *
+         * @return <code>position</code> 字段
+         */
         public long position() {
             return position;
         }
 
+        /**
+         * 读取<code>chunk</code> 字段。
+         *
+         * @return <code>chunk</code> 字段
+         */
         public EventChunk<DomainEvent<?>> chunk() {
             return chunk;
         }
 
+        /**
+         * 读取<code>index</code> 字段。
+         *
+         * @return <code>index</code> 字段
+         */
         public int index() {
             return index;
         }
 
+        /**
+         * 根据<code>chunk</code>、<code>Cursor</code>、<code>index</code>比较对象的值是否相等。
+         *
+         * @param o 用来比较的另一个对象，允许为空
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object o) {
             return this == o || (o instanceof Cursor && position == ((Cursor) o).position && Objects.equals(chunk, ((Cursor) o).chunk) && index == ((Cursor) o).index);
         }
 
+        /**
+         * 用<code>position</code>、<code>chunk</code>、<code>index</code>计算哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             return Objects.hash(position, chunk, index);
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>position</code>、<code>chunk</code>、<code>index</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "Cursor{position=" + position + ", chunk=" + chunk + ", index=" + index + "}";

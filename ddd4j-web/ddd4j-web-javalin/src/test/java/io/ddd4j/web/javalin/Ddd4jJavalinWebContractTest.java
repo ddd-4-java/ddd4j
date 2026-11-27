@@ -57,12 +57,27 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * 验证 <code>Ddd4jJavalinWeb</code> 在<code>readinessEndpointReflectsRegistry</code>等操作中的行为契约。
+ */
 class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
 
+    /**
+     * 由当前测试启动和关闭的应用实例。
+     */
     private Javalin app;
+    /**
+     * 执行真实请求供公共 HTTP 合同断言使用的客户端。
+     */
     private WebContractClient contractClient;
+    /**
+     * 汇总当前组件就绪状态的注册表。
+     */
     private RuntimeReadinessRegistry readinessRegistry;
 
+    /**
+     * 测试执行前执行 <code>CacheKit.build()</code>、<code>mock()</code>、<code>BaseContext.inject()</code>、<code>provider()</code> 完成资源准备。
+     */
     @BeforeEach
     void setUp() {
         CacheKit.build("javalin-contract", 300L);
@@ -85,6 +100,9 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
         contractClient = new JavalinContractClient(HttpClient.newHttpClient(), app.port());
     }
 
+    /**
+     * 测试结束后执行 <code>app.stop()</code>、<code>ThreadContext.clear()</code>、<code>BaseContext.clear()</code>、<code>CacheKit.unregister()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void tearDown() {
         if (Objects.nonNull(app)) {
@@ -95,11 +113,19 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
         CacheKit.unregister("javalin-contract");
     }
 
+    /**
+     * 返回发送测试请求所用的客户端。
+     *
+     * @return 实际返回<code>contractClient</code>，供调用方取得当前值
+     */
     @Override
     protected WebContractClient client() {
         return contractClient;
     }
 
+    /**
+     * 验证<code>ready.status()</code> 等于 <code>200</code>，<code>ready.body()</code> 包含 <code>"\"ready\":true"</code>，<code>unavailable.body()</code> 包含 <code>"\"ready\":false"</code>。
+     */
     @Test
     void readinessEndpointReflectsRegistryWithoutLeakingDetails() {
         WebContractResponse ready = client().request("GET", ReadinessEndpoint.PATH, Collections.emptyMap(), null);
@@ -113,6 +139,11 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
                 .doesNotContain("database", "secret diagnostic");
     }
 
+    /**
+     * 调用 <code>routes.get()</code>、<code>context.json()</code>、<code>R.ok()</code> 执行当前夹具操作。
+     *
+     * @param routes 传给 <code>routes.get()</code> 的 <code>io.javalin.config.RoutesConfig</code> 输入
+     */
     private void registerContractRoutes(io.javalin.config.RoutesConfig routes) {
         routes.get(WebContractPaths.SUCCESS, context -> context.json(R.ok(Map.of("result", "ok"))));
         routes.get(WebContractPaths.PUBLIC, context -> context.json(R.ok(Map.of("result", "ok"))));
@@ -143,6 +174,12 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
         });
     }
 
+    /**
+     * 创建 <code>new SubjectProvider</code> 供当前测试路径调用。
+     *
+     * @param subject 用于构造本次返回结果的 <code>Subject</code> 输入
+     * @return 当前测试使用的结果，取自 <code>new SubjectProvider(){ &#64;Override public Subject getSubject() { return subject; } }</code>
+     */
     private SubjectProvider provider(Subject subject) {
         return new SubjectProvider() {
             @Override
@@ -152,20 +189,47 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
         };
     }
 
+    /**
+     * 在当前 HTTP 框架中执行共用合同的客户端适配器。
+     */
     private final static class JavalinContractClient implements WebContractClient {
 
+        /**
+         * Java 序列化使用的版本标识。
+         */
         private static final long serialVersionUID = 0L;
 
+        /**
+         * 用于发送 HTTP 请求的客户端。
+         */
         private final HttpClient httpClient;
 
+        /**
+         * 当前夹具服务绑定的本地端口。
+         */
         private final int port;
 
+        /**
+         * 用给定值初始化 <code>JavalinContractClient</code> 实例。
+         *
+         * @param httpClient 用于发送 HTTP 请求的客户端
+         * @param port       <code>port</code> 字段
+         */
         @JsonCreator()
         private JavalinContractClient(@JsonProperty("httpClient") HttpClient httpClient, @JsonProperty("port") int port) {
             this.httpClient = httpClient;
             this.port = port;
         }
 
+        /**
+         * 通过当前客户端发起 HTTP 请求。
+         *
+         * @param method  HTTP 方法
+         * @param path    请求路径
+         * @param headers 请求头
+         * @param body    请求体
+         * @return 响应快照
+         */
         @Override
         public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
             try {
@@ -182,16 +246,34 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
             }
         }
 
+        /**
+         * 读取用于发送 HTTP 请求的客户端。
+         *
+         * @return 用于发送 HTTP 请求的客户端
+         */
         @JsonProperty("httpClient")
         public HttpClient httpClient() {
             return httpClient;
         }
 
+        /**
+         * 读取<code>port</code> 字段。
+         *
+         * @return <code>port</code> 字段
+         */
         @JsonProperty("port")
         public int port() {
             return port;
         }
 
+        /**
+         * 根据<code>httpClient</code>、<code>port</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -204,6 +286,11 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
             return Objects.equals(this.httpClient, other.httpClient) && this.port == other.port;
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 0;
@@ -212,6 +299,11 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
             return result;
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>httpClient</code>、<code>port</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "JavalinContractClient[httpClient=" + httpClient + ", port=" + port + "]";

@@ -58,12 +58,27 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class R2dbcAsyncEventStoreTest {
 
+    /**
+     * 测试事件流中使用的聚合类型名称。
+     */
     private static final String AGGREGATE_TYPE = "Order";
 
+    /**
+     * 为测试 JPA 实体管理器建立 H2 会话的工厂。
+     */
     private CloseableConnectionFactory h2Factory;
+    /**
+     * 测试容器跨用例复用的数据库连接。
+     */
     private Connection sharedConnection;
+    /**
+     * 读取及追加领域事件的事件存储。
+     */
     private R2dbcAsyncEventStore eventStore;
 
+    /**
+     * 测试前依次注册<code>EntityIdRegistry</code>。
+     */
     @BeforeEach
     void setUp() {
         h2Factory = H2ConnectionFactory.inMemory(
@@ -75,6 +90,9 @@ class R2dbcAsyncEventStoreTest {
         EntityIdRegistry.register(TestOrderId.TYPE_NAME, TestOrderId::new);
     }
 
+    /**
+     * 测试后依次注销<code>EntityIdRegistry</code>、关闭<code>sharedConnection</code>。
+     */
     @AfterEach
     void tearDown() {
         try {
@@ -90,6 +108,9 @@ class R2dbcAsyncEventStoreTest {
         }
     }
 
+    /**
+     * 验证<code>events</code> 的大小为 <code>2</code>，<code>restoredFirst.aggregateId()</code> 等于 <code>orderId</code>，<code>restoredSecond.position()</code> 大于 <code>restoredFirst.position()</code>。
+     */
     @Test
     void appendThenReadReturnsEventsInVersionOrderWithFullFieldRestoration() {
         TestOrderId orderId = new TestOrderId("order-001");
@@ -120,6 +141,9 @@ class R2dbcAsyncEventStoreTest {
                 .verifyComplete();
     }
 
+    /**
+     * 验证<code>error</code> 的类型为 <code>AggregateVersionConflictException.class</code>，<code>conflict.aggregateId()</code> 等于 <code>"order-002"</code>，<code>count</code> 等于 <code>1</code>。
+     */
     @Test
     void appendVersionConflictEmitsConflictAndPersistsNothing() {
         TestOrderId orderId = new TestOrderId("order-002");
@@ -142,6 +166,9 @@ class R2dbcAsyncEventStoreTest {
                 .verifyComplete();
     }
 
+    /**
+     * 验证<code>error</code> 的异常消息包含 <code>"CK_ASYNC_BATCH_VERSION"</code>。
+     */
     @Test
     void secondDatabaseInsertFailureRollsBackBatchAndAllowsVersionRetry() {
         TestOrderId orderId = new TestOrderId("order-failed-batch");
@@ -181,6 +208,9 @@ class R2dbcAsyncEventStoreTest {
                 .verifyComplete();
     }
 
+    /**
+     * 验证<code>Mono.fromFuture(rowsBeforeCommit).block(timeout)</code> 等于 <code>3L</code>。
+     */
     @Test
     void cancellationBeforeCommitRollsBackWrittenBatchAndAllowsVersionRetry() {
         Duration timeout = Duration.ofSeconds(5);
@@ -231,6 +261,9 @@ class R2dbcAsyncEventStoreTest {
                 .expectComplete().verify(timeout);
     }
 
+    /**
+     * 验证<code>count</code> 等于 <code>1</code>。
+     */
     @Test
     void streamsWithSameIdAndDifferentAggregateTypesMustRemainIndependent() {
         TestOrderId sharedId = new TestOrderId("shared-id");
@@ -250,6 +283,9 @@ class R2dbcAsyncEventStoreTest {
                 .verifyComplete();
     }
 
+    /**
+     * 验证<code>events</code> 的大小为 <code>2</code>，<code>events.get(0).version()</code> 等于 <code>1</code>，<code>events.get(1).version()</code> 等于 <code>2</code>。
+     */
     @Test
     void readSupportsVersionRange() {
         TestOrderId orderId = new TestOrderId("order-003");
@@ -268,6 +304,9 @@ class R2dbcAsyncEventStoreTest {
                 .verifyComplete();
     }
 
+    /**
+     * 验证<code>events</code> 的大小为 <code>2</code>，<code>events.get(0).position()</code> 小于 <code>events.get(1).position()</code>，<code>count</code> 等于 <code>1</code>。
+     */
     @Test
     void readAllPaginatesByGlobalPosition() {
         TestOrderId orderA = new TestOrderId("order-a");
@@ -293,12 +332,18 @@ class R2dbcAsyncEventStoreTest {
                 .verifyComplete();
     }
 
+    /**
+     * 在测试框架中执行 <code>StepVerifier.create()</code>、<code>eventStore.read()</code>，验证该场景。
+     */
     @Test
     void readMissingAggregateReturnsEmpty() {
         StepVerifier.create(eventStore.read(AGGREGATE_TYPE, new TestOrderId("missing")))
                 .verifyComplete();
     }
 
+    /**
+     * 验证<code>count</code>为零。
+     */
     @Test
     void appendEmptyListCompletesWithoutError() {
         StepVerifier.create(eventStore.append(AGGREGATE_TYPE, new TestOrderId("order-e"), Flux.empty(), 0))
@@ -308,6 +353,9 @@ class R2dbcAsyncEventStoreTest {
                 .verifyComplete();
     }
 
+    /**
+     * 验证<code>error</code> 的类型为 <code>IllegalStateException.class</code>，<code>error.getMessage()</code> 包含 <code>"EntityIdRegistry.register"</code>。
+     */
     @Test
     void readAllWithUnregisteredIdTypeFailsWithRegistrationGuidance() {
         EntityIdRegistry.unregister(TestOrderId.TYPE_NAME);
@@ -322,6 +370,9 @@ class R2dbcAsyncEventStoreTest {
                 .verify();
     }
 
+    /**
+     * 验证响应式序列以 <code>IllegalArgumentException.class</code> 失败。
+     */
     @Test
     void readAllLimitMustBePositive() {
         StepVerifier.create(eventStore.readAll(0, 0))
@@ -329,6 +380,11 @@ class R2dbcAsyncEventStoreTest {
                 .verify();
     }
 
+    /**
+     * 验证<code>stored.timestamp().toInstant()</code> 等于 <code>expected.toInstant()</code>。
+     *
+     * @throws Exception 反射访问被测成员时失败
+     */
     @Test
     void persistedTimestampMustComeFromEvent() throws Exception {
         TestOrderId orderId = new TestOrderId("order-time");
@@ -352,39 +408,81 @@ class R2dbcAsyncEventStoreTest {
      */
     static final class TestOrderId implements AggregateRootId {
 
+        /**
+         * 用于构造测试事件流或实体标识的逻辑类型名。
+         */
         private static final String TYPE_NAME = "TestOrderId";
 
+        /**
+         * 用于组成测试标识的原始值。
+         */
         private final String value;
 
+        /**
+         * 以给定状态构造 <code>TestOrderId</code> 测试对象。
+         *
+         * @param value 用于组成测试标识的原始值
+         */
         TestOrderId(String value) {
             this.value = value;
         }
 
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 此操作产生的<code>EntityType</code>结果
+         */
         @Override
         public EntityType getType() {
             return new StringEntityType(TYPE_NAME);
         }
 
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 实际返回<code>value</code>，供调用方取得当前值
+         */
         @Override
         public String asString() {
             return value;
         }
 
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * @return 实际返回<code>TYPE_NAME + ":" + value</code>，供调用方取得当前值
+         */
         @Override
         public String asTypedString() {
             return TYPE_NAME + ":" + value;
         }
 
+        /**
+         * 比较两个对象的值是否相等。
+         *
+         * @param object 用于此操作的 <code>object</code>（<code>Object</code>）
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object object) {
             return object instanceof TestOrderId other && value.equals(other.value);
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             return value.hashCode();
         }
 
+        /**
+         * 生成用于调试和日志的对象描述。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return asTypedString();
@@ -396,32 +494,67 @@ class R2dbcAsyncEventStoreTest {
      */
     static class OrderCreatedEvent extends DomainEvent<TestOrderId> {
 
+        /**
+         * 订单标识。
+         */
         private String orderId;
+        /**
+         * 用来校验交易数据映射的客户标识。
+         */
         private String customerId;
 
+        /**
+         * 使用 <code>super()</code> 初始化 <code>OrderCreatedEvent</code> 测试夹具。
+         */
         OrderCreatedEvent() {
             // Jackson 回读
             super();
         }
 
+        /**
+         * 设置 <code>orderId</code>、<code>customerId</code>，用于构造 <code>OrderCreatedEvent</code> 测试实例。
+         *
+         * @param orderId    订单标识
+         * @param customerId 用于初始化 <code>OrderCreatedEvent</code> 的 <code>String</code> 值
+         */
         OrderCreatedEvent(TestOrderId orderId, String customerId) {
             super(new EntityIdPath(orderId));
             this.orderId = orderId.asString();
             this.customerId = customerId;
         }
 
+        /**
+         * 读取订单标识。
+         *
+         * @return 订单标识
+         */
         public String getOrderId() {
             return orderId;
         }
 
+        /**
+         * 设置订单标识。
+         *
+         * @param orderId 要写入的值
+         */
         public void setOrderId(String orderId) {
             this.orderId = orderId;
         }
 
+        /**
+         * 读取<code>customerId</code> 字段。
+         *
+         * @return <code>customerId</code> 字段
+         */
         public String getCustomerId() {
             return customerId;
         }
 
+        /**
+         * 设置<code>customerId</code> 字段。
+         *
+         * @param customerId 要写入的值
+         */
         public void setCustomerId(String customerId) {
             this.customerId = customerId;
         }
@@ -432,15 +565,34 @@ class R2dbcAsyncEventStoreTest {
      */
     static class OrderItemAddedEvent extends DomainEvent<TestOrderId> {
 
+        /**
+         * 订单标识。
+         */
         private String orderId;
+        /**
+         * 定位批量请求中对应测试项的标识。
+         */
         private String itemId;
+        /**
+         * 测试订单或库存事件携带的商品数量。
+         */
         private int quantity;
 
+        /**
+         * 使用 <code>super()</code> 初始化 <code>OrderItemAddedEvent</code> 测试夹具。
+         */
         OrderItemAddedEvent() {
             // Jackson 回读
             super();
         }
 
+        /**
+         * 设置 <code>orderId</code>、<code>itemId</code>、<code>quantity</code>，用于构造 <code>OrderItemAddedEvent</code> 测试实例。
+         *
+         * @param orderId  订单标识
+         * @param itemId   用于初始化 <code>OrderItemAddedEvent</code> 的 <code>String</code> 值
+         * @param quantity 用于初始化 <code>OrderItemAddedEvent</code> 的 <code>int</code> 值
+         */
         OrderItemAddedEvent(TestOrderId orderId, String itemId, int quantity) {
             super(new EntityIdPath(orderId));
             this.orderId = orderId.asString();
@@ -448,6 +600,14 @@ class R2dbcAsyncEventStoreTest {
             this.quantity = quantity;
         }
 
+        /**
+         * 使用 <code>super()</code> 初始化 <code>OrderItemAddedEvent</code> 测试夹具。
+         *
+         * @param orderId   订单标识
+         * @param itemId    用于初始化 <code>OrderItemAddedEvent</code> 的 <code>String</code> 值
+         * @param quantity  用于初始化 <code>OrderItemAddedEvent</code> 的 <code>int</code> 值
+         * @param respondTo 用于初始化 <code>OrderItemAddedEvent</code> 的 <code>Event</code> 值
+         */
         OrderItemAddedEvent(TestOrderId orderId, String itemId, int quantity, Event respondTo) {
             super(new EntityIdPath(orderId), respondTo);
             this.orderId = orderId.asString();
@@ -455,26 +615,56 @@ class R2dbcAsyncEventStoreTest {
             this.quantity = quantity;
         }
 
+        /**
+         * 读取订单标识。
+         *
+         * @return 订单标识
+         */
         public String getOrderId() {
             return orderId;
         }
 
+        /**
+         * 设置订单标识。
+         *
+         * @param orderId 要写入的值
+         */
         public void setOrderId(String orderId) {
             this.orderId = orderId;
         }
 
+        /**
+         * 读取<code>itemId</code> 字段。
+         *
+         * @return <code>itemId</code> 字段
+         */
         public String getItemId() {
             return itemId;
         }
 
+        /**
+         * 设置<code>itemId</code> 字段。
+         *
+         * @param itemId 要写入的值
+         */
         public void setItemId(String itemId) {
             this.itemId = itemId;
         }
 
+        /**
+         * 读取<code>quantity</code> 字段。
+         *
+         * @return <code>quantity</code> 字段
+         */
         public int getQuantity() {
             return quantity;
         }
 
+        /**
+         * 设置<code>quantity</code> 字段。
+         *
+         * @param quantity 要写入的值
+         */
         public void setQuantity(int quantity) {
             this.quantity = quantity;
         }
@@ -486,21 +676,44 @@ class R2dbcAsyncEventStoreTest {
      */
     private static class SingleConnectionFactory implements ConnectionFactory {
 
+        /**
+         * 用于断言 ORM 条件或内容包装的包装对象。
+         */
         private final NoCloseConnection wrapper;
 
+        /**
+         * 使用 <code>this()</code> 初始化 <code>SingleConnectionFactory</code> 测试夹具。
+         *
+         * @param delegate 用于初始化 <code>SingleConnectionFactory</code> 的 <code>Connection</code> 值
+         */
         SingleConnectionFactory(Connection delegate) {
             this(new NoCloseConnection(delegate));
         }
 
+        /**
+         * 设置 <code>wrapper</code>，用于构造 <code>SingleConnectionFactory</code> 测试实例。
+         *
+         * @param wrapper 用于初始化 <code>SingleConnectionFactory</code> 的 <code>NoCloseConnection</code> 值
+         */
         SingleConnectionFactory(NoCloseConnection wrapper) {
             this.wrapper = wrapper;
         }
 
+        /**
+         * 通过 <code>Mono.just()</code> 取得当前测试需要的结果。
+         *
+         * @return 当前测试使用的结果，取自 <code>Mono.just(wrapper)</code>
+         */
         @Override
         public Publisher<? extends Connection> create() {
             return Mono.just(wrapper);
         }
 
+        /**
+         * 通过 <code>()-&gt;"single-connection"</code> 取得当前测试需要的结果。
+         *
+         * @return 当前测试使用的结果，取自 <code>()-&gt;"single-connection"</code>
+         */
         @Override
         public ConnectionFactoryMetadata getMetadata() {
             return () -> "single-connection";
@@ -512,97 +725,205 @@ class R2dbcAsyncEventStoreTest {
      */
     private static class NoCloseConnection implements Connection {
 
+        /**
+         * 供测试替身转发实际行为的底层实现。
+         */
         private final Connection delegate;
 
+        /**
+         * 设置 <code>delegate</code>，用于构造 <code>NoCloseConnection</code> 测试实例。
+         *
+         * @param delegate 用于初始化 <code>NoCloseConnection</code> 的 <code>Connection</code> 值
+         */
         NoCloseConnection(Connection delegate) {
             this.delegate = delegate;
         }
 
+        /**
+         * 通过 <code>Mono.empty()</code> 取得当前测试需要的结果。
+         *
+         * @return 当前测试使用的结果，取自 <code>Mono.empty()</code>
+         */
         @Override
         public Publisher<Void> close() {
             return Mono.empty();
         }
 
+        /**
+         * 通过 <code>delegate.beginTransaction()</code> 取得当前测试需要的结果。
+         *
+         * @return 当前测试使用的结果，取自 <code>delegate.beginTransaction()</code>
+         */
         @Override
         public Publisher<Void> beginTransaction() {
             return delegate.beginTransaction();
         }
 
+        /**
+         * 通过 <code>delegate.beginTransaction()</code> 取得当前测试需要的结果。
+         *
+         * @param definition 传给 <code>delegate.beginTransaction()</code> 的 <code>TransactionDefinition</code> 输入
+         * @return 当前测试使用的结果，取自 <code>delegate.beginTransaction(definition)</code>
+         */
         @Override
         public Publisher<Void> beginTransaction(TransactionDefinition definition) {
             return delegate.beginTransaction(definition);
         }
 
+        /**
+         * 通过 <code>delegate.commitTransaction()</code> 取得当前测试需要的结果。
+         *
+         * @return 当前测试使用的结果，取自 <code>delegate.commitTransaction()</code>
+         */
         @Override
         public Publisher<Void> commitTransaction() {
             return delegate.commitTransaction();
         }
 
+        /**
+         * 通过 <code>delegate.rollbackTransaction()</code> 取得当前测试需要的结果。
+         *
+         * @return 当前测试使用的结果，取自 <code>delegate.rollbackTransaction()</code>
+         */
         @Override
         public Publisher<Void> rollbackTransaction() {
             return delegate.rollbackTransaction();
         }
 
+        /**
+         * 通过 <code>delegate.createBatch()</code> 取得当前测试需要的结果。
+         *
+         * @return 当前测试使用的结果，取自 <code>delegate.createBatch()</code>
+         */
         @Override
         public Batch createBatch() {
             return delegate.createBatch();
         }
 
+        /**
+         * 通过 <code>delegate.createStatement()</code> 取得当前测试需要的结果。
+         *
+         * @param sql 当前操作要交给数据库执行的 SQL
+         * @return 当前测试使用的结果，取自 <code>delegate.createStatement(sql)</code>
+         */
         @Override
         public Statement createStatement(String sql) {
             return delegate.createStatement(sql);
         }
 
+        /**
+         * 通过 <code>delegate.createSavepoint()</code> 取得当前测试需要的结果。
+         *
+         * @param name 当前测试指定的对象或属性名称
+         * @return 当前测试使用的结果，取自 <code>delegate.createSavepoint(name)</code>
+         */
         @Override
         public Publisher<Void> createSavepoint(String name) {
             return delegate.createSavepoint(name);
         }
 
+        /**
+         * 通过 <code>delegate.releaseSavepoint()</code> 取得当前测试需要的结果。
+         *
+         * @param name 当前测试指定的对象或属性名称
+         * @return 当前测试使用的结果，取自 <code>delegate.releaseSavepoint(name)</code>
+         */
         @Override
         public Publisher<Void> releaseSavepoint(String name) {
             return delegate.releaseSavepoint(name);
         }
 
+        /**
+         * 通过 <code>delegate.rollbackTransactionToSavepoint()</code> 取得当前测试需要的结果。
+         *
+         * @param name 当前测试指定的对象或属性名称
+         * @return 当前测试使用的结果，取自 <code>delegate.rollbackTransactionToSavepoint(name)</code>
+         */
         @Override
         public Publisher<Void> rollbackTransactionToSavepoint(String name) {
             return delegate.rollbackTransactionToSavepoint(name);
         }
 
+        /**
+         * 通过 <code>delegate.setAutoCommit()</code> 取得当前测试需要的结果。
+         *
+         * @param autoCommit 传给 <code>delegate.setAutoCommit()</code> 的 <code>boolean</code> 输入
+         * @return 当前测试使用的结果，取自 <code>delegate.setAutoCommit(autoCommit)</code>
+         */
         @Override
         public Publisher<Void> setAutoCommit(boolean autoCommit) {
             return delegate.setAutoCommit(autoCommit);
         }
 
+        /**
+         * 通过 <code>delegate.isAutoCommit()</code> 取得当前测试需要的结果。
+         *
+         * @return 当前测试使用的结果，取自 <code>delegate.isAutoCommit()</code>
+         */
         @Override
         public boolean isAutoCommit() {
             return delegate.isAutoCommit();
         }
 
+        /**
+         * 通过 <code>delegate.getMetadata()</code> 取得当前测试需要的结果。
+         *
+         * @return 当前测试使用的结果，取自 <code>delegate.getMetadata()</code>
+         */
         @Override
         public ConnectionMetadata getMetadata() {
             return delegate.getMetadata();
         }
 
+        /**
+         * 通过 <code>delegate.setTransactionIsolationLevel()</code> 取得当前测试需要的结果。
+         *
+         * @param isolationLevel 传给 <code>delegate.setTransactionIsolationLevel()</code> 的 <code>IsolationLevel</code> 输入
+         * @return 当前测试使用的结果，取自 <code>delegate.setTransactionIsolationLevel(isolationLevel)</code>
+         */
         @Override
         public Publisher<Void> setTransactionIsolationLevel(IsolationLevel isolationLevel) {
             return delegate.setTransactionIsolationLevel(isolationLevel);
         }
 
+        /**
+         * 通过 <code>delegate.getTransactionIsolationLevel()</code> 取得当前测试需要的结果。
+         *
+         * @return 当前测试使用的结果，取自 <code>delegate.getTransactionIsolationLevel()</code>
+         */
         @Override
         public IsolationLevel getTransactionIsolationLevel() {
             return delegate.getTransactionIsolationLevel();
         }
 
+        /**
+         * 通过 <code>delegate.setLockWaitTimeout()</code> 取得当前测试需要的结果。
+         *
+         * @param timeout 等待测试事件的超时时长
+         * @return 当前测试使用的结果，取自 <code>delegate.setLockWaitTimeout(timeout)</code>
+         */
         @Override
         public Publisher<Void> setLockWaitTimeout(Duration timeout) {
             return delegate.setLockWaitTimeout(timeout);
         }
 
+        /**
+         * 通过 <code>delegate.setStatementTimeout()</code> 取得当前测试需要的结果。
+         *
+         * @param timeout 等待测试事件的超时时长
+         * @return 当前测试使用的结果，取自 <code>delegate.setStatementTimeout(timeout)</code>
+         */
         @Override
         public Publisher<Void> setStatementTimeout(Duration timeout) {
             return delegate.setStatementTimeout(timeout);
         }
 
+        /**
+         * 通过 <code>delegate.validate()</code> 取得当前测试需要的结果。
+         *
+         * @param depth 传给 <code>delegate.validate()</code> 的 <code>ValidationDepth</code> 输入
+         * @return 当前测试使用的结果，取自 <code>delegate.validate(depth)</code>
+         */
         @Override
         public Publisher<Boolean> validate(ValidationDepth depth) {
             return delegate.validate(depth);

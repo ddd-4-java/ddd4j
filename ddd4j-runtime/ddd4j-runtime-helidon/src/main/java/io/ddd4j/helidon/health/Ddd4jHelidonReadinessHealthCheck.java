@@ -32,6 +32,9 @@ import java.util.Objects;
 @ApplicationScoped
 public class Ddd4jHelidonReadinessHealthCheck implements HealthCheck {
 
+    /**
+     * 汇总当前组件就绪状态的注册表。
+     */
     private final RuntimeReadinessRegistry readinessRegistry;
 
     /**
@@ -45,6 +48,11 @@ public class Ddd4jHelidonReadinessHealthCheck implements HealthCheck {
                 "readinessRegistry must not be null");
     }
 
+    /**
+     * 将 DDD4J 就绪状态转换为 Helidon 健康检查响应。
+     *
+     * @return 框架健康端点返回的就绪结果
+     */
     @Override
     public HealthCheckResponse call() {
         ReadinessReport report = readinessRegistry.readiness();

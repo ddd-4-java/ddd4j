@@ -24,7 +24,9 @@ import lombok.Data;
 @Data
 public class SequenceProperties {
 
-    /** 序列配置前缀。 */
+    /**
+     * 序列配置前缀。
+     */
     public static final String PREFIX = "sequence";
 
     /**

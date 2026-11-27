@@ -32,33 +32,67 @@ import java.util.Objects;
  */
 public final class MQOutboxRecord {
 
+    /**
+     * 消息标识。
+     */
     private final String messageId;
+    /**
+     * 记录发布时使用的目标主题或地址。
+     */
     private final String destination;
+    /**
+     * 事件写入 Outbox 时序列化的消息负载。
+     */
     private final String payload;
+    /**
+     * 投递记录携带的消息元数据。
+     */
     private final Map<String, String> headers;
+    /**
+     * 当前 Outbox 记录的投递状态。
+     */
     private final MQOutboxStatus status;
+    /**
+     * 记录下次可被认领投递的时间。
+     */
     private final Instant availableAt;
+    /**
+     * 当前对该记录持有投递租约的派发器标识。
+     */
     private final String leaseOwner;
+    /**
+     * 当前独占投递租约的失效时间。
+     */
     private final Instant leaseUntil;
+    /**
+     * 当前 Outbox 记录累计尝试的发送次数。
+     */
     private final int attempts;
+    /**
+     * 上次投递失败的诊断说明。
+     */
     private final String lastError;
+    /**
+     * 此记录成功标记为发布完成的时间。
+     */
     private final Instant publishedAt;
 
     /**
      * 可持久化的 Outbox 消息快照。
      *
      * <p>该对象不绑定 JSON、数据库或 broker；存储适配器负责将其映射为自己的表结构。
- * @param messageId 消息标识
- * @param destination 目标对象
- * @param payload 消息负载
- * @param headers 消息头集合
- * @param status 状态
- * @param availableAt 参数 availableAt
- * @param leaseOwner 字符串参数
- * @param leaseUntil 参数 leaseUntil
- * @param attempts 整型数值
- * @param lastError 末个错误
- * @param publishedAt 参数 publishedAt
+     *
+     * @param messageId   消息标识
+     * @param destination 目标对象
+     * @param payload     消息负载
+     * @param headers     消息头集合
+     * @param status      状态
+     * @param availableAt 参数 availableAt
+     * @param leaseOwner  字符串参数
+     * @param leaseUntil  参数 leaseUntil
+     * @param attempts    整型数值
+     * @param lastError   末个错误
+     * @param publishedAt 参数 publishedAt
      */
 
     @JsonCreator
@@ -121,61 +155,89 @@ public final class MQOutboxRecord {
                 availableAt, null, null, 0, null, null);
     }
 
-    /** @return 稳定消息标识 */
+    /**
+     * @return 稳定消息标识
+     */
     public String messageId() {
         return messageId;
     }
 
-    /** @return Broker 目的地 */
+    /**
+     * @return Broker 目的地
+     */
     public String destination() {
         return destination;
     }
 
-    /** @return 已序列化事件负载 */
+    /**
+     * @return 已序列化事件负载
+     */
     public String payload() {
         return payload;
     }
 
-    /** @return 不可修改的消息头快照 */
+    /**
+     * @return 不可修改的消息头快照
+     */
     public Map<String, String> headers() {
         return headers;
     }
 
-    /** @return 当前投递状态 */
+    /**
+     * @return 当前投递状态
+     */
     public MQOutboxStatus status() {
         return status;
     }
 
-    /** @return 下一次可投递时间 */
+    /**
+     * @return 下一次可投递时间
+     */
     public Instant availableAt() {
         return availableAt;
     }
 
-    /** @return 当前租约持有者 */
+    /**
+     * @return 当前租约持有者
+     */
     public String leaseOwner() {
         return leaseOwner;
     }
 
-    /** @return 当前租约截止时间 */
+    /**
+     * @return 当前租约截止时间
+     */
     public Instant leaseUntil() {
         return leaseUntil;
     }
 
-    /** @return 已尝试投递次数 */
+    /**
+     * @return 已尝试投递次数
+     */
     public int attempts() {
         return attempts;
     }
 
-    /** @return 最近一次投递错误 */
+    /**
+     * @return 最近一次投递错误
+     */
     public String lastError() {
         return lastError;
     }
 
-    /** @return 确认发布的时间 */
+    /**
+     * @return 确认发布的时间
+     */
     public Instant publishedAt() {
         return publishedAt;
     }
 
+    /**
+     * 根据<code>leaseOwner</code>、<code>leaseUntil</code>、<code>lastError</code>、<code>publishedAt</code>、<code>attempts</code>、<code>status</code>比较对象的值是否相等。
+     *
+     * @param o 用来比较的另一个对象，允许为空
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -198,6 +260,11 @@ public final class MQOutboxRecord {
                 && Objects.equals(publishedAt, that.publishedAt);
     }
 
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         int result = messageId.hashCode();
@@ -214,6 +281,11 @@ public final class MQOutboxRecord {
         return result;
     }
 
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>messageId</code>、<code>destination</code>、<code>payload</code>、<code>headers</code>、<code>status</code>、<code>availableAt</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "MQOutboxRecord[messageId=" + messageId + ", destination=" + destination
@@ -223,57 +295,79 @@ public final class MQOutboxRecord {
                 + ", lastError=" + lastError + ", publishedAt=" + publishedAt + ']';
     }
 
-    /** @return 稳定消息标识 */
+    /**
+     * @return 稳定消息标识
+     */
     public String getMessageId() {
         return messageId;
     }
 
-    /** @return Broker 目的地 */
+    /**
+     * @return Broker 目的地
+     */
     public String getDestination() {
         return destination;
     }
 
-    /** @return 已序列化事件负载 */
+    /**
+     * @return 已序列化事件负载
+     */
     public String getPayload() {
         return payload;
     }
 
-    /** @return 不可修改的消息头快照 */
+    /**
+     * @return 不可修改的消息头快照
+     */
     public Map<String, String> getHeaders() {
         return headers;
     }
 
-    /** @return 当前投递状态 */
+    /**
+     * @return 当前投递状态
+     */
     public MQOutboxStatus getStatus() {
         return status;
     }
 
-    /** @return 下一次可投递时间 */
+    /**
+     * @return 下一次可投递时间
+     */
     public Instant getAvailableAt() {
         return availableAt;
     }
 
-    /** @return 当前租约持有者 */
+    /**
+     * @return 当前租约持有者
+     */
     public String getLeaseOwner() {
         return leaseOwner;
     }
 
-    /** @return 当前租约截止时间 */
+    /**
+     * @return 当前租约截止时间
+     */
     public Instant getLeaseUntil() {
         return leaseUntil;
     }
 
-    /** @return 已尝试投递次数 */
+    /**
+     * @return 已尝试投递次数
+     */
     public int getAttempts() {
         return attempts;
     }
 
-    /** @return 最近一次投递错误 */
+    /**
+     * @return 最近一次投递错误
+     */
     public String getLastError() {
         return lastError;
     }
 
-    /** @return 确认发布的时间 */
+    /**
+     * @return 确认发布的时间
+     */
     public Instant getPublishedAt() {
         return publishedAt;
     }

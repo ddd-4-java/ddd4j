@@ -50,7 +50,13 @@ import java.util.stream.Collectors;
  */
 public class EnumNameConverter<E extends Enum<E>> implements Converter<E> {
 
+    /**
+     * 单元格文本转换的目标枚举类型。
+     */
     private final Class<E> enumType;
+    /**
+     * 按导入文本索引目标枚举常量的映射。
+     */
     private final Map<String, E> nameIndex;
 
     /**
@@ -67,16 +73,34 @@ public class EnumNameConverter<E extends Enum<E>> implements Converter<E> {
                 .collect(Collectors.toMap(Enum::name, Function.identity(), (a, b) -> a));
     }
 
+    /**
+     * 读取<code>enumType</code> 字段。
+     *
+     * @return <code>enumType</code> 字段
+     */
     @Override
     public Class<?> supportJavaTypeKey() {
         return enumType;
     }
 
+    /**
+     * 声明转换器处理的 Excel 单元格类型。
+     *
+     * @return 字符串型单元格类型
+     */
     @Override
     public CellDataTypeEnum supportExcelTypeKey() {
         return CellDataTypeEnum.STRING;
     }
 
+    /**
+     * 按标签查找枚举常量。
+     *
+     * @param cellData            当前读取的文本单元格
+     * @param contentProperty     当前字段的 Excel 列元数据
+     * @param globalConfiguration 工作簿级转换配置
+     * @return 对应的枚举常量，空单元格返回空
+     */
     @Override
     public E convertToJavaData(ReadCellData<?> cellData,
                                ExcelContentProperty contentProperty,
@@ -87,6 +111,14 @@ public class EnumNameConverter<E extends Enum<E>> implements Converter<E> {
         return convertFromLabel(cellData.getStringValue());
     }
 
+    /**
+     * 将枚举常量格式化为导出标签。
+     *
+     * @param value               待导出的值
+     * @param contentProperty     当前字段的 Excel 列元数据
+     * @param globalConfiguration 工作簿级转换配置
+     * @return 字符串型写入单元格，空引用写为空文本
+     */
     @Override
     public WriteCellData<?> convertToExcelData(E value,
                                                ExcelContentProperty contentProperty,

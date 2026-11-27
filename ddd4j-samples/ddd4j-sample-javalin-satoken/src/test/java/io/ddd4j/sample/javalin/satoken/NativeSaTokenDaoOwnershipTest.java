@@ -21,17 +21,35 @@ import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * 验证 <code>NativeSaTokenDaoOwnership</code> 在 <code>closingReleasesOwnedDao</code>、<code>startupPreservesFailure</code> 等场景中的行为。
+ */
 @Testcontainers
 class NativeSaTokenDaoOwnershipTest {
+    /**
+     * 为当前集成测试提供独立 MySQL 服务的容器。
+     */
     @Container
     static final MySQLContainer<?> MYSQL = new MySQLContainer<>("mysql:8.0.36");
 
+    /**
+     * 读取 <code>field</code> 供当前测试使用。
+     *
+     * @return 当前测试使用的结果，取自 <code>field</code>
+     */
     private static Field rawDaoField() {
         Field field = Objects.requireNonNull(ReflectUtil.getField(SaManager.class, "saTokenDao"));
         field.setAccessible(true);
         return field;
     }
 
+    /**
+     * 调用 <code>field.get()</code>、<code>SaManager.setSaTokenDao()</code>、<code>field.set()</code> 执行当前夹具操作。
+     *
+     * @param field 传给 <code>Objects.nonNull()</code> 的 <code>Field</code> 输入
+     * @param prior 传给 <code>field.set()</code> 的 <code>Object</code> 输入
+     * @throws IllegalAccessException 无法访问所需的反射成员
+     */
     private static void restoreDao(Field field, Object prior) throws IllegalAccessException {
         try {
             if (Objects.nonNull(field.get(null))) {
@@ -42,6 +60,11 @@ class NativeSaTokenDaoOwnershipTest {
         }
     }
 
+    /**
+     * 验证<code>store.destroyCalls</code> 等于 <code>0</code>，<code>SaManager.getSaTokenDao()</code> 与…为同一实例 <code>store</code>，<code>store.getObject("caller-owned-key")</code> 等于 <code>"preserved"</code>。
+     *
+     * @throws Exception 发起测试请求时失败
+     */
     @Test
     void callerDaoServesLoginAndSurvivesClosingTheApplication() throws Exception {
         Field field = rawDaoField();
@@ -79,6 +102,11 @@ class NativeSaTokenDaoOwnershipTest {
         }
     }
 
+    /**
+     * 验证<code>field.get(null)</code>非空，<code>observed.getSuppressed()[0]</code> 与…为同一实例 <code>detachFailure</code>。
+     *
+     * @throws Exception 准备或释放被测运行资源时失败
+     */
     @Test
     void closingReleasesOwnedDaoWhenRestoringPermissionsAndDetachingDaoReportErrors() throws Exception {
         Field field = rawDaoField();
@@ -117,6 +145,11 @@ class NativeSaTokenDaoOwnershipTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>RuntimeException.class</code>，<code>field.get(null)</code>为空。
+     *
+     * @throws Exception 准备或释放被测运行资源时失败
+     */
     @Test
     void startupPreservesFailureWhenRollbackThrowsTheSameInstance() throws Exception {
         Field field = rawDaoField();
@@ -147,9 +180,18 @@ class NativeSaTokenDaoOwnershipTest {
         }
     }
 
+    /**
+     * 记录 DAO 操作，供测试验证调用次数或参数。
+     */
     private static final class TrackingDao extends SaTokenDaoDefaultImpl {
+        /**
+         * 跟踪应用或代理资源执行销毁操作的次数。
+         */
         private int destroyCalls;
 
+        /**
+         * 调用 <code>super.destroy()</code> 执行当前夹具操作。
+         */
         @Override
         public void destroy() {
             destroyCalls++;

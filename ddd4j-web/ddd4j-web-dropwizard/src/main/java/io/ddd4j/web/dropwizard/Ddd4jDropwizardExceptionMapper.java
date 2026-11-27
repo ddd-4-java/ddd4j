@@ -34,7 +34,9 @@ import java.util.Objects;
  */
 public final class Ddd4jDropwizardExceptionMapper extends BaseErrorConfiguration implements ExceptionMapper<Throwable> {
 
-    /** 使用默认异常翻译器创建映射器。 */
+    /**
+     * 使用默认异常翻译器创建映射器。
+     */
     public Ddd4jDropwizardExceptionMapper() {
         super();
     }
@@ -48,6 +50,11 @@ public final class Ddd4jDropwizardExceptionMapper extends BaseErrorConfiguration
         super(translator);
     }
 
+    /**
+     * 返回当前适配实现对应的运行框架名称。
+     *
+     * @return 框架标识
+     */
     @Override
     protected String frameworkName() {
         return "Dropwizard";
@@ -56,6 +63,9 @@ public final class Ddd4jDropwizardExceptionMapper extends BaseErrorConfiguration
     /**
      * 先归一 JAX-RS {@link WebApplicationException}（保留容器给出的状态与消息），
      * 其余异常走 ddd4j 通用翻译。
+     *
+     * @param exception 当前请求抛出的异常
+     * @return 命中的异常映射结果
      */
     @Override
     protected WebError doTranslate(Throwable exception) {
@@ -66,6 +76,12 @@ public final class Ddd4jDropwizardExceptionMapper extends BaseErrorConfiguration
         return super.doTranslate(exception);
     }
 
+    /**
+     * 将框架异常转换成带 HTTP 状态码和 JSON 正文的共用错误响应。
+     *
+     * @param exception 当前 HTTP 请求抛出的异常
+     * @return 提交给运行框架的异常响应
+     */
     @Override
     public Response toResponse(Throwable exception) {
         WebError error = translate(exception);

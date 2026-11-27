@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.mq;
-import java.util.Objects;
 
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.BaseContext;
@@ -70,6 +69,9 @@ public interface MQClient extends AutoCloseable {
 
     /**
      * 简单转义单引号（防止 tags 内含单引号破坏 selector 解析）。
+     *
+     * @param s 待转义的文本
+     * @return 可用于拼接消息元数据的转义文本
      */
     private static String escape(String s) {
         return s.replace("'", "''");
@@ -77,6 +79,9 @@ public interface MQClient extends AutoCloseable {
 
     /**
      * 反射调用异常解包（对齐 base-mq）。
+     *
+     * @param ex 待解包的异常
+     * @return 解包后的异常
      */
     private static Throwable unwrap(Exception ex) {
         Throwable cause = ex.getCause();
@@ -243,6 +248,11 @@ public interface MQClient extends AutoCloseable {
         return MQStartupStatus.unmanaged();
     }
 
+    /**
+     * 结束当前组件持有的资源。
+     *
+     * <p>此实现调用 <code>logger().info("Shutting down MQClient [{}]", impl())</code>。</p>
+     */
     @Override
     default void close() {
         logger().info("Shutting down MQClient [{}]", impl());
@@ -253,6 +263,14 @@ public interface MQClient extends AutoCloseable {
         }
     }
 
+    /**
+     * 根据监听器和代理异常生成可诊断的初始化失败记录。
+     *
+     * @param listener  初始化失败的监听器
+     * @param required  该监听器是否要求成功初始化
+     * @param exception 初始化时抛出的异常
+     * @return 当前监听器的启动失败记录
+     */
     private MQListenerInitializationFailure failure(MQListener listener, boolean required,
                                                     Throwable exception) {
         String topic = Objects.isNull(listener) ? "" : Objects.toString(listener.getTopic(), "");
@@ -264,12 +282,26 @@ public interface MQClient extends AutoCloseable {
                 exception.getClass().getSimpleName());
     }
 
+    /**
+     * 将监听器启动失败信息与原始异常合并为初始化异常。
+     *
+     * @param failure 已整理的监听器初始化失败信息
+     * @param cause   原始异常
+     * @return 供启动状态和调用方处理的消息初始化异常
+     */
     private MQInitializationException initializationException(MQListenerInitializationFailure failure,
                                                               Throwable cause) {
         return new MQInitializationException(failure.broker(), failure.topic(), failure.group(),
                 failure.listenerMethod(), cause);
     }
 
+    /**
+     * 回滚当前初始化检查点之后登记的资源，保留原来的初始化异常。
+     *
+     * @param lifecycle               负责回收已登记资源的生命周期
+     * @param checkpoint              初始化前记录的资源检查点
+     * @param initializationException 触发回滚的初始化异常
+     */
     private void rollback(MQClientLifecycle lifecycle, int checkpoint,
                           MQInitializationException initializationException) {
         try {
@@ -342,7 +374,7 @@ public interface MQClient extends AutoCloseable {
      * 便捷重载：无 Acknowledgment 的消费（ack 能力由 broker 内部处理，如 RocketMQ 返回值语义）。
      *
      * @param listener 监听器定义
-     * @param event 已反序列化的 MQ 事件
+     * @param event    已反序列化的 MQ 事件
      * @throws Throwable 已解包的业务异常
      */
     default void consume(MQListener listener, MQEvent event) throws Throwable {
@@ -444,7 +476,7 @@ public interface MQClient extends AutoCloseable {
     /**
      * 便捷重载：从 {@link MQEvent} + {@link MQProperties} 解析物理地址（生产者侧）。
      *
-     * @param event 待发布事件
+     * @param event      待发布事件
      * @param properties MQ 配置
      * @return 生产者侧物理地址
      */
@@ -456,7 +488,7 @@ public interface MQClient extends AutoCloseable {
      * 便捷重载：从 {@link MQListener} + {@link MQProperties} 解析物理目的地（消费者侧，
      * tag 取监听器声明的 tags 首个正向 tag，保持订阅定位一致）。
      *
-     * @param listener 监听器定义
+     * @param listener   监听器定义
      * @param properties MQ 配置
      * @return 消费者侧物理地址
      */
@@ -626,15 +658,25 @@ public interface MQClient extends AutoCloseable {
      * <p>CUSTOM：业务子类覆写 {@link #partitionKey(MQEvent)}，本枚举不适用。
      */
     enum PartitionKeyStrategy {
-        /** 不设置分区键。 */
+        /**
+         * 不设置分区键。
+         */
         NONE,
-        /** 按消息标签分区。 */
+        /**
+         * 按消息标签分区。
+         */
         TAG,
-        /** 按租户标识分区。 */
+        /**
+         * 按租户标识分区。
+         */
         TENANT,
-        /** 按标签和租户复合分区。 */
+        /**
+         * 按标签和租户复合分区。
+         */
         TAG_TENANT,
-        /** 由业务实现自定义分区键。 */
+        /**
+         * 由业务实现自定义分区键。
+         */
         CUSTOM
     }
 
@@ -644,9 +686,17 @@ public interface MQClient extends AutoCloseable {
     @Slf4j(topic = "### DDD4J-MQ ###")
     final class LogHolder {
 
+        /**
+         * 限制调用方直接创建 <code>LogHolder</code> 实例。
+         */
         private LogHolder() {
         }
 
+        /**
+         * 返回共享消息客户端使用的日志记录器。
+         *
+         * @return 消息客户端日志记录器
+         */
         private static Logger logger() {
             return log;
         }

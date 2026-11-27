@@ -23,13 +23,16 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-/** 为 Mapper 直接返回的 DDD4J 聚合根填充关联数据。 */
+/**
+ * 为 Mapper 直接返回的 DDD4J 聚合根填充关联数据。
+ */
 public final class AggregateQueryResultFiller {
 
     /**
      * 查找领域查询，统一填充结果中的聚合根。
+     *
      * @param parameters ORM 已标准化的参数对象
-     * @param results 查询结果
+     * @param results    查询结果
      */
     public void fill(Collection<Object> parameters, List<?> results) {
         if (results.isEmpty()) {
@@ -48,6 +51,12 @@ public final class AggregateQueryResultFiller {
         }
     }
 
+    /**
+     * 从执行参数中查找需要结果填充的 DDD4J 查询。
+     *
+     * @param parameters 当前语句的调用参数
+     * @return 找到的查询，缺少时为空
+     */
     private Query<?> findQuery(Collection<Object> parameters) {
         for (Object candidate : parameters) {
             if (candidate instanceof Query<?>) {
@@ -57,6 +66,12 @@ public final class AggregateQueryResultFiller {
         return null;
     }
 
+    /**
+     * 从返回对象和容器中提取可用于结果填充的聚合实例。
+     *
+     * @param result     需要提取聚合对象的返回值
+     * @param aggregates 本次批量写入的聚合对象
+     */
     private void collectAggregates(Object result, List<AggregateRoot<?>> aggregates) {
         if (result instanceof AggregateRoot<?>) {
             aggregates.add((AggregateRoot<?>) result);

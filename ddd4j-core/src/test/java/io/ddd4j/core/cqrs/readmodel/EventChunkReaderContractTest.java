@@ -41,6 +41,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("EventChunkReader SPI 契约")
 class EventChunkReaderContractTest {
 
+    /**
+     * 验证<code>chunk.getEvents()</code> 按顺序仅包含 <code>"b"</code>、<code>"c"</code>，<code>chunk.getNextEventNumber()</code> 等于 <code>4L</code>。
+     */
     @Test
     void read_应按fromEventNumber包含起始读取事件() {
         InMemoryEventChunkReader reader = new InMemoryEventChunkReader();
@@ -54,6 +57,9 @@ class EventChunkReaderContractTest {
         assertThat(chunk.getNextEventNumber()).isEqualTo(4L);
     }
 
+    /**
+     * 验证<code>chunk.getEvents()</code> 的大小为 <code>2</code>，<code>chunk.getNextEventNumber()</code> 等于 <code>3L</code>。
+     */
     @Test
     void read_应限制返回事件数量不超过chunkSize() {
         InMemoryEventChunkReader reader = new InMemoryEventChunkReader();
@@ -68,6 +74,9 @@ class EventChunkReaderContractTest {
         assertThat(chunk.getNextEventNumber()).isEqualTo(3L);
     }
 
+    /**
+     * 验证<code>chunk.hasEvents()</code>为假，<code>chunk.getNextEventNumber()</code> 等于 <code>2L</code>。
+     */
     @Test
     void read_从已读完的位置继续读_应返回空chunk且不推进位置() {
         InMemoryEventChunkReader reader = new InMemoryEventChunkReader();
@@ -80,6 +89,9 @@ class EventChunkReaderContractTest {
         assertThat(chunk.getNextEventNumber()).isEqualTo(2L);
     }
 
+    /**
+     * 验证<code>chunk.hasEvents()</code>为假，<code>chunk.getNextEventNumber()</code>为零。
+     */
     @Test
     void read_空流首次读取_应返回nextEventNumber为零的空chunk() {
         InMemoryEventChunkReader reader = new InMemoryEventChunkReader();
@@ -90,6 +102,9 @@ class EventChunkReaderContractTest {
         assertThat(chunk.getNextEventNumber()).isZero();
     }
 
+    /**
+     * 验证<code>chunk.getEvents()</code> 按顺序仅包含 <code>"a"</code>、<code>"b"</code>。
+     */
     @Test
     void read_eventTypes为空_应读取全部类型() {
         InMemoryEventChunkReader reader = new InMemoryEventChunkReader();
@@ -107,12 +122,32 @@ class EventChunkReaderContractTest {
      */
     static class InMemoryEventChunkReader implements EventChunkReader<String> {
 
+        /**
+         * 当前测试期间收集的领域事件，供断言比较发布内容或顺序。
+         */
         private final Deque<Numbered> events = new ArrayDeque<>();
 
+        /**
+         * 调用 <code>events.addLast()</code> 执行当前夹具操作。
+         *
+         * @param number  传给 <code>events.addLast()</code> 的 <code>long</code> 输入
+         * @param payload 传给被测操作的消息负载
+         */
         void append(long number, String payload) {
             events.addLast(new Numbered(number, payload));
         }
 
+        /**
+         * 读取调用指定的数据或事件流。
+         *
+         * <p>测试夹具会调用 <code>picked.add(n.payload)</code>、<code>picked.isEmpty()</code>。</p>
+         *
+         * @param streamId        投影流 ID
+         * @param fromEventNumber 起始事件号，包含该位置
+         * @param chunkSize       本次最大读取数量
+         * @param eventTypes      需要读取的事件类型；为空表示由实现自行决定
+         * @return 事件块
+         */
         @Override
         public EventChunk<String> read(String streamId, long fromEventNumber, int chunkSize,
                                        Collection<String> eventTypes) {
@@ -138,10 +173,19 @@ class EventChunkReaderContractTest {
          */
         private final static class Numbered {
 
+            /**
+             * Java 序列化使用的版本标识。
+             */
             private static final long serialVersionUID = 0L;
 
+            /**
+             * 用于测试映射或处理逻辑的数值字段。
+             */
             private final long number;
 
+            /**
+             * 当前事件或请求夹具携带的负载。
+             */
             private final String payload;
 
             /**
@@ -156,16 +200,34 @@ class EventChunkReaderContractTest {
                 this.payload = payload;
             }
 
+            /**
+             * 读取<code>number</code> 字段。
+             *
+             * @return <code>number</code> 字段
+             */
             @JsonProperty("number")
             public long number() {
                 return number;
             }
 
+            /**
+             * 读取<code>payload</code> 字段。
+             *
+             * @return <code>payload</code> 字段
+             */
             @JsonProperty("payload")
             public String payload() {
                 return payload;
             }
 
+            /**
+             * 根据<code>payload</code>、<code>number</code>比较对象的值是否相等。
+             *
+             * <p>只比较运行时类型相同的对象。</p>
+             *
+             * @param obj 用来比较或转换的输入对象
+             * @return 对象满足此实现的相等条件时为真
+             */
             @Override
             public boolean equals(Object obj) {
                 if (this == obj) {
@@ -178,6 +240,11 @@ class EventChunkReaderContractTest {
                 return this.number == other.number && Objects.equals(this.payload, other.payload);
             }
 
+            /**
+             * 计算与对象相等条件一致的哈希值。
+             *
+             * @return 由参与相等比较的状态计算出的哈希值
+             */
             @Override
             public int hashCode() {
                 int result = 0;
@@ -186,6 +253,11 @@ class EventChunkReaderContractTest {
                 return result;
             }
 
+            /**
+             * 生成用于调试和日志的对象描述，包含<code>number</code>、<code>payload</code>。
+             *
+             * @return 表示当前对象状态的字符串
+             */
             @Override
             public String toString() {
                 return "Numbered[number=" + number + ", payload=" + payload + "]";

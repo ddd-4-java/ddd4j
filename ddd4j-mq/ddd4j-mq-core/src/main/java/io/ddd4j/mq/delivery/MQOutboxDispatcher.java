@@ -31,15 +31,27 @@ import java.util.function.Consumer;
 @Slf4j
 public final class MQOutboxDispatcher {
 
+    /**
+     * 负责认领、确认和重新安排待发事件的发件箱存储。
+     */
     private final MQOutboxStore store;
+    /**
+     * 执行对消息代理实际发送的组件。
+     */
     private final MQOutboxSender sender;
+    /**
+     * 计算认领租约及失败重试条件的策略。
+     */
     private final MQDeliveryPolicy policy;
+    /**
+     * 接收消息投递或运行状态变化的回调。
+     */
     private final MQDeliveryObserver observer;
 
     /**
      * 创建可靠消息调度器。
      *
-     * @param store Outbox 持久化端口
+     * @param store  Outbox 持久化端口
      * @param sender 消息发送端口
      * @param policy 投递策略
      */
@@ -128,6 +140,11 @@ public final class MQOutboxDispatcher {
         return new MQOutboxDispatchResult(claimed.size(), published, rescheduled, dead, confirmationLost);
     }
 
+    /**
+     * 通知投递观察器并记录其运行时异常，避免影响实际投递路径。
+     *
+     * @param action 要在当前观察器上调用的通知动作
+     */
     private void notifyObserver(Consumer<MQDeliveryObserver> action) {
         try {
             action.accept(observer);

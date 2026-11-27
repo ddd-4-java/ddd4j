@@ -61,7 +61,13 @@ public class GeoBaiduTemplate {
      * 百度地图AK密钥
      */
     private final String ak;
+    /**
+     * 将地理编码输入和百度密钥填入请求的地址模板。
+     */
     private final String geocoderUrlTemplate;
+    /**
+     * 用于拼接百度 IP 定位请求的地址模板。
+     */
     private final String ipUrlTemplate;
 
     /**
@@ -74,10 +80,25 @@ public class GeoBaiduTemplate {
         this(httpClient, ak, geocoder, geocoder2);
     }
 
+    /**
+     * 配置百度地理编码及 IP 定位两个接口。
+     *
+     * @param ak                  百度地图接口密钥
+     * @param geocoderUrlTemplate 地理编码接口地址模板
+     * @param ipUrlTemplate       IP 定位接口地址模板
+     */
     GeoBaiduTemplate(String ak, String geocoderUrlTemplate, String ipUrlTemplate) {
         this(HttpClient.newHttpClient(), ak, geocoderUrlTemplate, ipUrlTemplate);
     }
 
+    /**
+     * 用给定值初始化 <code>GeoBaiduTemplate</code> 实例。
+     *
+     * @param httpClient          HTTP 客户端
+     * @param ak                  百度地图AK密钥
+     * @param geocoderUrlTemplate <code>geocoderUrlTemplate</code> 字段
+     * @param ipUrlTemplate       <code>ipUrlTemplate</code> 字段
+     */
     private GeoBaiduTemplate(HttpClient httpClient, String ak,
                              String geocoderUrlTemplate, String ipUrlTemplate) {
         super();

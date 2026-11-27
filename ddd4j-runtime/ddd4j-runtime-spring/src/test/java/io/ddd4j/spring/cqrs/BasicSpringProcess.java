@@ -11,13 +11,28 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  * 隔离 JVM 的基础 Spring 启动探针；类路径明确移除 JPA 与事件存储构件。
  */
 public final class BasicSpringProcess {
+    /**
+     * 限制调用方直接创建 <code>BasicSpringProcess</code> 实例。
+     */
     private BasicSpringProcess() {
     }
 
+    /**
+     * 调用 <code>verifyStartup()</code> 执行当前夹具操作。
+     *
+     * @param args 从命令行传入测试探针的参数
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     public static void main(String[] args) throws Exception {
         verifyStartup("io.ddd4j.spring.cqrs");
     }
 
+    /**
+     * 调用 <code>Class.forName()</code>、<code>context.getBeansOfType()</code>、<code>context.isActive()</code> 执行当前夹具操作。
+     *
+     * @param expectedPackage 传给 <code>expectedPackage.equals()</code> 的 <code>String</code> 输入
+     * @throws Exception 反射访问被测成员时失败
+     */
     public static void verifyStartup(String expectedPackage) throws Exception {
         for (String absent : new String[]{"javax.persistence.EntityManager", "jakarta.persistence.EntityManager",
                 "org.springframework.data.jpa.repository.JpaRepository",

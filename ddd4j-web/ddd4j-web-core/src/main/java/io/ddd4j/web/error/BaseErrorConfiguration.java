@@ -41,12 +41,23 @@ import java.util.Objects;
  */
 public abstract class BaseErrorConfiguration {
 
+    /**
+     * 当前组件使用的日志记录器。
+     */
     private static final Logger LOG = LoggerFactory.getLogger(BaseErrorConfiguration.class);
 
+    /**
+     * 将执行异常转换成共用 Web 错误的组件。
+     */
     private final WebExceptionTranslator translator;
+    /**
+     * 生成应用统一错误响应体的构造器。
+     */
     private final WebErrorResponseBuilder responseBuilder;
 
-    /** 使用默认异常翻译器和响应构造器。 */
+    /**
+     * 使用默认异常翻译器和响应构造器。
+     */
     protected BaseErrorConfiguration() {
         this(new DefaultWebExceptionTranslator());
     }
@@ -63,7 +74,7 @@ public abstract class BaseErrorConfiguration {
     /**
      * 使用指定异常翻译器和响应构造器。
      *
-     * @param translator 异常翻译器
+     * @param translator      异常翻译器
      * @param responseBuilder 错误响应构造器
      */
     protected BaseErrorConfiguration(WebExceptionTranslator translator, WebErrorResponseBuilder responseBuilder) {
@@ -74,9 +85,9 @@ public abstract class BaseErrorConfiguration {
     /**
      * 框架已给出 HTTP 状态时的兜底错误表示：消息为空时回退到状态短语。
      *
-     * @param status HTTP 状态码
+     * @param status          HTTP 状态码
      * @param fallbackMessage 默认错误消息
-     * @param message 错误消息
+     * @param message         错误消息
      * @return HTTP 状态错误
      */
     protected static WebError httpStatusError(int status, String fallbackMessage, String message) {
@@ -137,7 +148,7 @@ public abstract class BaseErrorConfiguration {
      * 统一的未处理错误日志：status &gt;= 500 时按 error 级别记录，子类在写响应前调用。
      *
      * @param throwable 原始异常
-     * @param error Web 错误
+     * @param error     Web 错误
      */
     protected void logUnhandled(Throwable throwable, WebError error) {
         if (isServerError(error)) {

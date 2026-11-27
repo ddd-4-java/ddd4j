@@ -31,6 +31,9 @@ import java.util.function.Consumer;
 @Slf4j
 public final class DropwizardDomainEventPublisher implements DomainEventPublisher {
 
+    /**
+     * 接收运行时发布领域事件的监听回调。
+     */
     private final List<Consumer<Object>> listeners;
 
     /**
@@ -43,11 +46,26 @@ public final class DropwizardDomainEventPublisher implements DomainEventPublishe
         this.listeners = ImmutableList.copyOf(Objects.requireNonNull(listeners, "listeners must not be null"));
     }
 
+    /**
+     * 将传入的事件交给当前发布通道。
+     *
+     * <p>Dropwizard 实现调用 <code>publish((Object)event)</code>。</p>
+     *
+     * @param <ID>  实体标识类型
+     * @param event 领域事件
+     */
     @Override
     public <ID extends EntityId> void publish(DomainEvent<ID> event) {
         publish((Object) event);
     }
 
+    /**
+     * 将传入的事件交给当前发布通道。
+     *
+     * <p>Dropwizard 实现调用 <code>log.debug("Publishing Dropwizard event: {}", event.getClass().getName())</code>。</p>
+     *
+     * @param event 任意事件对象
+     */
     @Override
     public void publish(Object event) {
         if (Objects.nonNull(event)) {

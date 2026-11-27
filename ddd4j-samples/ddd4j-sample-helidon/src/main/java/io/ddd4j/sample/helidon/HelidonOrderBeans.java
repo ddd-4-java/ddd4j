@@ -25,16 +25,33 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class HelidonOrderBeans {
 
+    /**
+     * 存放商品交易请求幂等记录的缓存名称。
+     */
     private static final String IDEMPOTENCY_CACHE_NAME = "ddd4j-web-idempotency";
+    /**
+     * 幂等缓存条目存活时间，单位为秒。
+     */
     private static final long IDEMPOTENCY_CACHE_TTL_SECONDS = 300L;
 
+    /**
+     * 由当前 Helidon 实例创建并负责注销的缓存。
+     */
     private Cache<String, Object> ownedIdempotencyCache;
 
+    /**
+     * 应用启动后登记供商品交易拦截器复用的幂等缓存。
+     *
+     * @param startup 框架启动阶段发出的应用事件
+     */
     void initializeIdempotencyCache(@jakarta.enterprise.event.Observes
                                     @jakarta.enterprise.context.Initialized(ApplicationScoped.class) Object startup) {
         ownedIdempotencyCache = CacheKit.buildLocalIfAbsent(IDEMPOTENCY_CACHE_NAME, IDEMPOTENCY_CACHE_TTL_SECONDS);
     }
 
+    /**
+     * 应用停止后仅清理当前示例创建的幂等缓存。
+     */
     @PreDestroy
     void destroyIdempotencyCache() {
         CacheKit.unregisterLocalIfOwned(IDEMPOTENCY_CACHE_NAME, ownedIdempotencyCache);

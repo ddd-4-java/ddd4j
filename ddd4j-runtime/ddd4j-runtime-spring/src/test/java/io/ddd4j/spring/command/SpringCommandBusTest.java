@@ -41,13 +41,22 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("SpringCommandBus 验收测试")
 class SpringCommandBusTest {
 
+    /**
+     * 当前测试使用的框架上下文或请求作用域。
+     */
     private AnnotationConfigApplicationContext context;
 
+    /**
+     * 根据本次调用更新 <code>context = new AnnotationConfigApplicationContext(TestConfig.class)</code>，用于后续测试步骤。
+     */
     @BeforeEach
     void setUp() {
         context = new AnnotationConfigApplicationContext(TestConfig.class);
     }
 
+    /**
+     * 测试结束后执行 <code>context.close()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void tearDown() {
         if (context != null) {
@@ -55,6 +64,9 @@ class SpringCommandBusTest {
         }
     }
 
+    /**
+     * 注册：容器刷新后应自动发现并注册 CommandExecutor Bean。
+     */
     @Test
     @DisplayName("注册：容器刷新后应自动发现并注册 CommandExecutor Bean")
     void shouldRegisterExecutorsOnContextRefresh() {
@@ -62,6 +74,9 @@ class SpringCommandBusTest {
         assertNotNull(commandBus, "SpringCommandBus 应作为 Bean 注册");
     }
 
+    /**
+     * 路由：execute 应正确路由到对应执行器。
+     */
     @Test
     @DisplayName("路由：execute 应正确路由到对应执行器")
     void shouldRouteCommandToCorrectExecutor() {
@@ -71,6 +86,9 @@ class SpringCommandBusTest {
         assertEquals("executed: hello", result.getData());
     }
 
+    /**
+     * 防御：未注册的 command 应抛出 IllegalStateException。
+     */
     @Test
     @DisplayName("防御：未注册的 command 应抛出 IllegalStateException")
     void shouldThrowForUnregisteredCommand() {
@@ -85,6 +103,9 @@ class SpringCommandBusTest {
                 "异常消息应包含未注册命令的类名");
     }
 
+    /**
+     * 防御：command 为 null 时应抛出 IllegalArgumentException。
+     */
     @Test
     @DisplayName("防御：command 为 null 时应抛出 IllegalArgumentException")
     void shouldThrowForNullCommand() {
@@ -92,6 +113,9 @@ class SpringCommandBusTest {
         assertThrows(IllegalArgumentException.class, () -> commandBus.execute(null));
     }
 
+    /**
+     * 路由：多个执行器应各自路由到正确的命令类型。
+     */
     @Test
     @DisplayName("路由：多个执行器应各自路由到正确的命令类型")
     void shouldRouteMultipleExecutorsCorrectly() {
@@ -102,6 +126,9 @@ class SpringCommandBusTest {
         assertEquals("another: b", r2.getData());
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，<code>bus.execute(new TestCommand("partial"))</code> 抛出 <code>IllegalStateException.class</code>。
+     */
     @Test
     void failedDiscoveryMustNotPublishPartialRoutes() {
         try (AnnotationConfigApplicationContext isolated = new AnnotationConfigApplicationContext()) {
@@ -114,6 +141,9 @@ class SpringCommandBusTest {
         }
     }
 
+    /**
+     * 验证<code>bus.execute(new TestCommand("late"))</code> 抛出 <code>IllegalStateException.class</code>。
+     */
     @Test
     void discoversAtLifecycleCallbackAndPreservesHandlerExceptionIdentity() {
         try (AnnotationConfigApplicationContext isolated = new AnnotationConfigApplicationContext()) {
@@ -135,6 +165,9 @@ class SpringCommandBusTest {
         }
     }
 
+    /**
+     * 验证<code>isolated.getBeansOfType(io.ddd4j.core.cqrs.command.CommandBus.class).size()</code> 等于 <code>1</code>。
+     */
     @Test
     void explicitEntryReusesLegacyOrCustomBusRegardlessOfRegistrationOrder() {
         for (Class<?> existing : new Class<?>[]{LegacyConfig.class, CustomConfig.class}) {
@@ -155,6 +188,9 @@ class SpringCommandBusTest {
         }
     }
 
+    /**
+     * 验证<code>isolated.getBeansOfType(io.ddd4j.core.cqrs.command.CommandBus.class).size()</code> 等于 <code>1</code>，<code>isolated.getBean("springCommandBus").getClass()</code> 等于 <code>type</code>。
+     */
     @Test
     void eachHistoricalComponentScanWorksAlongsideExplicitEntry() {
         for (Class<?> type : new Class<?>[]{SpringCommandBus.class, io.ddd4j.data.cqrs.spring.SpringCommandBus.class}) {
@@ -173,6 +209,9 @@ class SpringCommandBusTest {
         }
     }
 
+    /**
+     * 验证<code>creations.get()</code> 等于 <code>0</code>，<code>creations.get()</code> 等于 <code>1</code>。
+     */
     @Test
     void explicitEntryReusesPrototypeAndCustomScopedBusWithoutEagerCreation() {
         for (String scope : new String[]{"prototype", "requestLike"}) {
@@ -195,18 +234,35 @@ class SpringCommandBusTest {
         }
     }
 
+    /**
+     * 为测试容器启用需要显式选择的投影配置。
+     */
     @Configuration(proxyBeanMethods = false)
     @org.springframework.context.annotation.Import(io.ddd4j.spring.config.SpringCommandConfig.class)
     static class ExplicitConfig {
     }
 
+    /**
+     * 向测试容器注册 <code>executor()</code>、<code>springCommandBus()</code> 等测试入口或组件。
+     */
     @Configuration(proxyBeanMethods = false)
     static class LegacyConfig {
+        /**
+         * 创建 <code>new TestCommandExecutor</code> 供当前测试路径调用。
+         *
+         * @return 当前测试使用的结果，取自 <code>new TestCommandExecutor()</code>
+         */
         @Bean
         TestCommandExecutor executor() {
             return new TestCommandExecutor();
         }
 
+        /**
+         * 创建 <code>new io.ddd4j.data.cqrs.spring.SpringCommandBus</code> 供当前测试路径调用。
+         *
+         * @param context 当前框架保存请求或运行时状态的上下文
+         * @return 当前测试使用的结果，取自 <code>new io.ddd4j.data.cqrs.spring.SpringCommandBus(context, new io.ddd4j.core.cqrs.command.CommandRegistry())</code>
+         */
         @Bean
         io.ddd4j.data.cqrs.spring.SpringCommandBus springCommandBus(org.springframework.context.ApplicationContext context) {
             return new io.ddd4j.data.cqrs.spring.SpringCommandBus(context,
@@ -214,8 +270,16 @@ class SpringCommandBusTest {
         }
     }
 
+    /**
+     * 向测试容器注册 <code>customBus()</code> 等测试入口或组件。
+     */
     @Configuration(proxyBeanMethods = false)
     static class CustomConfig {
+        /**
+         * 创建 <code>new io.ddd4j.core.cqrs.command.DefaultCommandBus</code> 供当前测试路径调用。
+         *
+         * @return 当前测试使用的结果，取自 <code>new io.ddd4j.core.cqrs.command.DefaultCommandBus(java.util.List.of(new TestCommandExecutor()))</code>
+         */
         @Bean
         io.ddd4j.core.cqrs.command.CommandBus customBus() {
             return new io.ddd4j.core.cqrs.command.DefaultCommandBus(java.util.List.of(new TestCommandExecutor()));
@@ -228,12 +292,25 @@ class SpringCommandBusTest {
      * 测试命令
      */
     static class TestCommand implements Command {
+        /**
+         * 发送给当前夹具或用于断言往返结果的值。
+         */
         private final String value;
 
+        /**
+         * 设置 <code>value</code>，用于构造 <code>TestCommand</code> 测试实例。
+         *
+         * @param value 当前用例传入的值
+         */
         TestCommand(String value) {
             this.value = value;
         }
 
+        /**
+         * 读取<code>value</code> 字段。
+         *
+         * @return <code>value</code> 字段
+         */
         String getValue() {
             return value;
         }
@@ -243,12 +320,25 @@ class SpringCommandBusTest {
      * 另一个测试命令
      */
     static class AnotherCommand implements Command {
+        /**
+         * 发送给当前夹具或用于断言往返结果的值。
+         */
         private final String value;
 
+        /**
+         * 设置 <code>value</code>，用于构造 <code>AnotherCommand</code> 测试实例。
+         *
+         * @param value 当前用例传入的值
+         */
         AnotherCommand(String value) {
             this.value = value;
         }
 
+        /**
+         * 读取<code>value</code> 字段。
+         *
+         * @return <code>value</code> 字段
+         */
         String getValue() {
             return value;
         }
@@ -265,11 +355,26 @@ class SpringCommandBusTest {
      */
     static class TestCommandExecutor implements CommandExecutor<TestCommand> {
 
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>java.util.Collections.&lt;Class&lt;? extends Command&gt;&gt;singleton(TestCommand.class)</code>。</p>
+         *
+         * @return 实际返回<code>java.util.Collections.&lt;Class&lt;? extends Command&gt;&gt;singleton(TestCommand.class)</code>
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return java.util.Collections.<Class<? extends Command>>singleton(TestCommand.class);
         }
 
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>Result.ok("executed: " + command.getValue())</code>、<code>command.getValue()</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>Result.ok("executed: " + command.getValue())</code>
+         */
         @Override
         public Result execute(TestCommand command) {
             return Result.ok("executed: " + command.getValue());
@@ -281,11 +386,26 @@ class SpringCommandBusTest {
      */
     static class AnotherCommandExecutor implements CommandExecutor<AnotherCommand> {
 
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>java.util.Collections.&lt;Class&lt;? extends Command&gt;&gt;singleton(AnotherCommand.class)</code>。</p>
+         *
+         * @return 实际返回<code>java.util.Collections.&lt;Class&lt;? extends Command&gt;&gt;singleton(AnotherCommand.class)</code>
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return java.util.Collections.<Class<? extends Command>>singleton(AnotherCommand.class);
         }
 
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>Result.ok("another: " + command.getValue())</code>、<code>command.getValue()</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>Result.ok("another: " + command.getValue())</code>
+         */
         @Override
         public Result execute(AnotherCommand command) {
             return Result.ok("another: " + command.getValue());
@@ -298,16 +418,32 @@ class SpringCommandBusTest {
     @Configuration
     static class TestConfig {
 
+        /**
+         * 创建 <code>new SpringCommandBus</code> 供当前测试路径调用。
+         *
+         * @param context 当前框架保存请求或运行时状态的上下文
+         * @return 当前测试使用的结果，取自 <code>new SpringCommandBus(context)</code>
+         */
         @Bean
         public SpringCommandBus springCommandBus(AnnotationConfigApplicationContext context) {
             return new SpringCommandBus(context);
         }
 
+        /**
+         * 创建 <code>new TestCommandExecutor</code> 供当前测试路径调用。
+         *
+         * @return 当前测试使用的结果，取自 <code>new TestCommandExecutor()</code>
+         */
         @Bean
         public TestCommandExecutor testCommandExecutor() {
             return new TestCommandExecutor();
         }
 
+        /**
+         * 创建 <code>new AnotherCommandExecutor</code> 供当前测试路径调用。
+         *
+         * @return 当前测试使用的结果，取自 <code>new AnotherCommandExecutor()</code>
+         */
         @Bean
         public AnotherCommandExecutor anotherCommandExecutor() {
             return new AnotherCommandExecutor();

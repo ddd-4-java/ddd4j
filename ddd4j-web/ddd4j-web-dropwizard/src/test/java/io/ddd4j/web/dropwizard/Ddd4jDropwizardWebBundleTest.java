@@ -13,12 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.web.dropwizard;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.setup.Environment;
@@ -32,20 +26,35 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * 验证 <code>Ddd4jDropwizardWebBundle</code> 在<code>constructor</code>、<code>run</code>等操作中的行为契约。
+ */
 @ExtendWith(MockitoExtension.class)
 class Ddd4jDropwizardWebBundleTest {
 
+    /**
+     * 用于隔离 <code>Environment</code> 调用并记录交互的测试替身。
+     */
     @Mock
     private Environment environment;
 
+    /**
+     * 用于隔离 <code>JerseyEnvironment</code> 调用并记录交互的测试替身。
+     */
     @Mock
     private JerseyEnvironment jersey;
 
+    /**
+     * 验证被测调用 抛出 <code>NullPointerException.class</code>。
+     */
     @Test
     void constructorRejectsNullResolver() {
         assertThrows(NullPointerException.class, () -> new Ddd4jDropwizardWebBundle<>(null));
     }
 
+    /**
+     * 验证<code>bundle</code>非空。
+     */
     @Test
     void defaultConstructorBuildsDefaultConfiguration() {
         Ddd4jDropwizardWebBundle<TestConfiguration> bundle = new Ddd4jDropwizardWebBundle<>();
@@ -53,6 +62,9 @@ class Ddd4jDropwizardWebBundleTest {
         assertDoesNotThrow(() -> bundle.initialize(null));
     }
 
+    /**
+     * 在测试框架中执行 <code>environment.jersey()</code>、<code>bundle.run()</code>、<code>atLeastOnce()</code>，验证该场景。
+     */
     @Test
     void runRegistersFiltersAndExceptionMappers() {
         when(environment.jersey()).thenReturn(jersey);
@@ -65,6 +77,9 @@ class Ddd4jDropwizardWebBundleTest {
         verify(jersey, atLeastOnce()).register(any(Ddd4jDropwizardExceptionMapper.class));
     }
 
+    /**
+     * 验证<code>bundle.run(new TestConfiguration(), environment)</code> 抛出 <code>NullPointerException.class</code>。
+     */
     @Test
     void runRejectsNullWebConfiguration() {
         Ddd4jDropwizardWebBundle<TestConfiguration> bundle =
@@ -73,6 +88,9 @@ class Ddd4jDropwizardWebBundleTest {
         assertThrows(NullPointerException.class, () -> bundle.run(new TestConfiguration(), environment));
     }
 
+    /**
+     * 在测试框架中执行 <code>environment.jersey()</code>、<code>webConfiguration.setTrustForwardedHeaders()</code>、<code>bundle.run()</code>，验证该场景。
+     */
     @Test
     void runUsesCustomResolver() {
         when(environment.jersey()).thenReturn(jersey);
@@ -88,6 +106,9 @@ class Ddd4jDropwizardWebBundleTest {
         verify(jersey, atLeastOnce()).register(any(Ddd4jDropwizardRequestFilter.class));
     }
 
+    /**
+     * 提供运行 HTTP 合同测试所需的配置。
+     */
     private static final class TestConfiguration extends Configuration {
     }
 }

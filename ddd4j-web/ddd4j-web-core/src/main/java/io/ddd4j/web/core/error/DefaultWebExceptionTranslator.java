@@ -15,12 +15,7 @@
 package io.ddd4j.web.core.error;
 
 import io.ddd4j.core.api.ApiCode;
-import io.ddd4j.core.exception.AuthenticationException;
-import io.ddd4j.core.exception.AuthorizationException;
-import io.ddd4j.core.exception.BizRuntimeException;
-import io.ddd4j.core.exception.IdempotentException;
-import io.ddd4j.core.exception.ParamException;
-import io.ddd4j.core.exception.ValidateException;
+import io.ddd4j.core.exception.*;
 import io.ddd4j.kit.lang.StrKit;
 
 import java.util.NoSuchElementException;
@@ -31,17 +26,29 @@ import java.util.Objects;
  */
 public final class DefaultWebExceptionTranslator implements WebExceptionTranslator {
 
-    /** 表示请求参数或格式非法的状态码。 */
+    /**
+     * 表示请求参数或格式非法的状态码。
+     */
     public static final int BAD_REQUEST = 400;
-    /** 表示缺少或无效授权凭证的状态码。 */
+    /**
+     * 表示缺少或无效授权凭证的状态码。
+     */
     public static final int UNAUTHORIZED = 401;
-    /** 表示已认证但无权访问的状态码。 */
+    /**
+     * 表示已认证但无权访问的状态码。
+     */
     public static final int FORBIDDEN = 403;
-    /** 表示目标资源不存在的状态码。 */
+    /**
+     * 表示目标资源不存在的状态码。
+     */
     public static final int NOT_FOUND = 404;
-    /** 表示请求与当前资源状态冲突（如重复提交）的状态码。 */
+    /**
+     * 表示请求与当前资源状态冲突（如重复提交）的状态码。
+     */
     public static final int CONFLICT = 409;
-    /** 表示服务端发生未预期错误的状态码。 */
+    /**
+     * 表示服务端发生未预期错误的状态码。
+     */
     public static final int INTERNAL_SERVER_ERROR = 500;
 
     /**
@@ -88,20 +95,46 @@ public final class DefaultWebExceptionTranslator implements WebExceptionTranslat
         return error(INTERNAL_SERVER_ERROR, cause);
     }
 
+    /**
+     * 将 HTTP 状态和原异常转换为共用 Web 错误。
+     *
+     * @param status    准备返回给 HTTP 客户端的状态码
+     * @param throwable 请求处理时抛出的异常
+     * @return 带状态及安全响应内容的 Web 错误
+     */
     private WebError error(int status, Throwable throwable) {
         return new WebError(status, status, message(throwable), null);
     }
 
+    /**
+     * 将认证或授权失败转换为共用 Web 错误。
+     *
+     * @param code    当前要转换的业务错误码或 HTTP 状态码
+     * @param failure 当前认证过程的异常
+     * @return 向调用方报告的认证错误结果
+     */
     private WebError authError(ApiCode code, Throwable failure) {
         int status = code.getCode();
         String message = failure.getMessage();
         return new WebError(status, status, StrKit.isBlank(message) ? code.getReason() : message, null);
     }
 
+    /**
+     * 从异常中读取响应可使用的消息文本。
+     *
+     * @param throwable 请求处理时抛出的异常
+     * @return 用于当前异常转换的消息
+     */
     private String message(Throwable throwable) {
         return StrKit.isBlank(throwable.getMessage()) ? "Internal Server Error" : throwable.getMessage();
     }
 
+    /**
+     * 保留合法的 HTTP 错误状态，其他值归为内部服务器错误。
+     *
+     * @param code 当前要转换的业务错误码或 HTTP 状态码
+     * @return 转换后的 HTTP 错误状态码
+     */
     private int normalizeStatus(Integer code) {
         if (Objects.nonNull(code) && code >= BAD_REQUEST && code <= 599) {
             return code;

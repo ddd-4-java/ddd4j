@@ -41,12 +41,33 @@ import java.util.function.Function;
  */
 public final class Ddd4jBundle<C extends Configuration> implements ConfiguredBundle<C> {
 
+    /**
+     * 框架容器中需要登记到命令总线的执行器。
+     */
     private final Collection<CommandExecutor<?>> executors;
+    /**
+     * 接收运行时发布领域事件的监听回调。
+     */
     private final Collection<Consumer<Object>> listeners;
+    /**
+     * 根据当前调用范围提供认证主体的组件。
+     */
     private final SubjectProvider subjectProvider;
+    /**
+     * 当前运行框架注册的国际化消息提供器。
+     */
     private final I18nProvider i18nProvider;
+    /**
+     * 参与应用就绪状态汇总的运行组件。
+     */
     private final Collection<ReadinessContributor> readinessContributors;
+    /**
+     * 依据 Dropwizard 运行环境创建投影视图管理器的工厂。
+     */
     private final Function<Environment, DropwizardProjectionViewManager> projectionFactory;
+    /**
+     * 当前容器装配并负责关闭的 DDD4J 运行时。
+     */
     private Ddd4jDropwizardRuntime runtime;
 
     /**
@@ -84,6 +105,16 @@ public final class Ddd4jBundle<C extends Configuration> implements ConfiguredBun
         this(executors, listeners, subjectProvider, i18nProvider, readinessContributors, null);
     }
 
+    /**
+     * 保存 Dropwizard 启动时需装配的认证、事件、命令及投影组件。
+     *
+     * @param executors             当前框架容器提供的命令执行器
+     * @param listeners             接收领域事件的监听回调
+     * @param subjectProvider       从当前认证框架解析主体的组件
+     * @param i18nProvider          提供本地化消息的框架组件
+     * @param readinessContributors 提供运行时就绪检查的组件集合
+     * @param projectionFactory     依据运行环境构造视图管理器的工厂
+     */
     private Ddd4jBundle(Collection<CommandExecutor<?>> executors, Collection<Consumer<Object>> listeners,
                         SubjectProvider subjectProvider, I18nProvider i18nProvider,
                         Collection<? extends ReadinessContributor> readinessContributors,
@@ -127,6 +158,16 @@ public final class Ddd4jBundle<C extends Configuration> implements ConfiguredBun
         return projected(repository, reader, views, Objects.requireNonNull(scheduler, "scheduler must not be null"));
     }
 
+    /**
+     * 构造可以在 Dropwizard 生命周期内运行的显式投影装配。
+     *
+     * @param <E>        当前容器处理的组件或事件类型
+     * @param repository 保存并读取投影检查点的仓储
+     * @param reader     从事件源按位点分批读取事件的组件
+     * @param views      当前运行时注册的投影视图集合
+     * @param scheduler  调度投影任务的运行时组件
+     * @return 含投影装配配置的 Dropwizard Bundle
+     */
     private <E> Ddd4jBundle<C> projected(ProjectionPositionRepository repository,
                                          EventChunkReader<E> reader, Collection<? extends ProjectionView<E>> views, ViewScheduler scheduler) {
         Objects.requireNonNull(repository, "Explicit projection requires a position repository");
@@ -150,11 +191,22 @@ public final class Ddd4jBundle<C extends Configuration> implements ConfiguredBun
         return Optional.ofNullable(runtime);
     }
 
+    /**
+     * 执行 Bundle 的引导初始化入口。
+     *
+     * @param bootstrap Dropwizard 应用引导对象
+     */
     @Override
     public void initialize(Bootstrap<?> bootstrap) {
         Objects.requireNonNull(bootstrap, "bootstrap must not be null");
     }
 
+    /**
+     * 把 DDD4J 服务和就绪检查装配到 Dropwizard 应用。
+     *
+     * @param configuration 当前应用实例加载的配置
+     * @param environment   当前 Dropwizard 或 Spring 应用环境
+     */
     @Override
     public void run(C configuration, Environment environment) {
         Objects.requireNonNull(configuration, "configuration must not be null");

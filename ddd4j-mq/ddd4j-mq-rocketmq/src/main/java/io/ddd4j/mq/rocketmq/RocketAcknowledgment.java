@@ -39,8 +39,17 @@ public class RocketAcknowledgment implements Acknowledgment {
      */
     public static final String HEADER_ROCKET_MESSAGE = "ddd4j.rocket.message";
 
+    /**
+     * 当前消费确认所关联的原生代理消息。
+     */
     private final MessageExt message;
+    /**
+     * 记录已确认消息的状态或结果。
+     */
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
+    /**
+     * 当前 RocketMQ 消费结果是否要求由代理再次投递。
+     */
     private volatile boolean reconsume;
 
     /**
@@ -52,16 +61,37 @@ public class RocketAcknowledgment implements Acknowledgment {
         this.message = Objects.requireNonNull(message, "message");
     }
 
+    /**
+     * 返回本次消息投递的标识。
+     *
+     * <p>此实现调用 <code>message.getQueueOffset()</code>。</p>
+     *
+     * @return 当前投递的标记值
+     */
     @Override
     public long deliveryTag() {
         return message.getQueueOffset();
     }
 
+    /**
+     * 返回收到的消息标识。
+     *
+     * <p>此实现调用 <code>message.getMsgId()</code>。</p>
+     *
+     * @return 当前消息的标识
+     */
     @Override
     public String messageId() {
         return message.getMsgId();
     }
 
+    /**
+     * 返回消息所属链路的关联标识。
+     *
+     * <p>此实现调用 <code>message.getUserProperty(MQDeliveryHeaders.CORRELATION_ID)</code>。</p>
+     *
+     * @return 当前消息关联的请求或事件标识
+     */
     @Override
     public String correlationId() {
         String correlationId = message.getUserProperty(MQDeliveryHeaders.CORRELATION_ID);
@@ -70,51 +100,120 @@ public class RocketAcknowledgment implements Acknowledgment {
                 : message.getKeys();
     }
 
+    /**
+     * 检查当前投递的确认对象是否仍可用。
+     *
+     * <p>此实现调用 <code>acknowledged.get()</code>。</p>
+     *
+     * @return 实际返回<code>!acknowledged.get()</code>
+     */
     @Override
     public boolean isOpen() {
         return !acknowledged.get();
     }
 
+    /**
+     * 判断当前投递是否已完成确认处理。
+     *
+     * <p>此实现调用 <code>acknowledged.get()</code>。</p>
+     *
+     * @return 此投递已经进入确认终态时为真
+     */
     @Override
     public boolean isAcknowledged() {
         return acknowledged.get();
     }
 
+    /**
+     * 返回当前投递所使用的消息中间件类型。
+     *
+     * @return 客户端或投递协议对应的 broker 枚举值
+     */
     @Override
     public BrokerType brokerType() {
         return BrokerType.ROCKET;
     }
 
+    /**
+     * 确认本次投递或将已处理的位置通知 broker。
+     *
+     * <p>此实现调用 <code>ack(false)</code>。</p>
+     */
     @Override
     public void ack() {
         ack(false);
     }
 
+    /**
+     * 确认本次投递或将已处理的位置通知 broker。
+     *
+     * <p>此实现调用 <code>complete(false)</code>。</p>
+     *
+     * @param multiple 是否批量确认至当前 tag
+     */
     @Override
     public void ack(boolean multiple) {
         complete(false);
     }
 
+    /**
+     * 向底层客户端报告本次投递处理失败，并按调用选项决定是否请求重新投递。
+     *
+     * <p>此实现调用 <code>nack(false, requeue)</code>。</p>
+     *
+     * @param requeue 是否重新入队
+     */
     @Override
     public void nack(boolean requeue) {
         nack(false, requeue);
     }
 
+    /**
+     * 向底层客户端报告本次投递处理失败，并按调用选项决定是否请求重新投递。
+     *
+     * <p>此实现调用 <code>complete(requeue)</code>。</p>
+     *
+     * @param multiple 是否批量否定
+     * @param requeue  是否重新入队
+     */
     @Override
     public void nack(boolean multiple, boolean requeue) {
         complete(requeue);
     }
 
+    /**
+     * 拒绝当前投递，并按约定处理是否重新入队。
+     *
+     * <p>此实现调用 <code>complete(requeue)</code>。</p>
+     *
+     * @param requeue 是否重新入队
+     */
     @Override
     public void reject(boolean requeue) {
         complete(requeue);
     }
 
+    /**
+     * 请求底层消息会话恢复未处理的投递。
+     *
+     * <p>此实现调用 <code>complete(requeue)</code>。</p>
+     *
+     * @param requeue 是否重新入队
+     */
     @Override
     public void recover(boolean requeue) {
         complete(requeue);
     }
 
+    /**
+     * 取出适配器持有的底层投递或客户端对象。
+     *
+     * <p>此实现调用 <code>Optional.empty()</code>。</p>
+     *
+     * @param <T>        类型参数
+     * @param nativeType 原生类型
+     * @return 根据执行路径返回<code>Optional.empty()</code>、<code>Optional.of(nativeType.cast(message))</code>、<code>Optional.of(nativeType.cast(this))</code>
+     */
     @Override
     public <T> Optional<T> unwrap(Class<T> nativeType) {
         if (Objects.isNull(nativeType)) {
@@ -138,6 +237,11 @@ public class RocketAcknowledgment implements Acknowledgment {
         return reconsume;
     }
 
+    /**
+     * 原子占用确认机会并保存当前消息是否需要再次消费。
+     *
+     * @param reconsume 当前消息是否需要由 RocketMQ 再次投递
+     */
     private void complete(boolean reconsume) {
         if (!acknowledged.compareAndSet(false, true)) {
             throw new UnsupportedOperationException("Message already acknowledged, msgId=" + message.getMsgId());

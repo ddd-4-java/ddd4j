@@ -44,6 +44,9 @@ import org.springframework.core.env.Environment;
 @Configuration(proxyBeanMethods = false)
 public class Ddd4jMQPropertiesConfiguration {
 
+    /**
+     * Spring Boot 绑定消息队列配置使用的属性前缀。
+     */
     private static final String PREFIX = "ddd4j.mq.";
 
     /**

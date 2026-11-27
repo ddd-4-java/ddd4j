@@ -44,9 +44,9 @@ public abstract class BaseClientAggregateController<V, Q, ID extends Serializabl
     /**
      * 分页查询聚合根。
      *
-     * @param pageNum 页码
+     * @param pageNum  页码
      * @param pageSize 每页数量
-     * @param query 查询条件
+     * @param query    查询条件
      * @return 聚合根分页结果
      */
     @GetMapping
@@ -72,9 +72,9 @@ public abstract class BaseClientAggregateController<V, Q, ID extends Serializabl
     /**
      * 分页查询客户端视图。
      *
-     * @param pageNum 页码
+     * @param pageNum  页码
      * @param pageSize 每页数量
-     * @param query 查询条件
+     * @param query    查询条件
      * @return 客户端视图分页结果
      */
     protected abstract Page<V> clientListPage(int pageNum, int pageSize, Q query);

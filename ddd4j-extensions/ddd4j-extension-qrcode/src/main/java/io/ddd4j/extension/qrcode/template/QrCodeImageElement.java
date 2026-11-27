@@ -21,8 +21,16 @@ import java.awt.image.BufferedImage;
  */
 public final class QrCodeImageElement extends QrCodeFrameElement {
 
+    /**
+     * 绘制到模板画布上的源图像。
+     */
     private final BufferedImage image;
 
+    /**
+     * 按构建配置保存图像及其在画布中的位置、尺寸与层级。
+     *
+     * @param builder 提供图像及绘制边界的构建器
+     */
     private QrCodeImageElement(Builder builder) {
         super(builder.x, builder.y, builder.width, builder.height, builder.zIndex);
         this.image = builder.image;
@@ -53,13 +61,36 @@ public final class QrCodeImageElement extends QrCodeFrameElement {
      * <p>设置图片边界与层级后构建不可变元素。
      */
     public static final class Builder {
+        /**
+         * 绘制到模板画布上的源图像。
+         */
         private final BufferedImage image;
+        /**
+         * 元素在模板画布中的横向像素坐标。
+         */
         private int x;
+        /**
+         * 元素在模板画布中的纵向像素坐标。
+         */
         private int y;
+        /**
+         * 在编码或绘制时使用的像素宽度。
+         */
         private int width;
+        /**
+         * 在编码或绘制时使用的像素高度。
+         */
         private int height;
+        /**
+         * 重叠元素在画布中的叠放顺序。
+         */
         private int zIndex;
 
+        /**
+         * 从源图像开始构造模板图像元素。
+         *
+         * @param image 需要绘制到模板画布上的图像
+         */
         private Builder(BufferedImage image) {
             this.image = image;
         }

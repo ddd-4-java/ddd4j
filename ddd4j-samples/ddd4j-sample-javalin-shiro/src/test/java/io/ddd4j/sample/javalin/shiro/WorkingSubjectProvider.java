@@ -23,17 +23,36 @@ import io.ddd4j.sample.javalin.shiro.rbac.repository.InMemoryUserRepository;
  */
 public class WorkingSubjectProvider implements SubjectProvider {
 
+    /**
+     * 读取和保存用户的仓储。
+     */
     private final InMemoryUserRepository userRepository;
 
+    /**
+     * 用给定值初始化 <code>WorkingSubjectProvider</code> 实例。
+     *
+     * @param userRepository 读取和保存用户的仓储
+     */
     public WorkingSubjectProvider(InMemoryUserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
+    /**
+     * 取得当前请求使用的认证主体接口。
+     *
+     * @return Subject 实例
+     */
     @Override
     public Subject getSubject() {
         return new WorkingShiroSubject(userRepository);
     }
 
+    /**
+     * 取得当前请求使用的认证主体接口。
+     *
+     * @param realm 账号体系标识（如 sa-token 的 "admin"/"user"）
+     * @return 对应 realm 的 Subject 实例
+     */
     @Override
     public Subject getSubject(String realm) {
         return new WorkingShiroSubject(userRepository);

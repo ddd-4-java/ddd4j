@@ -81,6 +81,9 @@ public class R2dbcProjectionPositionRepository implements ProjectionPositionRepo
     private static final String MERGE_SQL = "merge into ddd4j_projection_position "
             + "(stream_id, next_event_number) key (stream_id) values ($1, $2)";
 
+    /**
+     * 创建事件存储 R2DBC 连接的工厂。
+     */
     private final ConnectionFactory connectionFactory;
 
     /**
@@ -152,9 +155,14 @@ public class R2dbcProjectionPositionRepository implements ProjectionPositionRepo
     }
 
     /**
-     * {@inheritDoc}
+     * 查询指定事件流的投影检查点。
      *
-     * <p>同步桥接：内部 {@code block()} 等待响应式面完成（单语句，见类注释）。
+     * <p>\u540c\u6b65\u6865\u63a5\uff1a\u5185\u90e8 {@code block()} \u7b49\u5f85\u54cd\u5e94\u5f0f\u9762\u5b8c\u6210\uff08\u5355\u8bed\u53e5\uff0c\u89c1\u7c7b\u6ce8\u91ca\uff09\u3002
+     *
+     * <p>R2DBC 实现调用 <code>findByStreamIdReactive(streamId).block()</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     * @return 与给定流标识对应的投影检查点
      */
     @Override
     public Optional<ProjectionPosition> findByStreamId(String streamId) {
@@ -162,9 +170,13 @@ public class R2dbcProjectionPositionRepository implements ProjectionPositionRepo
     }
 
     /**
-     * {@inheritDoc}
+     * 查询存储中符合条件的记录。
      *
-     * <p>同步桥接：内部 {@code block()} 等待响应式面完成（单语句，见类注释）。
+     * <p>\u540c\u6b65\u6865\u63a5\uff1a\u5185\u90e8 {@code block()} \u7b49\u5f85\u54cd\u5e94\u5f0f\u9762\u5b8c\u6210\uff08\u5355\u8bed\u53e5\uff0c\u89c1\u7c7b\u6ce8\u91ca\uff09\u3002
+     *
+     * <p>R2DBC 实现调用 <code>findAllReactive().collectList().block()</code>。</p>
+     *
+     * @return 满足条件的结果列表
      */
     @Override
     public List<ProjectionPosition> findAll() {
@@ -172,9 +184,14 @@ public class R2dbcProjectionPositionRepository implements ProjectionPositionRepo
     }
 
     /**
-     * {@inheritDoc}
+     * 在持久化存储中写入指定事件流的投影检查点。
      *
-     * <p>同步桥接：内部 {@code block()} 等待响应式面完成（单语句，见类注释）。
+     * <p>\u540c\u6b65\u6865\u63a5\uff1a\u5185\u90e8 {@code block()} \u7b49\u5f85\u54cd\u5e94\u5f0f\u9762\u5b8c\u6210\uff08\u5355\u8bed\u53e5\uff0c\u89c1\u7c7b\u6ce8\u91ca\uff09\u3002
+     *
+     * <p>R2DBC 实现调用 <code>saveReactive(position).block()</code>。</p>
+     *
+     * @param position 投影位置
+     * @return 实际返回<code>saveReactive(position).block()</code>
      */
     @Override
     public ProjectionPosition save(ProjectionPosition position) {
@@ -182,9 +199,13 @@ public class R2dbcProjectionPositionRepository implements ProjectionPositionRepo
     }
 
     /**
-     * {@inheritDoc}
+     * 删除指定事件流的投影检查点。
      *
-     * <p>同步桥接：内部 {@code block()} 等待响应式面完成（单语句，见类注释）。
+     * <p>\u540c\u6b65\u6865\u63a5\uff1a\u5185\u90e8 {@code block()} \u7b49\u5f85\u54cd\u5e94\u5f0f\u9762\u5b8c\u6210\uff08\u5355\u8bed\u53e5\uff0c\u89c1\u7c7b\u6ce8\u91ca\uff09\u3002
+     *
+     * <p>R2DBC 实现调用 <code>deleteByStreamIdReactive(streamId).block()</code>。</p>
+     *
+     * @param streamId 投影流 ID
      */
     @Override
     public void deleteByStreamId(String streamId) {
@@ -192,9 +213,13 @@ public class R2dbcProjectionPositionRepository implements ProjectionPositionRepo
     }
 
     /**
-     * {@inheritDoc}
+     * 将指定流的投影检查点重置为零。
      *
-     * <p>同步桥接：内部 {@code block()} 等待响应式面完成（单语句，见类注释）。
+     * <p>\u540c\u6b65\u6865\u63a5\uff1a\u5185\u90e8 {@code block()} \u7b49\u5f85\u54cd\u5e94\u5f0f\u9762\u5b8c\u6210\uff08\u5355\u8bed\u53e5\uff0c\u89c1\u7c7b\u6ce8\u91ca\uff09\u3002
+     *
+     * <p>R2DBC 实现调用 <code>resetToZeroReactive(streamId).block()</code>。</p>
+     *
+     * @param streamId 投影流 ID
      */
     @Override
     public void resetToZero(String streamId) {

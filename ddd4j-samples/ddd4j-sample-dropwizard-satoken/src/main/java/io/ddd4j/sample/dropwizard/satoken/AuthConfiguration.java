@@ -13,8 +13,16 @@ import java.util.List;
 @Getter
 @Setter
 public class AuthConfiguration extends Configuration {
+    /**
+     * 当前示例使用的请求上下文和访问策略配置。
+     */
     private Ddd4jDropwizardWebConfiguration ddd4jWeb = defaults();
 
+    /**
+     * 构造供认证示例启动的默认配置。
+     *
+     * @return 默认的认证和 Web 访问配置
+     */
     private static Ddd4jDropwizardWebConfiguration defaults() {
         var web = new Ddd4jDropwizardWebConfiguration();
         web.setPublicPaths(List.of("/auth/login", "/health"));

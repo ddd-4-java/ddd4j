@@ -64,6 +64,9 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
      * scheduler thread pool
      */
     private ScheduledExecutorService executor;
+    /**
+     * 管理 Guice 注册视图及其调度句柄的共享管理器。
+     */
     private DefaultViewManager<Object> delegate;
 
     /**
@@ -128,6 +131,11 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
         delegate = new DefaultViewManager<>(this, runner, views);
     }
 
+    /**
+     * 启动当前组件并准备其运行资源。
+     *
+     * <p>此实现调用 <code>running.compareAndSet(false, true)</code>。</p>
+     */
     @Override
     public void start() {
         if (running.compareAndSet(false, true)) {
@@ -154,6 +162,11 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
         }
     }
 
+    /**
+     * 停止当前组件并清理已登记的运行资源。
+     *
+     * <p>此实现调用 <code>running.compareAndSet(true, false)</code>。</p>
+     */
     @Override
     public void stop() {
         boolean wasRunning = running.compareAndSet(true, false);
@@ -181,6 +194,9 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
         }
     }
 
+    /**
+     * 关闭由当前管理器持有的调度执行器。
+     */
     private void stopOwnedExecutor() {
         handles.values().forEach(handle -> handle.cancel(false));
         if (Objects.nonNull(executor)) {
@@ -198,16 +214,33 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
         log.info("GuiceViewManager stopped");
     }
 
+    /**
+     * 结束当前组件持有的资源。
+     *
+     * <p>此实现调用 <code>stop()</code>。</p>
+     */
     @Override
     public void close() {
         stop();
     }
 
+    /**
+     * 检查当前组件是否仍处于运行状态。
+     *
+     * <p>此实现调用 <code>running.get()</code>。</p>
+     *
+     * @return 实际返回<code>running.get()</code>
+     */
     @Override
     public boolean isRunning() {
         return running.get();
     }
 
+    /**
+     * 请求立即执行指定投影视图的一轮更新。
+     *
+     * <p>此实现调用 <code>delegate.triggerOnce()</code>。</p>
+     */
     @Override
     public void triggerOnce() {
         if (Objects.nonNull(delegate)) {
@@ -245,6 +278,16 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
         return new ProjectionStatus(streamId, nextEventNumber, isRunning(), null, 0, null);
     }
 
+    /**
+     * 按给定时间规则安排任务。
+     *
+     * <p>此实现调用 <code>ensureStarted()</code>。</p>
+     *
+     * @param viewName 视图名称（用于日志 / 调试）
+     * @param cron     CRON 表达式
+     * @param task     要执行的任务
+     * @return 实际返回<code>scheduleAtFixedRate(viewName, period, task)</code>
+     */
     @Override
     public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
         ensureStarted();
@@ -273,6 +316,9 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
         return new GuiceViewScheduleHandle(future);
     }
 
+    /**
+     * 要求当前视图管理器已完成启动。
+     */
     private void ensureStarted() {
         if (!isRunning()) {
             start();
@@ -281,6 +327,13 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
 
     // Parse cron expression to period seconds.
     // Supported formats: 0/N, */N (every N seconds), N * * * * (every N minutes), * * * * * (every 60 seconds)
+
+    /**
+     * 从兼容 Cron 配置转换为定时器所用的秒数。
+     *
+     * @param cron 任务计划的 Cron 表达式
+     * @return 兼容调度使用的周期秒数
+     */
     private long parseCronToPeriodSeconds(String cron) {
         if (StrKit.isEmpty(cron)) {
             throw new IllegalArgumentException("Cron expression must not be empty");
@@ -321,19 +374,42 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
                 + ". Supported formats: '0/N', '*/N', 'N * * * *', '* * * * *'");
     }
 
+    /**
+     * 保存 Guice 投影任务的定时 Future，并提供取消入口。
+     */
     private static class GuiceViewScheduleHandle implements ViewScheduleHandle {
 
+        /**
+         * 用于跟踪和取消后台调度任务的句柄。
+         */
         private final ScheduledFuture<?> future;
 
+        /**
+         * 用给定值初始化 <code>GuiceViewScheduleHandle</code> 实例。
+         *
+         * @param future 用于跟踪和取消后台调度任务的句柄
+         */
         GuiceViewScheduleHandle(ScheduledFuture<?> future) {
             this.future = future;
         }
 
+        /**
+         * 撤销当前任务句柄允许撤销的操作。
+         *
+         * <p>此实现调用 <code>future.cancel(false)</code>。</p>
+         */
         @Override
         public void cancel() {
             future.cancel(false);
         }
 
+        /**
+         * 检查当前句柄是否仍处于有效状态。
+         *
+         * <p>此实现调用 <code>future.isCancelled()</code>。</p>
+         *
+         * @return 实际返回<code>!future.isCancelled() &amp;&amp; !future.isDone()</code>
+         */
         @Override
         public boolean isActive() {
             return !future.isCancelled() && !future.isDone();

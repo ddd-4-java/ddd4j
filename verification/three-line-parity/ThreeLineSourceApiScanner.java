@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 /** 从当前 Java 源码的语法树提取声明，供三线差异清单使用。 */
 public final class ThreeLineSourceApiScanner {
 
+    /** 限制调用方直接创建 <code>ThreeLineSourceApiScanner</code> 实例。 */
     private ThreeLineSourceApiScanner() {
     }
 
@@ -86,15 +87,32 @@ public final class ThreeLineSourceApiScanner {
         }
     }
 
+    /** 遍历编译单元并输出对外可见的 API 声明和可选的枚举成员。 */
     private static final class ApiVisitor extends TreeScanner<Void, Void> {
+        /** 扫描记录中输出的相对源码路径。 */
         private final String path;
+        /** 用来构造类型全限定名的包名。 */
         private final String packageName;
+        /** 是否另外输出枚举的合成 API 成员。 */
         private final boolean enumWitnesses;
+        /** 当前遍历的 Java 编译单元。 */
         private final CompilationUnitTree unit;
+        /** 用于获取 API 声明行号和偏移的源码位置服务。 */
         private final SourcePositions positions;
+        /** 从外到内记录当前正在遍历的类型名。 */
         private final Deque<String> types = new ArrayDeque<>();
+        /** 跟踪嵌套类型是否为接口，以计算成员默认可见性。 */
         private final Deque<Boolean> interfaces = new ArrayDeque<>();
 
+        /**
+         * 为指定编译单元创建源码扫描器。
+         *
+         * @param path 输出记录使用的相对源码路径
+         * @param packageName 源码声明的包名
+         * @param enumWitnesses 是否输出枚举合成成员
+         * @param unit 当前编译单元
+         * @param positions 从编译器获取的源码位置服务
+         */
         private ApiVisitor(String path, String packageName, boolean enumWitnesses,
                            CompilationUnitTree unit, SourcePositions positions) {
             this.path = path;
@@ -104,6 +122,13 @@ public final class ThreeLineSourceApiScanner {
             this.positions = positions;
         }
 
+        /**
+         * 将当前具名类型加入访问路径并遍历其成员，随后恢复外围类型状态。
+         *
+         * @param type 当前类型声明
+         * @param ignored 未使用的扫描参数
+         * @return 不返回聚合结果
+         */
         @Override
         public Void visitClass(ClassTree type, Void ignored) {
             String name = type.getSimpleName().toString();
@@ -153,6 +178,13 @@ public final class ThreeLineSourceApiScanner {
             return null;
         }
 
+        /**
+         * 在类型声明上查找指定简单名的注解。
+         *
+         * @param type 被检查的类型声明
+         * @param simpleName 注解的简单类型名
+         * @return 找到对应注解时返回 true
+         */
         private static boolean hasAnnotation(ClassTree type, String simpleName) {
             for (AnnotationTree annotation : type.getModifiers().getAnnotations()) {
                 String name = annotation.getAnnotationType().toString();
@@ -163,6 +195,12 @@ public final class ThreeLineSourceApiScanner {
             return false;
         }
 
+        /**
+         * 判断类型是否显式声明了无参构造器。
+         *
+         * @param type 被检查的类型声明
+         * @return 存在显式无参构造器时返回 true
+         */
         private static boolean hasExplicitNoArgs(ClassTree type) {
             return type.getMembers().stream()
                     .anyMatch(member -> member instanceof MethodTree
@@ -170,7 +208,12 @@ public final class ThreeLineSourceApiScanner {
                             && ((MethodTree) member).getParameters().isEmpty());
         }
 
-        /** 仅真实可见枚举的合成成员证明；独立标记，不混入普通源码方法清单。 */
+        /**
+         *  仅真实可见枚举的合成成员证明；独立标记，不混入普通源码方法清单。
+         *
+         * @param type 被扫描的类型声明
+         * @param flags 类型声明上的 Java 修饰符
+         */
         private void emitEnumWitnesses(ClassTree type, Set<Modifier> flags) {
             String owner = (packageName.isEmpty() ? "" : packageName + ".") + String.join("$", types);
             List<String> constants = new ArrayList<>();
@@ -212,11 +255,25 @@ public final class ThreeLineSourceApiScanner {
             emitEnumMember(owner, "valueOf(String)", declaration);
         }
 
+        /**
+         * 向标准输出写入标记为枚举成员的 API 清单行。
+         *
+         * @param owner 所属枚举的名称
+         * @param member 枚举成员名称
+         * @param declaration 成员的规范化声明
+         */
         private void emitEnumMember(String owner, String member, String declaration) {
             System.out.println("@enum:" + path + "\t" + owner + "#" + member + "\t"
                     + declaration + "|member=" + member);
         }
 
+        /**
+         * 记录当前可见方法的 API 声明，继续遍历嵌套节点。
+         *
+         * @param method 正在访问的方法声明
+         * @param ignored 未使用的扫描参数
+         * @return 不返回聚合结果
+         */
         @Override
         public Void visitMethod(MethodTree method, Void ignored) {
             Set<Modifier> flags = method.getModifiers().getFlags();
@@ -256,6 +313,12 @@ public final class ThreeLineSourceApiScanner {
             return null;
         }
 
+        /**
+         * 将连续空白折叠为单个空格并去掉首尾空白。
+         *
+         * @param value 要规范化的源码文本
+         * @return 适合写入一行 API 清单的文本
+         */
         private static String compact(String value) {
             return value.replaceAll("\\s+", " ").trim();
         }

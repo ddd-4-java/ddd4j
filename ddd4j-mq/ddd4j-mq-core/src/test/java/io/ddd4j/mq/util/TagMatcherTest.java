@@ -20,9 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * {@link TagMatcher} tag 表达式单测。
@@ -31,6 +29,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class TagMatcherTest {
 
+    /**
+     * 验证<code>TagMatcher.match("A", "*")</code>为真，<code>TagMatcher.match(null, "*")</code>为真，<code>TagMatcher.match("A", null)</code>为真。
+     */
     @Test
     void wildcardShouldMatchAnyInput() {
         assertTrue(TagMatcher.match("A", "*"));
@@ -38,6 +39,9 @@ class TagMatcherTest {
         assertTrue(TagMatcher.match("A", null));
     }
 
+    /**
+     * 验证<code>TagMatcher.match("A", "A || B")</code>为真，<code>TagMatcher.match("B", "A||B")</code>为真，<code>TagMatcher.match("C", "A || B")</code>为假。
+     */
     @Test
     void includeShouldMatchOnlyDeclaredTags() {
         assertTrue(TagMatcher.match("A", "A || B"));
@@ -45,12 +49,18 @@ class TagMatcherTest {
         assertFalse(TagMatcher.match("C", "A || B"));
     }
 
+    /**
+     * 验证<code>TagMatcher.match("C", "-C")</code>为假，<code>TagMatcher.match("A", "-C")</code>为真。
+     */
     @Test
     void excludeShouldRejectDeclaredTag() {
         assertFalse(TagMatcher.match("C", "-C"));
         assertTrue(TagMatcher.match("A", "-C"));
     }
 
+    /**
+     * 验证<code>TagMatcher.match("A", "* -C")</code>为真，<code>TagMatcher.match("C", "* -C")</code>为假，<code>TagMatcher.match("C", "A || B -C")</code>为假。
+     */
     @Test
     void compoundExpressionShouldApplyExcludeBeforeInclude() {
         assertTrue(TagMatcher.match("A", "* -C"));
@@ -58,6 +68,9 @@ class TagMatcherTest {
         assertFalse(TagMatcher.match("C", "A || B -C"));
     }
 
+    /**
+     * 验证<code>TagMatcher.match(null, "A")</code>为假，<code>TagMatcher.match("", "A")</code>为假，<code>TagMatcher.match("", "-C")</code>为真。
+     */
     @Test
     void emptyInputShouldNotMatchSpecificIncludes() {
         assertFalse(TagMatcher.match(null, "A"));
@@ -65,6 +78,9 @@ class TagMatcherTest {
         assertTrue(TagMatcher.match("", "-C"));
     }
 
+    /**
+     * 在测试框架中执行 <code>Arrays.asList()</code>、<code>TagMatcher.findIncludes()</code>、<code>Collections.emptyList()</code>，验证该场景。
+     */
     @Test
     void findIncludesShouldKeepDeclarationOrder() {
         assertEquals(Arrays.asList("A", "B"), new ArrayList<>(TagMatcher.findIncludes("A || B -C")));

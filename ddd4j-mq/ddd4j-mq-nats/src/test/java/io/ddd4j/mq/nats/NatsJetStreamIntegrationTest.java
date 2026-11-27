@@ -14,8 +14,8 @@
  */
 package io.ddd4j.mq.nats;
 
-import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.delivery.MQDeliveryHeaders;
+import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.serialization.JsonMQEventSerialization;
@@ -38,8 +38,8 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -51,6 +51,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Testcontainers(disabledWithoutDocker = true)
 class NatsJetStreamIntegrationTest {
 
+    /**
+     * 为集成测试提供隔离 <code>Generic</code> 服务的容器。
+     */
     @Container
     static final GenericContainer<?> NATS = new GenericContainer<>(
             DockerImageName.parse("nats:2.14.6-alpine"))
@@ -60,6 +63,11 @@ class NatsJetStreamIntegrationTest {
             .waitingFor(Wait.forListeningPort())
             .withStartupTimeout(Duration.ofMinutes(2));
 
+    /**
+     * 验证<code>connection.getStatus()</code> 等于 <code>Connection.Status.CONNECTED</code>，<code>ack.getSeqno()</code> 等于 <code>1L</code>。
+     *
+     * @throws Exception 装配运行测试所需的组件时失败
+     */
     @Test
     void natsPropertiesConnectsAndJetStreamAcknowledgesPublish() throws Exception {
         NatsProperties properties = new NatsProperties();
@@ -83,6 +91,11 @@ class NatsJetStreamIntegrationTest {
         }
     }
 
+    /**
+     * 验证<code>received</code>非空，<code>connection.getStatus()</code> 等于 <code>Connection.Status.CONNECTED</code>。
+     *
+     * @throws Exception 准备或释放被测运行资源时失败
+     */
     @Test
     void natsAdapterPublishesStableHeaderThroughJetStream() throws Exception {
         NatsProperties properties = new NatsProperties();
@@ -130,6 +143,11 @@ class NatsJetStreamIntegrationTest {
         }
     }
 
+    /**
+     * 验证<code>client.initConsumer(listener, properties)</code>为真，<code>bean.received.await(10, TimeUnit.SECONDS)</code>为真，<code>connection.getStatus()</code> 等于 <code>Connection.Status.CONNECTED</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void natsAdapterConsumesJetStreamMessageAndKeepsInjectedConnectionOpen() throws Exception {
         NatsProperties properties = new NatsProperties();
@@ -183,6 +201,11 @@ class NatsJetStreamIntegrationTest {
         }
     }
 
+    /**
+     * 验证<code>client.initConsumer(listener, properties)</code>为真，<code>bean.received.await(10, TimeUnit.SECONDS)</code>为真，<code>bean.causationId</code> 等于 <code>"native-causation"</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void natsAdapterPrefersNativeCausalityHeadersOverPayloadMirror() throws Exception {
         NatsProperties properties = new NatsProperties();
@@ -230,6 +253,11 @@ class NatsJetStreamIntegrationTest {
         }
     }
 
+    /**
+     * 验证<code>client.initConsumer(listener, properties)</code>为真，<code>bean.receivedTwice.await(10, TimeUnit.SECONDS)</code>为真，<code>acknowledged</code> 等于 <code>2L</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void natsAdapterRedeliversAfterListenerFailureAndAcknowledgesSuccess() throws Exception {
         NatsProperties properties = new NatsProperties();
@@ -284,6 +312,11 @@ class NatsJetStreamIntegrationTest {
         }
     }
 
+    /**
+     * 验证<code>client.initConsumer(listener, properties)</code>为真，<code>bean.received.await(10, TimeUnit.SECONDS)</code>为真，<code>bean.tags</code> 按顺序仅包含 <code>"allowed"</code>、<code>"&lt;none&gt;"</code>、<code>"allowed"</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void natsAdapterRoutesTaggedAndUntaggedEventsThroughOneLogicalTopic() throws Exception {
         NatsProperties properties = new NatsProperties();
@@ -347,22 +380,56 @@ class NatsJetStreamIntegrationTest {
         }
     }
 
+    /**
+     * 将 <code>received</code>、<code>tags</code> 等状态一起传入当前测试，供调用或结果断言使用。
+     */
     public static final class TagFilteringListener {
+        /**
+         * 等待数据到达的同步门闩。
+         */
         private final CountDownLatch received = new CountDownLatch(3);
+        /**
+         * 投递或订阅用例使用的标签表达式。
+         */
         private final List<String> tags = new CopyOnWriteArrayList<>();
 
+        /**
+         * 调用 <code>tags.add()</code>、<code>event.getTag()</code>、<code>received.countDown()</code> 执行当前夹具操作。
+         *
+         * @param event 交给被测入口处理的测试领域事件
+         */
         public void handle(MQEvent event) {
             tags.add(event.getTag() == null ? "<none>" : event.getTag());
             received.countDown();
         }
     }
 
+    /**
+     * 保存监听回调结果，供断言检查事件传递行为。
+     */
     public static final class RecordingListener {
+        /**
+         * 等待数据到达的同步门闩。
+         */
         private final CountDownLatch received = new CountDownLatch(1);
+        /**
+         * 消息标识。
+         */
         private volatile String messageId;
+        /**
+         * 用于关联同一次操作产生的事件或消息的标识。
+         */
         private volatile String correlationId;
+        /**
+         * 当前事件携带的上游事件标识。
+         */
         private volatile String causationId;
 
+        /**
+         * 根据本次调用更新 <code>messageId = event.getMsgId()</code>、<code>correlationId = event.getCorrelationId()</code>，用于后续测试步骤。
+         *
+         * @param event 交给被测入口处理的测试领域事件
+         */
         public void handle(MQEvent event) {
             messageId = event.getMsgId();
             correlationId = event.getCorrelationId();
@@ -371,13 +438,36 @@ class NatsJetStreamIntegrationTest {
         }
     }
 
+    /**
+     * 将 <code>attempts</code>、<code>receivedTwice</code>、<code>firstMessageId</code>、<code>secondMessageId</code> 等状态一起传入当前测试，供调用或结果断言使用。
+     */
     public static final class FailOnceListener {
+        /**
+         * 跟踪测试操作的调用或重试次数。
+         */
         private final AtomicInteger attempts = new AtomicInteger();
+        /**
+         * 协调测试线程在指定执行阶段等待或继续的门闩。
+         */
         private final CountDownLatch receivedTwice = new CountDownLatch(1);
+        /**
+         * 首次投递记录用来定位该消息的标识。
+         */
         private volatile String firstMessageId;
+        /**
+         * 第二条测试投递的业务消息标识。
+         */
         private volatile String secondMessageId;
+        /**
+         * 用来区分第二次请求或事件的关联标识。
+         */
         private volatile String secondCorrelationId;
 
+        /**
+         * 根据本次调用更新 <code>firstMessageId = event.getMsgId()</code>、<code>secondMessageId = event.getMsgId()</code>，用于后续测试步骤。
+         *
+         * @param event 交给被测入口处理的测试领域事件
+         */
         public void handle(MQEvent event) {
             if (attempts.incrementAndGet() == 1) {
                 firstMessageId = event.getMsgId();

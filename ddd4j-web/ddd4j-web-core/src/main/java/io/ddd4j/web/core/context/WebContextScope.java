@@ -27,21 +27,45 @@ import java.util.Objects;
  */
 public final class WebContextScope implements AutoCloseable {
 
-    /** 常量值 {@code "request-id"}。 */
+    /**
+     * 常量值 {@code "request-id"}。
+     */
     public static final String REQUEST_ID = "request-id";
-    /** 常量值 {@code "trace-id"}。 */
+    /**
+     * 常量值 {@code "trace-id"}。
+     */
     public static final String TRACE_ID = "trace-id";
-    /** 常量值 {@code "client-ip"}。 */
+    /**
+     * 常量值 {@code "client-ip"}。
+     */
     public static final String CLIENT_IP = "client-ip";
-    /** 常量值 {@code "http-method"}。 */
+    /**
+     * 常量值 {@code "http-method"}。
+     */
     public static final String HTTP_METHOD = "http-method";
-    /** 常量值 {@code "http-path"}。 */
+    /**
+     * 常量值 {@code "http-path"}。
+     */
     public static final String HTTP_PATH = "http-path";
 
+    /**
+     * 管理当前请求绑定的线程上下文及其恢复动作。
+     */
     private final ThreadContext.Scope threadScope;
+    /**
+     * 进入请求作用域前保存的 SLF4J MDC 值。
+     */
     private final Map<String, String> previousMdc;
+    /**
+     * 当前实例是否已关闭。
+     */
     private boolean closed;
 
+    /**
+     * 保存原线程状态并为当前请求开启上下文作用域。
+     *
+     * @param context 当前框架调用所携带的请求上下文
+     */
     private WebContextScope(WebRequestContext context) {
         WebRequestContext requestContext = Objects.requireNonNull(context, "context must not be null");
         this.threadScope = ThreadContext.open();
@@ -59,6 +83,11 @@ public final class WebContextScope implements AutoCloseable {
         return new WebContextScope(context);
     }
 
+    /**
+     * 结束当前组件持有的资源。
+     *
+     * <p>此实现调用 <code>threadScope.close()</code>。</p>
+     */
     @Override
     public void close() {
         if (closed) {
@@ -73,6 +102,11 @@ public final class WebContextScope implements AutoCloseable {
         closed = true;
     }
 
+    /**
+     * 将请求身份、跟踪信息及网络元数据绑定到当前线程。
+     *
+     * @param context 当前框架调用所携带的请求上下文
+     */
     private void bind(WebRequestContext context) {
         put(REQUEST_ID, context.requestId());
         put(TRACE_ID, context.traceId());
@@ -87,12 +121,24 @@ public final class WebContextScope implements AutoCloseable {
         putMdc(ContextConstants.TENANT_ID, context.tenantId());
     }
 
+    /**
+     * 有值时向当前 DDD4J 请求上下文写入一个属性。
+     *
+     * @param key   当前写入的上下文键、幂等键或属性名
+     * @param value 当前待写入或解析的值
+     */
     private void put(String key, Object value) {
         if (Objects.nonNull(value)) {
             ThreadContext.put(key, value);
         }
     }
 
+    /**
+     * 向当前日志 MDC 写入请求关联属性。
+     *
+     * @param key   当前写入的上下文键、幂等键或属性名
+     * @param value 当前待写入或解析的值
+     */
     private void putMdc(String key, String value) {
         if (StrKit.isNotBlank(value)) {
             MDC.put(key, value);

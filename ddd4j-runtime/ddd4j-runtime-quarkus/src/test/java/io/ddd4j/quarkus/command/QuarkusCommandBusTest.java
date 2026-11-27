@@ -37,9 +37,18 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class QuarkusCommandBusTest {
 
+    /**
+     * 测试从框架环境发现的注册项或执行器。
+     */
     private final java.util.List<CommandExecutor<?>> discovered = new java.util.ArrayList<>();
+    /**
+     * 执行用例命令并暴露路由结果的命令总线。
+     */
     private QuarkusCommandBus commandBus;
 
+    /**
+     * 测试执行前执行 <code>discovered.add()</code>、<code>org.mockito.Mockito.mock()</code>、<code>commandBus.executors.iterator()</code>、<code>discovered.iterator()</code> 完成资源准备。
+     */
     @BeforeEach
     void setUp() {
         commandBus = new QuarkusCommandBus();
@@ -50,6 +59,9 @@ class QuarkusCommandBusTest {
         commandBus.onStart(new io.quarkus.runtime.StartupEvent());
     }
 
+    /**
+     * 验证<code>commandBus.onStart(new io.quarkus.runtime.StartupEvent())</code> 抛出 <code>IllegalStateException.class</code>。
+     */
     @Test
     void startupRejectsDuplicateExecutors() {
         discovered.add(new TestCommandExecutor());
@@ -57,6 +69,9 @@ class QuarkusCommandBusTest {
                 .isInstanceOf(IllegalStateException.class).hasMessageContaining(TestCommand.class.getName());
     }
 
+    /**
+     * 验证<code>commandBus.execute(new FailCommand()).getMessage()</code> 等于 <code>first.getMessage()</code>。
+     */
     @Test
     void discoversLateCdiExecutorAndCachesItsRoute() {
         discovered.add(new FailCommandExecutor());
@@ -65,6 +80,9 @@ class QuarkusCommandBusTest {
         assertThat(commandBus.execute(new FailCommand()).getMessage()).isEqualTo(first.getMessage());
     }
 
+    /**
+     * 在测试框架中执行 <code>discovered.add()</code>、<code>commandBus.execute()</code>，验证该场景。
+     */
     @Test
     void propagatesExecutorExceptionWithoutWrapping() {
         IllegalStateException failure = new IllegalStateException("application failure");
@@ -77,6 +95,9 @@ class QuarkusCommandBusTest {
         assertThatThrownBy(() -> commandBus.execute(new FailCommand())).isSameAs(failure);
     }
 
+    /**
+     * 验证<code>result</code>非空，<code>result.isSuccess()</code>为真，<code>result.getData()</code> 等于 <code>"executed: hello"</code>。
+     */
     @Test
     void executeShouldRouteToRegisteredExecutor() {
         Result<String> result = commandBus.execute(new TestCommand("hello"));
@@ -86,6 +107,9 @@ class QuarkusCommandBusTest {
         assertThat(result.getData()).isEqualTo("executed: hello");
     }
 
+    /**
+     * 验证<code>commandBus.execute(null)</code> 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void executeShouldThrowWhenCommandIsNull() {
         assertThatThrownBy(() -> commandBus.execute(null))
@@ -93,6 +117,9 @@ class QuarkusCommandBusTest {
                 .hasMessageContaining("Command cannot be null");
     }
 
+    /**
+     * 验证<code>commandBus.execute(new UnregisteredCommand())</code> 抛出 <code>IllegalStateException.class</code>。
+     */
     @Test
     void executeShouldThrowWhenNoExecutorRegistered() {
         assertThatThrownBy(() -> commandBus.execute(new UnregisteredCommand()))
@@ -100,6 +127,9 @@ class QuarkusCommandBusTest {
                 .hasMessageContaining("No executor found for command:");
     }
 
+    /**
+     * 验证<code>result</code>非空，<code>result.isSuccess()</code>为真，<code>result.getData()</code> 等于 <code>"executed: test"</code>。
+     */
     @Test
     void executeVoidShouldDelegateToExecute() {
         Result<?> result = commandBus.executeVoid(new TestCommand("test"));
@@ -109,6 +139,9 @@ class QuarkusCommandBusTest {
         assertThat(result.getData()).isEqualTo("executed: test");
     }
 
+    /**
+     * 验证<code>result</code>非空，<code>result.isSuccess()</code>为假，<code>result.getMessage()</code> 等于 <code>"intentional failure"</code>。
+     */
     @Test
     void executeShouldReturnFailureResultWhenExecutorReturnsFail() {
         discovered.add(new FailCommandExecutor());
@@ -123,26 +156,48 @@ class QuarkusCommandBusTest {
     // --- 测试用命令和执行器 ---
 
     /**
-     * 携带字符串负载的测试命令，已注册执行器用于验证正常路由。
-     *
-     * @param payload 命令负载
+     * 携带字符串负载的测试命令，由已注册的执行器处理，用于验证正常路由。
      */
     final static class TestCommand implements Command {
 
+        /**
+         * Java 序列化使用的版本标识。
+         */
         private static final long serialVersionUID = 0L;
 
+        /**
+         * 当前事件或请求夹具携带的负载。
+         */
         private final String payload;
 
+        /**
+         * 设置 <code>payload</code>，用于构造 <code>TestCommand</code> 测试实例。
+         *
+         * @param payload 当前事件或请求夹具携带的负载
+         */
         @JsonCreator()
         TestCommand(@JsonProperty("payload") String payload) {
             this.payload = payload;
         }
 
+        /**
+         * 读取<code>payload</code> 字段。
+         *
+         * @return <code>payload</code> 字段
+         */
         @JsonProperty("payload")
         public String payload() {
             return payload;
         }
 
+        /**
+         * 根据<code>payload</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -155,6 +210,11 @@ class QuarkusCommandBusTest {
             return Objects.equals(this.payload, other.payload);
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 0;
@@ -162,6 +222,11 @@ class QuarkusCommandBusTest {
             return result;
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>payload</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "TestCommand[payload=" + payload + "]";
@@ -173,12 +238,26 @@ class QuarkusCommandBusTest {
      */
     final static class UnregisteredCommand implements Command {
 
+        /**
+         * Java 序列化使用的版本标识。
+         */
         private static final long serialVersionUID = 0L;
 
+        /**
+         * 创建字段使用默认初始值的 <code>UnregisteredCommand</code> 测试对象。
+         */
         @JsonCreator()
         UnregisteredCommand() {
         }
 
+        /**
+         * 比较两个对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -191,12 +270,22 @@ class QuarkusCommandBusTest {
             return true;
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 0;
             return result;
         }
 
+        /**
+         * 生成用于调试和日志的对象描述。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "UnregisteredCommand[]";
@@ -208,12 +297,26 @@ class QuarkusCommandBusTest {
      */
     final static class FailCommand implements Command {
 
+        /**
+         * Java 序列化使用的版本标识。
+         */
         private static final long serialVersionUID = 0L;
 
+        /**
+         * 创建字段使用默认初始值的 <code>FailCommand</code> 测试对象。
+         */
         @JsonCreator()
         FailCommand() {
         }
 
+        /**
+         * 比较两个对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -226,12 +329,22 @@ class QuarkusCommandBusTest {
             return true;
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 0;
             return result;
         }
 
+        /**
+         * 生成用于调试和日志的对象描述。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "FailCommand[]";
@@ -243,11 +356,26 @@ class QuarkusCommandBusTest {
      */
     static class TestCommandExecutor implements CommandExecutor<TestCommand> {
 
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>Result.ok("executed: " + command.payload())</code>、<code>command.payload()</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>Result.ok("executed: " + command.payload())</code>
+         */
         @Override
         public Result<String> execute(TestCommand command) {
             return Result.ok("executed: " + command.payload());
         }
 
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>Collections.&lt;Class&lt;? extends Command&gt;&gt;singleton(TestCommand.class)</code>。</p>
+         *
+         * @return 实际返回<code>Collections.&lt;Class&lt;? extends Command&gt;&gt;singleton(TestCommand.class)</code>
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.<Class<? extends Command>>singleton(TestCommand.class);
@@ -259,11 +387,26 @@ class QuarkusCommandBusTest {
      */
     static class FailCommandExecutor implements CommandExecutor<FailCommand> {
 
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>Result.fail("intentional failure")</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>Result.fail("intentional failure")</code>
+         */
         @Override
         public Result<String> execute(FailCommand command) {
             return Result.fail("intentional failure");
         }
 
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>Collections.&lt;Class&lt;? extends Command&gt;&gt;singleton(FailCommand.class)</code>。</p>
+         *
+         * @return 实际返回<code>Collections.&lt;Class&lt;? extends Command&gt;&gt;singleton(FailCommand.class)</code>
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.<Class<? extends Command>>singleton(FailCommand.class);

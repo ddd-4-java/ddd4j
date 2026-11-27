@@ -14,8 +14,8 @@
         SELECT s.id AS sku_id, g.spu_name, s.sku_name, s.sale_price_cent
         FROM goods_sku s JOIN goods_spu g ON g.tenant_id=s.tenant_id AND g.id=s.spu_id
         WHERE s.tenant_id=#{tenant} AND s.sku_code=#{skuCode} AND s.deleted=0 AND g.deleted=0
-          AND g.is_on_sale=1 AND s.stock_mode='UNLIMITED' AND s.sale_price_cent IS NOT NULL
-          AND JSON_CONTAINS(g.applicable_shop_ids, JSON_QUOTE(CAST(#{shopId} AS CHAR)))
+        AND g.is_on_sale=1 AND s.stock_mode='UNLIMITED' AND s.sale_price_cent IS NOT NULL
+        AND JSON_CONTAINS(g.applicable_shop_ids, JSON_QUOTE(CAST(#{shopId} AS CHAR)))
         FOR SHARE
     </select>
 </mapper>

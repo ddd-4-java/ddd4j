@@ -45,6 +45,11 @@ public class DefaultExceptionHandler extends BaseErrorConfiguration implements E
         super(translator);
     }
 
+    /**
+     * 返回当前适配实现对应的运行框架名称。
+     *
+     * @return 框架标识
+     */
     @Override
     protected String frameworkName() {
         return "Quarkus";
@@ -53,6 +58,9 @@ public class DefaultExceptionHandler extends BaseErrorConfiguration implements E
     /**
      * 先归一 JAX-RS {@link WebApplicationException}（保留容器给出的状态与消息），
      * 其余异常走 ddd4j 通用翻译。
+     *
+     * @param exception 当前请求抛出的异常
+     * @return 共用异常映射返回的响应
      */
     @Override
     protected WebError doTranslate(Throwable exception) {
@@ -64,6 +72,12 @@ public class DefaultExceptionHandler extends BaseErrorConfiguration implements E
         return super.doTranslate(exception);
     }
 
+    /**
+     * 将运行时异常映射为 Quarkus 可返回的 HTTP 错误。
+     *
+     * @param exception 当前请求处理时抛出的异常
+     * @return 框架响应中的状态和错误正文
+     */
     @Override
     public Response toResponse(RuntimeException exception) {
         WebError error = translate(exception);

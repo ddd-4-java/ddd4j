@@ -97,11 +97,29 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
                     "  return 1 " +
                     "end " +
                     "return 0";
+    /**
+     * 执行缓存读写和事务命令的 Jedis 客户端。
+     */
     private final UnifiedJedis jedis;
+    /**
+     * 写入缓存时使用的 Redis SET 参数。
+     */
     private final SetParams setParams;
+    /**
+     * 默认缓存存活时间，单位为秒。
+     */
     private final long expireSeconds;
+    /**
+     * 反序列化缓存条目时使用的值类型。
+     */
     private final Class<V> valueType;
+    /**
+     * 负责在 Redis 或 Memcached 中存储 JSON 值的映射器。
+     */
     private final ObjectMapper objectMapper;
+    /**
+     * 用于隔离当前缓存命名空间的键前缀。
+     */
     private final String keyPrefix;
 
     /**
@@ -133,10 +151,24 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
         this(jedis, config, valueType, JsonMapper.builder().build());
     }
 
+    /**
+     * 为业务键添加当前缓存命名空间前缀。
+     *
+     * @param key 缓存键
+     * @return 写入后端使用的缓存键
+     */
     private String key(String key) {
         return keyPrefix + key;
     }
 
+    /**
+     * 读取现有缓存值。
+     *
+     * <p>Jedis 实现调用 <code>jedis.get(key(key))</code>。</p>
+     *
+     * @param key 当前操作使用的键
+     * @return 根据执行路径返回<code>null</code>、<code>(V)json</code>、<code>objectMapper.readValue(json, valueType)</code>
+     */
     @Override
     public V getIfPresent(String key) {
         try {
@@ -153,6 +185,15 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
         }
     }
 
+    /**
+     * 读取调用指定的当前值。
+     *
+     * <p>Jedis 实现调用 <code>getIfPresent(key)</code>。</p>
+     *
+     * @param key             当前操作使用的键
+     * @param mappingFunction 传给 <code>mappingFunction.apply(key)</code>
+     * @return 实际返回<code>value</code>
+     */
     @Override
     public V get(String key, Function<String, V> mappingFunction) {
         V value = getIfPresent(key);
@@ -165,6 +206,14 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
         return value;
     }
 
+    /**
+     * 将给定数据写入当前存储。
+     *
+     * <p>Jedis 实现调用 <code>objectMapper.writeValueAsString(value)</code>。</p>
+     *
+     * @param key   当前操作使用的键
+     * @param value 要写入或作为比较条件传入的值
+     */
     @Override
     public void put(String key, V value) {
         try {
@@ -181,6 +230,13 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
 
     // ==================== CasCache 实现（基于 Redis SETNX + Lua） ====================
 
+    /**
+     * 使指定键的缓存条目失效。
+     *
+     * <p>Jedis 实现调用 <code>jedis.del(key(key))</code>。</p>
+     *
+     * @param key 当前操作使用的键
+     */
     @Override
     public void invalidate(String key) {
         try {
@@ -190,16 +246,29 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
         }
     }
 
+    /**
+     * 保留后端现有键。调用方需通过明确的键逐个失效。
+     */
     @Override
     public void invalidateAll() {
         // Redis 不建议 flushAll，需通过 key 前缀逐个删除
     }
 
+    /**
+     * 报告当前后端的缓存条目数量是否可用。
+     *
+     * @return 固定返回 -1，表示此适配器不估算条目数
+     */
     @Override
     public long estimatedSize() {
         return -1;
     }
 
+    /**
+     * 返回当前缓存实现记录的统计信息。
+     *
+     * @return 此实现返回<code>null</code>
+     */
     @Override
     public CacheStats stats() {
         return null;
@@ -216,6 +285,15 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
 
     // ==================== AtomicCache 实现（基于 Jedis incr/decr + Lua 库存脚本） ====================
 
+    /**
+     * 在键尚无缓存值时写入给定值。
+     *
+     * <p>Jedis 实现调用 <code>objectMapper.writeValueAsString(value)</code>。</p>
+     *
+     * @param key   缓存键
+     * @param value 缓存值
+     * @return 根据执行路径返回<code>"OK".equals(result)</code>、<code>false</code>
+     */
     @Override
     public boolean putIfAbsent(String key, V value) {
         try {
@@ -230,6 +308,16 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
         }
     }
 
+    /**
+     * 使用给定的新值更新数据。
+     *
+     * <p>Jedis 实现调用 <code>putIfAbsent(key, newValue)</code>。</p>
+     *
+     * @param key      缓存键
+     * @param expected 期望的旧值（null 表示期望 key 不存在）
+     * @param newValue 新值
+     * @return 根据执行路径返回<code>putIfAbsent(key, newValue)</code>、<code>Objects.nonNull(result) &amp;&amp; !Long.valueOf(0).equals(result)</code>、<code>false</code>
+     */
     @Override
     public boolean replace(String key, V expected, V newValue) {
         try {
@@ -245,6 +333,15 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
         }
     }
 
+    /**
+     * 在缓存值符合预期时删除该键。
+     *
+     * <p>Jedis 实现调用 <code>objectMapper.writeValueAsString(expected)</code>。</p>
+     *
+     * @param key      缓存键
+     * @param expected 期望的旧值
+     * @return 根据执行路径返回<code>Objects.nonNull(result) &amp;&amp; !Long.valueOf(0).equals(result)</code>、<code>false</code>
+     */
     @Override
     public boolean removeIf(String key, V expected) {
         try {
@@ -256,6 +353,15 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
         }
     }
 
+    /**
+     * 对当前计数或数值执行增加操作。
+     *
+     * <p>满足 <code>delta &lt; 0</code> 时抛出 <code>IllegalArgumentException</code>。 Jedis 实现调用 <code>jedis.incrBy(key(key), delta)</code>。</p>
+     *
+     * @param key   缓存键
+     * @param delta 增量（必须 >= 0）
+     * @return 实际返回<code>jedis.incrBy(key(key), delta)</code>
+     */
     @Override
     public long increment(String key, long delta) {
         if (delta < 0) {
@@ -264,6 +370,16 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
         return jedis.incrBy(key(key), delta);
     }
 
+    /**
+     * 对当前计数或数值执行增加操作。
+     *
+     * <p>Jedis 实现调用 <code>jedis.incrBy(key(key), delta)</code>。</p>
+     *
+     * @param key     缓存键
+     * @param delta   增量（必须 >= 0）
+     * @param seconds 过期时间（秒），仅对首次创建有效
+     * @return 实际返回<code>result</code>
+     */
     @Override
     public long increment(String key, long delta, long seconds) {
         long result = jedis.incrBy(key(key), delta);
@@ -273,6 +389,15 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
         return result;
     }
 
+    /**
+     * 对当前计数或数值执行减少操作。
+     *
+     * <p>满足 <code>delta &lt; 0</code> 时抛出 <code>IllegalArgumentException</code>。 Jedis 实现调用 <code>jedis.incrBy(key(key), -delta)</code>。</p>
+     *
+     * @param key   缓存键
+     * @param delta 减量（必须 >= 0）
+     * @return 实际返回<code>jedis.incrBy(key(key), -delta)</code>
+     */
     @Override
     public long decrement(String key, long delta) {
         if (delta < 0) {
@@ -281,6 +406,15 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
         return jedis.incrBy(key(key), -delta);
     }
 
+    /**
+     * 对键对应的数值执行浮点加法。
+     *
+     * <p>满足 <code>delta &lt; 0</code> 时抛出 <code>IllegalArgumentException</code>。 Jedis 实现调用 <code>jedis.incrByFloat(key(key), delta)</code>。</p>
+     *
+     * @param key   缓存键
+     * @param delta 增量（必须 >= 0）
+     * @return 实际返回<code>jedis.incrByFloat(key(key), delta)</code>
+     */
     @Override
     public double incrementFloat(String key, double delta) {
         if (delta < 0) {
@@ -289,6 +423,15 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
         return jedis.incrByFloat(key(key), delta);
     }
 
+    /**
+     * 对键对应的数值执行浮点减法。
+     *
+     * <p>满足 <code>delta &lt; 0</code> 时抛出 <code>IllegalArgumentException</code>。 Jedis 实现调用 <code>jedis.incrByFloat(key(key), -delta)</code>。</p>
+     *
+     * @param key   缓存键
+     * @param delta 减量（必须 >= 0）
+     * @return 实际返回<code>jedis.incrByFloat(key(key), -delta)</code>
+     */
     @Override
     public double decrementFloat(String key, double delta) {
         if (delta < 0) {
@@ -297,6 +440,15 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
         return jedis.incrByFloat(key(key), -delta);
     }
 
+    /**
+     * 尝试扣减键对应的库存。
+     *
+     * <p>Jedis 实现调用 <code>jedis.eval(STOCK_DECR_SCRIPT, 1, key(key), String.valueOf(quantity))</code>。</p>
+     *
+     * @param key      缓存键
+     * @param quantity 扣减数量（必须 > 0）
+     * @return 实际返回<code>result instanceof Long ? (Long)result : Long.parseLong(String.valueOf(result))</code>
+     */
     @Override
     public long stockDecrement(String key, long quantity) {
         Object result = jedis.eval(STOCK_DECR_SCRIPT, 1, key(key), String.valueOf(quantity));
@@ -305,17 +457,43 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
 
     // ==================== TTL 管理 ====================
 
+    /**
+     * 增加键对应的库存。
+     *
+     * <p>Jedis 实现调用 <code>jedis.eval(STOCK_INCR_SCRIPT, 1, key(key), String.valueOf(quantity))</code>。</p>
+     *
+     * @param key      缓存键
+     * @param quantity 回补数量（必须 > 0）
+     * @return 实际返回<code>result instanceof Long ? (Long)result : Long.parseLong(String.valueOf(result))</code>
+     */
     @Override
     public long stockIncrement(String key, long quantity) {
         Object result = jedis.eval(STOCK_INCR_SCRIPT, 1, key(key), String.valueOf(quantity));
         return result instanceof Long ? (Long) result : Long.parseLong(String.valueOf(result));
     }
 
+    /**
+     * 为指定键更新失效时间。
+     *
+     * <p>Jedis 实现调用 <code>jedis.expire(key(key), seconds)</code>。</p>
+     *
+     * @param key     当前操作使用的键
+     * @param seconds 传给 <code>jedis.expire(key(key), seconds)</code>
+     * @return 实际返回<code>jedis.expire(key(key), seconds) == 1L</code>
+     */
     @Override
     public boolean expire(String key, long seconds) {
         return jedis.expire(key(key), seconds) == 1L;
     }
 
+    /**
+     * 查询键的剩余有效时间。
+     *
+     * <p>Jedis 实现调用 <code>jedis.ttl(key(key))</code>。</p>
+     *
+     * @param key 当前操作使用的键
+     * @return 实际返回<code>jedis.ttl(key(key))</code>
+     */
     @Override
     public long getExpire(String key) {
         return jedis.ttl(key(key));
@@ -323,11 +501,29 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
 
     // ==================== CAS SPI 实现（基于 Redis Lua 脚本原子操作）====================
 
+    /**
+     * 移除指定键上的到期限制。
+     *
+     * <p>Jedis 实现调用 <code>jedis.persist(key(key))</code>。</p>
+     *
+     * @param key 当前操作使用的键
+     * @return 实际返回<code>jedis.persist(key(key)) == 1L</code>
+     */
     @Override
     public boolean persist(String key) {
         return jedis.persist(key(key)) == 1L;
     }
 
+    /**
+     * 比较缓存中的现值或版本并尝试原子修改。
+     *
+     * <p>Jedis 实现调用 <code>key(key)</code>。</p>
+     *
+     * @param key           当前操作使用的键
+     * @param expireSeconds 传给 <code>String.valueOf(expireSeconds)</code>
+     * @param operation     传给 <code>operation.maxRetries()</code>
+     * @return 根据执行路径返回<code>null</code>、<code>newValue</code>
+     */
     @Override
     public V compareAndSet(String key, long expireSeconds, CASOperation<V, V> operation) {
         String cachedKey = key(key);
@@ -366,6 +562,16 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
         return null;
     }
 
+    /**
+     * 比较缓存中的现值或版本并尝试原子修改。
+     *
+     * <p>Jedis 实现调用 <code>key(key)</code>。</p>
+     *
+     * @param key              当前操作使用的键
+     * @param expectedOldValue 传给 <code>serialize(expectedOldValue)</code>
+     * @param newValue         传给 <code>serialize(newValue)</code>
+     * @return 实际返回<code>Long.valueOf(1).equals(result)</code>
+     */
     @Override
     public boolean compareAndSet(String key, V expectedOldValue, V newValue) {
         String cachedKey = key(key);
@@ -376,6 +582,12 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
         return Long.valueOf(1).equals(result);
     }
 
+    /**
+     * 保留字符串值原样，将其他非空值编码为 JSON。
+     *
+     * @param value 待写入的缓存值
+     * @return 已编码的字符串，空值或编码失败时返回空字符串
+     */
     private String serialize(V value) {
         if (Objects.isNull(value)) {
             return "";
@@ -390,6 +602,12 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
         }
     }
 
+    /**
+     * 按照适配器的值类型反序列化缓存文本。
+     *
+     * @param json 从缓存后端读出的字符串
+     * @return 解码后的缓存值，输入为空或解码失败时返回空
+     */
     private V deserialize(String json) {
         if (StrKit.isEmpty(json)) {
             return null;

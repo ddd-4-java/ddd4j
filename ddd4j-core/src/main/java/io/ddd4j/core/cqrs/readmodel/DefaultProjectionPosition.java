@@ -35,6 +35,9 @@ import java.util.Objects;
 @EqualsAndHashCode
 public final class DefaultProjectionPosition implements ProjectionPosition {
 
+    /**
+     * Java 序列化版本标识。
+     */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -74,6 +77,12 @@ public final class DefaultProjectionPosition implements ProjectionPosition {
         return new DefaultProjectionPosition(streamId, 0);
     }
 
+    /**
+     * 以新事件位置构造同一流的投影检查点。
+     *
+     * @param nextEventNumber 新的下一个事件号
+     * @return 实际返回<code>this</code>，供调用方取得当前值
+     */
     @Override
     public ProjectionPosition withNextEventNumber(long nextEventNumber) {
         if (nextEventNumber == this.nextEventNumber) {

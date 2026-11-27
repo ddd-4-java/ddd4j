@@ -27,8 +27,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * 共享命令内核的可观察兼容契约；事务边界由平台集成测试负责。
  */
 class DefaultCommandBusCompatibilityTest {
+    /**
+     * 验证<code>type</code> 与…为同一实例 <code>LateCommand.class</code>，被测调用 抛出 <code>UnsupportedOperationException.class</code>，<code>executor.executed</code> 按顺序仅包含 <code>firstRouted</code>、<code>nextRouted</code>。
+     */
     @Test
     void missingRouteDiscoveryCachesOnlySuccessfulResolution() {
+        /** 供命令总线验证类型匹配和分发的命令样本。 */
         class LateCommand implements Command {
         }
         AtomicInteger lookups = new AtomicInteger();
@@ -58,6 +62,9 @@ class DefaultCommandBusCompatibilityTest {
         assertThat(executor.executed).containsExactly(firstRouted, nextRouted);
     }
 
+    /**
+     * 验证<code>actual</code> 与…为同一实例 <code>expected</code>，<code>actual.getData()</code> 等于 <code>"order-42"</code>，<code>executor.executed</code> 按顺序仅包含 <code>command</code>。
+     */
     @Test
     void successResultAndOriginalCommandArePassedThroughExactlyOnce() {
         Result<String> expected = Result.ok("order-42");
@@ -72,6 +79,9 @@ class DefaultCommandBusCompatibilityTest {
         assertThat(executor.executed).containsExactly(command);
     }
 
+    /**
+     * 验证<code>actual</code> 与…为同一实例 <code>expected</code>，<code>actual.isSuccess()</code>为假，<code>executor.executed</code> 按顺序仅包含 <code>command</code>。
+     */
     @Test
     void existingBusinessFailureIsReturnedWithoutThrowingOrRewriting() {
         Result<String> expected = Result.fail(409, "order already cancelled");
@@ -88,6 +98,9 @@ class DefaultCommandBusCompatibilityTest {
         assertThat(executor.executed).containsExactly(command);
     }
 
+    /**
+     * 验证<code>bus.execute(command)</code> 抛出 <code>IllegalArgumentException.class</code>，<code>executed</code> 按顺序仅包含 <code>command</code>。
+     */
     @Test
     void executorExceptionPropagatesWithoutWrappingOrRetry() {
         IllegalArgumentException expected = new IllegalArgumentException("invalid order state");
@@ -111,6 +124,9 @@ class DefaultCommandBusCompatibilityTest {
         assertThat(executed).containsExactly(command);
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，<code>failure</code> 的异常消息包含 <code>CreateOrderCommand.class.getName()</code>，<code>second.executed</code>为空。
+     */
     @Test
     void duplicateCommandRegistrationFailsDuringConstruction() {
         FixtureExecutor first = new FixtureExecutor(Result.ok(), CreateOrderCommand.class);
@@ -124,6 +140,9 @@ class DefaultCommandBusCompatibilityTest {
         assertThat(second.executed).isEmpty();
     }
 
+    /**
+     * 验证<code>bus.execute(new CancelOrderCommand())</code> 抛出 <code>IllegalStateException.class</code>，<code>failure</code> 的异常消息包含 <code>CancelOrderCommand.class.getName()</code>，<code>executor.executed</code>为空。
+     */
     @Test
     void missingCommandFailsWithoutInvokingAnUnrelatedExecutor() {
         FixtureExecutor executor = new FixtureExecutor(Result.ok(), CreateOrderCommand.class);
@@ -136,6 +155,9 @@ class DefaultCommandBusCompatibilityTest {
         assertThat(executor.executed).isEmpty();
     }
 
+    /**
+     * 验证<code>bus.execute(new SpecialCreateOrderCommand())</code> 抛出 <code>IllegalStateException.class</code>，<code>failure</code> 的异常消息包含 <code>SpecialCreateOrderCommand.class.getName()</code>，<code>executor.executed</code>为空。
+     */
     @Test
     void commandSubclassDoesNotFallBackToItsParentExecutor() {
         FixtureExecutor executor = new FixtureExecutor(Result.ok(), CreateOrderCommand.class);
@@ -148,6 +170,9 @@ class DefaultCommandBusCompatibilityTest {
         assertThat(executor.executed).isEmpty();
     }
 
+    /**
+     * 验证<code>bus.execute(create)</code> 与…为同一实例 <code>lifecycleResult</code>，<code>bus.execute(ship)</code> 与…为同一实例 <code>shippingResult</code>，<code>shipping.executed</code> 按顺序仅包含 <code>ship</code>。
+     */
     @Test
     void registryAssemblyRoutesEverySupportedTypeToTheCorrectExecutor() {
         Result<String> lifecycleResult = Result.ok("lifecycle");
@@ -170,6 +195,9 @@ class DefaultCommandBusCompatibilityTest {
         assertThat(shipping.executed).containsExactly(ship);
     }
 
+    /**
+     * 验证<code>bus.&lt;String&gt;execute(command).getData()</code> 等于 <code>"original"</code>，<code>bus.execute(new CancelOrderCommand())</code> 抛出 <code>IllegalStateException.class</code>，<code>replacement.executed</code>为空。
+     */
     @Test
     void constructionSnapshotsTheSuppliedExecutorCollection() {
         FixtureExecutor original = new FixtureExecutor(Result.ok("original"), CreateOrderCommand.class);
@@ -188,6 +216,9 @@ class DefaultCommandBusCompatibilityTest {
         assertThat(replacement.executed).isEmpty();
     }
 
+    /**
+     * 验证<code>bus.&lt;String&gt;execute(command).getData()</code> 等于 <code>"original"</code>，<code>bus.execute(new CancelOrderCommand())</code> 抛出 <code>IllegalStateException.class</code>，<code>executor.executed</code> 按顺序仅包含 <code>command</code>。
+     */
     @Test
     void supportedCommandChangesDoNotAlterAnAlreadyConstructedBus() {
         FixtureExecutor executor = new FixtureExecutor(Result.ok("original"), CreateOrderCommand.class);
@@ -201,6 +232,9 @@ class DefaultCommandBusCompatibilityTest {
         assertThat(executor.executed).containsExactly(command);
     }
 
+    /**
+     * 验证<code>originalBus.execute(new CancelOrderCommand())</code> 抛出 <code>IllegalStateException.class</code>，<code>later.executed</code>为空，<code>later.executed</code> 按顺序仅包含 <code>command</code>。
+     */
     @Test
     void laterRegistryRegistrationOnlyAppearsInANewBus() {
         CommandRegistry registry = new CommandRegistry();
@@ -217,6 +251,9 @@ class DefaultCommandBusCompatibilityTest {
         assertThat(later.executed).containsExactly(command);
     }
 
+    /**
+     * 验证<code>bus.execute(null)</code> 抛出 <code>NullPointerException.class</code>，<code>executor.executed</code>为空。
+     */
     @Test
     void nullCommandKeepsTheExistingCoreNullPointerContract() {
         FixtureExecutor executor = new FixtureExecutor(Result.ok(), CreateOrderCommand.class);
@@ -226,11 +263,17 @@ class DefaultCommandBusCompatibilityTest {
         assertThat(executor.executed).isEmpty();
     }
 
+    /**
+     * 验证被测调用 抛出 <code>NullPointerException.class</code>。
+     */
     @Test
     void nullExecutorCollectionIsRejectedAtConstruction() {
         assertThrows(NullPointerException.class, () -> new DefaultCommandBus(null));
     }
 
+    /**
+     * 验证被测调用 抛出 <code>NullPointerException.class</code>。
+     */
     @Test
     void nullExecutorIsRejectedAtConstruction() {
         assertThrows(NullPointerException.class,
@@ -243,12 +286,21 @@ class DefaultCommandBusCompatibilityTest {
     private static class CreateOrderCommand implements Command {
     }
 
+    /**
+     * 用于断言命令类型路由的特殊下单命令。
+     */
     private static final class SpecialCreateOrderCommand extends CreateOrderCommand {
     }
 
+    /**
+     * 用于验证取消订单命令路由的样本。
+     */
     private static final class CancelOrderCommand implements Command {
     }
 
+    /**
+     * 用于验证订单发运命令路由的样本。
+     */
     private static final class ShipOrderCommand implements Command {
     }
 
@@ -256,21 +308,49 @@ class DefaultCommandBusCompatibilityTest {
      * 可观测执行器记录输入，便于发现误路由、重复执行或错误结果转换。
      */
     private static final class FixtureExecutor implements CommandExecutor<Command> {
+        /**
+         * 夹具执行器声明的命令类型集合。
+         */
         private final Set<Class<? extends Command>> commandTypes;
+        /**
+         * 执行被测操作后保存的结果。
+         */
         private final Result<?> result;
+        /**
+         * 标记测试回调或业务操作已经实际执行。
+         */
         private final List<Command> executed = new ArrayList<>();
 
+        /**
+         * 构造供当前测试使用的 <code>FixtureExecutor</code> 实例。
+         *
+         * @param result       执行被测操作后保存的结果
+         * @param commandTypes 用于初始化 <code>FixtureExecutor</code> 的 <code>Class&lt;? extends Command&gt;[]</code> 值
+         */
         @SafeVarargs
         private FixtureExecutor(Result<?> result, Class<? extends Command>... commandTypes) {
             this.result = result;
             this.commandTypes = new LinkedHashSet<>(Arrays.asList(commandTypes));
         }
 
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * @return 实际返回<code>commandTypes</code>，供调用方取得当前值
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return commandTypes;
         }
 
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>executed.add(command)</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>result</code>
+         */
         @Override
         public Result<?> execute(Command command) {
             executed.add(command);

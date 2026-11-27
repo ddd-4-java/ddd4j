@@ -20,15 +20,27 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * 通过 <code>SubjectKit.register()</code>、<code>scope.start()</code>、<code>scope.close()</code> 验证 <code>SubjectKitRegistrationScope</code> 的运行行为。
+ */
 class SubjectKitRegistrationScopeTest {
 
+    /**
+     * 用例修改之前保存的原服务提供器。
+     */
     private final SubjectProvider originalProvider = SubjectKit.subjectProvider;
 
+    /**
+     * 测试结束后执行 <code>SubjectKit.register()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void restoreSubjectProvider() {
         SubjectKit.register(originalProvider);
     }
 
+    /**
+     * 验证<code>SubjectKit.subjectProvider</code> 指向同一实例 <code>current</code>，<code>SubjectKit.subjectProvider</code> 指向同一实例 <code>previous</code>。
+     */
     @Test
     void shouldRestorePreviousProviderOnClose() {
         SubjectProvider previous = new SubjectProvider() {
@@ -45,6 +57,9 @@ class SubjectKitRegistrationScopeTest {
         assertThat(SubjectKit.subjectProvider).isSameAs(previous);
     }
 
+    /**
+     * 验证<code>SubjectKit.subjectProvider</code> 指向同一实例 <code>replacement</code>。
+     */
     @Test
     void shouldNotOverwriteProviderReplacedAfterStart() {
         SubjectProvider current = new SubjectProvider() {
@@ -61,6 +76,9 @@ class SubjectKitRegistrationScopeTest {
     }
 
 
+    /**
+     * 验证<code>replacement</code> 等于 <code>current</code>，<code>SubjectKit.subjectProvider</code> 指向同一实例 <code>replacement</code>。
+     */
     @Test
     void shouldNotOverwriteEqualButDistinctProviderInstalledAfterStart() {
         SubjectProvider current = new EqualProvider();
@@ -76,12 +94,26 @@ class SubjectKitRegistrationScopeTest {
         assertThat(SubjectKit.subjectProvider).isSameAs(replacement);
     }
 
+    /**
+     * 提供受用例控制的认证主体，便于验证授权路径。
+     */
     private static final class EqualProvider implements SubjectProvider {
+        /**
+         * 比较两个对象的值是否相等。
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             return obj instanceof EqualProvider;
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             return EqualProvider.class.hashCode();

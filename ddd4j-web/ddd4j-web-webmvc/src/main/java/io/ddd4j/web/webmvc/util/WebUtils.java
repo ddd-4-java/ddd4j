@@ -31,11 +31,15 @@ import java.util.Objects;
  */
 public final class WebUtils {
 
+    /**
+     * 限制调用方直接创建 <code>WebUtils</code> 实例。
+     */
     private WebUtils() {
     }
 
     /**
      * 获取当前 HttpServletRequest
+     *
      * @return 当前 HTTP 请求
      */
     public static HttpServletRequest getHttpServletRequest() {
@@ -45,8 +49,9 @@ public final class WebUtils {
 
     /**
      * 获取客户端真实 IP
-     * @return 请求的远端地址
+     *
      * @param request HTTP 请求
+     * @return 请求的远端地址
      */
     public static String getRemoteAddr(HttpServletRequest request) {
         if (Objects.isNull(request)) {

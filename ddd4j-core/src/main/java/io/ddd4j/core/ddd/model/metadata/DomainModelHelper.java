@@ -58,8 +58,14 @@ import java.util.function.Function;
 @SuppressWarnings("unchecked")
 public final class DomainModelHelper {
 
+    /**
+     * 按领域和持久化模型类型缓存的映射元数据。
+     */
     private static final Map<ModelMappingKey, DomainModelInfo<?>> MODEL_INFO_CACHE = new ConcurrentHashMap<>();
 
+    /**
+     * 限制调用方直接创建 <code>DomainModelHelper</code> 实例。
+     */
     private DomainModelHelper() {
     }
 
@@ -142,14 +148,32 @@ public final class DomainModelHelper {
      * 按领域模型类型与持久化映射类型隔离的缓存键。
      */
     private static final class ModelMappingKey {
+        /**
+         * 领域模型的 Java 类型。
+         */
         private final Class<?> modelType;
+        /**
+         * 要与领域模型组合映射的持久化类型。
+         */
         private final Class<?> persistenceType;
 
+        /**
+         * 用领域和持久化类型构造元数据缓存键。
+         *
+         * @param modelType       领域模型类型
+         * @param persistenceType 对应的持久化类型
+         */
         private ModelMappingKey(Class<?> modelType, Class<?> persistenceType) {
             this.modelType = modelType;
             this.persistenceType = persistenceType;
         }
 
+        /**
+         * 比较两个对象的值是否相等。
+         *
+         * @param o 用来比较的另一个对象，允许为空
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object o) {
             if (this == o) {
@@ -162,6 +186,11 @@ public final class DomainModelHelper {
             return modelType.equals(that.modelType) && persistenceType.equals(that.persistenceType);
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             return 31 * modelType.hashCode() + persistenceType.hashCode();

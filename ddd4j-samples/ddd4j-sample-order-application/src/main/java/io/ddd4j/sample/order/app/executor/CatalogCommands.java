@@ -4,23 +4,42 @@ import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.Result;
 import io.ddd4j.sample.order.app.CatalogService;
-import io.ddd4j.sample.order.client.command.ConfirmTradePaymentCmd;
 import io.ddd4j.sample.order.client.command.ChangeTradeOrderCmd;
+import io.ddd4j.sample.order.client.command.ConfirmTradePaymentCmd;
 import io.ddd4j.sample.order.client.command.CreateGoodsSpuCmd;
 import io.ddd4j.sample.order.client.command.PlaceTradeOrderCmd;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 
-/** 商品建档和下单的应用执行器，供各框架命令总线注册。 */
+import java.util.Set;
+
+/**
+ * 商品建档和下单的应用执行器，供各框架命令总线注册。
+ */
 @RequiredArgsConstructor
 public final class CatalogCommands implements CommandExecutor<Command> {
+    /**
+     * 落实商品交易写用例的应用服务。
+     */
     private final CatalogService service;
 
+    /**
+     * 声明当前处理器可以接收的命令类型。
+     *
+     * @return 当前处理器声明可接收的命令类型集合
+     */
     @Override
     public Set<Class<? extends Command>> supportedCommands() {
         return Set.of(CreateGoodsSpuCmd.class, PlaceTradeOrderCmd.class, ConfirmTradePaymentCmd.class, ChangeTradeOrderCmd.class);
     }
 
+    /**
+     * 用当前处理器执行传入命令或操作。
+     *
+     * <p>此实现调用 <code>Result.ok(service.create(create))</code>。</p>
+     *
+     * @param command 命令对象
+     * @return 根据执行路径返回<code>Result.ok(service.create(create))</code>、<code>Result.ok(service.place(place))</code>、<code>Result.ok(service.confirmPayment(payment))</code>
+     */
     @Override
     public Result<Object> execute(Command command) {
         if (command instanceof CreateGoodsSpuCmd create) {

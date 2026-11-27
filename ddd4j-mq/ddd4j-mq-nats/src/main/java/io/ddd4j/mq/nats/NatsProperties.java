@@ -38,12 +38,6 @@ import java.util.Objects;
 public class NatsProperties extends MQProperties {
 
     /**
-     * 构造 NATS 配置（各字段带默认值，可经配置绑定覆盖）。
-     */
-    public NatsProperties() {
-    }
-
-    /**
      * NATS 服务器地址列表（逗号分隔，如 {@code nats://host1:4222,nats://host2:4222}）
      */
     private String servers = "nats://localhost:4222";
@@ -51,7 +45,6 @@ public class NatsProperties extends MQProperties {
      * 客户端名称
      */
     private String connectionName = "ddd4j-nats";
-
     /**
      * 是否要求 JetStream 持久化与发布确认；默认禁止静默回退到 core NATS。
      */
@@ -60,6 +53,11 @@ public class NatsProperties extends MQProperties {
      * 连接超时（毫秒）
      */
     private long connectTimeoutMillis = 2000L;
+    /**
+     * 构造 NATS 配置（各字段带默认值，可经配置绑定覆盖）。
+     */
+    public NatsProperties() {
+    }
 
     /**
      * 创建并打开 NATS {@link Connection}。

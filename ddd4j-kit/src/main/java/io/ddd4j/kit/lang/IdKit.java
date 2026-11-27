@@ -65,7 +65,13 @@ import java.util.concurrent.ConcurrentHashMap;
 @UtilityClass
 public class IdKit extends IdUtil {
 
+    /**
+     * 根据节点、时钟和序列配置复用的 Snowflake 实例。
+     */
     private static final Map<SnowflakeOptions, Snowflake> CUSTOM_SNOWFLAKES = new ConcurrentHashMap<>();
+    /**
+     * 缓存获取到的本机网络地址末尾字节。
+     */
     private static byte LAST_IP = 0;
 
     /**
@@ -211,6 +217,12 @@ public class IdKit extends IdUtil {
         return CUSTOM_SNOWFLAKES.computeIfAbsent(options, IdKit::newSnowflake);
     }
 
+    /**
+     * 用工作节点、数据中心和时钟选项构造 Hutool Snowflake。
+     *
+     * @param options Snowflake 生成配置
+     * @return 符合选项的 ID 生成器
+     */
     private static Snowflake newSnowflake(SnowflakeOptions options) {
         return new Snowflake(null, options.workerId, options.dataCenterId, options.useSystemClock,
                 options.timeOffset, options.randomSequenceLimit);
@@ -364,13 +376,40 @@ public class IdKit extends IdUtil {
         return LAST_IP;
     }
 
+    /**
+     * 保存 Snowflake 节点编号、时钟选择和序列生成配置。
+     */
     private static final class SnowflakeOptions {
+        /**
+         * Snowflake 标识中的工作节点编号。
+         */
         private final long workerId;
+        /**
+         * Snowflake 标识中的数据中心编号。
+         */
         private final long dataCenterId;
+        /**
+         * 是否使用 Hutool 系统时钟读取时间。
+         */
         private final boolean useSystemClock;
+        /**
+         * 容许时钟回拨的时间差，单位为毫秒。
+         */
         private final long timeOffset;
+        /**
+         * 毫秒内初始随机序列的上限。
+         */
         private final long randomSequenceLimit;
 
+        /**
+         * 保存用于创建和缓存 Snowflake 的完整配置。
+         *
+         * @param workerId            Snowflake 标识中的工作节点编号
+         * @param dataCenterId        Snowflake 标识中的数据中心编号
+         * @param useSystemClock      是否使用 Hutool 系统时钟读取时间
+         * @param timeOffset          容许时钟回拨的时间差，单位为毫秒
+         * @param randomSequenceLimit 毫秒内初始随机序列的上限
+         */
         private SnowflakeOptions(long workerId, long dataCenterId, boolean useSystemClock,
                                  long timeOffset, long randomSequenceLimit) {
             this.workerId = workerId;
@@ -380,6 +419,12 @@ public class IdKit extends IdUtil {
             this.randomSequenceLimit = randomSequenceLimit;
         }
 
+        /**
+         * 根据<code>workerId</code>、<code>dataCenterId</code>、<code>useSystemClock</code>、<code>timeOffset</code>、<code>randomSequenceLimit</code>比较对象的值是否相等。
+         *
+         * @param object 用于此操作的 <code>object</code>（<code>Object</code>）
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object object) {
             if (this == object) {
@@ -396,6 +441,11 @@ public class IdKit extends IdUtil {
                     && randomSequenceLimit == that.randomSequenceLimit;
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = (int) (workerId ^ (workerId >>> 32));

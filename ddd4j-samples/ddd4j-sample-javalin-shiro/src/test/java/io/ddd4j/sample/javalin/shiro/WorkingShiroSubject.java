@@ -44,14 +44,33 @@ import java.util.Objects;
  */
 public class WorkingShiroSubject extends ShiroSubject {
 
+    /**
+     * 在原生测试会话中存储主体信息的属性键。
+     */
     public static final String SESSION_ATTR_PRINCIPAL = "authPrincipal";
 
+    /**
+     * 读取和保存用户的仓储。
+     */
     private final InMemoryUserRepository userRepository;
 
+    /**
+     * 用给定值初始化 <code>WorkingShiroSubject</code> 实例。
+     *
+     * @param userRepository 读取和保存用户的仓储
+     */
     public WorkingShiroSubject(InMemoryUserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
+    /**
+     * 以传入的凭据启动认证会话。
+     *
+     * <p>测试夹具会调用 <code>SecurityUtils.getSubject()</code>、<code>String.valueOf(request.getLoginId())</code>。</p>
+     *
+     * @param request 框架传入的当前请求
+     * @return 实际返回<code>Objects.nonNull(subject.getSession()) ? subject.getSession().getId().toString() : null</code>
+     */
     @Override
     public String login(AuthRequest request) {
         Subject subject = SecurityUtils.getSubject();
@@ -72,6 +91,14 @@ public class WorkingShiroSubject extends ShiroSubject {
         return Objects.nonNull(subject.getSession()) ? subject.getSession().getId().toString() : null;
     }
 
+    /**
+     * 读取当前会话的认证主体。
+     *
+     * <p>测试夹具会调用 <code>SecurityUtils.getSubject()</code>、<code>subject.getSession()</code>。</p>
+     *
+     * @param <T> 此操作处理的值或结果的 Java 类型
+     * @return 根据执行路径返回<code>(T)p</code>、<code>super.getPrincipal()</code>
+     */
     @Override
     @SuppressWarnings("unchecked")
     public <T extends AuthPrincipal> T getPrincipal() {

@@ -47,6 +47,9 @@ import java.util.function.Consumer;
 @Slf4j(topic = "### DDD4J-MQ : ActiveMQClient ###")
 public class ActiveMQClient implements MQClient {
 
+    /**
+     * 当前消息代理客户端使用的连接和订阅配置。
+     */
     private final ActiveMQProperties properties;
     /**
      * 延迟初始化的 ActiveMQ 连接工厂（构造 1 注入时不创建）
@@ -56,7 +59,13 @@ public class ActiveMQClient implements MQClient {
      * 共享 connection（第一个 init* 时懒构造）
      */
     private final AtomicReference<Connection> connectionRef = new AtomicReference<>();
+    /**
+     * 协调消息客户端启动、初始化和关闭的生命周期。
+     */
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    /**
+     * 组件的启动状态和启动失败诊断信息。
+     */
     private final MQStartupStatus startupStatus = new MQStartupStatus("activemq");
 
     /**
@@ -83,6 +92,9 @@ public class ActiveMQClient implements MQClient {
 
     /**
      * 从 properties 自建 ActiveMQConnectionFactory（构造 2 用）。
+     *
+     * @param properties ActiveMQ 连接配置
+     * @return 配置好的 ActiveMQ 连接工厂
      */
     private static ActiveMQConnectionFactory buildFactory(ActiveMQProperties properties) {
         ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(properties.getBrokerUrl());
@@ -98,6 +110,11 @@ public class ActiveMQClient implements MQClient {
 
     // ========================= 生产者 =========================
 
+    /**
+     * 关闭原生消费者，并处理原生客户端抛出的异常。
+     *
+     * @param consumer 本次操作涉及的原生消费者
+     */
     private static void closeConsumer(MessageConsumer consumer) {
         try {
             consumer.close();
@@ -106,6 +123,11 @@ public class ActiveMQClient implements MQClient {
         }
     }
 
+    /**
+     * 关闭原生消息会话，并处理原生客户端抛出的异常。
+     *
+     * @param session 本次操作涉及的原生消息会话
+     */
     private static void closeSession(Session session) {
         try {
             session.close();
@@ -114,6 +136,11 @@ public class ActiveMQClient implements MQClient {
         }
     }
 
+    /**
+     * 关闭原生代理连接，并处理原生客户端抛出的异常。
+     *
+     * @param connection 待释放或等待完成的原生连接
+     */
     private static void closeConnection(Connection connection) {
         try {
             connection.close();
@@ -126,6 +153,10 @@ public class ActiveMQClient implements MQClient {
 
     /**
      * 优先读取 ddd4j 标准消息 ID，兼容升级期旧键并最终回退到 JMS 原生 ID。
+     *
+     * @param message 收到的 JMS 消息
+     * @return 用于确认和日志记录的 JMS 消息标识
+     * @throws JMSException 无法读取 JMS 消息的标识属性
      */
     static String messageId(Message message) throws JMSException {
         String messageId = message.getStringProperty(jmsProperty(MessageHeaders.HEADER_MESSAGE_ID));
@@ -139,27 +170,53 @@ public class ActiveMQClient implements MQClient {
 
     /**
      * ddd4j 消息头统一使用 {@code ddd4j.xxx.yyy} 命名，JMS 场景需替换为 '_'。
+     *
+     * @param name 原始应用属性名
+     * @return 可用作 JMS 属性名的字符串
      */
     static String jmsProperty(String name) {
         // JMS 属性名必须是合法 Java 标识符：'.' 与 '-' 均非法，统一替换为 '_'
         return name.replace('.', '_').replace('-', '_');
     }
 
+    /**
+     * 返回此消息适配器在 DDD4J 中登记的实现名。
+     *
+     * @return 实际返回<code>"activemq"</code>，供调用方取得当前值
+     */
     @Override
     public String impl() {
         return "activemq";
     }
 
+    /**
+     * 返回管理连接、生产者和消费者资源的生命周期对象。
+     *
+     * @return 当前消息适配器用于登记和关闭资源的生命周期对象
+     */
     @Override
     public MQClientLifecycle lifecycle() {
         return lifecycle;
     }
 
+    /**
+     * 返回消息客户端当前记录的启动状态。
+     *
+     * @return 当前消息适配器记录的启动状态
+     */
     @Override
     public MQStartupStatus startupStatus() {
         return startupStatus;
     }
 
+    /**
+     * 准备消息生产者并返回可发布事件的入口。
+     *
+     * <p>ActiveMQ 实现调用 <code>getConnection().createSession(false, Session.AUTO_ACKNOWLEDGE)</code>。</p>
+     *
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 接收待发布事件的函数
+     */
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         try {
@@ -206,6 +263,16 @@ public class ActiveMQClient implements MQClient {
         }
     }
 
+    /**
+     * 为监听器建立消息消费所需的订阅和客户端资源。
+     *
+     * <p>ActiveMQ 实现调用 <code>getConnection().createSession(false, Session.CLIENT_ACKNOWLEDGE)</code>。</p>
+     *
+     * @param listener     监听器定义
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 此实现返回<code>true</code>
+     * @throws Exception 当前框架、存储或底层客户端无法完成此操作时
+     */
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         final Session session = getConnection().createSession(false, Session.CLIENT_ACKNOWLEDGE);
@@ -258,6 +325,11 @@ public class ActiveMQClient implements MQClient {
         return true;
     }
 
+    /**
+     * 取得当前适配器使用的原生连接或客户端。
+     *
+     * @return 供发布或消费操作使用的原生连接或客户端
+     */
     private synchronized Connection getConnection() {
         Connection connection = connectionRef.get();
         if (Objects.isNull(connection)) {
@@ -284,6 +356,9 @@ public class ActiveMQClient implements MQClient {
         return connection;
     }
 
+    /**
+     * 释放消息客户端拥有的运行资源，并在退出时登记组件已停止。
+     */
     @Override
     public void close() {
         try {

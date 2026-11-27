@@ -26,11 +26,28 @@ import java.util.List;
 @Getter
 public final class QrCodeFrame {
 
+    /**
+     * 在编码或绘制时使用的像素宽度。
+     */
     private final int width;
+    /**
+     * 在编码或绘制时使用的像素高度。
+     */
     private final int height;
+    /**
+     * 填充模板画布时使用的背景色。
+     */
     private final String backgroundColor;
+    /**
+     * 层叠绘制到二维码模板画布中的元素。
+     */
     private final List<QrCodeFrameElement> elements;
 
+    /**
+     * 通过构建配置生成画布，并复制元素列表以隔离后续构建操作。
+     *
+     * @param builder 提供画布尺寸、背景和元素的构建器
+     */
     private QrCodeFrame(Builder builder) {
         this.width = builder.width;
         this.height = builder.height;
@@ -55,11 +72,29 @@ public final class QrCodeFrame {
      * <p>设置背景色并添加元素后构建不可变外框模板。
      */
     public static final class Builder {
+        /**
+         * 在编码或绘制时使用的像素宽度。
+         */
         private final int width;
+        /**
+         * 在编码或绘制时使用的像素高度。
+         */
         private final int height;
+        /**
+         * 层叠绘制到二维码模板画布中的元素。
+         */
         private final List<QrCodeFrameElement> elements = new ArrayList<>();
+        /**
+         * 填充模板画布时使用的背景色。
+         */
         private String backgroundColor = "#FFFFFF";
 
+        /**
+         * 使用指定像素尺寸开始构建模板画布。
+         *
+         * @param width  画布宽度，单位为像素
+         * @param height 画布高度，单位为像素
+         */
         private Builder(int width, int height) {
             this.width = width;
             this.height = height;

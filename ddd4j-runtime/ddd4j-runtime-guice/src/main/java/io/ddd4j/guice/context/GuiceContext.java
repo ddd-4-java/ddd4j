@@ -56,6 +56,9 @@ public class GuiceContext {
      */
     private static volatile Injector injector;
 
+    /**
+     * 限制调用方直接创建 <code>GuiceContext</code> 实例。
+     */
     private GuiceContext() {
     }
 

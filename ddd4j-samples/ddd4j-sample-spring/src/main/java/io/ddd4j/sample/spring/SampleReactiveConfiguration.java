@@ -20,6 +20,11 @@ import reactor.core.scheduler.Schedulers;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
 public class SampleReactiveConfiguration extends DelegatingWebFluxConfiguration {
+    /**
+     * 为阻塞式商品交易处理配置 Spring WebFlux 工作执行组件。
+     *
+     * @param configurer 设置 WebFlux 阻塞处理使用的配置入口
+     */
     @Override
     protected void configureBlockingExecution(BlockingExecutionConfigurer configurer) {
         super.configureBlockingExecution(configurer);
@@ -28,7 +33,9 @@ public class SampleReactiveConfiguration extends DelegatingWebFluxConfiguration 
     }
 
     /**
-     * 保留 WebFlux 为未匹配地址生成的原生 HTTP 状态。
+     * 为商品交易配置 WebFlux 的 HTTP 状态异常处理。
+     *
+     * @return 注册到 WebFlux 异常处理链的状态处理器
      */
     @Bean
     @Order(-3)
@@ -37,6 +44,11 @@ public class SampleReactiveConfiguration extends DelegatingWebFluxConfiguration 
         return new WebFluxResponseStatusExceptionHandler();
     }
 
+    /**
+     * 注册处理幂等请求的本地缓存，并在应用关闭时注销本 Bean 创建的实例。
+     *
+     * @return 按所有权注销缓存的关闭回调
+     */
     @Bean(destroyMethod = "close")
     @Profile("catalog-trade")
     public AutoCloseable catalogIdempotencyCache() {

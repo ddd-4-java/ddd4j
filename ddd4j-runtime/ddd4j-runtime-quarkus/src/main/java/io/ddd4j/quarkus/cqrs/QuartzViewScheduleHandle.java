@@ -43,12 +43,27 @@ class QuartzViewScheduleHandle implements ViewScheduler.ViewScheduleHandle {
      */
     private volatile boolean active = true;
 
+    /**
+     * 用给定值初始化 <code>QuartzViewScheduleHandle</code> 实例。
+     *
+     * @param scheduler Quartz 调度器
+     * @param identity  调度标识
+     */
     QuartzViewScheduleHandle(Scheduler scheduler, String identity) {
         this.scheduler = scheduler;
         this.identity = identity;
     }
 
 
+    /**
+     * 根据视图名称和 Cron 配置注册一次持续有效的 Quartz 投影计划。
+     *
+     * @param scheduler 调度投影任务的运行时组件
+     * @param viewName  当前被调度的视图名称
+     * @param cron      任务计划的 Cron 表达式
+     * @param task      实际执行一次投影的回调
+     * @return 可取消该计划的调度句柄
+     */
     static QuartzViewScheduleHandle schedule(Scheduler scheduler, String viewName, String cron, Runnable task) {
         String identity = viewName + "-" + UUID.randomUUID();
         JobDetail job = JobBuilder.newJob(RunnableJob.class)
@@ -73,6 +88,11 @@ class QuartzViewScheduleHandle implements ViewScheduler.ViewScheduleHandle {
         }
     }
 
+    /**
+     * 撤销当前任务句柄允许撤销的操作。
+     *
+     * <p>此实现调用 <code>scheduler.deleteJob(new JobKey(identity + "-job"))</code>。</p>
+     */
     @Override
     public synchronized void cancel() {
         if (!active) {
@@ -91,6 +111,11 @@ class QuartzViewScheduleHandle implements ViewScheduler.ViewScheduleHandle {
         }
     }
 
+    /**
+     * 检查当前句柄是否仍处于有效状态。
+     *
+     * @return 实际返回<code>active</code>，作为本次判断结果
+     */
     @Override
     public boolean isActive() {
         return active;

@@ -28,6 +28,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  */
 class AuthenticationResponseContractTest {
 
+    /**
+     * 验证<code>data.get("orderId")</code>为空，<code>data.get("paid")</code> 等于 <code>true</code>。
+     */
     @Test
     void paymentResponseKeepsOrderAndNullableId() {
         Map<String, Object> data = new AuthenticationResource().businessPayOrder(null).getData();

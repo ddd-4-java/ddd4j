@@ -30,13 +30,37 @@ import java.util.prefs.Preferences;
 @Slf4j
 public class LicenseVerify {
 
+    /**
+     * 当前服务接受的许可证主题。
+     */
     private final String subject;
+    /**
+     * 用于验证签名的公钥证书别名。
+     */
     private final String publicAlias;
+    /**
+     * 打开密钥库所需的存储口令。
+     */
     private final String storePass;
+    /**
+     * 安装或验证的许可证文件路径。
+     */
     private final String licensePath;
+    /**
+     * 包含验证公钥的密钥库路径。
+     */
     private final String publicKeysStorePath;
+    /**
+     * 用于签发或验证许可证的签名算法。
+     */
     private final String signatureAlgorithm;
+    /**
+     * 负责许可证安装、验证和卸载的组件。
+     */
     private CustomLicenseManager licenseManager;
+    /**
+     * 当前许可证是否成功安装。
+     */
     private boolean installSuccess;
 
     /**
@@ -121,6 +145,9 @@ public class LicenseVerify {
         }
     }
 
+    /**
+     * 尝试卸载当前许可证，清理失败时记录失败阶段和异常类型。
+     */
     private void uninstallQuietly() {
         try {
             licenseManager.uninstall();
@@ -129,6 +156,11 @@ public class LicenseVerify {
         }
     }
 
+    /**
+     * 当起止日期都有值时记录许可证有效期。
+     *
+     * @param content 已读取的许可证内容
+     */
     private void logValidity(License content) {
         if (Objects.nonNull(content.getNotBefore()) && Objects.nonNull(content.getNotAfter())) {
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

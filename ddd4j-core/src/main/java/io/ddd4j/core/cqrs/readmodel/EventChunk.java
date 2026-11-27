@@ -31,8 +31,14 @@ import java.util.Objects;
 @Getter
 public class EventChunk<E> {
 
+    /**
+     * 按源事件顺序保存的事件批次内容。
+     */
     private final List<E> events;
 
+    /**
+     * 投影恢复时应读取的下一条源事件序号。
+     */
     private final long nextEventNumber;
 
     /**

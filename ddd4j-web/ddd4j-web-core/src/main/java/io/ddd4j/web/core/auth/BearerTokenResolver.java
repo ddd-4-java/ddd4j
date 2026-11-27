@@ -23,6 +23,9 @@ import java.util.Optional;
  */
 public final class BearerTokenResolver {
 
+    /**
+     * Authorization 中使用的 Bearer 协议前缀。
+     */
     private static final String PREFIX = "Bearer ";
 
     /**

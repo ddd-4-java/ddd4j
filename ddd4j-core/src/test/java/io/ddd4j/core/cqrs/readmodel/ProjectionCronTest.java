@@ -7,7 +7,13 @@ import java.time.ZonedDateTime;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+/**
+ * 通过 <code>ZonedDateTime.parse()</code>、<code>ProjectionCron.parse()</code>、<code>sunday.plusSeconds()</code> 验证 <code>ProjectionCron</code> 的运行行为。
+ */
 class ProjectionCronTest {
+    /**
+     * 验证<code>ProjectionCron.parse("0/5 * * * * *").next(sunday)</code> 等于 <code>sunday.plusSeconds(5)</code>，<code>ProjectionCron.parse("1,3 0-5 8 * * 0").next(sunday)</code> 等于 <code>sunday.plusSeconds(1)</code>，<code>ProjectionCron.parse("0 0 9 ? * 1-5").next(sunday)</code> 等于 <code>ZonedDateTime.parse("2026-11-16T09:00:00+08:00[Asia/Shanghai]")</code>。
+     */
     @Test
     void numericSixFieldContractSupportsStepsListsRangesAndSundayAliases() {
         ZonedDateTime sunday = ZonedDateTime.parse("2026-11-15T08:00:00+08:00[Asia/Shanghai]");
@@ -18,6 +24,9 @@ class ProjectionCronTest {
                 .isEqualTo(ZonedDateTime.parse("2026-11-16T09:00:00+08:00[Asia/Shanghai]"));
     }
 
+    /**
+     * 验证<code>cron.next(ZonedDateTime.parse("2026-03-08T00:00:00-05:00[America/New_York]"))</code> 等于 <code>ZonedDateTime.parse("2026-03-09T02:30:00-04:00[America/New_York]")</code>，<code>cron.next(ZonedDateTime.parse("2026-03-08T00:00:00+08:00[Asia/Shanghai]"))</code> 等于 <code>ZonedDateTime.parse("2026-03-08T02:30:00+08:00[Asia/Shanghai]")</code>。
+     */
     @Test
     void nextUsesSuppliedZoneAndSkipsNonexistentDstTime() {
         ProjectionCron cron = ProjectionCron.parse("0 30 2 * * *");
@@ -27,6 +36,9 @@ class ProjectionCronTest {
                 .isEqualTo(ZonedDateTime.parse("2026-03-08T02:30:00+08:00[Asia/Shanghai]"));
     }
 
+    /**
+     * 验证<code>ProjectionCron.parse("0 0 0 1 1 *").next(ZonedDateTime.parse("2026-01-02T00:00:00Z"))</code> 等于 <code>ZonedDateTime.parse("2027-01-01T00:00:00Z")</code>。
+     */
     @Test
     void nextIncludesRepeatedDstHourAndSchedulesBeyondOldMillionSecondWindow() {
         ProjectionCron overlap = ProjectionCron.parse("0 30 1 * * *");
@@ -36,6 +48,9 @@ class ProjectionCronTest {
                 .isEqualTo(ZonedDateTime.parse("2027-01-01T00:00:00Z"));
     }
 
+    /**
+     * 验证<code>ProjectionCron.parse("5/120 * * * * *").next(from)</code> 等于 <code>from.plusSeconds(5)</code>，<code>ProjectionCron.parse("0/120,5/120,59/2147483647 * * * * *").next(from)</code> 等于 <code>from.plusSeconds(5)</code>，<code>ProjectionCron.parse("0 0 0 *&#47;120 * *").next(from)</code> 等于 <code>ZonedDateTime.parse("2026-12-01T00:00:00Z")</code>。
+     */
     @Test
     void positiveStepsWiderThanFieldKeepTheStartAndCannotOverflow() {
         ZonedDateTime from = ZonedDateTime.parse("2026-11-18T12:00:00Z");
@@ -57,6 +72,9 @@ class ProjectionCronTest {
                 .isEqualTo(ZonedDateTime.parse("2026-12-01T00:00:00Z"));
     }
 
+    /**
+     * 验证<code>ProjectionCron.parse(expression)</code> 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void invalidFieldsFailInsteadOfHangingOrBeingSilentlyInterpreted() {
         for (String expression : new String[]{"*/0 * * * * *", "*/-120 * * * * *", "60/120 * * * * *",

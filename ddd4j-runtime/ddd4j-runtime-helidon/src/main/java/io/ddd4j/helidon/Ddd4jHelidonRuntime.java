@@ -33,8 +33,17 @@ import java.util.Objects;
  */
 public final class Ddd4jHelidonRuntime implements AutoCloseable {
 
+    /**
+     * 管理当前示例或测试所拥有的 SPI 注册资源。
+     */
     private final SpiRegistrationScope registrations;
+    /**
+     * 管理当前运行时注册的认证主体提供器及其恢复动作。
+     */
     private final SubjectKitRegistrationScope subjectRegistration;
+    /**
+     * 汇总当前组件就绪状态的注册表。
+     */
     private final RuntimeReadinessRegistry readinessRegistry;
 
     /**
@@ -109,6 +118,11 @@ public final class Ddd4jHelidonRuntime implements AutoCloseable {
         return readinessRegistry;
     }
 
+    /**
+     * 结束当前组件持有的资源。
+     *
+     * <p>Helidon 实现调用 <code>subjectRegistration.close()</code>。</p>
+     */
     @Override
     public void close() {
         subjectRegistration.close();

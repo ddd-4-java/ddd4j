@@ -12,7 +12,8 @@ SCRIPT = pathlib.Path(__file__).with_name("check-bom-alignment.sh")
 
 class BomAlignmentTest(unittest.TestCase):
     def run_fixture(self, version, namespace, parent_version=None, root_properties="",
-                    dependency_properties="", orphan_poms=False, broken_module=None, profile=False):
+                    dependency_properties="", orphan_poms=False, broken_module=None, profile=False,
+                    reactor_artifact="", bom_dependencies="", deploy_skip=None, group_deploy_skip=False):
         with tempfile.TemporaryDirectory() as directory:
             root = pathlib.Path(directory)
             scripts = root / "scripts"
@@ -24,7 +25,9 @@ class BomAlignmentTest(unittest.TestCase):
                 f"<project><properties>{dependency_properties}</properties></project>")
             bom = root / "ddd4j-bom"
             bom.mkdir()
-            (bom / "pom.xml").write_text("<project/>")
+            (bom / "pom.xml").write_text(
+                "<project><dependencyManagement><dependencies>"
+                + bom_dependencies + "</dependencies></dependencyManagement></project>")
             modules, entry = ("subprojects", "subproject") if namespace == "4.1.0" else ("modules", "module")
             root_declaration = f"<{modules}><{entry}>group</{entry}></{modules}>"
             (root / "pom.xml").write_text(
@@ -32,17 +35,28 @@ class BomAlignmentTest(unittest.TestCase):
             group = root / "group"
             group.mkdir()
             (group / "pom.xml").write_text(
-                f"<project><{modules}><{entry}>sample</{entry}></{modules}></project>")
+                f"<project><groupId>io.ddd4j</groupId><artifactId>group</artifactId>"
+                f"<packaging>pom</packaging><{modules}><{entry}>sample</{entry}></{modules}>"
+                + ("<properties><maven.deploy.skip>true</maven.deploy.skip></properties>" if group_deploy_skip else "")
+                + "</project>")
             module = group / "sample"
             module.mkdir()
             parent = ("  <parent><groupId>io.ddd4j</groupId>"
                       "<artifactId>ddd4j-dependencies</artifactId>"
                       f"<version>{parent_version}</version></parent>\n") if parent_version else ""
+            if group_deploy_skip:
+                parent = ("<parent><groupId>io.ddd4j</groupId><artifactId>group</artifactId>"
+                          "<version>1</version></parent>")
             profile_start = "<profiles><profile><id>optional</id>" if profile else ""
             profile_end = "</profile></profiles>" if profile else ""
             model = (
                 f'<project xmlns="http://maven.apache.org/POM/{namespace}">\n'
-                + parent + profile_start +
+                + parent
+                + ("<groupId>io.ddd4j</groupId><artifactId>" + reactor_artifact + "</artifactId>"
+                   if reactor_artifact else "")
+                + (f"<properties><maven.deploy.skip>{str(deploy_skip).lower()}</maven.deploy.skip></properties>"
+                   if deploy_skip is not None else "")
+                + profile_start +
                 '  <dependencies><dependency>\n'
                 '    <groupId>io.ddd4j</groupId>\n'
                 '    <artifactId>ddd4j-core</artifactId>\n'
@@ -61,6 +75,45 @@ class BomAlignmentTest(unittest.TestCase):
                 (evidence / "pom.xml").write_text("<project>")
             return subprocess.run(["bash", str(scripts / SCRIPT.name)],
                                   cwd=root, capture_output=True, text=True, check=False)
+
+    def test_public_jar_requires_a_main_artifact_bom_entry(self):
+        coordinate = ("<dependency><groupId>io.ddd4j</groupId>"
+                      "<artifactId>ddd4j-web-example</artifactId>"
+                      "<version>${revision}</version>")
+        for namespace in ("4.0.0", "4.1.0"):
+            for entry in ("", coordinate + "<classifier>tests</classifier></dependency>"):
+                with self.subTest(namespace=namespace, entry=entry):
+                    result = self.run_fixture("${revision}", namespace, reactor_artifact="ddd4j-web-example",
+                                              bom_dependencies=entry)
+                    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+                    self.assertIn("BOM 未管理公开 Jar io.ddd4j:ddd4j-web-example", result.stdout)
+            result = self.run_fixture("${revision}", namespace, reactor_artifact="ddd4j-web-example",
+                                      bom_dependencies=coordinate + "</dependency>")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_bom_rejects_removed_and_duplicate_reactor_artifacts(self):
+        coord = ("<dependency><groupId>io.ddd4j</groupId><artifactId>ddd4j-web-example</artifactId>"
+                 "<version>${revision}</version></dependency>")
+        stale = self.run_fixture("${revision}", "4.0.0", bom_dependencies=coord)
+        self.assertEqual(stale.returncode, 1, stale.stdout + stale.stderr)
+        self.assertIn("BOM 指向不存在的 reactor 模块", stale.stdout)
+        duplicate = self.run_fixture("${revision}", "4.0.0", reactor_artifact="ddd4j-web-example",
+                                     bom_dependencies=coord * 2)
+        self.assertEqual(duplicate.returncode, 1, duplicate.stdout + duplicate.stderr)
+        self.assertIn("BOM 重复坐标", duplicate.stdout)
+
+    def test_explicit_deploy_enabled_child_requires_bom_under_skipped_parent(self):
+        result = self.run_fixture("${revision}", "4.0.0", reactor_artifact="ddd4j-sample-shared",
+                                  group_deploy_skip=True, deploy_skip=False)
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn("BOM 未管理公开 Jar io.ddd4j:ddd4j-sample-shared", result.stdout)
+
+    def test_deploy_skipped_modules_and_internal_testkits_are_optional_in_bom(self):
+        skipped = self.run_fixture("${revision}", "4.0.0", reactor_artifact="ddd4j-sample-example",
+                                    deploy_skip=True)
+        self.assertEqual(skipped.returncode, 0, skipped.stdout + skipped.stderr)
+        testkit = self.run_fixture("${revision}", "4.0.0", reactor_artifact="ddd4j-web-testkit")
+        self.assertEqual(testkit.returncode, 0, testkit.stdout + testkit.stderr)
 
     def test_hardcoded_dependency_version_fails_for_both_maven_models(self):
         for namespace in ("4.0.0", "4.1.0"):

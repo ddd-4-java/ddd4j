@@ -8,8 +8,16 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * 通过 <code>Instant.parse()</code>、<code>Collections.singletonMap()</code>、<code>JsonMapper.builder()</code> 验证 <code>MQOutboxRecordJsonContract</code> 的运行行为。
+ */
 class MQOutboxRecordJsonContractTest {
 
+    /**
+     * 验证<code>mapper.readTree(json).size()</code> 等于 <code>11</code>，<code>restored</code> 等于 <code>record</code>，<code>restored.headers().get(MQDeliveryHeaders.CORRELATION_ID)</code> 等于 <code>"correlation-1"</code>。
+     *
+     * @throws Exception 处理测试数据的序列化时失败
+     */
     @Test
     void snapshotRoundTripKeepsLeaseAndMessageHeaders() throws Exception {
         Instant availableAt = Instant.parse("2026-01-02T03:04:05Z");

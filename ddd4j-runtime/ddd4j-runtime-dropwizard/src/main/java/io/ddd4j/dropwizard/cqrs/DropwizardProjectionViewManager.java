@@ -11,10 +11,25 @@ import java.util.Objects;
  * Dropwizard 视图生命周期；共享管理器持有句柄，平台仅管理自有调度资源。
  */
 public class DropwizardProjectionViewManager implements ViewManager, AutoCloseable {
+    /**
+     * 实现实际视图启动和停止的共享管理器。
+     */
     private final DefaultViewManager<Object> delegate;
+    /**
+     * 提供应用生命周期及容器配置的 Dropwizard 环境。
+     */
     private final Environment environment;
+    /**
+     * 实际读取并应用投影事件的执行器。
+     */
     private final ProjectionRunner<?> runner;
+    /**
+     * 由当前运行环境管理和调度的投影视图。
+     */
     private final Collection<ProjectionView<?>> views;
+    /**
+     * 当前运行实例拥有并负责关闭的调度器。
+     */
     private DropwizardProjectionScheduler ownedScheduler;
 
     /**
@@ -65,6 +80,11 @@ public class DropwizardProjectionViewManager implements ViewManager, AutoCloseab
         return new DropwizardProjectionViewManager(env, runner, views);
     }
 
+    /**
+     * 启动当前组件并准备其运行资源。
+     *
+     * <p>Dropwizard 实现调用 <code>delegate.isRunning()</code>。</p>
+     */
     @Override
     public synchronized void start() {
         if (delegate.isRunning()) {
@@ -87,6 +107,11 @@ public class DropwizardProjectionViewManager implements ViewManager, AutoCloseab
         }
     }
 
+    /**
+     * 停止当前组件并清理已登记的运行资源。
+     *
+     * <p>Dropwizard 实现调用 <code>delegate.stop()</code>。</p>
+     */
     @Override
     public synchronized void stop() {
         try {
@@ -100,21 +125,46 @@ public class DropwizardProjectionViewManager implements ViewManager, AutoCloseab
         }
     }
 
+    /**
+     * 检查当前组件是否仍处于运行状态。
+     *
+     * <p>Dropwizard 实现调用 <code>delegate.isRunning()</code>。</p>
+     *
+     * @return 实际返回<code>delegate.isRunning()</code>
+     */
     @Override
     public boolean isRunning() {
         return delegate.isRunning();
     }
 
+    /**
+     * 请求立即执行指定投影视图的一轮更新。
+     *
+     * <p>Dropwizard 实现调用 <code>delegate.triggerOnce()</code>。</p>
+     */
     @Override
     public void triggerOnce() {
         delegate.triggerOnce();
     }
 
+    /**
+     * 汇总当前登记的投影视图及其运行状态。
+     *
+     * <p>Dropwizard 实现调用 <code>delegate.getProjectionStatus(streamId)</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     * @return 实际返回<code>delegate.getProjectionStatus(streamId)</code>
+     */
     @Override
     public ProjectionStatus getProjectionStatus(String streamId) {
         return delegate.getProjectionStatus(streamId);
     }
 
+    /**
+     * 结束当前组件持有的资源。
+     *
+     * <p>Dropwizard 实现调用 <code>stop()</code>。</p>
+     */
     @Override
     public void close() {
         stop();

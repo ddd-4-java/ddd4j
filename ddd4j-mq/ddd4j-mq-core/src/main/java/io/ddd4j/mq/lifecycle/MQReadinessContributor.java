@@ -16,6 +16,9 @@ import java.util.Objects;
  */
 public final class MQReadinessContributor implements ReadinessContributor {
 
+    /**
+     * 保存消息组件当前启动结果的状态对象。
+     */
     private final MQStartupStatus status;
 
     /**
@@ -27,6 +30,13 @@ public final class MQReadinessContributor implements ReadinessContributor {
         this.status = Objects.requireNonNull(status, "status must not be null");
     }
 
+    /**
+     * 执行当前实现对应的检查。
+     *
+     * <p>此实现调用 <code>status.snapshot()</code>。</p>
+     *
+     * @return 实际返回<code>ReadinessResult.ready(name)</code>
+     */
     @Override
     public ReadinessResult check() {
         MQStartupStatus.Snapshot snapshot = status.snapshot();

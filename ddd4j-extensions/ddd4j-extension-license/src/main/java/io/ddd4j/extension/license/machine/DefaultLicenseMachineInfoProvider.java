@@ -45,9 +45,17 @@ public final class DefaultLicenseMachineInfoProvider implements LicenseMachineIn
      */
     public static final String MACHINE_SN_ENV = "DDD4J_LICENSE_MACHINE_SN";
 
+    /**
+     * 限制调用方直接创建 <code>DefaultLicenseMachineInfoProvider</code> 实例。
+     */
     private DefaultLicenseMachineInfoProvider() {
     }
 
+    /**
+     * 获取当前机器的 IP 地址。
+     *
+     * @return 实际返回<code>addresses</code>，供调用方取得当前值
+     */
     @Override
     public Set<String> ipAddresses() {
         Set<String> addresses = new LinkedHashSet<>();
@@ -63,6 +71,11 @@ public final class DefaultLicenseMachineInfoProvider implements LicenseMachineIn
         return addresses;
     }
 
+    /**
+     * 获取当前机器的 MAC 地址。
+     *
+     * @return 实际返回<code>addresses</code>，供调用方取得当前值
+     */
     @Override
     public Set<String> macAddresses() {
         Set<String> addresses = new LinkedHashSet<>();
@@ -83,6 +96,13 @@ public final class DefaultLicenseMachineInfoProvider implements LicenseMachineIn
         return addresses;
     }
 
+    /**
+     * 获取机器序列号。
+     *
+     * <p>此实现调用 <code>System.getProperty(MACHINE_SN_PROPERTY)</code>。</p>
+     *
+     * @return 实际返回<code>serialNumber.trim()</code>
+     */
     @Override
     public String serialNumber() {
         String serialNumber = System.getProperty(MACHINE_SN_PROPERTY);
@@ -95,6 +115,11 @@ public final class DefaultLicenseMachineInfoProvider implements LicenseMachineIn
         return System.getProperty("os.name") + ":" + System.getProperty("user.name");
     }
 
+    /**
+     * 枚举可用网络接口并将其交给机器信息收集回调。
+     *
+     * @param consumer 接收每个可用接口的回调
+     */
     private void forEachAvailableNetworkInterface(NetworkInterfaceConsumer consumer) {
         try {
             Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
@@ -110,8 +135,17 @@ public final class DefaultLicenseMachineInfoProvider implements LicenseMachineIn
         }
     }
 
+    /**
+     * 表示读取许可绑定所需网络接口信息的回调。
+     */
     @FunctionalInterface
     private interface NetworkInterfaceConsumer {
+        /**
+         * 消费一个已枚举的网络接口。
+         *
+         * @param networkInterface 当前可用网络接口
+         * @throws Exception 无法从当前接口读取所需信息
+         */
         void accept(NetworkInterface networkInterface) throws Exception;
     }
 }

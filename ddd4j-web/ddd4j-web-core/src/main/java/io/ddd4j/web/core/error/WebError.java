@@ -14,30 +14,58 @@
  */
 package io.ddd4j.web.core.error;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.api.R;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * HTTP 状态与 ddd4j 响应体之间的统一错误表示。
  */
 public final class WebError {
 
+    /**
+     * Java 序列化版本标识。
+     */
     private static final long serialVersionUID = 0L;
 
+    /**
+     * 对应 HTTP 错误响应的状态码。
+     */
     private final int status;
 
+    /**
+     * 响应体中报告的业务错误码。
+     */
     private final Serializable code;
 
+    /**
+     * 响应体中供调用方读取的错误说明。
+     */
     private final String message;
 
+    /**
+     * 错误响应中随状态返回的可选业务数据。
+     */
     private final Object data;
+
+    /**
+     * 创建 Web 错误值对象。
+     *
+     * @param status  HTTP 状态码
+     * @param code    业务错误码
+     * @param message 错误消息
+     * @param data    错误数据
+     */
+    @JsonCreator()
+    public WebError(@JsonProperty("status") int status, @JsonProperty("code") Serializable code, @JsonProperty("message") String message, @JsonProperty("data") Object data) {
+        this.status = status;
+        this.code = code;
+        this.message = message;
+        this.data = data;
+    }
 
     /**
      * 将错误转换为统一响应对象。
@@ -89,22 +117,6 @@ public final class WebError {
     }
 
     /**
-     * 创建 Web 错误值对象。
-     *
-     * @param status HTTP 状态码
-     * @param code 业务错误码
-     * @param message 错误消息
-     * @param data 错误数据
-     */
-    @JsonCreator()
-    public WebError(@JsonProperty("status") int status, @JsonProperty("code") Serializable code, @JsonProperty("message") String message, @JsonProperty("data") Object data) {
-        this.status = status;
-        this.code = code;
-        this.message = message;
-        this.data = data;
-    }
-
-    /**
      * 返回HTTP 状态码。
      *
      * @return HTTP 状态码
@@ -144,6 +156,14 @@ public final class WebError {
         return data;
     }
 
+    /**
+     * 根据<code>code</code>、<code>message</code>、<code>data</code>、<code>status</code>比较对象的值是否相等。
+     *
+     * <p>只比较运行时类型相同的对象。</p>
+     *
+     * @param obj 用来比较或转换的输入对象
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -156,6 +176,11 @@ public final class WebError {
         return this.status == other.status && Objects.equals(this.code, other.code) && Objects.equals(this.message, other.message) && Objects.equals(this.data, other.data);
     }
 
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         int result = 0;
@@ -166,6 +191,11 @@ public final class WebError {
         return result;
     }
 
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>status</code>、<code>code</code>、<code>message</code>、<code>data</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "WebError[status=" + status + ", code=" + code + ", message=" + message + ", data=" + data + "]";

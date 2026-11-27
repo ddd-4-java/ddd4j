@@ -38,6 +38,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class JdbiTimestampTimezoneContractTest {
 
+    /**
+     * 核对<code>stored</code> 等于 <code>LocalDateTime.ofInstant(expected, ZoneOffset.UTC)</code>，<code>store.read("Order", id).get(0).timestamp().toInstant()</code> 等于 <code>expected</code>。
+     *
+     * @param jdbi 传给 <code>jdbi.withHandle()</code> 的 <code>Jdbi</code> 输入
+     * @throws Exception 反射访问被测成员时失败
+     */
     static void assertUtcRoundTrip(Jdbi jdbi) throws Exception {
         TimeZone original = TimeZone.getDefault();
         try {
@@ -67,6 +73,11 @@ class JdbiTimestampTimezoneContractTest {
         }
     }
 
+    /**
+     * 在测试框架中执行 <code>UUID.randomUUID()</code>、<code>Jdbi.create()</code>，验证该场景。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void persistedTimestampIsUtcIndependentOfWriterAndReaderTimezones() throws Exception {
         String database = "jdbi_timezone_" + UUID.randomUUID().toString().replace("-", "");
@@ -74,32 +85,71 @@ class JdbiTimestampTimezoneContractTest {
         assertUtcRoundTrip(jdbi);
     }
 
+    /**
+     * 测试专用聚合根标识，供仓储、事件序列化或命令路由构造独立的聚合实例。
+     */
     private static final class TestAggregateRootId implements AggregateRootId {
 
+        /**
+         * Java 序列化使用的版本标识。
+         */
         private static final long serialVersionUID = 1L;
+        /**
+         * 测试聚合注册和反序列化所用的实体类型标识。
+         */
         private static final EntityType TYPE = new StringEntityType("Order");
+        /**
+         * 用于组成测试标识的原始值。
+         */
         private final String value;
 
+        /**
+         * 以给定状态构造 <code>TestAggregateRootId</code> 测试对象。
+         *
+         * @param value 用于组成测试标识的原始值
+         */
         @JsonCreator
         private TestAggregateRootId(@JsonProperty("value") String value) {
             this.value = value;
         }
 
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 实际返回<code>TYPE</code>，供调用方取得当前值
+         */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 实际返回<code>value</code>，供调用方取得当前值
+         */
         @Override
         public String asString() {
             return value;
         }
 
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * <p>测试夹具会调用 <code>TYPE.asString()</code>。</p>
+         *
+         * @return 实际返回<code>TYPE.asString() + ":" + value</code>
+         */
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
         }
 
+        /**
+         * 读取<code>value</code> 字段。
+         *
+         * @return <code>value</code> 字段
+         */
         @JsonProperty("value")
         public String value() {
             return value;
@@ -111,10 +161,18 @@ class JdbiTimestampTimezoneContractTest {
      */
     public static final class TimeEvent extends DomainEvent<TestAggregateRootId> {
 
+        /**
+         * 使用 <code>super()</code> 初始化 <code>TimeEvent</code> 测试夹具。
+         */
         public TimeEvent() {
             super();
         }
 
+        /**
+         * 使用 <code>super()</code> 初始化 <code>TimeEvent</code> 测试夹具。
+         *
+         * @param id 当前要查找的测试记录标识
+         */
         private TimeEvent(TestAggregateRootId id) {
             super(new EntityIdPath(id));
         }

@@ -17,6 +17,7 @@ package io.ddd4j.auth.satoken.config;
 import cn.dev33.satoken.jwt.SaJwtUtil;
 import cn.dev33.satoken.jwt.StpLogicJwtForSimple;
 import cn.dev33.satoken.jwt.exception.SaJwtException;
+import io.ddd4j.core.constant.AuthConstants;
 import io.ddd4j.kit.lang.StrKit;
 import lombok.Getter;
 
@@ -37,16 +38,16 @@ import java.util.Objects;
 public class Ddd4jStpLogicJwtForSimple extends StpLogicJwtForSimple {
 
     /**
-     * JWT 签发方声明名称。
+     * 签发 JWT 时使用的签名密钥。
      */
-    public static final String ISSUER_CLAIM = "iss";
-    /**
-     * JWT 受众声明名称。
-     */
-    public static final String AUDIENCE_CLAIM = "aud";
-
     private final String signingSecret;
+    /**
+     * 写入或校验 JWT 的签发方声明。
+     */
     private final String issuer;
+    /**
+     * 写入或校验 JWT 的受众声明。
+     */
     private final String audience;
 
     /**
@@ -61,19 +62,33 @@ public class Ddd4jStpLogicJwtForSimple extends StpLogicJwtForSimple {
         this.audience = properties.getJwtAudience();
     }
 
+    /**
+     * 读取<code>signingSecret</code> 字段。
+     *
+     * @return <code>signingSecret</code> 字段
+     */
     @Override
     public String jwtSecretKey() {
         return signingSecret;
     }
 
+    /**
+     * 复制扩展声明并写入配置的签发方与接收方后生成令牌。
+     *
+     * @param loginId    当前认证域内的账号标识
+     * @param deviceType 令牌签发时关联的设备类型
+     * @param timeout    原生令牌生成所用的超时时长
+     * @param extraData  随令牌一起保存的额外声明
+     * @return 带当前账号范围和 JWT 声明的令牌
+     */
     @Override
     public String createTokenValue(Object loginId, String deviceType, long timeout, Map<String, Object> extraData) {
         Map<String, Object> payloads = new LinkedHashMap<>();
         if (Objects.nonNull(extraData)) {
             payloads.putAll(extraData);
         }
-        payloads.put(ISSUER_CLAIM, issuer);
-        payloads.put(AUDIENCE_CLAIM, audience);
+        payloads.put(AuthConstants.JWT_ISSUER, issuer);
+        payloads.put(AuthConstants.JWT_AUDIENCE, audience);
         return SaJwtUtil.createToken(getLoginType(), loginId, deviceType, timeout, payloads, jwtSecretKey());
     }
 
@@ -89,8 +104,8 @@ public class Ddd4jStpLogicJwtForSimple extends StpLogicJwtForSimple {
         }
         try {
             Map<String, Object> payloads = SaJwtUtil.getPayloadsNotCheck(token, getLoginType(), jwtSecretKey());
-            return Objects.equals(issuer, String.valueOf(payloads.get(ISSUER_CLAIM)))
-                    && Objects.equals(audience, String.valueOf(payloads.get(AUDIENCE_CLAIM)));
+            return Objects.equals(issuer, String.valueOf(payloads.get(AuthConstants.JWT_ISSUER)))
+                    && Objects.equals(audience, String.valueOf(payloads.get(AuthConstants.JWT_AUDIENCE)));
         } catch (SaJwtException | IllegalArgumentException exception) {
             return false;
         }

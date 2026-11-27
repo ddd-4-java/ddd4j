@@ -27,10 +27,19 @@ import java.util.Objects;
  */
 public class UpdateGoodsRequest {
 
+    /**
+     * Java 序列化版本标识。
+     */
     private static final long serialVersionUID = 0L;
 
+    /**
+     * 当前请求或结果使用的显示名称。
+     */
     private String name;
 
+    /**
+     * 用于替换商品当前销售价的请求字段。
+     */
     private BigDecimal price;
 
     /**
@@ -117,6 +126,12 @@ public class UpdateGoodsRequest {
         return other instanceof UpdateGoodsRequest;
     }
 
+    /**
+     * 比较两个对象的值是否相等。
+     *
+     * @param o 用来比较的另一个对象，允许为空
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -132,6 +147,11 @@ public class UpdateGoodsRequest {
         return Objects.equals(this.getName(), other.getName()) && Objects.equals(this.getPrice(), other.getPrice());
     }
 
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         int result = 1;
@@ -140,6 +160,11 @@ public class UpdateGoodsRequest {
         return result;
     }
 
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>name</code>、<code>price</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "UpdateGoodsRequest[name=" + name + ", price=" + price + "]";

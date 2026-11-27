@@ -40,9 +40,21 @@ import static global.namespace.fun.io.bios.BIOS.preferences;
  */
 public class CustomLicenseManager {
 
+    /**
+     * 用于许可证安装、卸载和在线验证的 TrueLicense 消费端管理器。
+     */
     private final ConsumerLicenseManager consumer;
+    /**
+     * 是否使用用户级偏好存储保存许可证。
+     */
     private final boolean userPreferences;
+    /**
+     * 负责按创建约束签发许可证的 TrueLicense 管理器。
+     */
     private final VendorLicenseManager vendor;
+    /**
+     * 记录安装或验证失败后当前管理器的验证状态是否已经失效。
+     */
     private boolean verificationInvalidated;
 
     /**
@@ -61,15 +73,32 @@ public class CustomLicenseManager {
         this.consumer = consumer(subject, keyStoreParam, preferences);
     }
 
+    /**
+     * 把已有密钥库输入包装为 TrueLicense 可按需读取的源。
+     *
+     * @param keyStoreParam 提供密钥库输入的配置
+     * @return 由密钥库配置打开输入流的许可证资源源
+     */
     private static Source keyStoreSource(CustomKeyStoreParam keyStoreParam) {
         return () -> keyStoreParam::getStream;
     }
 
+    /**
+     * 构造拒绝对已失效管理器继续执行验证的异常。
+     *
+     * @return 封装验证状态失效原因的管理异常
+     */
     private static LicenseManagementException invalidatedException() {
         return new LicenseManagementException(
                 new IllegalStateException("license manager verification state has been invalidated"));
     }
 
+    /**
+     * 把现有口令转换为 TrueLicense 可关闭的字符数组保护对象。
+     *
+     * @param value 密钥库或密钥条目的口令
+     * @return 在关闭时清空字符数组的口令保护对象
+     */
     private static PasswordProtection passwordProtection(String value) {
         Objects.requireNonNull(value, "password");
         return usage -> new Password() {
@@ -87,10 +116,23 @@ public class CustomLicenseManager {
         };
     }
 
+    /**
+     * 将许可证校验失败信息转换成 TrueLicense 校验异常。
+     *
+     * @param text 诊断所用的纯文本消息
+     * @return 带原始消息的许可证校验异常
+     */
     private static LicenseValidationException validationException(String text) {
         return new LicenseValidationException(new PlainMessage(text));
     }
 
+    /**
+     * 要求必填许可证配置包含非空白字符。
+     *
+     * @param value 待校验的值
+     * @param name  用于定位错误的配置名称
+     * @throws IllegalArgumentException 配置缺失或只含空白字符
+     */
     private static void requireText(String value, String name) {
         if (!StringUtils.hasText(value)) {
             throw new IllegalArgumentException(name + " must not be blank");
@@ -189,6 +231,13 @@ public class CustomLicenseManager {
         Objects.requireNonNull(content, "content");
     }
 
+    /**
+     * 按主题和签发规则构造 TrueLicense 签发端。
+     *
+     * @param subject       许可证主题
+     * @param keyStoreParam 提供签发密钥的密钥库配置
+     * @return 配置好的许可证签发端管理器
+     */
     private VendorLicenseManager vendor(String subject, CustomKeyStoreParam keyStoreParam) {
         LicenseManagementContext context = V1.builder()
                 .subject(subject)
@@ -210,6 +259,14 @@ public class CustomLicenseManager {
         return encryption.up().build();
     }
 
+    /**
+     * 按主题、校验规则及偏好存储创建许可证消费端。
+     *
+     * @param subject         许可证主题
+     * @param keyStoreParam   提供验证公钥的密钥库配置
+     * @param preferencesNode 当前许可证状态的持久化位置
+     * @return 配置好的许可证消费端管理器
+     */
     private ConsumerLicenseManager consumer(String subject, CustomKeyStoreParam keyStoreParam,
                                             Preferences preferencesNode) {
         LicenseManagementContext context = V1.builder()
@@ -229,6 +286,12 @@ public class CustomLicenseManager {
         return encryption.up().storeIn(preferences(preferencesNode, subject)).build();
     }
 
+    /**
+     * 核对许可证消费者类型及数量与本地存储模式是否匹配。
+     *
+     * @param content 待验证的许可证内容
+     * @throws LicenseValidationException 消费者类型或数量不符合消费端限制
+     */
     private void validateConsumer(License content) throws LicenseValidationException {
         Objects.requireNonNull(content, "content");
         String consumerType = content.getConsumerType();
@@ -251,6 +314,11 @@ public class CustomLicenseManager {
         validate(content);
     }
 
+    /**
+     * 安装失败后尝试卸载，把清理失败作为原异常的抑制异常保留。
+     *
+     * @param primary 引发清理的原始安装异常
+     */
     private void cleanupFailedInstallation(Throwable primary) {
         try {
             consumer.uninstall();
@@ -259,21 +327,46 @@ public class CustomLicenseManager {
         }
     }
 
+    /**
+     * 保存许可证管理回调所需的纯文本消息。
+     */
     private static final class PlainMessage implements Message {
 
+        /**
+         * Java 序列化版本标识。
+         */
         private static final long serialVersionUID = 1L;
 
+        /**
+         * 许可证校验错误使用的固定消息文本。
+         */
         private final String text;
 
+        /**
+         * 封装许可证校验诊断的文本。
+         *
+         * @param text 固定消息文本
+         */
         private PlainMessage(String text) {
             this.text = text;
         }
 
+        /**
+         * 生成用于调试和日志的对象描述。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return text;
         }
 
+        /**
+         * 返回校验消息的固定文本。
+         *
+         * @param locale 调用方指定的显示区域
+         * @return 构造时提供的消息文本
+         */
         @Override
         public String toString(Locale locale) {
             return text;

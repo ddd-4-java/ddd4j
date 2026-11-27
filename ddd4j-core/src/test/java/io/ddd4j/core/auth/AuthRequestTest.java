@@ -30,6 +30,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class AuthRequestTest {
 
+    /**
+     * 验证<code>request.getLoginId()</code> 等于 <code>"u1"</code>。
+     */
     @Test
     void of_shouldCreateWithLoginId() {
         AuthRequest request = AuthRequest.of("u1");
@@ -37,6 +40,9 @@ class AuthRequestTest {
         assertThat(request.getLoginId()).isEqualTo("u1");
     }
 
+    /**
+     * 验证<code>request.getLoginId()</code> 等于 <code>42L</code>。
+     */
     @Test
     void constructor_shouldSetLoginId() {
         AuthRequest request = new AuthRequest(42L);
@@ -44,6 +50,9 @@ class AuthRequestTest {
         assertThat(request.getLoginId()).isEqualTo(42L);
     }
 
+    /**
+     * 验证<code>request.getLoginIdAsString()</code> 等于 <code>"123"</code>。
+     */
     @Test
     void getLoginIdAsString_shouldStringifyLoginId() {
         AuthRequest request = AuthRequest.of(123L);
@@ -51,6 +60,9 @@ class AuthRequestTest {
         assertThat(request.getLoginIdAsString()).isEqualTo("123");
     }
 
+    /**
+     * 验证<code>request.getLoginIdAsString()</code>为空。
+     */
     @Test
     void getLoginIdAsString_shouldReturnNullWhenAbsent() {
         AuthRequest request = new AuthRequest();
@@ -58,6 +70,9 @@ class AuthRequestTest {
         assertThat(request.getLoginIdAsString()).isNull();
     }
 
+    /**
+     * 验证<code>result</code> 指向同一实例 <code>request</code>，<code>request.getTimeout()</code> 等于 <code>600L</code>。
+     */
     @Test
     void setTimeout_shouldBeChainableAndForwardToSessionConfig() {
         AuthRequest request = AuthRequest.of("u1");
@@ -68,6 +83,11 @@ class AuthRequestTest {
         assertThat(request.getTimeout()).isEqualTo(600L);
     }
 
+    /**
+     * 验证<code>mapper.readValue(mapper.writeValueAsString(inherited), AuthSessionConfig.class) .hasTimeoutOverride()</code>为假，<code>mapper.readValue(mapper.writeValueAsString(permanent), AuthSessionConfig.class) .hasTimeoutOverride()</code>为真。
+     *
+     * @throws Exception 处理测试数据的序列化时失败
+     */
     @Test
     void sessionConfigRoundTripDistinguishesInheritedAndPermanentTtl() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
@@ -80,6 +100,11 @@ class AuthRequestTest {
                 .hasTimeoutOverride()).isTrue();
     }
 
+    /**
+     * 验证<code>mapper.readTree(mapper.writeValueAsString(AuthRequest.of("u1"))).has("timeout")</code>为假，<code>mapper.readTree(mapper.writeValueAsString(AuthRequest.of("u1").setTimeout(-1))) .get("timeout").asLong()</code> 等于 <code>-1</code>，<code>legacy.getTimeout()</code> 等于 <code>-1</code>。
+     *
+     * @throws Exception 处理测试数据的序列化时失败
+     */
     @Test
     void requestOmitsInheritedTimeoutAndPreservesExplicitFlatCompatibility() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
@@ -93,6 +118,11 @@ class AuthRequestTest {
         assertThat(legacy.getTimeout()).isEqualTo(-1);
     }
 
+    /**
+     * 验证<code>inherited.path("loginIdAsString").asText()</code> 等于 <code>"actual"</code>，<code>inherited.has("timeout")</code>为假。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void strictRequestRoundTripPreservesLoginIdAndTimeoutPresence() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
@@ -112,6 +142,11 @@ class AuthRequestTest {
         assertThat(permanentRoundTrip.getTimeout()).isEqualTo(-1);
     }
 
+    /**
+     * 验证<code>actual.getLoginId()</code> 等于 <code>"actual"</code>，<code>actual.getLoginIdAsString()</code> 等于 <code>"actual"</code>，<code>mapper.readValue("{\"unmapped\":true}", AuthRequest.class)</code> 抛出 <code>UnrecognizedPropertyException.class</code>。
+     *
+     * @throws Exception 处理测试数据的序列化时失败
+     */
     @Test
     void strictRequestTreatsComputedLoginIdAsReadOnly() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
@@ -126,6 +161,9 @@ class AuthRequestTest {
                 .isInstanceOf(UnrecognizedPropertyException.class);
     }
 
+    /**
+     * 验证<code>request.getDeviceType()</code> 等于 <code>"mobile"</code>。
+     */
     @Test
     void setDeviceType_shouldForwardToSessionConfig() {
         AuthRequest request = AuthRequest.of("u1").setDeviceType("mobile");
@@ -133,6 +171,9 @@ class AuthRequestTest {
         assertThat(request.getDeviceType()).isEqualTo("mobile");
     }
 
+    /**
+     * 验证<code>request.getPrincipal()</code> 指向同一实例 <code>principal</code>。
+     */
     @Test
     void setPrincipal_shouldRoundTrip() {
         AuthPrincipal principal = new AuthPrincipal().setLoginId("u1");
@@ -141,6 +182,9 @@ class AuthRequestTest {
         assertThat(request.getPrincipal()).isSameAs(principal);
     }
 
+    /**
+     * 验证<code>result</code> 指向同一实例 <code>request</code>，<code>request.getExtra()</code> 含对应条目 <code>"k"</code>、<code>"v"</code>。
+     */
     @Test
     void extra_shouldAddEntryAndChain() {
         AuthRequest request = AuthRequest.of("u1");
@@ -151,6 +195,9 @@ class AuthRequestTest {
         assertThat(request.getExtra()).containsEntry("k", "v");
     }
 
+    /**
+     * 验证<code>request.extra(null, "v")</code> 抛出 <code>NullPointerException.class</code>。
+     */
     @Test
     void extra_shouldRejectNullKey() {
         AuthRequest request = AuthRequest.of("u1");
@@ -159,6 +206,9 @@ class AuthRequestTest {
                 .isInstanceOf(NullPointerException.class);
     }
 
+    /**
+     * 验证<code>a</code> 等于 <code>b</code>，<code>a.hashCode()</code> 等于 <code>b.hashCode()</code>，<code>a</code> 不等于 <code>c</code>。
+     */
     @Test
     void equals_shouldBeBasedOnLoginId() {
         AuthRequest a = AuthRequest.of("u1");
@@ -170,6 +220,9 @@ class AuthRequestTest {
         assertThat(a).isNotEqualTo(c);
     }
 
+    /**
+     * 验证<code>s</code> 包含 <code>"u1"</code>。
+     */
     @Test
     void toString_shouldContainLoginIdAndRealm() {
         AuthRequest request = AuthRequest.of("u1").setRealm("admin");
@@ -179,6 +232,9 @@ class AuthRequestTest {
         assertThat(s).contains("u1").contains("admin");
     }
 
+    /**
+     * 验证<code>request.getRealm()</code> 等于 <code>"user"</code>。
+     */
     @Test
     void realm_shouldRoundTrip() {
         AuthRequest request = AuthRequest.of("u1").setRealm("user");

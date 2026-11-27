@@ -13,21 +13,18 @@
  * limitations under the License.
  */
 package io.ddd4j.web.dropwizard;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.doAnswer;
 
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.context.ThreadContext;
-import io.ddd4j.web.core.context.WebContextScope;
-import io.ddd4j.web.core.context.WebHeaders;
-import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
-import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.extension.otel.Ddd4jOtel;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
 import io.ddd4j.web.core.auth.WebAccessPolicy;
+import io.ddd4j.web.core.context.WebContextScope;
+import io.ddd4j.web.core.context.WebHeaders;
 import io.ddd4j.web.core.context.WebRequestContextFactory;
 import io.ddd4j.web.core.context.WebRequestLifecycle;
+import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
+import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
@@ -36,8 +33,8 @@ import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import io.opentelemetry.sdk.trace.export.SpanExporter;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerResponseContext;
-import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.MultivaluedHashMap;
+import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.UriInfo;
 import org.junit.jupiter.api.Test;
 
@@ -50,16 +47,20 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
+/**
+ * 通过 <code>CacheKit.build()</code>、<code>ThreadContext.put()</code>、<code>request()</code> 验证 <code>Ddd4jDropwizardOtelScope</code> 的运行行为。
+ */
 class Ddd4jDropwizardOtelScopeTest {
 
+    /**
+     * 调用 <code>mock()</code>、<code>request.getMethod()</code>、<code>request.getUriInfo()</code> 执行当前夹具操作。
+     *
+     * @return 根据测试条件返回的可能值，包括 <code>null</code>、<code>request</code>
+     */
     private static ContainerRequestContext request() {
         ContainerRequestContext request = mock(ContainerRequestContext.class);
         UriInfo uriInfo = mock(UriInfo.class);
@@ -82,6 +83,11 @@ class Ddd4jDropwizardOtelScopeTest {
         return request;
     }
 
+    /**
+     * 读取 <code>response</code> 供当前测试使用。
+     *
+     * @return 当前测试使用的结果，取自 <code>response</code>
+     */
     private static ContainerResponseContext response() {
         ContainerResponseContext response = mock(ContainerResponseContext.class);
         when(response.getStatus()).thenReturn(200);
@@ -89,6 +95,11 @@ class Ddd4jDropwizardOtelScopeTest {
         return response;
     }
 
+    /**
+     * 调用 <code>GlobalOpenTelemetry.resetForTest()</code>、<code>Ddd4jOtel.class.getDeclaredField()</code>、<code>field.setAccessible()</code> 执行当前夹具操作。
+     *
+     * @throws Exception 反射访问被测成员时失败
+     */
     private static void resetOpenTelemetry() throws Exception {
         GlobalOpenTelemetry.resetForTest();
         for (String fieldName : new String[]{"TRACER_CACHE", "METER_CACHE"}) {
@@ -101,6 +112,9 @@ class Ddd4jDropwizardOtelScopeTest {
         available.setBoolean(null, false);
     }
 
+    /**
+     * 验证<code>ThreadContext.get(WebContextScope.REQUEST_ID)</code> 等于 <code>"inner"</code>，<code>responseFilter.filter(request, failedResponse)</code> 抛出 <code>IllegalStateException.class</code>，<code>ThreadContext.get(WebContextScope.REQUEST_ID)</code> 等于 <code>"outer"</code>。
+     */
     @Test
     void headerWriteFailureRestoresOuterContextAndAllowsRetry() {
         String cacheName = "dropwizard-header-failure";
@@ -136,6 +150,11 @@ class Ddd4jDropwizardOtelScopeTest {
         }
     }
 
+    /**
+     * 验证<code>observed[0]</code>为真，<code>observed[1]</code>为假。
+     *
+     * @throws Exception 测试服务器请求、会话操作或响应解析失败
+     */
     @Test
     void responseFilterMustCloseRequestOtelScope() throws Exception {
         resetOpenTelemetry();

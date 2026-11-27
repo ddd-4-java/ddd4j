@@ -43,6 +43,9 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 public class Goods extends AggregateRoot<Long> implements Serializable {
 
+    /**
+     * Java 序列化版本标识。
+     */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -78,6 +81,11 @@ public class Goods extends AggregateRoot<Long> implements Serializable {
      */
     private LocalDateTime updateTime;
 
+    /**
+     * 读取商品主键 ID。
+     *
+     * @return 商品主键 ID
+     */
     @Override
     public Long id() {
         return id;

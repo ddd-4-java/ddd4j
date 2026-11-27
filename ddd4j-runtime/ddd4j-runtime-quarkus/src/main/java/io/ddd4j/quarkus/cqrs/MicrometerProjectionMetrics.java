@@ -59,7 +59,13 @@ import java.util.concurrent.TimeUnit;
  */
 public class MicrometerProjectionMetrics implements ProjectionMetrics {
 
+    /**
+     * 注册和读取当前组件 Micrometer 指标的注册表。
+     */
     private final MeterRegistry registry;
+    /**
+     * 按事件流标识保存最近一次投影运行结果。
+     */
     private final ConcurrentMap<String, ProjectionRunInfo> runInfoMap = new ConcurrentHashMap<>();
 
     /**
@@ -116,6 +122,14 @@ public class MicrometerProjectionMetrics implements ProjectionMetrics {
                 (old, newInfo) -> newInfo);
     }
 
+    /**
+     * 读取投影最近一次运行的记录。
+     *
+     * <p>此实现调用 <code>Optional.ofNullable(runInfoMap.get(streamId))</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     * @return 最近一次运行的时间和结果等信息
+     */
     @Override
     public Optional<ProjectionRunInfo> getLastRunInfo(String streamId) {
         return Optional.ofNullable(runInfoMap.get(streamId));

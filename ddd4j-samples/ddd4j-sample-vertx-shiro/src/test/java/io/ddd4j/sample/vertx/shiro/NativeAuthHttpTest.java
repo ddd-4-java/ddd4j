@@ -33,25 +33,60 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Testcontainers
 class NativeAuthHttpTest {
+    /**
+     * 为当前集成测试提供独立 MySQL 服务的容器。
+     */
     @Container
     static final MySQLContainer<?> MYSQL = new MySQLContainer<>("mysql:8.0.36");
+    /**
+     * 用例查询或写入数据时使用的租户标识。
+     */
     static final String TENANT = "vertx-auth";
+    /**
+     * 用于区分订单路由、消息主题或投影事件流的测试名称。
+     */
     static final String ORDERS = "/orders/catalog/orders/";
+    /**
+     * 商品测试所使用的路由或业务编码。
+     */
     static final String GOODS = """
             {"spuName":"Book","skuCode":"S1","skuName":"Edition","shopId":7,"salePriceCent":500}
             """;
+    /**
+     * 测试订单的固定标识，用于组织和查询测试数据。
+     */
     static final String ORDER = """
             {"shopId":7,"items":[{"skuCode":"S1","quantity":2}]}
             """;
+    /**
+     * 发送与接收测试请求的客户端。
+     */
     private final HttpClient client = HttpClient.newHttpClient();
+    /**
+     * 按请求或业务标识记录完成和上下文清理结果。
+     */
     private final Map<String, Boolean> completions = new ConcurrentHashMap<>();
+    /**
+     * 本地测试服务的基础地址。
+     */
     private String base;
 
+    /**
+     * 通过 <code>CatalogRuntime.start()</code> 取得当前测试需要的结果。
+     *
+     * @param db 传给 <code>CatalogRuntime.start()</code> 的 <code>MySQLContainer&lt;?&gt;</code> 输入
+     * @return 当前测试使用的结果，取自 <code>CatalogRuntime.start(new UnpooledDataSource(db.getDriverClassName(), db.getJdbcUrl(), db.getUsername(), db.getPassword()))</code>
+     */
     static CatalogEndpoints catalog(MySQLContainer<?> db) {
         return CatalogRuntime.start(new UnpooledDataSource(db.getDriverClassName(), db.getJdbcUrl(),
                 db.getUsername(), db.getPassword()));
     }
 
+    /**
+     * 读取 <code>catalog</code> 供当前测试使用。
+     *
+     * @return 当前测试使用的结果，取自 <code>catalog</code>
+     */
     private static CatalogEndpoints seedCatalog() {
         var catalog = catalog(MYSQL);
         int status = catalog.createGoods(TENANT, "BOOK", GOODS).getStatus();
@@ -59,17 +94,45 @@ class NativeAuthHttpTest {
         return catalog;
     }
 
+    /**
+     * 调用 <code>Proxy.newProxyInstance()</code>、<code>CatalogEndpoints.class.getClassLoader()</code> 执行当前夹具操作。
+     *
+     * @param observer 接收测试状态或清理结果的观察回调
+     * @return 提供给后续契约断言的 <code>CatalogEndpoints</code> 结果
+     */
     private static CatalogEndpoints observing(InvocationHandler observer) {
         return (CatalogEndpoints) Proxy.newProxyInstance(CatalogEndpoints.class.getClassLoader(),
                 new Class<?>[]{CatalogEndpoints.class}, observer);
     }
 
+    /**
+     * 通过 <code>requestWithHeaders()</code> 取得当前测试需要的结果。
+     *
+     * @param method 发给被测服务的 HTTP 方法
+     * @param path   测试请求的资源路径或待访问文件路径
+     * @param token  从测试登录获得的会话凭据
+     * @param body   当前请求或响应中要读取的正文
+     * @param id     当前要查找的测试记录标识
+     * @return 当前测试使用的结果，取自 <code>requestWithHeaders(method, path, credentials, body, id)</code>
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     private HttpResponse<String> request(String method, String path, String token, String body, String id) throws Exception {
         Map<String, String> credentials = Objects.isNull(token) ? Collections.emptyMap()
                 : Collections.singletonMap("Authorization", "Bearer " + token);
         return requestWithHeaders(method, path, credentials, body, id);
     }
 
+    /**
+     * 调用 <code>HttpRequest.newBuilder()</code>、<code>URI.create()</code>、<code>Duration.ofSeconds()</code> 执行当前夹具操作。
+     *
+     * @param method      发给被测服务的 HTTP 方法
+     * @param path        测试请求的资源路径或待访问文件路径
+     * @param credentials 传给 <code>credentials.forEach()</code> 的 <code>Map&lt;String, String&gt;</code> 输入
+     * @param body        当前请求或响应中要读取的正文
+     * @param id          当前要查找的测试记录标识
+     * @return 提供给后续契约断言的 <code>HttpResponse&lt;String&gt;</code> 结果
+     * @throws Exception 发起测试请求时失败
+     */
     private HttpResponse<String> requestWithHeaders(String method, String path, Map<String, String> credentials,
                                                     String body, String id) throws Exception {
         var request = HttpRequest.newBuilder(URI.create(base + path)).timeout(Duration.ofSeconds(10))
@@ -82,12 +145,24 @@ class NativeAuthHttpTest {
                 : HttpRequest.BodyPublishers.ofString(body)).build(), HttpResponse.BodyHandlers.ofString());
     }
 
+    /**
+     * 创建 <code>new JsonObject</code> 供当前测试路径调用。
+     *
+     * @param user 传给 <code>request()</code> 的 <code>String</code> 输入
+     * @return 当前测试使用的结果，取自 <code>new JsonObject(response.body()).getString("token")</code>
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     private String login(String user) throws Exception {
         var response = request("POST", "/auth/login", null, "{\"username\":\"" + user + "\",\"password\":\"sample-password\"}", "login-" + user);
         assertEquals(200, response.statusCode(), response.body());
         return new JsonObject(response.body()).getString("token");
     }
 
+    /**
+     * 验证<code>denied.statusCode()</code> 等于 <code>403</code>，<code>catalog.order(TENANT, "denied").getStatus()</code> 等于 <code>404</code>，<code>completions.get(key)</code> 等于 <code>Boolean.TRUE</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void nativeCredentialsPermissionsLogoutAndBusinessFailure() throws Exception {
         var catalog = seedCatalog();
@@ -119,6 +194,11 @@ class NativeAuthHttpTest {
         }
     }
 
+    /**
+     * 验证<code>created.statusCode()</code> 等于 <code>201</code>，<code>canonical.statusCode()</code> 等于 <code>200</code>，<code>request("GET", orderPath, null, null, "no-credentials").statusCode()</code> 等于 <code>401</code>。
+     *
+     * @throws Exception 反射访问被测成员、等待并发操作时失败
+     */
     @Test
     void bearerSchemeCaseDoesNotChangeOrderAuthorization() throws Exception {
         var catalog = seedCatalog();
@@ -164,6 +244,16 @@ class NativeAuthHttpTest {
         }
     }
 
+    /**
+     * 核对<code>actual.statusCode()</code> 等于 <code>200</code>，<code>principal.get()</code> 等于 <code>"reader"</code>。
+     *
+     * @param expected    当前用例设定的期望值
+     * @param path        测试请求的资源路径或待访问文件路径
+     * @param credentials 传给 <code>requestWithHeaders()</code> 的 <code>Map&lt;String, String&gt;</code> 输入
+     * @param id          当前要查找的测试记录标识
+     * @param principal   传给 <code>principal.set()</code> 的 <code>AtomicReference&lt;String&gt;</code> 输入
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     private void assertReaderOrder(JsonObject expected, String path, Map<String, String> credentials, String id,
                                    AtomicReference<String> principal) throws Exception {
         principal.set(null);
@@ -173,6 +263,11 @@ class NativeAuthHttpTest {
         assertEquals("reader", principal.get(), id);
     }
 
+    /**
+     * 验证<code>Thread.currentThread().getName().contains("worker")</code>为真，<code>io.ddd4j.core.util.SubjectKit.getSubject().isAuthenticated()</code>为真，<code>catalog.order(TENANT, "HELD").getStatus()</code> 等于 <code>200</code>。
+     *
+     * @throws Exception 准备或读取夹具文件、反射访问被测成员、等待并发操作时失败
+     */
     @Test
     void disconnectWaitsForActualWorkerCompletionAndCloseDrainsIt() throws Exception {
         var catalog = seedCatalog();
@@ -218,6 +313,11 @@ class NativeAuthHttpTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>java.util.concurrent.ExecutionException.class</code>，<code>io.ddd4j.core.util.SubjectKit.subjectProvider</code> 与…为同一实例 <code>provider</code>，<code>login("alice").length() &gt; 0</code>为真。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void failedListenRestoresRunningApplicationOwner() throws Exception {
         var app = VertxShiroApplication.start(0, catalog(MYSQL), (id, clean) -> {

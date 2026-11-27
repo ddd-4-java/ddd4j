@@ -43,11 +43,29 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * 验证 <code>NativeAuthLifecycle</code> 在<code>restoresCallerBindings</code>、<code>closeRestoresCallerState</code>等操作中的行为契约。
+ */
 class NativeAuthLifecycleTest {
+    /**
+     * 通过 <code>servletProxy()</code> 取得当前测试需要的结果。
+     *
+     * @param <T>  当前契约测试所使用的 Java 类型
+     * @param type 用来解析、检查或构造测试对象的 Java 类型
+     * @return 当前测试使用的结果，取自 <code>servletProxy(type, null)</code>
+     */
     private static <T> T servletProxy(Class<T> type) {
         return servletProxy(type, null);
     }
 
+    /**
+     * 按 <code>("getHeader".equals(method.getName()) &amp;&amp; "ddd4j-token".equals(args[0]))</code> 等实际条件选择当前用例返回的结果。
+     *
+     * @param <T>   当前契约测试所使用的 Java 类型
+     * @param type  用来解析、检查或构造测试对象的 Java 类型
+     * @param token 从测试登录获得的会话凭据
+     * @return 根据测试条件返回的可能值，包括 <code>token</code>、<code>fail("unexpected servlet call: " + method)</code>
+     */
     private static <T> T servletProxy(Class<T> type, String token) {
         return type.cast(Proxy.newProxyInstance(type.getClassLoader(), new Class<?>[]{type},
                 (proxy, method, args) -> {
@@ -58,6 +76,11 @@ class NativeAuthLifecycleTest {
                 }));
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，<code>actual</code> 与…为同一实例 <code>failure</code>，<code>observations</code> 等于 <code>List.of(Optional.of("framework-context-present"))</code>。
+     *
+     * @throws Exception 反射访问被测成员时失败
+     */
     @Test
     void restoresCallerBindingsWhenSubjectProviderThrows() throws Exception {
         List<Optional<String>> observations = new ArrayList<>();
@@ -101,6 +124,9 @@ class NativeAuthLifecycleTest {
         }
     }
 
+    /**
+     * 验证<code>GuiceContext.getInjector()</code> 与…为同一实例 <code>injector</code>，<code>SubjectKit.subjectProvider</code> 与…为同一实例 <code>injector.getInstance(SubjectProvider.class)</code>，<code>org.apache.shiro.util.ThreadContext.getResources()</code> 等于 <code>callerShiroResources</code>。
+     */
     @Test
     void closeRestoresCallerStateWhenOwnedRuntimeThrows() {
         IllegalStateException failure = new IllegalStateException("owned Guice runtime close failure");
@@ -219,6 +245,11 @@ class NativeAuthLifecycleTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，<code>actual</code> 与…为同一实例 <code>failure</code>，<code>observedShiro</code> 等于 <code>Collections.singletonList(callerShiroResources)</code>。
+     *
+     * @throws Exception 反射访问被测成员时失败
+     */
     @Test
     void restoresCallerBindingsWhenNativeSessionLookupThrows() throws Exception {
         IllegalStateException failure = new IllegalStateException("native session lookup failure");

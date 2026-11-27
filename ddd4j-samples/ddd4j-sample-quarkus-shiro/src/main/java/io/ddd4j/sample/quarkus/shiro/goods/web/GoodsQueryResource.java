@@ -44,6 +44,9 @@ import java.util.Objects;
 @io.quarkus.arc.properties.IfBuildProperty(name = "sample.goods.standalone", stringValue = "true")
 public class GoodsQueryResource {
 
+    /**
+     * 处理商品创建、维护和查询操作的应用服务。
+     */
     private final GoodsApplicationService applicationService;
 
     /**
@@ -128,6 +131,19 @@ public class GoodsQueryResource {
         return R.ok(applicationService.countQuery(buildQuery(1L, 0L, code, nameLike, status, priceMin, priceMax, null)));
     }
 
+    /**
+     * 将分页和筛选请求属性绑定到领域商品查询。
+     *
+     * @param current  请求页码
+     * @param size     每页最多返回的商品记录数
+     * @param code     请求传入的商品编码
+     * @param nameLike 商品名称模糊匹配条件
+     * @param status   商品状态条件文本
+     * @param priceMin 请求价格区间的最小值
+     * @param priceMax 请求价格区间的最大值
+     * @param orderBys 请求给出的排序表达式
+     * @return 可由仓储执行的商品查询
+     */
     private GoodsQuery buildQuery(Long current, Long size, String code, String nameLike, String status,
                                   BigDecimal priceMin, BigDecimal priceMax, String orderBys) {
         GoodsQuery query = new GoodsQuery();
@@ -146,6 +162,12 @@ public class GoodsQueryResource {
         return query;
     }
 
+    /**
+     * 把提供的查询状态转换为商品状态枚举，空白值不限制状态。
+     *
+     * @param status 商品状态条件文本
+     * @return 解析到的商品状态，没有值时为空
+     */
     private io.ddd4j.sample.quarkus.shiro.goods.domain.GoodsStatus parseStatus(String status) {
         if (StrKit.isBlank(status)) {
             return null;

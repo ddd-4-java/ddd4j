@@ -24,8 +24,14 @@ import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * 通过 <code>delegate.addMessage()</code>、<code>LocaleContextHolder.getLocaleContext()</code>、<code>LocaleContextHolder.setLocale()</code> 验证 <code>SpringI18nProviderContract</code> 的运行行为。
+ */
 class SpringI18nProviderContractTest {
 
+    /**
+     * 验证<code>provider.getMessage("welcome", "Alice")</code> 等于 <code>"欢迎 Alice"</code>，<code>provider.getMessage("welcome", "Alice")</code> 等于 <code>"Hello Alice"</code>。
+     */
     @Test
     void resolvesMessageArgumentsUsingCurrentLocale() {
         StaticMessageSource delegate = new StaticMessageSource();

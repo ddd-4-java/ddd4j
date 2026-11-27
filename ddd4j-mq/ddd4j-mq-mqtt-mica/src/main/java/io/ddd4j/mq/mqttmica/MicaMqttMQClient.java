@@ -55,9 +55,21 @@ import java.util.function.Consumer;
 @Slf4j(topic = "### DDD4J-MQ : MicaMqttMQClient ###")
 public class MicaMqttMQClient implements MQClient {
 
+    /**
+     * 当前消息代理客户端使用的连接和订阅配置。
+     */
     private final MicaMqttProperties properties;
+    /**
+     * 持有当前已创建且可用的原生消息客户端。
+     */
     private final AtomicReference<MqttClient> clientRef = new AtomicReference<>();
+    /**
+     * 协调消息客户端启动、初始化和关闭的生命周期。
+     */
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    /**
+     * 组件的启动状态和启动失败诊断信息。
+     */
     private final MQStartupStatus startupStatus = new MQStartupStatus("mqtt-mica");
 
     /**
@@ -81,6 +93,12 @@ public class MicaMqttMQClient implements MQClient {
         this.properties = Objects.requireNonNull(properties, "properties");
     }
 
+    /**
+     * 优先从原生消息的标准头读取消息标识，缺少时回退到兼容头。
+     *
+     * @param message 当前接收的原生代理消息
+     * @return 用于后续消费确认的业务消息标识，头均缺失时为空
+     */
     static String messageId(MqttPublishMessage message) {
         Map<String, String> headers = nativeHeaders(message);
         String messageId = headers.get(MessageHeaders.HEADER_MESSAGE_ID);
@@ -89,6 +107,12 @@ public class MicaMqttMQClient implements MQClient {
                 : headers.get(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
     }
 
+    /**
+     * 提取原生 MQTT 发布消息携带的用户属性。
+     *
+     * @param message 当前接收的原生代理消息
+     * @return 按属性名组织的消息头
+     */
     private static Map<String, String> nativeHeaders(MqttPublishMessage message) {
         Map<String, String> headers = new HashMap<>();
         message.getProperties().getProperties().getProperties(MqttPropertyType.USER_PROPERTY.value())
@@ -99,6 +123,16 @@ public class MicaMqttMQClient implements MQClient {
         return headers;
     }
 
+    /**
+     * 把序列化事件和消息元数据发送到指定的原生代理。
+     *
+     * @param client  当前使用的原生代理或 Redis 客户端
+     * @param topic   要发布、订阅或取消订阅的代理主题
+     * @param body    要发送的消息负载字节
+     * @param qos     MQTT 投递使用的服务质量等级
+     * @param headers 消息随协议附带的头字段
+     * @return 当前原生代理返回的发送结果
+     */
     private static boolean publish(MqttClient client, String topic, byte[] body, MqttQoS qos,
                                    Map<String, String> headers) {
         if (headers.isEmpty()) {
@@ -112,6 +146,12 @@ public class MicaMqttMQClient implements MQClient {
         }));
     }
 
+    /**
+     * 等待原生 MQTT 客户端确认连接完成，超时后终止等待。
+     *
+     * @param connected 用来判断原生客户端是否完成连接的回调
+     * @throws InterruptedException 等待代理连接时线程被中断
+     */
     static void awaitConnected(BooleanSupplier connected) throws InterruptedException {
         // connectSync 只等待 TCP 连接；CONNACK 未到时 mica 会将订阅留到下次重连。
         long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(10);
@@ -128,16 +168,31 @@ public class MicaMqttMQClient implements MQClient {
         }
     }
 
+    /**
+     * 返回此消息适配器在 DDD4J 中登记的实现名。
+     *
+     * @return 实际返回<code>"mqtt-mica"</code>，供调用方取得当前值
+     */
     @Override
     public String impl() {
         return "mqtt-mica";
     }
 
+    /**
+     * 返回管理连接、生产者和消费者资源的生命周期对象。
+     *
+     * @return 当前消息适配器用于登记和关闭资源的生命周期对象
+     */
     @Override
     public MQClientLifecycle lifecycle() {
         return lifecycle;
     }
 
+    /**
+     * 返回消息客户端当前记录的启动状态。
+     *
+     * @return 当前消息适配器记录的启动状态
+     */
     @Override
     public MQStartupStatus startupStatus() {
         return startupStatus;
@@ -145,6 +200,11 @@ public class MicaMqttMQClient implements MQClient {
 
     // ========================= 生产者 =========================
 
+    /**
+     * Broker 默认拼接符（各 broker 决定，建议子类覆写）。
+     *
+     * @return 实际返回<code>"/"</code>，供调用方取得当前值
+     */
     @Override
     public String defaultConcat() {
         return "/";
@@ -154,6 +214,8 @@ public class MicaMqttMQClient implements MQClient {
 
     /**
      * mica-mqtt 无原生 broker-side tag selector，仅 topic 通配 → 强制应用层 {@link TagMatcher} 过滤。
+     *
+     * @return 当前代理是否支持按标签过滤
      */
     @Override
     public boolean supportsBrokerTagFilter() {
@@ -162,6 +224,14 @@ public class MicaMqttMQClient implements MQClient {
 
     // ========================= 连接管理 =========================
 
+    /**
+     * 准备消息生产者并返回可发布事件的入口。
+     *
+     * <p>MQTT 实现调用 <code>client()</code>。</p>
+     *
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 接收待发布事件的函数
+     */
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         MqttClient client = client();
@@ -188,6 +258,16 @@ public class MicaMqttMQClient implements MQClient {
         };
     }
 
+    /**
+     * 为监听器建立消息消费所需的订阅和客户端资源。
+     *
+     * <p>MQTT 实现调用 <code>client()</code>。</p>
+     *
+     * @param listener     监听器定义
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 此实现返回<code>true</code>
+     * @throws Exception 当前框架、存储或底层客户端无法完成此操作时
+     */
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         MqttClient client = client();
@@ -244,11 +324,18 @@ public class MicaMqttMQClient implements MQClient {
 
     /**
      * QoS：注入原生客户端时取默认 QoS = QOS1，否则读 properties。
+     *
+     * @return MQTT 发布或订阅使用的服务质量级别
      */
     private MqttQoS qos() {
         return properties.mqttQoS();
     }
 
+    /**
+     * 取得当前适配器使用的原生连接或客户端，缺少实例时建立连接。
+     *
+     * @return 供发布或消费操作使用的原生连接或客户端
+     */
     private synchronized MqttClient client() {
         MqttClient c = clientRef.get();
         if (Objects.nonNull(c)) {
@@ -270,6 +357,9 @@ public class MicaMqttMQClient implements MQClient {
         return c;
     }
 
+    /**
+     * 释放消息客户端拥有的运行资源，并在退出时登记组件已停止。
+     */
     @Override
     public void close() {
         try {

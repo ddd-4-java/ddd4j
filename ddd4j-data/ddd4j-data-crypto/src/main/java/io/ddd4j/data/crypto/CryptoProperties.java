@@ -84,6 +84,9 @@ public class CryptoProperties {
      * 弗兰科信息加密服务地址
      */
     private String flksecAddress;
+    /**
+     * FLKSEC 密码服务的连接端口。
+     */
     private String flksecPort;
 
 }

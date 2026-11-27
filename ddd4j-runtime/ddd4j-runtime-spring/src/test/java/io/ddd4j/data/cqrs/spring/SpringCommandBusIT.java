@@ -18,11 +18,7 @@ import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.CommandRegistry;
 import io.ddd4j.core.cqrs.command.Result;
-import io.ddd4j.data.cqrs.sample.SampleCommand;
-import io.ddd4j.data.cqrs.sample.SampleCommandHandler;
-import io.ddd4j.data.cqrs.sample.TestApp;
-import io.ddd4j.data.cqrs.sample.TxProbeCommand;
-import io.ddd4j.data.cqrs.sample.TxProbeCommandHandler;
+import io.ddd4j.data.cqrs.sample.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.aop.support.AopUtils;
@@ -65,9 +61,15 @@ import static org.assertj.core.api.Assertions.catchThrowableOfType;
 @SpringBootTest(classes = TestApp.class, properties = "spring.application.name=ddd4j-runtime-spring-cqrs-it")
 class SpringCommandBusIT {
 
+    /**
+     * 当前测试执行命令或发布事件使用的总线。
+     */
     @Autowired
     private SpringCommandBus bus;
 
+    /**
+     * 验证<code>result.isSuccess()</code>为真，<code>result.data()</code> 包含 <code>SampleCommandHandler.HANDLED</code>。
+     */
     @Test
     void execute_已注册命令_应路由到真实Handler并返回成功() {
         Result<String> result = bus.execute(new SampleCommand());
@@ -76,6 +78,9 @@ class SpringCommandBusIT {
         assertThat(result.data()).contains(SampleCommandHandler.HANDLED);
     }
 
+    /**
+     * 在测试框架中执行 <code>context.getStartupFailure()</code>、<code>ConflictCommand.class.getName()</code>，验证该场景。
+     */
     @Test
     void 装配期冲突_整批拒绝应传播为容器启动失败() {
         // 刻意不用嵌套 @Configuration：TestApp 的 @ComponentScan("io.ddd4j.data.cqrs")
@@ -97,6 +102,9 @@ class SpringCommandBusIT {
                 });
     }
 
+    /**
+     * 验证<code>exception</code>非空，<code>exception.getMessage()</code> 包含 <code>UnknownCommand.class.getName()</code>。
+     */
     @Test
     void execute_未注册命令_应抛ISE与ddd4j_core一致() {
         IllegalStateException exception = catchThrowableOfType(
@@ -127,22 +135,49 @@ class SpringCommandBusIT {
                 .isTrue();
     }
 
+    /**
+     * 供命令总线验证类型匹配和分发的命令样本。
+     */
     static class ConflictCommand implements Command {
     }
 
+    /**
+     * 与主要测试命令并行注册的第二种命令样本。
+     */
     static class CompanionCommand implements Command {
     }
 
+    /**
+     * 没有注册执行器的命令样本，用来验证命令分发边界。
+     */
     static class UnknownCommand implements Command {
     }
 
+    /**
+     * 接收测试命令并返回可断言结果的执行器替身。
+     */
     static class ExclusiveConflictHandler implements CommandExecutor<ConflictCommand> {
 
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>Collections.&lt;Class&lt;? extends Command&gt;&gt;singleton(ConflictCommand.class)</code>。</p>
+         *
+         * @return 实际返回<code>Collections.&lt;Class&lt;? extends Command&gt;&gt;singleton(ConflictCommand.class)</code>
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.<Class<? extends Command>>singleton(ConflictCommand.class);
         }
 
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>Result.ok()</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>Result.ok()</code>
+         */
         @Override
         public Result execute(ConflictCommand command) {
             return Result.ok();
@@ -156,11 +191,26 @@ class SpringCommandBusIT {
      */
     static class OverlappingMultiTypeHandler implements CommandExecutor<Command> {
 
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>Arrays.asList(ConflictCommand.class, CompanionCommand.class)</code>。</p>
+         *
+         * @return 支持的命令类型集合
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return new HashSet<Class<? extends Command>>(Arrays.asList(ConflictCommand.class, CompanionCommand.class));
         }
 
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>测试夹具会调用 <code>Result.ok()</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>Result.ok()</code>
+         */
         @Override
         public Result execute(Command command) {
             return Result.ok();

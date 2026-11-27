@@ -54,6 +54,9 @@ public abstract class AbstractCqrsRuntimeContractTest {
      */
     protected abstract CqrsRuntimeContract createContract();
 
+    /**
+     * 保留单项 CQRS 契约的清理钩子，测试本身在 finally 中关闭契约。
+     */
     @AfterEach
     void closeContract() {
         // 子类可通过 @Override createContract() 内部管理生命周期，
@@ -62,6 +65,9 @@ public abstract class AbstractCqrsRuntimeContractTest {
 
     // ========== 契约 1：命令路由 ==========
 
+    /**
+     * 验证发送 A 类命令时能路由到已注册的执行器并成功完成。
+     */
     @Test
     void shouldRouteCommandAToExecutorA() {
         CqrsRuntimeContract contract = createContract();
@@ -74,6 +80,9 @@ public abstract class AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /**
+     * 验证发送 B 类命令时能路由到已注册的执行器并成功完成。
+     */
     @Test
     void shouldRouteCommandBToExecutorB() {
         CqrsRuntimeContract contract = createContract();
@@ -88,6 +97,9 @@ public abstract class AbstractCqrsRuntimeContractTest {
 
     // ========== 契约 2：未注册命令 ==========
 
+    /**
+     * 验证未登记的命令类型会使总线调用失败。
+     */
     @Test
     void shouldThrowWhenCommandNotRegistered() {
         CqrsRuntimeContract contract = createContract();
@@ -101,6 +113,9 @@ public abstract class AbstractCqrsRuntimeContractTest {
 
     // ========== 契约 3：null 命令防御 ==========
 
+    /**
+     * 验证空命令会被总线按参数错误拒绝。
+     */
     @Test
     void shouldThrowWhenCommandIsNull() {
         CqrsRuntimeContract contract = createContract();
@@ -114,6 +129,9 @@ public abstract class AbstractCqrsRuntimeContractTest {
 
     // ========== 契约 4：位置读写往返 ==========
 
+    /**
+     * 验证写入的投影位点可按流标识重新读取。
+     */
     @Test
     void shouldWriteAndReadBackProjectionPosition() {
         CqrsRuntimeContract contract = createContract();
@@ -132,6 +150,9 @@ public abstract class AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /**
+     * 验证同一事件流保存新位点后读取到更新后的值。
+     */
     @Test
     void shouldOverwriteProjectionPositionOnUpdate() {
         CqrsRuntimeContract contract = createContract();
@@ -153,6 +174,9 @@ public abstract class AbstractCqrsRuntimeContractTest {
 
     // ========== 契约 5：ViewManager 生命周期 ==========
 
+    /**
+     * 验证启动视图管理器后运行状态为真。
+     */
     @Test
     void shouldReportRunningAfterStart() {
         CqrsRuntimeContract contract = createContract();
@@ -164,6 +188,9 @@ public abstract class AbstractCqrsRuntimeContractTest {
         }
     }
 
+    /**
+     * 验证停止已启动的视图管理器后运行状态为假。
+     */
     @Test
     void shouldReportNotRunningAfterStop() {
         CqrsRuntimeContract contract = createContract();
@@ -184,6 +211,9 @@ public abstract class AbstractCqrsRuntimeContractTest {
      * 测试命令 A。
      */
     public static final class CmdA implements Command {
+        /**
+         * A 类测试命令携带的文本负载。
+         */
         private final String payload;
 
         /**
@@ -205,6 +235,9 @@ public abstract class AbstractCqrsRuntimeContractTest {
      * 测试命令 B。
      */
     public static final class CmdB implements Command {
+        /**
+         * B 类测试命令携带的数值负载。
+         */
         private final int value;
 
         /**
@@ -235,13 +268,31 @@ public abstract class AbstractCqrsRuntimeContractTest {
      */
     public static final class StubExecutorA implements CommandExecutor<CmdA> {
 
+        /**
+         * 记录 A 执行器被调用的状态。
+         */
         private final AtomicBoolean invoked = new AtomicBoolean(false);
 
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>此实现调用 <code>Collections.singleton(CmdA.class)</code>。</p>
+         *
+         * @return 当前处理器声明可接收的命令类型集合
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.singleton(CmdA.class);
         }
 
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>此实现调用 <code>invoked.set(true)</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>Result.ok("executor-a:" + command.getPayload())</code>
+         */
         @Override
         @SuppressWarnings("unchecked")
         public Result execute(CmdA command) {
@@ -262,13 +313,31 @@ public abstract class AbstractCqrsRuntimeContractTest {
      */
     public static final class StubExecutorB implements CommandExecutor<CmdB> {
 
+        /**
+         * 记录 B 执行器被调用的状态。
+         */
         private final AtomicBoolean invoked = new AtomicBoolean(false);
 
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>此实现调用 <code>Collections.singleton(CmdB.class)</code>。</p>
+         *
+         * @return 当前处理器声明可接收的命令类型集合
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.singleton(CmdB.class);
         }
 
+        /**
+         * 用当前处理器执行传入命令或操作。
+         *
+         * <p>此实现调用 <code>invoked.set(true)</code>。</p>
+         *
+         * @param command 命令对象
+         * @return 实际返回<code>Result.ok("executor-b:" + command.getValue())</code>
+         */
         @Override
         @SuppressWarnings("unchecked")
         public Result execute(CmdB command) {

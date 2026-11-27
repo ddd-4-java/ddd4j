@@ -23,7 +23,13 @@ import java.util.Set;
  */
 @ApplicationScoped
 public class NativeAuth {
+    /**
+     * 启动示例前注册的 Shiro 安全管理器。
+     */
     private final SecurityManager previous = current();
+    /**
+     * 当前示例安装并负责关闭的 Shiro 安全管理器。
+     */
     private final DefaultSecurityManager owned = new DefaultSecurityManager(new SampleRealm());
 
     /**
@@ -35,6 +41,11 @@ public class NativeAuth {
         }
     }
 
+    /**
+     * 直接读取当前 Shiro 全局安全管理器的注册槽位。
+     *
+     * @return 已注册的安全管理器，未注册时为空
+     */
     private static SecurityManager current() {
         return (SecurityManager) ReflectUtil.getStaticFieldValue(Objects.requireNonNull(ReflectUtil.getField(SecurityUtils.class, "securityManager")));
     }
@@ -73,7 +84,18 @@ public class NativeAuth {
         owned.destroy();
     }
 
+    /**
+     * 根据示例用户及订单权限执行原生 Shiro 认证与授权。
+     */
     private static final class SampleRealm extends AuthorizingRealm {
+        /**
+         * 根据登录凭据查找供 Shiro 校验的身份信息。
+         *
+         * <p>此实现调用 <code>String.valueOf(token.getPrincipal())</code>。</p>
+         *
+         * @param token 待校验或用于定位会话的令牌
+         * @return 此操作产生的<code>AuthenticationInfo</code>结果
+         */
         @Override
         protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) {
             String user = String.valueOf(token.getPrincipal());
@@ -83,6 +105,14 @@ public class NativeAuth {
             return new SimpleAuthenticationInfo(user, "sample-password", getName());
         }
 
+        /**
+         * 加载 Shiro 用于权限和角色判定的信息。
+         *
+         * <p>此实现调用 <code>"alice".equals(principals.getPrimaryPrincipal())</code>。</p>
+         *
+         * @param principals 传给 <code>"alice".equals(principals.getPrimaryPrincipal())</code>
+         * @return 实际返回<code>result</code>
+         */
         @Override
         protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
             var result = new SimpleAuthorizationInfo();

@@ -25,20 +25,26 @@ import java.util.Objects;
  */
 public final class ApiVersionResult {
 
-    /** 解析出的版本，恒非 null。 */
+    /**
+     * 解析出的版本，恒非 null。
+     */
     private final ApiVersion version;
 
-    /** 版本来源。 */
+    /**
+     * 版本来源。
+     */
     private final ApiVersionSource source;
 
-    /** 原始文本（请求头原文 / 路径版本段 / 默认版本文本），可为 null。 */
+    /**
+     * 原始文本（请求头原文 / 路径版本段 / 默认版本文本），可为 null。
+     */
     private final String rawValue;
 
     /**
      * 创建解析结果。
      *
-     * @param version 解析出的版本（非 null）
-     * @param source 版本来源（非 null）
+     * @param version  解析出的版本（非 null）
+     * @param source   版本来源（非 null）
      * @param rawValue 触发本次结果的原始文本，可为 null
      */
     public ApiVersionResult(ApiVersion version, ApiVersionSource source, String rawValue) {

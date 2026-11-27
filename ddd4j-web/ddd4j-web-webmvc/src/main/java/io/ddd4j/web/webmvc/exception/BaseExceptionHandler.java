@@ -33,16 +33,27 @@ import java.util.Objects;
 @Slf4j
 public abstract class BaseExceptionHandler {
 
-    /** 失败状态值。 */
+    /**
+     * 失败状态值。
+     */
     public static final String STATUS_FAIL = "fail";
-    /** 错误状态值。 */
+    /**
+     * 错误状态值。
+     */
     public static final String STATUS_ERROR = "error";
 
-    /** 异步请求标识值。 */
+    /**
+     * 异步请求标识值。
+     */
     protected static final String XML_HTTP_REQUEST = "XMLHttpRequest";
-    /** 异步请求标识头名称。 */
+    /**
+     * 异步请求标识头名称。
+     */
     protected static final String X_REQUESTED_WITH = "X-Requested-With";
 
+    /**
+     * 查找当前 Servlet 请求及其上下文的请求持有器。
+     */
     private static final ThreadLocal<HttpServletRequest> REQUEST_HOLDER = new TransmittableThreadLocal<>();
 
     /**
@@ -54,6 +65,7 @@ public abstract class BaseExceptionHandler {
 
     /**
      * 获取当前请求
+     *
      * @return 当前 HTTP 请求
      */
     protected static HttpServletRequest getCurrentRequest() {
@@ -62,6 +74,7 @@ public abstract class BaseExceptionHandler {
 
     /**
      * 设置当前请求（由框架适配层调用）
+     *
      * @param request HTTP 请求
      */
     public static void setCurrentRequest(HttpServletRequest request) {
@@ -110,7 +123,7 @@ public abstract class BaseExceptionHandler {
     /**
      * 记录请求异常。
      *
-     * @param ex 捕获的异常
+     * @param ex        捕获的异常
      * @param detailMap 异常详情
      */
     protected void logException(Exception ex, Map<String, Object> detailMap) {

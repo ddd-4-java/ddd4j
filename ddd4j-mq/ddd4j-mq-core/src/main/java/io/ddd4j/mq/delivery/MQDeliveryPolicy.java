@@ -29,27 +29,58 @@ import java.util.Objects;
  */
 public final class MQDeliveryPolicy {
 
+    /**
+     * 默认投递任务租约时长。
+     */
     private static final Duration DEFAULT_LEASE_DURATION = Duration.ofSeconds(60);
+    /**
+     * 首次失败后等待重试的默认时长。
+     */
     private static final Duration DEFAULT_INITIAL_BACKOFF = Duration.ofSeconds(1);
+    /**
+     * 重试退避时间默认上限。
+     */
     private static final Duration DEFAULT_MAX_BACKOFF = Duration.ofMinutes(5);
+    /**
+     * 默认允许尝试投递的最大次数。
+     */
     private static final int DEFAULT_MAX_ATTEMPTS = 12;
+    /**
+     * 默认重试抖动比例。
+     */
     private static final double DEFAULT_JITTER_FACTOR = 0.20D;
 
+    /**
+     * 认领投递记录时授予的独占租约时长。
+     */
     private final Duration leaseDuration;
+    /**
+     * 投递最多允许执行的次数。
+     */
     private final int maxAttempts;
+    /**
+     * 计算重试退避时使用的基础时长。
+     */
     private final Duration initialBackoff;
+    /**
+     * 单次重试退避的时长上限。
+     */
     private final Duration maxBackoff;
+    /**
+     * 在基础退避时间上应用的抖动系数。
+     */
     private final double jitterFactor;
 
     /**
      * 可靠消息的租约和退避策略。
      *
      * <p>默认值采用 60 秒租约、12 次最多尝试，以及 1 秒到 5 分钟的指数退避。
- * @param leaseDuration 参数 leaseDuration
- * @param maxAttempts 整型数值
- * @param initialBackoff 参数 initialBackoff
- * @param maxBackoff 最大相关参数
- * @param jitterFactor 双精度数值
+     *
+     * @param leaseDuration  参数 leaseDuration
+     * @param maxAttempts    整型数值
+     * @param initialBackoff 参数 initialBackoff
+     * @param maxBackoff     最大相关参数
+     * @param jitterFactor   双精度数值
      */
 
     @JsonCreator
@@ -93,36 +124,52 @@ public final class MQDeliveryPolicy {
                 DEFAULT_INITIAL_BACKOFF, DEFAULT_MAX_BACKOFF, DEFAULT_JITTER_FACTOR);
     }
 
-    /** @return 投递租约时长 */
+    /**
+     * @return 投递租约时长
+     */
     @JsonProperty("leaseDuration")
     public Duration leaseDuration() {
         return leaseDuration;
     }
 
-    /** @return 最多投递尝试次数 */
+    /**
+     * @return 最多投递尝试次数
+     */
     @JsonProperty("maxAttempts")
     public int maxAttempts() {
         return maxAttempts;
     }
 
-    /** @return 初始退避时长 */
+    /**
+     * @return 初始退避时长
+     */
     @JsonProperty("initialBackoff")
     public Duration initialBackoff() {
         return initialBackoff;
     }
 
-    /** @return 最大退避时长 */
+    /**
+     * @return 最大退避时长
+     */
     @JsonProperty("maxBackoff")
     public Duration maxBackoff() {
         return maxBackoff;
     }
 
-    /** @return 退避抖动系数 */
+    /**
+     * @return 退避抖动系数
+     */
     @JsonProperty("jitterFactor")
     public double jitterFactor() {
         return jitterFactor;
     }
 
+    /**
+     * 根据<code>jitterFactor</code>、<code>maxAttempts</code>比较对象的值是否相等。
+     *
+     * @param o 用来比较的另一个对象，允许为空
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -139,6 +186,11 @@ public final class MQDeliveryPolicy {
                 && maxBackoff.equals(that.maxBackoff);
     }
 
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         int result = leaseDuration.hashCode();
@@ -149,6 +201,11 @@ public final class MQDeliveryPolicy {
         return result;
     }
 
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>leaseDuration</code>、<code>maxAttempts</code>、<code>initialBackoff</code>、<code>maxBackoff</code>、<code>jitterFactor</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "MQDeliveryPolicy[leaseDuration=" + leaseDuration + ", maxAttempts=" + maxAttempts
@@ -187,6 +244,12 @@ public final class MQDeliveryPolicy {
         return attempts >= maxAttempts;
     }
 
+    /**
+     * 按发送次数计算指数退避，并将结果限制在配置上限内。
+     *
+     * @param attempts 当前累计发送次数
+     * @return 退避时间，单位为毫秒
+     */
     private long exponentialBackoffMillis(int attempts) {
         long maxMillis = maxBackoff.toMillis();
         long initialMillis = initialBackoff.toMillis();
@@ -198,27 +261,37 @@ public final class MQDeliveryPolicy {
         return Math.min(initialMillis * multiplier, maxMillis);
     }
 
-    /** @return 投递租约时长 */
+    /**
+     * @return 投递租约时长
+     */
     public Duration getLeaseDuration() {
         return leaseDuration;
     }
 
-    /** @return 最多投递尝试次数 */
+    /**
+     * @return 最多投递尝试次数
+     */
     public int getMaxAttempts() {
         return maxAttempts;
     }
 
-    /** @return 初始退避时长 */
+    /**
+     * @return 初始退避时长
+     */
     public Duration getInitialBackoff() {
         return initialBackoff;
     }
 
-    /** @return 最大退避时长 */
+    /**
+     * @return 最大退避时长
+     */
     public Duration getMaxBackoff() {
         return maxBackoff;
     }
 
-    /** @return 退避抖动系数 */
+    /**
+     * @return 退避抖动系数
+     */
     public double getJitterFactor() {
         return jitterFactor;
     }

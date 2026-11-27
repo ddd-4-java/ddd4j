@@ -41,6 +41,13 @@ public class CdiSubjectProvider implements SubjectProvider {
     @Inject
     Instance<Subject> subjectInstance;
 
+    /**
+     * 取得当前请求使用的认证主体接口。
+     *
+     * <p>此实现调用 <code>subjectInstance.isUnsatisfied()</code>。</p>
+     *
+     * @return 本次调用使用的认证主体接口
+     */
     @Override
     public Subject getSubject() {
         if (subjectInstance.isUnsatisfied() || subjectInstance.isAmbiguous()) {

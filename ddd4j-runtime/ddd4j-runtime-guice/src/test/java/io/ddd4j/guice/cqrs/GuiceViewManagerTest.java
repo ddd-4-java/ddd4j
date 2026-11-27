@@ -31,17 +31,38 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * 验证 <code>GuiceViewManager</code> 在<code>schedule</code>、<code>scheduleAtFixedRate</code>、<code>getProjectionStatus</code>等操作中的行为契约。
+ */
 class GuiceViewManagerTest {
 
+    /**
+     * 等待测试回调抵达的秒数上限。
+     */
     private static final long CALLBACK_TIMEOUT_SECONDS = 5;
 
+    /**
+     * 当前测试使用并负责释放的视图或认证管理器。
+     */
     private final GuiceViewManager manager = new GuiceViewManager();
 
+    /**
+     * 创建 <code>new ProjectionRunner&lt;&gt;</code> 供当前测试路径调用。
+     *
+     * @param repository 当前测试访问的仓储实例
+     * @return 当前测试使用的结果，取自 <code>new ProjectionRunner&lt;&gt;(new DefaultProjectionService(repository), (streamId,position,size,types)-&gt;EventChunk.empty(position))</code>
+     */
     private static ProjectionRunner<Object> emptyRunner(GuiceInMemoryProjectionPositionRepository repository) {
         return new ProjectionRunner<>(new DefaultProjectionService(repository),
                 (streamId, position, size, types) -> EventChunk.empty(position));
     }
 
+    /**
+     * 构造 <code>ProjectionView&lt;Object&gt;</code> 作为当前测试的输入或结果。
+     *
+     * @param name 当前测试指定的对象或属性名称
+     * @return 提供给后续契约断言的 <code>ProjectionView&lt;Object&gt;</code> 结果
+     */
     private static ProjectionView<Object> view(String name) {
         return new ProjectionView<Object>() {
             @Override
@@ -65,11 +86,17 @@ class GuiceViewManagerTest {
         };
     }
 
+    /**
+     * 测试结束后执行 <code>manager.stop()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void tearDown() {
         manager.stop();
     }
 
+    /**
+     * 验证<code>manager.isRunning()</code>为假，<code>manager.isRunning()</code>为真。
+     */
     @Test
     void startAndStopLifecycle() {
         assertFalse(manager.isRunning());
@@ -84,12 +111,20 @@ class GuiceViewManagerTest {
         manager.close();
     }
 
+    /**
+     * 验证<code>manager.isRunning()</code>为假。
+     */
     @Test
     void triggerOnceIsSafe() {
         manager.triggerOnce();
         assertFalse(manager.isRunning());
     }
 
+    /**
+     * 验证<code>manager.isRunning()</code>为真，<code>handle</code>非空，<code>handle.isActive()</code>为假。
+     *
+     * @throws InterruptedException 等待测试操作时被中断
+     */
     @Test
     void scheduleRunsTaskAndHandleCancels() throws InterruptedException {
         CountDownLatch ran = new CountDownLatch(1);
@@ -103,6 +138,11 @@ class GuiceViewManagerTest {
         assertFalse(handle.isActive());
     }
 
+    /**
+     * 验证<code>manager.isRunning()</code>为真，<code>handle</code>非空，<code>ran.await(CALLBACK_TIMEOUT_SECONDS, TimeUnit.SECONDS)</code>为真。
+     *
+     * @throws InterruptedException 等待测试操作时被中断
+     */
     @Test
     void scheduleWithStarSlashNSucceeds() throws InterruptedException {
         CountDownLatch ran = new CountDownLatch(1);
@@ -113,6 +153,9 @@ class GuiceViewManagerTest {
         handle.cancel();
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void scheduleWithEmptyCronThrowsException() {
         assertThrows(IllegalArgumentException.class, () -> {
@@ -121,6 +164,9 @@ class GuiceViewManagerTest {
         });
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void scheduleWithInvalidCronThrowsException() {
         assertThrows(IllegalArgumentException.class, () -> {
@@ -129,6 +175,9 @@ class GuiceViewManagerTest {
         });
     }
 
+    /**
+     * 验证<code>handle</code>非空。
+     */
     @Test
     void scheduleWithPlainCronDefaultsToMinute() {
         AtomicInteger runs = new AtomicInteger();
@@ -137,6 +186,9 @@ class GuiceViewManagerTest {
         handle.cancel();
     }
 
+    /**
+     * 验证<code>handle</code>非空。
+     */
     @Test
     void scheduleWithMinuteIntervalSucceeds() {
         AtomicInteger runs = new AtomicInteger();
@@ -145,6 +197,9 @@ class GuiceViewManagerTest {
         handle.cancel();
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void scheduleWithUnsupportedCronFormatThrowsException() {
         assertThrows(IllegalArgumentException.class, () -> {
@@ -153,6 +208,11 @@ class GuiceViewManagerTest {
         });
     }
 
+    /**
+     * 验证<code>manager.isRunning()</code>为真，<code>handle</code>非空，<code>handle.isActive()</code>为假。
+     *
+     * @throws InterruptedException 等待测试操作时被中断
+     */
     @Test
     void scheduleAtFixedRateRunsTask() throws InterruptedException {
         CountDownLatch runs = new CountDownLatch(2);
@@ -166,6 +226,9 @@ class GuiceViewManagerTest {
         assertFalse(handle.isActive());
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void scheduleAtFixedRateWithInvalidIntervalThrowsException() {
         assertThrows(IllegalArgumentException.class, () -> {
@@ -178,6 +241,9 @@ class GuiceViewManagerTest {
         });
     }
 
+    /**
+     * 验证<code>first.isActive()</code>为假，<code>second.isActive()</code>为真，<code>second.isActive()</code>为假。
+     */
     @Test
     void stopCancelsOutstandingHandlesAndSupportsFreshRestart() {
         ViewScheduleHandle first = manager.scheduleAtFixedRate("owned", 3600, () -> {
@@ -191,6 +257,9 @@ class GuiceViewManagerTest {
         assertFalse(second.isActive());
     }
 
+    /**
+     * 验证被测调用 抛出 <code>LinkageError.class</code>，<code>scheduled.get()</code>非空，<code>managed.isRunning()</code>为假。
+     */
     @Test
     void startupLinkageErrorCancelsOwnedTasksAndResetsRunningState() {
         LinkageError failure = new LinkageError("view wiring failed");
@@ -222,6 +291,9 @@ class GuiceViewManagerTest {
         }
     }
 
+    /**
+     * 验证被测调用 抛出 <code>LinkageError.class</code>，<code>managed.isRunning()</code>为假，<code>cancellationAttempts.get()</code> 等于 <code>2</code>。
+     */
     @Test
     void stopLinkageErrorStillCancelsOwnedTasksAndRetriesExternalHandle() {
         LinkageError failure = new LinkageError("first cancellation failed");
@@ -262,6 +334,9 @@ class GuiceViewManagerTest {
 
     // --- getProjectionStatus tests ---
 
+    /**
+     * 验证<code>status.streamId()</code> 等于 <code>"orders"</code>，<code>status.nextEventNumber()</code> 等于 <code>0L</code>，<code>status.lastError()</code>为空。
+     */
     @Test
     void getProjectionStatus_withoutRepository_returnsBaseline() {
         manager.start();
@@ -275,6 +350,9 @@ class GuiceViewManagerTest {
         assertNull(status.lastError());
     }
 
+    /**
+     * 验证<code>status.streamId()</code> 等于 <code>"orders"</code>，<code>status.nextEventNumber()</code> 等于 <code>42L</code>，<code>status.lastError()</code>为空。
+     */
     @Test
     void getProjectionStatus_withRepositoryAndPosition_returnsRealPosition() {
         GuiceInMemoryProjectionPositionRepository repo = new GuiceInMemoryProjectionPositionRepository();
@@ -295,6 +373,9 @@ class GuiceViewManagerTest {
         mgr.stop();
     }
 
+    /**
+     * 验证<code>status.streamId()</code> 等于 <code>"orders"</code>，<code>status.nextEventNumber()</code> 等于 <code>42L</code>，<code>status.lastError()</code> 等于 <code>"last failure"</code>。
+     */
     @Test
     void getProjectionStatus_withMetrics_returnsLastRunInfo() {
         GuiceInMemoryProjectionPositionRepository repo = new GuiceInMemoryProjectionPositionRepository();
@@ -317,6 +398,9 @@ class GuiceViewManagerTest {
         assertEquals("last failure", status.lastError());
     }
 
+    /**
+     * 验证<code>status.streamId()</code> 等于 <code>"unknown"</code>，<code>status.nextEventNumber()</code> 等于 <code>0L</code>，<code>status.running()</code>为真。
+     */
     @Test
     void getProjectionStatus_withRepositoryButNoPosition_returnsZeroPosition() {
         GuiceInMemoryProjectionPositionRepository repo = new GuiceInMemoryProjectionPositionRepository();
@@ -333,6 +417,9 @@ class GuiceViewManagerTest {
         mgr.stop();
     }
 
+    /**
+     * 验证<code>status.running()</code>为假。
+     */
     @Test
     void getProjectionStatus_whenStopped_runningIsFalse() {
         ProjectionStatus status = manager.getProjectionStatus("orders");

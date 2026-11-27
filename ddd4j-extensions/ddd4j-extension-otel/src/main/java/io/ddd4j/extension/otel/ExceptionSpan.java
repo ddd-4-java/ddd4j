@@ -36,6 +36,9 @@ import java.util.Objects;
  */
 public final class ExceptionSpan {
 
+    /**
+     * 限制调用方直接创建 <code>ExceptionSpan</code> 实例。
+     */
     private ExceptionSpan() {
     }
 

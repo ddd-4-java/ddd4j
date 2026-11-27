@@ -17,6 +17,9 @@ import java.util.Map;
 @ApplicationScoped
 @Produces(MediaType.APPLICATION_JSON)
 public class AuthenticationResource {
+    /**
+     * 处理当前示例应用登录状态的原生认证组件。
+     */
     @Inject
     NativeAuth auth;
 
@@ -68,7 +71,13 @@ public class AuthenticationResource {
      */
     @Data
     public static class Login {
+        /**
+         * 当前身份凭据使用的用户名。
+         */
         private String username;
+        /**
+         * 当前登录或账号创建请求提供的口令。
+         */
         private String password;
     }
 }

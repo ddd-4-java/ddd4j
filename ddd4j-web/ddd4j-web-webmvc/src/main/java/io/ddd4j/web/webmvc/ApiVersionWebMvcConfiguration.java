@@ -51,19 +51,29 @@ import java.util.Objects;
 @Configuration(proxyBeanMethods = false)
 public class ApiVersionWebMvcConfiguration implements WebMvcConfigurer {
 
-    /** 配置属性前缀。 */
+    /**
+     * 配置属性前缀。
+     */
     public static final String PROPERTY_PREFIX = "ddd4j.web.api-version";
 
-    /** 属性名：是否启用版本解析。 */
+    /**
+     * 属性名：是否启用版本解析。
+     */
     public static final String PROPERTY_ENABLED = PROPERTY_PREFIX + ".enabled";
 
-    /** 属性名：默认版本。 */
+    /**
+     * 属性名：默认版本。
+     */
     public static final String PROPERTY_DEFAULT_VERSION = PROPERTY_PREFIX + ".default-version";
 
-    /** 属性名：非法版本值处理模式。 */
+    /**
+     * 属性名：非法版本值处理模式。
+     */
     public static final String PROPERTY_MODE = PROPERTY_PREFIX + ".mode";
 
-    /** 拦截器提供者：避免配置类内 {@code @Bean} 方法间的构造器循环依赖。 */
+    /**
+     * 拦截器提供者：避免配置类内 {@code @Bean} 方法间的构造器循环依赖。
+     */
     private final ObjectProvider<ApiVersionWebInterceptor> interceptorProvider;
 
     /**
@@ -93,7 +103,7 @@ public class ApiVersionWebMvcConfiguration implements WebMvcConfigurer {
     /**
      * API 版本解析拦截器 Bean：按 {@code enabled} 属性携带启用状态。
      *
-     * @param resolver 版本解析器
+     * @param resolver    版本解析器
      * @param environment Spring 环境
      * @return 版本拦截器
      */

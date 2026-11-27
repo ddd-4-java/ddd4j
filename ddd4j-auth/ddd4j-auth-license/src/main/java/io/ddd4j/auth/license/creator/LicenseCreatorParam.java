@@ -27,6 +27,9 @@ import java.util.Date;
 @Data
 public class LicenseCreatorParam implements Serializable {
 
+    /**
+     * Java 序列化版本标识。
+     */
     private static final long serialVersionUID = -7793154252684580872L;
     /**
      * 证书subject
@@ -95,6 +98,8 @@ public class LicenseCreatorParam implements Serializable {
 
     /**
      * 返回不包含密钥库口令和私钥口令的诊断信息。
+     *
+     * @return 用于诊断的许可证创建参数文本
      */
     @Override
     public String toString() {

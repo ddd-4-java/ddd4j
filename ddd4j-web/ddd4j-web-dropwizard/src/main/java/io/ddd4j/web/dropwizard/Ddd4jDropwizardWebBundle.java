@@ -28,9 +28,14 @@ import java.util.function.Function;
  */
 public final class Ddd4jDropwizardWebBundle<C extends Configuration> implements ConfiguredBundle<C> {
 
+    /**
+     * 从 Dropwizard 应用配置取得 DDD4J Web 配置的函数。
+     */
     private final Function<C, Ddd4jDropwizardWebConfiguration> configurationResolver;
 
-    /** 使用默认 Web 配置解析器创建 Bundle。 */
+    /**
+     * 使用默认 Web 配置解析器创建 Bundle。
+     */
     public Ddd4jDropwizardWebBundle() {
         this(configuration -> new Ddd4jDropwizardWebConfiguration());
     }
@@ -45,11 +50,22 @@ public final class Ddd4jDropwizardWebBundle<C extends Configuration> implements 
                 "configurationResolver must not be null");
     }
 
+    /**
+     * 提供 Web Bundle 的框架引导初始化入口。
+     *
+     * @param bootstrap Dropwizard 启动引导对象
+     */
     @Override
     public void initialize(Bootstrap<?> bootstrap) {
         // Dropwizard Web 接线只依赖 run 阶段已经构造完成的 Jersey Environment。
     }
 
+    /**
+     * 在已启动的 Dropwizard 应用中装配请求和响应处理组件。
+     *
+     * @param configuration 当前应用的配置对象
+     * @param environment   当前 Dropwizard 应用环境
+     */
     @Override
     public void run(C configuration, Environment environment) {
         Ddd4jDropwizardWebConfiguration webConfiguration = Objects.requireNonNull(

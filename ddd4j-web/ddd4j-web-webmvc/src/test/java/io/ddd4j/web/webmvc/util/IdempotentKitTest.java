@@ -45,14 +45,25 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class IdempotentKitTest {
 
+    /**
+     * 用于隔离 <code>ProceedingJoinPoint</code> 调用并记录交互的测试替身。
+     */
     @Mock
     private ProceedingJoinPoint joinPoint;
 
+    /**
+     * 用于隔离 <code>MethodSignature</code> 调用并记录交互的测试替身。
+     */
     @Mock
     private MethodSignature methodSignature;
 
     // =================== 固定 value 模式 ===================
 
+    /**
+     * 验证<code>key</code> 等于 <code>"my-fixed-key"</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void getIdempotentKey_withFixedValue_shouldReturnDirectly() throws Exception {
         Method method = SampleController.class.getMethod("fixedValueEndpoint", String.class);
@@ -70,6 +81,11 @@ class IdempotentKitTest {
 
     // =================== SpEL 模式 ===================
 
+    /**
+     * 验证<code>key</code> 等于 <code>"hello-42"</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void getIdempotentKey_withSpel_shouldEvaluateExpression() throws Exception {
         Method method = SampleController.class.getMethod("spelEndpoint", String.class, Integer.class);
@@ -87,6 +103,11 @@ class IdempotentKitTest {
 
     // =================== 路由拼接模式（默认） ===================
 
+    /**
+     * 验证<code>key</code> 的大小为 <code>32</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void getIdempotentKey_withRouteMapping_shouldGenerateMd5() throws Exception {
         Method method = SampleController.class.getMethod("defaultEndpoint", String.class);
@@ -104,6 +125,11 @@ class IdempotentKitTest {
         assertThat(key).matches("[a-f0-9]+");
     }
 
+    /**
+     * 验证<code>key</code> 的大小为 <code>32</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void getIdempotentKey_withRouteMapping_noArgs_shouldGenerateMd5() throws Exception {
         Method method = SampleController.class.getMethod("noArgsEndpoint");
@@ -120,6 +146,11 @@ class IdempotentKitTest {
         assertThat(key).matches("[a-f0-9]+");
     }
 
+    /**
+     * 验证<code>key1</code> 不等于 <code>key2</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void getIdempotentKey_withArgsIncluded_shouldVaryByArgs() throws Exception {
         Method method = SampleController.class.getMethod("withArgsEndpoint", String.class);
@@ -139,6 +170,11 @@ class IdempotentKitTest {
         assertThat(key1).isNotEqualTo(key2);
     }
 
+    /**
+     * 验证<code>key1</code> 等于 <code>key2</code>。
+     *
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
     @Test
     void getIdempotentKey_sameArgsSameRoute_shouldGenerateSameKey() throws Exception {
         Method method = SampleController.class.getMethod("defaultEndpoint", String.class);
@@ -157,30 +193,57 @@ class IdempotentKitTest {
 
     // =================== 辅助：测试用 Controller ===================
 
+    /**
+     * 为 HTTP 合同提供实际请求路由的 Spring 测试控制器。
+     */
     @RestController
     @RequestMapping("/api/sample")
     static class SampleController {
 
+        /**
+         * 作为空实现的测试替身，调用时保持当前夹具状态。
+         *
+         * @param name 当前测试指定的对象或属性名称
+         */
         @ApiIdempotent("my-fixed-key")
         @PostMapping("/fixed")
         public void fixedValueEndpoint(String name) {
         }
 
+        /**
+         * 作为空实现的测试替身，调用时保持当前夹具状态。
+         *
+         * @param name  当前测试指定的对象或属性名称
+         * @param count 本次调用使用的 <code>Integer</code> 参数 <code>count</code>
+         */
         @ApiIdempotent(value = "#name + '-' + #count", spel = true)
         @PostMapping("/spel")
         public void spelEndpoint(String name, Integer count) {
         }
 
+        /**
+         * 作为空实现的测试替身，调用时保持当前夹具状态。
+         *
+         * @param data 当前用例写入、读取或比较的数据
+         */
         @ApiIdempotent
         @PostMapping("/default")
         public void defaultEndpoint(String data) {
         }
 
+        /**
+         * 作为空实现的测试替身，调用时保持当前夹具状态。
+         */
         @ApiIdempotent
         @PostMapping("/noargs")
         public void noArgsEndpoint() {
         }
 
+        /**
+         * 作为空实现的测试替身，调用时保持当前夹具状态。
+         *
+         * @param orderId 测试中要定位的订单标识
+         */
         @ApiIdempotent(withArgs = true)
         @PostMapping("/withargs")
         public void withArgsEndpoint(String orderId) {

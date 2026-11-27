@@ -26,12 +26,19 @@ public final class MQDeliveryHeaders {
      */
     public static final String MESSAGE_ID = "ddd4j-message-id";
 
-    /** 跨语言消费方可直接读取的关联 ID header。 */
+    /**
+     * 跨语言消费方可直接读取的关联 ID header。
+     */
     public static final String CORRELATION_ID = "X-Correlation-Id";
 
-    /** 跨语言消费方可直接读取的因果 ID header。 */
+    /**
+     * 跨语言消费方可直接读取的因果 ID header。
+     */
     public static final String CAUSATION_ID = "X-Causation-Id";
 
+    /**
+     * 限制调用方直接创建 <code>MQDeliveryHeaders</code> 实例。
+     */
     private MQDeliveryHeaders() {
     }
 }

@@ -40,6 +40,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class MicronautProjectionScheduler implements ViewScheduler {
 
+    /**
+     * 按计划执行当前组件后台任务的定时线程池。
+     */
     private final ScheduledExecutorService executor;
 
     /**
@@ -71,6 +74,16 @@ public class MicronautProjectionScheduler implements ViewScheduler {
         executor.shutdownNow();
     }
 
+    /**
+     * 按给定时间规则安排任务。
+     *
+     * <p>Micronaut 实现调用 <code>CronExpression.parse(cron)</code>。</p>
+     *
+     * @param viewName 视图名称（用于日志 / 调试）
+     * @param cron     CRON 表达式
+     * @param task     要执行的任务
+     * @return 实际返回<code>handle</code>
+     */
     @Override
     public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
         Objects.requireNonNull(viewName, "viewName must not be null");
@@ -87,19 +100,47 @@ public class MicronautProjectionScheduler implements ViewScheduler {
      */
     private static class ReschedulingHandle implements ViewScheduleHandle, Runnable {
 
+        /**
+         * 按计划执行当前组件后台任务的定时线程池。
+         */
         private final ScheduledExecutorService executor;
+        /**
+         * 用来确定任务下次触发时间的 Cron 表达式。
+         */
         private final CronExpression cron;
+        /**
+         * 由当前调度句柄执行的投影任务。
+         */
         private final Runnable task;
+        /**
+         * 用于跟踪和取消后台调度任务的句柄。
+         */
         private volatile ScheduledFuture<?> future;
+        /**
+         * 任务是否已取消并停止继续安排新的触发。
+         */
         private volatile boolean cancelled = false;
+        /**
+         * 标识当前计划版本，供停用已失效的异步触发。
+         */
         private long scheduleGeneration;
 
+        /**
+         * 用给定值初始化 <code>ReschedulingHandle</code> 实例。
+         *
+         * @param executor 按计划执行当前组件后台任务的定时线程池
+         * @param cron     <code>cron</code> 字段
+         * @param task     <code>task</code> 字段
+         */
         ReschedulingHandle(ScheduledExecutorService executor, CronExpression cron, Runnable task) {
             this.executor = executor;
             this.cron = cron;
             this.task = task;
         }
 
+        /**
+         * 根据 Cron 计算下一次执行时间，并在计划仍有效时向调度线程池注册触发。
+         */
         synchronized void scheduleNext() {
             if (cancelled) {
                 return;
@@ -121,6 +162,11 @@ public class MicronautProjectionScheduler implements ViewScheduler {
             }
         }
 
+        /**
+         * 执行当前组件的任务体。
+         *
+         * <p>此实现调用 <code>task.run()</code>。</p>
+         */
         @Override
         public void run() {
             if (cancelled) {
@@ -133,6 +179,11 @@ public class MicronautProjectionScheduler implements ViewScheduler {
             }
         }
 
+        /**
+         * 撤销当前任务句柄允许撤销的操作。
+         *
+         * <p>此实现调用 <code>f.cancel(false)</code>。</p>
+         */
         @Override
         public synchronized void cancel() {
             cancelled = true;
@@ -142,6 +193,13 @@ public class MicronautProjectionScheduler implements ViewScheduler {
             }
         }
 
+        /**
+         * 检查当前句柄是否仍处于有效状态。
+         *
+         * <p>此实现调用 <code>f.isCancelled()</code>。</p>
+         *
+         * @return 根据执行路径返回<code>false</code>、<code>Objects.nonNull(f) &amp;&amp; !f.isCancelled() &amp;&amp; !f.isDone()</code>
+         */
         @Override
         public synchronized boolean isActive() {
             if (cancelled) {
@@ -156,8 +214,16 @@ public class MicronautProjectionScheduler implements ViewScheduler {
      * 保留六段数值语法，时间搜索复用 core；保留本地时区语义。
      */
     public static class CronExpression {
+        /**
+         * 负责解析 Cron 字段并计算下次触发时间的共用实现。
+         */
         private final ProjectionCron delegate;
 
+        /**
+         * 把已解析的 Cron 计划包装成当前框架的调度表达式。
+         *
+         * @param delegate 执行共享行为的底层实现
+         */
         private CronExpression(ProjectionCron delegate) {
             this.delegate = delegate;
         }

@@ -38,10 +38,16 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class TraceContextBridgeMustTest {
 
+    /**
+     * 调用 <code>System.setProperty()</code> 执行当前夹具操作。
+     */
     private static void enableTracing() {
         System.setProperty(TraceContextBridge.TRACING_ENABLED_PROPERTY, "true");
     }
 
+    /**
+     * 测试结束后执行 <code>System.clearProperty()</code>、<code>ThreadContext.clear()</code>、<code>MDC.clear()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void tearDown() {
         System.clearProperty(TraceContextBridge.TRACING_ENABLED_PROPERTY);
@@ -51,6 +57,9 @@ class TraceContextBridgeMustTest {
 
     // ========================= Scenario: 默认关闭零影响 =========================
 
+    /**
+     * 验证<code>TraceContextBridge.enabled()</code>为假，<code>TraceContextBridge.currentTraceId()</code>为空，<code>TraceContextBridge.correlationSnapshot().isEmpty()</code>为真。
+     */
     @Test
     void bridgeMustBeDisabledByDefaultAndWriteNothing() {
         assertFalse(TraceContextBridge.enabled(), "追踪桥接默认必须关闭");
@@ -68,6 +77,11 @@ class TraceContextBridgeMustTest {
 
     // ========================= Scenario: 异步线程池透传 =========================
 
+    /**
+     * 验证<code>TraceContextBridge.currentTraceId()</code> 等于 <code>"trace-parent-001"</code>，<code>MDC.get(TraceContextBridge.TRACE_ID_MDC_KEY)</code> 等于 <code>"trace-parent-001"</code>，<code>MDC.get(TraceContextBridge.TRACE_ID_MDC_KEY)</code>为空。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void traceIdMustPropagateAcrossTtlThreadPoolWhenEnabled() throws Exception {
         enableTracing();
@@ -96,6 +110,9 @@ class TraceContextBridgeMustTest {
 
     // ========================= Scenario: 无追踪头时新建 =========================
 
+    /**
+     * 验证<code>traceId</code>非空，<code>traceId.trim().isEmpty()</code>为假，<code>MDC.get(TraceContextBridge.TRACE_ID_MDC_KEY)</code> 等于 <code>traceId</code>。
+     */
     @Test
     void bridgeMustGenerateTraceIdWhenInboundBlank() {
         enableTracing();
@@ -111,6 +128,9 @@ class TraceContextBridgeMustTest {
 
     // ========================= Scenario: 因果链与 trace 并列 =========================
 
+    /**
+     * 验证<code>snapshot.get(TraceContextBridge.TRACE_ID_CONTEXT_KEY)</code> 等于 <code>"trace-side-by-side"</code>，<code>snapshot.get(TraceContextBridge.CORRELATION_ID_CONTEXT_KEY)</code> 等于 <code>"correlation-abc"</code>，<code>TraceContextBridge.currentTraceId()</code> 等于 <code>"trace-side-by-side"</code>。
+     */
     @Test
     void snapshotMustExposeTraceIdSideBySideWithCausalityChain() {
         enableTracing();

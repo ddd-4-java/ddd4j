@@ -35,14 +35,41 @@ import java.util.Objects;
 @Slf4j
 public class WebFluxKit {
 
+    /**
+     * XMLHttpRequest 使用的请求头值。
+     */
     private static final String XML_HTTP_REQUEST = "XMLHttpRequest";
+    /**
+     * 标识 AJAX 请求来源的 HTTP 头名称。
+     */
     private static final String X_REQUESTED_WITH = "X-Requested-With";
+    /**
+     * 标识 JSON 内容的媒体类型。
+     */
     private static final String CONTENT_TYPE_JSON = "application/json";
+    /**
+     * WebFlux 工具处理的自定义请求头集合。
+     */
     private static final String[] xheaders = new String[]{"X-Forwarded-For", "x-forwarded-for"};
+    /**
+     * WebFlux 工具处理的标准 HTTP 请求头集合。
+     */
     private static final String[] headers = new String[]{"Cdn-Src-Ip", "Proxy-Client-IP", "WL-Proxy-Client-IP", "X-Real-IP", "HTTP_CLIENT_IP", "HTTP_X_FORWARDED_FOR"};
+    /**
+     * IPv4 回环地址。
+     */
     private static final String LOCAL_HOST = "localhost";
+    /**
+     * IPv6 回环地址。
+     */
     private static final String LOCAL_IP6 = "0:0:0:0:0:0:0:1";
+    /**
+     * 本地客户端连接的回环地址。
+     */
     private static final String LOCAL_IP = "127.0.0.1";
+    /**
+     * 代理地址未知时返回的标识。
+     */
     private static final String UNKNOWN = "unknown";
 
     /**

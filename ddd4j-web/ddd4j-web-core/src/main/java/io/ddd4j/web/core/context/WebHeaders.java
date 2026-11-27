@@ -19,19 +19,34 @@ package io.ddd4j.web.core.context;
  */
 public final class WebHeaders {
 
-    /** 常量值 {@code "Authorization"}。 */
+    /**
+     * 常量值 {@code "Authorization"}。
+     */
     public static final String AUTHORIZATION = "Authorization";
-    /** 常量值 {@code "Idempotency-Key"}。 */
+    /**
+     * 常量值 {@code "Idempotency-Key"}。
+     */
     public static final String IDEMPOTENCY_KEY = "Idempotency-Key";
-    /** 常量值 {@code "X-Request-Id"}。 */
+    /**
+     * 常量值 {@code "X-Request-Id"}。
+     */
     public static final String REQUEST_ID = "X-Request-Id";
-    /** 常量值 {@code "X-Trace-Id"}。 */
+    /**
+     * 常量值 {@code "X-Trace-Id"}。
+     */
     public static final String TRACE_ID = "X-Trace-Id";
-    /** 常量值 {@code "X-Tenant-Id"}。 */
+    /**
+     * 常量值 {@code "X-Tenant-Id"}。
+     */
     public static final String TENANT_ID = "X-Tenant-Id";
-    /** 常量值 {@code "X-Forwarded-For"}。 */
+    /**
+     * 常量值 {@code "X-Forwarded-For"}。
+     */
     public static final String FORWARDED_FOR = "X-Forwarded-For";
 
+    /**
+     * 限制调用方直接创建 <code>WebHeaders</code> 实例。
+     */
     private WebHeaders() {
     }
 }

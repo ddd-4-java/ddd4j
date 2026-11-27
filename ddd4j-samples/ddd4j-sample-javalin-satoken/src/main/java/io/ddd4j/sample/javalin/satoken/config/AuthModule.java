@@ -44,6 +44,9 @@ import io.ddd4j.sample.javalin.satoken.rbac.web.AuthorizationController;
  */
 public class AuthModule extends AbstractModule {
 
+    /**
+     * 为当前认证示例安装用户、角色、权限及主体相关 Guice 绑定。
+     */
     @Override
     protected void configure() {
         // ========================= RBAC 模块 =========================
