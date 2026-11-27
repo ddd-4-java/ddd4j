@@ -179,25 +179,13 @@
       "evidence": "仅 Maven 4/JDK 21 线使用的 BOM 冲突白名单；由该线 strict-artifacts 门禁验证"
     }
   ],
-  "platformResourcesOnlyOnJdk8": [
-    {
-      "path": "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/resources/application.properties",
-      "sha256": "29716abf1b07448c88e73f0ab1f105794638c5d04a7d513ea4cb13e3eafd9754",
-      "counterpart": "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/cqrs/QuarkusJpaProjectionService.java",
-      "evidence": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/QuarkusJpaProjectionServiceContractTest.java",
-      "property": "ddd4j.quarkus.cqrs.projection.cron",
-      "default": "*/30 * * * * ?",
-      "reason": "JDK 8 从属性读取 cron，JDK 17 由 CDI 生命周期管理器注册 Quartz 任务，JDK 21 使用注解默认值。三线分别验证同一属性和 30 秒默认值。",
-      "jdk17Manager": "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/cqrs/QuarkusJpaViewManager.java"
-    }
-  ],
+  "platformResourcesOnlyOnJdk8": [],
   "platformCdiResourcesOnlyOnJdk8": [
     {
-      "path": "ddd4j-data/ddd4j-data-projection-panache/src/main/resources/META-INF/beans.xml",
+      "path": "ddd4j-data/ddd4j-data-event-store-panache/src/main/resources/META-INF/beans.xml",
       "sha256": "eeda5bb2f3e034daa25fb64f2c7ff46c3055921f5e6bb012e5e575666f28ef6c",
-      "evidence": "ddd4j-data/ddd4j-data-projection-panache/src/test/java/io/ddd4j/data/projection/panache/ProjectionRepositoryCdiContractTest.java",
-      "reason": "Quarkus 1/JDK 8 使用 Java EE 2.0 annotated beans.xml 启用 CDI；高两线省略旧命名空间文件。三线共同 QuarkusTest 从 Arc 容器验证 QuarkusProjectionPositionRepository 的 ApplicationScoped 作用域。",
-      "jdk17Evidence": "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/projection/panache/ProjectionRepositoryCdiContractTest.java",
+      "evidence": "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/projection/panache/ProjectionRepositoryCdiContractTest.java",
+      "reason": "按发行线校验 Panache CDI 归档描述符，并用三线 Arc 集成测试验证投影仓储的应用作用域。",
       "testSha256ByJdk": {
         "8": "249ce607cf0d7f7865120d9d6dad08f6004e3afe4a868609c4ad4355b576b846",
         "17": "7079a9c8ef6da0979651b5b81f43ecf7554621c754edf2410030ac6f2496e561",
@@ -269,14 +257,14 @@
   ],
   "platformContentMappings": [
     {
-      "path": "ddd4j-data/ddd4j-data-cqrs-quarkus/src/test/java/io/ddd4j/data/cqrs/quarkus/SampleCommandHandler.java",
+      "path": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/command/SampleCommandHandler.java",
       "replacements": [
         {
           "from": "import javax.enterprise.context.ApplicationScoped;",
           "to": "import jakarta.enterprise.context.ApplicationScoped;"
         }
       ],
-      "evidence": "ddd4j-data/ddd4j-data-cqrs-quarkus/src/test/java/io/ddd4j/data/cqrs/quarkus/QuarkusCommandBusIT.java",
+      "evidence": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/command/QuarkusCommandRegistrationIT.java",
       "reason": "三线相同的命令处理器夹具用于 ArC 发现与路由集成测试，仅 Quarkus CDI 的 javax/jakarta 命名空间不同。"
     },
     {
@@ -405,14 +393,14 @@
       "reason": "Helidon CQRS 资源注册逻辑三线一致；仅 JAX-RS import 随平台变化"
     },
     {
-      "path": "ddd4j-data/ddd4j-data-cqrs-dropwizard/src/test/java/io/ddd4j/data/cqrs/dropwizard/ElRuntimeTest.java",
+      "path": "ddd4j-runtime/ddd4j-runtime-dropwizard/src/test/java/io/ddd4j/dropwizard/ElRuntimeTest.java",
       "replacements": [
         {
           "from": "import javax.el.ExpressionFactory;",
           "to": "import jakarta.el.ExpressionFactory;"
         }
       ],
-      "evidence": "ddd4j-data/ddd4j-data-cqrs-dropwizard/src/test/java/io/ddd4j/data/cqrs/dropwizard/ElRuntimeTest.java",
+      "evidence": "ddd4j-runtime/ddd4j-runtime-dropwizard/src/test/java/io/ddd4j/dropwizard/ElRuntimeTest.java",
       "reason": "三线相同测试锁定 EL ExpressionFactory 可加载；JDK 8 使用 javax.el，高两线使用 jakarta.el"
     },
     {
@@ -547,7 +535,7 @@
       "reason": "三线相同 MyBatis-Plus SQL 观测值 JSON 往返契约，仅 JDK 21 线使用本线 Jackson 3 ObjectMapper 包名"
     },
     {
-      "path": "ddd4j-data/ddd4j-data-mybatis/src/test/java/io/ddd4j/data/mybatis/adapter/SqlObservationJsonContractTest.java",
+      "path": "ddd4j-data/ddd4j-data-mybatis/src/test/java/io/ddd4j/data/mybatis/plugins/observation/SqlObservationJsonContractTest.java",
       "targetLines": [
         "3.0.x"
       ],
@@ -557,7 +545,7 @@
           "to": "import tools.jackson.databind.ObjectMapper;"
         }
       ],
-      "evidence": "ddd4j-data/ddd4j-data-mybatis/src/test/java/io/ddd4j/data/mybatis/adapter/SqlObservationJsonContractTest.java",
+      "evidence": "ddd4j-data/ddd4j-data-mybatis/src/test/java/io/ddd4j/data/mybatis/plugins/observation/SqlObservationJsonContractTest.java",
       "reason": "三线相同 SQL 观测值 JSON 往返契约，仅 JDK 21 线使用本线 Jackson 3 ObjectMapper 包名"
     },
     {
@@ -765,7 +753,7 @@
       "reason": "三线验证相同 Broker Header 与 payload 排除契约，JDK 21 仅使用 Jackson 3 导入命名空间"
     },
     {
-      "path": "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/arch/ProjectionJpaModuleIndependenceTest.java",
+      "path": "ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/projection/jpa/arch/ProjectionJpaModuleIndependenceTest.java",
       "replacements": [
         {
           "from": "                            \"javax..\",\n",
@@ -776,7 +764,7 @@
         "2.0.x",
         "3.0.x"
       ],
-      "evidence": "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/arch/ProjectionJpaModuleIndependenceTest.java",
+      "evidence": "ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/projection/jpa/arch/ProjectionJpaModuleIndependenceTest.java",
       "reason": "JPA 模块独立性测试仅在 JDK 8 线允许 javax 包名；Jakarta 线不再允许该包名"
     },
     {
@@ -855,7 +843,7 @@
       "reason": "2.0.x 使用的 Testcontainers 版本将 RabbitMQContainer 放在 containers 包；三线容器测试逻辑一致"
     },
     {
-      "path": "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/TestApp.java",
+      "path": "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/projection/jpa/TestApp.java",
       "replacements": [
         {
           "from": "import org.springframework.boot.autoconfigure.domain.EntityScan;",
@@ -865,7 +853,7 @@
       "targetLines": [
         "3.0.x"
       ],
-      "evidence": "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/ProjectionPositionJpaIT.java",
+      "evidence": "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/projection/jpa/ProjectionPositionJpaIT.java",
       "reason": "三线 JPA 测试应用显式注册同一仓储扫描；Spring Boot 4 仅 EntityScan 导入包名不同"
     },
     {
@@ -997,25 +985,25 @@
       "reason": "同一组 Quarkus 资源生命周期契约测试仅按平台切换 CDI 注解命名空间"
     },
     {
-      "path": "ddd4j-data/ddd4j-data-projection-panache/src/test/java/io/ddd4j/data/projection/panache/arch/ProjectionPanacheModuleIndependenceTest.java",
+      "path": "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/projection/panache/arch/ProjectionPanacheModuleIndependenceTest.java",
       "replacements": [
         {
           "from": "                            \"javax..\",",
           "to": "                            \"jakarta..\","
         }
       ],
-      "evidence": "ddd4j-data/ddd4j-data-projection-panache/src/test/java/io/ddd4j/data/projection/panache/arch/ProjectionPanacheModuleIndependenceTest.java",
+      "evidence": "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/projection/panache/arch/ProjectionPanacheModuleIndependenceTest.java",
       "reason": "三线执行相同的 Projection Panache 模块依赖边界测试；JDK 8 的 Quarkus 使用 javax，JDK 17/21 使用 jakarta。仅允许该精确包名前缀替换，其他测试逻辑与说明逐字一致。"
     },
     {
-      "path": "ddd4j-data/ddd4j-data-projection-quarkus/src/test/java/io/ddd4j/data/projection/quarkus/arch/ProjectionQuarkusModuleIndependenceTest.java",
+      "path": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/arch/ProjectionQuarkusModuleIndependenceTest.java",
       "replacements": [
         {
           "from": "                            \"javax..\",",
           "to": "                            \"jakarta..\","
         }
       ],
-      "evidence": "ddd4j-data/ddd4j-data-projection-quarkus/src/test/java/io/ddd4j/data/projection/quarkus/arch/ProjectionQuarkusModuleIndependenceTest.java",
+      "evidence": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/arch/ProjectionQuarkusModuleIndependenceTest.java",
       "reason": "三线执行相同的 Projection Quarkus 模块依赖边界测试；JDK 8 的 Quarkus 使用 javax，JDK 17/21 使用 jakarta。仅允许该精确包名前缀替换，其他测试逻辑与说明逐字一致。"
     },
     {
@@ -2009,28 +1997,32 @@
     {
       "path": "ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/config/SpringCoreConfig.java",
       "sourceSha256": [
-        "aaeaaad5b961643ec77a8b2e28c2431b90f588d31091dff05eb90bf4c5d1ffee",
-        "595902436b40189292d65d8a55b0cfd9ab3aaa38bd1852b29d95e71e898b1bb6",
-        "6269d7fdfbcc5b233f3fb24cdf6b0977fc91b9a8c19563aeecec363b29fbb2cb"
+        "4dbce3e86e92feec52873cd1d9c377c342e511de29d1b9de3b6127b5083ebdcd",
+        "628ffe4ba64348c34b8c72575ff10fedda0fb56f7a4d9cf302901336c573a4f5",
+        "deb04b8aa69e6c53650e4f958f851468d1a5afb88a7b4392bde83eb258ee0840"
       ],
       "evidence": "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/config/SpringCoreConfigReadinessContractTest.java",
-      "testSha256": "dcc4890d63dea0dc4b47ab1f80df1f6cb2593a24d0f34095675aec4c6348b424",
-      "reason": "JDK 8 用 Collectors.toList，JDK 17/21 用 Stream.toList；注册表复制输入集合，三线同一 Spring 容器测试验证 Ordered 就绪检查项次序与结果"
+      "reason": "JDK 8 用 Collectors.toList，JDK 17/21 用 Stream.toList；注册表复制输入集合，三线同一 Spring 容器测试验证 Ordered 就绪检查项次序与结果",
+      "testSha256ByJdk": {
+        "8": "61b047a7051e242f6b3047b7bc88262374d743924770a742dba3dfcac821c692",
+        "17": "4ba9c0da7871a6619ad7bfb6c7a2a2b5d89b64b65842338bb0a28d8f34a95146",
+        "21": "61b047a7051e242f6b3047b7bc88262374d743924770a742dba3dfcac821c692"
+      }
     },
     {
       "path": "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/cqrs/QuarkusJpaProjectionService.java",
       "sourceSha256": [
-        "9005127c3b48a62f1f8bd93364475311ac154c385bf4d94c222ccfd40fdecfbe",
-        "b5f697053cc9fb9cfd159d703ffe39c9adec861e5c0393810aa220018b7ff881",
-        "191f55cbbba21f5e6029ba3185c15124a39f8cddf9a45ee0e4a6045f33bee562"
+        "15cf58398ab0e218d10a26d9f26f8e5679abefd7799c47ded527112fcd7c8c22",
+        "9f716469a8fd9b7dc76d2fc0c9ce10102f8e6751fbe051715c3836a62497b60e",
+        "9f716469a8fd9b7dc76d2fc0c9ce10102f8e6751fbe051715c3836a62497b60e"
       ],
       "evidence": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/QuarkusJpaProjectionServiceContractTest.java",
       "testSha256ByJdk": {
-        "8": "e50d1fd7cb43f7755104cc32e4ddd8d26e1feee001035673d68fe44659171bbb",
-        "17": "078341ac520ff1d26874f97ef73e49d799ad49a88879417624cf544f6ce7d03c",
-        "21": "078341ac520ff1d26874f97ef73e49d799ad49a88879417624cf544f6ce7d03c"
+        "8": "f09f46186f601f4a463aee03a0bd1f7d7c5cd27460f3c24c6a6e9756d60928ba",
+        "17": "f580124092a348b95058bc6b193c3e7b57499db82bebe6dc05fff4ee0ef0d7b3",
+        "21": "e88d7449975b6c1df2db074b42bc4a6fd1d306669fd5bb45b53d91fd5e5f11c4"
       },
-      "reason": "Quarkus 1.x 使用 javax 与配置文件默认 cron，3.x 使用 jakarta 与注解内默认 cron；三线测试验证 30 秒默认值、空仓储跳过及单流失败隔离，Quarkus 生命周期定向测试验证容器启动"
+      "reason": "三线仅在显式选择投影模式后调度，Quarkus 1 使用 javax、平台 Quartz 和 JDK 8 API，Quarkus 3 使用 Jakarta。真实 ArC 验证默认关闭、legacy 任务触发与释放、durable 检查点和失败回滚。"
     },
     {
       "path": "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/extension/DddCdiExtension.java",
@@ -2050,30 +2042,30 @@
     {
       "path": "ddd4j-extensions/ddd4j-extension-monitor/src/main/java/io/ddd4j/extension/monitor/channel/feishu/FeishuClient.java",
       "sourceSha256": [
-        "c450f2f5926ef9e8517429c6a44d2b7ee59721dfc77a57aa06512e1e9cc60722",
-        "90c706cab2d6295047502d8938177d43b85150b0a93f0ae74fec8e9f46d312d6",
-        "52af73b8385a3b8c44f457b6e953111a458d5e5f9f2dc0a6cb36c8aacf9b60d2"
+        "f44a6a54c7ed61627fe959cd9a03527586775d6a69a96372ffd11ebfa64d399f",
+        "ed5b1f6d0d35a3e42aaa938dfeebe1ae047dc9094736a5004e595a561b32e956",
+        "092f5496e193eb16b949dc42a5fc73531138a3b39d1adca8abc1ae4af90b97a3"
       ],
       "evidence": "ddd4j-extensions/ddd4j-extension-monitor/src/test/java/io/ddd4j/extension/monitor/channel/feishu/FeishuClientTest.java",
       "testSha256ByJdk": {
-        "8": "dd0b426555840bbb97a657fd4dcf80cf98a69e6732280e1d7ec9d204fd8d5ea6",
-        "17": "136bcacc7c5f75192f42b68478a445e297283cd9c04468bdcc0d7e2b3171c96e",
-        "21": "ddb6d9339b0bf070e448a1c34aa34f086055c0b31cd5b161ddcb17d03490d54e"
+        "8": "b2afd0e24cc6429694c83766a9ca742b9facf0623e77c4e68010e25603c083b3",
+        "17": "a08c9e39d160f56e553340433546ad36988c4f9b9856bf2158eae425101ebcab",
+        "21": "3cc8ca00abeb1cd12cd2cbefe2bf0ed8b58bf218adf40a1712503598bec0be95"
       },
       "reason": "JDK 8 使用 Hutool HTTP，JDK 17/21 使用 JDK HttpClient；三线测试均验证 POST、签名与非签名请求体"
     },
     {
       "path": "ddd4j-extensions/ddd4j-extension-monitor/src/main/java/io/ddd4j/extension/monitor/channel/feishu/FeishuRobotSender.java",
       "sourceSha256": [
-        "9058775ac94bb75f379cb5bd323f2b6074ea4f7bd9b03b6181e796f2078f7a77",
-        "1e625cb121c5b559db99c6d1dc69d18d8daaf15d4132258d7567a671436e2490",
-        "5338733b372e5e4ab5f0d6494f4fbcbb501a02e35a73694b38cdee260944486a"
+        "6a8f592fb231d1266ed343a45d7e16fd1cab43b39cd3ba9bf312084f26889ffa",
+        "c56a235f9c5815fc81eadfeb1efd0e5483b1a8125d21eab89602f29f64c1e6b5",
+        "75e515c781fb4083df93e7e568628007a0aa77bd1bc8922a4cedcf12f9165ff2"
       ],
       "evidence": "ddd4j-extensions/ddd4j-extension-monitor/src/test/java/io/ddd4j/extension/monitor/channel/feishu/FeishuRobotSenderContractTest.java",
       "testSha256ByJdk": {
-        "8": "7678628da088a05637d31b1f28e06b334cd2674861f89c484e3291ed2f84ca07",
-        "17": "7678628da088a05637d31b1f28e06b334cd2674861f89c484e3291ed2f84ca07",
-        "21": "7678628da088a05637d31b1f28e06b334cd2674861f89c484e3291ed2f84ca07"
+        "8": "a47fb44676ede918f9fd051dd572f315d4a177fa4763d1c95772cda58c508c57",
+        "17": "58636ff6d1f43358b98f94b23e423a911a47b25788762534af446c70a901b688",
+        "21": "a47fb44676ede918f9fd051dd572f315d4a177fa4763d1c95772cda58c508c57"
       },
       "reason": "JDK 8 使用 Arrays.asList/Collections.singletonList，高线使用 List.of；三线共同测试验证 post 富文本消息封装及发送"
     },
@@ -2081,14 +2073,14 @@
       "path": "ddd4j-extensions/ddd4j-extension-monitor/src/main/java/io/ddd4j/extension/monitor/channel/wecom/WeComClient.java",
       "sourceSha256": [
         "d39805fb1289904fcbf18597f1bd52c701d837b89311ef65ab9f10d65da21b4f",
-        "2674379cd1ee86ac7a34b181f30dcbdcf2739d9d5478dceb25ce6abf8a879249",
-        "b55d98b2364e0afc34cbe11ced0ddccc214f24207edc62f46587364477d629d2"
+        "ecc02adf0416ae75c8c83e9c47183e8847a7fe70ffffeb32789f5c3303ff1e5a",
+        "4c76df83aa07c242aa16f60e7947489fd008722f0d7ac200637145e84174566f"
       ],
       "evidence": "ddd4j-extensions/ddd4j-extension-monitor/src/test/java/io/ddd4j/extension/monitor/channel/wecom/WeComClientTest.java",
       "testSha256ByJdk": {
-        "8": "fdfc850d42011fa47d7ea4f051ebaddefc91f60c8c230d6cfb8d6d9ba715f888",
-        "17": "6ccde9be427992f4e38641f85c2a665ed515525fd3c835ffbd85c22e47799f58",
-        "21": "b72d7d944e68425065364df05d83997287ced4bf5bc6cda31c4f85040fbe349b"
+        "8": "7a09ae323a53b0143b21f3b88efdecf6df79c19eece9c9056c615251974dcdb3",
+        "17": "001243df874e2ddf8bb8edc91ec55000025d84c89f10b2486f58bda908c019df",
+        "21": "0567936b30bbe849f50c32b11a2e447d69415ef72d07203d0fb8d1a186bccd15"
       },
       "reason": "JDK 8 使用 Hutool HTTP，JDK 17/21 使用 JDK HttpClient；三线测试均验证企业微信 webhook 请求"
     },
@@ -2110,46 +2102,62 @@
     {
       "path": "ddd4j-runtime/ddd4j-runtime-testkit/src/main/java/io/ddd4j/runtime/testkit/RuntimeContractAdapter.java",
       "sourceSha256": [
-        "5f2ed2a2c9a3cbebec8a4d7cca86757a218dd094b6e540b753281183932001e9",
-        "a8dddea12ffcab66aa70de484fd756a50afece2d968179550e6b7c7549d973be",
-        "a8dddea12ffcab66aa70de484fd756a50afece2d968179550e6b7c7549d973be"
+        "25ae3461fcd662bcefa5fee8d0131be1adf7d62e644bbee6705d054d7f46ec39",
+        "3581391cb88fcef4c32748c226df3c8f05186f62065ed547896d0ff305e161c5",
+        "458bcf3cfac2f7300c042c541891b4dff652647b6f8ca602d283878f5c05bc08"
       ],
       "evidence": "ddd4j-runtime/ddd4j-runtime-testkit/src/test/java/io/ddd4j/runtime/testkit/RuntimeContractAdapterTest.java",
-      "testSha256": "11b404beab4386deff57ed974590c8c0745069d5a42b73a30c702b61e3154eae",
-      "reason": "三线共同测试验证服务注册表拒绝 null 键和值、保留不可变快照；JDK 8 使用显式校验与不可变 Map 包装，JDK 17/21 使用 Map.copyOf，行为一致"
+      "reason": "三线共同测试验证服务注册表拒绝 null 键和值、保留不可变快照；JDK 8 使用显式校验与不可变 Map 包装，JDK 17/21 使用 Map.copyOf，行为一致",
+      "testSha256ByJdk": {
+        "8": "58423866197478b26bb703e660f534955bf15e6f8b2aa15d68366510073d4dd2",
+        "17": "3855e6602956c83552750bf705110abd24af34503a0071106c3b2b26de675005",
+        "21": "58423866197478b26bb703e660f534955bf15e6f8b2aa15d68366510073d4dd2"
+      }
     },
     {
       "path": "ddd4j-extensions/ddd4j-extension-qlexpress/src/main/java/io/ddd4j/extension/qlexpress/function/FormatDateFunction.java",
       "sourceSha256": [
         "7fd034153d34ff2caa9edc91412a531a8a21d0421794c8bccb5c87ce1f650d0d",
-        "3a28fc07e964429db29c8fc9209254b35eb04899080260ecf31ec4ade53f202b",
+        "edbb7330aae5129b30174a74aa55e9378691eb8a6d275b072d4fb89587092eff",
         "3a28fc07e964429db29c8fc9209254b35eb04899080260ecf31ec4ade53f202b"
       ],
       "evidence": "ddd4j-extensions/ddd4j-extension-qlexpress/src/test/java/io/ddd4j/extension/qlexpress/function/FormatDateFunctionContractTest.java",
-      "testSha256": "95616e6c3f786b3b42227f648a69eb6fea24354b82cd128f391593134f68786a",
-      "reason": "三线共同测试验证 Date 按系统时区及 java.time 日期格式化；JDK 8 使用显式 instanceof 转换，高两线使用模式匹配，返回结果一致"
+      "reason": "三线共同测试验证 Date 按系统时区及 java.time 日期格式化；JDK 8 使用显式 instanceof 转换，高两线使用模式匹配，返回结果一致",
+      "testSha256ByJdk": {
+        "8": "ec4aa6414c84607bb84548d0703bdb9de395ad880ad0b3409693b75c538b3488",
+        "17": "0e10556fe07020d86a350cd1bbece8c384239dc2d19bc620f030d91e75126215",
+        "21": "ec4aa6414c84607bb84548d0703bdb9de395ad880ad0b3409693b75c538b3488"
+      }
     },
     {
       "path": "ddd4j-extensions/ddd4j-extension-qlexpress/src/main/java/io/ddd4j/extension/qlexpress/function/BuiltInFunctions.java",
       "sourceSha256": [
-        "7c6d4b0a7ed82d6681d8187a3476edecb558a3852ad21a4b0ad6bbdd5391a933",
-        "7f7cabf9c82a5b7e3daf9d3541e1705ea12666ba8a6223719e59753531d150b0",
-        "ce2f4166d2198322404cd6e5f477c510a9737c93eec8fa94cbbf72ecc56b52e8"
+        "f829be532ea746d7ff1b292aac5a991f1de62d18e5e9dacf73443242b4afbb93",
+        "41c91db1f0f3f9ab963eb3a4a247b3a5fdb248e934bfba6d01ca5dbe8e50c540",
+        "7dc1e5b5bf70d9ba01505199293af8f31b108d95631c173cd42a2f2f06a13668"
       ],
       "evidence": "ddd4j-extensions/ddd4j-extension-qlexpress/src/test/java/io/ddd4j/extension/qlexpress/function/BuiltInFunctionsContractTest.java",
-      "testSha256": "4401d43513765129d0cc4ce2eddfaf9b361d6cc14a566aae02bd97e6db56ba51",
-      "reason": "JDK 8 使用 Collections.unmodifiableList(Arrays.asList)，高两线使用 List.of；三线共同测试锁定内置函数顺序和返回列表不可修改的行为"
+      "reason": "JDK 8 使用 Collections.unmodifiableList(Arrays.asList)，高两线使用 List.of；三线共同测试锁定内置函数顺序和返回列表不可修改的行为",
+      "testSha256ByJdk": {
+        "8": "45cb09bcd36e3074ae571a429989287590133eed5af00601f40ee92dd922d9ba",
+        "17": "36f487c7a9ff7a95b9883a93b7b21dc8f492404d17424e4e10e9f7cd2cddd2f0",
+        "21": "45cb09bcd36e3074ae571a429989287590133eed5af00601f40ee92dd922d9ba"
+      }
     },
     {
       "path": "ddd4j-runtime/ddd4j-runtime-testkit/src/main/java/io/ddd4j/runtime/testkit/RuntimeFixtures.java",
       "sourceSha256": [
-        "8f17a4eff7d96febb797b033bd8051cd47ca1b966f2ce9d623f29e7228f7a9fc",
-        "a935c2e1d8ac69c90bf51a24e40e5aa7e02e8c11bb698acf12c19ed96646c911",
-        "6f115800fbee4e1fde4e5ec0badbb2f191312d773f97f90ab76d892d0bd599de"
+        "bd47a9dd3537e6f96ff1da11999850c497a347afe059602afabdf232e2481c92",
+        "a039ca2fdd9ff53315ab6390b2de3dd8576074d0d9ae47448ae878170fbfddf7",
+        "c9e27491431c2eabc6f64a7bea5ac362c45c63736c1d4cbb861a4d4c6466dc4c"
       ],
       "evidence": "ddd4j-runtime/ddd4j-runtime-testkit/src/test/java/io/ddd4j/runtime/testkit/RuntimeFixturesContractTest.java",
-      "testSha256": "7e9ef2a6708ac6ac1bb2248cd3b66f7f64276b9ac13ea556b549bd1c9bc50720",
-      "reason": "JDK 8 使用不可修改集合包装，高两线使用 List.of 和 Map.of；三线共同测试锁定就绪项及服务注册表的内容和不可修改行为"
+      "reason": "JDK 8 使用不可修改集合包装，高两线使用 List.of 和 Map.of；三线共同测试锁定就绪项及服务注册表的内容和不可修改行为",
+      "testSha256ByJdk": {
+        "8": "3d706ffa491446730beddac6b8bc0d0f0181d0ed617e9add29c4815f52bbe931",
+        "17": "41e5489166d6ae9d310a0cb38c1f2d7799124251a6be52becdb4b06730bcb2ef",
+        "21": "3d706ffa491446730beddac6b8bc0d0f0181d0ed617e9add29c4815f52bbe931"
+      }
     },
     {
       "path": "ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/listener/MQListener.java",
@@ -2187,13 +2195,17 @@
     {
       "path": "ddd4j-runtime/ddd4j-runtime-helidon/src/main/java/io/ddd4j/helidon/Ddd4jHelidonRuntime.java",
       "sourceSha256": [
-        "921a212bd9b20e7618a870e66daa888b4cbfb15b9e42e59ae0cf95a280f34530",
-        "0f9139ea34142a67956facde3cc2723d2c3df86a0255ac1266ecc7602ad5d9ff",
-        "0f9139ea34142a67956facde3cc2723d2c3df86a0255ac1266ecc7602ad5d9ff"
+        "64f02baba648aa49118123becb7f3feb3772016f31ec0b39ea36bcdb99340a87",
+        "7b8df7ab3ad733b53dd66c3a81452026e58aa59ed591170af32583851f672308",
+        "a4a3eb388b9f011a2935074087ca54df3fd328dada5ff7f075591ab150fff305"
       ],
       "evidence": "ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/Ddd4jHelidonRuntimeTest.java",
-      "testSha256": "73fdb8541d077c2d19736d7b895923bb9fe22b74bd6c5342a51ebba4f5f9b8a5",
-      "reason": "三线共同运行时契约测试验证 Helidon 生命周期、服务注册、就绪状态和默认空贡献者集合；JDK 8 使用 Collections.emptyList，高两线使用 List.of，业务语义一致"
+      "reason": "三线共同运行时契约测试验证 Helidon 生命周期、服务注册、就绪状态和默认空贡献者集合；JDK 8 使用 Collections.emptyList，高两线使用 List.of，业务语义一致",
+      "testSha256ByJdk": {
+        "8": "542fb1495bb4ad0e2752fac27f78f6bbca7b25c302cee03815afe9c47dddabac",
+        "17": "8154e0995bebdd073259b9d3f9f59a2bb31ce77437ab90220f4286d2aac05ce7",
+        "21": "542fb1495bb4ad0e2752fac27f78f6bbca7b25c302cee03815afe9c47dddabac"
+      }
     },
     {
       "path": "ddd4j-runtime/ddd4j-runtime-micronaut/src/main/java/io/ddd4j/micronaut/Ddd4jMicronautRuntime.java",
@@ -2209,13 +2221,17 @@
     {
       "path": "ddd4j-runtime/ddd4j-runtime-micronaut/src/main/java/io/ddd4j/micronaut/health/Ddd4jMicronautReadinessHealthIndicator.java",
       "sourceSha256": [
-        "67cca1b611fe5c6cf0a4504629989482dc1b1829484966f17d34581fc5ef8f8a",
-        "932480e12f22ebc07a7f198130d76996057dd0787466d1a49645d1d152a9bc7f",
-        "932480e12f22ebc07a7f198130d76996057dd0787466d1a49645d1d152a9bc7f"
+        "eec05d855323817e96fae2ae5ebc0b6116076c6ffae1611d7539e382df19c889",
+        "482e07f5e83977b7a0bb941748d97d19494cb6e638a88d4378902b4ac1ec9713",
+        "beb724f38a6765875ba1b291a6523d6f23831a334a34f3b41329f7913ff51322"
       ],
       "evidence": "ddd4j-runtime/ddd4j-runtime-micronaut/src/test/java/io/ddd4j/micronaut/health/Ddd4jMicronautReadinessHealthIndicatorTest.java",
-      "testSha256": "482fcd3e1600d0ea1c4892a2572a8ddd766b53a0caedbcac50971b0c46b3b3e0",
-      "reason": "三线共同测试验证就绪状态、检查数量及错误详情不外露；JDK 8 使用 Collections.singletonMap，高两线使用 Map.of，输出语义一致"
+      "reason": "三线共同测试验证就绪状态、检查数量及错误详情不外露；JDK 8 使用 Collections.singletonMap，高两线使用 Map.of，输出语义一致",
+      "testSha256ByJdk": {
+        "8": "f145f7eed9e2d310b3f37cec2d6a4ad294c75f68ac43cdc0028f4c3b5f560716",
+        "17": "cff203b8d3c28c8abbb7cf3a20e3bc6f468c0621ead7b0d314c2e887f104d107",
+        "21": "f145f7eed9e2d310b3f37cec2d6a4ad294c75f68ac43cdc0028f4c3b5f560716"
+      }
     },
     {
       "path": "ddd4j-runtime/ddd4j-runtime-dropwizard/src/main/java/io/ddd4j/dropwizard/Ddd4jBundle.java",
@@ -2297,13 +2313,17 @@
     {
       "path": "ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/cqrs/SpringJpaProjectionPositionRepository.java",
       "sourceSha256": [
-        "3ef320c32198b3c83aa4407e3cbb9f73f64b18ab5571627040ec88a09b26be5e",
-        "ea1933efa7b1d156d39b34d5b6b9d7f0727f63c1368d5536bf82fb0132c78fc9",
-        "ea1933efa7b1d156d39b34d5b6b9d7f0727f63c1368d5536bf82fb0132c78fc9"
+        "78e89fa0d14b70174d325afb1f7f8f8db808755e1f2f790844e4394ba751e671",
+        "d7d79efbf15c3a2cb8b344583be0586a4a4f5c6f2e75832de62fdb47ad9e7eae",
+        "d7d79efbf15c3a2cb8b344583be0586a4a4f5c6f2e75832de62fdb47ad9e7eae"
       ],
       "evidence": "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/cqrs/SpringJpaProjectionPositionRepositoryTest.java",
-      "testSha256": "686a954978ccaabaa10449a32e38be85a88ed90132f035d73eda28b4928a7c65",
-      "reason": "三线共同测试验证 findAll 顺序与不可修改列表，并覆盖 resetToZero；JDK 8 使用不可修改包装和 Collectors，JDK 17/21 使用 Stream.toList，业务语义一致"
+      "reason": "三线共同测试验证 findAll 顺序与不可修改列表，并覆盖 resetToZero；JDK 8 使用不可修改包装和 Collectors，JDK 17/21 使用 Stream.toList，业务语义一致",
+      "testSha256ByJdk": {
+        "8": "a12c03ca536b33332ae8ee7608803383b15000f66b043f748db7bfcea47e2b2b",
+        "17": "a1ac36560c41b1d1837b260c0867d1534f41cf6a9acbf7ac33a6cf1b6d669c08",
+        "21": "a12c03ca536b33332ae8ee7608803383b15000f66b043f748db7bfcea47e2b2b"
+      }
     },
     {
       "path": "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/command/QuarkusCommandBus.java",
@@ -2313,8 +2333,8 @@
         "4ea7631e90af820977519ab95d74565ad1aacfbf29b8166e3d0595887bf2f555"
       ],
       "evidence": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/command/QuarkusCommandBusPlatformContractTest.java",
-      "testSha256": "d35b567aef06ad9faa535682eafc606752c4c63f4daefb1d5f6be2aeb5160cf0",
-      "reason": "三线共同测试锁定 CDI 作用域、请求上下文、注入与代理构造及 core 路由继承；各线真实 ArC IT 均验证命令路由、冲突拒绝和未注册命令，javax/jakarta 与 JDK 8 空集合写法为平台适配"
+      "reason": "三线共同测试锁定 CDI 作用域、请求上下文、注入与代理构造及 core 路由继承；各线真实 ArC IT 均验证命令路由、冲突拒绝和未注册命令，javax/jakarta 与 JDK 8 空集合写法为平台适配",
+      "testSha256": "d35b567aef06ad9faa535682eafc606752c4c63f4daefb1d5f6be2aeb5160cf0"
     },
     {
       "path": "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/cqrs/QuarkusJpaProjectionPosition.java",
@@ -2330,13 +2350,17 @@
     {
       "path": "ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/cqrs/SpringJpaProjectionPosition.java",
       "sourceSha256": [
-        "b4b57e00662e9c0dd0653a73403720418f889f747c1c2e328255fdd42a6aa698",
-        "195f78782b4a11f041db5e92fbd3ca2689d48e36cce05e642a385b157c2f88d7",
-        "195f78782b4a11f041db5e92fbd3ca2689d48e36cce05e642a385b157c2f88d7"
+        "4762f1fa6d7cab5f6a51f00d6105ed57331b89e632f2decfc87f4b39b40df37a",
+        "45d942b21674d5f15435eed1a48bae915f5983ce2b7a9a2269c730c0d4312ea5",
+        "6996ada6d72c154528d714fdb78ac30a10d296e4e9e36320b4ad11e3ea5b90d8"
       ],
       "evidence": "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/cqrs/SpringJpaProjectionPositionDatabaseTest.java",
-      "testSha256": "842869d6ca7097aed117eee29f9a5131948d87d6db8c66ee3ba300a35591f989",
-      "reason": "三线相同的 H2 JPA 测试验证偏移量实体持久化与重置；JDK 8 javax.persistence 和高两线 jakarta.persistence 以及 @Serial 标注差异由源码哈希锁定"
+      "reason": "三线相同的 H2 JPA 测试验证偏移量实体持久化与重置；JDK 8 javax.persistence 和高两线 jakarta.persistence 以及 @Serial 标注差异由源码哈希锁定",
+      "testSha256ByJdk": {
+        "8": "907faf0eafdae0e9d6301cec1d8b3d97a2d03fc4d773349dbe219a85f95b27bf",
+        "17": "88cfe6a7b5b0f199ef50a26e89ed020084626a85f1ccb063e0138dcd61428733",
+        "21": "907faf0eafdae0e9d6301cec1d8b3d97a2d03fc4d773349dbe219a85f95b27bf"
+      }
     },
     {
       "path": "ddd4j-mq/ddd4j-mq-spring/src/main/java/io/ddd4j/mq/spring/registry/MQListenerBeanPostProcessor.java",
@@ -2352,13 +2376,17 @@
     {
       "path": "ddd4j-extensions/ddd4j-extension-monitor/src/main/java/io/ddd4j/extension/monitor/channel/dingtalk/DingTalkClient.java",
       "sourceSha256": [
-        "7549749b3bb9cca76959b345c23775da6ed34be3e2c37e12ae93d5e18430471d",
-        "08463e65a804f8967a3523236f7d12a237471af8d4fde593c68613f5478f9114",
-        "08463e65a804f8967a3523236f7d12a237471af8d4fde593c68613f5478f9114"
+        "595366c4293abcbc29b754270266e5252914f46b7f7c07b294820540d6b3d8e1",
+        "a704b5f53b14b3cc30dae7084ef25320f934998bee3971b06e1e9474d293d1e6",
+        "54ffac85bc8a590466ed1c40ed8aa50465f85c5e4a0b7855f401419c729eae1a"
       ],
       "evidence": "ddd4j-extensions/ddd4j-extension-monitor/src/test/java/io/ddd4j/extension/monitor/channel/dingtalk/DingTalkClientTest.java",
-      "testSha256": "cccc8332ceae76822b2058b5a55bb64de11ef88cea151fafcab26cad7edda49a",
-      "reason": "三线共同的本地 HTTP 端到端测试验证 POST 消息体、时间戳与 HMAC 签名；JDK 8 的 Hutool HTTP 和高两线 JDK HttpClient 为独立传输适配，源码与测试哈希精确锁定"
+      "reason": "三线共同的本地 HTTP 端到端测试验证 POST 消息体、时间戳与 HMAC 签名；JDK 8 的 Hutool HTTP 和高两线 JDK HttpClient 为独立传输适配，源码与测试哈希精确锁定",
+      "testSha256ByJdk": {
+        "8": "4c1a59ec3fd6a5339b553c2d3fac70da680fb09189cabb8f80dc26a26cae15ad",
+        "17": "ae558ae133461f9394d00d4fc81b441472b4284e68bf5a165d836b61cffda8c5",
+        "21": "4c1a59ec3fd6a5339b553c2d3fac70da680fb09189cabb8f80dc26a26cae15ad"
+      }
     },
     {
       "path": "ddd4j-extensions/ddd4j-extension-excel/src/main/java/io/ddd4j/extension/excel/fill/ExcelFiller.java",
@@ -2418,13 +2446,17 @@
     {
       "path": "ddd4j-extensions/ddd4j-extension-excel/src/main/java/io/ddd4j/extension/excel/convert/BigDecimalStringConverter.java",
       "sourceSha256": [
-        "eb4a9e1b11d040e4d3f0a4e549c5acf37725288b755ad567c717f4ed8bc22f34",
-        "1740d65023312a6825a10460494063e5732598a886c9f43304317da024e471fd",
-        "1740d65023312a6825a10460494063e5732598a886c9f43304317da024e471fd"
+        "e7abd11a99050421f1e90a9871b9fdc635b3e267db2946bd3f93a85130d07804",
+        "e274bbaca182f267fad162049504642831b7e66a56f5fbd944ea0c2ed0e69d07",
+        "d16f3bcb95a6393396e080ed2518b776f79b94c48bbfc84f33572d40b7d039eb"
       ],
       "evidence": "ddd4j-extensions/ddd4j-extension-excel/src/test/java/io/ddd4j/extension/excel/convert/ConvertersTest.java",
-      "testSha256": "792a48894b850ac5b3e28fba8d730ed8fa45f9f24912b42f96129cf9883636f8",
-      "reason": "金额字符串读写由三线相同的 ConvertersTest 7 项覆盖；JDK 8 的传统 instanceof 与高两线模式匹配及 Javadoc 表达差异由源码哈希锁定"
+      "reason": "金额字符串读写由三线相同的 ConvertersTest 7 项覆盖；JDK 8 的传统 instanceof 与高两线模式匹配及 Javadoc 表达差异由源码哈希锁定",
+      "testSha256ByJdk": {
+        "8": "946010564b78820e82514b4a6f87d864d04f144d463082630033201ac6c1fb3d",
+        "17": "9bc55896d588e61df4ab63ffefabfc736f2e5a44f49d8c7dbbfa01d762f6fca0",
+        "21": "946010564b78820e82514b4a6f87d864d04f144d463082630033201ac6c1fb3d"
+      }
     },
     {
       "path": "ddd4j-ddd-rules/ddd4j-ddd-rules-cola/src/main/java/io/ddd4j/ddd/cola/checker/ColaArchitectureChecker.java",
@@ -2451,68 +2483,92 @@
     {
       "path": "ddd4j-extensions/ddd4j-extension-license/src/main/java/io/ddd4j/extension/license/keystore/LicenseKeyStoreGenerator.java",
       "sourceSha256": [
-        "579158b96db6a8d9bdbcc63318325f9d838bce0b4378f641390f5c65724e8a05",
-        "0bf05050c04524f231e7103b4910169ce8e4eb166f7cdbc44f4de60b79bb5c11",
-        "0bf05050c04524f231e7103b4910169ce8e4eb166f7cdbc44f4de60b79bb5c11"
+        "dd3582c9168c610b58b1966ad65e1df1d5c49562e4d4ae0bb3410f60109233b7",
+        "011e5718dcf3727afcbd94877aa9c013ac84b7233d897d9f24bae233add97916",
+        "a67c2930391d84e4da934566e67ce7ef2ea70be6cec7dc33cc398f31c1578127"
       ],
       "evidence": "ddd4j-extensions/ddd4j-extension-license/src/test/java/io/ddd4j/extension/license/LicenseKitTest.java",
-      "testSha256": "d2898c90c6afa1e8739bfd46afd24c303f0566a5101e8a3e0a044e7eb613849c",
-      "reason": "三线 keytool 命令、超时及 UTF-8 输出处理一致；JDK 8 用缓冲循环读取进程输出，高两线用 readAllBytes，共同测试覆盖密钥库生成与签发验签，源码和测试哈希逐线锁定"
+      "reason": "三线 keytool 命令、超时及 UTF-8 输出处理一致；JDK 8 用缓冲循环读取进程输出，高两线用 readAllBytes，共同测试覆盖密钥库生成与签发验签，源码和测试哈希逐线锁定",
+      "testSha256ByJdk": {
+        "8": "40e7d137bdd59fefbfd70d4a2a4b22391140aeea2cb53885008f945b8e6f708f",
+        "17": "9ae7b63a7eefd13deaae08554f7152b67069d0fabf57a0382f2dc0a884d512c2",
+        "21": "40e7d137bdd59fefbfd70d4a2a4b22391140aeea2cb53885008f945b8e6f708f"
+      }
     },
     {
       "path": "ddd4j-extensions/ddd4j-extension-license/src/main/java/io/ddd4j/extension/license/creator/LicenseCreator.java",
       "sourceSha256": [
-        "53a4bdf3ebed4cd5da32bc17469cac8711491a14ce75d2805ddc200a68089a68",
-        "d1b89360fd1e47d441b32294641c817e2372c64051d4ee8126b3ad4429f2999d",
-        "d1b89360fd1e47d441b32294641c817e2372c64051d4ee8126b3ad4429f2999d"
+        "9f4b26d93f17890cdaf9d4e9297418733072dddccbcb8b813ff48e9e9eac9c9d",
+        "2ab444de03da9f85107f6b686f6dd3aec69bc45d5db218976c91c4784800970c",
+        "5e85487912f9098e5c5520dc0f307c2942924437e51eee7073b2d07db443ddf3"
       ],
       "evidence": "ddd4j-extensions/ddd4j-extension-license/src/test/java/io/ddd4j/extension/license/LicenseKitTest.java",
-      "testSha256": "d2898c90c6afa1e8739bfd46afd24c303f0566a5101e8a3e0a044e7eb613849c",
-      "reason": "三线签名、临时文件和原子替换逻辑相同；JDK 8 使用 UTF-8 bytes 写入与显式 PrivateKey 强转，高两线使用 Files.writeString 与模式匹配，三线共同签发验签测试及逐线哈希锁定差异"
+      "reason": "三线签名、临时文件和原子替换逻辑相同；JDK 8 使用 UTF-8 bytes 写入与显式 PrivateKey 强转，高两线使用 Files.writeString 与模式匹配，三线共同签发验签测试及逐线哈希锁定差异",
+      "testSha256ByJdk": {
+        "8": "40e7d137bdd59fefbfd70d4a2a4b22391140aeea2cb53885008f945b8e6f708f",
+        "17": "9ae7b63a7eefd13deaae08554f7152b67069d0fabf57a0382f2dc0a884d512c2",
+        "21": "40e7d137bdd59fefbfd70d4a2a4b22391140aeea2cb53885008f945b8e6f708f"
+      }
     },
     {
       "path": "ddd4j-extensions/ddd4j-extension-license/src/main/java/io/ddd4j/extension/license/LicenseVerify.java",
       "sourceSha256": [
-        "a75670eefda125be2e5718f9a39c71bb14cfeaadcfa6d164d4be6033ee959736",
-        "b286c943aba252981ec4f6f96b1fdf891635de2ed30109fc21624c3e1591299d",
-        "b286c943aba252981ec4f6f96b1fdf891635de2ed30109fc21624c3e1591299d"
+        "c0b2a14d740036082b79faa0187206090addb48b5a7beacaaa2624ab0ab1d79c",
+        "e08271d87efea01d38efd0e6d8cbb05ccb7256596d9dd120d37bb80517ae4e0c",
+        "baabdfd9378589812db3c8f5c6105e2272bef2cedae3e93be1c61b77666490dd"
       ],
       "evidence": "ddd4j-extensions/ddd4j-extension-license/src/test/java/io/ddd4j/extension/license/LicenseKitTest.java",
-      "testSha256": "d2898c90c6afa1e8739bfd46afd24c303f0566a5101e8a3e0a044e7eb613849c",
-      "reason": "三线公钥加载与空别名异常逻辑相同；JDK 8 的显式 InputStream/Certificate 类型在高两线仅改为 var，共同签发、安装和验签测试及逐线源码哈希锁定该语法差异"
+      "reason": "三线公钥加载与空别名异常逻辑相同；JDK 8 的显式 InputStream/Certificate 类型在高两线仅改为 var，共同签发、安装和验签测试及逐线源码哈希锁定该语法差异",
+      "testSha256ByJdk": {
+        "8": "40e7d137bdd59fefbfd70d4a2a4b22391140aeea2cb53885008f945b8e6f708f",
+        "17": "9ae7b63a7eefd13deaae08554f7152b67069d0fabf57a0382f2dc0a884d512c2",
+        "21": "40e7d137bdd59fefbfd70d4a2a4b22391140aeea2cb53885008f945b8e6f708f"
+      }
     },
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/model/AggregateRoot.java",
       "sourceSha256": [
-        "a395bce8b9468a0c0d525bb5e75eda8df67e5b17286a7feffdbe7a4e81043b2f",
-        "0d0568069f9732773553f21eb91bf27350c76c6fbf014a738eea11f5245500a0",
-        "0d0568069f9732773553f21eb91bf27350c76c6fbf014a738eea11f5245500a0"
+        "073293d168d3f38dbb141022368795e1128359487f0291cce779994a76ae2f60",
+        "ea7031893a973cb6963f91e4e127afb7bf93b9e2d98ed29be4be5897c174d723",
+        "77a45402d0e439478b027caaa50ca7de4ba24d3aa81c52071fa27f1c193644f3"
       ],
       "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/AggregateRootEventsTest.java",
-      "testSha256": "c26740d32ca4c267bd72570b785538999a1acd85f12e4e09c5d308dd73b86d93",
-      "reason": "三线事件缓冲、不可变快照、注册与反射派发逻辑及 Javadoc 一致；JDK 8 使用显式 ClassValue 泛型、不可变防御性复制和异常显式强转，高两线使用菱形、List.copyOf 与 instanceof 模式匹配；共同事件测试和源码哈希锁定"
+      "reason": "三线事件缓冲、不可变快照、注册与反射派发逻辑及 Javadoc 一致；JDK 8 使用显式 ClassValue 泛型、不可变防御性复制和异常显式强转，高两线使用菱形、List.copyOf 与 instanceof 模式匹配；共同事件测试和源码哈希锁定",
+      "testSha256ByJdk": {
+        "8": "affc52a7def8500422e3f6d96b2b8cc03b2507100cf873b5756d20bd0ab52b0c",
+        "17": "affc52a7def8500422e3f6d96b2b8cc03b2507100cf873b5756d20bd0ab52b0c",
+        "21": "affc52a7def8500422e3f6d96b2b8cc03b2507100cf873b5756d20bd0ab52b0c"
+      }
     },
     {
       "path": "ddd4j-cache/src/main/java/io/ddd4j/cache/local/CaffeineCache.java",
       "sourceSha256": [
-        "18a2d0e370ce5ae816ffa1cd2a187ce6769790647b7b9b25e27bb13aedc5460e",
-        "044e7bc2768762341a5bc5e3c7c1e8dab5a6d6b850ceec3202494efc8fe7e870",
-        "044e7bc2768762341a5bc5e3c7c1e8dab5a6d6b850ceec3202494efc8fe7e870"
+        "0d3b5efe0134062ffc6aa0ebc94aee90a193cc3d9dc9da36c7ca563434d627cd",
+        "cc0d1b57d1ace23d53b37aa3221b0ee16bf8ffc4b0001821574a5f647599943c",
+        "ce2979fae8e73b83c1d98e652d7870abb8d6f82a0d9819c663ed812b49444bff"
       ],
       "evidence": "ddd4j-cache/src/test/java/io/ddd4j/cache/local/LocalCacheCasParityTest.java",
-      "testSha256": "4edd1c6d67f019eec567b990266038d2fb9f6c3e3f9d7693e5505de3f929088d",
-      "reason": "三线相同 Caffeine 回调式 CAS 行为；JDK 8 匿名类显式写 GetsResponse<V>，高两线用菱形语法，源码与共同测试均锁定"
+      "reason": "三线相同 Caffeine 回调式 CAS 行为；JDK 8 匿名类显式写 GetsResponse<V>，高两线用菱形语法，源码与共同测试均锁定",
+      "testSha256ByJdk": {
+        "8": "fb4f0167a00ebd4a19f53fb1382d9497158d02772a122cceecc1ec4cb39f809d",
+        "17": "595df6b57e8d43956c3d5242d61f719ee5373a0f1f2c3978ba43cc18ac6311e3",
+        "21": "fb4f0167a00ebd4a19f53fb1382d9497158d02772a122cceecc1ec4cb39f809d"
+      }
     },
     {
       "path": "ddd4j-cache/src/main/java/io/ddd4j/cache/local/GuavaCache.java",
       "sourceSha256": [
-        "9146939847d2cc4370ec0d3bf2249d69b1c107f47db65631c65ec3400df5e626",
-        "39712e9d8a61e6c71d7b3a741397977d53f34faf23ddf9aa40694b569c04f394",
-        "39712e9d8a61e6c71d7b3a741397977d53f34faf23ddf9aa40694b569c04f394"
+        "60aa1643e92e741488f3c530f145afa937f6f0ec47d3bbdb564dbbcfac528989",
+        "82908400ef65b751d66e7dcedc13e94f6de4c3fb8b95f4e4d201bbe03abe9276",
+        "8acb2121aa8be928aeba8075e9bef5296deaec5644a388e3c22d3d7f166a55e9"
       ],
       "evidence": "ddd4j-cache/src/test/java/io/ddd4j/cache/local/LocalCacheCasParityTest.java",
-      "testSha256": "4edd1c6d67f019eec567b990266038d2fb9f6c3e3f9d7693e5505de3f929088d",
-      "reason": "三线相同 Guava 回调式 CAS 行为；JDK 8 匿名类显式写 GetsResponse<V>，高两线用菱形语法，源码与共同测试均锁定"
+      "reason": "三线相同 Guava 回调式 CAS 行为；JDK 8 匿名类显式写 GetsResponse<V>，高两线用菱形语法，源码与共同测试均锁定",
+      "testSha256ByJdk": {
+        "8": "fb4f0167a00ebd4a19f53fb1382d9497158d02772a122cceecc1ec4cb39f809d",
+        "17": "595df6b57e8d43956c3d5242d61f719ee5373a0f1f2c3978ba43cc18ac6311e3",
+        "21": "fb4f0167a00ebd4a19f53fb1382d9497158d02772a122cceecc1ec4cb39f809d"
+      }
     },
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/context/SpiRegistrationScope.java",
@@ -2539,13 +2595,17 @@
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/EventChunk.java",
       "sourceSha256": [
-        "c17c00d742060e9c11268f06b75a51a2e1d1f686b8169fed9b94ba7bcc7f25c6",
-        "5a3ae1ded0499adc527b407621290ef8d75b2e70e36015575b86e5c2dcd80721",
-        "5a3ae1ded0499adc527b407621290ef8d75b2e70e36015575b86e5c2dcd80721"
+        "6ae4435df065fb4303ce30aa21e5336e27cdc63f56e8c3b54fe46e9e00155d9c",
+        "a01ecb206f750e68bb2f7930aa1e1164964e6097b959a407b570ad31ade3e95c",
+        "25b0f01c0721d68ab43c9037a43896d13952f7187cafacc7c794e463895a5b58"
       ],
       "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/EventChunkTest.java",
-      "testSha256": "76d0b647e3330af7d37e1be7b8ea74531dbc78eae6c34b4768c862d3f25cfe7d",
-      "reason": "JDK 8 使用 ArrayList 与 Collections.unmodifiableList，JDK 17/21 使用 ArrayList 与 List.copyOf；三线先复制输入再拒绝 null 元素，统一错误消息、不可变快照和空 chunk 契约"
+      "reason": "JDK 8 使用 ArrayList 与 Collections.unmodifiableList，JDK 17/21 使用 ArrayList 与 List.copyOf；三线先复制输入再拒绝 null 元素，统一错误消息、不可变快照和空 chunk 契约",
+      "testSha256ByJdk": {
+        "8": "e29b8296c4a3c68fe9ebc49f50b9a75964234e68bdd61bc437ea8090d3bce277",
+        "17": "c7cf5cd75c839dbb68b6962894e97a2463bedb2c7041114eea1ca7fde2221ab2",
+        "21": "e29b8296c4a3c68fe9ebc49f50b9a75964234e68bdd61bc437ea8090d3bce277"
+      }
     },
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/AggregateVersion.java",
@@ -2594,13 +2654,17 @@
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/health/RuntimeReadinessRegistry.java",
       "sourceSha256": [
-        "96662185c5427d6a1346024b1a84f9c68036bc4dfed46833f09f4d46e41d12ff",
-        "482974719ec10c09e27ac69c588d14ed1b61b8dc6a531b5b9c7f66bbfe899fb4",
-        "482974719ec10c09e27ac69c588d14ed1b61b8dc6a531b5b9c7f66bbfe899fb4"
+        "c5da33508c2b112c6084914014b96ebab53660b844888221afafc98fcd261c79",
+        "76dacdec468d6177228486f807d603d4053568b22ad5774020df1d5c821fb631",
+        "dbe8beae8520db22c67186a0da8102e1283c7aa35f18f8742702efe656b198c7"
       ],
       "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/health/RuntimeReadinessRegistryTest.java",
-      "testSha256": "3ce7ed7a21699774f1b6f8e78b7b2ca05a2dcc7eeb6b38d6b2b9171bc55d17d8",
-      "reason": "JDK 8 使用 Collections.emptyList 与 unmodifiableList(new ArrayList)，JDK 17/21 使用 List.of 与 List.copyOf；注册表过滤 null，三线共同测试锁定快照不可变与就绪汇总契约"
+      "reason": "JDK 8 使用 Collections.emptyList 与 unmodifiableList(new ArrayList)，JDK 17/21 使用 List.of 与 List.copyOf；注册表过滤 null，三线共同测试锁定快照不可变与就绪汇总契约",
+      "testSha256ByJdk": {
+        "8": "a34718eab6d1b43c8c17fce94ff193d67b1647ea2c5dd6925360e8057d7a3da2",
+        "17": "c1c46b02fd9dc008b8662b97681404e59cf28103b0043902e1633cfeff32fc3f",
+        "21": "a34718eab6d1b43c8c17fce94ff193d67b1647ea2c5dd6925360e8057d7a3da2"
+      }
     },
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/i18n/I18nProvider.java",
@@ -2916,13 +2980,17 @@
     {
       "path": "ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/serialization/JsonMQEventSerialization.java",
       "sourceSha256": [
-        "d46ca64d1c5dad6036304f301a78f450022953f2d052ac2e0334247232404edf",
-        "d46ca64d1c5dad6036304f301a78f450022953f2d052ac2e0334247232404edf",
+        "8afb8794a5bdaa4c9e956d33d4977bb5b20a104cc4a440a7878f69f3ca7e84db",
+        "dc89a7fbc0de83330c853b05437e8b2c40ea1b42f3ca58a75bd51c8a6a2fe20b",
         "7ac87d90952a2936da158fe1256436d5d4bf00ab28c2007dceb31db13671630c"
       ],
       "evidence": "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/serialization/JsonMQEventSerializationTest.java",
-      "testSha256": "e1d87306376d4e98de78090a3e63a2122e18587c206a8e892dd2646443c40fca",
-      "reason": "Jackson 2 的事件 mapper 显式注册 JavaTimeModule 并输出 ISO-8601；Jackson 3 的 JsonKit mapper 自动支持 java.time。三线共同测试验证带时区事件时间戳的 JSON 往返及不可序列化对象抛错；逐线源码和测试 SHA-256 锁定。"
+      "reason": "Jackson 2 的事件 mapper 显式注册 JavaTimeModule 并输出 ISO-8601；Jackson 3 的 JsonKit mapper 自动支持 java.time。三线共同测试验证带时区事件时间戳的 JSON 往返及不可序列化对象抛错；逐线源码和测试 SHA-256 锁定。",
+      "testSha256ByJdk": {
+        "8": "13d422d51090ab803bb195b5388809819af895e689d39ddb78dd8ff2afd0573c",
+        "17": "17320043ce78f9ac5b1744277bfdfe1a4cfd4594ec2709e9064ece12dc206b1c",
+        "21": "13d422d51090ab803bb195b5388809819af895e689d39ddb78dd8ff2afd0573c"
+      }
     },
     {
       "path": "ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/MQClient.java",
@@ -3186,13 +3254,17 @@
     {
       "path": "ddd4j-web/ddd4j-web-helidon/src/main/java/io/ddd4j/web/helidon/Ddd4jHelidonWebConfiguration.java",
       "sourceSha256": [
-        "e369fdeef0508ff4aff93d414bffad97dce09a5d89b0b2af27bfcb5f148a6b9a",
-        "b819da5ce8747ab71bd20bd56af9f237591f9b672f48c2b1485cc17df8f16815",
-        "b819da5ce8747ab71bd20bd56af9f237591f9b672f48c2b1485cc17df8f16815"
+        "0451fa99b78a20d0f34afe509011844ba9c6ba18b55c03831c705c6355532e45",
+        "64bb0e25d3db489552fc69ac7b3238532d85c6fc375fc38dc921397e7f76eccf",
+        "4d189267ad94f8ca3fba76158d9374a4aade8a236cae513dfa6ab700b9467fa6"
       ],
       "evidence": "ddd4j-web/ddd4j-web-helidon/src/test/java/io/ddd4j/web/helidon/Ddd4jHelidonWebConfigurationContractTest.java",
-      "testSha256": "19c32328599f60547fc3cf9443b83499cb188440ea8fc35828fb42fc69348368",
-      "reason": "三线 Helidon Web 配置的公开路径去空白行为一致；JDK 8 的 MicroProfile Config 使用 getOptionalValue(String) 并拆分逗号及 Arrays.asList，JDK 17/21 使用 getOptionalValues(String) 与 List.of。配置契约及 Web 回归每线 7 项通过，源码和测试哈希锁定。"
+      "reason": "三线 Helidon Web 配置的公开路径去空白行为一致；JDK 8 的 MicroProfile Config 使用 getOptionalValue(String) 并拆分逗号及 Arrays.asList，JDK 17/21 使用 getOptionalValues(String) 与 List.of。配置契约及 Web 回归每线 7 项通过，源码和测试哈希锁定。",
+      "testSha256ByJdk": {
+        "8": "e87efcc77e6255b625e5e25cfba81c88bbba4e809c465ea53eba409789664b0a",
+        "17": "1631c40fadd2360524fb52d1a09c5f2c830c7bd95cdc52446578a48bfbb6482c",
+        "21": "e87efcc77e6255b625e5e25cfba81c88bbba4e809c465ea53eba409789664b0a"
+      }
     },
     {
       "path": "ddd4j-web/ddd4j-web-helidon/src/main/java/io/ddd4j/web/helidon/Ddd4jHelidonRequestFilter.java",
@@ -3238,15 +3310,15 @@
     {
       "path": "ddd4j-web/ddd4j-web-micronaut/src/main/java/io/ddd4j/web/micronaut/Ddd4jMicronautWebConfiguration.java",
       "sourceSha256": [
-        "e995bf26c65c07c9b54ee08cb96aefc057ea8ea7b42f102621e54570363c6f7f",
-        "6111a89c3ec0b604c12636dc98c8df1a0fd7ef0a5fd026358a9e570cf673f5c5",
-        "6111a89c3ec0b604c12636dc98c8df1a0fd7ef0a5fd026358a9e570cf673f5c5"
+        "dbe54eb427464e894ce02368a8ba5bb1a24e9238792c835fc625caeb64db05f3",
+        "363e338c8eef5bfcdbb39c43e1cb05220a8d318732d6e13f572243371e895f52",
+        "8f07fd7a300ab70fe8c9d21cde60e6d4251a8abb677e58f258b85b169aff0763"
       ],
       "evidence": "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautWebConfigurationTest.java",
       "testSha256ByJdk": {
-        "8": "a03cfcb994dfcc91c5fa864abc21f4c391e9b3999dce3f5e98ffe41d3c506e72",
-        "17": "abdade46cfb9e11cab110641764525412344dbd64360ae9d6ba27616ffc83e8d",
-        "21": "4a91e747f8d237314e87445c3a32b60d6b991daad6eaac0bf1205c4fea2e4f91"
+        "8": "0c9878cfc27b76c26c0ff04aa720bdcbd770b620ba23263dbad9fd7293ae7e8e",
+        "17": "49e9d5480652527edacb676deec653586cd235b1bbd3e72498127e7377ec6721",
+        "21": "407f17287954943ea665a2f3c95d84736241ff4ae8e739ec5860904167054f39"
       },
       "reason": "三线 Micronaut Web 配置的默认值、setter 拷贝与空值拒绝行为一致；JDK 8 使用 Arrays.asList，JDK 17/21 使用 List.of，setter 文档逐线对齐。三线配置定向测试各 3 项通过，源码及测试哈希锁定。"
     },
@@ -3528,13 +3600,17 @@
     {
       "path": "ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/exception/BaseExceptionHandler.java",
       "sourceSha256": [
-        "693442e68ce80638e3526b435fa1c824996882b6b6768e858d31b2afa23bbe7f",
-        "97917136d4360c81cf900dd8ed7f0f6d50163af82dde7f4bf1586fe6b7c14c65",
-        "9f32d6b30ee9ddae19faaa7b6b82933431b315019ceb97931ac9f028093b8071"
+        "26b70cada12d57baa971119db197a22183b0c2e0848f833d583747baca2cac6e",
+        "4693dd10811d1d27ff101c87c0b1f8a682d20d2948eee9f92ee8be1851b0ef2b",
+        "e123208a86427cc7b385a1573f047aad7aac17a6055067b2be248d2de2d2201a"
       ],
       "evidence": "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/exception/BaseExceptionHandlerAddressTest.java",
-      "testSha256": "30b69d5297bb45058589d2e90a424797502f7b5a41e9af71ac3537b996582af9",
-      "reason": "三线异常日志均通过 IpKit 解析代理头与连接地址，公共测试覆盖转发地址优先和无代理头回退；JDK 8 保留 javax.servlet，JDK 17/21 保留 jakarta.servlet。其余文档差异由逐线源码哈希锁定。"
+      "reason": "三线异常日志均通过 IpKit 解析代理头与连接地址，公共测试覆盖转发地址优先和无代理头回退；JDK 8 保留 javax.servlet，JDK 17/21 保留 jakarta.servlet。其余文档差异由逐线源码哈希锁定。",
+      "testSha256ByJdk": {
+        "8": "c5c2be3c236eacce6e5a4c814b16a637090a4c5e51b9b91d413b799584ff59bd",
+        "17": "9a66173e01bd934c46a449d7d299fb190576df4ead5aa9e67d6870a3e1328224",
+        "21": "c5c2be3c236eacce6e5a4c814b16a637090a4c5e51b9b91d413b799584ff59bd"
+      }
     },
     {
       "path": "ddd4j-runtime/ddd4j-runtime-dropwizard/src/main/java/io/ddd4j/dropwizard/cqrs/DropwizardProjectionScheduler.java",
@@ -3569,15 +3645,15 @@
     {
       "path": "ddd4j-runtime/ddd4j-runtime-helidon/src/main/java/io/ddd4j/helidon/health/Ddd4jHelidonReadinessHealthCheck.java",
       "sourceSha256": [
-        "2baf2ea2dbf3ed173b5cdac9bca9bd5d510934e6f19db1cb877f1d1a2f860cd6",
-        "eb0621332a2291be44fa91c921e7fd704e4277d0b5392238061fb498cd4040a6",
-        "79dc824432a24eb01bbefe021376871dcbbf19a0a8c6bc6e4570b1d37ea8989a"
+        "47b9b4a143afb7b4066a39743e6badb76b12a14bcce46c95d4f3a3fb79f97764",
+        "b5bde3414f463a892b2224ed0ec9ed62d6085617c1c12d55ba7553b397107f47",
+        "6e6f9d44524c945067eeca3ff9c121c40d5a97dd6e87a1c4ee573a7ed4f47e60"
       ],
       "evidence": "ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/health/Ddd4jHelidonReadinessHealthCheckTest.java",
       "testSha256ByJdk": {
-        "8": "8398024857c9723cac533a1f8027fb6743432d1dcce82bf19901416a3f9a42eb",
-        "17": "eceb43259981f2303df730beafb80079c88f5785100e75b0ebe1a459b65d758a",
-        "21": "f4e4a5c68f7b3552773c7855f20164e3ea9a58945a00662e65305e396df7ac31"
+        "8": "60c0fe4a13795f679b5bc7ebc6c342ffe75466b03aed4adddba9e0c08e71724b",
+        "17": "4d8b26274c651bcc5f9aef2c6e5486936374b425c99ce6b93e26aee3731c24c0",
+        "21": "c5a73b82701f56343bb2ee6785579d35c08bf9ee17e20e748d1f0c9e8dd586a1"
       },
       "reason": "Helidon 2 的 javax CDI 与 Helidon 4 的 jakarta CDI 是注入命名空间适配；三线探针测试各 1 项锁定 UP/DOWN、检查数量及不泄露故障详情。"
     },
@@ -3599,15 +3675,15 @@
     {
       "path": "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/health/Ddd4jQuarkusReadinessHealthCheck.java",
       "sourceSha256": [
-        "afde77dd359a26be36518929ef70e925a51298975c0e036179438558b427b7b7",
-        "2fbdb2428d27fdddd0d76d5a6d509aea0c807ad64b1754c10734625e934fa1a9",
-        "7c71c2e194c447a3400d79103b3533efb94813c73322c6cd66083fe29d538e7c"
+        "93d0d7b66ea32e697fae6602dc69336cb6623067e2db6dfe2d64a7e28bd6e35b",
+        "aa4a26b8e495c77a8073b75c350d8742a6b38519ba734d1c1076559453bb2221",
+        "2bd0721515560adcfcd99d47abe15753b275ee94b9b3aafd869478df31e0e56b"
       ],
       "evidence": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/health/Ddd4jQuarkusReadinessHealthCheckTest.java",
       "testSha256ByJdk": {
-        "8": "2388cdc129084258638a625c2f038c3494d57ddd5ca91c4bb7513fe6b39dfa4d",
-        "17": "f52acc4dd222b3bd66879dcfec09d0985bc64d6317e9beb710224c7c4e5737b4",
-        "21": "4c174ee24839329cf35e35b02742f4c1e14bb6dfa99c6bf5f918a1cb6e3a76e4"
+        "8": "77bb5ef5ee115ea3dc9389525239f767bc1ea18c7d928cfa6c5abebfb92c1441",
+        "17": "74ae4b50761fa669388a419a51c9350445048e76da94a67786f253bccafe1966",
+        "21": "195311a6217213e26eb476e973bc1380988ff89ea5ca679165973dd6b1f054fc"
       },
       "reason": "Quarkus 2 的 javax CDI 与 Quarkus 3 的 jakarta CDI 是注入命名空间适配；三线探针测试各 1 项锁定 UP/DOWN、检查数量及不泄露故障详情。"
     },
@@ -3672,6 +3748,57 @@
       },
       "reason": "低线在已匹配的控制器上使用 Micronaut 3 方法拦截器，高线使用 Micronaut 4 路由过滤器。三线均以原生 HTTP 验证未匹配路由、参数校验顺序、Bearer 方案与订单权限。",
       "jdk8Source": "ddd4j-samples/ddd4j-sample-micronaut-shiro/src/main/java/io/ddd4j/sample/micronaut/shiro/NativeAuthInterceptor.java"
+    },
+    {
+      "path": "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/cqrs/QuarkusJpaViewManager.java",
+      "sourceSha256": [
+        "10c19ca74e4ab36e1c85af7e80ec1fd3e698e07abf99754f8a8b2a475e0ddef6",
+        "9de1f0bdffa3c0b5c74dab28d626e07908e25046404695c3023808e0090d9f1c",
+        "9de1f0bdffa3c0b5c74dab28d626e07908e25046404695c3023808e0090d9f1c"
+      ],
+      "evidence": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/QuarkusJpaViewManagerTest.java",
+      "testSha256ByJdk": {
+        "8": "782b9163a8be0cf8abbf75436e68831bd2bd563955de06204d2557cc56a6b841",
+        "17": "7ca7fba262ac6cde3de4c5270d589160735bfa5caf5aa6353bb4f73983f53da3",
+        "21": "07f22cb93293b4a6c776a54639b01f5029ec2c8cc59e1a2d970bdc7bec067749"
+      },
+      "reason": "三线仅在显式选择投影模式后调度，Quarkus 1 使用 javax、平台 Quartz 和 JDK 8 API，Quarkus 3 使用 Jakarta。真实 ArC 验证默认关闭、legacy 任务触发与释放、durable 检查点和失败回滚。"
+    },
+    {
+      "path": "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/cqrs/QuarkusCqrsProducer.java",
+      "sourceSha256": [
+        "c744ed3c34b34b8983c8977c73f12300be9d7f2a7683e782bd80b2e36162b9a5",
+        "5c90236b65077e381c16e6be34e1a0a5f5c38097f0fcc895539f86b4c0d66edf",
+        "5c90236b65077e381c16e6be34e1a0a5f5c38097f0fcc895539f86b4c0d66edf"
+      ],
+      "evidence": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/QuarkusBasicRuntimeTest.java",
+      "testSha256ByJdk": {
+        "8": "f9e1922b3810df861e17ffe5f9727d02a831819cad14ec18ab2735238d63087b",
+        "17": "8b8f2e80201d63fe9a9b03bcb5e4af74b7f6cc67d5cacfd015b0539bd2332210",
+        "21": "8b8f2e80201d63fe9a9b03bcb5e4af74b7f6cc67d5cacfd015b0539bd2332210"
+      },
+      "reason": "三线仅在显式选择投影模式后调度，Quarkus 1 使用 javax、平台 Quartz 和 JDK 8 API，Quarkus 3 使用 Jakarta。真实 ArC 验证默认关闭、legacy 任务触发与释放、durable 检查点和失败回滚。"
+    },
+    {
+      "path": "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/cqrs/QuarkusViewScheduler.java",
+      "sourceSha256": [
+        "8276dac8494fd5d5c3d4d21c98e6ff60551fda567b09727da117abfda65801b5",
+        "e645c6cbd7c27536d2d617bce52164c4892896f002ab045dbe48580c38198a5c",
+        "e645c6cbd7c27536d2d617bce52164c4892896f002ab045dbe48580c38198a5c"
+      ],
+      "evidence": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/QuarkusLegacyCronExecutionTest.java",
+      "testSha256ByJdk": {
+        "8": "da0437f264a8e6385ed5c208aac6fba91ff663b34051359937969898611f24dd",
+        "17": "c992daef02825961403877eb8fbd9f1b6105901619c663a6802f7da74675625e",
+        "21": "c992daef02825961403877eb8fbd9f1b6105901619c663a6802f7da74675625e"
+      },
+      "additionalEvidence": [
+        {
+          "path": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/QuartzProjectionOwnershipTest.java",
+          "testSha256": "06255f1a5ce32d2f2627acc9c35370c778d09091ab9da538e521dd208e467919"
+        }
+      ],
+      "reason": "三线仅在显式选择投影模式后调度，Quarkus 1 使用 javax、平台 Quartz 和 JDK 8 API，Quarkus 3 使用 Jakarta。真实 ArC 验证默认关闭、legacy 任务触发与释放、durable 检查点和失败回滚。"
     }
   ],
   "historicalDocumentSections": [
@@ -4082,14 +4209,14 @@
       "path": "ddd4j-core/src/test/java/io/ddd4j/core/api/RTest.java",
       "productionPath": "ddd4j-core/src/main/java/io/ddd4j/core/api/R.java",
       "sourceSha256": [
-        "8971463897406b253c1cd1ee6affdb32647f9cb717b4ea27e6c02f0ebee12422",
-        "8971463897406b253c1cd1ee6affdb32647f9cb717b4ea27e6c02f0ebee12422",
-        "160e2aaec550ea07627518dbc1f4c3bb9971938fe24b405e46972fdbb28eae0c"
+        "472375964c82cbc1f6c2150d4014fa2391d477c4d0c6702bdd7048b562aa88d3",
+        "e5da217e89973e7835856a351f509d60a5ab09865035d92e51e516e50dbd4fc3",
+        "818ad12b5c93949f5276dfa4906fcb076e6aee73924962925517bcb32779fcf2"
       ],
       "productionSha256": [
         "1554ca6a55b3de1e307edec584d9a9b55d956cb1f531e8cb777cf753a6ae41ed",
-        "1554ca6a55b3de1e307edec584d9a9b55d956cb1f531e8cb777cf753a6ae41ed",
-        "a50a26acdd1d61d7c7d89b26dbf93334861cd44412230ad48ee58301a59c8ed3"
+        "aa1cbab56f78e2425adad3799f85ba383bb0f8c74e9f97f16141ec25f47c8c47",
+        "c20ce9c76548d1a0346e6d0471fe0c004a255b7f481171b43e663a657c172531"
       ],
       "testMethods": [
         "fail_withString_shouldTreatArgumentAsMessage",
@@ -4747,14 +4874,14 @@
       "path": "ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/health/Ddd4jHelidonReadinessHealthCheckTest.java",
       "productionPath": "ddd4j-runtime/ddd4j-runtime-helidon/src/main/java/io/ddd4j/helidon/health/Ddd4jHelidonReadinessHealthCheck.java",
       "sourceSha256": [
-        "8398024857c9723cac533a1f8027fb6743432d1dcce82bf19901416a3f9a42eb",
-        "eceb43259981f2303df730beafb80079c88f5785100e75b0ebe1a459b65d758a",
-        "f4e4a5c68f7b3552773c7855f20164e3ea9a58945a00662e65305e396df7ac31"
+        "60c0fe4a13795f679b5bc7ebc6c342ffe75466b03aed4adddba9e0c08e71724b",
+        "4d8b26274c651bcc5f9aef2c6e5486936374b425c99ce6b93e26aee3731c24c0",
+        "c5a73b82701f56343bb2ee6785579d35c08bf9ee17e20e748d1f0c9e8dd586a1"
       ],
       "productionSha256": [
-        "2baf2ea2dbf3ed173b5cdac9bca9bd5d510934e6f19db1cb877f1d1a2f860cd6",
-        "eb0621332a2291be44fa91c921e7fd704e4277d0b5392238061fb498cd4040a6",
-        "79dc824432a24eb01bbefe021376871dcbbf19a0a8c6bc6e4570b1d37ea8989a"
+        "47b9b4a143afb7b4066a39743e6badb76b12a14bcce46c95d4f3a3fb79f97764",
+        "b5bde3414f463a892b2224ed0ec9ed62d6085617c1c12d55ba7553b397107f47",
+        "6e6f9d44524c945067eeca3ff9c121c40d5a97dd6e87a1c4ee573a7ed4f47e60"
       ],
       "testMethods": [
         "shouldMapReadyAndUnavailableReportsWithoutExposingFailureDetails"
@@ -4787,14 +4914,14 @@
       "path": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/health/Ddd4jQuarkusReadinessHealthCheckTest.java",
       "productionPath": "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/health/Ddd4jQuarkusReadinessHealthCheck.java",
       "sourceSha256": [
-        "2388cdc129084258638a625c2f038c3494d57ddd5ca91c4bb7513fe6b39dfa4d",
-        "f52acc4dd222b3bd66879dcfec09d0985bc64d6317e9beb710224c7c4e5737b4",
-        "4c174ee24839329cf35e35b02742f4c1e14bb6dfa99c6bf5f918a1cb6e3a76e4"
+        "77bb5ef5ee115ea3dc9389525239f767bc1ea18c7d928cfa6c5abebfb92c1441",
+        "74ae4b50761fa669388a419a51c9350445048e76da94a67786f253bccafe1966",
+        "195311a6217213e26eb476e973bc1380988ff89ea5ca679165973dd6b1f054fc"
       ],
       "productionSha256": [
-        "afde77dd359a26be36518929ef70e925a51298975c0e036179438558b427b7b7",
-        "2fbdb2428d27fdddd0d76d5a6d509aea0c807ad64b1754c10734625e934fa1a9",
-        "7c71c2e194c447a3400d79103b3533efb94813c73322c6cd66083fe29d538e7c"
+        "93d0d7b66ea32e697fae6602dc69336cb6623067e2db6dfe2d64a7e28bd6e35b",
+        "aa4a26b8e495c77a8073b75c350d8742a6b38519ba734d1c1076559453bb2221",
+        "2bd0721515560adcfcd99d47abe15753b275ee94b9b3aafd869478df31e0e56b"
       ],
       "testMethods": [
         "shouldMapReadyAndUnavailableReportsWithoutExposingFailureDetails"
@@ -4805,14 +4932,14 @@
       "path": "ddd4j-runtime/ddd4j-runtime-vertx/src/test/java/io/ddd4j/vertx/VertxDomainEventPublisherTest.java",
       "productionPath": "ddd4j-runtime/ddd4j-runtime-vertx/src/main/java/io/ddd4j/vertx/VertxDomainEventPublisher.java",
       "sourceSha256": [
-        "4e2de5452323fbe393bf40c1061e3262d4a0407dc282a7287f13f46db264dd71",
-        "ae95cff7bea64fa66f364c06c433d5f954dea3e8d6d7e917d0d6e50a34811caa",
-        "82a1523a41457c2f8e476a43c81bd146d9bb78a8f4e302feb78a0f68eba8c498"
+        "20745f245b3089f933b1af8462cffd66389a4f0f1018bac10f4c84ca68fc5040",
+        "e92a861df5239187a2187aa96984b546b8d0e1bc8ef75a3a87433f3c330ecaf4",
+        "5edf8594afdaa91bcef4c8473a0e910fe1d333a302db308575934f98052331b9"
       ],
       "productionSha256": [
-        "8a16f62ac55015c68bfb8b4fb81e5c9599c8979f13916a54d987cff40c326053",
-        "29948eec6e4598e050bf7b1c68145efd801c60c0e8eaa8091a453ee793390ea0",
-        "9acf95989f34f89f770b116f5d7430a10c08b14a872e7d3b0d6c4374160d657d"
+        "8d1eed9bcf52fee5a82bdd69658caaeea2633102cd601c98f8090f8a89c34caf",
+        "41bfe55d6b148316809049e2b89610fa14ce311eeb118ecb99b2ea7679b5fb59",
+        "219a9f2020c3d8c0ea60802a428838fab681b24ebe9c0c445556edccf05e5828"
       ],
       "testMethods": [
         "shouldPublishLocalEventWithoutRequiringWireCodec"
