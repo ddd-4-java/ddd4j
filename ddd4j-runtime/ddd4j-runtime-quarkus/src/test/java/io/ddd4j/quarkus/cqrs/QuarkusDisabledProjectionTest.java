@@ -51,7 +51,7 @@ class QuarkusDisabledProjectionTest {
          */
         @Override
         public Map<String, String> getConfigOverrides() {
-            return Map.of("ddd4j.quarkus.cqrs.projection.cron", "{r08.disabled-cron}",
+            return Map.of(QuarkusJpaViewManager.MODE_KEY, "legacy", "ddd4j.quarkus.cqrs.projection.cron", "{r08.disabled-cron}",
                     "r08.disabled-cron", "disabled");
         }
     }

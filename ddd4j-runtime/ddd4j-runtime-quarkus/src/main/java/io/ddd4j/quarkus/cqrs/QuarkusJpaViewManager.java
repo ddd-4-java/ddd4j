@@ -186,7 +186,7 @@ public class QuarkusJpaViewManager implements ViewManager {
                 views.forEach(snapshot::add);
                 delegate = new DefaultViewManager<>(unique(schedulers, "ViewScheduler"), runner, snapshot);
             }
-        } else if ("legacy".equals(mode) || customLegacy || config.getOptionalValue(CRON_KEY, String.class).isPresent()) {
+        } else if ("legacy".equals(mode)) {
             QuarkusJpaProjectionService service = unique(legacyServices, "QuarkusJpaProjectionService");
             unique(positionRepositories, "ProjectionPositionRepository");
             if (ownsLifecycle()) {

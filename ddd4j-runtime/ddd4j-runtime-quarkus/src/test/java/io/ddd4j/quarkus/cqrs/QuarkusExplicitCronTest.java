@@ -17,7 +17,7 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * 显式配置旧 cron 即可使用 Quarkus 的原生 Quartz 调度。
+ * 显式选择 legacy 后，旧 cron 可使用 Quarkus 的原生 Quartz 调度。
  */
 @QuarkusTest
 @TestProfile(QuarkusExplicitCronTest.Profile.class)
@@ -86,7 +86,10 @@ class QuarkusExplicitCronTest {
          */
         @Override
         public Map<String, String> getConfigOverrides() {
-            return Collections.singletonMap(QuarkusJpaViewManager.CRON_KEY, CRON);
+            Map<String, String> values = new java.util.HashMap<>();
+            values.put(QuarkusJpaViewManager.CRON_KEY, CRON);
+            values.put(QuarkusJpaViewManager.MODE_KEY, "legacy");
+            return values;
         }
     }
 }

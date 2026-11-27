@@ -67,7 +67,7 @@ class QuarkusLegacyCronExecutionTest {
          */
         @Override
         public Map<String, String> getConfigOverrides() {
-            return Map.of("r08.legacy-subclass", "true",
+            return Map.of(QuarkusJpaViewManager.MODE_KEY, "legacy", "r08.legacy-subclass", "true",
                     "ddd4j.quarkus.cqrs.projection.cron", "{r08.native-cron}",
                     "r08.native-cron", "0/1 * * * * ?");
         }

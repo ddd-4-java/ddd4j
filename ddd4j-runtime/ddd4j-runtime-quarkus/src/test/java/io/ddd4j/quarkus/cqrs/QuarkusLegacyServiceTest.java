@@ -16,7 +16,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * 真实业务子类无需新增 mode 属性，仍以旧默认 cron 启动。
+ * 在 legacy 模式下，业务子类使用默认 cron 启动。
  */
 @QuarkusTest
 @TestProfile(QuarkusLegacyServiceTest.Profile.class)
@@ -82,7 +82,7 @@ class QuarkusLegacyServiceTest {
          */
         @Override
         public Map<String, String> getConfigOverrides() {
-            return Map.of("r08.legacy-subclass", "true");
+            return Map.of(QuarkusJpaViewManager.MODE_KEY, "legacy", "r08.legacy-subclass", "true");
         }
     }
 

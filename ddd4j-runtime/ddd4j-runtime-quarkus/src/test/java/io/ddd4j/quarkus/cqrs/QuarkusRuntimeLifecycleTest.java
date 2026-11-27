@@ -9,7 +9,6 @@ import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -68,7 +67,8 @@ class QuarkusRuntimeLifecycleTest {
          */
         @Override
         public Map<String, String> getConfigOverrides() {
-            return Collections.singletonMap(QuarkusJpaViewManager.CRON_KEY, "0/1 * * * * ?");
+            return Map.of(QuarkusJpaViewManager.MODE_KEY, "legacy",
+                    QuarkusJpaViewManager.CRON_KEY, "0/1 * * * * ?");
         }
     }
 }
