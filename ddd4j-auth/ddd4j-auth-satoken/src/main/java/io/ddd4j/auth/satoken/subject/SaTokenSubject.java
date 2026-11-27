@@ -117,12 +117,8 @@ public class SaTokenSubject implements Subject {
         if (Objects.nonNull(auth.getPath())) {
             sa.setPath(auth.getPath());
         }
-        if (Objects.nonNull(auth.isSecure())) {
-            sa.setSecure(auth.isSecure());
-        }
-        if (Objects.nonNull(auth.isHttpOnly())) {
-            sa.setHttpOnly(auth.isHttpOnly());
-        }
+        sa.setSecure(auth.isSecure());
+        sa.setHttpOnly(auth.isHttpOnly());
         if (Objects.nonNull(auth.getSameSite())) {
             sa.setSameSite(auth.getSameSite());
         }
