@@ -17,13 +17,14 @@ package io.ddd4j.micronaut;
 import io.ddd4j.cache.subject.InMemorySubject;
 import io.ddd4j.cache.subject.InMemorySubjectProvider;
 import io.ddd4j.core.cqrs.command.CommandBus;
-import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.DefaultCommandBus;
+import io.ddd4j.core.cqrs.command.CommandRegistry;
+import io.ddd4j.micronaut.command.MicronautCommandBus;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.health.ReadinessContributor;
 import io.ddd4j.core.health.RuntimeReadinessRegistry;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
+import io.micronaut.context.BeanContext;
 import io.micronaut.context.annotation.Context;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Requires;
@@ -71,15 +72,27 @@ public class Ddd4jMicronautFactory {
     }
 
     /**
-     * 按 <code>command Bus</code> 的契约计算并返回结果。
+     * 提供向 Micronaut 命令总线登记执行器的共享注册表。
      *
-     * @param executors 传入此操作的 <code>Collection&lt;CommandExecutor&lt;?&gt;&gt;</code> 类型 <code>executors</code>
-     * @return 当前操作得到的 <code>CommandBus</code> 结果
+     * @return 新的命令执行器注册表
+     */
+    @Singleton
+    @Requires(missingBeans = CommandRegistry.class)
+    CommandRegistry commandRegistry() {
+        return new CommandRegistry();
+    }
+
+    /**
+     * 从 Micronaut 容器及显式注册项初始化应用命令总线。
+     *
+     * @param context  当前框架传入的执行或容器上下文
+     * @param registry 接收命令执行器的共享注册表
+     * @return 装配完毕的 Micronaut 命令总线
      */
     @Singleton
     @Requires(missingBeans = CommandBus.class)
-    CommandBus commandBus(Collection<CommandExecutor<?>> executors) {
-        return new DefaultCommandBus(executors);
+    MicronautCommandBus commandBus(BeanContext context, CommandRegistry registry) {
+        return new MicronautCommandBus(context, registry);
     }
 
     /**
