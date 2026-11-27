@@ -22,6 +22,7 @@
         <netty.version>4.1.139.Final</netty.version>
         <vertx.version>3.9.16</vertx.version>
         <quarkus.bootstrap.workspace-discovery>false</quarkus.bootstrap.workspace-discovery>
+        <surefire.maxMetaspace>512M</surefire.maxMetaspace>
     </properties>
 
     <dependencyManagement>
