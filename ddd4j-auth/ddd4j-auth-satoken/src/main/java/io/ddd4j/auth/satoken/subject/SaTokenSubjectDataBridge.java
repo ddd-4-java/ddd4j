@@ -34,7 +34,7 @@ public class SaTokenSubjectDataBridge implements StpInterface {
      */
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
-        AuthPrincipal principal = SubjectKit.getPrincipalByLoginId(loginId);
+        AuthPrincipal principal = SubjectKit.getSubject(loginType).getPrincipalByLoginId(loginId);
         if (Objects.isNull(principal)) {
             return java.util.Collections.emptyList();
         }
@@ -49,7 +49,7 @@ public class SaTokenSubjectDataBridge implements StpInterface {
      */
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
-        AuthPrincipal principal = SubjectKit.getPrincipalByLoginId(loginId);
+        AuthPrincipal principal = SubjectKit.getSubject(loginType).getPrincipalByLoginId(loginId);
         if (Objects.isNull(principal)) {
             return java.util.Collections.emptyList();
         }

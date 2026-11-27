@@ -49,7 +49,7 @@ public class SaTokenSubjectProvider implements SubjectProvider {
      */
     @Override
     public Subject getSubject(String realm) {
-        return new SaTokenSubject();
+        return new SaTokenSubject(realm);
     }
 
 }

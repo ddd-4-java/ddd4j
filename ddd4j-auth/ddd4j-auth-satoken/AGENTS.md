@@ -22,3 +22,5 @@ Sa-Token 登录主体、JWT 与多实例注册。
 ./mvnw -pl ddd4j-auth/ddd4j-auth-satoken -am -Dtest=SaTokenSecurityConfigurerTest,SaTokenSubjectDataBridgeTest,SaTokenSubjectLifecycleTest -Dsurefire.failIfNoSpecifiedTests=false test
 ./mvnw -pl ddd4j-auth/ddd4j-auth-satoken -am verify
 ```
+
+使用令牌会话隔离数据访问时，注册 `SaTokenDataSubjectProvider`。通过 `SaTokenDataIdentity.bindCurrentRequest()` 绑定已验证的租户、应用及用户，再用 `current()` 读取。权限和角色查询须沿用当前认证域。变更后运行 `SaTokenDataIdentityContractTest` 和 `SaTokenSubjectDataBridgeTest`。

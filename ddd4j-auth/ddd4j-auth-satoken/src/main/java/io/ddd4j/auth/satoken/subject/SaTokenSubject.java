@@ -14,6 +14,7 @@
  */
 package io.ddd4j.auth.satoken.subject;
 
+import cn.dev33.satoken.exception.SaTokenException;
 import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.config.SaCookieConfig;
 import cn.dev33.satoken.exception.DisableServiceException;
@@ -60,6 +61,9 @@ public class SaTokenSubject implements Subject {
      * 登录时存入 SaSession 的 principal 键
      */
     public static final String PRINCIPAL_KEY = "principal";
+
+    /** 当前主体使用的认证域，空值对应默认域。 */
+    private final String realm;
 
     /**
      * \u6846\u67b6\u65e0\u5173\u679a\u4e3e\u6620\u5c04\uff1a{@link AuthLogoutMode} 转换为 sa-token \u7684 {@code SaLogoutMode}\u3002
@@ -117,7 +121,7 @@ public class SaTokenSubject implements Subject {
      * @return StpLogic
      */
     protected StpLogic stpLogic(String realm) {
-        if (Objects.isNull(realm) || !io.ddd4j.kit.lang.StrKit.isNotEmpty(realm)) {
+        if (StrKit.isBlank(realm)) {
             return StpUtil.stpLogic;
         }
         return SaManager.getStpLogic(realm, true);
@@ -133,10 +137,11 @@ public class SaTokenSubject implements Subject {
      */
     @Override
     public <T extends AuthPrincipal> T getPrincipal() {
-        if (!StpUtil.isLogin()) {
+        StpLogic logic = currentLogic();
+        if (!logic.isLogin()) {
             return null;
         }
-        SaSession session = StpUtil.getSession(false);
+        SaSession session = logic.getSession(false);
         if (Objects.isNull(session)) {
             return null;
         }
@@ -156,7 +161,7 @@ public class SaTokenSubject implements Subject {
      */
     @Override
     public <T extends AuthPrincipal> T getPrincipalByLoginId(Object loginId) {
-        SaSession session = StpUtil.getSessionByLoginId(loginId, false);
+        SaSession session = currentLogic().getSessionByLoginId(loginId, false);
         if (Objects.isNull(session)) {
             return null;
         }
@@ -187,15 +192,24 @@ public class SaTokenSubject implements Subject {
      */
     @Override
     public String login(AuthRequest request) {
-        StpLogic logic = stpLogic(request.getRealm());
-        AuthSessionConfig cfg = Objects.nonNull(request.getSessionConfig()) ? request.getSessionConfig() : new AuthSessionConfig();
+        String requestedRealm = request.getRealm();
+        if (StrKit.isNotBlank(realm) && StrKit.isNotBlank(requestedRealm)
+                && !Objects.equals(realm, requestedRealm)) {
+            throw new IllegalArgumentException("Login realm does not match the bound subject");
+        }
+        StpLogic logic = StrKit.isBlank(requestedRealm) ? currentLogic() : stpLogic(requestedRealm);
+        AuthSessionConfig cfg = java.util.Optional.ofNullable(request.getSessionConfig()).orElseGet(AuthSessionConfig::new);
 
-        // 构建 SaLoginParameter（框架无关 -> sa-token 桥接）
-        SaLoginParameter param = new SaLoginParameter();
-        param.setTimeout(cfg.getTimeout());
+        SaLoginParameter param = logic.createSaLoginParameter();
+        if (cfg.hasTimeoutOverride()) {
+            param.setTimeout(cfg.getTimeout());
+        }
         if (Objects.nonNull(cfg.getDeviceType())) {
             param.setDeviceType(cfg.getDeviceType());
         }
+        param.setDeviceId(cfg.getDeviceId());
+        param.setToken(cfg.getPresetToken());
+        param.setRightNowCreateTokenSession(cfg.isCreateTokenSessionNow());
         if (Objects.nonNull(request.getExtra()) && !request.getExtra().isEmpty()) {
             param.setExtraData(request.getExtra());
         }
@@ -213,11 +227,6 @@ public class SaTokenSubject implements Subject {
 
         // 调用 Sa-Token 登录，建立会话（异常映射到 ddd4j 通用 AuthException）
         try {
-            if (Objects.nonNull(cfg.getPresetToken())) {
-                // 已预定 token：先 set token 再 login
-                logic.setTokenValue(cfg.getPresetToken());
-            }
-            // sa-token 1.42 的 login(...) 返回 void；完成后通过 getTokenValue() 拿到 token
             logic.login(request.getLoginIdAsString(), param);
         } catch (NotLoginException e) {
             // sa-token 登录失败（含"账号无效/凭证错误"）：code 10011 -> NotLoggedInException
@@ -232,11 +241,6 @@ public class SaTokenSubject implements Subject {
         }
 
         String token = logic.getTokenValue();
-
-        // 登录后立即创建 TokenSession（如果配置需要）
-        if (cfg.isCreateTokenSessionNow()) {
-            logic.getSession(true);
-        }
 
         // 登录后将 principal 存入 SaSession
         if (Objects.nonNull(request.getPrincipal())) {
@@ -253,7 +257,8 @@ public class SaTokenSubject implements Subject {
      */
     @Override
     public void logout() {
-        StpUtil.stpLogic.logout();
+        StpLogic logic = currentLogic();
+        logic.logout(logic.createSaLogoutParameter().setIsKeepFreezeOps(true));
     }
 
     /**
@@ -265,7 +270,7 @@ public class SaTokenSubject implements Subject {
      */
     @Override
     public void logout(Object loginId) {
-        StpUtil.stpLogic.logout(loginId);
+        currentLogic().logout(loginId);
     }
 
     /**
@@ -277,7 +282,7 @@ public class SaTokenSubject implements Subject {
      */
     @Override
     public void kickout(Object loginId) {
-        StpUtil.stpLogic.kickout(loginId);
+        currentLogic().kickout(loginId);
     }
 
     /**
@@ -289,8 +294,25 @@ public class SaTokenSubject implements Subject {
      */
     @Override
     public String refresh() {
-        StpUtil.stpLogic.renewTimeout(StpUtil.stpLogic.getConfigOrGlobal().getTimeout());
-        return StpUtil.stpLogic.getTokenValue();
+        StpLogic logic = currentLogic();
+        try {
+            String token = logic.getTokenValue();
+            Object loginId = resolveVerifiedLoginId(token, logic);
+            if (Objects.isNull(loginId)) {
+                throw new NotLoggedInException("Sa-Token session is invalid or inactive");
+            }
+            SaSession session = logic.getSessionByLoginId(loginId, false);
+            if (Objects.isNull(session) || Objects.isNull(session.getTerminal(token))) {
+                throw new NotLoggedInException("Sa-Token session has no matching terminal");
+            }
+            logic.renewTimeout(logic.getConfigOrGlobal().getTimeout());
+            if (Objects.isNull(logic.getLoginIdByToken(token))) {
+                throw new NotLoggedInException("Sa-Token session is no longer active");
+            }
+            return token;
+        } catch (SaTokenException e) {
+            throw new NotLoggedInException("Sa-Token session renewal failed", e);
+        }
     }
 
     /**
@@ -305,7 +327,7 @@ public class SaTokenSubject implements Subject {
     @Override
     public <T extends AuthPrincipal> T verify(String token) {
         try {
-            Object loginId = resolveVerifiedLoginId(token);
+            Object loginId = resolveVerifiedLoginId(token, currentLogic());
             if (Objects.isNull(loginId)) {
                 return null;
             }
@@ -330,11 +352,10 @@ public class SaTokenSubject implements Subject {
      * @param token 请求携带的原始 token
      * @return 已验证的登录账号 ID；校验失败或凭证为空时返回 {@code null}
      */
-    private Object resolveVerifiedLoginId(String token) {
+    private Object resolveVerifiedLoginId(String token, StpLogic logic) {
         if (StrKit.isBlank(token)) {
             return null;
         }
-        StpLogic logic = StpUtil.stpLogic;
         if (logic instanceof StpLogicJwtForSimple) {
             StpLogicJwtForSimple jwtLogic = (StpLogicJwtForSimple) logic;
             // JWT Simple 必须经过 ddd4j 配置器，以固定 issuer/audience 与撤销语义。
@@ -742,7 +763,7 @@ public class SaTokenSubject implements Subject {
      */
     @Override
     public boolean isAuthenticated() {
-        return StpUtil.isLogin();
+        return currentLogic().isLogin();
     }
 
     /**
@@ -755,7 +776,7 @@ public class SaTokenSubject implements Subject {
      */
     @Override
     public boolean isAuthenticated(Object loginId) {
-        return StpUtil.isLogin(loginId);
+        return currentLogic().isLogin(loginId);
     }
 
     /**
@@ -778,7 +799,8 @@ public class SaTokenSubject implements Subject {
      */
     @Override
     public boolean isTrustDeviceId(String deviceId) {
-        return StpUtil.isTrustDeviceId(StpKit.getUserIdAsLong(), deviceId);
+        StpLogic logic = currentLogic();
+        return logic.isTrustDeviceId(logic.getLoginId(), deviceId);
     }
 
     /**
@@ -792,7 +814,7 @@ public class SaTokenSubject implements Subject {
      */
     @Override
     public boolean isTrustDeviceId(Object userId, String deviceId) {
-        return StpUtil.isTrustDeviceId(userId, deviceId);
+        return currentLogic().isTrustDeviceId(userId, deviceId);
     }
 
     /**
@@ -804,7 +826,7 @@ public class SaTokenSubject implements Subject {
      */
     @Override
     public Object getLoginId() {
-        return StpUtil.getLoginId();
+        return currentLogic().getLoginId();
     }
 
     /**
@@ -857,7 +879,7 @@ public class SaTokenSubject implements Subject {
      */
     @Override
     public Object getExtra(String tokenValue, String key) {
-        return StpUtil.getExtra(tokenValue, key);
+        return currentLogic().getExtra(tokenValue, key);
     }
 
     // ==================== 封禁（委托 Sa-Token）====================
@@ -872,7 +894,7 @@ public class SaTokenSubject implements Subject {
      */
     @Override
     public void disable(Object loginId, long timeout) {
-        StpUtil.stpLogic.disable(loginId, timeout);
+        currentLogic().disable(loginId, timeout);
     }
 
     /**
@@ -885,7 +907,7 @@ public class SaTokenSubject implements Subject {
      */
     @Override
     public boolean isDisabled(Object loginId) {
-        return StpUtil.stpLogic.isDisable(loginId);
+        return currentLogic().isDisable(loginId);
     }
 
     /**
@@ -897,7 +919,32 @@ public class SaTokenSubject implements Subject {
      */
     @Override
     public void untieDisable(Object loginId) {
-        StpUtil.stpLogic.untieDisable(loginId);
+        currentLogic().untieDisable(loginId);
+    }
+
+    /**
+     * 创建使用默认账号体系的主体。
+     */
+    public SaTokenSubject() {
+        this(null);
+    }
+
+    /**
+     * 创建绑定到指定账号体系的主体。
+     *
+     * @param realm 账号体系，空值表示使用默认账号体系
+     */
+    public SaTokenSubject(String realm) {
+        this.realm = realm;
+    }
+
+    /**
+     * 解析当前主体认证域使用的登录逻辑。
+     *
+     * @return 当前认证域对应的原生登录逻辑
+     */
+    private StpLogic currentLogic() {
+        return stpLogic(realm);
     }
 
 }

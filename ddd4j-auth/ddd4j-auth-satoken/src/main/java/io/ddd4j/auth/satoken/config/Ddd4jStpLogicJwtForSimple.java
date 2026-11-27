@@ -36,6 +36,10 @@ import java.util.Objects;
 @Getter
 public class Ddd4jStpLogicJwtForSimple extends StpLogicJwtForSimple {
 
+    /** 当前认证域签发与验证令牌使用的密钥。 */
+    private final String signingSecret;
+
+
     /** JWT 签发方声明的键。 */
     public static final String ISSUER_CLAIM = "iss";
     /** JWT 受众声明的键。 */
@@ -52,8 +56,18 @@ public class Ddd4jStpLogicJwtForSimple extends StpLogicJwtForSimple {
      */
     public Ddd4jStpLogicJwtForSimple(SaTokenSecurityProperties properties) {
         super(properties.getLoginType());
+        this.signingSecret = properties.getJwtSecretKey();
         this.issuer = properties.getJwtIssuer();
         this.audience = properties.getJwtAudience();
+    }
+
+    /**
+     * 从当前认证域读取签名密钥，避免不同域依赖同一个全局配置。
+     * @return 当前域的 JWT 签名密钥
+     */
+    @Override
+    public String jwtSecretKey() {
+        return signingSecret;
     }
 
     /**
