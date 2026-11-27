@@ -18,3 +18,7 @@
 ```
 
 所列集成用例使用 Testcontainers。核对测试报告中对应测试类的执行数和跳过数；只运行单元用例时，单独记录仍缺的数据库或 broker 往返。
+
+## 投影维护
+
+投影位置实体由本模块持久化。Spring Data 仓储及其数据库回归位于 `ddd4j-runtime-spring` 的 `io.ddd4j.spring.projection.jpa` 包。

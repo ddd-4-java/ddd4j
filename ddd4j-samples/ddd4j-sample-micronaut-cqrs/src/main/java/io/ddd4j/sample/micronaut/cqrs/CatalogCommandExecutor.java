@@ -2,7 +2,7 @@ package io.ddd4j.sample.micronaut.cqrs;
 
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.Result;
+import io.ddd4j.core.api.R;
 import io.ddd4j.sample.order.adapter.http.CatalogApi;
 import io.ddd4j.sample.order.adapter.http.CatalogCqrs;
 import io.ddd4j.sample.order.start.CatalogRuntime;
@@ -60,7 +60,7 @@ public class CatalogCommandExecutor implements CommandExecutor<Command> {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public Result<?> execute(Command command) {
+    public R<?> execute(Command command) {
         return delegate.execute(command);
     }
 }

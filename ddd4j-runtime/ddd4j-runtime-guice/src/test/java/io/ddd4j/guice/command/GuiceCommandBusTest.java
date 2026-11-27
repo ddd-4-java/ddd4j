@@ -20,7 +20,7 @@ import com.google.inject.Injector;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.Result;
+import io.ddd4j.core.api.R;
 import io.ddd4j.guice.Ddd4jCommandGuiceModule;
 import org.junit.jupiter.api.Test;
 
@@ -53,7 +53,7 @@ class GuiceCommandBusTest {
         assertNotNull(commandBus);
 
         TestCommand command = new TestCommand();
-        Result<?> result = commandBus.execute(command);
+        R<?> result = commandBus.execute(command);
 
         assertNotNull(result);
         assertTrue(executed.get());
@@ -160,15 +160,15 @@ class GuiceCommandBusTest {
         /**
          * 用当前处理器执行传入命令或操作。
          *
-         * <p>测试夹具会调用 <code>executed.set(true)</code>、<code>Result.ok()</code>。</p>
+         * <p>测试夹具会调用 <code>executed.set(true)</code>、<code>R.ok()</code>。</p>
          *
          * @param command 命令对象
-         * @return 实际返回<code>Result.ok()</code>
+         * @return 实际返回<code>R.ok()</code>
          */
         @Override
-        public Result execute(TestCommand command) {
+        public R<?> execute(TestCommand command) {
             executed.set(true);
-            return Result.ok();
+            return R.ok();
         }
     }
 
@@ -201,15 +201,15 @@ class GuiceCommandBusTest {
         /**
          * 用当前处理器执行传入命令或操作。
          *
-         * <p>测试夹具会调用 <code>executed.set(true)</code>、<code>Result.ok()</code>。</p>
+         * <p>测试夹具会调用 <code>executed.set(true)</code>、<code>R.ok()</code>。</p>
          *
          * @param command 命令对象
-         * @return 实际返回<code>Result.ok()</code>
+         * @return 实际返回<code>R.ok()</code>
          */
         @Override
-        public Result execute(AnotherCommand command) {
+        public R<?> execute(AnotherCommand command) {
             executed.set(true);
-            return Result.ok();
+            return R.ok();
         }
     }
 }

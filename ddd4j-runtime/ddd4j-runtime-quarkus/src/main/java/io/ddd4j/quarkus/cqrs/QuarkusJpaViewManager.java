@@ -14,6 +14,7 @@
  */
 package io.ddd4j.quarkus.cqrs;
 
+import io.quarkus.arc.DefaultBean;
 import io.ddd4j.core.cqrs.readmodel.ProjectionMetrics;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
@@ -45,6 +46,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 @Slf4j(topic = "### DDD4J-QUARKUS : ViewManager ###")
 @ApplicationScoped
+@DefaultBean
 public class QuarkusJpaViewManager implements ViewManager {
 
     /**

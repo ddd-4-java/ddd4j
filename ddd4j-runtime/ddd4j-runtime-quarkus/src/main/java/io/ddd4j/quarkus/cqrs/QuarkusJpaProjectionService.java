@@ -14,6 +14,7 @@
  */
 package io.ddd4j.quarkus.cqrs;
 
+import io.quarkus.arc.DefaultBean;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
 import io.quarkus.scheduler.Scheduled;
@@ -35,6 +36,7 @@ import java.util.List;
  */
 @Slf4j
 @ApplicationScoped
+@DefaultBean
 public class QuarkusJpaProjectionService {
 
     /**

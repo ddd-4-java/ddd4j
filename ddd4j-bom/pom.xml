@@ -103,41 +103,6 @@
             <!-- Ddd4j Data Extensions -->
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-cqrs-dropwizard</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-cqrs-helidon</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-cqrs-javalin</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-cqrs-micronaut</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-cqrs-quarkus</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-cqrs-spring</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-cqrs-vertx</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-data-crypto</artifactId>
                 <version>${revision}</version>
             </dependency>
@@ -189,66 +154,6 @@
             <dependency>
                 <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-data-mybatisplus</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-projection</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-projection-dropwizard</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-projection-helidon</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-projection-javalin</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-projection-jdbi</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-projection-jpa</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-projection-micronaut</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-projection-panache</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-projection-quarkus</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-projection-r2dbc</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-projection-spring</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-projection-vertx</artifactId>
                 <version>${revision}</version>
             </dependency>
 

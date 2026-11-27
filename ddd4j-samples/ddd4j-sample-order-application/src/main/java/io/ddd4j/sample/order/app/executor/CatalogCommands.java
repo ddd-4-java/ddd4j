@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.Result;
+import io.ddd4j.core.api.R;
 import io.ddd4j.sample.order.app.CatalogService;
 import io.ddd4j.sample.order.client.command.ConfirmTradePaymentCmd;
 import io.ddd4j.sample.order.client.command.ChangeTradeOrderCmd;
@@ -34,24 +34,24 @@ public final class CatalogCommands implements CommandExecutor<Command> {
     /**
      * 用当前处理器执行传入命令或操作。
      *
-     * <p>此实现调用 <code>Result.ok(service.create((CreateGoodsSpuCmd)command))</code>。</p>
+     * <p>此实现调用 <code>R.ok(service.create((CreateGoodsSpuCmd)command))</code>。</p>
      *
      * @param command 命令对象
-     * @return 根据执行路径返回<code>Result.ok(service.create((CreateGoodsSpuCmd)command))</code>、<code>Result.ok(service.place((PlaceTradeOrderCmd)command))</code>、<code>Result.ok(service.confirmPayment((ConfirmTradePaymentCmd)command))</code>
+     * @return 根据执行路径返回<code>R.ok(service.create((CreateGoodsSpuCmd)command))</code>、<code>R.ok(service.place((PlaceTradeOrderCmd)command))</code>、<code>R.ok(service.confirmPayment((ConfirmTradePaymentCmd)command))</code>
      */
     @Override
-    public Result<Object> execute(Command command) {
+    public R<Object> execute(Command command) {
         if (command instanceof CreateGoodsSpuCmd) {
-            return Result.ok(service.create((CreateGoodsSpuCmd) command));
+            return R.ok(service.create((CreateGoodsSpuCmd) command));
         }
         if (command instanceof PlaceTradeOrderCmd) {
-            return Result.ok(service.place((PlaceTradeOrderCmd) command));
+            return R.ok(service.place((PlaceTradeOrderCmd) command));
         }
         if (command instanceof ConfirmTradePaymentCmd) {
-            return Result.ok(service.confirmPayment((ConfirmTradePaymentCmd) command));
+            return R.ok(service.confirmPayment((ConfirmTradePaymentCmd) command));
         }
         if (command instanceof ChangeTradeOrderCmd) {
-            return Result.ok(service.change((ChangeTradeOrderCmd) command));
+            return R.ok(service.change((ChangeTradeOrderCmd) command));
         }
         throw new IllegalArgumentException("不支持的商品交易命令");
     }

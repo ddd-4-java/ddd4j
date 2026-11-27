@@ -14,6 +14,7 @@
  */
 package io.ddd4j.quarkus.cqrs;
 
+import io.quarkus.arc.DefaultBean;
 import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
@@ -40,6 +41,7 @@ import java.util.UUID;
  */
 @Slf4j
 @ApplicationScoped
+@DefaultBean
 public class QuarkusViewScheduler implements ViewScheduler {
 
     /**
