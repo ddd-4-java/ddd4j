@@ -17,6 +17,17 @@
     <dependencies>
         <dependency>
             <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-ddd-rules-cola</artifactId>
+            <version>${revision}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-web-core</artifactId>
             <version>${revision}</version>
         </dependency>

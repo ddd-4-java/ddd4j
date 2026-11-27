@@ -2269,13 +2269,17 @@
     {
       "path": "ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/Ddd4jGuiceRuntime.java",
       "sourceSha256": [
-        "eea813a30e203c2495796eb6b1a3741918d5037c056c8a83164bb6b5729c77fb",
-        "eb5ab8c2a66316632f72e00f38d1f81f3c4cf8ca37b08dee2368b66512839f21",
-        "eb5ab8c2a66316632f72e00f38d1f81f3c4cf8ca37b08dee2368b66512839f21"
+        "044027d8bf428a3dc2d55aa9cb0351b6f63ddf322b4672ba72a504304deab1af",
+        "8dff03dbeb4e328f3b0d0ffdc6760178da48799755aa61befc908ee4b294dd76",
+        "764107962c21ae6c018921c002793c5ef001a1e499a6cadeb0691b0ddc851bfa"
       ],
       "evidence": "ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/GuiceRuntimeContractTest.java",
-      "testSha256": "3ffd5623469e2247f50fea8c23dfd8ed80a41aa61aa328c86fc5cbae92b30e36",
-      "reason": "三线共同运行时契约测试验证 Guice 启动、关闭和就绪能力；JDK 8 使用 Collections.emptyList，高两线使用 List.of，默认就绪贡献者集合语义一致"
+      "reason": "三线共同运行时契约测试验证 Guice 启动、关闭和就绪能力；JDK 8 使用 Collections.emptyList，高两线使用 List.of，默认就绪贡献者集合语义一致",
+      "testSha256ByJdk": {
+        "8": "82aac1cf8437a89e9ec1f3fd9e4213d05b9a0cc8423e686a380c1dc28ca08be8",
+        "17": "e40b16228adf4b4a6d805e1d6a89508326475baee4588e35155b07cd23b63c18",
+        "21": "82aac1cf8437a89e9ec1f3fd9e4213d05b9a0cc8423e686a380c1dc28ca08be8"
+      }
     },
     {
       "path": "ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/cqrs/GuiceViewManager.java",
@@ -2826,13 +2830,17 @@
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunner.java",
       "sourceSha256": [
-        "f05137aa8eec21bafe76228684daa5ba5375897cfb6362e3c67b0dc6899f29fd",
-        "3e65eec22050db39264c6ee3bb2223e1db142b21c0177d75e34ed144b9fd7e60",
-        "3e65eec22050db39264c6ee3bb2223e1db142b21c0177d75e34ed144b9fd7e60"
+        "03ca1c56566e4a156cf5ad2ea4bc5e8c8d87910ce2867934557e6c2baefe1c79",
+        "29602a2295f6a27de72adee4b12695b1665e5c7cbe44ba553ac09573bbc9ec8c",
+        "d2cf4d4b4f325e3a95a49962ebd40c032a64d1aa7d619d382476fe07df9f99cd"
       ],
       "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunnerNullMetricsParityTest.java",
-      "testSha256": "4b897bc758ee31b86abef7ffc2296f9a1b95a36ba835417fa4ad424649fe01a8",
-      "reason": "JDK 8 以条件表达式回退空指标，高两线使用 Objects.requireNonNullElse；共同测试验证空指标时投影仍处理事件并推进位置"
+      "reason": "JDK 8 以条件表达式回退空指标，高两线使用 Objects.requireNonNullElse；共同测试验证空指标时投影仍处理事件并推进位置",
+      "testSha256ByJdk": {
+        "8": "2567e2825ebad85d4314c08ca65e00b2fb8e4064595c4d9224fb364ae000f051",
+        "17": "9c5f98809c9f84f8b56f5d0184400f1b825414f7742203eda99847312e1fefb8",
+        "21": "2567e2825ebad85d4314c08ca65e00b2fb8e4064595c4d9224fb364ae000f051"
+      }
     },
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/EntityIdPath.java",
@@ -3016,30 +3024,30 @@
     {
       "path": "ddd4j-mq/ddd4j-mq-activemq/src/main/java/io/ddd4j/mq/activemq/ActiveMQClient.java",
       "sourceSha256": [
-        "d470fb302c7908572a2452c28acd6056fbecb074f0f9c11095829f79a71d9d13",
-        "5915ee07620c7cfd5e5d756b03171fcf44498b458c02f8834b978a6df8a8d44a",
-        "26a458fec32375077a7e289e56f9c80ae04c52029f9504bf22de5574568c6620"
+        "daa30033eaf82a2f2b043bf0c9dc486ff3b6d2626b3dfb0b5a7c12d5a70f4157",
+        "ea3d8b17e0f98a940d3eca9475182fdd5963e86ffce67a2e77cffb90968c1b6b",
+        "3cfb7df56dfff95d2bdab5383417fae3592ec8d2922559b01771c5d74eddffdc"
       ],
       "evidence": "ddd4j-mq/ddd4j-mq-activemq/src/test/java/io/ddd4j/mq/activemq/ActiveMQAdapterContractTest.java",
       "testSha256ByJdk": {
-        "8": "e04ebb50656ab3c4a0a00ad2114305b48ebe678edec06869e11287a6bd2f6c88",
-        "17": "38f3251c3c76d11816499621291e3f05a4e9a2a52bb086bb128efe813fef56a6",
-        "21": "38f3251c3c76d11816499621291e3f05a4e9a2a52bb086bb128efe813fef56a6"
+        "8": "e949d2775e2e496646aa0f2c2619eb794d3b1e2455f8eb0e92c08c4f659fc11e",
+        "17": "1a87e1d11e0e09679211216c2758ca0e149c3e5f2796e54a181faee23e3e93c0",
+        "21": "0c57678aef74f66d62bd1dfc17a47a1c465c45714dcdcb28bcc5d9d3fb2f070c"
       },
       "reason": "ActiveMQ 的 JDK 8 线使用 javax.jms 与旧 Java 条件表达式，JDK 17/21 线使用 jakarta.jms 与等价语法；三线各六项适配器契约测试验证因果头、消息 ID、失败关闭与逆序释放"
     },
     {
       "path": "ddd4j-mq/ddd4j-mq-activemq/src/main/java/io/ddd4j/mq/activemq/util/ActivemqKit.java",
       "sourceSha256": [
-        "32bb77138231bd8e77b0ca3d21d8b45c6364d7a9936639d8b65172ac9c109783",
-        "7aceda1b85acadfc623b131038a160fa691409c93f2b63d45b3203709fab0a94",
-        "6120851e14b6f4067f3f72802283b5070a00b09d974d215bed09843ef631c40e"
+        "2dd42d8d2e410f3d6702516f06ccba3e873151642a709a7f910e119343abc42c",
+        "2de1ada6363af34d64f47ba78cd62d9a6dbf85a0c0b97231c481c8da2e765730",
+        "ca7ea7e0e170086fb79fca0a9e04dcd7ece5aa3ef43247c3e14fb4ff11ce3991"
       ],
       "evidence": "ddd4j-mq/ddd4j-mq-activemq/src/test/java/io/ddd4j/mq/activemq/util/ActivemqKitContractTest.java",
       "testSha256ByJdk": {
-        "8": "8dba921266af13959a79ac39705c79209a1047882561fcd159848bb55e9b8fe1",
-        "17": "bf8f7d31c2dafc1fba9721bd4142ec007bcb4488200b654b6cca3a77eb68cc91",
-        "21": "bf8f7d31c2dafc1fba9721bd4142ec007bcb4488200b654b6cca3a77eb68cc91"
+        "8": "5c06c7e4cbc6d9dad81cdd1d75811c006af7bdcfb9d2093b70f38a75d9def44d",
+        "17": "e2dc8ac3c6671d0a77df2c29c948b27f3507c4414b1bcae0574b95778482523d",
+        "21": "7da2f3bd1f959a3edcca02a8858d2d7935ff77ad171fb6cc2a1644f73daf6136"
       },
       "reason": "JDK 8 使用 javax.jms 与显式 instanceof 转型，JDK 17/21 使用 jakarta.jms 与模式匹配；三线各三项目的地、UTF-8 payload、JMS 消息头及异常回退契约测试验证等价行为"
     },

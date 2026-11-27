@@ -17,6 +17,11 @@
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <!-- Micronaut nullability annotations reference javax.annotation.meta.When during doclint. -->
         <dependency>
             <groupId>com.google.code.findbugs</groupId>

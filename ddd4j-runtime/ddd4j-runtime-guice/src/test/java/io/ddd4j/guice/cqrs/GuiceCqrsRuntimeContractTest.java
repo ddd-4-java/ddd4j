@@ -22,6 +22,7 @@ import io.ddd4j.guice.command.GuiceCommandBus;
 import io.ddd4j.runtime.testkit.AbstractCqrsRuntimeContractTest;
 import io.ddd4j.runtime.testkit.CqrsRuntimeContract;
 
+import java.util.Objects;
 import java.util.Arrays;
 
 /**
@@ -41,6 +42,249 @@ import java.util.Arrays;
  * @since 3.0.0
  */
 class GuiceCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
+
+    /**
+     * 构造 <code>io.ddd4j.core.cqrs.readmodel.ProjectionView&lt;&gt;</code> 作为当前测试的输入或结果。
+     *
+     * @param name 当前测试指定的对象或属性名称
+     * @param cron 用于构造本次返回结果的 <code>String</code> 输入
+     * @return 提供给后续契约断言的 <code>io.ddd4j.core.cqrs.readmodel.ProjectionView&lt;Object&gt;</code> 结果
+     */
+    private static io.ddd4j.core.cqrs.readmodel.ProjectionView<Object> startupView(String name, String cron) {
+        return new io.ddd4j.core.cqrs.readmodel.ProjectionView<Object>() {
+            public String getName() {
+                return name;
+            }
+
+            public String getCron() {
+                return cron;
+            }
+
+            public java.util.Collection<String> getEventTypes() {
+                return java.util.Collections.emptyList();
+            }
+
+            public void handleEvents(java.util.Collection<Object> events) {
+            }
+        };
+    }
+
+    /**
+     * 根据本次调用更新 <code>previous = com.google.inject.Guice.createInjector(new io.ddd4j.guice.Ddd4jGuiceModule())</code>、<code>priorRuntime = previous.getInstance(io.ddd4j.guice.Ddd4jGuiceRuntime.class)</code>，用于后续测试步骤。
+     *
+     * @param prior           传给 <code>"empty".equals(prior)</code> 的 <code>String</code> 输入
+     * @param projectionFirst 传给 <code>org.junit.jupiter.api.Assertions.assertThrows()</code> 的 <code>boolean</code> 输入
+     * @throws Exception 当前用例准备资源或调用测试入口失败
+     */
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.CsvSource({"empty,false", "empty,true", "registrations,false", "registrations,true", "runtime,false", "runtime,true"})
+    void failedProjectionStartupPreservesGlobalsAndReleasesOwnedResources(String prior, boolean projectionFirst) throws Exception {
+        io.ddd4j.core.context.BaseContext.clear();
+        io.ddd4j.guice.context.GuiceContext.clear();
+        String[] keys = {io.ddd4j.core.constant.SpiKeys.DOMAIN_EVENT_PUBLISHER,
+                io.ddd4j.core.constant.SpiKeys.SUBJECT_PROVIDER, io.ddd4j.core.constant.SpiKeys.I18N_PROVIDER,
+                io.ddd4j.core.constant.SpiKeys.COMMAND_BUS};
+        com.google.inject.Injector previous = null;
+        io.ddd4j.guice.Ddd4jGuiceRuntime priorRuntime = null;
+        ViewScheduler.ViewScheduleHandle priorHandle = null;
+        if (!"empty".equals(prior)) {
+            previous = com.google.inject.Guice.createInjector(new io.ddd4j.guice.Ddd4jGuiceModule());
+            priorRuntime = previous.getInstance(io.ddd4j.guice.Ddd4jGuiceRuntime.class);
+            priorHandle = previous.getInstance(GuiceViewManager.class).scheduleAtFixedRate("prior-runtime", 3600, () -> {
+            });
+        }
+        java.util.Map<String, Object> before = new java.util.HashMap<>();
+        for (String key : keys) {
+            before.put(key, io.ddd4j.core.context.BaseContext.get(key, Object.class).orElse(null));
+        }
+        if ("registrations".equals(prior)) {
+            priorRuntime.close();
+            priorRuntime = null;
+            previous = null;
+            before.forEach((key, value) -> io.ddd4j.core.context.BaseContext.inject(key, Object.class, value));
+        }
+        io.ddd4j.guice.context.GuiceContext.setAttribute("r07-prior", "untouched");
+        java.util.List<io.ddd4j.core.cqrs.readmodel.ProjectionView<Object>> views = java.util.Arrays.asList(
+                startupView("scheduled-first", "0/3600"), startupView("fails-second", "invalid-cron"));
+        GuiceInMemoryProjectionPositionRepository repository = new GuiceInMemoryProjectionPositionRepository();
+        io.ddd4j.core.cqrs.readmodel.EventChunkReader<Object> reader = (stream, from, size, types) ->
+                io.ddd4j.core.cqrs.readmodel.EventChunk.empty(from);
+        io.ddd4j.core.cqrs.readmodel.ProjectionRunner<Object> runner = new io.ddd4j.core.cqrs.readmodel.ProjectionRunner<>(
+                new io.ddd4j.core.cqrs.readmodel.DefaultProjectionService(repository), reader);
+        java.util.List<ViewScheduler.ViewScheduleHandle> handles = new java.util.ArrayList<>();
+        java.util.List<java.util.concurrent.ScheduledExecutorService> pools = new java.util.ArrayList<>();
+        java.lang.reflect.Field executorField = GuiceViewManager.class.getDeclaredField("executor");
+        executorField.setAccessible(true);
+        GuiceViewManager manager = new GuiceViewManager(1, repository, runner, views) {
+            @Override
+            public ViewScheduleHandle scheduleAtFixedRate(String name, long interval, Runnable task) {
+                ViewScheduleHandle handle = super.scheduleAtFixedRate(name, interval, task);
+                handles.add(handle);
+                try {
+                    pools.add((java.util.concurrent.ScheduledExecutorService) executorField.get(this));
+                } catch (IllegalAccessException failure) {
+                    throw new AssertionError(failure);
+                }
+                return handle;
+            }
+        };
+        com.google.inject.Module projection = com.google.inject.util.Modules.override(
+                new io.ddd4j.guice.Ddd4jProjectionGuiceModule(views)).with(new com.google.inject.AbstractModule() {
+            @Override
+            protected void configure() {
+                bind(GuiceViewManager.class).toInstance(manager);
+                bind(ProjectionPositionRepository.class).toInstance(repository);
+                bind(new com.google.inject.TypeLiteral<io.ddd4j.core.cqrs.readmodel.EventChunkReader<Object>>() {
+                }).toInstance(reader);
+            }
+        });
+        com.google.inject.Injector expectedPrevious = previous;
+        ViewScheduler.ViewScheduleHandle existingHandle = priorHandle;
+        try {
+            com.google.inject.CreationException failure = org.junit.jupiter.api.Assertions.assertThrows(
+                    com.google.inject.CreationException.class, () -> {
+                        if (projectionFirst) {
+                            com.google.inject.Guice.createInjector(projection, io.ddd4j.guice.Ddd4jGuiceModule.basic());
+                        } else {
+                            com.google.inject.Guice.createInjector(io.ddd4j.guice.Ddd4jGuiceModule.basic(), projection);
+                        }
+                    });
+            org.junit.jupiter.api.Assertions.assertTrue(failure.getMessage().contains("Unsupported cron expression format: invalid-cron"));
+            org.junit.jupiter.api.Assertions.assertFalse(handles.isEmpty(), "must schedule a real task before failing");
+            org.junit.jupiter.api.Assertions.assertAll(
+                    () -> org.junit.jupiter.api.Assertions.assertSame(expectedPrevious,
+                            io.ddd4j.guice.context.GuiceContext.isInitialized() ? io.ddd4j.guice.context.GuiceContext.getInjector() : null),
+                    () -> {
+                        for (String key : keys) {
+                            org.junit.jupiter.api.Assertions.assertSame(before.get(key),
+                                    io.ddd4j.core.context.BaseContext.get(key, Object.class).orElse(null), key);
+                        }
+                    },
+                    () -> org.junit.jupiter.api.Assertions.assertEquals("untouched", io.ddd4j.guice.context.GuiceContext.getAttribute("r07-prior")),
+                    () -> {
+                        if ("runtime".equals(prior)) {
+                            org.junit.jupiter.api.Assertions.assertTrue(existingHandle.isActive(), "existing runtime task must remain active");
+                            org.junit.jupiter.api.Assertions.assertTrue(expectedPrevious.getInstance(GuiceViewManager.class).isRunning());
+                        }
+                    },
+                    () -> org.junit.jupiter.api.Assertions.assertFalse(manager.isRunning()),
+                    () -> org.junit.jupiter.api.Assertions.assertTrue(handles.stream().noneMatch(ViewScheduler.ViewScheduleHandle::isActive)),
+                    () -> org.junit.jupiter.api.Assertions.assertTrue(pools.stream().allMatch(pool -> pool.isShutdown() && pool.isTerminated())));
+        } finally {
+            manager.close();
+            if (Objects.nonNull(priorRuntime)) {
+                priorRuntime.close();
+            }
+            io.ddd4j.core.context.BaseContext.clear();
+            io.ddd4j.guice.context.GuiceContext.clear();
+        }
+    }
+
+    /**
+     * 验证<code>basic.getExistingBinding(com.google.inject.Key.get(ProjectionPositionRepository.class))</code>为空，<code>basic.getExistingBinding(com.google.inject.Key.get(ViewManager.class))</code>为空，<code>basic.getInstance(CommandBus.class)</code>非空。
+     */
+    @org.junit.jupiter.api.Test
+    void basicHasNoProjectionAndLegacyKeepsMemoryDefault() {
+        com.google.inject.Injector basic = com.google.inject.Guice.createInjector(io.ddd4j.guice.Ddd4jGuiceModule.basic());
+        try (io.ddd4j.guice.Ddd4jGuiceRuntime runtime = basic.getInstance(io.ddd4j.guice.Ddd4jGuiceRuntime.class)) {
+            org.junit.jupiter.api.Assertions.assertNull(basic.getExistingBinding(com.google.inject.Key.get(ProjectionPositionRepository.class)));
+            org.junit.jupiter.api.Assertions.assertNull(basic.getExistingBinding(com.google.inject.Key.get(ViewManager.class)));
+            org.junit.jupiter.api.Assertions.assertNotNull(basic.getInstance(CommandBus.class));
+        }
+        com.google.inject.Injector legacy = com.google.inject.Guice.createInjector(new io.ddd4j.guice.Ddd4jGuiceModule());
+        try (io.ddd4j.guice.Ddd4jGuiceRuntime runtime = legacy.getInstance(io.ddd4j.guice.Ddd4jGuiceRuntime.class)) {
+            org.junit.jupiter.api.Assertions.assertInstanceOf(io.ddd4j.core.cqrs.readmodel.InMemoryProjectionPositionRepository.class,
+                    legacy.getInstance(ProjectionPositionRepository.class));
+            org.junit.jupiter.api.Assertions.assertNotNull(legacy.getInstance(com.google.inject.Key.get(
+                    new com.google.inject.TypeLiteral<io.ddd4j.core.cqrs.readmodel.ProjectionRunner<Object>>() {
+                    })));
+        }
+    }
+
+    /**
+     * 验证被测调用 抛出 <code>com.google.inject.CreationException.class</code>。
+     */
+    @org.junit.jupiter.api.Test
+    void explicitProjectionRejectsMissingRepositoryAndReaderAtInjectorCreation() {
+        for (boolean supplyRepository : new boolean[]{false, true}) {
+            org.junit.jupiter.api.Assertions.assertThrows(com.google.inject.CreationException.class, () ->
+                    com.google.inject.Guice.createInjector(io.ddd4j.guice.Ddd4jGuiceModule.basic(),
+                            new io.ddd4j.guice.Ddd4jProjectionGuiceModule(java.util.Collections.emptyList()),
+                            new com.google.inject.AbstractModule() {
+                                protected void configure() {
+                                    if (supplyRepository) {
+                                        bind(ProjectionPositionRepository.class).toInstance(new GuiceInMemoryProjectionPositionRepository());
+                                    } else {
+                                        bind(new com.google.inject.TypeLiteral<io.ddd4j.core.cqrs.readmodel.EventChunkReader<Object>>() {
+                                        })
+                                                .toInstance((stream, from, size, types) -> io.ddd4j.core.cqrs.readmodel.EventChunk.empty(from));
+                                    }
+                                }
+                            }));
+        }
+    }
+
+    /**
+     * 验证<code>checkpoint</code>非空，<code>injector.getInstance(ViewManager.class)</code> 与…为同一实例 <code>manager</code>，<code>handle.isActive()</code>为假。
+     *
+     * @throws Exception 准备或读取夹具文件时失败
+     */
+    @org.junit.jupiter.api.Test
+    void explicitProjectionRestoresFrozenPositionProcessesEventsAndClosesTasks() throws Exception {
+        org.h2.jdbcx.JdbcDataSource source = new org.h2.jdbcx.JdbcDataSource();
+        source.setURL("jdbc:h2:mem:r07_" + System.nanoTime() + ";DB_CLOSE_DELAY=-1");
+        GuiceJdbcProjectionPositionRepository repository = new GuiceJdbcProjectionPositionRepository(source);
+        // R00 冻结的旧版 Java 序列化检查点，保持原始字节。
+        java.io.InputStream checkpoint = GuiceCqrsRuntimeContractTest.class.getResourceAsStream("checkpoint-10.ser");
+        org.junit.jupiter.api.Assertions.assertNotNull(checkpoint, "Missing frozen R00 checkpoint");
+        try (java.io.InputStream resource = checkpoint;
+             java.io.ObjectInputStream input = new java.io.ObjectInputStream(resource)) {
+            repository.save((io.ddd4j.core.cqrs.readmodel.ProjectionPosition) input.readObject());
+        }
+        java.util.concurrent.atomic.AtomicInteger delivered = new java.util.concurrent.atomic.AtomicInteger();
+        io.ddd4j.core.cqrs.readmodel.ProjectionView<Object> view = new io.ddd4j.core.cqrs.readmodel.ProjectionView<Object>() {
+            public String getName() {
+                return "order-summary";
+            }
+
+            public String getCron() {
+                return "0/3600";
+            }
+
+            public java.util.Collection<String> getEventTypes() {
+                return java.util.Arrays.asList("Order");
+            }
+
+            public void handleEvents(java.util.Collection<Object> events) {
+                delivered.addAndGet(events.size());
+            }
+        };
+        com.google.inject.Injector injector = com.google.inject.Guice.createInjector(io.ddd4j.guice.Ddd4jGuiceModule.basic(),
+                new io.ddd4j.guice.Ddd4jProjectionGuiceModule(java.util.Arrays.asList(view)), new com.google.inject.AbstractModule() {
+                    protected void configure() {
+                        bind(ProjectionPositionRepository.class).toInstance(repository);
+                        bind(new com.google.inject.TypeLiteral<io.ddd4j.core.cqrs.readmodel.EventChunkReader<Object>>() {
+                        })
+                                .toInstance((stream, from, size, types) -> from == 10L
+                                        ? new io.ddd4j.core.cqrs.readmodel.EventChunk<>(java.util.Arrays.asList("event-11", "event-19"), 20L)
+                                        : io.ddd4j.core.cqrs.readmodel.EventChunk.empty(from));
+                    }
+                });
+        GuiceViewManager manager = injector.getInstance(GuiceViewManager.class);
+        org.junit.jupiter.api.Assertions.assertSame(manager, injector.getInstance(ViewManager.class));
+        org.junit.jupiter.api.Assertions.assertSame(manager, injector.getInstance(ViewScheduler.class));
+        org.junit.jupiter.api.Assertions.assertTrue(manager.isRunning());
+        manager.triggerOnce();
+        manager.triggerOnce();
+        org.junit.jupiter.api.Assertions.assertEquals(2, delivered.get());
+        org.junit.jupiter.api.Assertions.assertEquals(20L, new GuiceJdbcProjectionPositionRepository(source)
+                .findByStreamId("order-summary").orElseThrow(AssertionError::new).getNextEventNumber());
+        io.ddd4j.core.cqrs.readmodel.ViewScheduler.ViewScheduleHandle handle = manager.scheduleAtFixedRate("close-check", 3600, () -> {
+        });
+        injector.getInstance(io.ddd4j.guice.Ddd4jGuiceRuntime.class).close();
+        org.junit.jupiter.api.Assertions.assertFalse(manager.isRunning());
+        org.junit.jupiter.api.Assertions.assertFalse(handle.isActive());
+    }
 
     /**
      * 创建测试中用于操作当前框架的契约适配器。

@@ -61,6 +61,7 @@
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-data-mybatisplus</artifactId>
             <version>${revision}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.google.inject</groupId>

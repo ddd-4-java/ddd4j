@@ -1,5 +1,12 @@
 package io.ddd4j.sample.order;
 
+import com.tngtech.archunit.core.importer.ClassFileImporter;
+import com.tngtech.archunit.core.importer.ImportOption;
+import io.ddd4j.ddd.cola.rules.ColaDDDLayerRules;
+import io.ddd4j.sample.order.domain.InvalidDomainDependency;
+import io.ddd4j.sample.order.app.CatalogService;
+import com.tngtech.archunit.core.domain.JavaClasses;
+import com.tngtech.archunit.lang.EvaluationResult;
 import java.util.concurrent.Future;
 import java.util.concurrent.ExecutorService;
 import io.ddd4j.sample.order.app.projection.TradeOrderSnapshot;
@@ -140,5 +147,33 @@ class CatalogArchitectureTest {
             Thread.currentThread().interrupt();
             throw new AssertionError(failure);
         }
+    }
+
+    /**
+     * 验证真实商品交易类满足 COLA 依赖规则。
+     */
+    @Test
+    void catalogProductionClassesRespectColaBoundaries() {
+        JavaClasses classes = new ClassFileImporter()
+                .withImportOption(new ImportOption.DoNotIncludeTests())
+                .importPackages("io.ddd4j.sample.order");
+        assertTrue(classes.contain(TradeOrder.class));
+        assertTrue(classes.contain(CatalogApi.class));
+        assertTrue(classes.contain(CatalogDatabase.class));
+        assertTrue(classes.contain(CatalogService.class));
+        ColaDDDLayerRules.DOMAIN_NOT_DEPEND_ON_ADAPTER.check(classes);
+        ColaDDDLayerRules.DOMAIN_NOT_DEPEND_ON_APPLICATION.check(classes);
+        ColaDDDLayerRules.DOMAIN_NOT_DEPEND_ON_FRAMEWORK.check(classes);
+    }
+
+    /**
+     * 验证真实的 app 包名同样会触发领域反向依赖违规。
+     */
+    @Test
+    void domainDependingOnAppIsRejected() {
+        JavaClasses classes = new ClassFileImporter()
+                .importClasses(InvalidDomainDependency.class);
+        EvaluationResult result = ColaDDDLayerRules.DOMAIN_NOT_DEPEND_ON_APPLICATION.evaluate(classes);
+        assertTrue(result.hasViolation());
     }
 }

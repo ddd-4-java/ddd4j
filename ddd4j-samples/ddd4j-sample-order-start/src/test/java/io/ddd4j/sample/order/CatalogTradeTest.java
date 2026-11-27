@@ -1,5 +1,8 @@
 package io.ddd4j.sample.order;
 
+import io.ddd4j.core.constant.ContextConstants;
+import io.ddd4j.core.context.ThreadContext;
+import io.ddd4j.data.mybatis.context.Ddd4jTenantContext;
 import io.ddd4j.sample.order.domain.model.TradeOrder;
 import io.ddd4j.sample.order.domain.gateway.TradeSession;
 import io.ddd4j.kit.lang.StrKit;
@@ -36,6 +39,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /** \u4f7f\u7528\u771f\u5b9e MySQL \u9a8c\u8bc1\u5546\u54c1\u4ea4\u6613\u7684\u8868\u7ed3\u6784\u3001\u4e8b\u52a1\u3001\u79df\u6237\u9694\u79bb\u548c\u72b6\u6001\u6d41\u8f6c\u3002 */
@@ -221,4 +225,26 @@ class CatalogTradeTest {
         assertEquals(expected, counts);
     }
 
+
+    /**
+     * 验证 MyBatis 事务把业务租户传给 DDD4J，并在异常后恢复请求租户。
+     */
+    @Test
+    void catalogTransactionScopesAndRestoresTenant() {
+        UnpooledDataSource source = new UnpooledDataSource(MYSQL.getDriverClassName(), MYSQL.getJdbcUrl(), MYSQL.getUsername(), MYSQL.getPassword());
+        TradeSession.Transactions transactions = CatalogDatabase.open(source);
+        Ddd4jTenantContext context = new Ddd4jTenantContext();
+        try (ThreadContext.Scope request = ThreadContext.open(); Ddd4jTenantContext.Scope ignored = context.open("request-tenant")) {
+            ThreadContext.set(ContextConstants.PREPARING_SQL, "caller-sql");
+            IllegalStateException failure = assertThrows(IllegalStateException.class, () -> transactions.execute("trade-tenant", session -> {
+                assertEquals("trade-tenant", context.getCurrentTenantId());
+                assertFalse(session.goods().findById(Long.MAX_VALUE).isPresent());
+                assertNotEquals("caller-sql", ThreadContext.get(ContextConstants.PREPARING_SQL));
+                throw new IllegalStateException("rollback");
+            }));
+            assertEquals("rollback", failure.getMessage());
+            assertEquals("request-tenant", context.getCurrentTenantId());
+            assertEquals("caller-sql", ThreadContext.get(ContextConstants.PREPARING_SQL));
+        }
+    }
 }

@@ -73,7 +73,7 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
     Optional<M> findById(ID id);
 
     /**
-     * 保存聚合根（新建或更新，对应 {@code insert} + {@code updateById}）。
+     * 保存聚合根，由具体实现定义新建和更新的语义。
      *
      * @param aggregate 聚合根
      * @return 保存后的聚合根（包含自增字段）

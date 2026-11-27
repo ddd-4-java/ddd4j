@@ -30,7 +30,7 @@ public interface QueryBus {
     /**
      * 只读分发：按查询对象类型路由到注册的 {@link QueryHandler} 并返回其结果。
      *
-     * <p>查询路径 MUST NOT 产生写副作用；重复 ask 同一查询 MUST 返回一致结果。
+     * <p>处理器应只读。结果反映执行时读取到的数据，可能随业务提交或投影更新而变化。
      *
      * @param query 查询对象
      * @param <R>   结果类型
