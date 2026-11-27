@@ -1,0 +1,64 @@
+diff --git a/ddd4j-boot-auth/ddd4j-boot-auth-satoken/src/main/java/io/ddd4j/boot/auth/satoken/SaTokenEnhanceAutoConfiguration.java b/ddd4j-boot-auth/ddd4j-boot-auth-satoken/src/main/java/io/ddd4j/boot/auth/satoken/SaTokenEnhanceAutoConfiguration.java
+index 0f1fdcd..143b2c1 100644
+--- a/ddd4j-boot-auth/ddd4j-boot-auth-satoken/src/main/java/io/ddd4j/boot/auth/satoken/SaTokenEnhanceAutoConfiguration.java
++++ b/ddd4j-boot-auth/ddd4j-boot-auth-satoken/src/main/java/io/ddd4j/boot/auth/satoken/SaTokenEnhanceAutoConfiguration.java
+@@ -47,2 +47,6 @@ public class SaTokenEnhanceAutoConfiguration implements InitializingBean {
+      * 显式注册 ddd4j 扩展注解处理器，避免依赖框架自动发现策略。
++     *
++     * @param mixCheckLoginHandler 多账号登录检查处理器
++     * @param internalCheckHandler 内部服务鉴权处理器
++     * @return 在初始化时向 Sa-Token 注册两种处理器的回调
+      */
+@@ -62,2 +66,4 @@ public class SaTokenEnhanceAutoConfiguration implements InitializingBean {
+      * 多账号混合登录注解处理器。
++     *
++     * @return 新的多账号登录检查处理器
+      */
+@@ -71,2 +77,4 @@ public class SaTokenEnhanceAutoConfiguration implements InitializingBean {
+      * 内部服务 API Key 注解处理器。
++     *
++     * @return 新的内部服务 API Key 检查处理器
+      */
+@@ -80,2 +88,4 @@ public class SaTokenEnhanceAutoConfiguration implements InitializingBean {
+      * Sa-Token SubjectProvider（覆盖 ddd4j-auth-spring 的默认装配，确保 sa-token 优先）。
++     *
++     * @return 基于 Sa-Token 的主体提供器
+      */
+@@ -89,2 +99,4 @@ public class SaTokenEnhanceAutoConfiguration implements InitializingBean {
+      * Sa-Token exception handler for servlet applications.
++     *
++     * @return Servlet 应用的 Sa-Token 异常处理器
+      */
+diff --git a/ddd4j-boot-auth/ddd4j-boot-auth-shiro/src/main/java/io/ddd4j/boot/auth/shiro/ShiroEnhanceAutoConfiguration.java b/ddd4j-boot-auth/ddd4j-boot-auth-shiro/src/main/java/io/ddd4j/boot/auth/shiro/ShiroEnhanceAutoConfiguration.java
+index f906cf3..d80af89 100644
+--- a/ddd4j-boot-auth/ddd4j-boot-auth-shiro/src/main/java/io/ddd4j/boot/auth/shiro/ShiroEnhanceAutoConfiguration.java
++++ b/ddd4j-boot-auth/ddd4j-boot-auth-shiro/src/main/java/io/ddd4j/boot/auth/shiro/ShiroEnhanceAutoConfiguration.java
+@@ -35,2 +35,4 @@ public class ShiroEnhanceAutoConfiguration {
+      * Shiro SubjectProvider（覆盖默认装配）。
++     *
++     * @return 基于 Shiro 的主体提供器
+      */
+@@ -44,2 +46,4 @@ public class ShiroEnhanceAutoConfiguration {
+      * Shiro exception handler for servlet applications.
++     *
++     * @return Servlet 应用的 Shiro 异常处理器
+      */
+diff --git a/ddd4j-boot-core/src/main/java/io/ddd4j/boot/core/Ddd4jRepositoryAutoConfiguration.java b/ddd4j-boot-core/src/main/java/io/ddd4j/boot/core/Ddd4jRepositoryAutoConfiguration.java
+index 38c305e..1ae1b27 100644
+--- a/ddd4j-boot-core/src/main/java/io/ddd4j/boot/core/Ddd4jRepositoryAutoConfiguration.java
++++ b/ddd4j-boot-core/src/main/java/io/ddd4j/boot/core/Ddd4jRepositoryAutoConfiguration.java
+@@ -151,2 +151,4 @@ public class Ddd4jRepositoryAutoConfiguration {
+          * 获取已注册的仓储实例映射（用于测试）。
++         *
++         * @return 仓储注册表的只读视图
+          */
+diff --git a/ddd4j-boot-web/ddd4j-boot-web-webmvc/src/main/java/io/ddd4j/boot/web/webmvc/Ddd4jWebMvcAutoConfiguration.java b/ddd4j-boot-web/ddd4j-boot-web-webmvc/src/main/java/io/ddd4j/boot/web/webmvc/Ddd4jWebMvcAutoConfiguration.java
+index 60e9d11..1d3c900 100644
+--- a/ddd4j-boot-web/ddd4j-boot-web-webmvc/src/main/java/io/ddd4j/boot/web/webmvc/Ddd4jWebMvcAutoConfiguration.java
++++ b/ddd4j-boot-web/ddd4j-boot-web-webmvc/src/main/java/io/ddd4j/boot/web/webmvc/Ddd4jWebMvcAutoConfiguration.java
+@@ -75,2 +75,5 @@ public class Ddd4jWebMvcAutoConfiguration {
+      * 请求生命周期、鉴权和幂等基础设施，避免覆盖 Spring Boot 的同名 Bean。
++     *
++     * @param environment 提供当前启用的 Spring 配置集
++     * @return 按环境查询启用配置集的管理器
+      */

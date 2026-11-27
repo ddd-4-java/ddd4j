@@ -83,6 +83,8 @@ jobs:
 
       - name: Install pinned Easy4J build dependencies
         run: bash scripts/install-mybatis-plus-enhance.sh 1.0.x .
+      - name: Install pinned DDD4J Boot Web and authentication adapters
+        run: bash scripts/install-ddd4j-boot-web.sh
       - name: Verify BOM publication contract
         run: ./scripts/check-bom-alignment.sh
       - name: Verify Java style guardrails
@@ -150,6 +152,8 @@ jobs:
           fi
       - name: Install pinned Easy4J build dependencies
         run: bash scripts/install-mybatis-plus-enhance.sh 1.0.x .
+      - name: Install pinned DDD4J Boot Web and authentication adapters
+        run: bash scripts/install-ddd4j-boot-web.sh
       - name: Install reactor dependencies without coverage enforcement
         run: ./mvnw -U -Denforcer.skip=true -B -DskipTests install
       - name: Enforce 90% line coverage on gated modules
@@ -192,6 +196,8 @@ jobs:
           fi
       - name: Install pinned Easy4J build dependencies
         run: bash scripts/install-mybatis-plus-enhance.sh 1.0.x .
+      - name: Install pinned DDD4J Boot Web and authentication adapters
+        run: bash scripts/install-ddd4j-boot-web.sh
       - name: Install reactor artifacts for plugin resolution
         run: ./mvnw -U -Denforcer.skip=true -B -Dmaven.test.skip=true -DskipITs -Dquarkus.build.skip=true install
       - name: Generate CycloneDX SBOM
@@ -257,7 +263,7 @@ jobs:
       - name: Run infrastructure and native Broker integration tests
         run: >-
           ./mvnw -U -Denforcer.skip=true -B
-          -pl ddd4j-cache,ddd4j-data/ddd4j-data-mybatisplus,ddd4j-mq/ddd4j-mq-kafka,ddd4j-samples/ddd4j-sample-order-jdbc,ddd4j-samples/ddd4j-sample-order-kafka,ddd4j-samples/ddd4j-sample-order-redis,ddd4j-mq/ddd4j-mq-rabbitmq,ddd4j-mq/ddd4j-mq-nats,ddd4j-mq/ddd4j-mq-mqtt,ddd4j-mq/ddd4j-mq-mqtt-mica,ddd4j-mq/ddd4j-mq-activemq,ddd4j-mq/ddd4j-mq-pulsar,ddd4j-mq/ddd4j-mq-tdmq,ddd4j-mq/ddd4j-mq-rocketmq,ddd4j-mq/ddd4j-mq-redis-stream,ddd4j-mq/ddd4j-mq-sqs
+          -pl ddd4j-cache,ddd4j-data/ddd4j-data-mybatisplus,ddd4j-mq/ddd4j-mq-kafka,ddd4j-samples/ddd4j-sample-order-start,ddd4j-mq/ddd4j-mq-rabbitmq,ddd4j-mq/ddd4j-mq-nats,ddd4j-mq/ddd4j-mq-mqtt,ddd4j-mq/ddd4j-mq-mqtt-mica,ddd4j-mq/ddd4j-mq-activemq,ddd4j-mq/ddd4j-mq-pulsar,ddd4j-mq/ddd4j-mq-tdmq,ddd4j-mq/ddd4j-mq-rocketmq,ddd4j-mq/ddd4j-mq-redis-stream,ddd4j-mq/ddd4j-mq-sqs
           -am clean test
       - name: Run Redis Stream native causality tests
         shell: bash
