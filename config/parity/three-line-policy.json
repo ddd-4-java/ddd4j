@@ -203,43 +203,47 @@
       "path": "ddd4j-web/ddd4j-web-quarkus/src/main/resources/META-INF/beans.xml",
       "sha256": "eeda5bb2f3e034daa25fb64f2c7ff46c3055921f5e6bb012e5e575666f28ef6c",
       "evidence": "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusFilterCdiContractTest.java",
-      "testSha256": "6f8f37bf04f320757c3ec2a80c6e35460892f73d5e6a039bb9c623d49c022ade",
       "assertion": "available",
       "httpEvidence": "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebContractTest.java",
       "httpTestSha256": [
-        "fb046d423efe84aeeab3754fa066df646350c12c5d854ef1e3cb4321c6728449",
-        "8e03833c56faabbbf2dc760b64333d2f5337b5781dc890fe862d7c61c59d540c",
-        "11f1047eedfb9765cf6385f097ad87d2e74ac8be17e5cbc328b2dc1cb85a766c"
+        "7dab1c09392ff43acb26f0ea1870823d020b877068015afe3666681f95387a21",
+        "047c09bac8c0e6212c65fe11b8b784af837688aee6e7afd7de7361d7bbf930e6",
+        "267547ca25e7a568fd8c075f29d09aac32999d70134e75a80e0fdab36b4dc826"
       ],
-      "reason": "Quarkus 1/JDK 8 的 Java EE 2.0 annotated beans.xml 是 CDI 发现入口；高线 Quarkus REST 的 Bean 作用域为 Singleton。三线 Arc 均能取得过滤器 Bean，且共同 HTTP 契约每线 6 项通过。"
+      "reason": "Quarkus 1/JDK 8 的 Java EE 2.0 annotated beans.xml 是 CDI 发现入口；高线 Quarkus REST 的 Bean 作用域为 Singleton。三线 Arc 均能取得过滤器 Bean，且共同 HTTP 契约每线 6 项通过。",
+      "testSha256ByJdk": {
+        "8": "01c43e58a85b08582c09445aa7d9f11e5db7f172c722fc7783428ba04612e9f2",
+        "17": "b5112f071a17dbb2a7b19b92769e81ae46895feddcf23fd736178bfca3365334",
+        "21": "01c43e58a85b08582c09445aa7d9f11e5db7f172c722fc7783428ba04612e9f2"
+      }
     }
   ],
   "platformFilesOnlyOnJdk17": {
     "sources": {
-      "ddd4j-runtime/ddd4j-runtime-dropwizard/src/main/java/io/ddd4j/dropwizard/Ddd4jLogbackAccessRequestLayout.java": "63c63044f1cf75dcd3876309cd319b7721f838850bace7ae8be8f1dd63116290",
-      "ddd4j-runtime/ddd4j-runtime-dropwizard/src/main/java/io/ddd4j/dropwizard/Ddd4jLogbackAccessRequestLogFactory.java": "2d1fafb8fc94b2e7093bc35ec24a9c75d5d1bd907d6af41b8daf4051e3ffdc38",
-      "ddd4j-runtime/ddd4j-runtime-dropwizard/src/test/java/io/ddd4j/dropwizard/Ddd4jLogbackAccessRequestLogFactoryTest.java": "55efd3d849a236d9276af2921e61b9e18646d36a2f6b010b948ad46011c227ec"
+      "ddd4j-runtime/ddd4j-runtime-dropwizard/src/main/java/io/ddd4j/dropwizard/Ddd4jLogbackAccessRequestLayout.java": "55e0083540e43b8d870835af234caa545a37e76c019fb0b6f1c1739949db39a4",
+      "ddd4j-runtime/ddd4j-runtime-dropwizard/src/main/java/io/ddd4j/dropwizard/Ddd4jLogbackAccessRequestLogFactory.java": "15880480c4130748633fcaf3a17d5d9a33e9b6e05bb3d85a7029b95a7b230848",
+      "ddd4j-runtime/ddd4j-runtime-dropwizard/src/test/java/io/ddd4j/dropwizard/Ddd4jLogbackAccessRequestLogFactoryTest.java": "5876426bf3e2609f607348833692c5d16b366350ff0d476d8aa06fb588fc0fe5"
     },
     "counterparts": {
       "ddd4j-runtime/ddd4j-runtime-dropwizard/src/main/java/io/ddd4j/dropwizard/Ddd4jBundle.java": {
-        "8": "f658fbb594393aca39206a85b14d49353f83a69e2e6f6faaf70b4ee0cd3260a3",
-        "17": "fe0489825192826bd0e10badbc942af4c22b9207c128edb526ac1f967c302935",
-        "21": "36be887c8be5a9bc64a374445d58fe183e80f93b95db3709b518e0449b37d467"
+        "8": "c7972d6015f057efbc2e77ebd294db1aee3f6dc144cf455bece09fa750533618",
+        "17": "0662c3a7cabcbf9f1160a75e225490bdfbea4f4ecb5494b489a7383e0f8545dc",
+        "21": "2bfcd0bb5e0963f6b763c81e9f2cffa6f954c6f33dc94be852588bdc074cc844"
       },
       "ddd4j-runtime/ddd4j-runtime-dropwizard/src/test/java/io/ddd4j/dropwizard/Ddd4jBundleTest.java": {
-        "8": "fac496cd99b1e286fa7bf23d597619ebd6c0f2cd718093528b442cf639d9ed22",
-        "17": "ef8f5b3fbcb2f11201b4a7f98cf021fa8f25731173a85ccf94974f4fd11b1727",
-        "21": "08111932536fd48de913f073dd4ab05a0bc15c23def1b8cf4696639e8d156c5d"
+        "8": "9a853f76d1430d55d05ff9c22dee640576b711c6eba0cdf9da03fdaaa670828c",
+        "17": "efe664ff7dd9ab328274ba4ac6e932f05bfc30bdd1659b6f4cb3a741ce16972b",
+        "21": "9955cae7a19bb5c04c0f03a1dc1f2d5c7511c167d01c305cd56e5f24a7585e25"
       },
       "ddd4j-samples/ddd4j-sample-dropwizard/src/test/java/io/ddd4j/sample/dropwizard/NativeDefaultTest.java": {
-        "8": "9e09c92f56c7ce050514cada47a91fec6e445d17e5bb70b02d5b4abc1326ab08",
-        "17": "a7e2205488bf308aea7d4cd642e04b19019af0c191f9791ad1d3f6615a238807",
-        "21": "a7e2205488bf308aea7d4cd642e04b19019af0c191f9791ad1d3f6615a238807"
+        "8": "9117c3ca29e761c07b9469f078ab8105e536c517458580a99c0f8c627b6f1975",
+        "17": "4662af42ca59c0af6b744c9659e81696d76270e8a9ee9fc8937bda94d2f241fd",
+        "21": "47707847f1589e80fbb946ed891e0b73129529b4e146659265d555e88285c371"
       },
       "ddd4j-samples/ddd4j-sample-dropwizard/src/main/java/io/ddd4j/sample/dropwizard/DropwizardOrderApplication.java": {
-        "8": "0124849c130bd57de7a25e17eabe5d8fc1ce5b836cfe90dad1e0e8d4c715851e",
-        "17": "db59a4335e6c57d254f5abf920efe214f864f9c14f413ce9e704a5cdf9ef8cfb",
-        "21": "db59a4335e6c57d254f5abf920efe214f864f9c14f413ce9e704a5cdf9ef8cfb"
+        "8": "a9d2eb6dd812508f5b1e4b6d86a51b335c9272179676a9153106ba03123b4485",
+        "17": "6d4ad8f617d8c89886556b1d72b1f7d8831e0a0337caed1dea529a2842caa080",
+        "21": "7d8a5d749888cab4733905f609d73bf2f3b86fed0d5cca84e0a0928ae58cd882"
       },
       "ddd4j-samples/ddd4j-sample-dropwizard/src/main/resources/dropwizard-order.yml": {
         "8": "45f8f54b9a41f11a7a1f6d5f7a57135c69b0820f9843938e75ae308356185495",
@@ -259,7 +263,7 @@
     },
     {
       "path": "ddd4j-samples/ddd4j-sample-micronaut-satoken/src/main/java/io/ddd4j/sample/micronaut/satoken/NativeAuthInterceptor.java",
-      "sha256": "ff4a6095932d93dd2dfd59d9d5b6e2a848e629c510830ba3ae20ed75629145bf",
+      "sha256": "1b12a4bee0e441f62dfa84f772b9436b1eab17e8574b75820ce03c8515fe10d2",
       "counterpart": "ddd4j-samples/ddd4j-sample-micronaut-satoken/src/main/java/io/ddd4j/sample/micronaut/satoken/CatalogTradeController.java",
       "evidence": "ddd4j-samples/ddd4j-sample-micronaut-satoken/src/test/java/io/ddd4j/sample/micronaut/satoken/NativeAuthHttpTest.java",
       "reason": "JDK 8 Micronaut 3 在商品交易路由上用 AOP 建立并恢复原生主体；高两线由原生过滤器管理请求上下文。三线 HTTP 回归锁定权限和上下文清理。"
@@ -273,14 +277,14 @@
     },
     {
       "path": "ddd4j-samples/ddd4j-sample-micronaut-shiro/src/main/java/io/ddd4j/sample/micronaut/shiro/NativeAuthInterceptor.java",
-      "sha256": "38c30fe0f5232b2d37394390c5a79d6b9bb28531e4ee3a30d4638ec34dfc8940",
+      "sha256": "4b99a233bc44cd1322e79538cef383978f5632586fd02fe5458778f044149e49",
       "counterpart": "ddd4j-samples/ddd4j-sample-micronaut-shiro/src/main/java/io/ddd4j/sample/micronaut/shiro/CatalogTradeController.java",
       "evidence": "ddd4j-samples/ddd4j-sample-micronaut-shiro/src/test/java/io/ddd4j/sample/micronaut/shiro/NativeAuthHttpTest.java",
       "reason": "JDK 8 Micronaut 3 在商品交易路由上用 AOP 建立并恢复原生主体；高两线由原生过滤器管理请求上下文。三线 HTTP 回归锁定权限和上下文清理。"
     },
     {
       "path": "ddd4j-web/ddd4j-web-quarkus/src/main/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebResponseFilter.java",
-      "sha256": "518b960158fb487fb190472f96de2d010cf481958c3fe72b27bd3512b2ba0d9c",
+      "sha256": "fb19f2d4e35104adcd4381b9dad84c6a2c1c8a56af4b75496daf7af2ada066db",
       "counterpart": "ddd4j-web/ddd4j-web-quarkus/src/main/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebFilter.java",
       "evidence": "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebContractTest.java",
       "reason": "Quarkus 1.x 以独立 JAX-RS ContainerResponseFilter Provider 委托响应清理；Quarkus 高线在共同过滤器上使用 RESTEasy Reactive @ServerResponseFilter。三线运行共同 HTTP 契约，平台入口源码由 SHA-256 锁定"
@@ -289,34 +293,34 @@
   "platformTestsOnlyOnJdk8": [
     {
       "path": "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbContainerSupport.java",
-      "sha256": "69a6f22092fb4f5af473dc35b1ab0773efc51fb2ffbb4de5a14cd812838fab61",
+      "sha256": "b032d558e680ce18497786fc15d683127868244c2ef1e2f9e7e96e6599ef1e70",
       "counterpart": "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreIT.java",
       "counterpartSha256": [
-        "de61d64921ad554a618388c898d8172bd8dd17d3f651a07b77359aa785e51aac",
-        "b977a3acfdd7635c8906014539e45cf2e96f5b40cc209befb29e1d219db6af70",
-        "c9ecb12935984809c56b20cf76d55473ff3307b292f9915039ac22fcfc1c896e"
+        "2c134d1b174b5f6f10b71448523939a7ba3aefd6444da74901e9e257d47f118d",
+        "8fefe5a36844b13fa632c7645d1c6c9942021a721abf4dd388374572dd66f565",
+        "c235e87b7f6b1a9ba428f131bd8a4ea9d534a3bdb6ebd5d8b99889eaccb323b6"
       ],
       "reason": "JDK 8 进程级单例 EventStoreDB 容器夹具；三线 EsdbEventStoreIT 均在真实容器执行，低线额外补充用例覆盖并发与因果元数据"
     },
     {
       "path": "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreContainerIT.java",
-      "sha256": "9919d78ab903abddac190e6feb18c8a107fa0b67b3c6b8127e38e06d067629af",
+      "sha256": "e3ecb3e1324e2308eb6d12b2199cd8c17640c45dfafefed7aabb49b538fd895d",
       "counterpart": "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreIT.java",
       "counterpartSha256": [
-        "de61d64921ad554a618388c898d8172bd8dd17d3f651a07b77359aa785e51aac",
-        "b977a3acfdd7635c8906014539e45cf2e96f5b40cc209befb29e1d219db6af70",
-        "c9ecb12935984809c56b20cf76d55473ff3307b292f9915039ac22fcfc1c896e"
+        "2c134d1b174b5f6f10b71448523939a7ba3aefd6444da74901e9e257d47f118d",
+        "8fefe5a36844b13fa632c7645d1c6c9942021a721abf4dd388374572dd66f565",
+        "c235e87b7f6b1a9ba428f131bd8a4ea9d534a3bdb6ebd5d8b99889eaccb323b6"
       ],
       "reason": "JDK 8 补充容器契约验证并发冲突与因果元数据；高两线 EsdbEventStoreIT 包含相同断言并在真实容器执行"
     },
     {
       "path": "ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/PostgresEventStoreContainerSupport.java",
-      "sha256": "4391fdd7bbd84ef05b3a248cffe8705b25e19f1ed1280d8b0e602edb3734e663",
+      "sha256": "90f631703676b6a95b3fbcadd9ee4a25d5f0dad464b0be84ff0795ef88398a4e",
       "counterpart": "ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStorePostgresIT.java",
       "counterpartSha256": [
-        "94b83e2b1fd0b7533e146e6a779c91d7d257d041f211c61d5f7af309f75f5cd6",
-        "135522200b45abaa4f0317712aa716b125d814a2334488a4d5dea355dae4681b",
-        "4f62b531d9d39f76fd2b18ca6250d4d2cfcee4ed923a3bda2df1fc84eb76916e"
+        "99a4948fd9a8a3dfa696e7f916a4d6d023ce3d41635193641e0db0ae150329cc",
+        "3ba5139538c370ff1a02f5236d8c9d52d02f4c49464b84904851b7f025c6e248",
+        "7ff8b912777b3884242112159a29453a3678fd1161be6fadb4d36aada24d51c4"
       ],
       "reason": "JDK 8 PostgreSQL 进程级单例容器夹具；高两线使用 @Container；三线 R2dbcEventStorePostgresIT 各 4 项真实 PostgreSQL 测试通过且无跳过"
     }
