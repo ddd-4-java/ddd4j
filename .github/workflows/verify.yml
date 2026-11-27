@@ -160,6 +160,10 @@ jobs:
         run: >-
           ./mvnw -U -Denforcer.skip=true -B -Pcoverage verify
           -pl ddd4j-web/ddd4j-web-core,ddd4j-web/ddd4j-web-micronaut
+      - name: Require coverage data from both gated modules
+        run: |
+          test -s ddd4j-web/ddd4j-web-core/target/jacoco.exec
+          test -s ddd4j-web/ddd4j-web-micronaut/target/jacoco.exec
 
   supply-chain-reports:
     name: SBOM and license reports
