@@ -2179,6 +2179,44 @@ class ThreeLineInventoryTest(unittest.TestCase):
         rows = json.loads((output / "inventory.json").read_text())["differences"]
         row = next(item for item in rows if item["path"] == path and item["category"] == "test")
         self.assertEqual("OPEN", row["status"])
+
+
+    def test_micronaut_interceptor_mapping_rejects_unreviewed_paths_and_source_drift(self):
+        spec = importlib.util.spec_from_file_location("parity_auth_path", SCRIPT)
+        checker = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(checker)
+        base = ("ddd4j-samples/ddd4j-sample-micronaut-satoken/src/main/java/"
+                "io/ddd4j/sample/micronaut/satoken/NativeAuth")
+        modern, legacy = base + "Filter.java", base + "Interceptor.java"
+        evidence = "demo/src/test/java/example/HttpTest.java"
+        for index, root in enumerate(self.roots):
+            self.write(root, legacy if index == 0 else modern, str(index))
+            self.write(root, evidence, "locked test")
+        digest = lambda value: hashlib.sha256(value.encode()).hexdigest()
+        row = {"path": modern, "jdk8Source": legacy, "evidence": evidence,
+               "sourceSha256": [digest(str(index)) for index in range(3)],
+               "testSha256": digest("locked test"), "reason": "native HTTP authentication"}
+        checker.validate_platform_syntax_mappings([row], self.roots)
+        self.assertTrue(checker.platform_syntax_matches(modern, self.roots, row))
+        self.write(self.roots[0], legacy, "changed")
+        self.assertFalse(checker.platform_syntax_matches(modern, self.roots, row))
+        with self.assertRaisesRegex(ValueError, "invalid JDK 8 authentication source"):
+            checker.validate_platform_syntax_mappings([dict(row, jdk8Source="../Other.java")], self.roots)
+        self.write(self.roots[1], legacy, "unexpected duplicate")
+        with self.assertRaisesRegex(ValueError, "invalid JDK 8 authentication source"):
+            checker.validate_platform_syntax_mappings([row], self.roots)
+
+    def test_unicode_documentation_preserves_tokens_without_accepting_delimiter_escapes(self):
+        spec = importlib.util.spec_from_file_location("parity_lexical", SCRIPT)
+        checker = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(checker)
+        tokens = checker.java_lexical_tokens
+        self.assertEqual(tokens("int value;"), tokens(r"/** \u4fdd\u5b58\uff0c\u3002 */ int value;"))
+        for source in (r"// \u000a return false;", r"/* \u002a\u002f return true; */",
+                       r"/* \u005c */ int value;", r'int \u4fdd;', r'String s = "\u4fdd";'):
+            with self.subTest(source=source):
+                self.assertIsNone(tokens(source))
+
     def test_java_comment_and_formatting_only_change_is_token_equivalent(self):
         path = "ddd4j-core/src/main/java/example/Foo.java"
         common = 'package example; public class Foo { public String value() { return "same"; } }'

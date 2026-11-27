@@ -29,7 +29,7 @@ final class CatalogTradeRoutes {
                 ctx.header("X-Tenant-Id"), ctx.pathParam("code"))));
         post("/api/orders/{code}", ctx -> respond(ctx, api.placeOrder(
                 ctx.header("X-Tenant-Id"), ctx.pathParam("code"), ctx.body())));
-        post("/api/orders/{orderNo}/payment", ctx -> respond(ctx, api.confirmPayment(
+        post("/api/orders/{orderNo}/payment", ctx -> respond(ctx, api.confirmPayment(ctx.header("Idempotency-Key"),
                 ctx.header("X-Tenant-Id"), ctx.pathParam("orderNo"), ctx.body())));
         post("/api/orders/{orderNo}/cancel", ctx -> respond(ctx, api.cancelOrder(
                 ctx.header("X-Tenant-Id"), ctx.pathParam("orderNo"))));

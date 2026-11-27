@@ -239,7 +239,7 @@ public final class VertxSaTokenApplication {
                     return switch (operation) {
                         case "catalog-createGoods" -> catalog.createGoods(tenant, code, ctx.body().asString());
                         case "catalog-goods" -> catalog.goods(tenant, code);
-                        case "catalog-confirmPayment" -> catalog.confirmPayment(tenant, code, ctx.body().asString());
+                        case "catalog-confirmPayment" -> catalog.confirmPayment(ctx.request().getHeader("Idempotency-Key"), tenant, code, ctx.body().asString());
                         case "catalog-cancelOrder" -> catalog.cancelOrder(tenant, code);
                         case "catalog-fulfillOrder" -> catalog.fulfillOrder(tenant, code);
                         case "catalog-placeOrder" -> catalog.placeOrder(tenant, code, ctx.body().asString());

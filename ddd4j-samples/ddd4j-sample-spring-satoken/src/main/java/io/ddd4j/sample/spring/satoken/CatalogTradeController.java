@@ -85,6 +85,7 @@ public class CatalogTradeController {
     /**
      * 向订单用例提交实付金额并返回确认结果。
      *
+     * @param idempotencyKey 支付请求幂等键
      * @param tenant  请求头提供的租户标识
      * @param orderNo 租户内业务订单号
      * @param body    带人民币分值的支付确认数据
@@ -92,9 +93,10 @@ public class CatalogTradeController {
      */
     @RawResponse
     @PostMapping("/orders/{orderNo}/payment")
-    public ResponseEntity<JsonNode> confirmPayment(@RequestHeader("X-Tenant-Id") String tenant,
+    public ResponseEntity<JsonNode> confirmPayment(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyKey,
+                                                   @RequestHeader("X-Tenant-Id") String tenant,
                                                    @PathVariable("orderNo") String orderNo, @RequestBody JsonNode body) {
-        Reply reply = catalog.confirmPayment(tenant, orderNo, body.toString());
+        Reply reply = catalog.confirmPayment(idempotencyKey, tenant, orderNo, body.toString());
         return ResponseEntity.status(reply.getStatus()).body(reply.getPayload());
     }
 

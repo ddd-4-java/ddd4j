@@ -1,5 +1,6 @@
 package io.ddd4j.sample.micronaut;
 
+import io.micronaut.core.annotation.Nullable;
 import io.ddd4j.sample.order.adapter.http.CatalogApi;
 import io.ddd4j.sample.order.adapter.http.Reply;
 import io.ddd4j.sample.order.start.CatalogRuntime;
@@ -83,15 +84,17 @@ public class CatalogTradeController {
     /**
      * 向订单用例提交实付金额并返回确认结果。
      *
+     * @param idempotencyKey 支付请求幂等键
      * @param tenant  请求头提供的租户标识
      * @param orderNo 租户内业务订单号
      * @param body    带人民币分值的支付确认数据
      * @return 包含业务状态码和 JSON 正文的 HTTP 响应
      */
     @Post("/orders/{orderNo}/payment")
-    public HttpResponse<String> confirmPayment(@Header("X-Tenant-Id") String tenant,
+    public HttpResponse<String> confirmPayment(@Nullable @Header("Idempotency-Key") String idempotencyKey,
+                                               @Header("X-Tenant-Id") String tenant,
                                                @PathVariable("orderNo") String orderNo, @Body String body) {
-        Reply reply = api.confirmPayment(tenant, orderNo, body);
+        Reply reply = api.confirmPayment(idempotencyKey, tenant, orderNo, body);
         return HttpResponse.<String>status(HttpStatus.valueOf(reply.getStatus()))
                 .contentType(MediaType.APPLICATION_JSON_TYPE).body(reply.getBody());
     }

@@ -332,7 +332,7 @@ class NativeAuthHttpTest {
          * @throws Exception 处理测试数据的序列化、发起测试请求时失败
          */
         HttpResponse<String> send(String method, String path, Object body, String token) throws Exception {
-            var builder = HttpRequest.newBuilder(URI.create(base + path)).header("Content-Type", "application/json").header("X-Tenant-Id", TENANT);
+            var builder = HttpRequest.newBuilder(URI.create(base + path)).header("Content-Type", "application/json").header("X-Tenant-Id", TENANT).header("Idempotency-Key", path.endsWith("/payment") ? "checkout-confirmation" : "");
             if (Objects.nonNull(token)) {
                 builder.header("Authorization", "Bearer " + token);
             }

@@ -93,7 +93,7 @@ class QuarkusCatalogCqrsHttpTest {
      */
     private String request(String method, String path, int status, String body) throws Exception {
         var request = HttpRequest.newBuilder(base.resolve("/orders/catalog" + path))
-                .header("X-Tenant-Id", tenant).header("Content-Type", "application/json")
+                .header("X-Tenant-Id", tenant).header("Idempotency-Key", path.endsWith("/payment") ? "checkout-confirmation" : "").header("Content-Type", "application/json")
                 .method(method, HttpRequest.BodyPublishers.ofString(body)).build();
         var response = http.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(status, response.statusCode(), response.body());

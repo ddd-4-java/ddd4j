@@ -261,7 +261,7 @@ class SpringSatokenHttpTest {
          */
         private String call(String method, String path, String token, String body) {
             try {
-                var builder = HttpRequest.newBuilder(URI.create(base + path)).header("Content-Type", "application/json").header("X-Tenant-Id", tenant)
+                var builder = HttpRequest.newBuilder(URI.create(base + path)).header("Content-Type", "application/json").header("X-Tenant-Id", tenant).header("Idempotency-Key", path.endsWith("/payment") ? "checkout-confirmation" : "")
                         .method(method, HttpRequest.BodyPublishers.ofString(body));
                 if (!token.isEmpty()) {
                     builder.header("satoken", token);

@@ -142,13 +142,18 @@ class OrderControllerTest {
         assertEquals(201, created.statusCode(), created.body());
         assertEquals(3980, JSON.readTree(created.body()).path("grossAmountCent").asLong());
         assertEquals(200, get(path).statusCode());
-        assertEquals(400, post(path + "/payment", "{}", null).statusCode());
-        var first = post(path + "/payment", "{\"paidAmountCent\":3980}", null);
-        var repeated = post(path + "/payment", "{\"paidAmountCent\":3980}", null);
+        assertEquals(400, post(path + "/payment", "{\"paidAmountCent\":3980}", null).statusCode());
+        assertEquals(400, post(path + "/payment", "{\"paidAmountCent\":3980}", "   ").statusCode());
+        assertEquals("AWAITING_PAYMENT", JSON.readTree(get(path).body()).path("orderState").asText());
+        assertEquals(400, post(path + "/payment", "{}", "confirm-order").statusCode());
+        var first = post(path + "/payment", "{\"paidAmountCent\":3980}", "confirm-order");
+        var repeated = post(path + "/payment", "{\"paidAmountCent\":3980}", "confirm-order");
         assertEquals(200, first.statusCode(), first.body());
         assertEquals(200, repeated.statusCode(), repeated.body());
         assertEquals("CONFIRMED", JSON.readTree(first.body()).path("orderState").asText());
         assertEquals(JSON.readTree(first.body()), JSON.readTree(repeated.body()));
+        assertEquals(409, post(path + "/payment", "{\"paidAmountCent\":3979}", "confirm-order").statusCode());
+        assertEquals(3980, JSON.readTree(get(path).body()).path("paidAmountCent").asLong());
     }
 
     /**

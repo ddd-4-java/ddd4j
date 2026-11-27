@@ -142,7 +142,7 @@ class HelidonOrderResourceTest {
      * @return 当前测试使用的结果，取自 <code>Objects.isNull(body) ? builder.method(method) : builder.method(method, Entity.entity(body, MediaType.APPLICATION_JSON_TYPE))</code>
      */
     private Response request(String method, String path, String token, String body) {
-        Invocation.Builder builder = target.path(path).request().header("X-Tenant-Id", "helidon-auth");
+        Invocation.Builder builder = target.path(path).request().header("X-Tenant-Id", "helidon-auth").header("Idempotency-Key", path.endsWith("/payment") ? "checkout-confirmation" : "");
         if (Objects.nonNull(token)) {
             builder.header("Authorization", "Bearer " + token);
         }

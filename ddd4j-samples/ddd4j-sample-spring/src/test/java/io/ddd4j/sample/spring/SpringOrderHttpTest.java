@@ -58,7 +58,7 @@ class SpringOrderHttpTest {
                                                 String path, int status, String body) {
         int port = ((WebServerApplicationContext) context).getWebServer().getPort();
         var req = HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + path))
-                .header("Content-Type", "application/json").header("X-Tenant-Id", tenant).header("X-Language", "fr-CA")
+                .header("Content-Type", "application/json").header("X-Tenant-Id", tenant).header("Idempotency-Key", path.endsWith("/payment") ? "checkout-confirmation" : "").header("X-Language", "fr-CA")
                 .method(method, HttpRequest.BodyPublishers.ofString(body)).build();
         try {
             var response = HttpClient.newHttpClient().send(req, HttpResponse.BodyHandlers.ofString());

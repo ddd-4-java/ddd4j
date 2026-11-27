@@ -65,7 +65,7 @@ public class JavalinEntryContractTest {
     private static SampleHttpTransport.Response request(JavalinSample.JavalinApplication app, String method,
                                                         String path, String body) throws Exception {
         return SampleHttpTransport.request("http://127.0.0.1:" + app.app().port() + "/api" + path,
-                method, Map.of(), Map.of("X-Tenant-Id", "basic"), body);
+                method, Map.of(), Map.of("X-Tenant-Id", "basic", "Idempotency-Key", path.endsWith("/payment") ? "checkout-confirmation" : ""), body);
     }
 
     /**

@@ -365,6 +365,9 @@ class NativeAuthHttpTest {
          */
         HttpResponse<String> send(String method, String path, Object body, String bearer) throws Exception {
             var builder = HttpRequest.newBuilder(URI.create(base + path)).header("Content-Type", "application/json").header("X-Tenant-Id", tenantId);
+            if ("POST".equals(method) && path.endsWith("/payment") && Objects.nonNull(body)) {
+                builder.header("Idempotency-Key", "checkout-confirmation");
+            }
             if (Objects.nonNull(bearer)) {
                 builder.header("Authorization", "Bearer " + bearer);
             }

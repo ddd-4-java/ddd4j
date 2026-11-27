@@ -130,7 +130,7 @@ class NativeSharedOrderAuthTest {
         String token = login("admin");
         String id = createOrder(token, "authorized-" + UUID.randomUUID());
         assertEquals(200, catalog.order(TENANT, id).getStatus());
-        given().header("Authorization", token).contentType("application/json").body(Map.of("paidAmountCent", 2500))
+        given().header("Authorization", token).contentType("application/json").header("Idempotency-Key", "checkout-confirmation").body(Map.of("paidAmountCent", 2500))
                 .post(ORDERS + id + "/payment").then().statusCode(200).body("orderState", equalTo("CONFIRMED"));
         given().header("Authorization", token).get(ORDERS + id).then().statusCode(200)
                 .body("orderNo", equalTo(id)).body("paidAmountCent", equalTo(2500)).body("items", hasSize(1));

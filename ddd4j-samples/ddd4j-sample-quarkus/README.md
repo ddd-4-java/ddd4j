@@ -12,7 +12,7 @@ java -jar "$module/target/quarkus-app/quarkus-run.jar"
 ```
 
 业务请求携带 `X-Tenant-Id`。商品地址为 `/api/goods/{spuCode}`，订单地址为 `/api/orders/{orderNo}`。支付、取消和履约分别使用订单子路径
-`/payment`、`/cancel`、`/fulfill`。
+`/payment`、`/cancel`、`/fulfill`。支付请求必须提供非空 `Idempotency-Key`，重试时复用原键和实付金额。
 
 <details>
 <summary>商品交易迁移前的说明</summary>

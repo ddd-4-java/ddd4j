@@ -70,12 +70,12 @@ class VertxBasicMainTest {
      * @param method 发给被测服务的 HTTP 方法
      * @param path   测试请求的资源路径或待访问文件路径
      * @param body   当前请求或响应中要读取的正文
-     * @return 当前测试使用的结果，取自 <code>SampleHttpTransport.request(base(app) + path, method, Collections.emptyMap(), Map.of("X-Tenant-Id", "basic"), body)</code>
+     * @return 当前测试使用的结果，取自 <code>SampleHttpTransport.request(base(app) + path, method, Collections.emptyMap(), Map.of("X-Tenant-Id", "basic", "Idempotency-Key", path.endsWith("/payment") ? "checkout-confirmation" : ""), body)</code>
      * @throws Exception 发起测试请求时失败
      */
     private static SampleHttpTransport.Response request(VertxOrderApplication app, String method, String path, String body)
             throws Exception {
-        return SampleHttpTransport.request(base(app) + path, method, Collections.emptyMap(), Map.of("X-Tenant-Id", "basic"), body);
+        return SampleHttpTransport.request(base(app) + path, method, Collections.emptyMap(), Map.of("X-Tenant-Id", "basic", "Idempotency-Key", path.endsWith("/payment") ? "checkout-confirmation" : ""), body);
     }
 
     /**
