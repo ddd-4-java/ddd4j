@@ -13,6 +13,11 @@
  * limitations under the License.
  */
 package io.ddd4j.guice.cqrs;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Arrays;
+import io.ddd4j.core.cqrs.readmodel.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -263,5 +268,136 @@ class GuiceViewManagerTest {
         ProjectionStatus status = manager.getProjectionStatus("orders");
 
         assertFalse(status.running());
+    }
+
+    /**
+     * 创建 <code>new ProjectionRunner&lt;&gt;</code> 供当前测试路径调用。
+     *
+     * @param repository 当前测试访问的仓储实例
+     * @return 当前测试使用的结果，取自 <code>new ProjectionRunner&lt;&gt;(new DefaultProjectionService(repository), (streamId,position,size,types)-&gt;EventChunk.empty(position))</code>
+     */
+    private static ProjectionRunner<Object> emptyRunner(GuiceInMemoryProjectionPositionRepository repository) {
+        return new ProjectionRunner<>(new DefaultProjectionService(repository),
+                (streamId, position, size, types) -> EventChunk.empty(position));
+    }
+
+    /**
+     * 构造 <code>ProjectionView&lt;Object&gt;</code> 作为当前测试的输入或结果。
+     *
+     * @param name 当前测试指定的对象或属性名称
+     * @return 提供给后续契约断言的 <code>ProjectionView&lt;Object&gt;</code> 结果
+     */
+    private static ProjectionView<Object> view(String name) {
+        return new ProjectionView<Object>() {
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
+            public String getCron() {
+                return "0/3600";
+            }
+
+            @Override
+            public Collection<String> getEventTypes() {
+                return Collections.emptyList();
+            }
+
+            @Override
+            public void handleEvents(Collection<Object> events) {
+            }
+        };
+    }
+
+    /**
+     * 验证<code>first.isActive()</code>为假，<code>second.isActive()</code>为真，<code>second.isActive()</code>为假。
+     */
+    @Test
+    void stopCancelsOutstandingHandlesAndSupportsFreshRestart() {
+        ViewScheduleHandle first = manager.scheduleAtFixedRate("owned", 3600, () -> {
+        });
+        manager.stop();
+        assertFalse(first.isActive());
+        ViewScheduleHandle second = manager.scheduleAtFixedRate("owned", 3600, () -> {
+        });
+        assertTrue(second.isActive());
+        manager.close();
+        assertFalse(second.isActive());
+    }
+
+    /**
+     * 验证被测调用 抛出 <code>LinkageError.class</code>，<code>scheduled.get()</code>非空，<code>managed.isRunning()</code>为假。
+     */
+    @Test
+    void startupLinkageErrorCancelsOwnedTasksAndResetsRunningState() {
+        LinkageError failure = new LinkageError("view wiring failed");
+        AtomicReference<ViewScheduleHandle> scheduled = new AtomicReference<>();
+        AtomicReference<ViewScheduleHandle> owned = new AtomicReference<>();
+        GuiceInMemoryProjectionPositionRepository repo = new GuiceInMemoryProjectionPositionRepository();
+        ProjectionRunner<Object> runner = emptyRunner(repo);
+
+        try (GuiceViewManager managed = new GuiceViewManager(1, repo, runner,
+                Arrays.asList(view("first"), view("second"))) {
+            @Override
+            public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
+                if ("second".equals(viewName)) {
+                    throw failure;
+                }
+                ViewScheduleHandle first = super.schedule(viewName, cron, task);
+                scheduled.set(first);
+                owned.set(scheduleAtFixedRate("local", 3600, () -> {
+                }));
+                return first;
+            }
+        }) {
+            assertSame(failure, assertThrows(LinkageError.class, managed::start));
+            assertNotNull(scheduled.get());
+            assertNotNull(owned.get());
+            assertFalse(scheduled.get().isActive());
+            assertFalse(owned.get().isActive());
+            assertFalse(managed.isRunning());
+        }
+    }
+
+    /**
+     * 验证被测调用 抛出 <code>LinkageError.class</code>，<code>managed.isRunning()</code>为假，<code>cancellationAttempts.get()</code> 等于 <code>2</code>。
+     */
+    @Test
+    void stopLinkageErrorStillCancelsOwnedTasksAndRetriesExternalHandle() {
+        LinkageError failure = new LinkageError("first cancellation failed");
+        AtomicInteger cancellationAttempts = new AtomicInteger();
+        GuiceInMemoryProjectionPositionRepository repo = new GuiceInMemoryProjectionPositionRepository();
+        ProjectionRunner<Object> runner = emptyRunner(repo);
+
+        try (GuiceViewManager managed = new GuiceViewManager(1, repo, runner, Collections.singletonList(view("external"))) {
+            @Override
+            public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
+                return new ViewScheduleHandle() {
+                    @Override
+                    public void cancel() {
+                        if (cancellationAttempts.incrementAndGet() == 1) {
+                            throw failure;
+                        }
+                    }
+
+                    @Override
+                    public boolean isActive() {
+                        return cancellationAttempts.get() < 2;
+                    }
+                };
+            }
+        }) {
+            managed.start();
+            ViewScheduleHandle owned = managed.scheduleAtFixedRate("local", 3600, () -> {
+            });
+
+            assertSame(failure, assertThrows(LinkageError.class, managed::stop));
+            assertFalse(managed.isRunning());
+            assertFalse(owned.isActive());
+            assertEquals(1, cancellationAttempts.get());
+            managed.close();
+            assertEquals(2, cancellationAttempts.get());
+        }
     }
 }

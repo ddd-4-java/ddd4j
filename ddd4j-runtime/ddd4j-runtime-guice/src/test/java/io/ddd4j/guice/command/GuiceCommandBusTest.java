@@ -237,4 +237,92 @@ class GuiceCommandBusTest {
             return R.ok();
         }
     }
+
+    /**
+     * 验证<code>bus.execute(new AnotherCommand())</code> 与…为同一实例 <code>expected</code>，<code>bus.execute(new TestCommand())</code> 与…为同一实例 <code>expected</code>。
+     */
+    @Test
+    void dynamicDiscoveryCachesRoutesAndPreservesResultIdentity() {
+        Set<Class<? extends Command>> types = new java.util.LinkedHashSet<>();
+        types.add(TestCommand.class);
+        R<?> expected = R.ok("dynamic");
+        CommandExecutor<Command> executor = new CommandExecutor<>() {
+            public Set<Class<? extends Command>> supportedCommands() {
+                return types;
+            }
+
+            public R<?> execute(Command command) {
+                return expected;
+            }
+        };
+        GuiceCommandBus bus = new GuiceCommandBus(java.util.List.of(executor));
+        types.add(AnotherCommand.class);
+        assertSame(expected, bus.execute(new AnotherCommand()));
+        types.clear();
+        assertSame(expected, bus.execute(new AnotherCommand()));
+        assertSame(expected, bus.execute(new TestCommand()));
+    }
+
+    /**
+     * 验证<code>io.ddd4j.core.cqrs.command.DefaultCommandBus.class.isAssignableFrom(GuiceCommandBus.class)</code>为真。
+     */
+    @Test
+    void routingUsesSharedCommandEngine() {
+        assertTrue(io.ddd4j.core.cqrs.command.DefaultCommandBus.class.isAssignableFrom(GuiceCommandBus.class));
+    }
+
+    /**
+     * 验证<code>bus.execute(new TestCommand())</code> 抛出 <code>IllegalStateException.class</code>，被测调用 抛出 <code>IllegalStateException.class</code>。
+     */
+    @Test
+    void initiallyEmptyExecutorsStayUndiscoverableAndExceptionsAreUnchanged() {
+        Set<Class<? extends Command>> empty = new java.util.HashSet<>();
+        CommandExecutor<Command> absent = new CommandExecutor<>() {
+            public Set<Class<? extends Command>> supportedCommands() {
+                return empty;
+            }
+
+            public R<?> execute(Command command) {
+                throw new AssertionError("must stay undiscovered");
+            }
+        };
+        GuiceCommandBus bus = new GuiceCommandBus(java.util.List.of(absent));
+        empty.add(TestCommand.class);
+        assertThrows(IllegalStateException.class, () -> bus.execute(new TestCommand()));
+        IllegalStateException failure = new IllegalStateException("business failure");
+        CommandExecutor<TestCommand> throwing = new CommandExecutor<>() {
+            public Set<Class<? extends Command>> supportedCommands() {
+                return Set.of(TestCommand.class);
+            }
+
+            public R<?> execute(TestCommand command) {
+                throw failure;
+            }
+        };
+        assertSame(failure, assertThrows(IllegalStateException.class,
+                () -> new GuiceCommandBus(java.util.List.of(throwing)).execute(new TestCommand())));
+    }
+
+    /**
+     * 验证<code>calls.get()</code> 等于 <code>1</code>，<code>bus.execute(new AnotherCommand()).isOk()</code>为真，<code>bus.execute(new TestCommand()).isOk()</code>为真。
+     */
+    @Test
+    void initialSupportedCommandsIsReadOnlyOnceBeforeDynamicMiss() {
+        java.util.concurrent.atomic.AtomicInteger calls = new java.util.concurrent.atomic.AtomicInteger();
+        CommandExecutor<Command> executor = new CommandExecutor<>() {
+            public Set<Class<? extends Command>> supportedCommands() {
+                return calls.incrementAndGet() == 1 ? Set.of(TestCommand.class) : Set.of(AnotherCommand.class);
+            }
+
+            public R<?> execute(Command command) {
+                return R.ok();
+            }
+        };
+        GuiceCommandBus bus = new GuiceCommandBus(java.util.List.of(executor));
+        assertEquals(1, calls.get());
+        assertTrue(bus.execute(new AnotherCommand()).isOk());
+        assertEquals(2, calls.get());
+        assertTrue(bus.execute(new TestCommand()).isOk());
+        assertEquals(2, calls.get());
+    }
 }

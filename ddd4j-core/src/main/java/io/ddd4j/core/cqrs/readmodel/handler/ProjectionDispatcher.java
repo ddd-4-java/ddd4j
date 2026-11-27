@@ -19,10 +19,7 @@ import io.ddd4j.core.ddd.event.DomainEvent;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.SynchronousSink;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -58,17 +55,30 @@ import java.util.stream.Collectors;
  */
 public class ProjectionDispatcher {
 
-    /** \u8bfb\u53d6\u6295\u5f71\u5904\u7406\u5668\u53ca\u4e8b\u4ef6\u8ba2\u9605\u7684\u6ce8\u518c\u8868\u3002 */
+    /**
+     * 读取投影处理器及事件订阅的注册表。
+     */
     private final ProjectionHandlerRegistry registry;
 
-    /** \u6309\u4f4d\u70b9\u5206\u5757\u8bfb\u53d6\u4e8b\u4ef6\u7684\u6295\u5f71\u7ec4\u4ef6\u3002 */
+    /**
+     * 按位点分块读取事件的投影组件。
+     */
     private final EventChunkReader<DomainEvent<?>> chunkReader;
 
-    /** \u8bfb\u53d6\u5e76\u4fdd\u5b58\u6295\u5f71\u6d88\u8d39\u4f4d\u7f6e\u7684\u4ed3\u50a8\u3002 */
+    /**
+     * 读取并保存投影消费位置的仓储。
+     */
     private final ProjectionPositionRepository positions;
 
-    /** \u8bfb\u53d6\u4e8b\u4ef6\u548c\u63a8\u8fdb\u6295\u5f71\u68c0\u67e5\u70b9\u7684\u670d\u52a1\u3002 */
+    /**
+     * 读取事件和推进投影检查点的服务。
+     */
     private final ProjectionService service;
+
+    /**
+     * 执行单次分批投影任务的运行器。
+     */
+    private final ProjectionRunner<DomainEvent<?>> runner;
 
     /**
      * 构造分发门面。
@@ -92,6 +102,7 @@ public class ProjectionDispatcher {
         this.chunkReader = Objects.requireNonNull(chunkReader, "chunkReader must not be null");
         this.positions = Objects.requireNonNull(positions, "positions must not be null");
         this.service = Objects.requireNonNull(service, "service must not be null");
+        this.runner = new ProjectionRunner<>(this.service, this.chunkReader);
     }
 
     /**
@@ -122,10 +133,97 @@ public class ProjectionDispatcher {
     }
 
     /**
-     * \u4ece\u5f53\u524d\u68c0\u67e5\u70b9\u5f00\u59cb\u6309\u5904\u7406\u5668\u8ba2\u9605\u7684\u4e8b\u4ef6\u7c7b\u578b\u5206\u6279\u8bfb\u53d6\u3002
-     * @param eventType \u4e8b\u4ef6\u7684 Java \u7c7b\u578b\u6216\u6301\u4e45\u5316\u7c7b\u578b\u540d\u79f0
-     * @param handler \u5f53\u524d\u6267\u884c\u7684\u6295\u5f71\u5904\u7406\u5668
-     * @return \u4ea4\u7ed9\u65e7\u517c\u5bb9\u6295\u5f71\u5165\u53e3\u7684\u4e8b\u4ef6\u6d41
+     * 从处理器自己的检查点拉取并处理一个完整源事件块。
+     * 成功后按源块 nextEventNumber 提交；失败保留原位置，整块可能重投。
+     * 处理顺序、位置推进、重入保护均由共享 Runner 执行。此入口使用 service 读写位置。
+     *
+     * @param handler 独立视图处理器
+     * @return 源返回的完整事件块（保留真实源位置）
+     */
+    public EventChunk<DomainEvent<?>> runOnce(ProjectionHandler handler) {
+        return runner.runOnce(asView(handler));
+    }
+
+    /**
+     * 对订阅该事件的每个独立视图运行一块，单个失败不阻止其余视图，最后传播首个失败。
+     * 每个视图读取其全部订阅类型，避免共享检查点跳过其他订阅事件。
+     *
+     * @param eventType 用于选择订阅视图的事件类型
+     * @param <E>       事件类型
+     */
+    public <E extends DomainEvent<?>> void runByEvent(Class<E> eventType) {
+        RuntimeException firstFailure = null;
+        for (ProjectionHandler handler : registry.findHandlers(eventType)) {
+            try {
+                runOnce(handler);
+            } catch (RuntimeException failure) {
+                if (Objects.isNull(firstFailure)) {
+                    firstFailure = failure;
+                } else if (firstFailure != failure) {
+                    firstFailure.addSuppressed(failure);
+                }
+            }
+        }
+        if (Objects.nonNull(firstFailure)) {
+            throw firstFailure;
+        }
+    }
+
+    /**
+     * 将旧 Handler 入口适配为框架无关 View，固定本次名称、CRON、块大小和类型声明。
+     * 已注册处理器的身份或订阅漂移时，在读取、处理和提交之前拒绝适配。
+     *
+     * @param handler 业务处理器
+     * @return 顺序处理块内事件的视图
+     */
+    public ProjectionView<DomainEvent<?>> asView(ProjectionHandler handler) {
+        ProjectionHandler actual = Objects.requireNonNull(handler, "handler must not be null");
+        String name = actual.getName();
+        List<Class<? extends DomainEvent<?>>> types = new ArrayList<>(actual.eventTypes());
+        for (Class<?> type : types) {
+            Objects.requireNonNull(type, "event type must not be null");
+        }
+        registry.validateMetadata(actual, name, types);
+        Collection<String> names = Collections.unmodifiableList(types.stream()
+                .map(Class::getSimpleName).collect(Collectors.toList()));
+        String cron = actual.getCron();
+        int chunkSize = actualChunkSize(actual);
+        return new ProjectionView<DomainEvent<?>>() {
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
+            public String getCron() {
+                return cron;
+            }
+
+            @Override
+            public int getChunkSize() {
+                return chunkSize;
+            }
+
+            @Override
+            public Collection<String> getEventTypes() {
+                return names;
+            }
+
+            @Override
+            public void handleEvents(Collection<DomainEvent<?>> events) {
+                for (DomainEvent<?> event : events) {
+                    actual.handle(event);
+                }
+            }
+        };
+    }
+
+    /**
+     * 从当前检查点开始按处理器订阅的事件类型分批读取。
+     *
+     * @param eventType 事件的 Java 类型或持久化类型名称
+     * @param handler   当前执行的投影处理器
+     * @return 交给旧兼容投影入口的事件流
      */
     private Flux<DomainEvent<?>> pullChunks(Class<?> eventType, ProjectionHandler handler) {
         String streamId = streamIdOf(handler);
@@ -137,7 +235,10 @@ public class ProjectionDispatcher {
     }
 
     /**
-     * 单事件顺序应用并推进投影位置（position++ 后提交）。
+     * 旧单事件兼容入口：顺序应用并按消费数量推进位置（position++ 后提交）。
+     * <p>裸事件没有源位置，不能用于有过滤间隙的全局事件流；源位置安全入口为
+     * {@link #runOnce(ProjectionHandler)}。保留先处理、后从 positions 读取并提交的历史顺序，
+     * 该兼容分支不具备 Runner 的源块恢复或重入保证。
      *
      * <p>执行顺序固定为「先 {@link ProjectionHandler#handle} 应用、后提交位置」：
      * handler 抛出的异常直接传播给调用者且位置保持不变（不丢事件、可重试）。
@@ -159,17 +260,17 @@ public class ProjectionDispatcher {
     }
 
     /**
-     * \u751f\u6210\u5668\u5355\u6b65\u63a8\u8fdb\uff1a\u5148\u5728\u5f53\u524d\u5757\u5185\u6e38\u6807\u540e\u79fb\u627e\u4e0b\u4e00\u4e2a\u5339\u914d\u4e8b\u4ef6\uff08\u6bcf\u4e2a\u751f\u6210\u6b65\u53ea\u53d1\u4e00\u4e2a
-     *  {@code next}\u2014\u2014{@link SynchronousSink} \u5951\u7ea6\uff09\uff0c\u5f53\u524d\u5757\u626b\u5c3d\u518d\u62c9\u4e0b\u4e00\u5757\uff1b
-     *  \u4e8b\u4ef6\u8017\u5c3d\u6216\u4f4d\u7f6e\u4e0d\u518d\u524d\u8fdb\u5373 {@code complete}\u3002
+     * 生成器单步推进：先在当前块内游标后移找下一个匹配事件（每个生成步只发一个
+     * {@code next}——{@link SynchronousSink} 契约），当前块扫尽再拉下一块；
+     * 事件耗尽或位置不再前进即 {@code complete}。
      *
-     * @param eventType \u4e8b\u4ef6\u8d1f\u8f7d\u7684 Java \u7c7b\u578b
-     * @param streamId \u6295\u5f71\u4e8b\u4ef6\u6d41\u6807\u8bc6
-     * @param chunkSize \u5355\u6279\u6700\u591a\u8bf7\u6c42\u7684\u4e8b\u4ef6\u6570\u91cf
-     * @param eventNames \u8ba2\u9605\u7684\u4e8b\u4ef6\u540d\u79f0
-     * @param cursor \u672c\u6b21\u62c9\u53d6\u4f7f\u7528\u7684\u6d41\u6e38\u6807
-     * @param sink \u63a5\u6536\u62c9\u53d6\u4e8b\u4ef6\u7684\u4e0b\u6e38
-     * @return \u672c\u6b21\u5206\u6279\u62c9\u53d6\u540e\u7684\u6e38\u6807\u72b6\u6001
+     * @param eventType  事件负载的 Java 类型
+     * @param streamId   投影事件流标识
+     * @param chunkSize  单批最多请求的事件数量
+     * @param eventNames 订阅的事件名称
+     * @param cursor     本次拉取使用的流游标
+     * @param sink       接收拉取事件的下游
+     * @return 本次分批拉取后的游标状态
      */
     private Cursor pullStep(Class<?> eventType, String streamId, int chunkSize, Collection<String> eventNames,
                             Cursor cursor, SynchronousSink<DomainEvent<?>> sink) {
@@ -200,8 +301,9 @@ public class ProjectionDispatcher {
     }
 
     /**
-     * \u5728\u65e7\u7684\u9010\u4e8b\u4ef6\u6295\u5f71\u5165\u53e3\u4e2d\u5c06\u5f53\u524d\u4f4d\u7f6e\u63a8\u8fdb\u4e00\u4e2a\u5e8f\u53f7\u3002
-     * @param streamId \u6295\u5f71\u4e8b\u4ef6\u6d41\u6807\u8bc6
+     * 在旧的逐事件投影入口中将当前位置推进一个序号。
+     *
+     * @param streamId 投影事件流标识
      */
     private void commitPosition(String streamId) {
         ProjectionPosition current = positions.findByStreamId(streamId)
@@ -210,18 +312,20 @@ public class ProjectionDispatcher {
     }
 
     /**
-     * \u4f7f\u7528\u6295\u5f71\u5904\u7406\u5668\u540d\u79f0\u4f5c\u4e3a\u4e8b\u4ef6\u6d41\u6807\u8bc6\u3002
-     * @param handler \u5f53\u524d\u6267\u884c\u7684\u6295\u5f71\u5904\u7406\u5668
-     * @return \u4f9d\u5904\u7406\u5668\u6ce8\u518c\u7684\u4e8b\u4ef6\u6d41\u6807\u8bc6
+     * 使用投影处理器名称作为事件流标识。
+     *
+     * @param handler 当前执行的投影处理器
+     * @return 依处理器注册的事件流标识
      */
     private String streamIdOf(ProjectionHandler handler) {
         return handler.getName();
     }
 
     /**
-     * \u9009\u62e9\u5904\u7406\u5668\u58f0\u660e\u7684\u6b63\u6279\u91cf\u5927\u5c0f\uff0c\u7f3a\u7701\u65f6\u53d6 100\u3002
-     * @param handler \u5f53\u524d\u6267\u884c\u7684\u6295\u5f71\u5904\u7406\u5668
-     * @return \u6bcf\u6b21\u8bfb\u53d6\u7684\u6700\u5927\u4e8b\u4ef6\u6570
+     * 选择处理器声明的正批量大小，缺省时取 100。
+     *
+     * @param handler 当前执行的投影处理器
+     * @return 每次读取的最大事件数
      */
     private int actualChunkSize(ProjectionHandler handler) {
         int chunkSize = handler.getChunkSize();
@@ -229,9 +333,10 @@ public class ProjectionDispatcher {
     }
 
     /**
-     * \u5c06\u5904\u7406\u5668\u8ba2\u9605\u7684\u4e8b\u4ef6\u7c7b\u578b\u8f6c\u6362\u6210\u7b80\u5355\u7c7b\u540d\u3002
-     * @param handler \u5f53\u524d\u6267\u884c\u7684\u6295\u5f71\u5904\u7406\u5668
-     * @return \u4e0d\u53ef\u53d8\u7684\u4e8b\u4ef6\u540d\u79f0\u96c6\u5408
+     * 将处理器订阅的事件类型转换成简单类名。
+     *
+     * @param handler 当前执行的投影处理器
+     * @return 不可变的事件名称集合
      */
     private Collection<String> eventTypeNames(ProjectionHandler handler) {
         return Collections.unmodifiableList(handler.eventTypes().stream()
@@ -243,18 +348,25 @@ public class ProjectionDispatcher {
      * 流式拉取的生成器状态：投影位置 + 当前事件块 + 块内游标。
      */
     private static final class Cursor {
-        /** \u5c1a\u672a\u4ea4\u7ed9\u4e0b\u6e38\u8bfb\u53d6\u7684\u6e90\u4e8b\u4ef6\u4f4d\u7f6e\u3002 */
+        /**
+         * 尚未交给下游读取的源事件位置。
+         */
         private final long position;
-        /** \u5f53\u524d\u4ece\u6e90\u4f4d\u7f6e\u8bfb\u53d6\u7684\u4e8b\u4ef6\u6279\u6b21\u3002 */
+        /**
+         * 当前从源位置读取的事件批次。
+         */
         private final EventChunk<DomainEvent<?>> chunk;
-        /** \u5f53\u524d\u6279\u6b21\u4e2d\u4e0b\u4e00\u6761\u8981\u5904\u7406\u7684\u4e8b\u4ef6\u7d22\u5f15\u3002 */
+        /**
+         * 当前批次中下一条要处理的事件索引。
+         */
         private final int index;
 
         /**
-         * \u6784\u9020\u6307\u5411\u6307\u5b9a\u6e90\u4f4d\u7f6e\u53ca\u6279\u6b21\u504f\u79fb\u7684\u62c9\u53d6\u6e38\u6807\u3002
-         * @param position \u5f53\u524d\u6e90\u4e8b\u4ef6\u4f4d\u7f6e
-         * @param chunk \u5df2\u8bfb\u53d6\u7684\u6279\u6b21\uff0c\u9996\u6b21\u8bfb\u53d6\u524d\u4e3a\u7a7a
-         * @param index \u6279\u6b21\u4e2d\u5373\u5c06\u5904\u7406\u7684\u4e8b\u4ef6\u7d22\u5f15
+         * 构造指向指定源位置及批次偏移的拉取游标。
+         *
+         * @param position 当前源事件位置
+         * @param chunk    已读取的批次，首次读取前为空
+         * @param index    批次中即将处理的事件索引
          */
         Cursor(long position, EventChunk<DomainEvent<?>> chunk, int index) {
             this.position = position;
@@ -263,33 +375,37 @@ public class ProjectionDispatcher {
         }
 
         /**
-         * \u4e3a\u6307\u5b9a\u6e90\u4f4d\u7f6e\u521b\u5efa\u5c1a\u672a\u53d6\u5f97\u4efb\u4f55\u4e8b\u4ef6\u6279\u6b21\u7684\u6e38\u6807\u3002
-         * @param position \u4e8b\u4ef6\u6e90\u4e2d\u7684\u8d77\u59cb\u4f4d\u7f6e
-         * @return \u7528\u6765\u53d1\u8d77\u7b2c\u4e00\u6b21\u62c9\u53d6\u7684\u6e38\u6807
+         * 为指定源位置创建尚未取得任何事件批次的游标。
+         *
+         * @param position 事件源中的起始位置
+         * @return 用来发起第一次拉取的游标
          */
         static Cursor start(long position) {
             return new Cursor(position, null, 0);
         }
 
         /**
-         * \u8bfb\u53d6<code>position</code> \u5b57\u6bb5\u3002
-         * @return <code>position</code> \u5b57\u6bb5
+         * 读取<code>position</code> 字段。
+         *
+         * @return <code>position</code> 字段
          */
         public long position() {
             return position;
         }
 
         /**
-         * \u8bfb\u53d6<code>chunk</code> \u5b57\u6bb5\u3002
-         * @return <code>chunk</code> \u5b57\u6bb5
+         * 读取<code>chunk</code> 字段。
+         *
+         * @return <code>chunk</code> 字段
          */
         public EventChunk<DomainEvent<?>> chunk() {
             return chunk;
         }
 
         /**
-         * \u8bfb\u53d6<code>index</code> \u5b57\u6bb5\u3002
-         * @return <code>index</code> \u5b57\u6bb5
+         * 读取<code>index</code> 字段。
+         *
+         * @return <code>index</code> 字段
          */
         public int index() {
             return index;
@@ -303,7 +419,7 @@ public class ProjectionDispatcher {
          */
         @Override
         public boolean equals(Object o) {
-            return this == o || (o instanceof Cursor && position == ((Cursor) o).position && java.util.Objects.equals(chunk, ((Cursor) o).chunk) && index == ((Cursor) o).index);
+            return this == o || (o instanceof Cursor && position == ((Cursor) o).position && Objects.equals(chunk, ((Cursor) o).chunk) && index == ((Cursor) o).index);
         }
 
         /**
@@ -313,7 +429,7 @@ public class ProjectionDispatcher {
          */
         @Override
         public int hashCode() {
-            return java.util.Objects.hash(position, chunk, index);
+            return Objects.hash(position, chunk, index);
         }
 
         /**

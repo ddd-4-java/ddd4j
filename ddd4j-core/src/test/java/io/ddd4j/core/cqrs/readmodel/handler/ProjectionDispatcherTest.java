@@ -13,25 +13,9 @@
  * limitations under the License.
  */
 package io.ddd4j.core.cqrs.readmodel.handler;
-import java.util.Set;
-import java.util.Queue;
-import java.util.List;
-import java.util.Collection;
-import java.util.ArrayList;
-import java.util.ArrayDeque;
-import io.ddd4j.core.cqrs.readmodel.ProjectionService;
-import io.ddd4j.core.cqrs.readmodel.InMemoryProjectionPositionRepository;
-import io.ddd4j.core.cqrs.readmodel.EventChunkReader;
-import io.ddd4j.core.cqrs.readmodel.EventChunk;
-import io.ddd4j.core.cqrs.readmodel.DefaultProjectionService;
-import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.cqrs.readmodel.*;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import org.junit.jupiter.api.Test;
@@ -51,33 +35,222 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * 未注册类型空流兜底、dispatchOne 的「先应用后提交」顺序与 position++ 语义、
  * handler 失败时位置不推进、不包装事务（同步完成 future）。
  *
- * @author ddd4j
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
 class ProjectionDispatcherTest {
 
-    /** \u5f53\u524d\u7528\u4f8b\u6ce8\u518c\u88ab\u6d4b\u7ec4\u4ef6\u548c\u89c2\u5bdf\u6307\u6807\u7684\u5bb9\u5668\u3002 */
+    /**
+     * 当前用例注册被测组件和观察指标的容器。
+     */
     private final ProjectionHandlerRegistry registry = new ProjectionHandlerRegistry();
 
-    /** \u6d4b\u8bd5\u4f7f\u7528\u6216\u8bb0\u5f55\u7684\u591a\u6761\u6295\u5f71\u4f4d\u70b9\u3002 */
+    /**
+     * 测试使用或记录的多条投影位点。
+     */
     private final InMemoryProjectionPositionRepository positions = new InMemoryProjectionPositionRepository();
 
-    /** \u5f53\u524d\u6d4b\u8bd5\u8c03\u7528\u6216\u9a8c\u8bc1\u751f\u547d\u5468\u671f\u7684\u5e94\u7528\u670d\u52a1\u3002 */
+    /**
+     * 当前测试调用或验证生命周期的应用服务。
+     */
     private final ProjectionService service = new DefaultProjectionService(positions);
 
-    /** \u6309\u4f4d\u70b9\u5206\u5757\u8bfb\u53d6\u4e8b\u4ef6\u7684\u6295\u5f71\u7ec4\u4ef6\u3002 */
+    /**
+     * 按位点分块读取事件的投影组件。
+     */
     private final ScriptedChunkReader chunkReader = new ScriptedChunkReader();
 
-    /** \u4f9b\u6d4b\u8bd5\u6267\u884c\u4e8b\u4ef6\u6216 HTTP \u901a\u77e5\u5206\u53d1\u7684\u7ec4\u4ef6\u3002 */
+    /**
+     * 供测试执行事件或 HTTP 通知分发的组件。
+     */
     private final ProjectionDispatcher dispatcher =
             new ProjectionDispatcher(registry, chunkReader, positions, service);
 
-    /** \u9a8c\u8bc1<code>isolated.chunkByEvent(ProjectionHandlerRegistryTest.OrderCreated.class) .collectList().block()</code>\u4e3a\u7a7a\uff0c<code>received.get()</code> \u6309\u987a\u5e8f\u4ec5\u5305\u542b <code>"OrderCreated"</code>\uff0c<code>received.get().clear()</code> \u629b\u51fa <code>UnsupportedOperationException.class</code>\u3002 */
+    /**
+     * 验证<code>isolated.asView(handler)</code> 抛出 <code>NullPointerException.class</code>，<code>isolated.runOnce(handler)</code> 抛出 <code>NullPointerException.class</code>，<code>executionFailure</code> 的异常消息为 <code>"event type must not be null"</code>。
+     */
+    @Test
+    void invalidDirectHandlerIsRejectedBeforeReadHandleOrCheckpointActivity() {
+        ProjectionHandlerRegistryTest.MutableHandler handler = new ProjectionHandlerRegistryTest.MutableHandler();
+        handler.types.add(null);
+        List<String> checkpointActivity = new ArrayList<>();
+        ProjectionPositionRepository observedPositions = new InMemoryProjectionPositionRepository() {
+            @Override
+            public Optional<ProjectionPosition> findByStreamId(String streamId) {
+                checkpointActivity.add("read");
+                return super.findByStreamId(streamId);
+            }
+
+            @Override
+            public ProjectionPosition save(ProjectionPosition position) {
+                checkpointActivity.add("save");
+                return super.save(position);
+            }
+        };
+        ProjectionDispatcher isolated = new ProjectionDispatcher(registry, chunkReader, observedPositions,
+                new DefaultProjectionService(observedPositions));
+
+        NullPointerException adaptationFailure = assertThrows(NullPointerException.class,
+                () -> isolated.asView(handler));
+        NullPointerException executionFailure = assertThrows(NullPointerException.class,
+                () -> isolated.runOnce(handler));
+
+        assertThat(chunkReader.calls()).isEmpty();
+        assertThat(handler.handled).isEmpty();
+        assertThat(checkpointActivity).isEmpty();
+        assertThat(adaptationFailure).hasMessage("event type must not be null");
+        assertThat(executionFailure).hasMessage("event type must not be null");
+    }
+
+    /**
+     * 验证<code>dispatcher.runByEvent(ProjectionHandlerRegistryTest.OrderCreated.class)</code> 抛出 <code>IllegalStateException.class</code>，<code>dispatcher.runOnce(handler)</code> 抛出 <code>IllegalStateException.class</code>，<code>service.readProjectionPosition("first")</code> 等于 <code>10</code>。
+     */
+    @Test
+    void changedRegisteredSubscriptionsFailBeforeReadHandleOrCheckpointAdvance() {
+        ProjectionHandlerRegistryTest.MutableHandler handler = new ProjectionHandlerRegistryTest.MutableHandler();
+        registry.register(handler);
+        service.updateProjectionPosition("first", 10);
+        handler.types.clear();
+        handler.types.add(ProjectionHandlerRegistryTest.OrderPaid.class);
+        chunkReader.enqueue(EventChunk.empty(20));
+
+        assertThrows(IllegalStateException.class,
+                () -> dispatcher.runByEvent(ProjectionHandlerRegistryTest.OrderCreated.class));
+        assertThrows(IllegalStateException.class, () -> dispatcher.runOnce(handler));
+        assertThat(chunkReader.calls()).isEmpty();
+        assertThat(handler.handled).isEmpty();
+        assertThat(service.readProjectionPosition("first")).isEqualTo(10);
+    }
+
+    /**
+     * 验证<code>dispatcher.runByEvent(ProjectionHandlerRegistryTest.OrderCreated.class)</code> 抛出 <code>IllegalStateException.class</code>，<code>chunkReader.calls()</code>为空，<code>service.readProjectionPosition("second")</code>为零。
+     */
+    @Test
+    void changedRegisteredNameFailsBeforeReadingAnotherCheckpoint() {
+        ProjectionHandlerRegistryTest.MutableHandler handler = new ProjectionHandlerRegistryTest.MutableHandler();
+        registry.register(handler);
+        service.updateProjectionPosition("first", 10);
+        handler.name = "second";
+        chunkReader.enqueue(EventChunk.empty(20));
+
+        assertThrows(IllegalStateException.class,
+                () -> dispatcher.runByEvent(ProjectionHandlerRegistryTest.OrderCreated.class));
+        assertThat(chunkReader.calls()).isEmpty();
+        assertThat(handler.handled).isEmpty();
+        assertThat(service.readProjectionPosition("first")).isEqualTo(10);
+        assertThat(service.readProjectionPosition("second")).isZero();
+    }
+
+    /**
+     * 验证<code>view.getName()</code> 等于 <code>"first"</code>，<code>view.getStreamId()</code> 等于 <code>"first"</code>，<code>handler.handled</code> 按顺序仅包含 <code>event</code>。
+     */
+    @Test
+    void directlyAdaptedViewFreezesIdentityAndSubscriptionAtAdaptation() {
+        ProjectionHandlerRegistryTest.MutableHandler handler = new ProjectionHandlerRegistryTest.MutableHandler();
+        ProjectionView<DomainEvent<?>> view = dispatcher.asView(handler);
+        handler.name = "second";
+        handler.types.clear();
+        handler.types.add(ProjectionHandlerRegistryTest.OrderPaid.class);
+
+        assertThat(view.getName()).isEqualTo("first");
+        assertThat(view.getStreamId()).isEqualTo("first");
+        assertThat(view.getEventTypes()).containsExactly("OrderCreated");
+        DomainEvent<?> event = new ProjectionHandlerRegistryTest.OrderCreated();
+        view.handleEvents(List.of(event));
+        assertThat(handler.handled).containsExactly(event);
+    }
+
+    /**
+     * 验证<code>result.getNextEventNumber()</code> 等于 <code>20</code>，<code>service.readProjectionPosition("gap")</code> 等于 <code>20</code>，<code>handler.handled()</code> 按顺序仅包含 <code>first</code>、<code>second</code>。
+     */
+    @Test
+    void sourceAwareRunPreservesGapPositionAndHistory() {
+        ProjectionHandlerRegistryTest.RecordingHandler handler =
+                new ProjectionHandlerRegistryTest.RecordingHandler("gap", Set.of(ProjectionHandlerRegistryTest.OrderCreated.class));
+        positions.save(new DefaultProjectionPosition("gap", 10));
+        DomainEvent<?> first = new ProjectionHandlerRegistryTest.OrderCreated();
+        DomainEvent<?> second = new ProjectionHandlerRegistryTest.OrderCreated();
+        chunkReader.enqueue(new EventChunk<>(List.of(first, second), 20));
+        EventChunk<DomainEvent<?>> result = dispatcher.runOnce(handler);
+        dispatcher.runOnce(handler);
+        assertThat(result.getNextEventNumber()).isEqualTo(20);
+        assertThat(service.readProjectionPosition("gap")).isEqualTo(20);
+        assertThat(handler.handled()).containsExactly(first, second);
+        assertThat(chunkReader.calls()).extracting(ScriptedChunkReader.ReadCall::fromEventNumber)
+                .containsExactly(10L, 20L);
+    }
+
+    /**
+     * 验证<code>dispatcher.runByEvent(ProjectionHandlerRegistryTest.OrderCreated.class)</code> 抛出 <code>IllegalStateException.class</code>，<code>service.readProjectionPosition("first")</code> 等于 <code>10</code>，<code>service.readProjectionPosition("first")</code> 等于 <code>20</code>。
+     */
+    @Test
+    void failedViewDoesNotLoseOtherSubscribersAndCanResumeAtOwnPosition() {
+        ProjectionHandlerRegistryTest.RecordingHandler first =
+                new ProjectionHandlerRegistryTest.RecordingHandler("first", Set.of(ProjectionHandlerRegistryTest.OrderCreated.class));
+        ProjectionHandlerRegistryTest.RecordingHandler second =
+                new ProjectionHandlerRegistryTest.RecordingHandler("second", Set.of(ProjectionHandlerRegistryTest.OrderCreated.class));
+        registry.register(first);
+        registry.register(second);
+        first.failWith(new IllegalStateException("business write failed"));
+        service.updateProjectionPosition("first", 10);
+        service.updateProjectionPosition("second", 10);
+        DomainEvent<?> event = new ProjectionHandlerRegistryTest.OrderCreated();
+        chunkReader.enqueue(new EventChunk<>(List.of(event, event), 20));
+        chunkReader.enqueue(new EventChunk<>(List.of(event, event), 20));
+        assertThrows(IllegalStateException.class,
+                () -> dispatcher.runByEvent(ProjectionHandlerRegistryTest.OrderCreated.class));
+        assertThat(service.readProjectionPosition("first")).isEqualTo(10);
+        assertThat(service.readProjectionPosition("second")).isEqualTo(20);
+        assertThat(second.handled()).hasSize(2);
+        first.failWith(null);
+        chunkReader.enqueue(new EventChunk<>(List.of(event, event), 20));
+        dispatcher.runOnce(first);
+        assertThat(service.readProjectionPosition("first")).isEqualTo(20);
+        assertThat(chunkReader.calls()).extracting(ScriptedChunkReader.ReadCall::fromEventNumber)
+                .containsExactly(10L, 10L, 10L);
+    }
+
+    /**
+     * 验证<code>service.readProjectionPosition("legacy")</code> 等于 <code>10</code>，<code>handler.handled()</code>为空，<code>service.readProjectionPosition("legacy")</code> 等于 <code>12</code>。
+     */
+    @Test
+    void legacyBareEventKeepsCountPositionAndReadOnlyStreamDoesNotDispatch() {
+        ProjectionHandlerRegistryTest.RecordingHandler handler =
+                new ProjectionHandlerRegistryTest.RecordingHandler("legacy", Set.of(ProjectionHandlerRegistryTest.OrderCreated.class));
+        registry.register(handler);
+        service.updateProjectionPosition("legacy", 10);
+        DomainEvent<?> event = new ProjectionHandlerRegistryTest.OrderCreated();
+        chunkReader.enqueue(new EventChunk<>(List.of(event, event), 20));
+        List<DomainEvent<?>> events = dispatcher.chunkByEvent(ProjectionHandlerRegistryTest.OrderCreated.class)
+                .collectList().block();
+        assertThat(service.readProjectionPosition("legacy")).isEqualTo(10);
+        assertThat(handler.handled()).isEmpty();
+        events.forEach(item -> dispatcher.dispatchOne(item, handler));
+        assertThat(service.readProjectionPosition("legacy")).isEqualTo(12);
+    }
+
+    /**
+     * 验证<code>view.getName()</code> 等于 <code>"adapter"</code>，<code>view.getStreamId()</code> 等于 <code>"adapter"</code>，<code>view.getEventTypes()</code> 按顺序仅包含 <code>"OrderCreated"</code>。
+     */
+    @Test
+    void adapterPreservesHandlerMetadata() {
+        ProjectionHandlerRegistryTest.RecordingHandler handler =
+                new ProjectionHandlerRegistryTest.RecordingHandler("adapter", Set.of(ProjectionHandlerRegistryTest.OrderCreated.class));
+        ProjectionView<DomainEvent<?>> view = dispatcher.asView(handler);
+        assertThat(view.getName()).isEqualTo("adapter");
+        assertThat(view.getStreamId()).isEqualTo("adapter");
+        assertThat(view.getCron()).isEqualTo(handler.getCron());
+        assertThat(view.getChunkSize()).isEqualTo(handler.getChunkSize());
+        assertThat(view.getEventTypes()).containsExactly("OrderCreated");
+    }
+
+    /**
+     * 验证<code>isolated.chunkByEvent(ProjectionHandlerRegistryTest.OrderCreated.class) .collectList().block()</code>为空，<code>received.get()</code> 按顺序仅包含 <code>"OrderCreated"</code>，<code>received.get().clear()</code> 抛出 <code>UnsupportedOperationException.class</code>。
+     */
     @Test
     void chunkReaderReceivesImmutableEventTypeNames() {
         registry.register(new ProjectionHandlerRegistryTest.RecordingHandler(
-                "order-summary", Collections.<Class<? extends DomainEvent<?>>>singleton(
-                        ProjectionHandlerRegistryTest.OrderCreated.class)));
+                "order-summary", Set.of(ProjectionHandlerRegistryTest.OrderCreated.class)));
         AtomicReference<Collection<String>> received = new AtomicReference<>();
         EventChunkReader<DomainEvent<?>> reader = (streamId, fromEventNumber, chunkSize, eventTypes) -> {
             received.set(eventTypes);
@@ -91,7 +264,9 @@ class ProjectionDispatcherTest {
         assertThrows(UnsupportedOperationException.class, () -> received.get().clear());
     }
 
-    /** \u9a8c\u8bc1<code>emitted</code> \u6309\u987a\u5e8f\u4ec5\u5305\u542b <code>first</code>\u3001<code>second</code>\uff0c<code>chunkReader.calls()</code> \u7684\u5927\u5c0f\u4e3a <code>2</code>\uff0c<code>initialCall.eventTypes()</code> \u4ec5\u5305\u542b <code>"OrderCreated"</code>\u3001<code>"OrderPaid"</code>\u3002 */
+    /**
+     * 验证<code>emitted</code> 按顺序仅包含 <code>first</code>、<code>second</code>，<code>chunkReader.calls()</code> 的大小为 <code>2</code>，<code>initialCall.eventTypes()</code> 仅包含 <code>"OrderCreated"</code>、<code>"OrderPaid"</code>。
+     */
     @Test
     void chunkByEventEmitsOnlyRequestedTypeAndCompletesWhenExhausted() {
         ProjectionHandlerRegistryTest.RecordingHandler handler =
@@ -120,7 +295,9 @@ class ProjectionDispatcherTest {
                 .containsExactlyInAnyOrder("OrderCreated", "OrderPaid");
     }
 
-    /** \u9a8c\u8bc1<code>emitted</code>\u4e3a\u7a7a\uff0c<code>chunkReader.calls()</code>\u4e3a\u7a7a\u3002 */
+    /**
+     * 验证<code>emitted</code>为空，<code>chunkReader.calls()</code>为空。
+     */
     @Test
     void chunkByEventReturnsEmptyFluxForUnregisteredEventType() {
         registry.register(new ProjectionHandlerRegistryTest.RecordingHandler("order-summary",
@@ -135,7 +312,9 @@ class ProjectionDispatcherTest {
         assertThat(chunkReader.calls()).isEmpty();
     }
 
-    /** \u9a8c\u8bc1<code>chunkReader.calls().get(0).fromEventNumber()</code> \u7b49\u4e8e <code>7</code>\u3002 */
+    /**
+     * 验证<code>chunkReader.calls().get(0).fromEventNumber()</code> 等于 <code>7</code>。
+     */
     @Test
     void chunkByEventContinuesFromPersistedPosition() {
         registry.register(new ProjectionHandlerRegistryTest.RecordingHandler("order-summary",
@@ -149,7 +328,9 @@ class ProjectionDispatcherTest {
         assertThat(chunkReader.calls().get(0).fromEventNumber()).isEqualTo(7);
     }
 
-    /** \u9a8c\u8bc1<code>handler.handled()</code> \u6309\u987a\u5e8f\u4ec5\u5305\u542b <code>first</code>\u3001<code>second</code>\u3001<code>third</code>\uff0c<code>service.readProjectionPosition("order-summary")</code> \u7b49\u4e8e <code>3L</code>\uff0c<code>position.getNextEventNumber()</code> \u7b49\u4e8e <code>3L</code>\u3002 */
+    /**
+     * 验证<code>handler.handled()</code> 按顺序仅包含 <code>first</code>、<code>second</code>、<code>third</code>，<code>service.readProjectionPosition("order-summary")</code> 等于 <code>3L</code>，<code>position.getNextEventNumber()</code> 等于 <code>3L</code>。
+     */
     @Test
     void dispatchOneAppliesHandlerInOrderAndAdvancesPositionByOne() {
         ProjectionHandlerRegistryTest.RecordingHandler handler =
@@ -170,7 +351,9 @@ class ProjectionDispatcherTest {
                 .hasValueSatisfying(position -> assertThat(position.getNextEventNumber()).isEqualTo(3L));
     }
 
-    /** \u9a8c\u8bc1<code>dispatcher.dispatchOne(new ProjectionHandlerRegistryTest.OrderCreated(), handler)</code> \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>service.readProjectionPosition("order-summary")</code>\u4e3a\u96f6\uff0c<code>handler.handled()</code>\u4e3a\u7a7a\u3002 */
+    /**
+     * 验证<code>dispatcher.dispatchOne(new ProjectionHandlerRegistryTest.OrderCreated(), handler)</code> 抛出 <code>IllegalStateException.class</code>，<code>service.readProjectionPosition("order-summary")</code>为零，<code>handler.handled()</code>为空。
+     */
     @Test
     void dispatchOneKeepsPositionWhenHandlerFails() {
         ProjectionHandlerRegistryTest.RecordingHandler handler =
@@ -186,7 +369,9 @@ class ProjectionDispatcherTest {
         assertThat(handler.handled()).isEmpty();
     }
 
-    /** \u9a8c\u8bc1<code>dispatcher.dispatchOne(null, handler)</code> \u629b\u51fa <code>NullPointerException.class</code>\uff0c<code>dispatcher.dispatchOne(new ProjectionHandlerRegistryTest.OrderCreated(), null)</code> \u629b\u51fa <code>NullPointerException.class</code>\u3002 */
+    /**
+     * 验证<code>dispatcher.dispatchOne(null, handler)</code> 抛出 <code>NullPointerException.class</code>，<code>dispatcher.dispatchOne(new ProjectionHandlerRegistryTest.OrderCreated(), null)</code> 抛出 <code>NullPointerException.class</code>。
+     */
     @Test
     void dispatchOneRejectsNullArguments() {
         ProjectionHandlerRegistryTest.RecordingHandler handler =
@@ -199,7 +384,9 @@ class ProjectionDispatcherTest {
                 () -> dispatcher.dispatchOne(new ProjectionHandlerRegistryTest.OrderCreated(), null));
     }
 
-    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>NullPointerException.class</code>\u3002 */
+    /**
+     * 验证被测调用 抛出 <code>NullPointerException.class</code>。
+     */
     @Test
     void constructorRejectsNullComponents() {
         EventChunkReader<DomainEvent<?>> reader = new ScriptedChunkReader();
@@ -220,23 +407,29 @@ class ProjectionDispatcherTest {
      */
     static final class ScriptedChunkReader implements EventChunkReader<DomainEvent<?>> {
 
-        /** \u5f53\u524d\u7528\u4f8b\u6267\u884c\u7684\u6570\u636e\u5e93\u811a\u672c\u6216\u8868\u8fbe\u5f0f\u6587\u672c\u3002 */
+        /**
+         * 当前用例执行的数据库脚本或表达式文本。
+         */
         private final Queue<EventChunk<DomainEvent<?>>> script = new ArrayDeque<>();
 
-        /** \u8bb0\u5f55\u88ab\u6d4b\u5165\u53e3\u5b9e\u9645\u89e6\u53d1\u7684\u8c03\u7528\u3002 */
+        /**
+         * 记录被测入口实际触发的调用。
+         */
         private final List<ReadCall> calls = new ArrayList<>();
 
         /**
-         * \u8c03\u7528 <code>script.add()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
-         * @param chunk \u4f20\u7ed9 <code>script.add()</code> \u7684 <code>EventChunk&lt;DomainEvent&lt;?&gt;&gt;</code> \u8f93\u5165
+         * 调用 <code>script.add()</code> 执行当前夹具操作。
+         *
+         * @param chunk 传给 <code>script.add()</code> 的 <code>EventChunk&lt;DomainEvent&lt;?&gt;&gt;</code> 输入
          */
         void enqueue(EventChunk<DomainEvent<?>> chunk) {
             script.add(chunk);
         }
 
         /**
-         * \u8bfb\u53d6\u8bb0\u5f55\u88ab\u6d4b\u5165\u53e3\u5b9e\u9645\u89e6\u53d1\u7684\u8c03\u7528\u3002
-         * @return \u8bb0\u5f55\u88ab\u6d4b\u5165\u53e3\u5b9e\u9645\u89e6\u53d1\u7684\u8c03\u7528
+         * 读取记录被测入口实际触发的调用。
+         *
+         * @return 记录被测入口实际触发的调用
          */
         List<ReadCall> calls() {
             return calls;
@@ -247,10 +440,10 @@ class ProjectionDispatcherTest {
          *
          * <p>测试夹具会调用 <code>calls.add(new ReadCall(streamId, fromEventNumber, chunkSize, List.copyOf(eventTypes)))</code>、<code>List.copyOf(eventTypes)</code>。</p>
          *
-         * @param streamId 投影流 ID
+         * @param streamId        投影流 ID
          * @param fromEventNumber 起始事件号，包含该位置
-         * @param chunkSize 本次最大读取数量
-         * @param eventTypes 需要读取的事件类型；为空表示由实现自行决定
+         * @param chunkSize       本次最大读取数量
+         * @param eventTypes      需要读取的事件类型；为空表示由实现自行决定
          * @return 实际返回<code>chunk != null ? chunk : EventChunk.empty(fromEventNumber)</code>
          */
         @Override
@@ -262,32 +455,42 @@ class ProjectionDispatcherTest {
         }
 
         /**
-         * 一次事件块读取的参数记录：流 ID、起始事件号、块大小与事件类型名，
-         * 供测试断言读取约定。
+         * 将 <code>serialVersionUID</code>、<code>streamId</code>、<code>fromEventNumber</code>、<code>chunkSize</code> 等状态一起传入当前测试，供调用或结果断言使用。
          */
         final static class ReadCall {
 
-            /** Java \u5e8f\u5217\u5316\u4f7f\u7528\u7684\u7248\u672c\u6807\u8bc6\u3002 */
+            /**
+             * Java 序列化使用的版本标识。
+             */
             private static final long serialVersionUID = 0L;
 
-            /** \u6295\u5f71\u4efb\u52a1\u4f7f\u7528\u7684\u4e8b\u4ef6\u6d41\u6807\u8bc6\u3002 */
+            /**
+             * 投影任务使用的事件流标识。
+             */
             private final String streamId;
 
-            /** \u672c\u6b21\u6295\u5f71\u6d4b\u8bd5\u8bf7\u6c42\u8bfb\u53d6\u7684\u8d77\u59cb\u4e8b\u4ef6\u4f4d\u70b9\u3002 */
+            /**
+             * 本次投影测试请求读取的起始事件位点。
+             */
             private final long fromEventNumber;
 
-            /** \u5206\u6279\u8bfb\u53d6\u4e8b\u4ef6\u65f6\u914d\u7f6e\u7684\u5355\u6279\u5927\u5c0f\u3002 */
+            /**
+             * 分批读取事件时配置的单批大小。
+             */
             private final int chunkSize;
 
-            /** \u5939\u5177\u5411\u6295\u5f71\u8fd0\u884c\u5668\u58f0\u660e\u8ba2\u9605\u7684\u4e8b\u4ef6\u7c7b\u578b\u3002 */
+            /**
+             * 夹具向投影运行器声明订阅的事件类型。
+             */
             private final Collection<String> eventTypes;
 
             /**
-             * \u7528\u7ed9\u5b9a\u503c\u521d\u59cb\u5316 <code>ReadCall</code> \u5b9e\u4f8b\u3002
-             * @param streamId \u6295\u5f71\u4efb\u52a1\u4f7f\u7528\u7684\u4e8b\u4ef6\u6d41\u6807\u8bc6
-             * @param fromEventNumber <code>fromEventNumber</code> \u5b57\u6bb5
-             * @param chunkSize <code>chunkSize</code> \u5b57\u6bb5
-             * @param eventTypes <code>eventTypes</code> \u5b57\u6bb5
+             * 用给定值初始化 <code>ReadCall</code> 实例。
+             *
+             * @param streamId        投影任务使用的事件流标识
+             * @param fromEventNumber <code>fromEventNumber</code> 字段
+             * @param chunkSize       <code>chunkSize</code> 字段
+             * @param eventTypes      <code>eventTypes</code> 字段
              */
             @JsonCreator()
             ReadCall(@JsonProperty("streamId") String streamId, @JsonProperty("fromEventNumber") long fromEventNumber, @JsonProperty("chunkSize") int chunkSize, @JsonProperty("eventTypes") Collection<String> eventTypes) {
@@ -298,8 +501,9 @@ class ProjectionDispatcherTest {
             }
 
             /**
-             * \u8bfb\u53d6\u6295\u5f71\u4efb\u52a1\u4f7f\u7528\u7684\u4e8b\u4ef6\u6d41\u6807\u8bc6\u3002
-             * @return \u6295\u5f71\u4efb\u52a1\u4f7f\u7528\u7684\u4e8b\u4ef6\u6d41\u6807\u8bc6
+             * 读取投影任务使用的事件流标识。
+             *
+             * @return 投影任务使用的事件流标识
              */
             @JsonProperty("streamId")
             public String streamId() {
@@ -307,8 +511,9 @@ class ProjectionDispatcherTest {
             }
 
             /**
-             * \u8bfb\u53d6<code>fromEventNumber</code> \u5b57\u6bb5\u3002
-             * @return <code>fromEventNumber</code> \u5b57\u6bb5
+             * 读取<code>fromEventNumber</code> 字段。
+             *
+             * @return <code>fromEventNumber</code> 字段
              */
             @JsonProperty("fromEventNumber")
             public long fromEventNumber() {
@@ -316,8 +521,9 @@ class ProjectionDispatcherTest {
             }
 
             /**
-             * \u8bfb\u53d6<code>chunkSize</code> \u5b57\u6bb5\u3002
-             * @return <code>chunkSize</code> \u5b57\u6bb5
+             * 读取<code>chunkSize</code> 字段。
+             *
+             * @return <code>chunkSize</code> 字段
              */
             @JsonProperty("chunkSize")
             public int chunkSize() {
@@ -325,8 +531,9 @@ class ProjectionDispatcherTest {
             }
 
             /**
-             * \u8bfb\u53d6<code>eventTypes</code> \u5b57\u6bb5\u3002
-             * @return <code>eventTypes</code> \u5b57\u6bb5
+             * 读取<code>eventTypes</code> 字段。
+             *
+             * @return <code>eventTypes</code> 字段
              */
             @JsonProperty("eventTypes")
             public Collection<String> eventTypes() {

@@ -115,72 +115,137 @@ public class EsdbEventStore implements EventStore {
     }
 
     /**
-     * 按聚合查询其事件流并还原已存储的事件。
-     *
-     * <p>此实现调用 <code>streamName(aggregateType, aggregateId)</code>。</p>
+     * 读取聚合的完整事件历史，按版本升序返回。
      *
      * @param aggregateType 聚合类型
      * @param aggregateId 聚合 ID
-     * @return 实际返回<code>List.of()</code>
+     * @return 完整历史，流不存在时为空
      */
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId) {
-        String streamName = streamName(aggregateType, aggregateId);
-        try {
-            ReadResult result = client.readStream(streamName, ReadStreamOptions.get().forwards().fromStart()
-                    .maxCount(EventStoreConstants.ESDB_DEFAULT_READ_LIMIT)).join();
-            return result.getEvents().stream().map(event -> toStoredEvent(event, aggregateType, aggregateId)).toList();
-        } catch (CompletionException exception) {
-            if (exception.getCause() instanceof StreamNotFoundException) return List.of();
-            throw new IllegalStateException("Failed to read events from stream: " + streamName, exception.getCause());
-        }
+        return read(aggregateType, aggregateId, 1L, Long.MAX_VALUE);
     }
 
     /**
-     * 按聚合查询其事件流并还原已存储的事件。
-     *
-     * <p>此实现调用 <code>read(aggregateType, aggregateId).stream()</code>。</p>
+     * 从对应的原生修订号开始，分批读取指定的闭区间。
      *
      * @param aggregateType 聚合类型
      * @param aggregateId 聚合 ID
      * @param fromVersion 起始版本号（含）
      * @param toVersion 结束版本号（含）
-     * @return 版本区间内的持久化事件，按版本升序
+     * @return 按版本升序排列的不可变事件列表
      */
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId, long fromVersion, long toVersion) {
-        return read(aggregateType, aggregateId).stream()
-                .filter(event -> event.version() >= fromVersion && event.version() <= toVersion).toList();
+        long version = Math.max(1L, fromVersion);
+        String streamName = streamName(aggregateType, aggregateId);
+        List<StoredEvent> events = new ArrayList<>();
+        try {
+            while (version <= toVersion) {
+                long count = Math.min(toVersion - version + 1L, EventStoreConstants.ESDB_DEFAULT_READ_LIMIT);
+                var options = ReadStreamOptions.get().forwards().maxCount(count);
+                var batch = client.readStream(streamName, version == 1L ? options.fromStart() : options.fromRevision(version - 1L))
+                        .join().getEvents();
+                for (ResolvedEvent resolved : batch) {
+                    if (resolved.getEvent().getRevision() >= toVersion) {
+                        return List.copyOf(events);
+                    }
+                    events.add(toStoredEvent(resolved, aggregateType, aggregateId));
+                }
+                if (batch.size() < count || events.get(events.size() - 1).version() >= toVersion) {
+                    break;
+                }
+                version = events.get(events.size() - 1).version() + 1L;
+            }
+            return List.copyOf(events);
+        } catch (CompletionException exception) {
+            if (events.isEmpty() && exception.getCause() instanceof StreamNotFoundException) {
+                return List.of();
+            }
+            throw new IllegalStateException("Failed to read events from stream: " + streamName, exception.getCause());
+        }
     }
 
     /**
-     * 按全局位置读取用于投影或重放的存储事件。
-     *
-     * <p>满足 <code>limit &lt;= 0</code> 时抛出 <code>IllegalArgumentException</code>。 此实现调用 <code>ReadAllOptions.get().forwards().fromPosition(new Position(fromPosition, fromPosition))</code>。</p>
+     * 扫描全局日志，直到收集足够的业务事件或读到日志末尾。
      *
      * @param fromPosition 起始 position（含）
-     * @param limit 最大读取数量
-     * @return 实际返回<code>events</code>
+     * @param limit 最大返回数量
+     * @return 按日志顺序排列的事件
      */
     @Override
     public List<StoredEvent> readAll(long fromPosition, int limit) {
-        if (limit <= 0) throw new IllegalArgumentException("limit must be positive");
+        if (limit <= 0) {
+            throw new IllegalArgumentException("limit must be positive");
+        }
         try {
-            ReadResult result = client.readAll(ReadAllOptions.get().forwards()
-                    .fromPosition(new Position(fromPosition, fromPosition)).maxCount(Math.max(limit * 2L, EventStoreConstants.ESDB_DEFAULT_READ_LIMIT))).join();
+            long pageSize = EventStoreConstants.ESDB_DEFAULT_READ_LIMIT;
+            Position cursor = new Position(fromPosition, 0L);
             List<StoredEvent> events = new ArrayList<>();
-            for (ResolvedEvent resolved : result.getEvents()) {
-                RecordedEvent recorded = resolved.getEvent();
-                if (recorded == null || recorded.getStreamId().startsWith(EventStoreConstants.ESDB_SYSTEM_STREAM_PREFIX)
-                        || (!streamPrefix.isEmpty() && !recorded.getStreamId().startsWith(streamPrefix))) continue;
-                if (recorded.getPosition().getCommitUnsigned() < fromPosition) continue;
-                events.add(toStoredEvent(resolved, null, null));
-                if (events.size() == limit) break;
+            boolean resumed = false;
+            while (events.size() < limit) {
+                var batch = resumed
+                        ? client.readAll(ReadAllOptions.get().forwards().fromPosition(cursor).maxCount(pageSize)).join().getEvents()
+                        : firstGlobalPage(cursor, pageSize);
+                for (ResolvedEvent resolved : batch) {
+                    if (resumed && cursor.equals(logPosition(resolved))) {
+                        continue;
+                    }
+                    RecordedEvent recorded = resolved.getEvent();
+                    if (Objects.isNull(recorded) || recorded.getStreamId().startsWith(EventStoreConstants.ESDB_SYSTEM_STREAM_PREFIX)
+                            || (!streamPrefix.isEmpty() && !recorded.getStreamId().startsWith(streamPrefix))
+                            || recorded.getPosition().getCommitUnsigned() < fromPosition) {
+                        continue;
+                    }
+                    events.add(toStoredEvent(resolved, null, null));
+                    if (events.size() == limit) {
+                        return events;
+                    }
+                }
+                if (batch.size() < pageSize) {
+                    break;
+                }
+                cursor = logPosition(batch.get(batch.size() - 1));
+                resumed = true;
             }
             return events;
         } catch (CompletionException exception) {
             throw new IllegalStateException("Failed to read EventStoreDB global log", exception.getCause());
         }
+    }
+
+    /**
+     * 从调用方给定的位置开始扫描。调用方可以用上次位置加一表达排除该事件，
+     * 此时偏移可能不落在原生日志记录边界上。服务端拒绝该位置时从日志头扫描，
+     * 由调用方要求的起始位置过滤扫描结果。
+     *
+     * @param cursor 由调用方位置转换的初始位点
+     * @param pageSize 每次最多扫描的原生记录数
+     * @return 首批扫描结果
+     */
+    private List<ResolvedEvent> firstGlobalPage(Position cursor, long pageSize) {
+        var options = ReadAllOptions.get().forwards().maxCount(pageSize);
+        try {
+            return client.readAll(options.fromPosition(cursor)).join().getEvents();
+        } catch (CompletionException failure) {
+            Throwable cause = failure.getCause();
+            // The client reports this server response through its shaded gRPC exception.
+            if (cursor.getCommitUnsigned() != 0L && Objects.nonNull(cause)
+                    && "UNKNOWN: Unexpected ReadAllResult: InvalidPosition".equals(cause.getMessage())) {
+                return client.readAll(options.fromStart()).join().getEvents();
+            }
+            throw failure;
+        }
+    }
+
+    /**
+     * 返回原生日志位点，用于从上一批扫描结束的位置继续。
+     *
+     * @param event 全局日志记录
+     * @return 该记录的原生提交和准备位点
+     */
+    private static Position logPosition(ResolvedEvent event) {
+        return event.getPosition().orElseGet(() -> event.getOriginalEvent().getPosition());
     }
 
     /**

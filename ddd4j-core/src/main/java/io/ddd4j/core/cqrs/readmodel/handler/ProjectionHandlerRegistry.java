@@ -15,109 +15,102 @@
 package io.ddd4j.core.cqrs.readmodel.handler;
 
 import io.ddd4j.core.ddd.event.DomainEvent;
+import io.ddd4j.kit.lang.StrKit;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
- * 投影处理器注册中心（框架无关）。
- * <p>
- * 由各运行时适配器（阶段 7 Task 7.7+：Spring／Quarkus／Micronaut／Helidon／
- * Javalin／Vertx／Dropwizard）在装配期收集业务 {@link ProjectionHandler} bean，
- * 逐个注册到本类；随后调度器通过 {@link #findHandler(Class)} 定位订阅者，
- * 交给 {@link ProjectionDispatcher} 拉块分发。本类只维护「事件类型 → handler」
- * 映射，不执行事件、不感知任何运行时框架。
- *
- * <h2>注册语义（与 CommandRegistry 同源）</h2>
- * <p>
- * {@link #register} 采用 <b>先校验全部订阅类型无冲突、再统一落库</b> 的整批拒绝
- * （all-or-nothing）语义：任一事件类型已被其他 handler 注册即抛
- * {@link IllegalStateException}（消息含事件类型全限定名），且本 handler 声明的
- * 所有类型（包括无冲突者）均不落库——多类型 handler 中途冲突不会留下
- * 「前几个类型已落库」的半注册状态。该语义与 ddd4j-core 中 CommandRegistry 的
- * {@code CommandRegistry}（ADR-0004 对 fuin 先例的保留决策）同源：
- * 冲突在装配期暴露，注册中心保持长生命周期共享组件的一致性。
- *
- * <h3>线程模型</h3>
- * <p>
- * 注册发生在装配期（单线程或已外部同步）；内部使用 {@link ConcurrentHashMap}
- * 保证 {@link #findHandler} 无锁读。并发的重复注册属契约外用法，落库阶段的
- * {@code putIfAbsent} 仅作防御性兜底。
- *
- * @author <a href="https://github.com/partme-ai">Partme.AI</a>
- * @see ProjectionHandler
- * @see ProjectionDispatcher
- * @since 2.0.x
+ * 按独立视图身份注册投影处理器。同一事件允许多个视图订阅，各自维护检查点。
+ * 注册先验证完整声明，再原子发布不可变订阅快照；同名视图整批拒绝。
+ * 旧单值查询确定性返回最先注册的订阅者，多视图调用使用 {@link #findHandlers(Class)}。
  */
 public class ProjectionHandlerRegistry {
 
-    /** \u6309\u6295\u5f71\u540d\u67e5\u627e\u5df2\u767b\u8bb0\u7684\u5904\u7406\u5668\u3002 */
-    private final Map<Class<?>, ProjectionHandler> handlers = new ConcurrentHashMap<>();
+    /**
+     * 按投影名查找已登记的处理器。
+     */
+    private final Map<String, ProjectionHandler> handlers = new LinkedHashMap<>();
+    /**
+     * 每个已登记处理器订阅的事件类型索引。
+     */
+    private final Map<String, List<Class<? extends DomainEvent<?>>>> subscriptions = new LinkedHashMap<>();
 
     /**
-     * 注册一个投影处理器（整批拒绝语义）。
-     * <p>
-     * 先校验 {@link ProjectionHandler#eventTypes()} 声明的全部事件类型均无冲突，
-     * 再统一写入；任一类型已被其他 handler 注册即抛 {@link IllegalStateException}，
-     * 且本 handler 声明的所有类型都不落库（与 {@code CommandRegistry} 同源语义）。
+     * 注册处理器。不同名称可订阅相同事件，同名不能覆盖已有注册。
      *
-     * @param handler 投影处理器，非空
-     * @throws NullPointerException  handler、事件类型集合或集合中的类型为 null
-     * @throws IllegalStateException 任一事件类型已被注册（消息含事件类型全限定名）
+     * @param handler 处理器及完整订阅声明
+     * @throws IllegalStateException 视图名已注册
      */
-    public void register(ProjectionHandler handler) {
+    public synchronized void register(ProjectionHandler handler) {
         ProjectionHandler actual = Objects.requireNonNull(handler, "handler must not be null");
-        Collection<Class<? extends DomainEvent<?>>> declaredTypes =
-                Objects.requireNonNull(actual.eventTypes(), "event types must not be null");
-        for (Class<?> eventType : declaredTypes) {
-            Objects.requireNonNull(eventType, "event type must not be null");
+        String name = actual.getName();
+        if (StrKit.isBlank(name)) {
+            throw new IllegalArgumentException("handler name must not be blank");
         }
-        Set<Class<?>> eventTypes = Collections.unmodifiableSet(new HashSet<>(declaredTypes));
-        for (Class<?> eventType : eventTypes) {
-            if (handlers.containsKey(eventType)) {
-                throw new IllegalStateException(
-                        "Duplicate projection handler registration for event: " + eventType.getName());
-            }
+        List<Class<? extends DomainEvent<?>>> declaredTypes = new ArrayList<>(
+                Objects.requireNonNull(actual.eventTypes(), "event types must not be null"));
+        for (Class<?> type : declaredTypes) {
+            Objects.requireNonNull(type, "event type must not be null");
         }
-        for (Class<?> eventType : eventTypes) {
-            ProjectionHandler previous = handlers.putIfAbsent(eventType, actual);
-            if (Objects.nonNull(previous)) {
-                throw new IllegalStateException(
-                        "Duplicate projection handler registration for event: " + eventType.getName());
-            }
+        List<Class<? extends DomainEvent<?>>> types = Collections.unmodifiableList(
+                declaredTypes.stream().distinct().collect(Collectors.toList()));
+        if (handlers.containsKey(name)) {
+            throw new IllegalStateException("Duplicate projection handler registration for view: " + name);
         }
+        handlers.put(name, actual);
+        subscriptions.put(name, types);
     }
 
     /**
-     * 返回已注册 handler 的不可变视图（声明多类型的 handler 只出现一次）。
-     * <p>
-     * 内部映射按「事件类型」键控（多类型 handler 对应多个键值），故以去重集合返回；
-     * 供调度器遍历注册面（按 {@link ProjectionHandler#getCron()} 注册周期任务）。
+     * 校验本次适配快照与登记元数据一致；未注册对象可直接适配。
+     * 按对象身份匹配，避免改名后用新名称绕过登记检查。
      *
-     * @return 已注册 handler 的不可变集合
+     * @param handler 注册的投影处理器
+     * @param name    处理器声明的投影名称
+     * @param types   处理器订阅的领域事件类型
      */
-    public Collection<ProjectionHandler> all() {
-        return Collections.unmodifiableCollection(new LinkedHashSet<>(handlers.values()));
+    synchronized void validateMetadata(ProjectionHandler handler, String name,
+                                       Collection<Class<? extends DomainEvent<?>>> types) {
+        for (Map.Entry<String, ProjectionHandler> entry : handlers.entrySet()) {
+            if (entry.getValue() == handler && (!Objects.equals(entry.getKey(), name)
+                    || !new HashSet<>(subscriptions.get(entry.getKey())).equals(new HashSet<>(types)))) {
+                throw new IllegalStateException("Registered projection metadata changed for view: " + entry.getKey());
+            }
+        }
     }
 
     /**
-     * 按事件类型查找订阅的 handler。
+     * 返回按注册顺序排列的不可变快照，每个视图出现一次。
      *
-     * @param eventType 事件类型，非空
-     * @param <E>       事件类型泛型
-     * @return 订阅该类型的 handler；未注册返回 {@link Optional#empty()}
-     * （兜底策略由 {@link ProjectionDispatcher} 决定）
-     * @throws NullPointerException eventType 为 null
+     * @return 全部已注册视图
+     */
+    public synchronized Collection<ProjectionHandler> all() {
+        return Collections.unmodifiableList(new ArrayList<>(handlers.values()));
+    }
+
+    /**
+     * 兼容旧单视图调用；多订阅时返回最先注册者，不执行扇出。
+     *
+     * @param eventType 事件类型
+     * @param <E>       事件类型
+     * @return 第一个订阅者，未注册时为空
      */
     public <E extends DomainEvent<?>> Optional<ProjectionHandler> findHandler(Class<E> eventType) {
+        return findHandlers(eventType).stream().findFirst();
+    }
+
+    /**
+     * 查找全部独立订阅视图，按注册顺序返回不可变快照。
+     *
+     * @param eventType 事件类型
+     * @param <E>       事件类型
+     * @return 订阅该类型的全部处理器
+     */
+    public synchronized <E extends DomainEvent<?>> List<ProjectionHandler> findHandlers(Class<E> eventType) {
         Objects.requireNonNull(eventType, "eventType must not be null");
-        return Optional.ofNullable(handlers.get(eventType));
+        return Collections.unmodifiableList(handlers.entrySet().stream()
+                .filter(entry -> subscriptions.get(entry.getKey()).contains(eventType))
+                .map(Map.Entry::getValue).collect(Collectors.toList()));
     }
 }
