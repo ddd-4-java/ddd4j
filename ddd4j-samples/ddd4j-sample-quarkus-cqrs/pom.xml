@@ -411,6 +411,11 @@
             <artifactId>agroal-pool</artifactId>
             <version>${quarkus-agroal.version}</version>
         </dependency>
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <version>${jakarta.persistence-api.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
