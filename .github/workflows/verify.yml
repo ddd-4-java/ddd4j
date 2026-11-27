@@ -60,7 +60,7 @@ jobs:
         run: ./scripts/verify-release-worktree.sh
       - name: Verify DDD architecture rules
         run: ./scripts/verify-architecture.sh
-      - name: Install pinned Spring Boot 4 Web adapters
+      - name: Install pinned Spring Boot 4 Web and authentication adapters
         run: bash scripts/install-ddd4j-boot4-web.sh
       - name: Run unit and adapter contracts
         run: ./mvnw -B clean test -DskipITs
@@ -95,7 +95,7 @@ jobs:
           printf '%s' "$MAVEN_SETTINGS_XML" | base64 --decode > "$HOME/.m2/settings.xml"
       # 两步法：先全 reactor 安装依赖（不激活 coverage，避免未达标依赖模块触发 check），
       # 再对白名单模块强制 -Pcoverage verify。模块达标（LINE >= 90%）后加入白名单。
-      - name: Install pinned Spring Boot 4 Web adapters
+      - name: Install pinned Spring Boot 4 Web and authentication adapters
         run: bash scripts/install-ddd4j-boot4-web.sh
       - name: Install reactor dependencies without coverage enforcement
         run: ./mvnw -B -DskipTests install
@@ -127,7 +127,7 @@ jobs:
           install -d -m 700 "$HOME/.m2"
           umask 077
           printf '%s' "$MAVEN_SETTINGS_XML" | base64 --decode > "$HOME/.m2/settings.xml"
-      - name: Install pinned Spring Boot 4 Web adapters
+      - name: Install pinned Spring Boot 4 Web and authentication adapters
         run: bash scripts/install-ddd4j-boot4-web.sh
       - name: Generate CycloneDX SBOM
         run: ./scripts/generate-sbom.sh
@@ -188,5 +188,5 @@ jobs:
       - name: Run Redis, MySQL, PostgreSQL and Kafka integration tests
         run: >-
           ./mvnw -B
-          -pl ddd4j-cache,ddd4j-data/ddd4j-data-mybatisplus,ddd4j-mq/ddd4j-mq-kafka,ddd4j-samples/ddd4j-sample-order-jdbc,ddd4j-samples/ddd4j-sample-order-kafka,ddd4j-samples/ddd4j-sample-order-redis
+          -pl ddd4j-cache,ddd4j-data/ddd4j-data-mybatisplus,ddd4j-mq/ddd4j-mq-kafka,ddd4j-samples/ddd4j-sample-order-start
           -am test
