@@ -14,9 +14,8 @@
  */
 package io.ddd4j.micronaut.cqrs;
 
+import io.ddd4j.core.cqrs.readmodel.ProjectionCron;
 import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
-import jakarta.annotation.PreDestroy;
-import jakarta.inject.Singleton;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -29,10 +28,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * Micronaut CDI 投影调度器（{@link ViewScheduler} SPI 的 Micronaut 实现）。
  *
- * <p>以 {@code @Singleton} 实现。Micronaut 4.x 无内置 cron 调度 API，
- * 退化为 JDK {@link ScheduledExecutorService} 兜底（与 Quarkus 模块同款模式）：
- * {@link #schedule} 用 {@link CronExpression} 解析 cron 得到下次执行延迟，
- * 以 {@code schedule} 注册并自动重调度。
+ * <p>由 Micronaut 工厂或旧 GAV 的 Bean 管理所有权，使用 JDK 调度器和共享数值 CRON。
+ * 保留完成后重调度与代际 Future 取消保护。
  *
  * <p><b>仅服务 Micronaut 运行时</b>；Spring 系运行时用
  * {@code SpringProjectionScheduler}，Quarkus 用 {@code QuarkusProjectionScheduler}。
@@ -41,13 +38,16 @@ import java.util.concurrent.TimeUnit;
  * @see ViewScheduler
  * @since 2.0.x
  */
-@Singleton
 public class MicronautProjectionScheduler implements ViewScheduler {
 
-    /** \u6309\u8ba1\u5212\u6267\u884c\u5f53\u524d\u7ec4\u4ef6\u540e\u53f0\u4efb\u52a1\u7684\u5b9a\u65f6\u7ebf\u7a0b\u6c60\u3002 */
+    /**
+     * 按计划执行当前组件后台任务的定时线程池。
+     */
     private final ScheduledExecutorService executor;
 
-    /** 创建由框架管理的调度器。 */
+    /**
+     * 创建由框架管理的调度器。
+     */
     public MicronautProjectionScheduler() {
         this(Executors.newScheduledThreadPool(
                 Runtime.getRuntime().availableProcessors(),
@@ -59,16 +59,18 @@ public class MicronautProjectionScheduler implements ViewScheduler {
     }
 
     /**
-     * \u4f7f\u7528\u6307\u5b9a\u6267\u884c\u5668\uff0c\u5173\u95ed\u65f6\u7ec8\u6b62\u8be5\u6267\u884c\u5668\u3002
-     * @param executor \u8c03\u5ea6\u6267\u884c\u5668
+     * 使用指定执行器，关闭时终止该执行器。
+     *
+     * @param executor 调度执行器
      */
-    MicronautProjectionScheduler(ScheduledExecutorService executor) {
+    protected MicronautProjectionScheduler(ScheduledExecutorService executor) {
         this.executor = Objects.requireNonNull(executor, "executor");
     }
 
-    /** \u5173\u95ed\u672c\u8c03\u5ea6\u5668\u62e5\u6709\u7684\u6267\u884c\u5668\u3002 */
-    @PreDestroy
-    void shutdown() {
+    /**
+     * 关闭本调度器拥有的执行器。
+     */
+    public void shutdown() {
         executor.shutdownNow();
     }
 
@@ -78,8 +80,8 @@ public class MicronautProjectionScheduler implements ViewScheduler {
      * <p>Micronaut 实现调用 <code>CronExpression.parse(cron)</code>。</p>
      *
      * @param viewName 视图名称（用于日志 / 调试）
-     * @param cron CRON 表达式
-     * @param task 要执行的任务
+     * @param cron     CRON 表达式
+     * @param task     要执行的任务
      * @return 实际返回<code>handle</code>
      */
     @Override
@@ -98,24 +100,37 @@ public class MicronautProjectionScheduler implements ViewScheduler {
      */
     private static class ReschedulingHandle implements ViewScheduleHandle, Runnable {
 
-        /** \u6309\u8ba1\u5212\u6267\u884c\u5f53\u524d\u7ec4\u4ef6\u540e\u53f0\u4efb\u52a1\u7684\u5b9a\u65f6\u7ebf\u7a0b\u6c60\u3002 */
+        /**
+         * 按计划执行当前组件后台任务的定时线程池。
+         */
         private final ScheduledExecutorService executor;
-        /** \u7528\u6765\u786e\u5b9a\u4efb\u52a1\u4e0b\u6b21\u89e6\u53d1\u65f6\u95f4\u7684 Cron \u8868\u8fbe\u5f0f\u3002 */
+        /**
+         * 用来确定任务下次触发时间的 Cron 表达式。
+         */
         private final CronExpression cron;
-        /** \u7531\u5f53\u524d\u8c03\u5ea6\u53e5\u67c4\u6267\u884c\u7684\u6295\u5f71\u4efb\u52a1\u3002 */
+        /**
+         * 由当前调度句柄执行的投影任务。
+         */
         private final Runnable task;
-        /** \u7528\u4e8e\u8ddf\u8e2a\u548c\u53d6\u6d88\u540e\u53f0\u8c03\u5ea6\u4efb\u52a1\u7684\u53e5\u67c4\u3002 */
+        /**
+         * 用于跟踪和取消后台调度任务的句柄。
+         */
         private volatile ScheduledFuture<?> future;
-        /** \u4efb\u52a1\u662f\u5426\u5df2\u53d6\u6d88\u5e76\u505c\u6b62\u7ee7\u7eed\u5b89\u6392\u65b0\u7684\u89e6\u53d1\u3002 */
+        /**
+         * 任务是否已取消并停止继续安排新的触发。
+         */
         private volatile boolean cancelled = false;
-        /** \u6807\u8bc6\u5f53\u524d\u8ba1\u5212\u7248\u672c\uff0c\u4f9b\u505c\u7528\u5df2\u5931\u6548\u7684\u5f02\u6b65\u89e6\u53d1\u3002 */
+        /**
+         * 标识当前计划版本，供停用已失效的异步触发。
+         */
         private long scheduleGeneration;
 
         /**
-         * \u7528\u7ed9\u5b9a\u503c\u521d\u59cb\u5316 <code>ReschedulingHandle</code> \u5b9e\u4f8b\u3002
-         * @param executor \u6309\u8ba1\u5212\u6267\u884c\u5f53\u524d\u7ec4\u4ef6\u540e\u53f0\u4efb\u52a1\u7684\u5b9a\u65f6\u7ebf\u7a0b\u6c60
-         * @param cron <code>cron</code> \u5b57\u6bb5
-         * @param task <code>task</code> \u5b57\u6bb5
+         * 用给定值初始化 <code>ReschedulingHandle</code> 实例。
+         *
+         * @param executor 按计划执行当前组件后台任务的定时线程池
+         * @param cron     <code>cron</code> 字段
+         * @param task     <code>task</code> 字段
          */
         ReschedulingHandle(ScheduledExecutorService executor, CronExpression cron, Runnable task) {
             this.executor = executor;
@@ -123,14 +138,16 @@ public class MicronautProjectionScheduler implements ViewScheduler {
             this.task = task;
         }
 
-        /** \u6839\u636e Cron \u8ba1\u7b97\u4e0b\u4e00\u6b21\u6267\u884c\u65f6\u95f4\uff0c\u5e76\u5728\u8ba1\u5212\u4ecd\u6709\u6548\u65f6\u5411\u8c03\u5ea6\u7ebf\u7a0b\u6c60\u6ce8\u518c\u89e6\u53d1\u3002 */
+        /**
+         * 根据 Cron 计算下一次执行时间，并在计划仍有效时向调度线程池注册触发。
+         */
         synchronized void scheduleNext() {
             if (cancelled) {
                 return;
             }
             LocalDateTime now = LocalDateTime.now();
             LocalDateTime next = cron.next(now);
-            if (next == null) {
+            if (Objects.isNull(next)) {
                 return;
             }
             long delayMillis = Duration.between(now, next).toMillis();
@@ -171,7 +188,7 @@ public class MicronautProjectionScheduler implements ViewScheduler {
         public synchronized void cancel() {
             cancelled = true;
             ScheduledFuture<?> f = future;
-            if (f != null) {
+            if (Objects.nonNull(f)) {
                 f.cancel(false);
             }
         }
@@ -181,7 +198,7 @@ public class MicronautProjectionScheduler implements ViewScheduler {
          *
          * <p>此实现调用 <code>f.isCancelled()</code>。</p>
          *
-         * @return 根据执行路径返回<code>false</code>、<code>f != null &amp;&amp; !f.isCancelled() &amp;&amp; !f.isDone()</code>
+         * @return 根据执行路径返回<code>false</code>、<code>Objects.nonNull(f) &amp;&amp; !f.isCancelled() &amp;&amp; !f.isDone()</code>
          */
         @Override
         public synchronized boolean isActive() {
@@ -189,170 +206,51 @@ public class MicronautProjectionScheduler implements ViewScheduler {
                 return false;
             }
             ScheduledFuture<?> f = future;
-            return f != null && !f.isCancelled() && !f.isDone();
+            return Objects.nonNull(f) && !f.isCancelled() && !f.isDone();
         }
     }
 
-    // ======== Minimal CRON parser (6-field: sec min hour dom month dow) ========
-
     /**
-     * Minimal 6-field CRON parser (sec min hour dom month dow).
-     *
-     * <p>Supports: wildcard (*), range (1-5), step ({@code &#42;/5}),
-     * comma list (1,3,5), and literal values.
-     * Does not support L/W/C special characters.
+     * 保留六段数值语法，时间搜索复用 core；保留本地时区语义。
      */
-    static class CronExpression {
-
-        /** Cron 秒字段允许的取值。 */
-        private final int[] seconds;
-        /** Cron 分字段允许的取值。 */
-        private final int[] minutes;
-        /** Cron 小时字段允许的取值。 */
-        private final int[] hours;
-        /** Cron 月内日期字段允许的取值。 */
-        private final int[] daysOfMonth;
-        /** Cron 月字段允许的取值。 */
-        private final int[] months;
-        /** Cron 星期字段允许的取值。 */
-        private final int[] daysOfWeek;
+    public static class CronExpression {
+        /**
+         * 负责解析 Cron 字段并计算下次触发时间的共用实现。
+         */
+        private final ProjectionCron delegate;
 
         /**
-         * 以各 Cron 字段允许的取值集合构造表达式。
+         * 把已解析的 Cron 计划包装成当前框架的调度表达式。
          *
-         * @param seconds Cron 秒字段允许的取值
-         * @param minutes Cron 分字段允许的取值
-         * @param hours Cron 小时字段允许的取值
-         * @param daysOfMonth Cron 月内日期字段允许的取值
-         * @param months Cron 月字段允许的取值
-         * @param daysOfWeek Cron 星期字段允许的取值
+         * @param delegate 执行共享行为的底层实现
          */
-        private CronExpression(int[] seconds, int[] minutes, int[] hours,
-                               int[] daysOfMonth, int[] months, int[] daysOfWeek) {
-            this.seconds = seconds;
-            this.minutes = minutes;
-            this.hours = hours;
-            this.daysOfMonth = daysOfMonth;
-            this.months = months;
-            this.daysOfWeek = daysOfWeek;
+        private CronExpression(ProjectionCron delegate) {
+            this.delegate = delegate;
         }
 
         /**
-         * 解析按秒、分、时、日、月、星期排列的六段 Cron 表达式。
+         * 解析旧入口的表达式。
          *
-         * @param expr 待解析的六字段 Cron 表达式文本
-         * @return 已按六个字段解析的 Cron 表达式
+         * @param expression 六段数值表达式
+         * @return 已解析对象
          */
-        static CronExpression parse(String expr) {
-            String[] parts = expr.trim().split("\\s+");
-            if (parts.length != 6) {
-                throw new IllegalArgumentException("CRON expression must have 6 fields (sec min hour dom month dow): " + expr);
+        public static CronExpression parse(String expression) {
+            if (expression.contains("?")) {
+                throw new IllegalArgumentException("Micronaut legacy cron does not support ?: " + expression);
             }
-            return new CronExpression(
-                    parseField(parts[0], 0, 59),
-                    parseField(parts[1], 0, 59),
-                    parseField(parts[2], 0, 23),
-                    parseField(parts[3], 1, 31),
-                    parseField(parts[4], 1, 12),
-                    parseField(parts[5], 0, 7)
-            );
+            return new CronExpression(ProjectionCron.parse(expression));
         }
 
         /**
-         * \u4ece\u672c\u5730\u65f6\u95f4\u67e5\u627e\u4e0b\u4e00\u65f6\u95f4\u3002
-         * @param from \u8d77\u59cb\u672c\u5730\u65f6\u95f4
-         * @return \u4e0b\u4e00\u65f6\u95f4\uff0c\u672a\u6765\u516b\u5e74\u65e0\u5339\u914d\u8fd4\u56de null
-         */
-        LocalDateTime next(LocalDateTime from) {
-            LocalDateTime candidate = from.plusSeconds(1).withNano(0);
-            for (int i = 0; i < 1_000_000; i++) {
-                if (matches(candidate)) {
-                    return candidate;
-                }
-                candidate = candidate.plusSeconds(1);
-            }
-            return null;
-        }
-
-        /**
-         * 检查日期时间是否符合当前 Cron 表达式。
+         * 从本地时间查找下一时间。
          *
-         * @param dt 传入此操作的 <code>LocalDateTime</code> 类型 <code>dt</code>
-         * @return 当前时间是否满足全部 Cron 条件
+         * @param from 起始本地时间
+         * @return 下一时间，未来八年无匹配返回 null
          */
-        private boolean matches(LocalDateTime dt) {
-            return contains(seconds, dt.getSecond())
-                    && contains(minutes, dt.getMinute())
-                    && contains(hours, dt.getHour())
-                    && contains(daysOfMonth, dt.getDayOfMonth())
-                    && contains(months, dt.getMonthValue())
-                    && matchesDayOfWeek(dt);
-        }
-
-        /**
-         * 按 Cron 星期编号检查给定时间，兼容星期日的两种表示。
-         *
-         * @param dt 传入此操作的 <code>LocalDateTime</code> 类型 <code>dt</code>
-         * @return 当前时间是否符合星期字段
-         */
-        private boolean matchesDayOfWeek(LocalDateTime dt) {
-            int dow = dt.getDayOfWeek().getValue() % 7; // Monday=1 -> 1, Sunday=7 -> 0
-            return contains(daysOfWeek, dow) || contains(daysOfWeek, dt.getDayOfWeek().getValue());
-        }
-
-        /**
-         * 查找指定数值是否属于当前 Cron 字段允许的集合。
-         *
-         * @param values 查找指定值时使用的候选集合
-         * @param v 待检查是否存在的候选值
-         * @return 给定值是否在候选集合中
-         */
-        private static boolean contains(int[] values, int v) {
-            for (int val : values) {
-                if (val == v) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        /**
-         * 展开 Cron 字段的通配符、列表、区间和步长，校验数值边界。
-         *
-         * @param field 当前待展开的 Cron 字段
-         * @param min 此字段允许的最小数值
-         * @param max 此字段允许的最大数值
-         * @return 此字段允许的数值集合
-         */
-        private static int[] parseField(String field, int min, int max) {
-            if ("*".equals(field)) {
-                int[] result = new int[max - min + 1];
-                for (int i = 0; i < result.length; i++) {
-                    result[i] = min + i;
-                }
-                return result;
-            }
-            java.util.List<Integer> values = new java.util.ArrayList<>();
-            for (String part : field.split(",")) {
-                if (part.contains("/")) {
-                    String[] stepParts = part.split("/", 2);
-                    int step = Integer.parseInt(stepParts[1]);
-                    int start = "*".equals(stepParts[0]) ? min : Integer.parseInt(stepParts[0]);
-                    for (int v = start; v <= max; v += step) {
-                        values.add(v);
-                    }
-                } else if (part.contains("-")) {
-                    String[] rangeParts = part.split("-", 2);
-                    int from = Integer.parseInt(rangeParts[0]);
-                    int to = Integer.parseInt(rangeParts[1]);
-                    for (int v = from; v <= to; v++) {
-                        values.add(v);
-                    }
-                } else {
-                    values.add(Integer.parseInt(part));
-                }
-            }
-            return values.stream().mapToInt(Integer::intValue).toArray();
+        public LocalDateTime next(LocalDateTime from) {
+            // 旧实现按 LocalDateTime 墙上时间递增；固定偏移仅用于复用解析器，避免引入 DST 转换。
+            java.time.ZonedDateTime next = delegate.next(from.atZone(java.time.ZoneOffset.UTC));
+            return Objects.isNull(next) ? null : next.toLocalDateTime();
         }
     }
 }

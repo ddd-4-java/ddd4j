@@ -64,3 +64,7 @@ Micronaut Bean 工厂、投影调度及启停。
 ./mvnw -pl ddd4j-runtime/ddd4j-runtime-micronaut -am -Dtest=MicronautProjectionSchedulerIT,MicronautProjectionSchedulerRaceTest,ProjectionMicronautModuleIndependenceTest -Dsurefire.failIfNoSpecifiedTests=false test
 ./mvnw -pl ddd4j-runtime/ddd4j-runtime-micronaut -am verify
 ```
+
+## 从自动投影迁移
+
+已有应用在 Micronaut 配置中设置 `ddd4j.cqrs.projection.enabled=true` 才会装配并启动投影。注册一个读取真实事件的 `EventChunkReader` 和一个持久化的 `ProjectionPositionRepository`。容器在开始调度前检查这两个 Bean；缺少、重复、使用空读取器或内存位置仓储都会使启动失败。仅使用命令总线的应用可保持默认关闭。

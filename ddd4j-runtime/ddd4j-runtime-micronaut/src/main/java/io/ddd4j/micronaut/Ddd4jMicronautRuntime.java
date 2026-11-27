@@ -17,6 +17,7 @@ package io.ddd4j.micronaut;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.SpiRegistrationScope;
 import io.ddd4j.core.cqrs.command.CommandBus;
+import io.ddd4j.core.cqrs.readmodel.ViewManager;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.health.ReadinessContributor;
 import io.ddd4j.core.health.RuntimeReadinessRegistry;
@@ -35,20 +36,30 @@ import java.util.Objects;
  */
 public final class Ddd4jMicronautRuntime implements AutoCloseable {
 
-    /** \u7ba1\u7406\u5f53\u524d\u793a\u4f8b\u6216\u6d4b\u8bd5\u6240\u62e5\u6709\u7684 SPI \u6ce8\u518c\u8d44\u6e90\u3002 */
+    /**
+     * 管理查询视图及其投影执行的组件。
+     */
+    private final ViewManager viewManager;
+    /**
+     * 管理当前示例或测试所拥有的 SPI 注册资源。
+     */
     private final SpiRegistrationScope registrations;
-    /** \u7ba1\u7406\u5f53\u524d\u8fd0\u884c\u65f6\u6ce8\u518c\u7684\u8ba4\u8bc1\u4e3b\u4f53\u63d0\u4f9b\u5668\u53ca\u5176\u6062\u590d\u52a8\u4f5c\u3002 */
+    /**
+     * 管理当前运行时注册的认证主体提供器及其恢复动作。
+     */
     private final SubjectKitRegistrationScope subjectRegistration;
-    /** \u6c47\u603b\u5f53\u524d\u7ec4\u4ef6\u5c31\u7eea\u72b6\u6001\u7684\u6ce8\u518c\u8868\u3002 */
+    /**
+     * 汇总当前组件就绪状态的注册表。
+     */
     private final RuntimeReadinessRegistry readinessRegistry;
 
     /**
      * 使用默认的就绪检查集合创建运行时桥梁。
      *
-     * @param publisher 领域事件发布器
+     * @param publisher       领域事件发布器
      * @param subjectProvider 主体提供器
-     * @param i18nProvider 国际化提供器
-     * @param commandBus 命令总线
+     * @param i18nProvider    国际化提供器
+     * @param commandBus      命令总线
      */
     public Ddd4jMicronautRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
                                  I18nProvider i18nProvider, CommandBus commandBus) {
@@ -58,15 +69,32 @@ public final class Ddd4jMicronautRuntime implements AutoCloseable {
     /**
      * 注册 Micronaut 提供的 ddd4j 服务与就绪检查。
      *
-     * @param publisher 领域事件发布器
-     * @param subjectProvider 主体提供器
-     * @param i18nProvider 国际化提供器
-     * @param commandBus 命令总线
+     * @param publisher             领域事件发布器
+     * @param subjectProvider       主体提供器
+     * @param i18nProvider          国际化提供器
+     * @param commandBus            命令总线
      * @param readinessContributors 就绪检查贡献者
      */
     public Ddd4jMicronautRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
                                  I18nProvider i18nProvider, CommandBus commandBus,
                                  Collection<? extends ReadinessContributor> readinessContributors) {
+        this(publisher, subjectProvider, i18nProvider, commandBus, readinessContributors, null);
+    }
+
+    /**
+     * 平台工厂在依赖验证后接入唯一视图生命周期。
+     *
+     * @param publisher             运行时领域事件发布器
+     * @param subjectProvider       当前应用的认证主体提供器
+     * @param i18nProvider          国际化消息提供器
+     * @param commandBus            运行时命令总线
+     * @param readinessContributors 提供应用就绪状态的组件集合
+     * @param viewManager           查询视图和投影管理器
+     */
+    Ddd4jMicronautRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
+                          I18nProvider i18nProvider, CommandBus commandBus,
+                          Collection<? extends ReadinessContributor> readinessContributors, ViewManager viewManager) {
+        this.viewManager = viewManager;
         this.registrations = new SpiRegistrationScope()
                 .register(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class,
                         Objects.requireNonNull(publisher, "publisher must not be null"))
@@ -85,8 +113,22 @@ public final class Ddd4jMicronautRuntime implements AutoCloseable {
      */
     @PostConstruct
     public void start() {
-        registrations.start();
-        subjectRegistration.start();
+        try {
+            if (Objects.nonNull(viewManager)) {
+                viewManager.start();
+            }
+            registrations.start();
+            subjectRegistration.start();
+        } catch (RuntimeException | Error failure) {
+            try {
+                close();
+            } catch (RuntimeException | Error cleanup) {
+                if (failure != cleanup) {
+                    failure.addSuppressed(cleanup);
+                }
+            }
+            throw failure;
+        }
     }
 
     /**
@@ -101,12 +143,18 @@ public final class Ddd4jMicronautRuntime implements AutoCloseable {
     /**
      * 结束当前组件持有的资源。
      *
-     * <p>Micronaut 实现调用 <code>subjectRegistration.close()</code>。</p>
+     * <p>Micronaut 实现调用 <code>viewManager.stop()</code>。</p>
      */
     @Override
     @PreDestroy
     public void close() {
-        subjectRegistration.close();
-        registrations.close();
+        try {
+            if (Objects.nonNull(viewManager)) {
+                viewManager.stop();
+            }
+        } finally {
+            subjectRegistration.close();
+            registrations.close();
+        }
     }
 }

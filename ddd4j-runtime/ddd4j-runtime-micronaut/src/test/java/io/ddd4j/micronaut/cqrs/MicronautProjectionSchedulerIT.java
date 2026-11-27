@@ -14,7 +14,9 @@
  */
 package io.ddd4j.micronaut.cqrs;
 
+import io.ddd4j.core.cqrs.readmodel.ViewManager;
 import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
+import io.micronaut.context.annotation.Property;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.DisplayName;
@@ -42,6 +44,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @DisplayName("MicronautProjectionScheduler + ViewManager 真实 BeanContext IT")
 @MicronautTest
+@Property(name = "test.micronaut.scheduler-fixture", value = "true")
+@Property(name = MicronautProjectionViewManager.ENABLED, value = "true")
 class MicronautProjectionSchedulerIT {
 
     /** 注册任务和取消任务所用的视图调度器。 */
@@ -50,7 +54,7 @@ class MicronautProjectionSchedulerIT {
 
     /** 保存 <code>view Manager</code> 对应的 <code>MicronautProjectionViewManager</code> 数据。 */
     @Inject
-    MicronautProjectionViewManager viewManager;
+    ViewManager viewManager;
 
     /** 验证<code>handle.isActive()</code>为真，<code>handle.isActive()</code>为假。 */
     @Test
@@ -68,7 +72,7 @@ class MicronautProjectionSchedulerIT {
     /** 验证<code>viewManager.isRunning()</code>为假，<code>viewManager.isRunning()</code>为真。 */
     @Test
     void viewManager_start_stop_应管理生命周期() {
-        // @PostConstruct 已自动 start，先 stop 再验证
+        // 显式配置已启动管理器，从停止状态验证重新启动。
         viewManager.stop();
         assertThat(viewManager.isRunning()).isFalse();
 
