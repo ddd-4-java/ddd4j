@@ -23,20 +23,11 @@ import javax.persistence.Table;
  * 投影位置 JPA 实体：落地 {@code io.ddd4j.core.cqrs.readmodel.ProjectionPosition}
  * 的持久化形态（core 的 {@code DefaultProjectionPosition} 为不可变值对象，不入库）。
  *
- * <p>设计要点：
- * <ul>
- *   <li>{@code streamId} 为自然主键（String），即 core {@code ProjectionPosition#getStreamId()}
- *       的返回类型——也是 {@code io.ddd4j.core.cqrs.readmodel.handler.ProjectionHandler#getName()}
- *       约定的投影流 ID，天然按视图名隔离命名空间。</li>
- *   <li>{@code nextEventNumber} 为位置计数列（下一个待处理事件号，0-based），语义同 core
- *       契约；<b>刻意不加 JPA {@code @Version} 乐观锁</b>（non-versionable）——推进与重置
- *       均走 {@link SpringDataProjectionPositionRepository} 的显式更新 SQL，
- *       避免实体托管态与数据库态的版本漂移。</li>
- * </ul>
+ * <p>以视图的流标识作为主键，保存下一条待处理事件的编号。
+ * {@link EntityManagerProjectionPositionRepository} 在调用方的事务中更新检查点。</p>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @see SpringDataProjectionPositionRepository
- * @see JpaProjectionPositionRepository
+ * @see EntityManagerProjectionPositionRepository
  * @since 2.0.x
  */
 @Entity

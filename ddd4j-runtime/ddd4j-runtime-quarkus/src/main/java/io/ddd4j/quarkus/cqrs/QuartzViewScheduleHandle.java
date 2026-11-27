@@ -15,12 +15,9 @@
 package io.ddd4j.quarkus.cqrs;
 
 import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
-import lombok.extern.slf4j.Slf4j;
-import org.quartz.JobKey;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
+import org.quartz.*;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.UUID;
 
 /**
  * Quartz 调度句柄。
@@ -29,9 +26,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 持有 {@link Scheduler} 引用以支持取消调度操作。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 1.0.x
+ * @since 2.0.x
  */
-@Slf4j
 class QuartzViewScheduleHandle implements ViewScheduler.ViewScheduleHandle {
 
     /**
@@ -45,45 +41,83 @@ class QuartzViewScheduleHandle implements ViewScheduler.ViewScheduleHandle {
     /**
      * 活跃状态标志
      */
-    private final AtomicBoolean active = new AtomicBoolean(true);
+    private volatile boolean active = true;
 
     /**
-     * \u7528\u7ed9\u5b9a\u503c\u521d\u59cb\u5316 <code>QuartzViewScheduleHandle</code> \u5b9e\u4f8b\u3002
-     * @param scheduler Quartz \u8c03\u5ea6\u5668
-     * @param identity \u8c03\u5ea6\u6807\u8bc6
+     * 用给定值初始化 <code>QuartzViewScheduleHandle</code> 实例。
+     *
+     * @param scheduler Quartz 调度器
+     * @param identity  调度标识
      */
     QuartzViewScheduleHandle(Scheduler scheduler, String identity) {
         this.scheduler = scheduler;
         this.identity = identity;
     }
 
+
     /**
-     * 撤销当前任务句柄允许撤销的操作。
+     * 根据视图名称和 Cron 配置注册一次持续有效的 Quartz 投影计划。
      *
-     * <p>此实现调用 <code>active.compareAndSet(true, false)</code>。</p>
+     * @param scheduler 调度投影任务的运行时组件
+     * @param viewName  当前被调度的视图名称
+     * @param cron      任务计划的 Cron 表达式
+     * @param task      实际执行一次投影的回调
+     * @return 可取消该计划的调度句柄
      */
-    @Override
-    public void cancel() {
-        if (active.compareAndSet(true, false)) {
-            try {
-                scheduler.deleteJob(new JobKey(identity + "-job"));
-            } catch (SchedulerException ex) {
-                log.warn("Failed to cancel scheduled view job '{}'", identity, ex);
-            } finally {
+    static QuartzViewScheduleHandle schedule(Scheduler scheduler, String viewName, String cron, Runnable task) {
+        String identity = viewName + "-" + UUID.randomUUID();
+        JobDetail job = JobBuilder.newJob(RunnableJob.class)
+                .withIdentity(identity + "-job")
+                .usingJobData(QuarkusViewScheduler.TASK_KEY, identity)
+                .storeDurably().build();
+        Trigger trigger = TriggerBuilder.newTrigger()
+                .withIdentity(identity + "-trigger")
+                .withSchedule(CronScheduleBuilder.cronSchedule(cron)).build();
+        RunnableHolder.put(identity, task);
+        boolean scheduled = false;
+        try {
+            scheduler.scheduleJob(job, trigger);
+            scheduled = true;
+            return new QuartzViewScheduleHandle(scheduler, identity);
+        } catch (SchedulerException failure) {
+            throw new IllegalStateException("Failed to schedule view '" + viewName + "' with cron '" + cron + "'", failure);
+        } finally {
+            if (!scheduled) {
                 RunnableHolder.remove(identity);
             }
         }
     }
 
     /**
+     * 撤销当前任务句柄允许撤销的操作。
+     *
+     * <p>此实现调用 <code>scheduler.deleteJob(new JobKey(identity + "-job"))</code>。</p>
+     */
+    @Override
+    public synchronized void cancel() {
+        if (!active) {
+            return;
+        }
+        active = false;
+        boolean deleted = false;
+        try {
+            scheduler.deleteJob(new JobKey(identity + "-job"));
+            deleted = true;
+        } catch (SchedulerException failure) {
+            throw new IllegalStateException("Failed to cancel scheduled view job '" + identity + "'", failure);
+        } finally {
+            active = !deleted;
+            RunnableHolder.remove(identity);
+        }
+    }
+
+    /**
      * 检查当前句柄是否仍处于有效状态。
      *
-     * <p>此实现调用 <code>active.get()</code>。</p>
-     *
-     * @return 实际返回<code>active.get()</code>
+     * @return 实际返回<code>active</code>，作为本次判断结果
      */
     @Override
     public boolean isActive() {
-        return active.get();
+        return active;
     }
 }
