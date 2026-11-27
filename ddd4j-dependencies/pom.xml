@@ -685,6 +685,7 @@
         <thymeleaf-layout-dialect.version>3.4.0</thymeleaf-layout-dialect.version>
         <thymeleaf.version>3.1.5.RELEASE</thymeleaf.version>
         <tika-bom.version>3.3.2</tika-bom.version>
+        <tika.version>3.3.2</tika.version>
         <tio.version>3.8.6.v20240801-RELEASE</tio.version>
         <token-bucket.version>1.7</token-bucket.version>
         <tomcat.version>11.0.27</tomcat.version>
@@ -779,7 +780,6 @@
         <maven-war-plugin.version>3.5.1</maven-war-plugin.version>
         <quarkus-failsafe-plugin.version>3.2.5</quarkus-failsafe-plugin.version>
         <quarkus-surefire-plugin.version>3.2.5</quarkus-surefire-plugin.version>
-        <tika.version>3.3.2</tika.version>
     </properties>
 
     <dependencyManagement>
