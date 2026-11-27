@@ -18,6 +18,7 @@
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <properties>
+        <surefire.maxMetaspace>512M</surefire.maxMetaspace>
         <quarkus.platform.version>${quarkus.version}</quarkus.platform.version>
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
