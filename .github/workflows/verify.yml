@@ -12,6 +12,8 @@ permissions:
   contents: read
 
 env:
+  # Testcontainers 1.20 clients default to API 1.32, below the hosted daemon's minimum.
+  MAVEN_ARGS: -Dapi.version=1.44
   DDD4J_REPORT_DIR: ${{ github.workspace }}/target/release-quality
   NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
 
