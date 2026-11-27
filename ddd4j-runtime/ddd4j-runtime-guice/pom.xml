@@ -50,16 +50,19 @@
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-cache</artifactId>
             <version>${revision}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-data-crypto</artifactId>
             <version>${revision}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-data-logs</artifactId>
             <version>${revision}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.ddd4j</groupId>
