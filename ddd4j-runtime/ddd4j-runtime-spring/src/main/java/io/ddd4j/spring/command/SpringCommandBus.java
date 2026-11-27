@@ -16,6 +16,7 @@ package io.ddd4j.spring.command;
 
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandBus;
+import io.ddd4j.core.cqrs.command.DefaultCommandBus;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.api.R;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +27,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Spring 命令总线。
@@ -60,14 +64,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SpringCommandBus implements CommandBus, SmartInitializingSingleton {
 
     /**
-     * 命令类型到执行器的路由映射
-     */
-    private final Map<Class<? extends Command>, CommandExecutor<?>> executorMap = new ConcurrentHashMap<>();
-
-    /**
      * Spring 应用上下文
      */
     private final ApplicationContext applicationContext;
+    // 只在完整发现成功后发布快照；路由和执行完全归共享内核。
+    /**
+     * 已从 Spring 容器发现的命令执行器及路由类型快照。
+     */
+    private volatile DiscoveredCommands discovered;
 
     /**
      * \u521b\u5efa\u901a\u8fc7 Spring \u4e0a\u4e0b\u6587\u67e5\u627e\u6267\u884c\u5668\u7684\u547d\u4ee4\u603b\u7ebf\u3002
@@ -87,19 +91,25 @@ public class SpringCommandBus implements CommandBus, SmartInitializingSingleton 
     @Override
     public void afterSingletonsInstantiated() {
         Map<String, CommandExecutor> beans = applicationContext.getBeansOfType(CommandExecutor.class);
+        List<CommandExecutor<?>> snapshots = new ArrayList<>();
+        Set<Class<? extends Command>> types = new HashSet<>();
         for (CommandExecutor executor : beans.values()) {
-            for (Object obj : executor.supportedCommands()) {
-                Class<? extends Command> commandType = (Class<? extends Command>) obj;
-                CommandExecutor<?> previous = executorMap.putIfAbsent(commandType, executor);
-                if (Objects.nonNull(previous)) {
-                    throw new IllegalStateException("Multiple executors found for command: " + commandType.getName());
-                } else {
-                    log.info("注册命令执行器: {} -> {}", commandType.getName(),
-                            executor.getClass().getSimpleName());
+            Set<Class<? extends Command>> supported = Set.copyOf(executor.supportedCommands());
+            types.addAll(supported);
+            snapshots.add(new CommandExecutor<Command>() {
+                @Override
+                public Set<Class<? extends Command>> supportedCommands() {
+                    return supported;
                 }
-            }
+
+                @Override
+                public R<?> execute(Command command) {
+                    return executor.execute(command);
+                }
+            });
         }
-        log.info("SpringCommandBus 初始化完成，共注册 {} 个执行器", executorMap.size());
+        discovered = new DiscoveredCommands(new DefaultCommandBus(snapshots), types);
+        log.info("SpringCommandBus 初始化完成，共注册 {} 个命令类型", types.size());
     }
 
     /**
@@ -121,13 +131,37 @@ public class SpringCommandBus implements CommandBus, SmartInitializingSingleton 
             throw new IllegalArgumentException("Command cannot be null");
         }
 
-        CommandExecutor executor = executorMap.get(command.getClass());
-        if (Objects.isNull(executor)) {
+        DiscoveredCommands snapshot = discovered;
+        if (Objects.isNull(snapshot) || !snapshot.types.contains(command.getClass())) {
             throw new IllegalStateException(
                     "No executor found for command: " + command.getClass().getName()
                             + ". Ensure the executor bean implements CommandExecutor interface "
                             + "and its supportedCommands() includes this command type.");
         }
-        return (R<T>) executor.execute(command);
+        return snapshot.delegate.execute(command);
+    }
+    /**
+     * 保存已装配的 Spring 命令总线及其支持命令类型的发现结果。
+     */
+    private static final class DiscoveredCommands {
+        /**
+         * 使用已发现执行器完成命令分发的共享总线。
+         */
+        private final DefaultCommandBus delegate;
+        /**
+         * 当前从 Spring 容器发现的受支持命令类型集合。
+         */
+        private final Set<Class<? extends Command>> types;
+
+        /**
+         * 将容器已发现的命令类型与同一轮装配的总线一起保存。
+         *
+         * @param delegate 当前发现轮次组装的共享命令总线
+         * @param types    该总线支持的命令类型
+         */
+        private DiscoveredCommands(DefaultCommandBus delegate, Set<Class<? extends Command>> types) {
+            this.delegate = delegate;
+            this.types = Set.copyOf(types);
+        }
     }
 }
