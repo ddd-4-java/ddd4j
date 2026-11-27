@@ -16,8 +16,10 @@ import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/** \u901a\u8fc7 <code>Guice.createInjector()</code>\u3001<code>injector.getInstance()</code>\u3001<code>users.count()</code> \u9a8c\u8bc1 <code>AuthModuleInjectionContract</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
 class AuthModuleInjectionContractTest {
 
+    /** \u9a8c\u8bc1<code>users.count()</code> \u7b49\u4e8e <code>3</code>\uff0c<code>roles.count()</code> \u7b49\u4e8e <code>2</code>\uff0c<code>subjectData.getPermissionList(principal)</code> \u7b49\u4e8e <code>Collections.singletonList(permissionCode)</code>\u3002 */
     @Test
     void bindsSeededRepositoriesServiceAndSubjectDataProvider() {
         Injector injector = Guice.createInjector(new AuthModule());
@@ -43,6 +45,7 @@ class AuthModuleInjectionContractTest {
         assertEquals(Collections.singletonList(permissionCode), subjectData.getPermissionList(principal));
     }
 
+    /** \u9a8c\u8bc1<code>second.getInstance(InMemoryUserRepository.class)</code> \u4e0e\u2026\u4e3a\u4e0d\u540c\u7684\u5b9e\u4f8b <code>first.getInstance(InMemoryUserRepository.class)</code>\uff0c<code>second.getInstance(InMemoryRoleRepository.class)</code> \u4e0e\u2026\u4e3a\u4e0d\u540c\u7684\u5b9e\u4f8b <code>first.getInstance(InMemoryRoleRepository.class)</code>\uff0c<code>reinstalled.getInstance(InMemoryRoleRepository.class).findByCode("user").isPresent()</code>\u4e3a\u5047\u3002 */
     @Test
     void isolatesStandaloneModulesAndDoesNotReseedOnReinstallation() {
         AuthModule firstModule = new AuthModule();
@@ -65,6 +68,7 @@ class AuthModuleInjectionContractTest {
         assertFalse(reinstalled.getInstance(InMemoryRoleRepository.class).findByCode("user").isPresent());
     }
 
+    /** \u9a8c\u8bc1<code>injector.getInstance(GoodsApplicationService.class)</code>\u975e\u7a7a\uff0c<code>injector.getInstance(InMemoryUserRepository.class)</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>users</code>\uff0c<code>roles.count()</code> \u7b49\u4e8e <code>0</code>\u3002 */
     @Test
     void bindsGoodsAndRbacApplicationServices() {
         InMemoryUserRepository users = new InMemoryUserRepository();
@@ -81,6 +85,7 @@ class AuthModuleInjectionContractTest {
         assertEquals(0, roles.count());
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>NullPointerException.class</code>\u3002 */
     @Test
     void rejectsMissingExternallyOwnedRbacService() {
         InMemoryUserRepository users = new InMemoryUserRepository();

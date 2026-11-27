@@ -33,6 +33,7 @@ import org.mockito.ArgumentCaptor;
 /** 三线共同的 DDD CDI 作用域注册契约。 */
 class DddCdiExtensionContractTest {
 
+    /** \u9a8c\u8bc1<code>scope.getValue().annotationType()</code> \u7b49\u4e8e <code>ApplicationScoped.class</code>\u3002 */
     @Test
     void addsApplicationScopeToDddService() {
         ProcessAnnotatedType<Object> event = event();
@@ -49,6 +50,7 @@ class DddCdiExtensionContractTest {
         assertEquals(ApplicationScoped.class, scope.getValue().annotationType());
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>event()</code>\u3001<code>event.getAnnotatedType()</code>\u3001<code>type.isAnnotationPresent()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void preservesExistingApplicationScope() {
         ProcessAnnotatedType<Object> event = event();
@@ -61,6 +63,7 @@ class DddCdiExtensionContractTest {
         verify(event, never()).configureAnnotatedType();
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>event()</code>\u3001<code>never()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void ignoresNonDddType() {
         ProcessAnnotatedType<Object> event = event();
@@ -70,6 +73,10 @@ class DddCdiExtensionContractTest {
         verify(event, never()).configureAnnotatedType();
     }
 
+    /**
+     * \u8bfb\u53d6 <code>event</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>event</code>
+     */
     @SuppressWarnings("unchecked")
     private ProcessAnnotatedType<Object> event() {
         ProcessAnnotatedType<Object> event = mock(ProcessAnnotatedType.class);

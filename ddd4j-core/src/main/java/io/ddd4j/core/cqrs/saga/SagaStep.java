@@ -28,8 +28,11 @@ import java.util.Objects;
  */
 public final class SagaStep {
 
+    /** \u7528\u4e8e\u8bca\u65ad\u548c\u533a\u5206\u4e1a\u52a1\u6b65\u9aa4\u7684\u6807\u8bc6\u3002 */
     private final String name;
+    /** \u6b63\u5411\u6267\u884c\u8be5\u4e1a\u52a1\u6b65\u9aa4\u7684\u52a8\u4f5c\u3002 */
     private final Runnable action;
+    /** \u6b65\u9aa4\u6210\u529f\u540e\u53ef\u7528\u4e8e\u64a4\u9500\u5176\u6548\u679c\u7684\u52a8\u4f5c\u3002 */
     private final Runnable compensation;
 
     /**

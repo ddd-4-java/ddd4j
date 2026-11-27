@@ -30,8 +30,20 @@ import java.util.Map;
  */
 public interface SpringServletResponseExtensionPoint extends ExtensionPoint {
 
+    /**
+     * \u89e3\u5305\u5916\u90e8\u54cd\u5e94\u3002
+     * @param response HTTP \u54cd\u5e94
+     * @param realParams \u539f\u59cb\u8bf7\u6c42\u53c2\u6570
+     * @return \u89e3\u5305\u540e\u7684\u54cd\u5e94
+     */
     String dewrap(HttpServletResponse response, Map<String, Object> realParams);
 
+    /**
+     * \u89e3\u5305\u5916\u90e8\u54cd\u5e94\u3002
+     * @param responseEntity \u54cd\u5e94\u5b9e\u4f53
+     * @param <T> \u54cd\u5e94\u4f53\u7c7b\u578b
+     * @return \u89e3\u5305\u540e\u7684\u54cd\u5e94
+     */
     <T> ResponseEntity<T> dewrap(ResponseEntity<T> responseEntity);
 
 }

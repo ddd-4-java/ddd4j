@@ -66,9 +66,11 @@ import static org.assertj.core.api.Assertions.catchThrowableOfType;
 @SpringBootTest(classes = TestApp.class)
 class SpringCommandBusIT {
 
+    /** \u5f53\u524d\u6d4b\u8bd5\u6267\u884c\u547d\u4ee4\u6216\u53d1\u5e03\u4e8b\u4ef6\u4f7f\u7528\u7684\u603b\u7ebf\u3002 */
     @Autowired
     private SpringCommandBus bus;
 
+    /** \u9a8c\u8bc1<code>result.isSuccess()</code>\u4e3a\u771f\uff0c<code>result.data()</code> \u5305\u542b <code>SampleCommandHandler.HANDLED</code>\u3002 */
     @Test
     void execute_已注册命令_应路由到真实Handler并返回成功() {
         Result<String> result = bus.execute(new SampleCommand());
@@ -77,6 +79,7 @@ class SpringCommandBusIT {
         assertThat(result.data()).contains(SampleCommandHandler.HANDLED);
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>context.getStartupFailure()</code>\u3001<code>ConflictCommand.class.getName()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void 装配期冲突_整批拒绝应传播为容器启动失败() {
         // 刻意不用嵌套 @Configuration：TestApp 的 @ComponentScan("io.ddd4j.data.cqrs")
@@ -98,6 +101,7 @@ class SpringCommandBusIT {
                 });
     }
 
+    /** \u9a8c\u8bc1<code>exception</code>\u975e\u7a7a\uff0c<code>exception.getMessage()</code> \u5305\u542b <code>UnknownCommand.class.getName()</code>\u3002 */
     @Test
     void execute_未注册命令_应抛ISE与ddd4j_core一致() {
         IllegalStateException exception = catchThrowableOfType(
@@ -128,22 +132,28 @@ class SpringCommandBusIT {
                 .isTrue();
     }
 
+    /** \u4f9b\u547d\u4ee4\u603b\u7ebf\u9a8c\u8bc1\u7c7b\u578b\u5339\u914d\u548c\u5206\u53d1\u7684\u547d\u4ee4\u6837\u672c\u3002 */
     static class ConflictCommand implements Command {
     }
 
+    /** \u4e0e\u4e3b\u8981\u6d4b\u8bd5\u547d\u4ee4\u5e76\u884c\u6ce8\u518c\u7684\u7b2c\u4e8c\u79cd\u547d\u4ee4\u6837\u672c\u3002 */
     static class CompanionCommand implements Command {
     }
 
+    /** \u6ca1\u6709\u6ce8\u518c\u6267\u884c\u5668\u7684\u547d\u4ee4\u6837\u672c\uff0c\u7528\u6765\u9a8c\u8bc1\u547d\u4ee4\u5206\u53d1\u8fb9\u754c\u3002 */
     static class UnknownCommand implements Command {
     }
 
+    /** \u63a5\u6536\u6d4b\u8bd5\u547d\u4ee4\u5e76\u8fd4\u56de\u53ef\u65ad\u8a00\u7ed3\u679c\u7684\u6267\u884c\u5668\u66ff\u8eab\u3002 */
     static class ExclusiveConflictHandler implements CommandExecutor<ConflictCommand> {
 
+        /** {@inheritDoc} */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.<Class<? extends Command>>singleton(ConflictCommand.class);
         }
 
+        /** {@inheritDoc} */
         @Override
         public Result execute(ConflictCommand command) {
             return Result.ok();
@@ -157,11 +167,13 @@ class SpringCommandBusIT {
      */
     static class OverlappingMultiTypeHandler implements CommandExecutor<Command> {
 
+        /** {@inheritDoc} */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return new HashSet<Class<? extends Command>>(Arrays.asList(ConflictCommand.class, CompanionCommand.class));
         }
 
+        /** {@inheritDoc} */
         @Override
         public Result execute(Command command) {
             return Result.ok();

@@ -31,6 +31,11 @@ import javax.ws.rs.ext.Provider;
 @Priority(Priorities.USER)
 public final class Ddd4jHelidonResponseFilter implements ContainerResponseFilter {
 
+    /**
+     * \u5199\u5165\u54cd\u5e94\u5173\u8054\u5934\uff0c\u5e76\u5b8c\u6210 Helidon \u8bf7\u6c42\u8ddf\u8e2a\u4e0e\u4f5c\u7528\u57df\u6e05\u7406\u3002
+     * @param request \u5f53\u524d\u8fdb\u5165\u8c03\u7528\u94fe\u7684 HTTP \u8bf7\u6c42
+     * @param response \u5f53\u524d\u51c6\u5907\u5199\u51fa\u7684 HTTP \u54cd\u5e94
+     */
     @Override
     public void filter(ContainerRequestContext request, ContainerResponseContext response) {
         Object contextValue = request.getProperty(Ddd4jHelidonRequestFilter.CONTEXT_PROPERTY);

@@ -51,6 +51,7 @@ final class EsdbContainerSupport {
         }
     }
 
+    /** 初始化 <code>EsdbContainerSupport</code> 并委托其默认构造路径。 */
     private EsdbContainerSupport() {
     }
 }

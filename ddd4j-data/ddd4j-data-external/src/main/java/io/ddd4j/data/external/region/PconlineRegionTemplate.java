@@ -74,6 +74,7 @@ public class PconlineRegionTemplate {
      * 缓存服务
      */
     private RegionCache regionCache;
+    /** \u5f53\u524d\u5730\u533a\u67e5\u8be2\u9002\u914d\u5668\u4f7f\u7528\u7684\u8bf7\u6c42\u5730\u5740\u6a21\u677f\u3002 */
     private final String urlTemplate;
 
     /**
@@ -93,11 +94,21 @@ public class PconlineRegionTemplate {
         this(regionCache, GET_COUNTRY_BY_IP_URL);
     }
 
+    /**
+     * \u88c5\u914d\u4f7f\u7528\u592a\u5e73\u6d0b\u7f51\u7edc\u63a5\u53e3\u67e5\u8be2 IP \u5f52\u5c5e\u5730\u533a\u7684\u5b9e\u73b0\u3002
+     * @param regionCache \u8bfb\u53d6\u548c\u7f13\u5b58 IP \u5730\u533a\u67e5\u8be2\u7ed3\u679c\u7684\u7ec4\u4ef6
+     * @param urlTemplate \u53ef\u66ff\u6362\u7684\u5730\u533a\u67e5\u8be2\u5730\u5740\u6a21\u677f
+     */
     PconlineRegionTemplate(RegionCache regionCache, String urlTemplate) {
         this.regionCache = Objects.isNull(regionCache) ? RegionCache.none() : regionCache;
         this.urlTemplate = Objects.requireNonNull(urlTemplate, "urlTemplate");
     }
 
+    /**
+     * \u6f14\u793a IP \u5730\u533a\u67e5\u8be2\u3002
+     * @param args \u547d\u4ee4\u884c\u53c2\u6570
+     * @throws IOException \u67e5\u8be2\u5931\u8d25\u65f6\u629b\u51fa
+     */
     public static void main(String[] args) throws IOException {
 
         PconlineRegionTemplate template = new PconlineRegionTemplate();
@@ -106,6 +117,11 @@ public class PconlineRegionTemplate {
         mapLL2.ifPresent(location -> log.info("Location: {}", location.toJSONString()));
     }
 
+    /**
+     * \u6e05\u9664\u5730\u533a\u670d\u52a1\u8fd4\u56de\u503c\u7684\u9996\u5c3e\u7a7a\u767d\u5e76\u4fdd\u7559\u7a7a\u5f15\u7528\u3002
+     * @param value \u5730\u533a\u670d\u52a1\u8fd4\u56de\u7684\u5b57\u7b26\u4e32
+     * @return \u6e05\u7406\u540e\u7684\u5b57\u7b26\u4e32
+     */
     private static String trimWhitespace(String value) {
         if (Objects.isNull(value)) {
             return null;
@@ -265,6 +281,11 @@ public class PconlineRegionTemplate {
         }
     }
 
+    /**
+     * \u5224\u65ad\u6307\u5b9a IP \u662f\u5426\u5c5e\u4e8e\u4e2d\u56fd\u5927\u9646\u3002
+     * @param ip \u5f85\u67e5\u8be2\u7684 IP \u5730\u5740
+     * @return \u5c5e\u4e8e\u4e2d\u56fd\u5927\u9646\u65f6\u4e3a true
+     */
     public boolean isMainlandIp(String ip) {
         try {
             Optional<JSONObject> optional = this.getLocationByIp(ip);

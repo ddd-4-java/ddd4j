@@ -32,36 +32,58 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+/** \u9a8c\u8bc1 <code>Ddd4jMicronautWebFilterUnit</code> \u5728 <code>secondConstructor</code> \u7b49\u573a\u666f\u4e2d\u7684\u884c\u4e3a\u3002 */
 class Ddd4jMicronautWebFilterUnitTest {
 
+    /** \u6784\u9020\u672c\u7ec4\u6d4b\u8bd5\u8f93\u5165\u65f6\u590d\u7528\u7684\u56fa\u5b9a\u6807\u8bc6\u6216\u540d\u79f0\u3002 */
     private static final String REQUEST_ID = "reqId-001";
 
+    /**
+     * 执行 <code>context Factory</code>，调用 <code>ClientIpResolver.remoteAddressOnly</code>。
+     *
+     * @return 当前操作得到的 <code>WebRequestContextFactory</code> 结果
+     */
     private WebRequestContextFactory contextFactory() {
         return new WebRequestContextFactory(() -> REQUEST_ID, ClientIpResolver.remoteAddressOnly());
     }
 
+    /**
+     * 执行 <code>request Lifecycle</code>，调用 <code>Collections.singletonList</code>。
+     *
+     * @return 当前操作得到的 <code>WebRequestLifecycle</code> 结果
+     */
     private WebRequestLifecycle requestLifecycle() {
         return new WebRequestLifecycle(new BearerSubjectAuthenticator(),
                 new PathWebAccessPolicy(Collections.singletonList("/test"), AuthenticationMode.REQUIRED));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>new Ddd4jMicronautWebFilter(
+     *                         null, newLifecycle(), null)</code> \u629b\u51fa <code>NullPointerException</code>\u3002
+     */
     @Test
     void secondConstructorRejectsNullContextFactory() {
         assertThatNullPointerException().isThrownBy(() ->
                 new Ddd4jMicronautWebFilter(null, requestLifecycle(), null));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>new Ddd4jMicronautWebFilter(
+     *                         newContextFactory(), null, null)</code> \u629b\u51fa <code>NullPointerException</code>\u3002
+     */
     @Test
     void secondConstructorRejectsNullRequestLifecycle() {
         assertThatNullPointerException().isThrownBy(() ->
                 new Ddd4jMicronautWebFilter(contextFactory(), null, null));
     }
 
+    /** \u9a8c\u8bc1<code>filter</code>\u975e\u7a7a\u3002 */
     @Test
     void secondConstructorAcceptsNullIdempotency() {
         assertThat(new Ddd4jMicronautWebFilter(contextFactory(), requestLifecycle(), null)).isNotNull();
     }
 
+    /** \u9a8c\u8bc1<code>Flux.from(result).blockFirst()</code> \u6307\u5411\u540c\u4e00\u5b9e\u4f8b <code>response</code>\u3002 */
     @Test
     void publicPathProceedsThroughMicronautFilterChain() {
         Ddd4jMicronautWebFilter filter = new Ddd4jMicronautWebFilter(

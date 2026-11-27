@@ -35,15 +35,24 @@ import java.util.Objects;
 @Slf4j
 public class LicenseVerify {
 
+    /** \u5f53\u524d\u670d\u52a1\u63a5\u53d7\u7684\u8bb8\u53ef\u8bc1\u4e3b\u9898\u3002 */
     private final String subject;
+    /** \u4ece\u9a8c\u8bc1\u5bc6\u94a5\u5e93\u4e2d\u9009\u62e9\u516c\u94a5\u8bc1\u4e66\u6761\u76ee\u7684\u522b\u540d\u3002 */
     private final String publicAlias;
+    /** \u6253\u5f00\u9a8c\u8bc1\u5bc6\u94a5\u5e93\u7684\u53e3\u4ee4\u3002 */
     private final String storePass;
+    /** \u5f53\u524d\u5f85\u5b89\u88c5\u548c\u9a8c\u8bc1\u7684\u8bb8\u53ef\u8bc1\u6587\u4ef6\u8def\u5f84\u3002 */
     private final String licensePath;
+    /** \u4fdd\u5b58\u9a8c\u8bc1\u516c\u94a5\u7684\u5bc6\u94a5\u5e93\u6587\u4ef6\u8def\u5f84\u3002 */
     private final String publicKeysStorePath;
+    /** \u6267\u884c\u8bb8\u53ef\u8bc1\u7ea6\u675f\u9a8c\u8bc1\u7684\u7ba1\u7406\u7ec4\u4ef6\u3002 */
     private final CustomLicenseManager licenseManager;
+    /** \u7528\u4e8e\u5173\u8054\u5f53\u524d\u8bb8\u53ef\u8bc1\u548c\u516c\u94a5\u914d\u7f6e\u7684\u9a8c\u8bc1\u7f13\u5b58\u952e\u3002 */
     private final String cacheKey;
 
+    /** \u6700\u8fd1\u4e00\u6b21\u5b89\u88c5\u53ca\u9a8c\u7b7e\u662f\u5426\u6210\u529f\u3002 */
     private volatile boolean installSuccess;
+    /** \u8bb8\u53ef\u8bc1\u9a8c\u8bc1\u7ed3\u679c\u7684\u7f13\u5b58\u5b58\u6d3b\u79d2\u6570\u3002 */
     private long cacheTtlSeconds = LicenseCache.DEFAULT_TTL_SECONDS;
 
     /**
@@ -70,6 +79,12 @@ public class LicenseVerify {
         this.cacheKey = buildCacheKey();
     }
 
+    /**
+     * \u68c0\u67e5\u8bb8\u53ef\u8bc1\u914d\u7f6e\u4e2d\u7684\u5fc5\u586b\u6587\u672c\u3002
+     * @param value \u5f85\u68c0\u67e5\u7684\u914d\u7f6e\u503c
+     * @param field \u7528\u4e8e\u8bca\u65ad\u7684\u914d\u7f6e\u5b57\u6bb5\u540d\u79f0
+     * @throws IllegalArgumentException \u914d\u7f6e\u672a\u63d0\u4f9b\u6709\u6548\u6587\u672c
+     */
     private static void requireText(String value, String field) {
         if (StrKit.isBlank(value)) {
             throw new IllegalArgumentException(field + " 不能为空");
@@ -174,6 +189,11 @@ public class LicenseVerify {
         return LicenseCache.exists(cacheKey);
     }
 
+    /**
+     * \u8bfb\u53d6\u7b7e\u540d\u4fe1\u5c01\u5e76\u7528\u914d\u7f6e\u516c\u94a5\u9a8c\u7b7e\uff0c\u901a\u8fc7\u540e\u89e3\u6790\u8bb8\u53ef\u8bc1\u4fe1\u606f\u3002
+     * @return \u901a\u8fc7\u7b7e\u540d\u9a8c\u8bc1\u7684\u8bb8\u53ef\u8bc1\u4fe1\u606f
+     * @throws Exception \u6587\u4ef6\u3001\u5bc6\u94a5\u3001\u516c\u94a5\u9a8c\u8bc1\u6216\u8d1f\u8f7d\u89e3\u6790\u5931\u8d25
+     */
     private LicenseInfo readVerifiedLicense() throws Exception {
         SignedLicense signedLicense = SignedLicense.parse(Files.readAllBytes(Paths.get(licensePath)));
         PublicKey publicKey = loadPublicKey();
@@ -190,6 +210,11 @@ public class LicenseVerify {
         return licenseInfo;
     }
 
+    /**
+     * \u6253\u5f00\u914d\u7f6e\u7684 JKS \u5bc6\u94a5\u5e93\u5e76\u8bfb\u53d6\u6307\u5b9a\u8bc1\u4e66\u7684\u516c\u94a5\u3002
+     * @return \u8bb8\u53ef\u8bc1\u9a8c\u7b7e\u6240\u7528\u7684\u516c\u94a5
+     * @throws Exception \u65e0\u6cd5\u8bfb\u53d6\u5bc6\u94a5\u5e93\u6216\u627e\u4e0d\u5230\u6307\u5b9a\u8bc1\u4e66
+     */
     private PublicKey loadPublicKey() throws Exception {
         KeyStore keyStore = KeyStore.getInstance("JKS");
         try (java.io.InputStream inputStream = Files.newInputStream(Paths.get(publicKeysStorePath))) {
@@ -202,6 +227,10 @@ public class LicenseVerify {
         return certificate.getPublicKey();
     }
 
+    /**
+     * \u6838\u5bf9\u4e3b\u9898\u3001\u6709\u6548\u671f\u548c\u5f53\u524d\u73af\u5883\u7ed1\u5b9a\u8981\u6c42\u3002
+     * @param licenseInfo \u5df2\u7ecf\u89e3\u6790\u7684\u8bb8\u53ef\u8bc1\u4fe1\u606f
+     */
     private void validateLicense(LicenseInfo licenseInfo) {
         if (!Objects.equals(subject, licenseInfo.getSubject())) {
             throw new IllegalStateException("License subject 不匹配");
@@ -212,6 +241,11 @@ public class LicenseVerify {
         licenseManager.validate(licenseInfo);
     }
 
+    /**
+     * \u5c06\u73af\u5883\u7ed1\u5b9a\u5931\u8d25\u4e0e\u5176\u4ed6\u8bb8\u53ef\u8bc1\u9a8c\u8bc1\u6545\u969c\u5206\u7c7b\u3002
+     * @param exception \u9a8c\u8bc1\u8fc7\u7a0b\u4e2d\u629b\u51fa\u7684\u5f02\u5e38
+     * @return \u5bf9\u5916\u62a5\u544a\u7684\u5931\u8d25\u7c7b\u578b
+     */
     private LicenseVerificationResult.Status statusFor(Exception exception) {
         String message = exception.getMessage();
         if (Objects.nonNull(message) && (message.contains("IP 校验") || message.contains("MAC 校验") || message.contains("SN 校验"))) {
@@ -220,6 +254,10 @@ public class LicenseVerify {
         return LicenseVerificationResult.Status.INVALID;
     }
 
+    /**
+     * \u6839\u636e\u4e3b\u9898\u3001\u516c\u94a5\u522b\u540d\u53ca\u89c4\u8303\u5316\u6587\u4ef6\u8def\u5f84\u751f\u6210\u9a8c\u8bc1\u7f13\u5b58\u952e\u3002
+     * @return \u533a\u5206\u5f53\u524d\u8bb8\u53ef\u8bc1\u4e0e\u9a8c\u8bc1\u914d\u7f6e\u7684\u7f13\u5b58\u952e
+     */
     private String buildCacheKey() {
         String normalizedLicensePath = Paths.get(licensePath).toAbsolutePath().normalize().toString();
         String normalizedKeyStorePath = Paths.get(publicKeysStorePath).toAbsolutePath().normalize().toString();

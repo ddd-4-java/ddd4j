@@ -63,7 +63,7 @@ import java.util.function.Function;
 public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicCache<String, V> {
 
     /**
-     * Lua 库存扣减脚本（-1=售罄, -2=不足, -3=未初始化, -4=非法参数, >=0=剩余）
+     * Lua 库存扣减脚本（-1=售罄, -2=不足, -3=未初始化, -4=非法参数, {@code >=0} 表示剩余量）
      */
     private static final String STOCK_DECR_SCRIPT =
             "if (redis.call('EXISTS', KEYS[1]) == 1) then " +
@@ -85,10 +85,15 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
                     "  return redis.call('INCRBY', KEYS[1], num); " +
                     "end; " +
                     "return -3;";
+    /** \u7528\u4e8e\u8bbf\u95ee Redis \u7f13\u5b58\u548c\u9501\u7684 Redisson \u5ba2\u6237\u7aef\u3002 */
     private final RedissonClient redissonClient;
+    /** \u9ed8\u8ba4\u7f13\u5b58\u5b58\u6d3b\u65f6\u95f4\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002 */
     private final long expireSeconds;
+    /** \u53cd\u5e8f\u5217\u5316\u7f13\u5b58\u6761\u76ee\u65f6\u4f7f\u7528\u7684\u503c\u7c7b\u578b\u3002 */
     private final Class<V> valueType;
+    /** \u8d1f\u8d23\u5728 Redis \u6216 Memcached \u4e2d\u5b58\u50a8 JSON \u503c\u7684\u6620\u5c04\u5668\u3002 */
     private final ObjectMapper objectMapper;
+    /** \u7528\u4e8e\u9694\u79bb\u5f53\u524d\u7f13\u5b58\u547d\u540d\u7a7a\u95f4\u7684\u952e\u524d\u7f00\u3002 */
     private final String keyPrefix;
 
     /**
@@ -111,6 +116,13 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
                 .build();
     }
 
+    /**
+     * \u4f7f\u7528\u6307\u5b9a ObjectMapper \u5de5\u5382\u521b\u5efa Redisson \u7f13\u5b58\u3002
+     * @param redissonClient Redisson \u5ba2\u6237\u7aef
+     * @param config \u7f13\u5b58\u914d\u7f6e
+     * @param valueType \u7f13\u5b58\u503c\u7c7b\u578b
+     * @param objectMapperFactory ObjectMapper \u5de5\u5382
+     */
     public RedissonCache(RedissonClient redissonClient, CacheConfig config, Class<V> valueType, Function<String, ObjectMapper> objectMapperFactory) {
         this(redissonClient, config, valueType, objectMapperFactory.apply(valueType.getName()));
     }
@@ -125,10 +137,16 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         this(redissonClient, config, valueType, JsonMapper.builder().build());
     }
 
+    /**
+     * \u4e3a\u4e1a\u52a1\u952e\u6dfb\u52a0\u5f53\u524d\u7f13\u5b58\u547d\u540d\u7a7a\u95f4\u524d\u7f00\u3002
+     * @param key \u7f13\u5b58\u952e
+     * @return \u5199\u5165\u540e\u7aef\u4f7f\u7528\u7684\u7f13\u5b58\u952e
+     */
     private String key(String key) {
         return keyPrefix + key;
     }
 
+    /** {@inheritDoc} */
     @Override
     public V getIfPresent(String key) {
         try {
@@ -143,6 +161,7 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public V get(String key, Function<String, V> mappingFunction) {
         V value = getIfPresent(key);
@@ -155,6 +174,7 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         return value;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void put(String key, V value) {
         try {
@@ -170,6 +190,7 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void invalidate(String key) {
         try {
@@ -179,6 +200,7 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         }
     }
 
+    /** \u4fdd\u7559\u540e\u7aef\u73b0\u6709\u952e\u3002\u8c03\u7528\u65b9\u9700\u901a\u8fc7\u660e\u786e\u7684\u952e\u9010\u4e2a\u5931\u6548\u3002 */
     @Override
     public void invalidateAll() {
         // Redis 不建议 flushAll，需通过 key 前缀逐个删除
@@ -186,16 +208,22 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
 
     // ==================== CacheLock 实现（基于 Redisson 分布式锁） ====================
 
+    /**
+     * \u62a5\u544a\u5f53\u524d\u540e\u7aef\u7684\u7f13\u5b58\u6761\u76ee\u6570\u91cf\u662f\u5426\u53ef\u7528\u3002
+     * @return \u56fa\u5b9a\u8fd4\u56de -1\uff0c\u8868\u793a\u6b64\u9002\u914d\u5668\u4e0d\u4f30\u7b97\u6761\u76ee\u6570
+     */
     @Override
     public long estimatedSize() {
         return -1;
     }
 
+    /** {@inheritDoc} */
     @Override
     public CacheStats stats() {
         return null;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean tryLock(String key, long waitSeconds, long leaseSeconds) {
         try {
@@ -209,6 +237,7 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
 
     // ==================== CasCache 实现（基于 Redisson RBucket CAS） ====================
 
+    /** {@inheritDoc} */
     @Override
     public void unlock(String key) {
         try {
@@ -228,6 +257,7 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         return redissonClient.getLock(keyPrefix + "lock:" + key);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean putIfAbsent(String key, V value) {
         try {
@@ -244,6 +274,7 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
 
     // ==================== AtomicCache 实现（基于 Redisson RAtomicLong + Lua 库存脚本） ====================
 
+    /** {@inheritDoc} */
     @Override
     public boolean replace(String key, V expected, V newValue) {
         try {
@@ -259,6 +290,7 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean removeIf(String key, V expected) {
         try {
@@ -270,6 +302,7 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public long increment(String key, long delta) {
         if (delta < 0) {
@@ -278,6 +311,7 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         return redissonClient.getAtomicLong(key(key)).addAndGet(delta);
     }
 
+    /** {@inheritDoc} */
     @Override
     public long increment(String key, long delta, long seconds) {
         long result = increment(key, delta);
@@ -286,6 +320,7 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public long decrement(String key, long delta) {
         if (delta < 0) {
@@ -294,6 +329,7 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         return redissonClient.getAtomicLong(key(key)).addAndGet(-delta);
     }
 
+    /** {@inheritDoc} */
     @Override
     public double incrementFloat(String key, double delta) {
         if (delta < 0) {
@@ -308,6 +344,7 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
                 String.valueOf(delta));
     }
 
+    /** {@inheritDoc} */
     @Override
     public double decrementFloat(String key, double delta) {
         if (delta < 0) {
@@ -316,6 +353,7 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         return incrementFloat(key, -delta);
     }
 
+    /** {@inheritDoc} */
     @Override
     public long stockDecrement(String key, long quantity) {
         org.redisson.api.RScript script = redissonClient.getScript();
@@ -324,6 +362,7 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
                 java.util.Collections.singletonList(key(key)), quantity);
     }
 
+    /** {@inheritDoc} */
     @Override
     public long stockIncrement(String key, long quantity) {
         org.redisson.api.RScript script = redissonClient.getScript();
@@ -334,17 +373,20 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
 
     // ==================== TTL 管理 ====================
 
+    /** {@inheritDoc} */
     @Override
     public boolean expire(String key, long seconds) {
         return redissonClient.getBucket(key(key)).expire(Duration.ofSeconds(seconds));
     }
 
+    /** {@inheritDoc} */
     @Override
     public long getExpire(String key) {
         long ttl = redissonClient.getBucket(key(key)).remainTimeToLive();
         return ttl < 0 ? ttl : ttl / 1000;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean persist(String key) {
         return redissonClient.getBucket(key(key)).clearExpire();
@@ -361,6 +403,7 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
 
     // ==================== CAS SPI 实现（基于 RBucket.compareAndSet 值比较 + 重试）====================
 
+    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("unchecked")
     public V compareAndSet(String key, long expireSeconds, CASOperation<V, V> operation) {
@@ -413,6 +456,7 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         return null;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean compareAndSet(String key, V expectedOldValue, V newValue) {
         String cachedKey = key(key);
@@ -425,6 +469,11 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         return bucket.compareAndSet(expectedJson, newJson);
     }
 
+    /**
+     * \u4fdd\u7559\u5b57\u7b26\u4e32\u503c\u539f\u6837\uff0c\u5c06\u5176\u4ed6\u975e\u7a7a\u503c\u7f16\u7801\u4e3a JSON\u3002
+     * @param value \u5f85\u5199\u5165\u7684\u7f13\u5b58\u503c
+     * @return \u5df2\u7f16\u7801\u7684\u5b57\u7b26\u4e32\uff0c\u7a7a\u503c\u6216\u7f16\u7801\u5931\u8d25\u65f6\u8fd4\u56de\u7a7a\u5f15\u7528
+     */
     private String serialize(V value) {
         if (Objects.isNull(value)) {
             return null;
@@ -439,6 +488,11 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         }
     }
 
+    /**
+     * \u6309\u7167\u9002\u914d\u5668\u7684\u503c\u7c7b\u578b\u53cd\u5e8f\u5217\u5316\u7f13\u5b58\u6587\u672c\u3002
+     * @param json \u4ece\u7f13\u5b58\u540e\u7aef\u8bfb\u51fa\u7684\u5b57\u7b26\u4e32
+     * @return \u89e3\u7801\u540e\u7684\u7f13\u5b58\u503c\uff0c\u8f93\u5165\u4e3a\u7a7a\u6216\u89e3\u7801\u5931\u8d25\u65f6\u8fd4\u56de\u7a7a
+     */
     private V deserialize(String json) {
         if (StrKit.isEmpty(json)) {
             return null;

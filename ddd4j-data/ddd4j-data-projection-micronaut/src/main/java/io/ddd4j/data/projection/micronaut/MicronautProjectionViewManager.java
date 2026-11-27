@@ -46,16 +46,27 @@ import java.util.concurrent.ConcurrentHashMap;
 @Singleton
 public class MicronautProjectionViewManager implements ViewManager {
 
+    /** 注册任务和取消任务所用的视图调度器。 */
     private final ViewScheduler scheduler;
 
+    /** 实际执行投影更新的运行器。 */
     private final ProjectionRunner<?> runner;
 
+    /** 已发现并参加调度的投影视图。 */
     private final Collection<ProjectionView<?>> views;
 
+    /** 以视图名称索引的当前调度任务句柄。 */
     private final Map<String, ViewScheduler.ViewScheduleHandle> handles = new ConcurrentHashMap<>();
 
+    /** 视图管理器是否已启动。 */
     private volatile boolean running = false;
 
+    /**
+     * \u6536\u96c6\u539f\u751f\u89c6\u56fe\uff0c\u4fdd\u7559\u6784\u9020\u65f6\u5feb\u7167\u3002
+     * @param scheduler \u8c03\u5ea6\u5668
+     * @param runner \u8fd0\u884c\u5668
+     * @param context \u5bb9\u5668
+     */
     @Inject
     @SuppressWarnings("unchecked")
     public MicronautProjectionViewManager(ViewScheduler scheduler,
@@ -77,16 +88,19 @@ public class MicronautProjectionViewManager implements ViewManager {
         this.views = null;
     }
 
+    /** 容器初始化组件后启动投影视图管理器。 */
     @PostConstruct
     void onPostConstruct() {
         start();
     }
 
+    /** 容器销毁组件前停止管理器并释放调度任务。 */
     @PreDestroy
     void onPreDestroy() {
         stop();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void start() {
         if (!running && scheduler != null && views != null) {
@@ -99,6 +113,7 @@ public class MicronautProjectionViewManager implements ViewManager {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void stop() {
         if (running) {
@@ -108,11 +123,13 @@ public class MicronautProjectionViewManager implements ViewManager {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isRunning() {
         return running;
     }
 
+    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("unchecked")
     public void triggerOnce() {
@@ -123,6 +140,11 @@ public class MicronautProjectionViewManager implements ViewManager {
         }
     }
 
+    /**
+     * 将本次调度触发的视图交给投影运行器执行。
+     *
+     * @param view 本次要执行投影更新的视图
+     */
     @SuppressWarnings("unchecked")
     private void runView(ProjectionView<?> view) {
         ((ProjectionRunner<Object>) runner).runOnce((ProjectionView<Object>) view);

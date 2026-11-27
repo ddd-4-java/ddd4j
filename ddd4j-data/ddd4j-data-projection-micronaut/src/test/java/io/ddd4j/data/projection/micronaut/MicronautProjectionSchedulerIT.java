@@ -44,12 +44,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 @MicronautTest
 class MicronautProjectionSchedulerIT {
 
+    /** 注册任务和取消任务所用的视图调度器。 */
     @Inject
     MicronautProjectionScheduler scheduler;
 
+    /** 保存 <code>view Manager</code> 对应的 <code>MicronautProjectionViewManager</code> 数据。 */
     @Inject
     MicronautProjectionViewManager viewManager;
 
+    /** 验证<code>handle.isActive()</code>为真，<code>handle.isActive()</code>为假。 */
     @Test
     void scheduler_schedule_应返回activeHandle_cancel后应inactive() {
         ViewScheduler.ViewScheduleHandle handle = scheduler.schedule(
@@ -62,6 +65,7 @@ class MicronautProjectionSchedulerIT {
         assertThat(handle.isActive()).isFalse();
     }
 
+    /** 验证<code>viewManager.isRunning()</code>为假，<code>viewManager.isRunning()</code>为真。 */
     @Test
     void viewManager_start_stop_应管理生命周期() {
         // @PostConstruct 已自动 start，先 stop 再验证
@@ -79,6 +83,7 @@ class MicronautProjectionSchedulerIT {
         assertThat(viewManager.isRunning()).isFalse();
     }
 
+    /** 验证<code>viewManager.isRunning()</code>为真。 */
     @Test
     void triggerOnce_应立即执行所有view的runOnce() {
         // 前序测试可能已 stop，确保重新 start

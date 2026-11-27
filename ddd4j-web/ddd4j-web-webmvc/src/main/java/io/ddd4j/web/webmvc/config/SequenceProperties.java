@@ -17,6 +17,10 @@ package io.ddd4j.web.webmvc.config;
 import cn.hutool.core.date.SystemClock;
 import lombok.Data;
 
+/**
+ * \u5e8f\u5217\u53f7\u914d\u7f6e\u5c5e\u6027\uff08\u96ea\u82b1\u7b97\u6cd5\uff09\u3002
+ *  <p>\u914d\u7f6e\u96ea\u82b1\u7b97\u6cd5 ID \u751f\u6210\u5668\u7684\u76f8\u5173\u53c2\u6570\uff0c\u5982\u662f\u5426\u4f7f\u7528\u7cfb\u7edf\u65f6\u949f\u3001\u5141\u8bb8\u65f6\u95f4\u56de\u62e8\u91cf\u7b49\u3002</p>
+ */
 @Data
 /**
  * 序列号配置属性（雪花算法）。
@@ -24,6 +28,7 @@ import lombok.Data;
  */
 public class SequenceProperties {
 
+    /** \u5e8f\u5217\u914d\u7f6e\u524d\u7f00\u3002 */
     public static final String PREFIX = "sequence";
 
     /**

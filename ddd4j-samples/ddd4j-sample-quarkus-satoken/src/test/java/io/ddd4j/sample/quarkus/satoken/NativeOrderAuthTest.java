@@ -34,19 +34,31 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @QuarkusTest
 class NativeOrderAuthTest {
+    /** \u534f\u8c03\u6d4b\u8bd5\u7ebf\u7a0b\u5728\u6307\u5b9a\u6267\u884c\u9636\u6bb5\u7b49\u5f85\u6216\u7ee7\u7eed\u7684\u95e8\u95e9\u3002 */
     static final java.util.concurrent.CountDownLatch held = new java.util.concurrent.CountDownLatch(1);
+    /** \u7528\u6765\u63a7\u5236\u6d4b\u8bd5\u7ebf\u7a0b\u9000\u51fa\u7b49\u5f85\u6216\u89c2\u5bdf\u64cd\u4f5c\u5b8c\u6210\u7684\u540c\u6b65\u95e8\u95e9\u3002 */
     static final java.util.concurrent.CountDownLatch release = new java.util.concurrent.CountDownLatch(1);
+    /** \u534f\u8c03\u6d4b\u8bd5\u7ebf\u7a0b\u5728\u6307\u5b9a\u6267\u884c\u9636\u6bb5\u7b49\u5f85\u6216\u7ee7\u7eed\u7684\u95e8\u95e9\u3002 */
     static final java.util.concurrent.CountDownLatch canceled = new java.util.concurrent.CountDownLatch(1);
+    /** \u4f9b\u6d4b\u8bd5\u7ebf\u7a0b\u5b89\u5168\u4fdd\u5b58\u5f53\u524d\u89c2\u5bdf\u7ed3\u679c\u7684\u5f15\u7528\u3002 */
     static final AtomicReference<Optional<String>> observed = new AtomicReference<>();
+    /** \u5f53\u524d\u793a\u4f8b\u7528\u6765\u89e3\u6790\u89d2\u8272\u7f16\u8f91\u548c\u6743\u9650\u5206\u914d\u7684\u914d\u7f6e\u3002 */
     @Inject
     RbacConfig rbac;
+    /** \u4fdd\u5b58\u793a\u4f8b\u89d2\u8272\u5b9a\u4e49\u7684\u5185\u5b58\u4ed3\u50a8\u3002 */
     @Inject
     InMemoryRoleRepository roles;
+    /** \u4fdd\u5b58\u6d4b\u8bd5\u6570\u636e\u7684\u5185\u5b58\u5b58\u50a8\u3002 */
     @Inject
     CatalogApi store;
+    /** \u672c\u5730\u6d4b\u8bd5\u670d\u52a1\u7684\u57fa\u7840\u5730\u5740\u3002 */
     @TestHTTPResource
     URI base;
 
+    /**
+     * \u901a\u8fc7 <code>java.util.Objects.requireNonNull()</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>java.util.Objects.requireNonNull(observed.get(), "server completion observer must execute")</code>
+     */
     private static Optional<String> completed() {
         for (int i = 0; i < 200 && java.util.Objects.isNull(observed.get()); i++) {
             try {
@@ -59,17 +71,20 @@ class NativeOrderAuthTest {
         return java.util.Objects.requireNonNull(observed.get(), "server completion observer must execute");
     }
 
+    /** \u6d4b\u8bd5\u6267\u884c\u524d\u6267\u884c <code>seed()</code> \u5b8c\u6210\u8d44\u6e90\u51c6\u5907\u3002 */
     @BeforeEach
     void prepareGoods() {
         seed(store);
     }
 
+    /** \u9a8c\u8bc1<code>completed()</code> \u7b49\u4e8e <code>Optional.empty()</code>\u3002 */
     @Test
     void anonymousOrderWriteMustBeRejected() {
         given().contentType("application/json").body(ORDER).post(ORDERS + "anonymous").then().statusCode(401);
         assertEquals(Optional.empty(), completed());
     }
 
+    /** \u9a8c\u8bc1<code>store.order(TENANT, driver.orderId).getBody().contains("CANCELLED")</code>\u4e3a\u771f\uff0c<code>completed()</code> \u7b49\u4e8e <code>Optional.empty()</code>\u3002 */
     @Test
     void nativeAuthSharedBusinessDenialLogoutAndCleanup() {
         rbac.reset();
@@ -94,6 +109,11 @@ class NativeOrderAuthTest {
         assertEquals(Optional.empty(), completed());
     }
 
+    /**
+     * \u8c03\u7528 <code>java.net.http.HttpRequest.newBuilder()</code>\u3001<code>base.resolve()</code>\u3001<code>java.net.http.HttpClient.newHttpClient()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @param token \u4ece\u6d4b\u8bd5\u767b\u5f55\u83b7\u5f97\u7684\u4f1a\u8bdd\u51ed\u636e
+     * @param id \u5f53\u524d\u8981\u67e5\u627e\u7684\u6d4b\u8bd5\u8bb0\u5f55\u6807\u8bc6
+     */
     private void verifyClientCancellation(String token, String id) {
         io.ddd4j.sample.order.testkit.http.HttpRequest request = io.ddd4j.sample.order.testkit.http.HttpRequest.newBuilder(base.resolve(ORDERS + id))
                 .header("Authorization", "Bearer " + token).header("X-Tenant-Id", TENANT).header("X-S03-Hold", "true").GET().build();
@@ -119,6 +139,10 @@ class NativeOrderAuthTest {
     @Provider
     @Priority(1002)
     public static class CancellationGate implements javax.ws.rs.container.ContainerRequestFilter {
+        /**
+         * \u8c03\u7528 <code>request.getHeaderString()</code>\u3001<code>held.countDown()</code>\u3001<code>release.await()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+         * @param request \u5f85\u4ea4\u7ed9\u88ab\u6d4b\u670d\u52a1\u5904\u7406\u7684\u8bf7\u6c42
+         */
         @Override
         public void filter(ContainerRequestContext request) {
             if ("true".equals(request.getHeaderString("X-S03-Hold"))) {
@@ -139,6 +163,11 @@ class NativeOrderAuthTest {
     @Provider
     @Priority(999)
     public static class RejectedResponseObserver implements ContainerResponseFilter {
+        /**
+         * \u8c03\u7528 <code>response.getStatus()</code>\u3001<code>observed.set()</code>\u3001<code>cn.dev33.satoken.SaManager.getSaTokenContext()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+         * @param request \u5f85\u4ea4\u7ed9\u88ab\u6d4b\u670d\u52a1\u5904\u7406\u7684\u8bf7\u6c42
+         * @param response \u5f53\u524d\u8bf7\u6c42\u5df2\u6536\u5230\u7684\u54cd\u5e94
+         */
         @Override
         public void filter(ContainerRequestContext request, ContainerResponseContext response) {
             if (response.getStatus() == 401 || response.getStatus() == 403) {
@@ -153,6 +182,12 @@ class NativeOrderAuthTest {
     @Provider
     @Priority(999)
     public static class CleanupObserver implements ContainerResponseFilter {
+        /**
+         * 执行 <code>filter</code>，调用 <code>request.getUriInfo</code>、<code>Thread.currentThread</code>、<code>request.getHeaderString</code>。
+         *
+         * @param request 待发送或处理的 HTTP 请求
+         * @param response 当前收到的 HTTP 响应
+         */
         @Override
         public void filter(ContainerRequestContext request, ContainerResponseContext response) {
             String path = request.getUriInfo().getPath();
@@ -169,9 +204,19 @@ class NativeOrderAuthTest {
         }
     }
 
+    /** \u628a\u5171\u4eab\u9274\u6743\u65ad\u8a00\u8f6c\u53d1\u5230\u793a\u4f8b\u5e94\u7528\u7684\u8c03\u7528\u9a71\u52a8\u3002 */
     private final class Driver implements AuthSampleDriver {
+        /** \u8ba2\u5355\u6807\u8bc6\u3002 */
         String orderId;
 
+        /**
+         * \u8bfb\u53d6 <code>response</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
+         * @param method \u53d1\u7ed9\u88ab\u6d4b\u670d\u52a1\u7684 HTTP \u65b9\u6cd5
+         * @param path \u6d4b\u8bd5\u8bf7\u6c42\u7684\u8d44\u6e90\u8def\u5f84\u6216\u5f85\u8bbf\u95ee\u6587\u4ef6\u8def\u5f84
+         * @param token \u4ece\u6d4b\u8bd5\u767b\u5f55\u83b7\u5f97\u7684\u4f1a\u8bdd\u51ed\u636e
+         * @param body \u5f53\u524d\u8bf7\u6c42\u6216\u54cd\u5e94\u4e2d\u8981\u8bfb\u53d6\u7684\u6b63\u6587
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>response</code>
+         */
         private io.restassured.response.Response call(String method, String path, String token, Object body) {
             observed.set(null);
             io.restassured.specification.RequestSpecification request = given().contentType("application/json");
@@ -192,16 +237,19 @@ class NativeOrderAuthTest {
             return response;
         }
 
+        /** {@inheritDoc} */
         @Override
         public String login(String user, String password) {
             return call("POST", "/auth/login", null, ImmutableMap.of("username", user, "password", password)).path("token");
         }
 
+        /** {@inheritDoc} */
         @Override
         public String authenticatedPrincipal(String token) {
             return call("GET", "/auth/me", token, null).path("data.userId");
         }
 
+        /** {@inheritDoc} */
         @Override
         public String authorizedResource(String token, String permission) {
             if ("order:cancel".equals(permission)) {
@@ -218,16 +266,19 @@ class NativeOrderAuthTest {
             return response.path("orderState");
         }
 
+        /** {@inheritDoc} */
         @Override
         public void logout(String token) {
             call("POST", "/auth/logout", token, null);
         }
 
+        /** {@inheritDoc} */
         @Override
         public void failingRequest(String token) {
             call("POST", ORDERS + orderId + "/payment", token, ImmutableMap.of("paidAmountCent", 1));
         }
 
+        /** {@inheritDoc} */
         @Override
         public Optional<String> contextPrincipal() {
             return completed();

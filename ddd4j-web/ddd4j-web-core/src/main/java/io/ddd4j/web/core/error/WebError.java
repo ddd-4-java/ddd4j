@@ -29,14 +29,19 @@ import java.io.Serializable;
  */
 public final class WebError {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 0L;
 
+    /** \u5bf9\u5e94 HTTP \u9519\u8bef\u54cd\u5e94\u7684\u72b6\u6001\u7801\u3002 */
     private final int status;
 
+    /** \u54cd\u5e94\u4f53\u4e2d\u62a5\u544a\u7684\u4e1a\u52a1\u9519\u8bef\u7801\u3002 */
     private final Serializable code;
 
+    /** \u54cd\u5e94\u4f53\u4e2d\u4f9b\u8c03\u7528\u65b9\u8bfb\u53d6\u7684\u9519\u8bef\u8bf4\u660e\u3002 */
     private final String message;
 
+    /** \u9519\u8bef\u54cd\u5e94\u4e2d\u968f\u72b6\u6001\u8fd4\u56de\u7684\u53ef\u9009\u4e1a\u52a1\u6570\u636e\u3002 */
     private final Object data;
 
     /**
@@ -144,6 +149,7 @@ public final class WebError {
         return data;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -156,6 +162,7 @@ public final class WebError {
         return this.status == other.status && Objects.equals(this.code, other.code) && Objects.equals(this.message, other.message) && Objects.equals(this.data, other.data);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int result = 0;
@@ -166,6 +173,7 @@ public final class WebError {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "WebError[status=" + status + ", code=" + code + ", message=" + message + ", data=" + data + "]";

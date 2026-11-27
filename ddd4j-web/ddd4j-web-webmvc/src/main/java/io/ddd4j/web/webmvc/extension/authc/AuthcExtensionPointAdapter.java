@@ -39,9 +39,12 @@ import java.util.Objects;
 @Slf4j
 public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
 
+    /** Authorization \u8bf7\u6c42\u5934\u540d\u79f0\u3002 */
     public static final String AUTHORIZATION_HEADER = "Authorization";
+    /** Bearer \u4ee4\u724c\u524d\u7f00\u3002 */
     public static final String BEARER_PREFIX = "Bearer ";
 
+    /** {@inheritDoc} */
     @Override
     public String getToken(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException {
         if (Objects.isNull(request)) {
@@ -58,6 +61,7 @@ public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
         return null;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void handleHeader(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException {
         if (Objects.isNull(request) || Objects.isNull(params)) {
@@ -72,6 +76,7 @@ public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void handleRequest(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException {
         if (Objects.isNull(request) || Objects.isNull(params)) {
@@ -88,6 +93,7 @@ public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public Object handleResult(Object res) throws PluginRuntimeException {
         return res;

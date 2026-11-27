@@ -51,9 +51,11 @@ import java.util.function.Consumer;
  */
 public class ErrorCollectingReadListener<T> extends AnalysisEventListener<T> {
 
+    /** \u5df2\u6210\u529f\u89e3\u6790\u5e76\u901a\u8fc7\u884c\u6821\u9a8c\u7684\u6570\u636e\u3002 */
     @Getter
     private final List<T> successData = new ArrayList<>();
 
+    /** \u5bfc\u5165\u65f6\u53d1\u751f\u7684\u9010\u884c\u8bfb\u53d6\u6216\u6821\u9a8c\u9519\u8bef\u3002 */
     @Getter
     private final List<ImportError> errors = new ArrayList<>();
 
@@ -78,6 +80,11 @@ public class ErrorCollectingReadListener<T> extends AnalysisEventListener<T> {
         this.rowValidator = rowValidator;
     }
 
+    /**
+     * \u6821\u9a8c\u5f53\u524d\u884c\uff0c\u628a\u6570\u636e\u6216\u6821\u9a8c\u9519\u8bef\u4fdd\u5b58\u5230\u5bf9\u5e94\u7684\u5bfc\u5165\u7ed3\u679c\u5217\u8868\u3002
+     * @param data \u5f53\u524d\u89e3\u6790\u7684\u884c
+     * @param context \u63d0\u4f9b\u5de5\u4f5c\u8868\u53ca\u884c\u53f7\u7684\u8bfb\u53d6\u4e0a\u4e0b\u6587
+     */
     @Override
     public void invoke(T data, AnalysisContext context) {
         if (Objects.nonNull(rowValidator)) {
@@ -91,11 +98,20 @@ public class ErrorCollectingReadListener<T> extends AnalysisEventListener<T> {
         successData.add(data);
     }
 
+    /**
+     * \u5b8c\u6210\u8bfb\u53d6\uff0c\u5df2\u6536\u96c6\u7684\u6570\u636e\u548c\u9519\u8bef\u53ef\u901a\u8fc7\u7ed3\u679c\u65b9\u6cd5\u83b7\u53d6\u3002
+     * @param context \u63d0\u4f9b\u5de5\u4f5c\u8868\u53ca\u884c\u53f7\u7684\u8bfb\u53d6\u4e0a\u4e0b\u6587
+     */
     @Override
     public void doAfterAllAnalysed(AnalysisContext context) {
         // 无需后续动作；调用方通过 toResult() 取数
     }
 
+    /**
+     * \u6309\u5f53\u524d\u884c\u53f7\u6536\u96c6\u8f6c\u6362\u5f02\u5e38\uff0c\u4fdd\u7559\u5176\u4ed6\u884c\u7684\u8bfb\u53d6\u673a\u4f1a\u3002
+     * @param exception \u5f53\u524d\u5355\u5143\u683c\u6216\u6574\u884c\u7684\u8f6c\u6362\u5f02\u5e38
+     * @param context \u63d0\u4f9b\u5de5\u4f5c\u8868\u53ca\u884c\u53f7\u7684\u8bfb\u53d6\u4e0a\u4e0b\u6587
+     */
     @Override
     public void onException(Exception exception, AnalysisContext context) {
         // 关键：不抛出，转为 ImportError 收集

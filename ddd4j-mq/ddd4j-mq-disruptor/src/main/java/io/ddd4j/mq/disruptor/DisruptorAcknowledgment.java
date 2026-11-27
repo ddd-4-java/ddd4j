@@ -29,9 +29,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class DisruptorAcknowledgment implements Acknowledgment {
 
+    /** \u5f53\u524d\u786e\u8ba4\u52a8\u4f5c\u5173\u8054\u7684 Disruptor \u4e8b\u4ef6\u3002 */
     private final DisruptorEvent event;
+    /** \u5411 Disruptor \u5de5\u4f5c\u7ebf\u7a0b\u8f6c\u4ea4\u6d88\u606f\u7684\u73af\u5f62\u7f13\u51b2\u533a\u3002 */
     private final RingBuffer<DisruptorEvent> ringBuffer;
+    /** \u7528\u4e8e\u5e95\u5c42\u4ee3\u7406\u786e\u8ba4\u6d88\u606f\u7684\u6295\u9012\u6807\u8bb0\u3002 */
     private final long deliveryTag;
+    /** \u8bb0\u5f55\u5df2\u786e\u8ba4\u6d88\u606f\u7684\u72b6\u6001\u6216\u7ed3\u679c\u3002 */
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 
     /**
@@ -48,46 +52,55 @@ public class DisruptorAcknowledgment implements Acknowledgment {
         this.deliveryTag = deliveryTag;
     }
 
+    /** {@inheritDoc} */
     @Override
     public long deliveryTag() {
         return deliveryTag;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String messageId() {
         return event.getMessageId();
     }
 
+    /** {@inheritDoc} */
     @Override
     public String correlationId() {
         return Objects.nonNull(event.getMessageId()) ? event.getMessageId() : null;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isOpen() {
         return Objects.nonNull(ringBuffer);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isAcknowledged() {
         return acknowledged.get();
     }
 
+    /** {@inheritDoc} */
     @Override
     public BrokerType brokerType() {
         return BrokerType.DISRUPTOR;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void ack() {
         ack(false);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void ack(boolean multiple) {
         acknowledged.set(true);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void nack(boolean requeue) {
         if (requeue && Objects.nonNull(ringBuffer) && !acknowledged.get()) {
@@ -96,16 +109,19 @@ public class DisruptorAcknowledgment implements Acknowledgment {
         acknowledged.set(true);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void nack(boolean multiple, boolean requeue) {
         nack(requeue);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void reject(boolean requeue) {
         nack(requeue);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void recover(boolean requeue) {
         if (!requeue) {
@@ -114,6 +130,7 @@ public class DisruptorAcknowledgment implements Acknowledgment {
         nack(true);
     }
 
+    /** {@inheritDoc} */
     @Override
     public <T> Optional<T> unwrap(Class<T> nativeType) {
         if (nativeType.isInstance(event)) {

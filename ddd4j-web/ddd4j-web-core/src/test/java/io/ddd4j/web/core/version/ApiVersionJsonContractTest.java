@@ -24,6 +24,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class ApiVersionJsonContractTest {
 
+    /**
+     * \u9a8c\u8bc1<code>mapper.writeValueAsString(version)</code> \u7b49\u4e8e <code>"\"2.1.0\""</code>\uff0c<code>mapper.readValue("\"2.1.0\"", ApiVersion.class)</code> \u7b49\u4e8e <code>version</code>\u3002
+     * @throws Exception \u5904\u7406\u6d4b\u8bd5\u6570\u636e\u7684\u5e8f\u5217\u5316\u65f6\u5931\u8d25
+     */
     @Test
     void serializesAndDeserializesAsNormalizedString() throws Exception {
         ObjectMapper mapper = new ObjectMapper();

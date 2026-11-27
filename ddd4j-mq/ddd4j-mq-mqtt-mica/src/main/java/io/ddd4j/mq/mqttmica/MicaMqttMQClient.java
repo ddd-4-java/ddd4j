@@ -55,9 +55,13 @@ import java.util.function.Consumer;
 @Slf4j(topic = "### DDD4J-MQ : MicaMqttMQClient ###")
 public class MicaMqttMQClient implements MQClient {
 
+    /** \u5f53\u524d\u6d88\u606f\u4ee3\u7406\u5ba2\u6237\u7aef\u4f7f\u7528\u7684\u8fde\u63a5\u548c\u8ba2\u9605\u914d\u7f6e\u3002 */
     private final MicaMqttProperties properties;
+    /** \u6301\u6709\u5f53\u524d\u5df2\u521b\u5efa\u4e14\u53ef\u7528\u7684\u539f\u751f\u6d88\u606f\u5ba2\u6237\u7aef\u3002 */
     private final AtomicReference<MqttClient> clientRef = new AtomicReference<>();
+    /** \u534f\u8c03\u6d88\u606f\u5ba2\u6237\u7aef\u542f\u52a8\u3001\u521d\u59cb\u5316\u548c\u5173\u95ed\u7684\u751f\u547d\u5468\u671f\u3002 */
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    /** \u7ec4\u4ef6\u7684\u542f\u52a8\u72b6\u6001\u548c\u542f\u52a8\u5931\u8d25\u8bca\u65ad\u4fe1\u606f\u3002 */
     private final MQStartupStatus startupStatus = new MQStartupStatus("mqtt-mica");
 
     /**
@@ -81,6 +85,11 @@ public class MicaMqttMQClient implements MQClient {
         this.properties = Objects.requireNonNull(properties, "properties");
     }
 
+    /**
+     * \u4f18\u5148\u4ece\u539f\u751f\u6d88\u606f\u7684\u6807\u51c6\u5934\u8bfb\u53d6\u6d88\u606f\u6807\u8bc6\uff0c\u7f3a\u5c11\u65f6\u56de\u9000\u5230\u517c\u5bb9\u5934\u3002
+     * @param message \u5f53\u524d\u63a5\u6536\u7684\u539f\u751f\u4ee3\u7406\u6d88\u606f
+     * @return \u7528\u4e8e\u540e\u7eed\u6d88\u8d39\u786e\u8ba4\u7684\u4e1a\u52a1\u6d88\u606f\u6807\u8bc6\uff0c\u5934\u5747\u7f3a\u5931\u65f6\u4e3a\u7a7a
+     */
     static String messageId(MqttPublishMessage message) {
         Map<String, String> headers = nativeHeaders(message);
         String messageId = headers.get(MessageHeaders.HEADER_MESSAGE_ID);
@@ -89,6 +98,11 @@ public class MicaMqttMQClient implements MQClient {
                 : headers.get(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
     }
 
+    /**
+     * \u63d0\u53d6\u539f\u751f MQTT \u53d1\u5e03\u6d88\u606f\u643a\u5e26\u7684\u7528\u6237\u5c5e\u6027\u3002
+     * @param message \u5f53\u524d\u63a5\u6536\u7684\u539f\u751f\u4ee3\u7406\u6d88\u606f
+     * @return \u6309\u5c5e\u6027\u540d\u7ec4\u7ec7\u7684\u6d88\u606f\u5934
+     */
     private static Map<String, String> nativeHeaders(MqttPublishMessage message) {
         Map<String, String> headers = new HashMap<>();
         message.getProperties().getProperties().getProperties(MqttPropertyType.USER_PROPERTY.value())
@@ -99,6 +113,15 @@ public class MicaMqttMQClient implements MQClient {
         return headers;
     }
 
+    /**
+     * \u628a\u5e8f\u5217\u5316\u4e8b\u4ef6\u548c\u6d88\u606f\u5143\u6570\u636e\u53d1\u9001\u5230\u6307\u5b9a\u7684\u539f\u751f\u4ee3\u7406\u3002
+     * @param client \u5f53\u524d\u4f7f\u7528\u7684\u539f\u751f\u4ee3\u7406\u6216 Redis \u5ba2\u6237\u7aef
+     * @param topic \u8981\u53d1\u5e03\u3001\u8ba2\u9605\u6216\u53d6\u6d88\u8ba2\u9605\u7684\u4ee3\u7406\u4e3b\u9898
+     * @param body \u8981\u53d1\u9001\u7684\u6d88\u606f\u8d1f\u8f7d\u5b57\u8282
+     * @param qos MQTT \u6295\u9012\u4f7f\u7528\u7684\u670d\u52a1\u8d28\u91cf\u7b49\u7ea7
+     * @param headers \u6d88\u606f\u968f\u534f\u8bae\u9644\u5e26\u7684\u5934\u5b57\u6bb5
+     * @return \u5f53\u524d\u539f\u751f\u4ee3\u7406\u8fd4\u56de\u7684\u53d1\u9001\u7ed3\u679c
+     */
     private static boolean publish(MqttClient client, String topic, byte[] body, MqttQoS qos,
                                    Map<String, String> headers) {
         if (headers.isEmpty()) {
@@ -112,21 +135,25 @@ public class MicaMqttMQClient implements MQClient {
         }));
     }
 
+    /** {@inheritDoc} */
     @Override
     public String impl() {
         return "mqtt-mica";
     }
 
+    /** {@inheritDoc} */
     @Override
     public MQClientLifecycle lifecycle() {
         return lifecycle;
     }
 
+    /** {@inheritDoc} */
     @Override
     public MQStartupStatus startupStatus() {
         return startupStatus;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String defaultConcat() {
         return "/";
@@ -135,7 +162,9 @@ public class MicaMqttMQClient implements MQClient {
     // ========================= 生产者 =========================
 
     /**
-     * mica-mqtt 无原生 broker-side tag selector，仅 topic 通配 → 强制应用层 {@link TagMatcher} 过滤。
+     * mica-mqtt \u65e0\u539f\u751f broker-side tag selector\uff0c\u4ec5 topic \u901a\u914d \u2192 \u5f3a\u5236\u5e94\u7528\u5c42 {@link TagMatcher} \u8fc7\u6ee4\u3002
+     *
+     * @return \u5f53\u524d\u4ee3\u7406\u662f\u5426\u652f\u6301\u6309\u6807\u7b7e\u8fc7\u6ee4
      */
     @Override
     public boolean supportsBrokerTagFilter() {
@@ -144,6 +173,7 @@ public class MicaMqttMQClient implements MQClient {
 
     // ========================= 消费者 =========================
 
+    /** {@inheritDoc} */
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         MqttClient client = client();
@@ -172,6 +202,11 @@ public class MicaMqttMQClient implements MQClient {
 
     // ========================= 连接管理 =========================
 
+    /**
+     * \u7b49\u5f85\u539f\u751f MQTT \u5ba2\u6237\u7aef\u786e\u8ba4\u8fde\u63a5\u5b8c\u6210\uff0c\u8d85\u65f6\u540e\u7ec8\u6b62\u7b49\u5f85\u3002
+     * @param connected \u7528\u6765\u5224\u65ad\u539f\u751f\u5ba2\u6237\u7aef\u662f\u5426\u5b8c\u6210\u8fde\u63a5\u7684\u56de\u8c03
+     * @throws InterruptedException \u7b49\u5f85\u4ee3\u7406\u8fde\u63a5\u65f6\u7ebf\u7a0b\u88ab\u4e2d\u65ad
+     */
     static void awaitConnected(BooleanSupplier connected) throws InterruptedException {
         // connectSync 只等待 TCP 连接；CONNACK 未到时 mica 会将订阅留到下次重连。
         long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(10);
@@ -188,6 +223,7 @@ public class MicaMqttMQClient implements MQClient {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         MqttClient client = client();
@@ -243,12 +279,18 @@ public class MicaMqttMQClient implements MQClient {
     }
 
     /**
-     * QoS：注入原生客户端时取默认 QoS = QOS1，否则读 properties。
+     * QoS\uff1a\u6ce8\u5165\u539f\u751f\u5ba2\u6237\u7aef\u65f6\u53d6\u9ed8\u8ba4 QoS = QOS1\uff0c\u5426\u5219\u8bfb properties\u3002
+     *
+     * @return MQTT \u53d1\u5e03\u6216\u8ba2\u9605\u4f7f\u7528\u7684\u670d\u52a1\u8d28\u91cf\u7ea7\u522b
      */
     private MqttQoS qos() {
         return properties.mqttQoS();
     }
 
+    /**
+     * \u53d6\u5f97\u5f53\u524d\u9002\u914d\u5668\u4f7f\u7528\u7684\u539f\u751f\u8fde\u63a5\u6216\u5ba2\u6237\u7aef\uff0c\u7f3a\u5c11\u5b9e\u4f8b\u65f6\u5efa\u7acb\u8fde\u63a5\u3002
+     * @return \u4f9b\u53d1\u5e03\u6216\u6d88\u8d39\u64cd\u4f5c\u4f7f\u7528\u7684\u539f\u751f\u8fde\u63a5\u6216\u5ba2\u6237\u7aef
+     */
     private synchronized MqttClient client() {
         MqttClient c = clientRef.get();
         if (Objects.nonNull(c)) {
@@ -270,6 +312,7 @@ public class MicaMqttMQClient implements MQClient {
         return c;
     }
 
+    /** \u91ca\u653e\u6d88\u606f\u5ba2\u6237\u7aef\u62e5\u6709\u7684\u8fd0\u884c\u8d44\u6e90\uff0c\u5e76\u5728\u9000\u51fa\u65f6\u767b\u8bb0\u7ec4\u4ef6\u5df2\u505c\u6b62\u3002 */
     @Override
     public void close() {
         try {

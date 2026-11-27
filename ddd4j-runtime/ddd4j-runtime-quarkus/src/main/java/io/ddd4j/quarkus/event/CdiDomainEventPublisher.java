@@ -44,6 +44,7 @@ public class CdiDomainEventPublisher implements DomainEventPublisher {
     @Inject
     Event<Object> event;
 
+    /** {@inheritDoc} */
     @Override
     public <ID extends EntityId> void publish(DomainEvent<ID> domainEvent) {
         if (Objects.isNull(domainEvent)) {

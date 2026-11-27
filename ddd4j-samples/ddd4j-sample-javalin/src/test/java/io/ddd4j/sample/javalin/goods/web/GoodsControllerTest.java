@@ -58,12 +58,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class GoodsControllerTest {
 
+    /** \u8d1f\u8d23\u8f6c\u6362\u6d4b\u8bd5\u6216\u534f\u8bae\u6b63\u6587\u4e2d JSON \u6570\u636e\u7684 Jackson \u6620\u5c04\u5668\u3002 */
     private static final ObjectMapper JSON = new ObjectMapper();
 
+    /** \u7531\u5f53\u524d\u6d4b\u8bd5\u542f\u52a8\u548c\u5173\u95ed\u7684\u5e94\u7528\u5b9e\u4f8b\u3002 */
     private static Javalin app;
+    /** \u7528\u4e8e\u53d1\u9001 HTTP \u8bf7\u6c42\u7684\u5ba2\u6237\u7aef\u3002 */
     private static HttpClient httpClient;
+    /** \u5f53\u524d\u670d\u52a1\u7684 HTTP \u57fa\u7840\u5730\u5740\u3002 */
     private static String baseUrl;
 
+    /** \u6d4b\u8bd5\u6267\u884c\u524d\u6267\u884c <code>BaseContext.inject()</code>\u3001<code>RepositoryRegistry.register()</code>\u3001<code>Javalin.create()</code>\u3001<code>cfg.jsonMapper()</code> \u5b8c\u6210\u8d44\u6e90\u51c6\u5907\u3002 */
     @BeforeAll
     static void startApp() {
         BaseContext.inject(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, new NoOpDomainEventPublisher());
@@ -86,6 +91,7 @@ class GoodsControllerTest {
         httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
     }
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>app.stop()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterAll
     static void stopApp() {
         if (Objects.nonNull(app)) {
@@ -93,6 +99,11 @@ class GoodsControllerTest {
         }
     }
 
+    /**
+     * \u901a\u8fc7 <code>body.substring()</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+     * @param body \u5f53\u524d\u8bf7\u6c42\u6216\u54cd\u5e94\u4e2d\u8981\u8bfb\u53d6\u7684\u6b63\u6587
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>body.substring(start, end)</code>
+     */
     private static String extractId(String body) {
         int idx = body.indexOf("\"id\":");
         if (idx < 0) {
@@ -110,6 +121,12 @@ class GoodsControllerTest {
         return body.substring(start, end);
     }
 
+    /**
+     * \u901a\u8fc7 <code>body.path()</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+     * @param response \u5f53\u524d\u8bf7\u6c42\u5df2\u6536\u5230\u7684\u54cd\u5e94
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>body.path("data")</code>
+     * @throws Exception \u5904\u7406\u6d4b\u8bd5\u6570\u636e\u7684\u5e8f\u5217\u5316\u65f6\u5931\u8d25
+     */
     private JsonNode queryData(HttpResponse<String> response) throws Exception {
         assertEquals(200, response.statusCode(), response.body());
         JsonNode body = JSON.readTree(response.body());
@@ -117,6 +134,14 @@ class GoodsControllerTest {
         return body.path("data");
     }
 
+    /**
+     * \u901a\u8fc7 <code>extractId()</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+     * @param code \u7528\u4e8e\u5b9a\u4f4d\u76ee\u6807\u6d4b\u8bd5\u8bb0\u5f55\u7684\u4e1a\u52a1\u7f16\u7801
+     * @param name \u5f53\u524d\u6d4b\u8bd5\u6307\u5b9a\u7684\u5bf9\u8c61\u6216\u5c5e\u6027\u540d\u79f0
+     * @param price \u4f20\u7ed9 <code>postJson()</code> \u7684 <code>String</code> \u8f93\u5165
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>extractId(created.body())</code>
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     private String createFixture(String code, String name, String price) throws Exception {
         HttpResponse<String> created = postJson("/api/goods",
                 "{\"code\":\"" + code + "\",\"name\":\"" + name + "\",\"price\":" + price + ",\"stock\":1}");
@@ -124,6 +149,13 @@ class GoodsControllerTest {
         return extractId(created.body());
     }
 
+    /**
+     * \u8c03\u7528 <code>httpClient.send()</code>\u3001<code>HttpRequest.newBuilder()</code>\u3001<code>URI.create()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @param path \u6d4b\u8bd5\u8bf7\u6c42\u7684\u8d44\u6e90\u8def\u5f84\u6216\u5f85\u8bbf\u95ee\u6587\u4ef6\u8def\u5f84
+     * @param body \u5f53\u524d\u8bf7\u6c42\u6216\u54cd\u5e94\u4e2d\u8981\u8bfb\u53d6\u7684\u6b63\u6587
+     * @return \u63d0\u4f9b\u7ed9\u540e\u7eed\u5951\u7ea6\u65ad\u8a00\u7684 <code>HttpResponse&lt;String&gt;</code> \u7ed3\u679c
+     * @throws Exception \u53d1\u8d77\u6d4b\u8bd5\u8bf7\u6c42\u65f6\u5931\u8d25
+     */
     private HttpResponse<String> postJson(String path, String body) throws Exception {
         return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
                         .header("Content-Type", "application/json")
@@ -131,6 +163,13 @@ class GoodsControllerTest {
                 HttpResponse.BodyHandlers.ofString());
     }
 
+    /**
+     * \u8c03\u7528 <code>httpClient.send()</code>\u3001<code>HttpRequest.newBuilder()</code>\u3001<code>URI.create()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @param path \u6d4b\u8bd5\u8bf7\u6c42\u7684\u8d44\u6e90\u8def\u5f84\u6216\u5f85\u8bbf\u95ee\u6587\u4ef6\u8def\u5f84
+     * @param body \u5f53\u524d\u8bf7\u6c42\u6216\u54cd\u5e94\u4e2d\u8981\u8bfb\u53d6\u7684\u6b63\u6587
+     * @return \u63d0\u4f9b\u7ed9\u540e\u7eed\u5951\u7ea6\u65ad\u8a00\u7684 <code>HttpResponse&lt;String&gt;</code> \u7ed3\u679c
+     * @throws Exception \u53d1\u8d77\u6d4b\u8bd5\u8bf7\u6c42\u65f6\u5931\u8d25
+     */
     private HttpResponse<String> putJson(String path, String body) throws Exception {
         return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
                         .header("Content-Type", "application/json")
@@ -138,11 +177,23 @@ class GoodsControllerTest {
                 HttpResponse.BodyHandlers.ofString());
     }
 
+    /**
+     * \u8c03\u7528 <code>httpClient.send()</code>\u3001<code>HttpRequest.newBuilder()</code>\u3001<code>URI.create()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @param path \u6d4b\u8bd5\u8bf7\u6c42\u7684\u8d44\u6e90\u8def\u5f84\u6216\u5f85\u8bbf\u95ee\u6587\u4ef6\u8def\u5f84
+     * @return \u63d0\u4f9b\u7ed9\u540e\u7eed\u5951\u7ea6\u65ad\u8a00\u7684 <code>HttpResponse&lt;String&gt;</code> \u7ed3\u679c
+     * @throws Exception \u53d1\u8d77\u6d4b\u8bd5\u8bf7\u6c42\u65f6\u5931\u8d25
+     */
     private HttpResponse<String> put(String path) throws Exception {
         return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).PUT(HttpRequest.BodyPublishers.noBody()).build(),
                 HttpResponse.BodyHandlers.ofString());
     }
 
+    /**
+     * \u901a\u8fc7 <code>httpClient.send()</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+     * @param path \u6d4b\u8bd5\u8bf7\u6c42\u7684\u8d44\u6e90\u8def\u5f84\u6216\u5f85\u8bbf\u95ee\u6587\u4ef6\u8def\u5f84
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).DELETE().build(), HttpResponse.BodyHandlers.ofString())</code>
+     * @throws Exception \u53d1\u8d77\u6d4b\u8bd5\u8bf7\u6c42\u65f6\u5931\u8d25
+     */
     private HttpResponse<String> delete(String path) throws Exception {
         return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).DELETE().build(),
                 HttpResponse.BodyHandlers.ofString());
@@ -150,11 +201,21 @@ class GoodsControllerTest {
 
     // ---------- 1) create ----------
 
+    /**
+     * \u901a\u8fc7 <code>httpClient.send()</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+     * @param path \u6d4b\u8bd5\u8bf7\u6c42\u7684\u8d44\u6e90\u8def\u5f84\u6216\u5f85\u8bbf\u95ee\u6587\u4ef6\u8def\u5f84
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).GET().build(), HttpResponse.BodyHandlers.ofString())</code>
+     * @throws Exception \u53d1\u8d77\u6d4b\u8bd5\u8bf7\u6c42\u65f6\u5931\u8d25
+     */
     private HttpResponse<String> get(String path) throws Exception {
         return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).GET().build(),
                 HttpResponse.BodyHandlers.ofString());
     }
 
+    /**
+     * \u8bf7\u6c42 <code>POST /api/goods</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 201\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void createGoods_shouldReturn201() throws Exception {
         HttpResponse<String> resp = postJson("/api/goods",
@@ -164,6 +225,10 @@ class GoodsControllerTest {
         assertTrue(resp.body().contains("\"status\":\"DRAFT\""));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>dup.statusCode() &gt;= 400</code>\u4e3a\u771f\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void createGoods_duplicateCode_shouldReturn4xxOr5xx() throws Exception {
         postJson("/api/goods", "{\"code\":\"SKU-DUP\",\"name\":\"A\",\"price\":1.00,\"stock\":1}");
@@ -172,6 +237,10 @@ class GoodsControllerTest {
         assertTrue(dup.statusCode() >= 400);
     }
 
+    /**
+     * \u9a8c\u8bc1<code>resp.statusCode() &gt;= 400</code>\u4e3a\u771f\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void createGoods_blankCode_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> resp = postJson("/api/goods",
@@ -179,6 +248,10 @@ class GoodsControllerTest {
         assertTrue(resp.statusCode() >= 400);
     }
 
+    /**
+     * \u9a8c\u8bc1<code>resp.statusCode() &gt;= 400</code>\u4e3a\u771f\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void createGoods_negativePrice_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> resp = postJson("/api/goods",
@@ -188,6 +261,10 @@ class GoodsControllerTest {
 
     // ---------- 2) update ----------
 
+    /**
+     * \u9a8c\u8bc1<code>resp.statusCode() &gt;= 400</code>\u4e3a\u771f\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void createGoods_negativeStock_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> resp = postJson("/api/goods",
@@ -195,6 +272,10 @@ class GoodsControllerTest {
         assertTrue(resp.statusCode() >= 400);
     }
 
+    /**
+     * \u8bf7\u6c42 <code>POST /api/goods</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void updateGoods_shouldChangeNameAndPrice() throws Exception {
         HttpResponse<String> create = postJson("/api/goods",
@@ -208,6 +289,10 @@ class GoodsControllerTest {
         assertTrue(resp.body().contains("\"price\":20"));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>resp.statusCode() &gt;= 400</code>\u4e3a\u771f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void updateGoods_unknownId_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> resp = putJson("/api/goods/999999999",
@@ -220,6 +305,10 @@ class GoodsControllerTest {
     // Javalin 没有内置 enum 转换器，所有命中该路由的请求都会返回 500 (MissingConverterException)。
     // 这是预存在的业务代码 bug（不允许修改业务代码），以下测试断言当前行为。
 
+    /**
+     * \u9a8c\u8bc1<code>resp.statusCode() &gt;= 400</code>\u4e3a\u771f\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void updateGoods_deletedGoods_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> create = postJson("/api/goods",
@@ -231,6 +320,10 @@ class GoodsControllerTest {
         assertTrue(resp.statusCode() >= 400);
     }
 
+    /**
+     * \u9a8c\u8bc1<code>resp.statusCode() == 500</code>\u4e3a\u771f\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void changeStatus_toOnSale_shouldReturn200() throws Exception {
         HttpResponse<String> create = postJson("/api/goods",
@@ -241,6 +334,10 @@ class GoodsControllerTest {
                 "expected MissingConverterException (500) for enum query param, actual=" + resp.statusCode());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>resp.statusCode() &gt;= 400</code>\u4e3a\u771f\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void changeStatus_invalidStatus_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> create = postJson("/api/goods",
@@ -250,6 +347,10 @@ class GoodsControllerTest {
         assertTrue(resp.statusCode() >= 400);
     }
 
+    /**
+     * \u9a8c\u8bc1<code>resp.statusCode() == 500</code>\u4e3a\u771f\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void changeStatus_offSale_shouldReturn200() throws Exception {
         HttpResponse<String> create = postJson("/api/goods",
@@ -263,12 +364,20 @@ class GoodsControllerTest {
 
     // ---------- 4) delete ----------
 
+    /**
+     * \u9a8c\u8bc1<code>resp.statusCode() &gt;= 400</code>\u4e3a\u771f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void changeStatus_unknownId_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> resp = put("/api/goods/999999999/status?status=ON_SALE");
         assertTrue(resp.statusCode() >= 400);
     }
 
+    /**
+     * \u8bf7\u6c42 <code>POST /api/goods</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void deleteGoods_shouldReturn200() throws Exception {
         HttpResponse<String> create = postJson("/api/goods",
@@ -278,6 +387,10 @@ class GoodsControllerTest {
         assertEquals(200, resp.statusCode());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>resp.statusCode() &gt;= 400</code>\u4e3a\u771f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void deleteGoods_unknownId_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> resp = delete("/api/goods/999999999");
@@ -286,6 +399,10 @@ class GoodsControllerTest {
 
     // ---------- 5) getById ----------
 
+    /**
+     * \u9a8c\u8bc1<code>delete("/api/goods/" + id).statusCode()</code> \u7b49\u4e8e <code>200</code>\uff0c<code>goods.path("code").asText()</code> \u7b49\u4e8e <code>"SKU-SOFT"</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void deleteGoods_thenGetByCode_shouldReturnDeletedStatus() throws Exception {
         String id = createFixture("SKU-SOFT", "x", "1.00");
@@ -295,6 +412,10 @@ class GoodsControllerTest {
         assertEquals("DELETED", goods.path("status").asText());
     }
 
+    /**
+     * \u8bf7\u6c42 <code>POST /api/goods</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void getById_shouldReturnGoods() throws Exception {
         HttpResponse<String> create = postJson("/api/goods",
@@ -307,12 +428,20 @@ class GoodsControllerTest {
 
     // ---------- 6) getByCode ----------
 
+    /**
+     * \u9a8c\u8bc1<code>resp.statusCode() &gt;= 400</code>\u4e3a\u771f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void getById_unknownId_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> resp = get("/api/goods/999999999");
         assertTrue(resp.statusCode() >= 400);
     }
 
+    /**
+     * \u9a8c\u8bc1<code>goods.path("id").asText()</code> \u7b49\u4e8e <code>id</code>\uff0c<code>goods.path("code").asText()</code> \u7b49\u4e8e <code>"SKU-BC"</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void getByCode_shouldReturnGoods() throws Exception {
         String id = createFixture("SKU-BC", "x", "1.00");
@@ -321,6 +450,10 @@ class GoodsControllerTest {
         assertEquals("SKU-BC", goods.path("code").asText());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>resp.statusCode()</code> \u7b49\u4e8e <code>400</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void getByCode_missingParam_shouldHandle() throws Exception {
         HttpResponse<String> resp = get("/api/goods/by-code");
@@ -329,12 +462,20 @@ class GoodsControllerTest {
 
     // ---------- 7) page / list / count 充血查询 ----------
 
+    /**
+     * \u9a8c\u8bc1<code>resp.statusCode()</code> \u7b49\u4e8e <code>400</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void getByCode_unknownCode_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> resp = get("/api/goods/by-code?code=missing");
         assertEquals(400, resp.statusCode(), resp.body());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>page.path("current").asInt(-1)</code> \u7b49\u4e8e <code>1</code>\uff0c<code>page.path("size").asInt(-1)</code> \u7b49\u4e8e <code>10</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void pageQuery_defaultPage_shouldReturnOk() throws Exception {
         createFixture("SKU-P0", "FirstPage", "1.00");
@@ -347,6 +488,10 @@ class GoodsControllerTest {
         assertEquals("SKU-P0", rows.path(0).path("code").asText());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>delete("/api/goods/" + deletedId).statusCode()</code> \u7b49\u4e8e <code>200</code>\uff0c<code>rows.size()</code> \u7b49\u4e8e <code>1</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void pageQuery_byStatus_shouldReturnOk() throws Exception {
         createFixture("SKU-PS", "PageStatus", "1.00");
@@ -359,6 +504,10 @@ class GoodsControllerTest {
         assertEquals("DRAFT", rows.path(0).path("status").asText());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>rows.size()</code> \u7b49\u4e8e <code>1</code>\uff0c<code>rows.path(0).path("code").asText()</code> \u7b49\u4e8e <code>"SKU-PR"</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void pageQuery_byPriceRange_shouldReturnOk() throws Exception {
         createFixture("SKU-PR", "PagePrice", "50.00");
@@ -369,6 +518,10 @@ class GoodsControllerTest {
         assertEquals("SKU-PR", rows.path(0).path("code").asText());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>rows.size()</code> \u7b49\u4e8e <code>1</code>\uff0c<code>rows.path(0).path("code").asText()</code> \u7b49\u4e8e <code>"SKU-NL"</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void pageQuery_byNameLike_shouldReturnOk() throws Exception {
         createFixture("SKU-NL", "ProCameraX", "1.00");
@@ -378,6 +531,10 @@ class GoodsControllerTest {
         assertEquals("SKU-NL", rows.path(0).path("code").asText());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>rows.size()</code> \u7b49\u4e8e <code>1</code>\uff0c<code>rows.path(0).path("code").asText()</code> \u7b49\u4e8e <code>"SKU-EX"</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void pageQuery_byCodeExact_shouldReturnOk() throws Exception {
         createFixture("SKU-EX", "Exact", "1.00");
@@ -387,6 +544,10 @@ class GoodsControllerTest {
         assertEquals("SKU-EX", rows.path(0).path("code").asText());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>goods.isArray()</code>\u4e3a\u771f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void listQuery_shouldReturnOk() throws Exception {
         createFixture("SKU-LS", "List", "1.00");
@@ -396,6 +557,10 @@ class GoodsControllerTest {
                 .anyMatch(goodsItem -> "SKU-LS".equals(goodsItem.path("code").asText())));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>delete("/api/goods/" + deletedId).statusCode()</code> \u7b49\u4e8e <code>200</code>\uff0c<code>goods.size()</code> \u7b49\u4e8e <code>1</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void listQuery_byStatus_shouldReturnOk() throws Exception {
         createFixture("SKU-LS-DRAFT", "ListStatus", "1.00");
@@ -407,6 +572,10 @@ class GoodsControllerTest {
         assertEquals("SKU-LS-DRAFT", goods.path(0).path("code").asText());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>count &gt;= 0</code>\u4e3a\u771f\uff0c<code>queryData(get(path)).asLong(-1)</code> \u7b49\u4e8e <code>count + 1</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void countQuery_shouldReturnOk() throws Exception {
         String path = "/api/goods/count";
@@ -418,6 +587,10 @@ class GoodsControllerTest {
 
     // ---------- 综合 ----------
 
+    /**
+     * \u9a8c\u8bc1<code>delete("/api/goods/" + deletedId).statusCode()</code> \u7b49\u4e8e <code>200</code>\uff0c<code>queryData(get("/api/goods/count?nameLike=CountStatus")).asLong(-1)</code> \u7b49\u4e8e <code>2</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void countQuery_byStatus_shouldReturnOk() throws Exception {
         createFixture("SKU-CT-DRAFT", "CountStatus", "1.00");
@@ -427,6 +600,10 @@ class GoodsControllerTest {
         assertEquals(1, queryData(get("/api/goods/count?nameLike=CountStatus&status=DRAFT")).asLong(-1));
     }
 
+    /**
+     * \u8bf7\u6c42 <code>POST /api/goods</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void fullCrudLifecycle() throws Exception {
         HttpResponse<String> create = postJson("/api/goods",
@@ -458,6 +635,10 @@ class GoodsControllerTest {
         assertEquals("DELETED", goods.path("status").asText());
     }
 
+    /**
+     * \u8bf7\u6c42 <code>POST /api/goods</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 201\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void multipleCreates_allShouldSucceed() throws Exception {
         for (int i = 0; i < 3; i++) {
@@ -467,6 +648,10 @@ class GoodsControllerTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>firstPage.path("current").asInt(-1)</code> \u7b49\u4e8e <code>1</code>\uff0c<code>thirdPage.path("current").asInt(-1)</code> \u7b49\u4e8e <code>3</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void pageQuery_withPagination_shouldReturnOk() throws Exception {
         for (int i = 0; i < 15; i++) {
@@ -487,6 +672,10 @@ class GoodsControllerTest {
         assertEquals("SKU-PG10", thirdRows.path(0).path("code").asText());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>resp.statusCode() &gt;= 400</code>\u4e3a\u771f\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void updateGoods_blankName_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> create = postJson("/api/goods",
@@ -497,6 +686,10 @@ class GoodsControllerTest {
         assertTrue(resp.statusCode() >= 400);
     }
 
+    /**
+     * \u8bf7\u6c42 <code>POST /api/goods</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 201\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void createGoods_zeroStock_shouldReturn201() throws Exception {
         HttpResponse<String> resp = postJson("/api/goods",
@@ -504,6 +697,10 @@ class GoodsControllerTest {
         assertEquals(201, resp.statusCode());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>rows.size()</code> \u7b49\u4e8e <code>2</code>\uff0c<code>rows.path(0).path("code").asText()</code> \u7b49\u4e8e <code>"SKU-ORDER-HIGH"</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void pageQuery_withOrderBys_shouldReturnOk() throws Exception {
         createFixture("SKU-ORDER-LOW", "PageOrder", "1.00");
@@ -514,6 +711,10 @@ class GoodsControllerTest {
         assertEquals("SKU-ORDER-LOW", rows.path(1).path("code").asText());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>page.statusCode()</code> \u7b49\u4e8e <code>400</code>\uff0c<code>list.statusCode()</code> \u7b49\u4e8e <code>400</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void queryInvalidNumber_shouldReturnBadRequest() throws Exception {
         HttpResponse<String> page = get("/api/goods/page?current=bad");
@@ -524,6 +725,10 @@ class GoodsControllerTest {
         assertEquals(400, count.statusCode(), count.body());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>resp.statusCode()</code> \u7b49\u4e8e <code>400</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void pageQuery_invalidStatusEnum_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> resp = get("/api/goods/page?status=BAD&current=1&size=10");

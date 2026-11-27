@@ -27,6 +27,7 @@ import java.util.Objects;
  */
 public class Ddd4jSqlObservationSink implements SqlObservationSink, org.apache.ibatis.enhance.spi.SqlObservationSink {
 
+    /** {@inheritDoc} */
     @Override
     public void accept(org.apache.ibatis.enhance.spi.SqlObservation observation) {
         if (Objects.nonNull(observation)) {
@@ -35,6 +36,7 @@ public class Ddd4jSqlObservationSink implements SqlObservationSink, org.apache.i
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void accept(SqlObservation observation) {
         if (Objects.isNull(observation)) {

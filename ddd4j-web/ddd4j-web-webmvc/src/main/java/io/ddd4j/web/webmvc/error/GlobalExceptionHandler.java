@@ -81,10 +81,12 @@ import java.util.*;
 @Slf4j
 public class GlobalExceptionHandler {
 
+    /** \u89e3\u6790 Spring MVC \u9519\u8bef\u6d88\u606f\u4f7f\u7528\u7684\u56fd\u9645\u5316\u8d44\u6e90\u3002 */
     @Getter
     @Autowired
     private NestedMessageSource messageSource;
 
+    /** \u4e3a\u670d\u52a1\u7aef\u5f02\u5e38\u54cd\u5e94\u9009\u62e9\u8bed\u8a00\u7684\u914d\u7f6e\u3002 */
     @Autowired
     private ServerI18nProperties serverI18NProperties;
 
@@ -383,6 +385,11 @@ public class GlobalExceptionHandler {
     }
 
 
+    /**
+     * \u5904\u7406 WebFlux \u7ed1\u5b9a\u6821\u9a8c\u5f02\u5e38\u3002
+     * @param ex \u7ed1\u5b9a\u6821\u9a8c\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
+     */
     @ExceptionHandler(WebExchangeBindException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public R<?> webExchangeBindException(WebExchangeBindException ex) {
@@ -1022,11 +1029,13 @@ public class GlobalExceptionHandler {
     /*---------------------默认全局异常----------------------------*/
 
     /**
-     * 全局异常捕捉处理
-     * 500 (Internal Server Error)
-     * @param ex 异常对象
-     * @return 默认的ApiRestResponse
-     * @throws java.lang.Exception 执行对应操作失败时抛出
+     * \u5168\u5c40\u5f02\u5e38\u6355\u6349\u5904\u7406
+     *  500 (Internal Server Error)
+     * @param ex \u5f02\u5e38\u5bf9\u8c61
+     * @return \u9ed8\u8ba4\u7684ApiRestResponse
+     * @throws java.lang.Exception \u6267\u884c\u5bf9\u5e94\u64cd\u4f5c\u5931\u8d25\u65f6\u629b\u51fa
+     *
+     * @throws Exception \u5f02\u5e38\u5904\u7406\u5931\u8d25\u65f6\u629b\u51fa
      */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.OK)
@@ -1072,6 +1081,10 @@ public class GlobalExceptionHandler {
     }
 
 
+    /**
+     * \u8bb0\u5f55\u8bf7\u6c42\u4e0a\u4e0b\u6587\u548c\u5f02\u5e38\u8be6\u60c5\u3002
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     */
     protected void logException(Exception ex) {
         HttpServletRequest request = WebUtils.getHttpServletRequest();
         if (Objects.nonNull(request)) {

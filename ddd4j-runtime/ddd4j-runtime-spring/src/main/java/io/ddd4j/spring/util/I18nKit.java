@@ -40,6 +40,7 @@ import java.util.ResourceBundle;
 public class I18nKit {
 
     // 国际化文件前缀
+    /** \u52a0\u8f7d\u56fd\u9645\u5316\u8d44\u6e90\u6587\u4ef6\u65f6\u4f7f\u7528\u7684\u7edf\u4e00\u540d\u79f0\u524d\u7f00\u3002 */
     private final String I18N_FILE_PREFIX = "i18n/messages";
 
     /**
@@ -88,6 +89,12 @@ public class I18nKit {
         ThreadContext.set(ContextConstants.LOCALE, locale);
     }
 
+    /**
+     * \u5c06\u53c2\u6570\u5e94\u7528\u5230\u672c\u5730\u5316\u6d88\u606f\u6a21\u677f\u3002
+     * @param template \u5e26\u5360\u4f4d\u7b26\u7684\u6d88\u606f\u6a21\u677f
+     * @param args \u4f9d\u5e8f\u4ee3\u5165\u6d88\u606f\u6a21\u677f\u7684\u53c2\u6570\u503c
+     * @return \u66ff\u6362\u5360\u4f4d\u7b26\u540e\u7684\u6d88\u606f\u6587\u672c
+     */
     private String format(String template, Object... args) {
         if (Objects.isNull(template) || !org.springframework.util.StringUtils.hasLength(template) || Objects.isNull(args) || args.length == 0) {
             return template;

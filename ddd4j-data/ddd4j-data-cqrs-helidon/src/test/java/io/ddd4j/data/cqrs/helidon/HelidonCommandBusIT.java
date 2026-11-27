@@ -65,6 +65,7 @@ class HelidonCommandBusIT {
         return HelidonCommandBus.discover(new CommandRegistry());
     }
 
+    /** 验证<code>result.isSuccess()</code>为真，<code>result.data()</code> 包含 <code>SampleCommandHandler.HANDLED</code>。 */
     @Test
     void execute_已注册命令_应路由到真实Handler并返回成功() {
         HelidonCommandBus bus = assemble();
@@ -75,6 +76,7 @@ class HelidonCommandBusIT {
         assertThat(result.data()).contains(SampleCommandHandler.HANDLED);
     }
 
+    /** 验证<code>exception</code>非空，<code>exception.getMessage()</code> 包含 <code>SampleCommand.class.getName()</code>。 */
     @Test
     void 装配期冲突_整批拒绝应自构造器传播() {
         // 预注册多类型占位执行器（SampleCommand + CompanionCommand），再以真实
@@ -91,6 +93,7 @@ class HelidonCommandBusIT {
         assertThat(exception.getMessage()).contains(SampleCommand.class.getName());
     }
 
+    /** 验证<code>exception</code>非空，<code>exception.getMessage()</code> 包含 <code>UnknownCommand.class.getName()</code>。 */
     @Test
     void execute_未注册命令_应抛ISE与ddd4j_core一致() {
         HelidonCommandBus bus = assemble();
@@ -118,6 +121,11 @@ class HelidonCommandBusIT {
      */
     static class OverlappingMultiTypeHandler implements CommandExecutor<Command> {
 
+        /**
+         * 执行 <code>supported Commands</code>，调用 <code>Collections.unmodifiableSet</code>、<code>Arrays.asList</code>。
+         *
+         * @return 当前操作得到的 <code>Set&lt;Class&lt;? extends Command&gt;&gt;</code> 结果
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return java.util.Collections.unmodifiableSet(new java.util.LinkedHashSet<>(

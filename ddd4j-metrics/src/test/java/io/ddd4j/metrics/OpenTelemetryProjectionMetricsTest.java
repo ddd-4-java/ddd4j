@@ -41,11 +41,16 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @DisplayName("OpenTelemetryProjectionMetrics")
 class OpenTelemetryProjectionMetricsTest {
 
+    /** \u8bfb\u53d6\u6d4b\u8bd5\u671f\u95f4\u4ea7\u751f\u7684\u6307\u6807\u5feb\u7167\u3002 */
     private InMemoryMetricReader metricReader;
+    /** \u7ed1\u5b9a\u5185\u5b58\u6307\u6807\u8bfb\u53d6\u5668\u7684 OpenTelemetry SDK \u63d0\u4f9b\u5668\u3002 */
     private SdkMeterProvider meterProvider;
+    /** \u4f9b\u88ab\u6d4b\u6295\u5f71\u6307\u6807\u9002\u914d\u5668\u6ce8\u518c\u6307\u6807\u7684 Meter\u3002 */
     private Meter meter;
+    /** \u5f53\u524d\u7528\u4f8b\u4f7f\u7528\u7684 OpenTelemetry \u6295\u5f71\u6307\u6807\u9002\u914d\u5668\u3002 */
     private OpenTelemetryProjectionMetrics metrics;
 
+    /** \u521b\u5efa\u9694\u79bb\u7684 Meter \u63d0\u4f9b\u5668\u3001\u6307\u6807\u8bfb\u53d6\u5668\u548c\u6295\u5f71\u6307\u6807\u9002\u914d\u5668\u3002 */
     @BeforeEach
     void setUp() {
         metricReader = InMemoryMetricReader.create();
@@ -56,6 +61,7 @@ class OpenTelemetryProjectionMetricsTest {
         metrics = new OpenTelemetryProjectionMetrics(meter);
     }
 
+    /** \u6784\u9020\uff1anull Meter \u5e94\u629b NPE\u3002 */
     @Test
     @DisplayName("构造：null Meter 应抛 NPE")
     void constructor_nullMeter_shouldThrowNPE() {
@@ -63,6 +69,7 @@ class OpenTelemetryProjectionMetricsTest {
                 .isInstanceOf(NullPointerException.class);
     }
 
+    /** \u4fbf\u6377\u6784\u9020\uff1anull OpenTelemetry \u5e94\u629b NPE\u3002 */
     @Test
     @DisplayName("便捷构造：null OpenTelemetry 应抛 NPE")
     void convenienceConstructor_nullOpenTelemetry_shouldThrowNPE() {
@@ -70,6 +77,7 @@ class OpenTelemetryProjectionMetricsTest {
                 .isInstanceOf(NullPointerException.class);
     }
 
+    /** \u4fbf\u6377\u6784\u9020\uff1anull instrumentationScope \u5e94\u629b NPE\u3002 */
     @Test
     @DisplayName("便捷构造：null instrumentationScope 应抛 NPE")
     void convenienceConstructor_nullScope_shouldThrowNPE() {
@@ -78,7 +86,10 @@ class OpenTelemetryProjectionMetricsTest {
     }
 
     /**
-     * 按指标名称收集 MetricData。
+     * \u6309\u6307\u6807\u540d\u79f0\u6536\u96c6 MetricData\u3002
+     *
+     * @param metricName \u8981\u7b5b\u9009\u7684\u6307\u6807\u540d\u79f0
+     * @return \u540c\u540d\u6307\u6807\u7684\u91c7\u96c6\u7ed3\u679c
      */
     private List<MetricData> collectMetricsByName(String metricName) {
         return metricReader.collectAllMetrics().stream()
@@ -86,10 +97,12 @@ class OpenTelemetryProjectionMetricsTest {
                 .collect(Collectors.toList());
     }
 
+    /** \u9a8c\u8bc1\u6295\u5f71\u542f\u52a8\u8ba1\u6570\u3001\u91cd\u590d\u8c03\u7528\u7d2f\u52a0\u548c\u4e8b\u4ef6\u6d41\u95f4\u9694\u79bb\u3002 */
     @Nested
     @DisplayName("onRunStarted")
     class OnRunStartedTests {
 
+        /** \u5e94\u8bb0\u5f55\u8fd0\u884c\u6b21\u6570\u8ba1\u6570\u5668\u3002 */
         @Test
         @DisplayName("应记录运行次数计数器")
         void shouldRecordRunCounter() {
@@ -106,6 +119,7 @@ class OpenTelemetryProjectionMetricsTest {
                     });
         }
 
+        /** \u591a\u6b21\u8c03\u7528\u5e94\u7d2f\u52a0\u3002 */
         @Test
         @DisplayName("多次调用应累加")
         void multipleCalls_shouldAccumulate() {
@@ -118,6 +132,7 @@ class OpenTelemetryProjectionMetricsTest {
                     .satisfies(point -> assertThat(point.getValue()).isEqualTo(2));
         }
 
+        /** \u4e0d\u540c streamId \u5e94\u72ec\u7acb\u8ba1\u6570\u3002 */
         @Test
         @DisplayName("不同 streamId 应独立计数")
         void differentStreamIds_shouldBeIndependent() {
@@ -132,10 +147,12 @@ class OpenTelemetryProjectionMetricsTest {
         }
     }
 
+    /** \u9a8c\u8bc1\u6295\u5f71\u5b8c\u6210\u65f6\u7684\u4e8b\u4ef6\u8ba1\u6570\u4e0e\u5904\u7406\u8017\u65f6\u3002 */
     @Nested
     @DisplayName("onRunCompleted")
     class OnRunCompletedTests {
 
+        /** \u5e94\u8bb0\u5f55\u4e8b\u4ef6\u8ba1\u6570\u5668\u548c\u8fd0\u884c\u8017\u65f6\u3002 */
         @Test
         @DisplayName("应记录事件计数器和运行耗时")
         void shouldRecordEventCounterAndDuration() {
@@ -162,6 +179,7 @@ class OpenTelemetryProjectionMetricsTest {
                     });
         }
 
+        /** \u591a\u6b21\u8c03\u7528\u5e94\u7d2f\u52a0\u3002 */
         @Test
         @DisplayName("多次调用应累加")
         void multipleCalls_shouldAccumulate() {
@@ -180,10 +198,12 @@ class OpenTelemetryProjectionMetricsTest {
         }
     }
 
+    /** \u9a8c\u8bc1\u6295\u5f71\u9519\u8bef\u8ba1\u6570\u4ee5\u53ca\u591a\u6b21\u5931\u8d25\u7684\u7d2f\u8ba1\u7ed3\u679c\u3002 */
     @Nested
     @DisplayName("onRunFailed")
     class OnRunFailedTests {
 
+        /** \u5e94\u8bb0\u5f55\u9519\u8bef\u8ba1\u6570\u5668\u3002 */
         @Test
         @DisplayName("应记录错误计数器")
         void shouldRecordErrorCounter() {
@@ -199,6 +219,7 @@ class OpenTelemetryProjectionMetricsTest {
                     });
         }
 
+        /** \u591a\u6b21\u5931\u8d25\u5e94\u7d2f\u52a0\u3002 */
         @Test
         @DisplayName("多次失败应累加")
         void multipleFailures_shouldAccumulate() {

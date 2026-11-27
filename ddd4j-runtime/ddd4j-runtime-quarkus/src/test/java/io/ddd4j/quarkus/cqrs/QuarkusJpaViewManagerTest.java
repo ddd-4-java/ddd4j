@@ -42,14 +42,20 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class QuarkusJpaViewManagerTest {
 
+    /** \u7528\u4e8e\u9694\u79bb <code>Instance&lt;ProjectionPositionRepository&gt;</code> \u8c03\u7528\u5e76\u8bb0\u5f55\u4ea4\u4e92\u7684\u6d4b\u8bd5\u66ff\u8eab\u3002 */
     @Mock
     private Instance<ProjectionPositionRepository> positionRepositories;
 
+    /** \u7528\u4e8e\u9694\u79bb <code>ProjectionPositionRepository</code> \u8c03\u7528\u5e76\u8bb0\u5f55\u4ea4\u4e92\u7684\u6d4b\u8bd5\u66ff\u8eab\u3002 */
     @Mock
     private ProjectionPositionRepository positionRepository;
 
     /**
-     * 通过反射设置 CDI Instance 字段。
+     * \u901a\u8fc7\u53cd\u5c04\u8bbe\u7f6e CDI Instance \u5b57\u6bb5\u3002
+     *
+     * @param repos \u6d4b\u8bd5\u4f7f\u7528\u7684\u6295\u5f71\u4f4d\u70b9\u4ed3\u50a8\u96c6\u5408
+     * @return \u4f7f\u7528\u6d4b\u8bd5\u4ed3\u50a8\u521b\u5efa\u7684 Quarkus \u89c6\u56fe\u7ba1\u7406\u5668
+     * @throws Exception \u65e0\u6cd5\u53cd\u5c04\u6ce8\u5165\u4ed3\u50a8
      */
     private QuarkusJpaViewManager createManager(Instance<ProjectionPositionRepository> repos) throws Exception {
         QuarkusJpaViewManager manager = new QuarkusJpaViewManager();
@@ -59,10 +65,15 @@ class QuarkusJpaViewManagerTest {
         return manager;
     }
 
+    /** getProjectionStatus \u5404\u5206\u652f\u884c\u4e3a\u7684\u6821\u9a8c\u7528\u4f8b\u7ec4\u3002 */
     @Nested
     @DisplayName("getProjectionStatus")
     class GetProjectionStatusTests {
 
+        /**
+         * \u9a8c\u8bc1<code>status.streamId()</code> \u7b49\u4e8e <code>"orders"</code>\uff0c<code>status.lastError()</code>\u4e3a\u7a7a\u3002
+         * @throws Exception \u51c6\u5907\u6216\u91ca\u653e\u88ab\u6d4b\u8fd0\u884c\u8d44\u6e90\u65f6\u5931\u8d25
+         */
         @Test
         @DisplayName("CDI 仓储不可用时应返回基线状态")
         void whenUnsatisfied_shouldReturnBaseline() throws Exception {
@@ -80,6 +91,10 @@ class QuarkusJpaViewManagerTest {
             assertThat(status.lastError()).isNull();
         }
 
+        /**
+         * \u9a8c\u8bc1<code>status.streamId()</code> \u7b49\u4e8e <code>"orders"</code>\uff0c<code>status.running()</code>\u4e3a\u771f\u3002
+         * @throws Exception \u51c6\u5907\u6216\u91ca\u653e\u88ab\u6d4b\u8fd0\u884c\u8d44\u6e90\u65f6\u5931\u8d25
+         */
         @Test
         @DisplayName("CDI 仓储可用且位置存在时应返回真实位置")
         void whenAvailableAndPositionExists_shouldReturnRealPosition() throws Exception {
@@ -98,6 +113,10 @@ class QuarkusJpaViewManagerTest {
             assertThat(status.running()).isTrue();
         }
 
+        /**
+         * \u9a8c\u8bc1<code>status.streamId()</code> \u7b49\u4e8e <code>"unknown"</code>\uff0c<code>status.nextEventNumber()</code> \u7b49\u4e8e <code>0L</code>\u3002
+         * @throws Exception \u51c6\u5907\u6216\u91ca\u653e\u88ab\u6d4b\u8fd0\u884c\u8d44\u6e90\u65f6\u5931\u8d25
+         */
         @Test
         @DisplayName("CDI 仓储可用但位置不存在时应返回 nextEventNumber=0")
         void whenAvailableButNoPosition_shouldReturnZeroPosition() throws Exception {
@@ -115,6 +134,10 @@ class QuarkusJpaViewManagerTest {
             assertThat(status.nextEventNumber()).isEqualTo(0L);
         }
 
+        /**
+         * \u9a8c\u8bc1<code>status.running()</code>\u4e3a\u5047\u3002
+         * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+         */
         @Test
         @DisplayName("管理器停止时 running 应为 false")
         void whenStopped_runningShouldBeFalse() throws Exception {

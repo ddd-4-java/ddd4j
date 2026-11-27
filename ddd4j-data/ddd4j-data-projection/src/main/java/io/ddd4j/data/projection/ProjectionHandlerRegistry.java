@@ -58,6 +58,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ProjectionHandlerRegistry {
 
+    /** \u6309\u6295\u5f71\u540d\u67e5\u627e\u5df2\u767b\u8bb0\u7684\u5904\u7406\u5668\u3002 */
     private final Map<Class<?>, ProjectionHandler> handlers = new ConcurrentHashMap<>();
 
     /**

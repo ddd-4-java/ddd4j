@@ -56,9 +56,15 @@ public class ProjectionPositionEntity {
     @Column(name = "next_event_number", nullable = false)
     private long nextEventNumber;
 
+    /** \u521b\u5efa\u4f9b JPA \u52a0\u8f7d\u7684\u7a7a\u5b9e\u4f53\u3002 */
     public ProjectionPositionEntity() {
     }
 
+    /**
+     * \u521b\u5efa\u6295\u5f71\u6d88\u8d39\u4f4d\u7f6e\u5b9e\u4f53\u3002
+     * @param streamId \u6295\u5f71\u6d41\u6807\u8bc6
+     * @param nextEventNumber \u4e0b\u4e00\u4e2a\u5f85\u5904\u7406\u4e8b\u4ef6\u53f7
+     */
     public ProjectionPositionEntity(String streamId, long nextEventNumber) {
         this.streamId = streamId;
         this.nextEventNumber = nextEventNumber;
@@ -74,18 +80,22 @@ public class ProjectionPositionEntity {
         return new ProjectionPositionEntity(streamId, 0L);
     }
 
+    /** @return \u6295\u5f71\u6d41\u6807\u8bc6 */
     public String getStreamId() {
         return streamId;
     }
 
+    /** @param streamId \u6295\u5f71\u6d41\u6807\u8bc6 */
     public void setStreamId(String streamId) {
         this.streamId = streamId;
     }
 
+    /** @return \u4e0b\u4e00\u4e2a\u5f85\u5904\u7406\u4e8b\u4ef6\u53f7 */
     public long getNextEventNumber() {
         return nextEventNumber;
     }
 
+    /** @param nextEventNumber \u4e0b\u4e00\u4e2a\u5f85\u5904\u7406\u4e8b\u4ef6\u53f7 */
     public void setNextEventNumber(long nextEventNumber) {
         this.nextEventNumber = nextEventNumber;
     }

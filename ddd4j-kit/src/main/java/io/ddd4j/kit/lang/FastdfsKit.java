@@ -26,6 +26,7 @@ import java.security.MessageDigest;
  */
 public class FastdfsKit {
 
+    /** FastDFS \u5730\u5740\u7f16\u7801\u4f7f\u7528\u7684\u5b57\u7b26\u96c6\u3002 */
     public static String g_charset = "ISO8859-1";
 
     /**

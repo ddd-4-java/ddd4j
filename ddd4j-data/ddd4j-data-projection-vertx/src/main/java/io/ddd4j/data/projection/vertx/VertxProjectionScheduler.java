@@ -56,6 +56,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class VertxProjectionScheduler implements ViewScheduler {
 
+    /** 执行延迟投影任务的调度线程池。 */
     private final java.util.concurrent.ScheduledExecutorService executor =
             java.util.concurrent.Executors.newScheduledThreadPool(
                     Runtime.getRuntime().availableProcessors(),
@@ -65,6 +66,7 @@ public class VertxProjectionScheduler implements ViewScheduler {
                         return t;
                     });
 
+    /** 初始化 Vert.x 投影调度器使用的执行环境。 */
     private VertxProjectionScheduler() {
         // 私有构造（静态工厂收口装配）
     }
@@ -100,6 +102,7 @@ public class VertxProjectionScheduler implements ViewScheduler {
         executor.shutdownNow();
     }
 
+    /** {@inheritDoc} */
     @Override
     public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
         Objects.requireNonNull(viewName, "viewName must not be null");
@@ -116,12 +119,24 @@ public class VertxProjectionScheduler implements ViewScheduler {
      */
     private static class ReschedulingHandle implements ViewScheduleHandle, Runnable {
 
+        /** 执行延迟投影任务的调度线程池。 */
         private final java.util.concurrent.ScheduledExecutorService executor;
+        /** 控制投影任务执行时点的 Cron 表达式。 */
         private final CronExpression cron;
+        /** 到达计划时点后执行的投影任务。 */
         private final Runnable task;
+        /** 下一次投影任务对应的定时执行句柄。 */
         private volatile java.util.concurrent.ScheduledFuture<?> future;
+        /** 当前任务是否已被取消。 */
         private final AtomicBoolean cancelled = new AtomicBoolean(false);
 
+        /**
+         * 保留执行器、Cron 规则以及每次触发时需要运行的任务。
+         *
+         * @param executor 执行延迟投影任务的线程池
+         * @param cron 控制任务触发时刻的 Cron 表达式
+         * @param task 计划到期时调用的投影任务
+         */
         ReschedulingHandle(java.util.concurrent.ScheduledExecutorService executor,
                            CronExpression cron, Runnable task) {
             this.executor = executor;
@@ -129,6 +144,7 @@ public class VertxProjectionScheduler implements ViewScheduler {
             this.task = task;
         }
 
+        /** 在句柄仍有效时计算下一触发时点并向线程池提交延迟任务。 */
         void scheduleNext() {
             if (cancelled.get()) {
                 return;
@@ -145,6 +161,7 @@ public class VertxProjectionScheduler implements ViewScheduler {
             future = executor.schedule(this, delayMillis, java.util.concurrent.TimeUnit.MILLISECONDS);
         }
 
+        /** 执行一次投影任务，并在任务完成后安排下一触发时点。 */
         @Override
         public void run() {
             if (cancelled.get()) {
@@ -157,6 +174,7 @@ public class VertxProjectionScheduler implements ViewScheduler {
             }
         }
 
+        /** 标记句柄取消并撤销待执行的任务。 */
         @Override
         public void cancel() {
             cancelled.set(true);
@@ -166,6 +184,11 @@ public class VertxProjectionScheduler implements ViewScheduler {
             }
         }
 
+        /**
+         * 检查句柄是否仍有待执行的定时任务。
+         *
+         * @return 是否存在尚未完成且未取消的任务
+         */
         @Override
         public boolean isActive() {
             if (cancelled.get()) {
@@ -187,13 +210,29 @@ public class VertxProjectionScheduler implements ViewScheduler {
      */
     static class CronExpression {
 
+        /** Cron 秒字段允许的取值。 */
         private final int[] seconds;
+        /** Cron 分字段允许的取值。 */
         private final int[] minutes;
+        /** Cron 小时字段允许的取值。 */
         private final int[] hours;
+        /** Cron 月内日期字段允许的取值。 */
         private final int[] daysOfMonth;
+        /** Cron 月字段允许的取值。 */
         private final int[] months;
+        /** Cron 星期字段允许的取值。 */
         private final int[] daysOfWeek;
 
+        /**
+         * 以各 Cron 字段允许的取值集合构造表达式。
+         *
+         * @param seconds Cron 秒字段允许的取值
+         * @param minutes Cron 分字段允许的取值
+         * @param hours Cron 小时字段允许的取值
+         * @param daysOfMonth Cron 月内日期字段允许的取值
+         * @param months Cron 月字段允许的取值
+         * @param daysOfWeek Cron 星期字段允许的取值
+         */
         private CronExpression(int[] seconds, int[] minutes, int[] hours,
                                int[] daysOfMonth, int[] months, int[] daysOfWeek) {
             this.seconds = seconds;
@@ -204,6 +243,12 @@ public class VertxProjectionScheduler implements ViewScheduler {
             this.daysOfWeek = daysOfWeek;
         }
 
+        /**
+         * 解析按秒、分、时、日、月、星期排列的六段 Cron 表达式。
+         *
+         * @param expr 待解析的六字段 Cron 表达式文本
+         * @return 已按六个字段解析的 Cron 表达式
+         */
         static CronExpression parse(String expr) {
             String[] parts = expr.trim().split("\\s+");
             if (parts.length != 6) {
@@ -219,6 +264,11 @@ public class VertxProjectionScheduler implements ViewScheduler {
             );
         }
 
+        /**
+         * \u4fdd\u6301\u672c\u5730\u5899\u4e0a\u65f6\u95f4\u548c\u539f\u4e00\u767e\u4e07\u79d2\u641c\u7d22\u7a97\u53e3\u3002
+         * @param from \u5f53\u524d\u672c\u5730\u65f6\u95f4
+         * @return \u4e0b\u4e00\u65f6\u95f4\uff1b\u7a97\u53e3\u5185\u65e0\u5339\u914d\u8fd4\u56de null
+         */
         LocalDateTime next(LocalDateTime from) {
             LocalDateTime candidate = from.plusSeconds(1).withNano(0);
             for (int i = 0; i < 1_000_000; i++) {
@@ -230,6 +280,12 @@ public class VertxProjectionScheduler implements ViewScheduler {
             return null;
         }
 
+        /**
+         * 检查日期时间是否符合当前 Cron 表达式。
+         *
+         * @param dt 传入此操作的 <code>LocalDateTime</code> 类型 <code>dt</code>
+         * @return 当前时间是否满足全部 Cron 条件
+         */
         private boolean matches(LocalDateTime dt) {
             return contains(seconds, dt.getSecond())
                     && contains(minutes, dt.getMinute())
@@ -239,11 +295,24 @@ public class VertxProjectionScheduler implements ViewScheduler {
                     && matchesDayOfWeek(dt);
         }
 
+        /**
+         * 按 Cron 星期编号检查给定时间，兼容星期日的两种表示。
+         *
+         * @param dt 传入此操作的 <code>LocalDateTime</code> 类型 <code>dt</code>
+         * @return 当前时间是否符合星期字段
+         */
         private boolean matchesDayOfWeek(LocalDateTime dt) {
             int dow = dt.getDayOfWeek().getValue() % 7; // Monday=1 -> 1, Sunday=7 -> 0
             return contains(daysOfWeek, dow) || contains(daysOfWeek, dt.getDayOfWeek().getValue());
         }
 
+        /**
+         * 查找指定数值是否属于当前 Cron 字段允许的集合。
+         *
+         * @param values 查找指定值时使用的候选集合
+         * @param v 待检查是否存在的候选值
+         * @return 给定值是否在候选集合中
+         */
         private static boolean contains(int[] values, int v) {
             for (int val : values) {
                 if (val == v) {
@@ -253,6 +322,14 @@ public class VertxProjectionScheduler implements ViewScheduler {
             return false;
         }
 
+        /**
+         * 展开 Cron 字段的通配符、列表、区间和步长，校验数值边界。
+         *
+         * @param field 当前待展开的 Cron 字段
+         * @param min 此字段允许的最小数值
+         * @param max 此字段允许的最大数值
+         * @return 此字段允许的数值集合
+         */
         private static int[] parseField(String field, int min, int max) {
             if ("*".equals(field)) {
                 int[] result = new int[max - min + 1];

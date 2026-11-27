@@ -31,9 +31,12 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class I18nKit {
 
+    /** \u4e3a\u5f53\u524d\u8c03\u7528\u63d0\u4f9b\u533a\u57df\u8bed\u8a00\u914d\u7f6e\u7684\u6ce8\u518c\u9879\u3002 */
     private static final Map<String, I18nProvider> LOCALE_PROVIDERS = new ConcurrentHashMap<>();
+    /** \u5f53\u524d\u4f7f\u7528\u7684\u56fd\u9645\u5316\u6d88\u606f\u63d0\u4f9b\u5668\u3002 */
     private static volatile I18nProvider provider = I18nProvider.DEFAULT;
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>I18nKit</code> \u5b9e\u4f8b\u3002 */
     private I18nKit() {
     }
 

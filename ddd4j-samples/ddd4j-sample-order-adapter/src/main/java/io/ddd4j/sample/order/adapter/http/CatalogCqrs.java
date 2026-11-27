@@ -13,9 +13,13 @@ import io.ddd4j.sample.order.client.command.ChangeTradeOrderCmd;
 
 /** 写入走框架命令总线。订单查询读取可从四表重建的独立读模型。 */
 public final class CatalogCqrs implements CatalogEndpoints {
+    /** \u5171\u7528\u7684\u5546\u54c1\u4ea4\u6613 HTTP \u64cd\u4f5c\u3002 */
     private final CatalogApi api;
+    /** CQRS \u793a\u4f8b\u7531\u8fd0\u884c\u6846\u67b6\u88c5\u914d\u7684\u547d\u4ee4\u603b\u7ebf\u3002 */
     private final CommandBus commands;
+    /** \u4ece\u5df2\u63d0\u4ea4\u8ba2\u5355\u8bfb\u53d6\u6570\u636e\u7684\u6295\u5f71\u89c6\u56fe\u3002 */
     private final CatalogOrderView view;
+    /** \u5904\u7406\u8ba2\u5355\u5feb\u7167\u67e5\u8be2\u7684\u603b\u7ebf\u3002 */
     private final QueryBus projectedQueries;
 
     /**
@@ -31,36 +35,43 @@ public final class CatalogCqrs implements CatalogEndpoints {
         projectedQueries = new DefaultQueryBus(Collections.singletonList(view));
     }
 
+    /** {@inheritDoc} */
     @Override
     public Reply createGoods(String tenant, String code, String body) {
         return api.createGoods(commands, tenant, code, body);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Reply goods(String tenant, String code) {
         return api.goods(tenant, code);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Reply placeOrder(String tenant, String code, String body) {
         return api.placeOrder(commands, tenant, code, body);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Reply confirmPayment(String tenant, String orderNo, String body) {
         return api.confirmPayment(commands, tenant, orderNo, body);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Reply cancelOrder(String tenant, String orderNo) {
         return api.changeOrder(commands, tenant, orderNo, ChangeTradeOrderCmd.Action.CANCEL);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Reply fulfillOrder(String tenant, String orderNo) {
         return api.changeOrder(commands, tenant, orderNo, ChangeTradeOrderCmd.Action.FULFILL);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Reply order(String tenant, String code) {
         if (Objects.isNull(tenant) || Objects.isNull(code)) {

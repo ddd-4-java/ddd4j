@@ -31,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class ReadinessReportTest {
 
+    /** \u9a8c\u8bc1<code>report.ready()</code>\u4e3a\u771f\uff0c<code>report.results()</code> \u7684\u5927\u5c0f\u4e3a <code>2</code>\u3002 */
     @Test
     void check_shouldReportReadyWhenAllContributorsAreReady() {
         ReadinessReport report = ReadinessReport.check(Arrays.asList(
@@ -41,6 +42,7 @@ class ReadinessReportTest {
         assertThat(report.results()).hasSize(2);
     }
 
+    /** \u9a8c\u8bc1<code>report.ready()</code>\u4e3a\u5047\uff0c<code>report.results()</code> \u7684\u5927\u5c0f\u4e3a <code>2</code>\uff0c<code>result.details()</code> \u542b\u5bf9\u5e94\u6761\u76ee <code>"reason"</code>\u3001<code>"check failed"</code>\u3002 */
     @Test
     void check_shouldFailClosedWhenContributorThrows() {
         ReadinessReport report = ReadinessReport.check(Arrays.asList(
@@ -58,6 +60,7 @@ class ReadinessReportTest {
         });
     }
 
+    /** \u9a8c\u8bc1<code>result.details()</code> \u542b\u5bf9\u5e94\u6761\u76ee <code>"reason"</code>\u3001<code>"initial"</code>\uff0c<code>result.details().put("extra", "value")</code> \u629b\u51fa <code>UnsupportedOperationException.class</code>\uff0c<code>report.results().clear()</code> \u629b\u51fa <code>UnsupportedOperationException.class</code>\u3002 */
     @Test
     void resultAndReport_shouldKeepImmutableSnapshots() {
         Map<String, String> details = new HashMap<>();
@@ -77,6 +80,7 @@ class ReadinessReportTest {
                 .isInstanceOf(UnsupportedOperationException.class);
     }
 
+    /** \u9a8c\u8bc1<code>report.ready()</code>\u4e3a\u5047\uff0c<code>report.results()</code> \u7684\u5927\u5c0f\u4e3a <code>2</code>\uff0c<code>report.results().get(1).details()</code> \u542b\u5bf9\u5e94\u6761\u76ee <code>"reason"</code>\u3001<code>"empty result"</code>\u3002 */
     @Test
     void check_shouldIgnoreNullContributorAndFailClosedOnEmptyResult() {
         ReadinessReport report = ReadinessReport.check(Arrays.asList(
@@ -91,6 +95,7 @@ class ReadinessReportTest {
         assertThat(report.results().get(1).details()).containsEntry("reason", "empty result");
     }
 
+    /** \u9a8c\u8bc1<code>result.toString()</code> \u7b49\u4e8e <code>"ReadinessResult[name=database, ready=false, details={Aa=first, BB=second, AaAa=third, BBBB=fourth}]"</code>\u3002 */
     @Test
     void result_shouldKeepDiagnosticTextInInputOrder() {
         Map<String, String> details = new LinkedHashMap<>();
@@ -106,6 +111,7 @@ class ReadinessReportTest {
                 "ReadinessResult[name=database, ready=false, details={Aa=first, BB=second, AaAa=third, BBBB=fourth}]");
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>NullPointerException.class</code>\u3002 */
     @Test
     void result_shouldRejectNullDiagnosticEntries() {
         Map<String, String> nullKey = new HashMap<>();

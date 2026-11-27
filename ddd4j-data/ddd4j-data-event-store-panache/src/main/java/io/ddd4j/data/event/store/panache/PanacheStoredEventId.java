@@ -28,33 +28,57 @@ import java.util.Objects;
  */
 public class PanacheStoredEventId implements Serializable {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 1L;
 
+    /** \u805a\u5408\u7c7b\u578b\u3002 */
     private String aggregateType;
+    /** \u805a\u5408\u6807\u8bc6\u3002 */
     private String aggregateId;
+    /** \u4e8b\u4ef6\u7248\u672c\u3002 */
     private long version;
 
+    /** \u521b\u5efa\u7a7a\u7684\u590d\u5408\u4e3b\u952e\uff0c\u4f9b JPA \u4f7f\u7528\u3002 */
     public PanacheStoredEventId() {
     }
 
+    /**
+     * \u521b\u5efa\u4e8b\u4ef6\u590d\u5408\u4e3b\u952e\u3002
+     * @param aggregateType \u805a\u5408\u7c7b\u578b
+     * @param aggregateId \u805a\u5408\u6807\u8bc6
+     * @param version \u4e8b\u4ef6\u7248\u672c
+     */
     public PanacheStoredEventId(String aggregateType, String aggregateId, long version) {
         this.aggregateType = aggregateType;
         this.aggregateId = aggregateId;
         this.version = version;
     }
 
+    /**
+     * \u8fd4\u56de\u805a\u5408\u6807\u8bc6\u3002
+     * @return \u805a\u5408\u6807\u8bc6
+     */
     public String getAggregateId() {
         return aggregateId;
     }
 
+    /**
+     * \u8fd4\u56de\u805a\u5408\u7c7b\u578b\u3002
+     * @return \u805a\u5408\u7c7b\u578b
+     */
     public String getAggregateType() {
         return aggregateType;
     }
 
+    /**
+     * \u8fd4\u56de\u4e8b\u4ef6\u7248\u672c\u3002
+     * @return \u4e8b\u4ef6\u7248\u672c
+     */
     public long getVersion() {
         return version;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -65,6 +89,7 @@ public class PanacheStoredEventId implements Serializable {
                 && Objects.equals(aggregateId, that.aggregateId);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return Objects.hash(aggregateType, aggregateId, version);

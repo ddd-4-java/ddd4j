@@ -47,10 +47,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("HelidonProjectionScheduler + ViewManager 手动装配 IT")
 class HelidonProjectionSchedulerIT {
 
+    /**
+     * 按 <code>create Scheduler</code> 的契约计算并返回结果。
+     *
+     * @return 当前操作得到的 <code>HelidonProjectionScheduler</code> 结果
+     */
     private HelidonProjectionScheduler createScheduler() {
         return new HelidonProjectionScheduler();
     }
 
+    /**
+     * 执行 <code>create Runner</code>，调用 <code>EventChunk.empty</code>。
+     *
+     * @return 按条件返回 <code>0</code>、<code>null</code>
+     */
     private ProjectionRunner<Object> createRunner() {
         ProjectionService service = new ProjectionService() {
             @Override
@@ -72,6 +82,13 @@ class HelidonProjectionSchedulerIT {
         return new ProjectionRunner<>(service, reader);
     }
 
+    /**
+     * 执行 <code>create View</code>，调用 <code>Collections.singleton</code>。
+     *
+     * @param name 传入此操作的 <code>String</code> 类型 <code>name</code>
+     * @param cron 控制任务触发时刻的 Cron 表达式
+     * @return 按条件返回 <code>cron</code>、<code>java.util.Collections.singleton("TestEvent")</code>
+     */
     private ProjectionView<Object> createView(String name, String cron) {
         return new ProjectionView<Object>() {
             @Override
@@ -95,6 +112,7 @@ class HelidonProjectionSchedulerIT {
         };
     }
 
+    /** 验证<code>handle.isActive()</code>为真，<code>handle.isActive()</code>为假。 */
     @Test
     void scheduler_schedule_应返回activeHandle_cancel后应inactive() {
         HelidonProjectionScheduler scheduler = createScheduler();
@@ -111,6 +129,7 @@ class HelidonProjectionSchedulerIT {
         scheduler.shutdown();
     }
 
+    /** 验证<code>viewManager.isRunning()</code>为假，<code>viewManager.isRunning()</code>为真。 */
     @Test
     void viewManager_start_stop_应管理生命周期() {
         HelidonProjectionScheduler scheduler = createScheduler();
@@ -134,6 +153,7 @@ class HelidonProjectionSchedulerIT {
         scheduler.shutdown();
     }
 
+    /** 验证<code>viewManager.isRunning()</code>为真。 */
     @Test
     void triggerOnce_应立即执行所有view的runOnce() {
         HelidonProjectionScheduler scheduler = createScheduler();

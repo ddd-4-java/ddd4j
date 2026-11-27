@@ -25,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class ApiCodeTest {
 
+    /** \u9a8c\u8bc1<code>ApiCode.getReasonByCode(ApiCode.OK.getCode())</code> \u7b49\u4e8e <code>"\u8bf7\u6c42/\u64cd\u4f5c\u6210\u529f"</code>\uff0c<code>ApiCode.getReasonByCode(ApiCode.UNAUTHORIZED.getCode())</code> \u7b49\u4e8e <code>"\u672a\u767b\u5f55\u6216token\u5df2\u7ecf\u5931\u6548"</code>\u3002 */
     @Test
     void getReasonByCode_shouldReturnMatchingDesc() {
         assertThat(ApiCode.getReasonByCode(ApiCode.OK.getCode()))
@@ -33,32 +34,38 @@ class ApiCodeTest {
                 .isEqualTo("未登录或token已经失效");
     }
 
+    /** \u9a8c\u8bc1<code>ApiCode.getReasonByCode(999999)</code>\u4e3a\u7a7a\u3002 */
     @Test
     void getReasonByCode_shouldReturnEmptyStringForUnknownCode() {
         assertThat(ApiCode.getReasonByCode(999999)).isEmpty();
     }
 
+    /** \u9a8c\u8bc1<code>ApiCode.getReasonByCode(null)</code>\u4e3a\u7a7a\u3002 */
     @Test
     void getReasonByCode_shouldReturnEmptyStringForNull() {
         assertThat(ApiCode.getReasonByCode(null)).isEmpty();
     }
 
+    /** \u9a8c\u8bc1<code>ApiCode.getByCode(ApiCode.FAIL.getCode())</code> \u7b49\u4e8e <code>ApiCode.FAIL</code>\uff0c<code>ApiCode.getByCode(ApiCode.FORBIDDEN.getCode())</code> \u7b49\u4e8e <code>ApiCode.FORBIDDEN</code>\u3002 */
     @Test
     void getByCode_shouldReturnMatchingEnum() {
         assertThat(ApiCode.getByCode(ApiCode.FAIL.getCode())).isEqualTo(ApiCode.FAIL);
         assertThat(ApiCode.getByCode(ApiCode.FORBIDDEN.getCode())).isEqualTo(ApiCode.FORBIDDEN);
     }
 
+    /** \u9a8c\u8bc1<code>ApiCode.getByCode(999999)</code>\u4e3a\u7a7a\u3002 */
     @Test
     void getByCode_shouldReturnNullForUnknownCode() {
         assertThat(ApiCode.getByCode(999999)).isNull();
     }
 
+    /** \u9a8c\u8bc1<code>ApiCode.getByCode(null)</code>\u4e3a\u7a7a\u3002 */
     @Test
     void getByCode_shouldReturnNullForNull() {
         assertThat(ApiCode.getByCode(null)).isNull();
     }
 
+    /** \u9a8c\u8bc1<code>ApiCode.OK.getCode()</code>\u4e3a\u96f6\uff0c<code>ApiCode.SUCCESS.getCode()</code> \u7b49\u4e8e <code>200</code>\uff0c<code>ApiCode.SERVER_ERROR.getCode()</code> \u7b49\u4e8e <code>500</code>\u3002 */
     @Test
     void values_shouldContainKeyCodes() {
         assertThat(ApiCode.OK.getCode()).isZero();
@@ -67,6 +74,7 @@ class ApiCodeTest {
         assertThat(ApiCode.SERVER_ERROR.getCode()).isEqualTo(500);
     }
 
+    /** \u9a8c\u8bc1<code>ApiCode.OK.getCode()</code>\u4e3a\u96f6\uff0c<code>ApiCode.SUCCESS.getCode()</code> \u7b49\u4e8e <code>200</code>\uff0c<code>ApiCode.NETWORK_AUTHENTICATION_REQUIRED.getCode()</code> \u7b49\u4e8e <code>511</code>\u3002 */
     @Test
     void values_shouldContainKeyCodesFromBothCatalogs() {
         // 通用码段（原 ResultCode）
@@ -81,6 +89,7 @@ class ApiCodeTest {
         assertThat(ApiCode.NETWORK_AUTHENTICATION_REQUIRED.getCode()).isEqualTo(511);
     }
 
+    /** \u9a8c\u8bc1<code>code.getCode()</code>\u975e\u7a7a\u3002 */
     @Test
     void getCodeAndDesc_shouldExposeGetters() {
         for (ApiCode code : ApiCode.values()) {
@@ -89,6 +98,7 @@ class ApiCodeTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>ApiCode.getReasonByCode(code.getCode())</code>\u975e\u7a7a\uff0c<code>ApiCode.getByCode(code.getCode())</code>\u975e\u7a7a\u3002 */
     @Test
     void getReasonByCode_shouldResolveAllEnumValues() {
         for (ApiCode code : ApiCode.values()) {
@@ -98,6 +108,7 @@ class ApiCodeTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>ok.getCode()</code> \u7b49\u4e8e <code>200</code>\uff0c<code>ok.isOk()</code>\u4e3a\u771f\uff0c<code>withMsgAndData.getData()</code> \u7b49\u4e8e <code>"payload"</code>\u3002 */
     @Test
     void toResponse_shouldBuildRFromCustomApiCodeContract() {
         // ResultCode 作为 CustomApiCode 实现，默认方法直接构建 R

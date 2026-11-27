@@ -34,6 +34,7 @@ import java.util.Objects;
 @Requires(beans = RuntimeReadinessRegistry.class)
 public class Ddd4jMicronautReadinessHealthIndicator implements HealthIndicator {
 
+    /** \u6c47\u603b\u5f53\u524d\u7ec4\u4ef6\u5c31\u7eea\u72b6\u6001\u7684\u6ce8\u518c\u8868\u3002 */
     private final RuntimeReadinessRegistry readinessRegistry;
 
     /**
@@ -46,6 +47,10 @@ public class Ddd4jMicronautReadinessHealthIndicator implements HealthIndicator {
                 "readinessRegistry must not be null");
     }
 
+    /**
+     * \u8ba1\u7b97\u5e94\u7528\u5c31\u7eea\u72b6\u6001\u5e76\u901a\u8fc7 Micronaut \u6307\u6807\u5165\u53e3\u53d1\u5e03\u3002
+     * @return \u53d1\u51fa\u5f53\u524d\u8fd0\u884c\u65f6\u5065\u5eb7\u72b6\u6001\u7684\u54cd\u5e94\u5f0f\u7ed3\u679c
+     */
     @Override
     public Publisher<HealthResult> getResult() {
         ReadinessReport report = readinessRegistry.readiness();

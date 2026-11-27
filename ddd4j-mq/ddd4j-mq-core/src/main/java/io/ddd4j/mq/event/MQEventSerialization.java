@@ -22,22 +22,24 @@ package io.ddd4j.mq.event;
 public interface MQEventSerialization {
 
     /**
-     * 反序列化消息体为领域对象。
+     * \u53cd\u5e8f\u5217\u5316\u6d88\u606f\u4f53\u4e3a\u9886\u57df\u5bf9\u8c61\u3002
+     * @param src \u539f\u59cb\u6d88\u606f\u4f53
+     * @param dist \u76ee\u6807\u7c7b\u578b
+     * @param <S> \u6e90\u7c7b\u578b
+     * @param <T> \u76ee\u6807\u7c7b\u578b
+     * @return \u53cd\u5e8f\u5217\u5316\u7ed3\u679c
      *
-     * @param src  原始消息体
-     * @param dist 目标类型
-     * @param <S>  源类型
-     * @param <T>  目标类型
-     * @return 反序列化结果
+     * @throws RuntimeException \u4e8b\u4ef6\u8f7d\u8377\u65e0\u6cd5\u53cd\u5e8f\u5217\u5316
      */
     <S, T> T deserialize(S src, Class<T> dist) throws RuntimeException;
 
     /**
-     * 序列化领域对象为消息体。
+     * \u5e8f\u5217\u5316\u9886\u57df\u5bf9\u8c61\u4e3a\u6d88\u606f\u4f53\u3002
+     * @param src \u6e90\u5bf9\u8c61
+     * @param <T> \u5e8f\u5217\u5316\u7ed3\u679c\u7c7b\u578b
+     * @return \u5e8f\u5217\u5316\u7ed3\u679c
      *
-     * @param src 源对象
-     * @param <T> 序列化结果类型
-     * @return 序列化结果
+     * @throws RuntimeException \u4e8b\u4ef6\u65e0\u6cd5\u5e8f\u5217\u5316
      */
     <T> T serialize(Object src) throws RuntimeException;
 }

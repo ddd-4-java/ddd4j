@@ -29,6 +29,7 @@ import io.ddd4j.core.subject.SubjectProvider;
  */
 public class SecuritySubjectProvider implements SubjectProvider {
 
+    /** {@inheritDoc} */
     @Override
     public Subject getSubject() {
         return new SecuritySubject();

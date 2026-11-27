@@ -38,6 +38,11 @@ import java.util.stream.Collectors;
 @EnableAspectJAutoProxy(exposeProxy = true)
 public class SpringCoreConfig {
 
+    /**
+     * \u6c47\u96c6 Spring \u5bb9\u5668\u4e2d\u7684\u5c31\u7eea\u68c0\u67e5\u9879\u3002
+     * @param readinessContributors \u5c31\u7eea\u68c0\u67e5\u9879\u63d0\u4f9b\u8005
+     * @return \u8fd0\u884c\u65f6\u5c31\u7eea\u6ce8\u518c\u8868
+     */
     @Bean
     /**
      * Spring 核心配置
@@ -56,11 +61,19 @@ public class SpringCoreConfig {
         return new RuntimeReadinessRegistry(readinessContributors.orderedStream().collect(Collectors.toList()));
     }
 
+    /**
+     * \u521b\u5efa Spring \u4e0a\u4e0b\u6587\u6865\u63a5\u5668\u3002
+     * @return Spring \u4e0a\u4e0b\u6587\u6865\u63a5\u5668
+     */
     @Bean
     public SpringContext springContext() {
         return new SpringContext();
     }
 
+    /**
+     * \u521b\u5efa\u53ef\u611f\u77e5 Spring \u4e0a\u4e0b\u6587\u7684\u6846\u67b6\u4e0a\u4e0b\u6587\u3002
+     * @return Spring \u4e0a\u4e0b\u6587\u9002\u914d\u5668
+     */
     @Bean
     public SpringContextAwareContext springContextAwareContext() {
         return new SpringContextAwareContext();

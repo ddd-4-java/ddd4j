@@ -94,16 +94,25 @@ public class Page<T> implements Iterable<T> {
         return new Page<>(new ArrayList<>(), 0L, 0L, 0L, Collections.emptyMap());
     }
 
+    /** {@inheritDoc} */
     @Override
     public Iterator<T> iterator() {
         return Objects.nonNull(this.records) && !this.records.isEmpty() ? this.records.iterator() : Collections.emptyIterator();
     }
 
+    /**
+     * \u5bf9\u5f53\u524d\u9875\u8bb0\u5f55\u63d0\u4f9b\u62c6\u5206\u8fed\u4ee3\u5668\u3002
+     * @return \u8bb0\u5f55\u5217\u8868\u7684\u62c6\u5206\u8fed\u4ee3\u5668\uff0c\u672a\u8bbe\u7f6e\u8bb0\u5f55\u65f6\u4e3a\u7a7a\u8fed\u4ee3\u5668
+     */
     @Override
     public Spliterator<T> spliterator() {
         return Objects.nonNull(this.records) ? this.records.spliterator() : Spliterators.emptySpliterator();
     }
 
+    /**
+     * \u5bf9\u5f53\u524d\u9875\u8bb0\u5f55\u6309\u5217\u8868\u987a\u5e8f\u6267\u884c\u7ed9\u5b9a\u64cd\u4f5c\u3002
+     * @param action \u63a5\u6536\u6bcf\u6761\u8bb0\u5f55\u7684\u64cd\u4f5c
+     */
     @Override
     public void forEach(Consumer<? super T> action) {
         if (Objects.nonNull(this.records)) {

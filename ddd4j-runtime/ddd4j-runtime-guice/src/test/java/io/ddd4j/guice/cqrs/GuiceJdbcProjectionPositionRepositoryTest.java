@@ -43,9 +43,15 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class GuiceJdbcProjectionPositionRepositoryTest {
 
+    /** \u88ab\u6d4b JDBC \u7ec4\u4ef6\u8bbf\u95ee\u7684\u6d4b\u8bd5\u6570\u636e\u6e90\u3002 */
     private JdbcDataSource dataSource;
+    /** \u7528\u4e8e\u5f53\u524d\u8bfb\u53d6\u6216\u5199\u5165\u65ad\u8a00\u7684\u6d4b\u8bd5\u4ed3\u50a8\u3002 */
     private GuiceJdbcProjectionPositionRepository repository;
 
+    /**
+     * \u6d4b\u8bd5\u6267\u884c\u524d\u6267\u884c <code>dataSource.setURL()</code>\u3001<code>System.nanoTime()</code>\u3001<code>dataSource.getConnection()</code>\u3001<code>conn.createStatement()</code> \u5b8c\u6210\u8d44\u6e90\u51c6\u5907\u3002
+     * @throws Exception \u6267\u884c\u6570\u636e\u5e93\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @BeforeEach
     void setUp() throws Exception {
         dataSource = new JdbcDataSource();
@@ -58,6 +64,7 @@ class GuiceJdbcProjectionPositionRepositoryTest {
         repository = new GuiceJdbcProjectionPositionRepository(dataSource);
     }
 
+    /** \u9a8c\u8bc1<code>saved.getStreamId()</code> \u7b49\u4e8e <code>"stream-1"</code>\uff0c<code>saved.getNextEventNumber()</code> \u7b49\u4e8e <code>5L</code>\uff0c<code>repository.findByStreamId("missing").isPresent()</code>\u4e3a\u5047\u3002 */
     @Test
     void saveAndFindByStreamId() {
         DefaultProjectionPosition position = new DefaultProjectionPosition("stream-1", 5L);
@@ -74,6 +81,7 @@ class GuiceJdbcProjectionPositionRepositoryTest {
         assertFalse(repository.findByStreamId("missing").isPresent());
     }
 
+    /** \u9a8c\u8bc1<code>found.isPresent()</code>\u4e3a\u771f\uff0c<code>found.get().getNextEventNumber()</code> \u7b49\u4e8e <code>99L</code>\u3002 */
     @Test
     void saveOverwritesExistingPosition() {
         repository.save(new DefaultProjectionPosition("stream-1", 1L));
@@ -84,6 +92,7 @@ class GuiceJdbcProjectionPositionRepositoryTest {
         assertEquals(99L, found.get().getNextEventNumber());
     }
 
+    /** \u9a8c\u8bc1<code>all.size()</code> \u7b49\u4e8e <code>3</code>\u3002 */
     @Test
     void findAllReturnsAllPositions() {
         repository.save(new DefaultProjectionPosition("stream-1", 1L));
@@ -95,6 +104,7 @@ class GuiceJdbcProjectionPositionRepositoryTest {
         assertEquals(3, all.size());
     }
 
+    /** \u9a8c\u8bc1<code>repository.findByStreamId("stream-1").isPresent()</code>\u4e3a\u5047\u3002 */
     @Test
     void deleteByStreamIdRemovesPosition() {
         repository.save(new DefaultProjectionPosition("stream-1", 1L));
@@ -104,12 +114,14 @@ class GuiceJdbcProjectionPositionRepositoryTest {
         assertFalse(repository.findByStreamId("stream-1").isPresent());
     }
 
+    /** \u9a8c\u8bc1<code>repository.deleteByStreamId("nonexistent")</code> \u6b63\u5e38\u8fd4\u56de\u3002 */
     @Test
     void deleteByStreamIdNonexistentIsNoOp() {
         // 删除不存在的 streamId 不应抛异常
         assertDoesNotThrow(() -> repository.deleteByStreamId("nonexistent"));
     }
 
+    /** \u9a8c\u8bc1<code>found.isPresent()</code>\u4e3a\u771f\uff0c<code>found.get().getNextEventNumber()</code> \u7b49\u4e8e <code>0L</code>\u3002 */
     @Test
     void resetToZeroResetsExistingPosition() {
         repository.save(new DefaultProjectionPosition("stream-1", 42L));
@@ -121,6 +133,7 @@ class GuiceJdbcProjectionPositionRepositoryTest {
         assertEquals(0L, found.get().getNextEventNumber());
     }
 
+    /** \u9a8c\u8bc1<code>found.isPresent()</code>\u4e3a\u771f\uff0c<code>found.get().getNextEventNumber()</code> \u7b49\u4e8e <code>0L</code>\u3002 */
     @Test
     void resetToZeroCreatesPositionIfNotExists() {
         // resetToZero 在 streamId 不存在时应创建一个 zero 位置
@@ -131,6 +144,10 @@ class GuiceJdbcProjectionPositionRepositoryTest {
         assertEquals(0L, found.get().getNextEventNumber());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>successCount.get()</code> \u7b49\u4e8e <code>threadCount * updatesPerThread</code>\uff0c<code>repository.findAll().size()</code> \u7b49\u4e8e <code>threadCount</code>\uff0c<code>found.get().getNextEventNumber()</code> \u7b49\u4e8e <code>t * 1000L + updatesPerThread - 1</code>\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void concurrentUpdatesOnSeparateStreamsDoNotThrow() throws Exception {
         // 每个线程操作独立 streamId，无行级锁竞争
@@ -173,6 +190,10 @@ class GuiceJdbcProjectionPositionRepositoryTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>successCount.get()</code> \u7b49\u4e8e <code>threadCount * updatesPerThread</code>\uff0c<code>found.isPresent()</code>\u4e3a\u771f\uff0c<code>found.get().getNextEventNumber() &gt;= 0</code>\u4e3a\u771f\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void concurrentUpdatesOnSameStreamDoNotThrow() throws Exception {
         // 少量线程并发更新同一 streamId，验证 last-writer-wins 语义
@@ -212,6 +233,7 @@ class GuiceJdbcProjectionPositionRepositoryTest {
         assertTrue(found.get().getNextEventNumber() >= 0);
     }
 
+    /** \u9a8c\u8bc1<code>found.isPresent()</code>\u4e3a\u771f\uff0c<code>found.get().getNextEventNumber()</code> \u7b49\u4e8e <code>5L</code>\u3002 */
     @Test
     void duplicateUpdatesAreIdempotent() {
         // 重复写入相同值不应抛异常

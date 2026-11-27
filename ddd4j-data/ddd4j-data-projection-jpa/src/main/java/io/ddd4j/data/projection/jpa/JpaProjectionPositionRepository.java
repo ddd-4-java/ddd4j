@@ -52,6 +52,7 @@ import java.util.stream.Collectors;
 @Repository
 public class JpaProjectionPositionRepository implements ProjectionPositionRepository {
 
+    /** \u5728 Spring \u4e8b\u52a1\u4e2d\u8bfb\u53d6\u548c\u4fdd\u5b58\u4f4d\u70b9\u7684\u6301\u4e45\u5316\u4ed3\u50a8\u3002 */
     private final SpringDataProjectionPositionRepository repository;
 
     /**
@@ -76,6 +77,7 @@ public class JpaProjectionPositionRepository implements ProjectionPositionReposi
                         entity.getStreamId(), entity.getNextEventNumber()));
     }
 
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
     public List<ProjectionPosition> findAll() {
@@ -104,6 +106,7 @@ public class JpaProjectionPositionRepository implements ProjectionPositionReposi
         return new DefaultProjectionPosition(position.getStreamId(), position.getNextEventNumber());
     }
 
+    /** {@inheritDoc} */
     @Override
     @Transactional
     public void deleteByStreamId(String streamId) {

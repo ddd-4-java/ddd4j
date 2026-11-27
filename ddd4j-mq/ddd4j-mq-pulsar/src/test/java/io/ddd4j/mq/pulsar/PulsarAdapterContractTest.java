@@ -34,13 +34,16 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+/** \u9a8c\u8bc1 <code>PulsarAdapterContract</code> \u5728 <code>doesNotRedeliver</code> \u7b49\u573a\u666f\u4e2d\u7684\u884c\u4e3a\u3002 */
 class PulsarAdapterContractTest {
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>BaseContext.clear()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterEach
     void clearContext() {
         BaseContext.clear();
     }
 
+    /** \u9a8c\u8bc1<code>PulsarMQClient.messageId(message)</code> \u7b49\u4e8e <code>"stable-id"</code>\uff0c<code>acknowledgment.isAcknowledged()</code>\u4e3a\u771f\u3002 */
     @Test
     void shouldPreferStableMessageIdAndNegativeAcknowledgeOnRetry() {
         Message<byte[]> message = mock(Message.class);
@@ -56,6 +59,7 @@ class PulsarAdapterContractTest {
         assertTrue(acknowledgment.isAcknowledged());
     }
 
+    /** \u9a8c\u8bc1<code>acknowledgment.nack(false)</code> \u629b\u51fa <code>UnsupportedOperationException.class</code>\uff0c<code>acknowledgment.reject(false)</code> \u629b\u51fa <code>UnsupportedOperationException.class</code>\uff0c<code>acknowledgment.isAcknowledged()</code>\u4e3a\u771f\u3002 */
     @Test
     void doesNotRedeliverWhenNonRequeueWasRequested() {
         Message<byte[]> message = mock(Message.class);
@@ -74,6 +78,10 @@ class PulsarAdapterContractTest {
         assertTrue(acknowledgment.isAcknowledged());
     }
 
+    /**
+     * \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>mock()</code>\u3001<code>pulsarClient.newProducer()</code>\u3001<code>producerBuilder.topic()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002
+     * @throws Exception \u53d1\u8d77\u6d4b\u8bd5\u8bf7\u6c42\u65f6\u5931\u8d25
+     */
     @Test
     @SuppressWarnings("unchecked")
     void taggedEventUsesSubscribedPhysicalTopic() throws Exception {
@@ -117,6 +125,10 @@ class PulsarAdapterContractTest {
         client.close();
     }
 
+    /**
+     * \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>mock()</code>\u3001<code>pulsarClient.newProducer()</code>\u3001<code>producerBuilder.topic()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002
+     * @throws Exception \u53d1\u8d77\u6d4b\u8bd5\u8bf7\u6c42\u65f6\u5931\u8d25
+     */
     @Test
     @SuppressWarnings("unchecked")
     void shouldPublishCausalityAsNativePulsarProperties() throws Exception {
@@ -185,6 +197,10 @@ class PulsarAdapterContractTest {
         client.close();
     }
 
+    /**
+     * \u9a8c\u8bc1<code>received.get().getCorrelationId()</code> \u7b49\u4e8e <code>"correlation-id"</code>\uff0c<code>acknowledgment.get().correlationId()</code>\u4e3a\u7a7a\u3002
+     * @throws Exception \u51c6\u5907\u6216\u91ca\u653e\u88ab\u6d4b\u8fd0\u884c\u8d44\u6e90\u65f6\u5931\u8d25
+     */
     @Test
     @SuppressWarnings("unchecked")
     void shouldRestoreCausalityFromNativePulsarProperties() throws Exception {
@@ -258,6 +274,10 @@ class PulsarAdapterContractTest {
         verify(pulsarClient, never()).close();
     }
 
+    /**
+     * \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\u3002
+     * @throws Exception \u53d1\u8d77\u6d4b\u8bd5\u8bf7\u6c42\u65f6\u5931\u8d25
+     */
     @Test
     @SuppressWarnings("unchecked")
     void shouldPropagateBrokerSendFailureToPublisher() throws Exception {

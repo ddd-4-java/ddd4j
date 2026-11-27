@@ -34,27 +34,32 @@ public class GuiceInMemoryProjectionPositionRepository implements ProjectionPosi
      */
     private final ConcurrentMap<String, ProjectionPosition> store = new ConcurrentHashMap<>();
 
+    /** {@inheritDoc} */
     @Override
     public Optional<ProjectionPosition> findByStreamId(String streamId) {
         return Optional.ofNullable(store.get(streamId));
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<ProjectionPosition> findAll() {
         return Collections.unmodifiableList(new ArrayList<>(store.values()));
     }
 
+    /** {@inheritDoc} */
     @Override
     public ProjectionPosition save(ProjectionPosition position) {
         store.put(position.getStreamId(), position);
         return position;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void deleteByStreamId(String streamId) {
         store.remove(streamId);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void resetToZero(String streamId) {
         ProjectionPosition old = store.get(streamId);

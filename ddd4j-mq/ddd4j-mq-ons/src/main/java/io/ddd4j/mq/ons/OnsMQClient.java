@@ -50,12 +50,19 @@ import java.util.function.Consumer;
 @Slf4j(topic = "### DDD4J-MQ : OnsMQClient ###")
 public class OnsMQClient implements MQClient {
 
+    /** \u5f53\u524d\u6d88\u606f\u4ee3\u7406\u5ba2\u6237\u7aef\u4f7f\u7528\u7684\u8fde\u63a5\u548c\u8ba2\u9605\u914d\u7f6e\u3002 */
     private final OnsProperties properties;
+    /** \u5f53\u524d\u9002\u914d\u5668\u5df2\u5efa\u7acb\u7684\u539f\u751f\u6d88\u8d39\u8005\u3002 */
     private final List<com.aliyun.openservices.ons.api.Consumer> consumers = new CopyOnWriteArrayList<>();
+    /** \u534f\u8c03\u6d88\u606f\u5ba2\u6237\u7aef\u542f\u52a8\u3001\u521d\u59cb\u5316\u548c\u5173\u95ed\u7684\u751f\u547d\u5468\u671f\u3002 */
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    /** \u7ec4\u4ef6\u7684\u542f\u52a8\u72b6\u6001\u548c\u542f\u52a8\u5931\u8d25\u8bca\u65ad\u4fe1\u606f\u3002 */
     private final MQStartupStatus startupStatus = new MQStartupStatus("ons");
+    /** 保存 <code>producer</code> 对应的 <code>Producer</code> 数据。 */
     private volatile Producer producer;
+    /** 保存 <code>producer Started</code> 对应的 <code>boolean</code> 数据。 */
     private volatile boolean producerStarted;
+    /** \u5f53\u524d\u5b9e\u4f8b\u662f\u5426\u5df2\u5173\u95ed\u3002 */
     private volatile boolean closed;
 
     /**
@@ -80,6 +87,11 @@ public class OnsMQClient implements MQClient {
         this.producer = producer;
     }
 
+    /**
+     * \u4f18\u5148\u4ece\u539f\u751f\u6d88\u606f\u7684\u6807\u51c6\u5934\u8bfb\u53d6\u6d88\u606f\u6807\u8bc6\uff0c\u7f3a\u5c11\u65f6\u56de\u9000\u5230\u517c\u5bb9\u5934\u3002
+     * @param message \u5f53\u524d\u63a5\u6536\u7684\u539f\u751f\u4ee3\u7406\u6d88\u606f
+     * @return \u7528\u4e8e\u540e\u7eed\u6d88\u8d39\u786e\u8ba4\u7684\u4e1a\u52a1\u6d88\u606f\u6807\u8bc6\uff0c\u5934\u5747\u7f3a\u5931\u65f6\u4e3a\u7a7a
+     */
     static String messageId(Message message) {
         String messageId = message.getUserProperties(MessageHeaders.HEADER_MESSAGE_ID);
         return StrKit.isNotEmpty(messageId)
@@ -87,6 +99,11 @@ public class OnsMQClient implements MQClient {
                 : message.getUserProperties(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
     }
 
+    /**
+     * \u5c06 DDD4J \u6d88\u606f\u5143\u6570\u636e\u5199\u5165 ONS \u539f\u751f\u6d88\u606f\u7528\u6237\u5c5e\u6027\u3002
+     * @param message \u5f53\u524d\u63a5\u6536\u7684\u539f\u751f\u4ee3\u7406\u6d88\u606f
+     * @param event \u5f53\u524d\u53d1\u5e03\u6216\u5f85\u8865\u9f50\u5143\u6570\u636e\u7684 DDD4J \u6d88\u606f\u4e8b\u4ef6
+     */
     static void applyNativeHeaders(Message message, MQEvent event) {
         String tenantId = message.getUserProperties(MessageHeaders.HEADER_TENANT_ID);
         if (StrKit.isNotEmpty(tenantId)) {
@@ -108,11 +125,13 @@ public class OnsMQClient implements MQClient {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public String impl() {
         return "ons";
     }
 
+    /** {@inheritDoc} */
     @Override
     public MQClientLifecycle lifecycle() {
         return lifecycle;
@@ -120,6 +139,7 @@ public class OnsMQClient implements MQClient {
 
     // ========================= 生产者 =========================
 
+    /** {@inheritDoc} */
     @Override
     public MQStartupStatus startupStatus() {
         return startupStatus;
@@ -127,10 +147,16 @@ public class OnsMQClient implements MQClient {
 
     // ========================= 消费者 =========================
 
+    /**
+     * \u7528\u6307\u5b9a\u4f1a\u8bdd\u5c5e\u6027\u521b\u5efa ONS \u53d1\u5e03\u5ba2\u6237\u7aef\u3002
+     * @param sessionProperties \u5f53\u524d ONS \u5ba2\u6237\u7aef\u7684\u4f1a\u8bdd\u5c5e\u6027
+     * @return \u5c1a\u5f85\u542f\u52a8\u7684\u539f\u751f\u751f\u4ea7\u8005
+     */
     Producer createProducer(Properties sessionProperties) {
         return ONSFactory.createProducer(sessionProperties);
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         if (closed) {
@@ -185,10 +211,16 @@ public class OnsMQClient implements MQClient {
         }
     }
 
+    /**
+     * \u7528\u6307\u5b9a\u4f1a\u8bdd\u5c5e\u6027\u521b\u5efa ONS \u6d88\u8d39\u5ba2\u6237\u7aef\u3002
+     * @param sessionProperties \u5f53\u524d ONS \u5ba2\u6237\u7aef\u7684\u4f1a\u8bdd\u5c5e\u6027
+     * @return \u5c1a\u5f85\u8ba2\u9605\u7684\u539f\u751f\u6d88\u8d39\u8005
+     */
     com.aliyun.openservices.ons.api.Consumer createConsumer(Properties sessionProperties) {
         return ONSFactory.createConsumer(sessionProperties);
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         if (closed) {
@@ -254,11 +286,13 @@ public class OnsMQClient implements MQClient {
 
     // ========================= 关闭 =========================
 
+    /** {@inheritDoc} */
     @Override
     public void start() {
         // ONS producer/consumer 在各自创建时已启动；此方法留作 future 扩展。
     }
 
+    /** \u91ca\u653e\u6d88\u606f\u5ba2\u6237\u7aef\u62e5\u6709\u7684\u8fd0\u884c\u8d44\u6e90\uff0c\u5e76\u5728\u9000\u51fa\u65f6\u767b\u8bb0\u7ec4\u4ef6\u5df2\u505c\u6b62\u3002 */
     @Override
     public synchronized void close() {
         if (closed) {

@@ -39,6 +39,7 @@ public class WeatherTemplate {
      * 天气查询请求地址
      */
     private final static String SOJSON_WEATHER_URL = "http://t.weather.sojson.com/api/weather/city/%s";
+    /** \u5929\u6c14\u670d\u52a1\u8bf7\u6c42\u4f7f\u7528\u7684\u5730\u5740\u6a21\u677f\u3002 */
     private final String weatherUrlTemplate;
 
     /**
@@ -69,6 +70,10 @@ public class WeatherTemplate {
         this(SOJSON_WEATHER_URL);
     }
 
+    /**
+     * \u4f7f\u7528\u6307\u5b9a\u63a5\u53e3\u5730\u5740\u6a21\u677f\u521b\u5efa\u5929\u6c14\u67e5\u8be2\u5ba2\u6237\u7aef\u3002
+     * @param weatherUrlTemplate \u5929\u6c14\u63a5\u53e3\u8bf7\u6c42\u5730\u5740\u6a21\u677f
+     */
     WeatherTemplate(String weatherUrlTemplate) {
         this.weatherUrlTemplate = Objects.requireNonNull(weatherUrlTemplate, "weatherUrlTemplate");
     }

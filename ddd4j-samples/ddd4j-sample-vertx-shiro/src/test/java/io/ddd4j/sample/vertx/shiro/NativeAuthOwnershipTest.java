@@ -16,10 +16,15 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  * 原生全局引擎的 owner 恢复，不覆盖后任。
  */
 class NativeAuthOwnershipTest {
+    /**
+     * \u8c03\u7528 <code>ReflectUtil.getStaticFieldValue()</code>\u3001<code>ReflectUtil.getField()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @return \u63d0\u4f9b\u7ed9\u540e\u7eed\u5951\u7ea6\u65ad\u8a00\u7684 <code>SecurityManager</code> \u7ed3\u679c
+     */
     private SecurityManager current() {
         return (SecurityManager) ReflectUtil.getStaticFieldValue(Objects.requireNonNull(ReflectUtil.getField(SecurityUtils.class, "securityManager")));
     }
 
+    /** \u9a8c\u8bc1<code>current()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>previous</code>\uff0c<code>current()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>replacement</code>\u3002 */
     @Test
     void restoresPreviousAndPreservesReplacement() {
         SecurityManager previous = current();
@@ -38,6 +43,7 @@ class NativeAuthOwnershipTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>current()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>caller</code>\u3002 */
     @Test
     void leavesCallerProcessManagerInstalledWhileRunning() {
         SecurityManager previous = current();
@@ -56,6 +62,7 @@ class NativeAuthOwnershipTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>ThreadContext.getSecurityManager()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>app.manager()</code>\uff0c<code>ThreadContext.getSubject()</code> \u4e0e\u2026\u4e3a\u4e0d\u540c\u7684\u5b9e\u4f8b <code>previous</code>\uff0c<code>ThreadContext.getSubject()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>replacement</code>\u3002 */
     @Test
     void restoresWorkerBindingsAndPreservesLaterOwners() {
         SecurityManager originalManager = ThreadContext.getSecurityManager();

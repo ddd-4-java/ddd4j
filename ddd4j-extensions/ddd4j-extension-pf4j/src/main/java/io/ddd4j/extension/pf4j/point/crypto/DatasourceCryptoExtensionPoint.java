@@ -14,6 +14,12 @@
  */
 package io.ddd4j.extension.pf4j.point.crypto;
 
+/**
+ * \u6570\u636e\u6e90\u914d\u7f6e\u52a0\u89e3\u5bc6\u6269\u5c55\u70b9\u3002
+ *
+ *  <p>\u7ee7\u627f {@link CryptoExtensionPoint}\uff0c\u7528\u4e8e\u5bf9\u6570\u636e\u6e90\u8fde\u63a5\u4e32\u3001\u8d26\u53f7\u5bc6\u7801\u7b49\u654f\u611f\u914d\u7f6e\u505a\u52a0\u89e3\u5bc6\u3002
+ * @since 2.0.x
+ */
 public interface DatasourceCryptoExtensionPoint extends CryptoExtensionPoint {
 
 }

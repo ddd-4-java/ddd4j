@@ -17,6 +17,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Slf4j(topic = "### DDD4J-AUTH : SaTokenExceptionHandler ###")
 public class SaTokenExceptionHandler {
 
+    /**
+     * \u5c06 Sa-Token \u9274\u6743\u5f02\u5e38\u6620\u5c04\u4e3a\u672a\u8ba4\u8bc1\u54cd\u5e94\u3002
+     * @param exception Sa-Token \u5f02\u5e38
+     * @return \u672a\u8ba4\u8bc1\u54cd\u5e94
+     */
     @ExceptionHandler(SaTokenException.class)
     public ResponseEntity<R<String>> accessDeniedException(SaTokenException exception) {
         log.warn("Sa-Token 鉴权异常：code={}, msg={}", exception.getCode(), exception.getMessage());

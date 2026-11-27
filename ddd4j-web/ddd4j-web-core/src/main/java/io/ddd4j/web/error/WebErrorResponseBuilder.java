@@ -35,8 +35,10 @@ public final class WebErrorResponseBuilder {
     public static final String INTERNAL_ERROR_FALLBACK_JSON =
             "{\"code\":500,\"msg\":\"Internal Server Error\",\"data\":null}";
 
+    /** \u4f9b\u5404\u6846\u67b6\u5171\u7528\u7684\u9519\u8bef\u54cd\u5e94\u6784\u9020\u5668\u5b9e\u4f8b\u3002 */
     private static final WebErrorResponseBuilder INSTANCE = new WebErrorResponseBuilder();
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>WebErrorResponseBuilder</code> \u5b9e\u4f8b\u3002 */
     private WebErrorResponseBuilder() {
     }
 

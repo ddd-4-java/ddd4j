@@ -37,8 +37,13 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 class DomainEventRoundTripTest {
 
     // Jackson 2 不会自动注册 java.time 支持；findAndAddModules 经 SPI 发现 classpath 上的 jsr310（JavaTimeModule）
+    /** \u7528\u4e8e\u8bfb\u5199 JSON \u6570\u636e\u7684 Jackson \u6620\u5c04\u5668\u3002 */
     private final ObjectMapper objectMapper = JsonMapper.builder().findAndAddModules().build();
 
+    /**
+     * \u9a8c\u8bc1<code>restored.getEntityIdPath().asString()</code> \u7b49\u4e8e <code>original.getEntityIdPath().asString()</code>\uff0c<code>restored.getEntityIdPath().last().asString()</code> \u7b49\u4e8e <code>"order-1"</code>\uff0c<code>restored.getEventTimestamp().toInstant()</code> \u7b49\u4e8e <code>original.getEventTimestamp().toInstant()</code>\u3002
+     * @throws Exception \u5904\u7406\u6d4b\u8bd5\u6570\u636e\u7684\u5e8f\u5217\u5316\u65f6\u5931\u8d25
+     */
     @Test
     void roundTripRestoresIdentityMetadataAndPayload() throws Exception {
         SampleEvent original = new SampleEvent("order-1", 2500L);
@@ -62,12 +67,14 @@ class DomainEventRoundTripTest {
         assertThat(restored.getEventTimestamp().toInstant()).isEqualTo(original.getEventTimestamp().toInstant());
     }
 
+    /** \u9a8c\u8bc1<code>objectMapper.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)</code>\u4e3a\u771f\u3002 */
     @Test
     void mapperKeepsPlatformDefaultUnknownPropertyHandling() {
         // 证明回读发生在默认严格模式下（未用 workaround 放宽）
         assertThat(objectMapper.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)).isTrue();
     }
 
+    /** \u9a8c\u8bc1<code>single.size()</code> \u7b49\u4e8e <code>1</code>\uff0c<code>single.last().asString()</code> \u7b49\u4e8e <code>"order-1"</code>\uff0c<code>multi.last().asString()</code> \u7b49\u4e8e <code>"item-9"</code>\u3002 */
     @Test
     void valueOfParsesSingleAndMultiSegmentPaths() {
         EntityIdPath single = EntityIdPath.valueOf("String:order-1");
@@ -80,6 +87,7 @@ class DomainEventRoundTripTest {
         assertThat(multi.last().asString()).isEqualTo("item-9");
     }
 
+    /** \u9a8c\u8bc1<code>EntityIdPath.valueOf("")</code> \u629b\u51fa <code>IllegalArgumentException</code>\uff0c<code>EntityIdPath.valueOf("String:")</code> \u629b\u51fa <code>IllegalArgumentException</code>\u3002 */
     @Test
     void valueOfRejectsMalformedPaths() {
         // 空串 / 空白
@@ -103,6 +111,7 @@ class DomainEventRoundTripTest {
                 .withMessageContaining("String:");
     }
 
+    /** \u9a8c\u8bc1<code>EntityIdPath.valueOf(original.asString()).asString()</code> \u7b49\u4e8e <code>original.asString()</code>\u3002 */
     @Test
     void valueOfIsIdempotentForSerializedForm() {
         EntityIdPath original = new EntityIdPath(new StringEntityId("order-1"), new StringEntityId("item-9"));
@@ -115,32 +124,56 @@ class DomainEventRoundTripTest {
      */
     static final class SampleEvent extends DomainEvent<StringEntityId> {
 
+        /** \u8ba2\u5355\u6807\u8bc6\u3002 */
         private String orderId;
 
+        /** \u6d4b\u8bd5\u4ea4\u6613\u4f7f\u7528\u7684\u6570\u91cf\u6216\u91d1\u989d\u3002 */
         private long amount;
 
+        /** \u6784\u9020\u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684 <code>SampleEvent</code> \u5b9e\u4f8b\u3002 */
         SampleEvent() {
             // Jackson 回读
         }
 
+        /**
+         * \u8bbe\u7f6e <code>orderId</code>\u3001<code>amount</code>\uff0c\u7528\u4e8e\u6784\u9020 <code>SampleEvent</code> \u6d4b\u8bd5\u5b9e\u4f8b\u3002
+         * @param orderId \u8ba2\u5355\u6807\u8bc6
+         * @param amount \u7528\u4e8e\u521d\u59cb\u5316 <code>SampleEvent</code> \u7684 <code>long</code> \u503c
+         */
         SampleEvent(String orderId, long amount) {
             super(orderId);
             this.orderId = orderId;
             this.amount = amount;
         }
 
+        /**
+         * \u8bfb\u53d6\u8ba2\u5355\u6807\u8bc6\u3002
+         * @return \u8ba2\u5355\u6807\u8bc6
+         */
         public String getOrderId() {
             return orderId;
         }
 
+        /**
+         * \u8bbe\u7f6e\u8ba2\u5355\u6807\u8bc6\u3002
+         * @param orderId \u8981\u5199\u5165\u7684\u503c
+         */
         public void setOrderId(String orderId) {
             this.orderId = orderId;
         }
 
+        /**
+         * \u8bfb\u53d6<code>amount</code> \u5b57\u6bb5\u3002
+         * @return <code>amount</code> \u5b57\u6bb5
+         */
         public long getAmount() {
             return amount;
         }
 
+        /**
+         * \u8bbe\u7f6e<code>amount</code> \u5b57\u6bb5\u3002
+         * @param amount \u8981\u5199\u5165\u7684\u503c
+         */
         public void setAmount(long amount) {
             this.amount = amount;
         }

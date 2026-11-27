@@ -23,6 +23,7 @@ import javax.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class DefaultI18nProvider implements I18nProvider {
 
+    /** {@inheritDoc} */
     @Override
     public String getMessage(String key, Object... args) {
         return I18nProvider.DEFAULT.getMessage(key, args);

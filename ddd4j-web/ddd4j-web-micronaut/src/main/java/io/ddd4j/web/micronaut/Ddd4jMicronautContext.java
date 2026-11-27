@@ -30,11 +30,15 @@ import java.util.Optional;
  */
 public final class Ddd4jMicronautContext {
 
+    /** 保存 <code>Ddd4jMicronautContext.class.getName()</code>，供 <code>Ddd4jMicronautContext</code> 的处理流程复用。 */
     static final String REQUEST_ATTRIBUTE = Ddd4jMicronautContext.class.getName();
 
+    /** 保存 <code>CURRENT</code> 对应的 <code>ThreadLocal&lt;Ddd4jMicronautContext&gt;</code> 数据。 */
     private static final ThreadLocal<Ddd4jMicronautContext> CURRENT = new ThreadLocal<>();
 
+    /** \u5f53\u524d HTTP \u8bf7\u6c42\u89e3\u6790\u540e\u7528\u4e8e\u8de8\u5c42\u4f20\u9012\u7684\u4e0a\u4e0b\u6587\u3002 */
     private final WebRequestContext requestContext;
+    /** \u5f53\u524d\u8bf7\u6c42\u6240\u7ed1\u5b9a\u7684\u4e3b\u4f53\u64cd\u4f5c\u5165\u53e3\u3002 */
     private final Optional<Subject> subject;
 
     /**
@@ -50,6 +54,10 @@ public final class Ddd4jMicronautContext {
         this.subject = Objects.requireNonNull(subject, "subject must not be null");
     }
 
+    /**
+     * \u83b7\u53d6\u5f53\u524d Micronaut \u4f20\u64ad\u4e0a\u4e0b\u6587\u4e2d\u7684\u8bf7\u6c42\u4e0a\u4e0b\u6587\u3002
+     * @return \u5f53\u524d\u8bf7\u6c42\u4e0a\u4e0b\u6587\uff0c\u53ef\u4e3a\u7a7a
+     */
     public static Optional<Ddd4jMicronautContext> current() {
         Ddd4jMicronautContext current = CURRENT.get();
         if (Objects.nonNull(current)) {
@@ -59,18 +67,34 @@ public final class Ddd4jMicronautContext {
                 .flatMap(request -> request.getAttribute(REQUEST_ATTRIBUTE, Ddd4jMicronautContext.class));
     }
 
+    /**
+     * 执行 <code>set</code>，调用 <code>CURRENT.set</code>。
+     *
+     * @param context 传入此操作的 <code>Ddd4jMicronautContext</code> 类型 <code>context</code>
+     */
     public static void set(Ddd4jMicronautContext context) {
         CURRENT.set(context);
     }
 
+    /** 执行 <code>clear</code>，调用 <code>CURRENT.remove</code>。 */
     public static void clear() {
         CURRENT.remove();
     }
 
+    /**
+     * 执行 <code>current Thread Context</code>，调用 <code>CURRENT.get</code>。
+     *
+     * @return 返回表达式 <code>CURRENT.get()</code>
+     */
     static Ddd4jMicronautContext currentThreadContext() {
         return CURRENT.get();
     }
 
+    /**
+     * 执行 <code>restore</code> 对应的处理。
+     *
+     * @param previous 传入此操作的 <code>Ddd4jMicronautContext</code> 类型 <code>previous</code>
+     */
     static void restore(Ddd4jMicronautContext previous) {
         if (Objects.isNull(previous)) {
             clear();
@@ -79,30 +103,52 @@ public final class Ddd4jMicronautContext {
         }
     }
 
+    /**
+     * \u83b7\u53d6 Web \u8bf7\u6c42\u4e0a\u4e0b\u6587\u3002
+     * @return Web \u8bf7\u6c42\u4e0a\u4e0b\u6587
+     */
     @JsonProperty("requestContext")
     public WebRequestContext requestContext() {
         return requestContext;
     }
 
+    /**
+     * \u83b7\u53d6\u5f53\u524d\u4e3b\u4f53\u3002
+     * @return \u53ef\u9009\u4e3b\u4f53
+     */
     @JsonProperty("subject")
     public Optional<Subject> subject() {
         return subject;
     }
 
+    /**
+     * 读取<code>scope</code> 的当前值。
+     *
+     * @return 返回表达式 <code>scope</code>
+     */
     public WebContextScope openContext() {
         WebContextScope scope = WebContextScope.open(requestContext);
         subject.ifPresent(ThreadContext::bind);
         return scope;
     }
 
+    /**
+     * \u83b7\u53d6 Web \u8bf7\u6c42\u4e0a\u4e0b\u6587\u7684 JavaBean \u8bbf\u95ee\u65b9\u6cd5\u3002
+     * @return Web \u8bf7\u6c42\u4e0a\u4e0b\u6587
+     */
     public WebRequestContext getRequestContext() {
         return requestContext;
     }
 
+    /**
+     * \u83b7\u53d6\u5f53\u524d\u4e3b\u4f53\u7684 JavaBean \u8bbf\u95ee\u65b9\u6cd5\u3002
+     * @return \u53ef\u9009\u4e3b\u4f53
+     */
     public Optional<Subject> getSubject() {
         return subject;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -116,6 +162,7 @@ public final class Ddd4jMicronautContext {
                 && Objects.equals(subject, other.subject);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int result = Objects.hashCode(requestContext);
@@ -123,6 +170,7 @@ public final class Ddd4jMicronautContext {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "Ddd4jMicronautContext[requestContext=" + requestContext + ", subject=" + subject + "]";

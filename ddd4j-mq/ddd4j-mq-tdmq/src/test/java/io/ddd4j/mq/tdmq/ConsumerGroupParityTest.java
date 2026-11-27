@@ -29,6 +29,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * 通过真实订阅入口观察 group，不访问外部 Broker。
  */
 class ConsumerGroupParityTest {
+    /**
+     * \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>properties.setDefaultGroup()</code>\u3001<code>client.setBrokerSubscriber()</code>\u3001<code>groups.add()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void whitespaceGroupFallsBackAndExplicitGroupIsPreserved() throws Exception {
         TdmqProperties properties = new TdmqProperties();
@@ -51,6 +55,7 @@ class ConsumerGroupParityTest {
     }
 
 
+    /** \u9a8c\u8bc1<code>closeCount.get()</code> \u7b49\u4e8e <code>1</code>\u3002 */
     @Test
     void closesEverySubscriptionOnlyOnce() {
         TdmqProperties properties = new TdmqProperties();

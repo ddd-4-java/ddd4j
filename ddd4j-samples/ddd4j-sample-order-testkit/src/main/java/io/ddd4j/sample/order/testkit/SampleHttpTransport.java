@@ -15,6 +15,7 @@ import java.util.concurrent.ExecutionException;
  */
 public final class SampleHttpTransport {
 
+    /** \u9650\u5236\u5de5\u5177\u7c7b\u5b9e\u4f8b\u5316\u3002 */
     private SampleHttpTransport() {
     }
 
@@ -58,9 +59,16 @@ public final class SampleHttpTransport {
      * 实际 HTTP 响应的状态与正文。
      */
     public static final class Response {
+        /** HTTP \u54cd\u5e94\u72b6\u6001\u7801\u3002 */
         private final int statusCode;
+        /** HTTP \u54cd\u5e94\u6b63\u6587\u3002 */
         private final String body;
 
+        /**
+         * \u4fdd\u5b58\u6d4b\u8bd5\u5ba2\u6237\u7aef\u63a5\u6536\u5230\u7684\u72b6\u6001\u7801\u4e0e\u54cd\u5e94\u6b63\u6587\u3002
+         * @param statusCode HTTP \u54cd\u5e94\u72b6\u6001\u7801
+         * @param body HTTP \u54cd\u5e94\u6b63\u6587
+         */
         private Response(int statusCode, String body) {
             this.statusCode = statusCode;
             this.body = body;

@@ -39,6 +39,7 @@ import java.util.Objects;
  */
 public final class MqSpan {
 
+    /** \u5c06\u8ddf\u8e2a\u4e0a\u4e0b\u6587\u5199\u5165 HTTP \u6216\u6d88\u606f\u4f20\u8f93\u5934\u7684\u4f20\u64ad\u9002\u914d\u5668\u3002 */
     private static final TextMapSetter<Map<String, String>> SETTER = new TextMapSetter<Map<String, String>>() {
         @Override
         public void set(Map<String, String> carrier, String key, String value) {
@@ -47,6 +48,7 @@ public final class MqSpan {
             }
         }
     };
+    /** \u4ece HTTP \u6216\u6d88\u606f\u4f20\u8f93\u5934\u8bfb\u53d6\u8ddf\u8e2a\u4e0a\u4e0b\u6587\u7684\u4f20\u64ad\u9002\u914d\u5668\u3002 */
     private static final TextMapGetter<Map<String, String>> GETTER = new TextMapGetter<Map<String, String>>() {
         @Override
         public Iterable<String> keys(Map<String, String> carrier) {
@@ -70,6 +72,7 @@ public final class MqSpan {
         }
     };
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>MqSpan</code> \u5b9e\u4f8b\u3002 */
     private MqSpan() {
     }
 
@@ -153,6 +156,10 @@ public final class MqSpan {
         endConsumer(span, null);
     }
 
+    /**
+     * \u628a\u5f53\u524d\u8ffd\u8e2a\u4e0a\u4e0b\u6587\u5199\u5165\u6d88\u606f\u4f20\u8f93\u5934\u3002
+     * @param headers \u4f20\u64ad\u8ffd\u8e2a\u4fe1\u606f\u4f7f\u7528\u7684\u4f20\u8f93\u5934\u5b57\u6bb5
+     */
     private static void injectContext(Map<String, String> headers) {
         if (Objects.isNull(headers)) {
             return;
@@ -168,6 +175,11 @@ public final class MqSpan {
         }
     }
 
+    /**
+     * \u4ece\u6d88\u606f\u5934\u6062\u590d\u8c03\u7528\u94fe\u4f20\u64ad\u4e0a\u4e0b\u6587\u3002
+     * @param headers \u4f20\u64ad\u8ffd\u8e2a\u4fe1\u606f\u4f7f\u7528\u7684\u4f20\u8f93\u5934\u5b57\u6bb5
+     * @return \u6d88\u606f\u4e2d\u4f20\u9012\u7684 OpenTelemetry \u4e0a\u4e0b\u6587
+     */
     private static Context extractContext(Map<String, String> headers) {
         if (Objects.isNull(headers)) {
             return Context.current();

@@ -38,6 +38,7 @@ import java.util.function.Function;
  */
 public final class MQListenerClasspathScanner {
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>MQListenerClasspathScanner</code> \u5b9e\u4f8b\u3002 */
     private MQListenerClasspathScanner() {
     }
 
@@ -114,6 +115,11 @@ public final class MQListenerClasspathScanner {
         }
     }
 
+    /**
+     * \u68c0\u67e5 Bean \u7c7b\u578b\u662f\u5426\u5c5e\u4e8e\u5e94\u8df3\u8fc7\u4e1a\u52a1\u76d1\u542c\u626b\u63cf\u7684\u57fa\u7840\u8bbe\u65bd\u3002
+     * @param clazz \u5f85\u5224\u65ad\u662f\u5426\u4e3a\u57fa\u7840\u8bbe\u65bd\u7684 Bean \u7c7b\u578b
+     * @return \u4e0d\u5e94\u626b\u63cf\u8be5\u7c7b\u7684\u76d1\u542c\u65b9\u6cd5\u65f6\u8fd4\u56de true
+     */
     private static boolean isInfrastructureClass(Class<?> clazz) {
         String name = clazz.getName();
         return name.startsWith("org.springframework")

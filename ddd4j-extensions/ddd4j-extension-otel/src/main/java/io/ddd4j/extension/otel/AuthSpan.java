@@ -55,14 +55,21 @@ public final class AuthSpan {
      * 鉴权相关标准化属性键。
      */
     public static final AttributeKey<String> ATTR_AUTH_FRAMEWORK = AttributeKey.stringKey("auth.framework");
+    /** Span \u5c5e\u6027\u952e {@code auth.login_id}\u3002 */
     public static final AttributeKey<String> ATTR_AUTH_LOGIN_ID = AttributeKey.stringKey("auth.login_id");
+    /** Span \u5c5e\u6027\u952e {@code auth.success}\u3002 */
     public static final AttributeKey<Boolean> ATTR_AUTH_SUCCESS = AttributeKey.booleanKey("auth.success");
+    /** Span \u5c5e\u6027\u952e {@code auth.operation}\u3002 */
     public static final AttributeKey<String> ATTR_AUTH_OPERATION = AttributeKey.stringKey("auth.operation");
+    /** Span \u5c5e\u6027\u952e {@code auth.role}\u3002 */
     public static final AttributeKey<String> ATTR_AUTH_ROLE = AttributeKey.stringKey("auth.role");
+    /** Span \u5c5e\u6027\u952e {@code auth.permission}\u3002 */
     public static final AttributeKey<String> ATTR_AUTH_PERMISSION = AttributeKey.stringKey("auth.permission");
 
+    /** \u8ba4\u8bc1\u8ddf\u8e2a\u5b57\u6bb5\u7f3a\u5c11\u6846\u67b6\u6807\u8bc6\u65f6\u4f7f\u7528\u7684\u9ed8\u8ba4\u540d\u79f0\u3002 */
     private static final String DEFAULT_FRAMEWORK = "ddd4j";
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>AuthSpan</code> \u5b9e\u4f8b\u3002 */
     private AuthSpan() {
     }
 
@@ -306,6 +313,10 @@ public final class AuthSpan {
         }
     }
 
+    /**
+     * \u628a\u5f53\u524d\u4f1a\u8bdd\u7684\u767b\u5f55\u6807\u8bc6\u8865\u5230\u8ba4\u8bc1\u8ddf\u8e2a Span\u3002
+     * @param span \u63a5\u6536\u5f53\u524d\u8ddf\u8e2a\u5c5e\u6027\u7684 Span
+     */
     private static void attachCurrentLoginId(Span span) {
         try {
             AuthPrincipal principal = SubjectKit.getPrincipal();

@@ -40,7 +40,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @UtilityClass
 public class SymmetricCryptoKit {
 
+    /** \u6309\u914d\u7f6e\u952e\u590d\u7528\u5bf9\u79f0\u52a0\u5bc6\u5bf9\u8c61\u3002 */
     private final Map<String, SymmetricCrypto> SYMMETRIC_CRYPTO_CACHE = new ConcurrentHashMap<>();
+    /** \u6309\u914d\u7f6e\u952e\u590d\u7528\u6d88\u606f\u8ba4\u8bc1\u7801\u8fd0\u7b97\u5bf9\u8c61\u3002 */
     private final Map<String, HMac> HMAC_CACHE = new ConcurrentHashMap<>();
 
     /**

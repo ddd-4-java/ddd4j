@@ -52,14 +52,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("JavalinProjectionScheduler + ViewManager 真实 Javalin 启动 IT")
 class JavalinProjectionSchedulerIT {
 
+    /** 保存 <code>app</code> 对应的 <code>Javalin</code> 数据。 */
     private Javalin app;
 
+    /** 初始化测试资源，调用 <code>Javalin.create</code>。 */
     @BeforeEach
     void startJavalin() {
         app = Javalin.create(cfg -> {
         }).start(0);
     }
 
+    /** 释放测试资源，调用 <code>app.stop</code>。 */
     @AfterEach
     void stopJavalin() {
         if (app != null) {
@@ -67,6 +70,11 @@ class JavalinProjectionSchedulerIT {
         }
     }
 
+    /**
+     * 执行 <code>create Runner</code>，调用 <code>EventChunk.empty</code>。
+     *
+     * @return 按条件返回 <code>0</code>、<code>null</code>
+     */
     private ProjectionRunner<Object> createRunner() {
         ProjectionService service = new ProjectionService() {
             @Override
@@ -88,6 +96,13 @@ class JavalinProjectionSchedulerIT {
         return new ProjectionRunner<>(service, reader);
     }
 
+    /**
+     * 执行 <code>create View</code>，调用 <code>Collections.singleton</code>。
+     *
+     * @param name 传入此操作的 <code>String</code> 类型 <code>name</code>
+     * @param cron 控制任务触发时刻的 Cron 表达式
+     * @return 按条件返回 <code>cron</code>、<code>Collections.singleton("TestEvent")</code>
+     */
     private ProjectionView<Object> createView(String name, String cron) {
         return new ProjectionView<Object>() {
             @Override
@@ -111,6 +126,7 @@ class JavalinProjectionSchedulerIT {
         };
     }
 
+    /** 验证<code>handle.isActive()</code>为真，<code>handle.isActive()</code>为假。 */
     @Test
     void scheduler_schedule_应返回activeHandle_cancel后应inactive() {
         JavalinProjectionScheduler scheduler =
@@ -126,6 +142,7 @@ class JavalinProjectionSchedulerIT {
         assertThat(handle.isActive()).isFalse();
     }
 
+    /** 验证<code>viewManager.isRunning()</code>为假，<code>viewManager.isRunning()</code>为真。 */
     @Test
     void viewManager_start_stop_应管理生命周期() {
         ProjectionRunner<Object> runner = createRunner();
@@ -146,6 +163,7 @@ class JavalinProjectionSchedulerIT {
         assertThat(viewManager.isRunning()).isFalse();
     }
 
+    /** 验证<code>viewManager.isRunning()</code>为真。 */
     @Test
     void triggerOnce_应立即执行所有view的runOnce() {
         ProjectionRunner<Object> runner = createRunner();

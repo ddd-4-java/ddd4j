@@ -45,6 +45,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
 
+    /** {@inheritDoc} */
     @Override
     protected CqrsRuntimeContract createContract() {
         StubExecutorA executorA = new StubExecutorA();
@@ -93,23 +94,32 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
      */
     private static class StubViewManager implements ViewManager {
 
+        /** 视图管理器是否已启动。 */
         private final AtomicBoolean running = new AtomicBoolean(false);
 
+        /** 执行 <code>start</code>，调用 <code>running.set</code>。 */
         @Override
         public void start() {
             running.set(true);
         }
 
+        /** 执行 <code>stop</code>，调用 <code>running.set</code>。 */
         @Override
         public void stop() {
             running.set(false);
         }
 
+        /**
+         * 执行 <code>is Running</code>，调用 <code>running.get</code>。
+         *
+         * @return 返回表达式 <code>running.get()</code>
+         */
         @Override
         public boolean isRunning() {
             return running.get();
         }
 
+        /** 执行 <code>trigger Once</code> 对应的处理。 */
         @Override
         public void triggerOnce() {
             // 桩实现，不做任何操作
@@ -122,6 +132,14 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
      */
     private static class NoopViewScheduler implements ViewScheduler {
 
+        /**
+         * 执行 <code>schedule</code> 对应的处理。
+         *
+         * @param viewName 注册调度任务所用的视图名称
+         * @param cron 控制任务触发时刻的 Cron 表达式
+         * @param task 计划到期时调用的投影任务
+         * @return 当前操作得到的 <code>ViewScheduleHandle</code> 结果
+         */
         @Override
         public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
             return new ViewScheduleHandle() {

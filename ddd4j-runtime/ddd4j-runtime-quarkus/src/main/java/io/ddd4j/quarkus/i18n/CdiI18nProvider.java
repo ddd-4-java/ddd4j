@@ -35,6 +35,7 @@ import java.util.ResourceBundle;
 @ApplicationScoped
 public class CdiI18nProvider implements I18nProvider {
 
+    /** {@inheritDoc} */
     @Override
     public String getMessage(String key, Object... args) {
         if (Objects.isNull(key)) {

@@ -73,6 +73,7 @@ public abstract class TenantAwareEntity extends TenantAwareEntityBase {
         return tenantId;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return String.format("%s<%s:%s>", this.getClass().getSimpleName(), tenantId, id);

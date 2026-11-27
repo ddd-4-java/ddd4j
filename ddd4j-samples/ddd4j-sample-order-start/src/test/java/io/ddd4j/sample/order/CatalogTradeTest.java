@@ -38,11 +38,14 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+/** \u4f7f\u7528\u771f\u5b9e MySQL \u9a8c\u8bc1\u5546\u54c1\u4ea4\u6613\u7684\u8868\u7ed3\u6784\u3001\u4e8b\u52a1\u3001\u79df\u6237\u9694\u79bb\u548c\u72b6\u6001\u6d41\u8f6c\u3002 */
 @Testcontainers
 class CatalogTradeTest {
+    /** \u4e3a\u5546\u54c1\u4ea4\u6613\u96c6\u6210\u6d4b\u8bd5\u63d0\u4f9b\u9694\u79bb\u6570\u636e\u5e93\u7684 MySQL \u5bb9\u5668\u3002 */
     @Container
     static final MySQLContainer<?> MYSQL = new MySQLContainer<>("mysql:8.0.36");
 
+    /** \u9a8c\u8bc1\u89c4\u683c\u552f\u4e00\u952e\u51b2\u7a81\u4f1a\u8f6c\u6210\u9886\u57df\u5f02\u5e38\uff0c\u5e76\u56de\u6eda\u540c\u4e8b\u52a1\u4e2d\u7684\u5546\u54c1\u8bb0\u5f55\u3002 */
     @Test
     void databaseTranslatesDuplicateSkuAndRollsBackItsParent() {
         String tenant = UUID.randomUUID().toString().substring(0, 16);
@@ -59,6 +62,10 @@ class CatalogTradeTest {
                 () -> transactions.execute(tenant, session -> session.goods().findByCode("SECOND")));
     }
 
+    /**
+     * \u9a8c\u8bc1\u91cd\u590d\u542f\u52a8\u4fdd\u7559\u8ba2\u5355\u5feb\u7167\uff0c\u4e14\u6309\u79df\u6237\u9694\u79bb\u540c\u4e1a\u52a1\u7f16\u53f7\u7684\u8ba2\u5355\u3002
+     * @throws Exception \u6570\u636e\u5e93\u8868\u7ed3\u6784\u68c0\u67e5\u5931\u8d25
+     */
     @Test
     void startupAndRestartPreserveTenantScopedOrderSnapshots() throws Exception {
         String tenant = UUID.randomUUID().toString().substring(0, 16);
@@ -101,6 +108,7 @@ class CatalogTradeTest {
         assertEquals(404, restarted.order(tenant + "x", "O1").getStatus());
     }
 
+    /** \u9a8c\u8bc1\u5199\u547d\u4ee4\u5148\u63d0\u4ea4\u4ea4\u6613\u4e8b\u5b9e\uff0c\u6295\u5f71\u53ef\u76f4\u63a5\u4ece\u4ea4\u6613\u8868\u91cd\u5efa\u5feb\u7167\u3002 */
     @Test
     void catalogCommandsWriteBeforeProjectionAndProjectionRebuildsFromTradeTables() {
         String tenant = UUID.randomUUID().toString().substring(0, 16);
@@ -123,6 +131,7 @@ class CatalogTradeTest {
         assertEquals(200, rebuilt.project(tenant, "O1").getStatus());
         assertEquals(cqrs.order(tenant, "O1").getPayload(), rebuilt.order(tenant, "O1").getPayload());
     }
+    /** {@inheritDoc} */
     @Test
     void paymentUpdatesTradeFactsAndPreservesTheOriginalSnapshot() {
         UnpooledDataSource source = new UnpooledDataSource(MYSQL.getDriverClassName(), MYSQL.getJdbcUrl(), MYSQL.getUsername(), MYSQL.getPassword());
@@ -163,6 +172,7 @@ class CatalogTradeTest {
         assertEquals(2500, event.getPaidAmountCent());
     }
 
+    /** \u9a8c\u8bc1\u53d6\u6d88\u548c\u5c65\u7ea6\u5206\u522b\u4fee\u6539\u5bf9\u5e94\u72b6\u6001\u5b57\u6bb5\u3002 */
     @Test
     void cancellationAndFulfillmentUseTheSeparateTradeStates() {
         UnpooledDataSource source = new UnpooledDataSource(MYSQL.getDriverClassName(), MYSQL.getJdbcUrl(), MYSQL.getUsername(), MYSQL.getPassword());
@@ -186,6 +196,11 @@ class CatalogTradeTest {
         assertEquals(404, api.fulfillOrder(tenant + "x", "FULFILL").getStatus());
     }
 
+    /**
+     * \u67e5\u8be2\u6570\u636e\u5e93\u5143\u6570\u636e\u5e76\u6838\u5bf9\u5546\u54c1\u4ea4\u6613\u56db\u5f20\u8868\u7684\u7ed3\u6784\u3002
+     * @param source \u6307\u5411\u9694\u79bb\u6d4b\u8bd5 MySQL \u7684\u6570\u636e\u6e90
+     * @throws Exception \u65e0\u6cd5\u8fde\u63a5\u6570\u636e\u5e93\u6216\u8bfb\u53d6\u8868\u7ed3\u6784
+     */
     private static void assertSchema(UnpooledDataSource source) throws Exception {
         Map<String, Integer> counts = new HashMap<>();
         try (Connection connection = source.getConnection();

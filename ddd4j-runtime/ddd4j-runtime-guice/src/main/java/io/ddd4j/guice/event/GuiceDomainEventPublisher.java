@@ -39,11 +39,16 @@ public class GuiceDomainEventPublisher implements DomainEventPublisher {
      */
     private final EventBus eventBus;
 
+    /**
+     * \u4f7f\u7528 Guava EventBus \u521b\u5efa\u9886\u57df\u4e8b\u4ef6\u53d1\u5e03\u5668\u3002
+     * @param eventBus Guava \u4e8b\u4ef6\u603b\u7ebf
+     */
     @Inject
     public GuiceDomainEventPublisher(EventBus eventBus) {
         this.eventBus = eventBus;
     }
 
+    /** {@inheritDoc} */
     @Override
     public <ID extends EntityId> void publish(DomainEvent<ID> event) {
         if (Objects.isNull(event)) {

@@ -22,6 +22,7 @@ import java.util.Set;
  */
 
 public class NativeAuth implements AutoCloseable {
+    /** \u5f53\u524d\u793a\u4f8b\u5b89\u88c5\u5e76\u8d1f\u8d23\u5173\u95ed\u7684 Shiro \u5b89\u5168\u7ba1\u7406\u5668\u3002 */
     private final DefaultSecurityManager owned = new DefaultSecurityManager(new SampleRealm());
 
     /**
@@ -58,7 +59,9 @@ public class NativeAuth implements AutoCloseable {
         owned.destroy();
     }
 
+    /** \u6839\u636e\u793a\u4f8b\u7528\u6237\u53ca\u8ba2\u5355\u6743\u9650\u6267\u884c\u539f\u751f Shiro \u8ba4\u8bc1\u4e0e\u6388\u6743\u3002 */
     private static final class SampleRealm extends AuthorizingRealm {
+        /** {@inheritDoc} */
         @Override
         protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) {
             String user = String.valueOf(token.getPrincipal());
@@ -68,6 +71,7 @@ public class NativeAuth implements AutoCloseable {
             return new SimpleAuthenticationInfo(user, "sample-password", getName());
         }
 
+        /** {@inheritDoc} */
         @Override
         protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
             SimpleAuthorizationInfo result = new SimpleAuthorizationInfo();

@@ -41,6 +41,7 @@ public class CdiSubjectProvider implements SubjectProvider {
     @Inject
     Instance<Subject> subjectInstance;
 
+    /** {@inheritDoc} */
     @Override
     public Subject getSubject() {
         if (subjectInstance.isUnsatisfied() || subjectInstance.isAmbiguous()) {

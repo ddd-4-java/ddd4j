@@ -28,6 +28,7 @@ import java.util.Objects;
  */
 public class TestSubject extends SaTokenSubject {
 
+    /** {@inheritDoc} */
     @Override
     public Object getUserId() {
         // 回退到 Subject 接口默认实现：从 principal.getUserId() 取值

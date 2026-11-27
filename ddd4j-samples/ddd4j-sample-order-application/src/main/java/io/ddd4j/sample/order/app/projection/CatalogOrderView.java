@@ -20,24 +20,30 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public final class CatalogOrderView
         implements ProjectionView<TradeOrderQuery>, QueryHandler<ProjectedTradeOrderQuery, TradeOrderSnapshot> {
+    /** \u6839\u636e\u79df\u6237\u548c\u8ba2\u5355\u53f7\u52a0\u8f7d\u5df2\u63d0\u4ea4\u8ba2\u5355\u7684\u67e5\u8be2\u51fd\u6570\u3002 */
     private final Function<TradeOrderQuery, TradeOrder> readCommittedOrder;
+    /** \u6309\u79df\u6237\u548c\u8ba2\u5355\u53f7\u5206\u533a\u7684\u8ba2\u5355\u5feb\u7167\u3002 */
     private final Map<String, ConcurrentHashMap<String, TradeOrderSnapshot>> orders = new ConcurrentHashMap<>();
 
+    /** {@inheritDoc} */
     @Override
     public String getName() {
         return "catalog-orders";
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getCron() {
         return "";
     }
 
+    /** {@inheritDoc} */
     @Override
     public Collection<String> getEventTypes() {
         return Collections.emptySet();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void handleEvents(Collection<TradeOrderQuery> requests) {
         requests.forEach(this::rebuild);
@@ -57,11 +63,13 @@ public final class CatalogOrderView
                 .compute(orderNo, (key, previous) -> TradeOrderSnapshot.from(readCommittedOrder.apply(request)));
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<ProjectedTradeOrderQuery> queryType() {
         return ProjectedTradeOrderQuery.class;
     }
 
+    /** {@inheritDoc} */
     @Override
     public TradeOrderSnapshot handle(ProjectedTradeOrderQuery query) {
         return Optional.ofNullable(orders.get(query.getTenantId()))

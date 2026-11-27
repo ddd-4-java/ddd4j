@@ -33,12 +33,17 @@ import java.util.Objects;
 @Slf4j
 public abstract class BaseExceptionHandler {
 
+    /** \u5931\u8d25\u72b6\u6001\u503c\u3002 */
     public static final String STATUS_FAIL = "fail";
+    /** \u9519\u8bef\u72b6\u6001\u503c\u3002 */
     public static final String STATUS_ERROR = "error";
 
+    /** \u5f02\u6b65\u8bf7\u6c42\u6807\u8bc6\u503c\u3002 */
     protected static final String XML_HTTP_REQUEST = "XMLHttpRequest";
+    /** \u5f02\u6b65\u8bf7\u6c42\u6807\u8bc6\u5934\u540d\u79f0\u3002 */
     protected static final String X_REQUESTED_WITH = "X-Requested-With";
 
+    /** \u67e5\u627e\u5f53\u524d Servlet \u8bf7\u6c42\u53ca\u5176\u4e0a\u4e0b\u6587\u7684\u8bf7\u6c42\u6301\u6709\u5668\u3002 */
     private static final ThreadLocal<HttpServletRequest> REQUEST_HOLDER = new TransmittableThreadLocal<>();
 
     /**
@@ -99,6 +104,10 @@ public abstract class BaseExceptionHandler {
         return XML_HTTP_REQUEST.equalsIgnoreCase(request.getHeader(X_REQUESTED_WITH));
     }
 
+    /**
+     * \u8bb0\u5f55\u8bf7\u6c42\u5f02\u5e38\u3002
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     */
     protected void logException(Exception ex) {
         HttpServletRequest request = getCurrentRequest();
         if (Objects.nonNull(request)) {
@@ -107,6 +116,11 @@ public abstract class BaseExceptionHandler {
         log.error(ex.getMessage(), ex);
     }
 
+    /**
+     * \u8bb0\u5f55\u8bf7\u6c42\u5f02\u5e38\u3002
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @param detailMap \u5f02\u5e38\u8be6\u60c5
+     */
     protected void logException(Exception ex, Map<String, Object> detailMap) {
         HttpServletRequest request = getCurrentRequest();
         if (Objects.nonNull(request)) {

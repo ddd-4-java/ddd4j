@@ -32,20 +32,28 @@ import java.util.Objects;
 @Setter
 public class GoodsQueryParameters {
 
+    /** \u5f53\u524d\u8bf7\u6c42\u7684\u67e5\u8be2\u9875\u53f7\u3002 */
     @QueryParam("current")
     private Long current;
+    /** \u5f53\u524d\u5206\u9875\u67e5\u8be2\u5e0c\u671b\u8fd4\u56de\u7684\u8bb0\u5f55\u6570\u3002 */
     @QueryParam("size")
     private Long size;
+    /** \u5f53\u524d\u8bf7\u6c42\u6216\u7ed3\u679c\u4f7f\u7528\u7684\u4e1a\u52a1\u7f16\u7801\u3002 */
     @QueryParam("code")
     private String code;
+    /** \u5546\u54c1\u540d\u79f0\u6a21\u7cca\u5339\u914d\u6761\u4ef6\u3002 */
     @QueryParam("nameLike")
     private String nameLike;
+    /** \u5f53\u524d\u5546\u54c1\u3001\u8d26\u53f7\u6216\u6743\u9650\u8bb0\u5f55\u7684\u4e1a\u52a1\u72b6\u6001\u3002 */
     @QueryParam("status")
     private String status;
+    /** \u7b5b\u9009\u5546\u54c1\u65f6\u7684\u4ef7\u683c\u4e0b\u9650\u3002 */
     @QueryParam("priceMin")
     private BigDecimal priceMin;
+    /** \u7b5b\u9009\u5546\u54c1\u65f6\u7684\u4ef7\u683c\u4e0a\u9650\u3002 */
     @QueryParam("priceMax")
     private BigDecimal priceMax;
+    /** \u53ef\u89e3\u6790\u4e3a\u6392\u5e8f\u5b57\u6bb5\u548c\u65b9\u5411\u7684\u67e5\u8be2\u6587\u672c\u3002 */
     @QueryParam("orderBys")
     private String orderBys;
 
@@ -71,6 +79,10 @@ public class GoodsQueryParameters {
         return query;
     }
 
+    /**
+     * \u628a\u63d0\u4f9b\u7684\u67e5\u8be2\u72b6\u6001\u8f6c\u6362\u4e3a\u5546\u54c1\u72b6\u6001\u679a\u4e3e\uff0c\u7a7a\u767d\u503c\u4e0d\u9650\u5236\u72b6\u6001\u3002
+     * @return \u89e3\u6790\u5230\u7684\u5546\u54c1\u72b6\u6001\uff0c\u6ca1\u6709\u503c\u65f6\u4e3a\u7a7a
+     */
     private GoodsStatus parseStatus() {
         return StrKit.isBlank(status) ? null : GoodsStatus.valueOf(status.toUpperCase(Locale.ROOT));
     }

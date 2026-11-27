@@ -43,6 +43,7 @@ class SampleCommandHandler implements CommandExecutor<SampleCommand> {
      */
     static final String HANDLED = "handled-by-micronaut-handler";
 
+    /** {@inheritDoc} */
     @Override
     public Set<Class<? extends Command>> supportedCommands() {
         return Collections.singleton(SampleCommand.class);

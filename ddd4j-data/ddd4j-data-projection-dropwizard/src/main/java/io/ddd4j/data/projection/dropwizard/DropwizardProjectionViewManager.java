@@ -49,16 +49,27 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DropwizardProjectionViewManager implements ViewManager {
 
+    /** 注册任务和取消任务所用的视图调度器。 */
     private final ViewScheduler scheduler;
 
+    /** \u5b9e\u9645\u8bfb\u53d6\u5e76\u5e94\u7528\u6295\u5f71\u4e8b\u4ef6\u7684\u6267\u884c\u5668\u3002 */
     private final ProjectionRunner<?> runner;
 
+    /** \u7531\u5f53\u524d\u8fd0\u884c\u73af\u5883\u7ba1\u7406\u548c\u8c03\u5ea6\u7684\u6295\u5f71\u89c6\u56fe\u3002 */
     private final Collection<ProjectionView<?>> views;
 
+    /** 以视图名称索引的当前调度任务句柄。 */
     private final Map<String, ViewScheduler.ViewScheduleHandle> handles = new ConcurrentHashMap<>();
 
+    /** 视图管理器是否已启动。 */
     private volatile boolean running = false;
 
+    /**
+     * \u4f7f\u7528\u501f\u7528\u8c03\u5ea6\u5668\uff0c\u4e0d\u53d6\u5f97\u8c03\u5ea6\u5668\u3001reader \u6216\u4ed3\u50a8\u6240\u6709\u6743\u3002
+     * @param scheduler \u8c03\u7528\u65b9\u8c03\u5ea6\u5668
+     * @param runner \u5171\u4eab\u8fd0\u884c\u5668
+     * @param views \u89c6\u56fe\u5feb\u7167
+     */
     private DropwizardProjectionViewManager(ViewScheduler scheduler,
                                             ProjectionRunner<?> runner,
                                             Collection<ProjectionView<?>> views) {
@@ -86,6 +97,7 @@ public class DropwizardProjectionViewManager implements ViewManager {
         return new DropwizardProjectionViewManager(scheduler, runner, views);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void start() {
         if (!running) {
@@ -98,6 +110,7 @@ public class DropwizardProjectionViewManager implements ViewManager {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void stop() {
         if (running) {
@@ -107,11 +120,13 @@ public class DropwizardProjectionViewManager implements ViewManager {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isRunning() {
         return running;
     }
 
+    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("unchecked")
     public void triggerOnce() {
@@ -119,6 +134,11 @@ public class DropwizardProjectionViewManager implements ViewManager {
                 (Collection<? extends ProjectionView<Object>>) (Collection<?>) views);
     }
 
+    /**
+     * 将本次调度触发的视图交给投影运行器执行。
+     *
+     * @param view 本次要执行投影更新的视图
+     */
     @SuppressWarnings("unchecked")
     private void runView(ProjectionView<?> view) {
         ((ProjectionRunner<Object>) runner).runOnce((ProjectionView<Object>) view);

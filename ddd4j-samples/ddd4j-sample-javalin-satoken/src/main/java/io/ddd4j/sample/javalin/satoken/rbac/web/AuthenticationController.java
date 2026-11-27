@@ -54,6 +54,7 @@ import static io.javalin.apibuilder.ApiBuilder.*;
  */
 public class AuthenticationController {
 
+    /** \u6267\u884c\u57fa\u4e8e\u89d2\u8272\u7684\u6388\u6743\u4e0e\u5206\u914d\u64cd\u4f5c\u7684\u5e94\u7528\u670d\u52a1\u3002 */
     private final RbacService rbacService;
 
     /**
@@ -236,10 +237,13 @@ public class AuthenticationController {
     @NoArgsConstructor
     public static class LoginRequest {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u5f53\u524d\u8eab\u4efd\u51ed\u636e\u4f7f\u7528\u7684\u7528\u6237\u540d\u3002 */
         private String username;
 
+        /** \u5f53\u524d\u767b\u5f55\u6216\u8d26\u53f7\u521b\u5efa\u8bf7\u6c42\u63d0\u4f9b\u7684\u53e3\u4ee4\u3002 */
         @ToString.Exclude
         private String password;
 
@@ -284,8 +288,10 @@ public class AuthenticationController {
     @NoArgsConstructor
     public static class KickoutRequest {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u8d26\u53f7\u8eab\u4efd\u6216\u7528\u6237\u8bb0\u5f55\u7684\u4e3b\u952e\u3002 */
         private String userId;
 
         /**
@@ -317,8 +323,10 @@ public class AuthenticationController {
     @NoArgsConstructor
     public static class RoleCheckRequest {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u5f53\u524d\u8bf7\u6c42\u8981\u68c0\u67e5\u7684\u89d2\u8272\u6807\u8bc6\u3002 */
         private String role;
 
         /**
@@ -350,8 +358,10 @@ public class AuthenticationController {
     @NoArgsConstructor
     public static class PermissionCheckRequest {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u5f53\u524d\u8bf7\u6c42\u8981\u68c0\u67e5\u7684\u6743\u9650\u6807\u8bc6\u3002 */
         private String permission;
 
         /**

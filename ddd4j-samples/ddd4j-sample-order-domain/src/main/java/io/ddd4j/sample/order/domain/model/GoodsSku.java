@@ -90,6 +90,7 @@ public class GoodsSku implements Entity<Long> {
                 .salePriceCent(priceCent).stockMode("UNLIMITED").build();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Long id() {
         return id;

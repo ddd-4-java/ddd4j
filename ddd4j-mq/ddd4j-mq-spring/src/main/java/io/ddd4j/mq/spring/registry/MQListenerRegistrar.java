@@ -56,11 +56,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @RequiredArgsConstructor
 public class MQListenerRegistrar implements DisposableBean {
 
+    /** \u6355\u83b7\u5bb9\u5668\u4e2d\u5e26\u6d88\u606f\u76d1\u542c\u6ce8\u89e3\u65b9\u6cd5\u7684\u540e\u5904\u7406\u5668\u3002 */
     private final MQListenerBeanPostProcessor beanPostProcessor;
+    /** \u5f53\u524d Spring \u5bb9\u5668\u6301\u6709\u7684\u6d88\u606f\u4ee3\u7406\u9002\u914d\u5668\u3002 */
     private final List<MQClient> mqClients;
+    /** \u5f53\u524d\u6d88\u606f\u4ee3\u7406\u5ba2\u6237\u7aef\u4f7f\u7528\u7684\u8fde\u63a5\u548c\u8ba2\u9605\u914d\u7f6e\u3002 */
     private final MQProperties properties;
+    /** \u7528\u4e8e\u8bfb\u5199\u6d88\u606f\u8d1f\u8f7d\u7684\u534f\u8bae\u7f16\u7801\u7ec4\u4ef6\u3002 */
     private final MQEventSerialization serialization;
+    /** \u6309\u9700\u63d0\u4f9b\u6d88\u606f\u5904\u7406\u72b6\u6001\u5b58\u50a8\u7684\u7ec4\u4ef6\u3002 */
     private final ObjectProvider<MQEventStorer<?>> storerProvider;
+    /** \u5f53\u524d Spring \u6d88\u606f\u76d1\u542c\u6ce8\u518c\u5668\u662f\u5426\u5df2\u5173\u95ed\u3002 */
     private final AtomicBoolean destroyed = new AtomicBoolean();
 
     /**
@@ -109,7 +115,9 @@ public class MQListenerRegistrar implements DisposableBean {
     }
 
     /**
-     * 逆序关闭所有客户端。单个客户端关闭失败不会阻止其余客户端释放资源。
+     * \u9006\u5e8f\u5173\u95ed\u6240\u6709\u5ba2\u6237\u7aef\u3002\u5355\u4e2a\u5ba2\u6237\u7aef\u5173\u95ed\u5931\u8d25\u4e0d\u4f1a\u963b\u6b62\u5176\u4f59\u5ba2\u6237\u7aef\u91ca\u653e\u8d44\u6e90\u3002
+     *
+     * @throws Exception \u5173\u95ed\u5df2\u6ce8\u518c\u7684\u6d88\u606f\u76d1\u542c\u7ec4\u4ef6\u5931\u8d25
      */
     @Override
     public void destroy() throws Exception {

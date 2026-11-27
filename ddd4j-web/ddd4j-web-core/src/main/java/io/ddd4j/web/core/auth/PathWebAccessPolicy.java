@@ -26,8 +26,11 @@ import java.util.Objects;
  */
 public final class PathWebAccessPolicy implements WebAccessPolicy {
 
+    /** \u7528\u4e8e\u8bc6\u522b\u524d\u7f00\u5f0f\u8def\u5f84\u89c4\u5219\u7684\u6a21\u5f0f\u3002 */
     private static final String PREFIX_PATTERN = "/**";
+    /** \u8131\u79bb\u9ed8\u8ba4\u8ba4\u8bc1\u8981\u6c42\u7684\u8bf7\u6c42\u8def\u5f84\u6a21\u5f0f\u3002 */
     private final List<String> disabledPatterns;
+    /** \u5f53\u8bf7\u6c42\u6ca1\u6709\u5339\u914d\u663e\u5f0f\u8bbf\u95ee\u7b56\u7565\u65f6\u4f7f\u7528\u7684\u8ba4\u8bc1\u6a21\u5f0f\u3002 */
     private final AuthenticationMode defaultMode;
 
     /**
@@ -59,6 +62,12 @@ public final class PathWebAccessPolicy implements WebAccessPolicy {
                 ? AuthenticationMode.DISABLED : defaultMode;
     }
 
+    /**
+     * \u4f9d\u636e\u663e\u5f0f\u8def\u5f84\u548c\u901a\u914d\u89c4\u5219\u68c0\u67e5\u8bf7\u6c42\u662f\u5426\u547d\u4e2d\u914d\u7f6e\u3002
+     * @param path \u5f53\u524d\u88ab\u5904\u7406\u7684 HTTP \u8bf7\u6c42\u8def\u5f84
+     * @param pattern \u5f53\u524d\u8981\u5339\u914d\u7684\u8bbf\u95ee\u7b56\u7565\u8def\u5f84\u89c4\u5219
+     * @return \u8bf7\u6c42\u8def\u5f84\u7b26\u5408\u5f53\u524d\u8bbf\u95ee\u8def\u5f84\u89c4\u5219\u65f6\u8fd4\u56de true
+     */
     private boolean matches(String path, String pattern) {
         if (pattern.endsWith(PREFIX_PATTERN)) {
             String prefix = pattern.substring(0, pattern.length() - PREFIX_PATTERN.length());

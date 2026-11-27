@@ -22,6 +22,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Slf4j(topic = "### DDD4J-AUTH : ShiroExceptionHandler ###")
 public class ShiroExceptionHandler {
 
+    /**
+     * \u5c06 Shiro \u8ba4\u8bc1\u5f02\u5e38\u6620\u5c04\u4e3a\u672a\u8ba4\u8bc1\u54cd\u5e94\u3002
+     * @param exception Shiro \u8ba4\u8bc1\u5f02\u5e38
+     * @return \u672a\u8ba4\u8bc1\u54cd\u5e94
+     */
     @ExceptionHandler({UnknownAccountException.class, IncorrectCredentialsException.class,
             AuthenticationException.class})
     public ResponseEntity<R<String>> authenticationException(Exception exception) {
@@ -29,12 +34,22 @@ public class ShiroExceptionHandler {
         return new ResponseEntity<>(R.of(401, "未登录或登录已过期"), HttpStatus.UNAUTHORIZED);
     }
 
+    /**
+     * \u5c06\u8d26\u53f7\u9501\u5b9a\u5f02\u5e38\u6620\u5c04\u4e3a\u7981\u6b62\u8bbf\u95ee\u54cd\u5e94\u3002
+     * @param exception \u8d26\u53f7\u9501\u5b9a\u5f02\u5e38
+     * @return \u7981\u6b62\u8bbf\u95ee\u54cd\u5e94
+     */
     @ExceptionHandler(LockedAccountException.class)
     public ResponseEntity<R<String>> lockedAccountException(LockedAccountException exception) {
         log.warn("Shiro 账号锁定：{}", exception.getMessage());
         return new ResponseEntity<>(R.of(403, "账号已被锁定"), HttpStatus.FORBIDDEN);
     }
 
+    /**
+     * \u5c06 Shiro \u6388\u6743\u5f02\u5e38\u6620\u5c04\u4e3a\u7981\u6b62\u8bbf\u95ee\u54cd\u5e94\u3002
+     * @param exception Shiro \u6388\u6743\u5f02\u5e38
+     * @return \u7981\u6b62\u8bbf\u95ee\u54cd\u5e94
+     */
     @ExceptionHandler({UnauthorizedException.class, AuthorizationException.class})
     public ResponseEntity<R<String>> authorizationException(Exception exception) {
         log.warn("Shiro 授权异常：{}", exception.getMessage());

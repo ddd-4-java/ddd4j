@@ -41,6 +41,10 @@ public class ShiroConfiguration implements WebMvcConfigurer {
         registration.setOrder(-100);
         return registration;
     }
+    /**
+     * \u5411 Spring MVC \u6ce8\u518c\u5f53\u524d\u793a\u4f8b\u4f7f\u7528\u7684\u539f\u751f\u8ba4\u8bc1\u62e6\u622a\u5668\u3002
+     * @param registry Spring MVC \u7684\u62e6\u622a\u5668\u6ce8\u518c\u5668
+     */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new HandlerInterceptor() {

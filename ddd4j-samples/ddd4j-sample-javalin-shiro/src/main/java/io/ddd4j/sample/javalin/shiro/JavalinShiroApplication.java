@@ -103,6 +103,15 @@ public class JavalinShiroApplication {
         }, CatalogRuntime.start());
     }
 
+    /**
+     * 执行 <code>start</code>，调用 <code>RbacConfig.initSeedData</code>、<code>mgt.DefaultSecurityManager</code>、<code>AuthConfig.RbacRealm</code>。
+     *
+     * @param port 传入此操作的 <code>int</code> 类型 <code>port</code>
+     * @param observer 传入此操作的 <code>Consumer&lt;Optional&lt;String&gt;&gt;</code> 类型 <code>observer</code>
+     * @param configure 传入此操作的 <code>Consumer&lt;io.javalin.Javalin&gt;</code> 类型 <code>configure</code>
+     * @param catalog 传入此操作的 <code>CatalogEndpoints</code> 类型 <code>catalog</code>
+     * @return 当前操作得到的 <code>Application</code> 结果
+     */
     static Application start(int port, Consumer<Optional<String>> observer,
                              Consumer<io.javalin.Javalin> configure, CatalogEndpoints catalog) {
         // ==================== 1. 初始化 RBAC + Shiro SecurityManager ====================
@@ -261,8 +270,13 @@ public class JavalinShiroApplication {
      * 可关闭的实际 Javalin/Guice 应用句柄。
      */
     public static final class Application implements AutoCloseable {
+        /** \u5f53\u524d\u793a\u4f8b\u62e5\u6709\u548c\u5173\u95ed\u539f\u751f\u8ba4\u8bc1\u8d44\u6e90\u7684\u751f\u547d\u5468\u671f\u7ec4\u4ef6\u3002 */
         private final NativeAuthLifecycle lifecycle;
 
+        /**
+         * \u628a\u8ba4\u8bc1\u751f\u547d\u5468\u671f\u5173\u8054\u5230\u53ef\u505c\u6b62\u7684 Javalin \u5e94\u7528\u5305\u88c5\u5668\u3002
+         * @param lifecycle \u7531\u5f53\u524d\u5e94\u7528\u6301\u6709\u5e76\u5728\u5173\u95ed\u65f6\u56de\u6536\u7684\u8ba4\u8bc1\u751f\u547d\u5468\u671f
+         */
         private Application(NativeAuthLifecycle lifecycle) {
             this.lifecycle = lifecycle;
         }
@@ -274,6 +288,7 @@ public class JavalinShiroApplication {
             return lifecycle.app();
         }
 
+        /** {@inheritDoc} */
         @Override
         public void close() {
             lifecycle.close();

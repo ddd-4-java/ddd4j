@@ -347,9 +347,15 @@ public class ThreadContext {
      */
     public static final class Scope implements AutoCloseable {
 
+        /** \u5efa\u7acb\u5f53\u524d\u7ebf\u7a0b\u4f5c\u7528\u57df\u524d\u4fdd\u5b58\u7684\u8d44\u6e90\u526f\u672c\u3002 */
         private final Map<Object, Object> previousResources;
+        /** \u5f53\u524d\u5b9e\u4f8b\u662f\u5426\u5df2\u5173\u95ed\u3002 */
         private boolean closed;
 
+        /**
+         * \u4fdd\u5b58\u8fdb\u5165\u524d\u7684\u7ebf\u7a0b\u8d44\u6e90\uff0c\u4f9b\u5f53\u524d\u4f5c\u7528\u57df\u5173\u95ed\u65f6\u6062\u590d\u3002
+         * @param previousResources \u8fdb\u5165\u4f5c\u7528\u57df\u524d\u7684\u8d44\u6e90\u526f\u672c
+         */
         private Scope(Map<Object, Object> previousResources) {
             this.previousResources = previousResources;
         }
@@ -367,20 +373,34 @@ public class ThreadContext {
         }
     }
 
+    /** \u5728\u5f53\u524d\u7ebf\u7a0b\u8fd8\u6ca1\u6709\u8d44\u6e90\u8868\u65f6\u521d\u59cb\u5316\u8d44\u6e90\u6620\u5c04\u3002 */
     private static void ensureResourcesInitialized() {
         if (Objects.isNull(THREAD_LOCAL_POOL.get())) {
             THREAD_LOCAL_POOL.set(new ConcurrentHashMap<>(4));
         }
     }
 
+    /**
+     * \u4e3a\u5f53\u524d\u7ebf\u7a0b\u7684\u4e0a\u4e0b\u6587\u5236\u4f5c\u72ec\u7acb\u8d44\u6e90\u6620\u5c04\u3002
+     * @return \u5f53\u524d\u8d44\u6e90\u7684\u6d45\u62f7\u8d1d\uff0c\u672a\u521d\u59cb\u5316\u65f6\u8fd4\u56de\u7a7a
+     */
     private static Map<Object, Object> snapshotResources() {
         return copyResources(THREAD_LOCAL_POOL.get());
     }
 
+    /**
+     * \u590d\u5236\u5df2\u6709\u8d44\u6e90\u6620\u5c04\u5e76\u4fdd\u6301\u7a7a\u5f15\u7528\u8bed\u4e49\u3002
+     * @param resources \u8981\u590d\u5236\u6216\u5b89\u88c5\u7684\u7ebf\u7a0b\u8d44\u6e90\u6620\u5c04
+     * @return \u526f\u672c\u6620\u5c04\uff0c\u539f\u5f15\u7528\u4e3a\u7a7a\u65f6\u8fd4\u56de\u7a7a
+     */
     private static Map<Object, Object> copyResources(Map<Object, Object> resources) {
         return Objects.isNull(resources) ? null : new ConcurrentHashMap<>(resources);
     }
 
+    /**
+     * \u66ff\u6362\u5f53\u524d\u7ebf\u7a0b\u7684\u8d44\u6e90\u6620\u5c04\uff0c\u7a7a\u6620\u5c04\u6216\u7a7a\u5f15\u7528\u8868\u793a\u6e05\u9664\u5f53\u524d\u7ed1\u5b9a\u3002
+     * @param resources \u8981\u590d\u5236\u6216\u5b89\u88c5\u7684\u7ebf\u7a0b\u8d44\u6e90\u6620\u5c04
+     */
     private static void replaceResources(Map<Object, Object> resources) {
         if (Objects.isNull(resources) || resources.isEmpty()) {
             clear();

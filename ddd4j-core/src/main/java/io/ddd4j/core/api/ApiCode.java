@@ -191,6 +191,7 @@ public enum ApiCode implements IEnum<Integer>, CustomApiCode {
      */
     METHOD_ARGUMENT_NOT_VALID(HttpStatus.SC_BAD_REQUEST, "错误请求参数"),
 
+    /** \u529f\u80fd\u672a\u6388\u6743\uff0c\u62d2\u7edd\u8bbf\u95ee\u3002 */
     ACCESS_DENIED(HttpStatus.SC_UNAUTHORIZED, "不允许访问（功能未授权）"),
 
     /**
@@ -262,14 +263,22 @@ public enum ApiCode implements IEnum<Integer>, CustomApiCode {
      */
     NETWORK_AUTHENTICATION_REQUIRED(HttpStatus.SC_NETWORK_AUTHENTICATION_REQUIRED, "要求网络认证");
 
+    /** \u5bf9\u5916\u54cd\u5e94\u4e2d\u7684\u6570\u503c\u72b6\u6001\u7801\u3002 */
     private final Integer code;
+    /** \u4e0e\u72b6\u6001\u7801\u5173\u8054\u7684\u8bf4\u660e\u3002 */
     private final String reason;
 
+    /**
+     * \u521b\u5efa\u5bf9\u5916\u72b6\u6001\u7801\u4e0e\u5176\u8bf4\u660e\u7684\u7ec4\u5408\u3002
+     * @param code \u6570\u503c\u72b6\u6001\u7801
+     * @param reason \u72b6\u6001\u7684\u8bf4\u660e
+     */
     private ApiCode(Integer code, String reason) {
         this.code = code;
         this.reason = reason;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDesc() {
         return reason;

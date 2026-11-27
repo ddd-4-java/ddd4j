@@ -36,6 +36,7 @@ public class AnonymousSubjectProvider implements SubjectProvider {
      */
     public static final AnonymousSubjectProvider INSTANCE = new AnonymousSubjectProvider();
 
+    /** {@inheritDoc} */
     @Override
     public Subject getSubject() {
         return null; // 匿名：未登录

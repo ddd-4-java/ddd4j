@@ -46,8 +46,11 @@ import java.util.*;
 @Filter("/**")
 public final class Ddd4jMicronautWebFilter implements HttpFilter {
 
+    /** \u6839\u636e\u6846\u67b6\u8bf7\u6c42\u5143\u6570\u636e\u88c5\u914d\u5171\u7528 Web \u8bf7\u6c42\u4e0a\u4e0b\u6587\u3002 */
     private final WebRequestContextFactory contextFactory;
+    /** \u5f00\u542f\u548c\u5173\u95ed\u5f53\u524d Web \u8bf7\u6c42\u4e0a\u4e0b\u6587\u7684\u7ec4\u4ef6\u3002 */
     private final WebRequestLifecycle requestLifecycle;
+    /** \u5728\u8bf7\u6c42\u5904\u7406\u9636\u6bb5\u83b7\u53d6\u53ca\u91ca\u653e\u5e42\u7b49\u4fdd\u62a4\u7684\u7ec4\u4ef6\u3002 */
     private final Optional<WebIdempotencyLifecycle> idempotencyLifecycle;
 
     /**
@@ -84,6 +87,10 @@ public final class Ddd4jMicronautWebFilter implements HttpFilter {
         this.idempotencyLifecycle = Optional.ofNullable(idempotencyLifecycle);
     }
 
+    /**
+     * \u5c1d\u8bd5\u5173\u95ed\u8bf7\u6c42\u4f5c\u7528\u57df\uff0c\u6e05\u7406\u6545\u969c\u4e0d\u6253\u65ad\u54cd\u5e94\u5904\u7406\u3002
+     * @param scope \u9700\u8981\u5728\u5f53\u524d\u8bf7\u6c42\u7ed3\u675f\u540e\u5173\u95ed\u7684\u4f5c\u7528\u57df
+     */
     private static void closeScope(AutoCloseable scope) {
         try {
             scope.close();
@@ -91,6 +98,11 @@ public final class Ddd4jMicronautWebFilter implements HttpFilter {
         }
     }
 
+    /**
+     * \u63d0\u53d6\u8bf7\u6c42\u5934\uff0c\u6bcf\u4e2a\u6709\u503c\u7684\u8bf7\u6c42\u5934\u4fdd\u7559\u7b2c\u4e00\u4e2a\u503c\u3002
+     * @param request \u5f53\u524d\u6846\u67b6 HTTP \u8bf7\u6c42\u6216\u4ea4\u6362\u4e0a\u4e0b\u6587
+     * @return \u4f9b\u8bf7\u6c42\u4e0a\u4e0b\u6587\u8bfb\u53d6\u7684\u8bf7\u6c42\u5934\u6620\u5c04
+     */
     private static Map<String, String> extractRequestHeaders(HttpRequest<?> request) {
         Map<String, String> headers = new HashMap<>();
         request.getHeaders().forEach((k, v) -> {
@@ -173,6 +185,11 @@ public final class Ddd4jMicronautWebFilter implements HttpFilter {
         }
     }
 
+    /**
+     * \u4ece\u6846\u67b6\u8bf7\u6c42\u63d0\u53d6\u79df\u6237\u3001\u8ddf\u8e2a\u6807\u8bc6\u3001\u8ba4\u8bc1\u548c\u8def\u7531\u4fe1\u606f\uff0c\u7ec4\u88c5\u5171\u7528\u4e0a\u4e0b\u6587\u3002
+     * @param request \u5f53\u524d\u6846\u67b6 HTTP \u8bf7\u6c42
+     * @return \u4f9b\u4e0a\u4e0b\u6587\u548c\u8ba4\u8bc1\u5904\u7406\u94fe\u4f7f\u7528\u7684\u8bf7\u6c42\u4e0a\u4e0b\u6587
+     */
     private WebRequestContext createContext(HttpRequest<?> request) {
         InetSocketAddress remoteAddress = request.getRemoteAddress();
         String remoteHost = Objects.nonNull(remoteAddress) && Objects.nonNull(remoteAddress.getAddress())
@@ -190,6 +207,11 @@ public final class Ddd4jMicronautWebFilter implements HttpFilter {
                 request.getPath()));
     }
 
+    /**
+     * \u628a\u8bf7\u6c42\u6807\u8bc6\u548c\u8ddf\u8e2a\u6807\u8bc6\u5199\u56de Micronaut \u54cd\u5e94\u3002
+     * @param response \u5f53\u524d\u51c6\u5907\u5199\u51fa\u7684 HTTP \u54cd\u5e94
+     * @param context \u5f53\u524d\u6846\u67b6\u8c03\u7528\u6240\u643a\u5e26\u7684\u8bf7\u6c42\u4e0a\u4e0b\u6587
+     */
     private void addResponseHeaders(HttpResponse<?> response, WebRequestContext context) {
         if (response instanceof MutableHttpResponse) {
             MutableHttpResponse<?> mutable = (MutableHttpResponse<?>) response;
@@ -198,6 +220,11 @@ public final class Ddd4jMicronautWebFilter implements HttpFilter {
         }
     }
 
+    /**
+     * \u8bf7\u6c42\u7ed3\u675f\u540e\u6309\u6210\u529f\u72b6\u6001\u5b8c\u6210\u6216\u91ca\u653e\u5df2\u53d6\u5f97\u7684\u5e42\u7b49\u4f5c\u7528\u57df\u3002
+     * @param scope \u53ef\u5b8c\u6210\u6216\u91ca\u653e\u7684\u5e42\u7b49\u4f5c\u7528\u57df
+     * @param successful \u8bf7\u6c42\u662f\u5426\u6309\u6b63\u5e38\u4e1a\u52a1\u7ed3\u679c\u5b8c\u6210
+     */
     private void closeIdempotency(Optional<WebIdempotencyLifecycle.Scope> scope, boolean successful) {
         scope.ifPresent(idempotencyScope -> {
             if (successful) {
@@ -207,9 +234,15 @@ public final class Ddd4jMicronautWebFilter implements HttpFilter {
         });
     }
 
+    /** 为测试场景提供 <code>ReactiveInvocationInstrumenterFactory</code> 的实现。 */
     @Singleton
     static final class ContextPropagationFactory implements ReactiveInvocationInstrumenterFactory {
 
+        /**
+         * 执行 <code>new Reactive Invocation Instrumenter</code>，调用 <code>Ddd4jMicronautContext.current</code>、<code>current.isPresent</code>、<code>current.get</code>。
+         *
+         * @return 返回表达式 <code>null</code>
+         */
         @Override
         public InvocationInstrumenter newReactiveInvocationInstrumenter() {
             Optional<Ddd4jMicronautContext> current = Ddd4jMicronautContext.current();

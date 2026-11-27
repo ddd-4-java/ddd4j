@@ -27,10 +27,13 @@ import java.util.Objects;
  */
 public final class UpdateGoodsRequest {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 0L;
 
+    /** \u5f53\u524d\u8bf7\u6c42\u6216\u7ed3\u679c\u4f7f\u7528\u7684\u663e\u793a\u540d\u79f0\u3002 */
     private final String name;
 
+    /** \u7528\u4e8e\u66ff\u6362\u5546\u54c1\u5f53\u524d\u9500\u552e\u4ef7\u7684\u8bf7\u6c42\u5b57\u6bb5\u3002 */
     private final BigDecimal price;
 
     /**
@@ -65,6 +68,7 @@ public final class UpdateGoodsRequest {
         return price;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -77,6 +81,7 @@ public final class UpdateGoodsRequest {
         return Objects.equals(this.name, other.name) && Objects.equals(this.price, other.price);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int result = 0;
@@ -85,6 +90,7 @@ public final class UpdateGoodsRequest {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "UpdateGoodsRequest[name=" + name + ", price=" + price + "]";

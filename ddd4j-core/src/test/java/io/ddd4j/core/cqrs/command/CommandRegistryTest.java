@@ -40,8 +40,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  */
 class CommandRegistryTest {
 
+    /** \u5f53\u524d\u7528\u4f8b\u6ce8\u518c\u88ab\u6d4b\u7ec4\u4ef6\u548c\u89c2\u5bdf\u6307\u6807\u7684\u5bb9\u5668\u3002 */
     private final CommandRegistry registry = new CommandRegistry();
 
+    /** \u9a8c\u8bc1<code>found</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>executor</code>\u3002 */
     @Test
     void registeredExecutorIsFoundByExactCommandType() {
         CreateOrderCmdExe executor = new CreateOrderCmdExe();
@@ -52,6 +54,7 @@ class CommandRegistryTest {
         assertSame(executor, found, "findExecutor should return the registered executor instance");
     }
 
+    /** \u9a8c\u8bc1<code>registry.findExecutor(CancelOrderCommand.class)</code>\u4e3a\u7a7a\u3002 */
     @Test
     void findExecutorReturnsNullForUnregisteredCommandType() {
         registry.register(new CreateOrderCmdExe());
@@ -60,11 +63,13 @@ class CommandRegistryTest {
                 "unregistered command type should yield null (bus layer owns the missing-executor error)");
     }
 
+    /** \u9a8c\u8bc1<code>registry.register(null)</code> \u629b\u51fa <code>NullPointerException.class</code>\u3002 */
     @Test
     void registerRejectsNullExecutor() {
         assertThrows(NullPointerException.class, () -> registry.register(null));
     }
 
+    /** \u9a8c\u8bc1<code>registry.register(new CreateOrderCmdExe())</code> \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>ex</code> \u7684\u5f02\u5e38\u6d88\u606f\u5305\u542b <code>CreateOrderCommand.class.getName()</code>\u3002 */
     @Test
     void duplicateCommandTypeRegistrationThrowsIllegalStateWithCommandName() {
         registry.register(new CreateOrderCmdExe());
@@ -75,6 +80,7 @@ class CommandRegistryTest {
         assertThat(ex).hasMessageContaining(CreateOrderCommand.class.getName());
     }
 
+    /** \u9a8c\u8bc1<code>registry.register(multiTypeExecutor)</code> \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>ex</code> \u7684\u5f02\u5e38\u6d88\u606f\u5305\u542b <code>CreateOrderCommand.class.getName()</code>\uff0c<code>registry.executors()</code> \u7684\u5927\u5c0f\u4e3a <code>1</code>\u3002 */
     @Test
     void conflictingBatchRegistrationIsRejectedEntirely() {
         registry.register(new CreateOrderCmdExe());
@@ -91,6 +97,7 @@ class CommandRegistryTest {
                 .doesNotContain(multiTypeExecutor);
     }
 
+    /** \u9a8c\u8bc1<code>registry.executors().add(new CancelOrderCmdExe())</code> \u629b\u51fa <code>UnsupportedOperationException.class</code>\u3002 */
     @Test
     void executorsViewIsImmutable() {
         registry.register(new CreateOrderCmdExe());
@@ -99,6 +106,7 @@ class CommandRegistryTest {
                 () -> registry.executors().add(new CancelOrderCmdExe()));
     }
 
+    /** \u9a8c\u8bc1<code>registry.findExecutor(CreateOrderCommand.class)</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>createExecutor</code>\uff0c<code>registry.findExecutor(CancelOrderCommand.class)</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>cancelExecutor</code>\uff0c<code>registry.executors()</code> \u7684\u5927\u5c0f\u4e3a <code>3</code>\u3002 */
     @Test
     void multipleExecutorsRouteToTheirOwnCommandTypes() {
         CreateOrderCmdExe createExecutor = new CreateOrderCmdExe();
@@ -118,38 +126,48 @@ class CommandRegistryTest {
                 .containsOnlyOnce(multiTypeExecutor);
     }
 
+    /** \u4f9b\u547d\u4ee4\u603b\u7ebf\u9a8c\u8bc1\u7c7b\u578b\u5339\u914d\u548c\u5206\u53d1\u7684\u547d\u4ee4\u6837\u672c\u3002 */
     static class CreateOrderCommand implements Command {
     }
 
+    /** \u7528\u4e8e\u9a8c\u8bc1\u53d6\u6d88\u8ba2\u5355\u547d\u4ee4\u8def\u7531\u7684\u6837\u672c\u3002 */
     static class CancelOrderCommand implements Command {
     }
 
+    /** \u7528\u4e8e\u9a8c\u8bc1\u8ba2\u5355\u53d1\u8fd0\u547d\u4ee4\u8def\u7531\u7684\u6837\u672c\u3002 */
     static class ShipOrderCommand implements Command {
     }
 
+    /** \u4f9b\u547d\u4ee4\u603b\u7ebf\u9a8c\u8bc1\u7c7b\u578b\u5339\u914d\u548c\u5206\u53d1\u7684\u547d\u4ee4\u6837\u672c\u3002 */
     static class TrackOrderCommand implements Command {
     }
 
+    /** \u63a5\u6536\u6d4b\u8bd5\u547d\u4ee4\u5e76\u8fd4\u56de\u53ef\u65ad\u8a00\u7ed3\u679c\u7684\u6267\u884c\u5668\u66ff\u8eab\u3002 */
     static class CreateOrderCmdExe implements CommandExecutor<CreateOrderCommand> {
 
+        /** {@inheritDoc} */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.<Class<? extends Command>>singleton(CreateOrderCommand.class);
         }
 
+        /** {@inheritDoc} */
         @Override
         public Result execute(CreateOrderCommand command) {
             return Result.ok();
         }
     }
 
+    /** \u63a5\u6536\u6d4b\u8bd5\u547d\u4ee4\u5e76\u8fd4\u56de\u53ef\u65ad\u8a00\u7ed3\u679c\u7684\u6267\u884c\u5668\u66ff\u8eab\u3002 */
     static class CancelOrderCmdExe implements CommandExecutor<CancelOrderCommand> {
 
+        /** {@inheritDoc} */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.<Class<? extends Command>>singleton(CancelOrderCommand.class);
         }
 
+        /** {@inheritDoc} */
         @Override
         public Result execute(CancelOrderCommand command) {
             return Result.fail("cancelled");
@@ -162,12 +180,14 @@ class CommandRegistryTest {
      */
     static class OrderLifecycleCmdExe implements CommandExecutor<Command> {
 
+        /** {@inheritDoc} */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return new HashSet<>(Arrays.<Class<? extends Command>>asList(
                     CreateOrderCommand.class, CancelOrderCommand.class));
         }
 
+        /** {@inheritDoc} */
         @Override
         public Result execute(Command command) {
             return Result.ok();
@@ -180,12 +200,14 @@ class CommandRegistryTest {
      */
     static class OrderFulfillmentCmdExe implements CommandExecutor<Command> {
 
+        /** {@inheritDoc} */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return new HashSet<>(Arrays.<Class<? extends Command>>asList(
                     ShipOrderCommand.class, TrackOrderCommand.class));
         }
 
+        /** {@inheritDoc} */
         @Override
         public Result execute(Command command) {
             return Result.ok();

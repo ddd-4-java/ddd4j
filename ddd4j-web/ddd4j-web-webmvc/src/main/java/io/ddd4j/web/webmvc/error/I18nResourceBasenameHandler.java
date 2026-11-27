@@ -27,6 +27,12 @@ import java.net.URL;
  */
 public class I18nResourceBasenameHandler implements ResourceBasenameHandler {
 
+    /**
+     * \u5904\u7406\u8d44\u6e90\uff0c\u63d0\u53d6\u56fd\u9645\u5316 basename\u3002
+     * @param resource \u8d44\u6e90\u5bf9\u8c61
+     * @return \u89e3\u6790\u540e\u7684 basename \u5b57\u7b26\u4e32
+     * @throws IOException \u8d44\u6e90\u8bbf\u95ee\u5f02\u5e38
+     */
     @Override
     /**
      * 处理资源，提取国际化 basename。

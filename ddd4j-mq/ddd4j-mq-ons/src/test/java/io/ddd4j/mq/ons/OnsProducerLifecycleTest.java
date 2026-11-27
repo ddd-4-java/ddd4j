@@ -24,8 +24,10 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+/** \u9a8c\u8bc1 <code>OnsProducerLifecycle</code> \u5728 <code>closedAdapter</code>\u3001<code>producerHandle</code> \u7b49\u573a\u666f\u4e2d\u7684\u884c\u4e3a\u3002 */
 class OnsProducerLifecycleTest {
 
+    /** \u9a8c\u8bc1<code>client.initProducer(new MQProperties())</code> \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>failure.getCause()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>startupFailure</code>\u3002 */
     @Test
     void failedOwnedProducerStartShutsDownCreatedProducer() {
         Producer nativeProducer = mock(Producer.class);
@@ -52,6 +54,7 @@ class OnsProducerLifecycleTest {
         verify(nativeProducer, times(1)).shutdown();
     }
 
+    /** \u9a8c\u8bc1<code>client.initProducer(new MQProperties())</code> \u629b\u51fa <code>IllegalStateException.class</code>\u3002 */
     @Test
     void failedBorrowedProducerStartDoesNotShutDownProducer() {
         Producer nativeProducer = mock(Producer.class);
@@ -63,6 +66,7 @@ class OnsProducerLifecycleTest {
         verify(nativeProducer, never()).shutdown();
     }
 
+    /** \u9a8c\u8bc1<code>client.initConsumer(listener, new MQProperties())</code> \u629b\u51fa <code>IllegalStateException.class</code>\u3002 */
     @Test
     void failedConsumerSubscriptionShutsDownCreatedConsumer() {
         com.aliyun.openservices.ons.api.Consumer nativeConsumer = mock(com.aliyun.openservices.ons.api.Consumer.class);
@@ -88,6 +92,7 @@ class OnsProducerLifecycleTest {
         verify(nativeConsumer, times(1)).shutdown();
     }
 
+    /** \u9a8c\u8bc1<code>client.initConsumer(listener, new MQProperties())</code> \u629b\u51fa <code>IllegalStateException.class</code>\u3002 */
     @Test
     void failedConsumerStartShutsDownCreatedConsumer() {
         com.aliyun.openservices.ons.api.Consumer nativeConsumer = mock(com.aliyun.openservices.ons.api.Consumer.class);
@@ -112,6 +117,7 @@ class OnsProducerLifecycleTest {
         verify(nativeConsumer, times(1)).shutdown();
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>mock()</code>\u3001<code>client.initProducer()</code>\u3001<code>client.close()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void repeatedInitializationStartsInjectedProducerOnce() {
         Producer producer = mock(Producer.class);
@@ -125,6 +131,7 @@ class OnsProducerLifecycleTest {
         verify(producer, never()).shutdown();
     }
 
+    /** \u9a8c\u8bc1<code>client.initProducer(new MQProperties())</code> \u629b\u51fa <code>IllegalStateException.class</code>\u3002 */
     @Test
     void closedAdapterRejectsProducerInitialization() {
         Producer producer = mock(Producer.class);
@@ -137,6 +144,7 @@ class OnsProducerLifecycleTest {
         verify(producer, never()).shutdown();
     }
 
+    /** \u9a8c\u8bc1<code>client.initConsumer(listener, new MQProperties())</code> \u629b\u51fa <code>IllegalStateException.class</code>\u3002 */
     @Test
     void closedAdapterRejectsConsumerBeforeCreatingBroker() {
         OnsProperties properties = new OnsProperties() {
@@ -152,6 +160,7 @@ class OnsProducerLifecycleTest {
         assertThrows(IllegalStateException.class, () -> client.initConsumer(listener, new MQProperties()));
     }
 
+    /** \u9a8c\u8bc1<code>publisher.accept(new MQEvent())</code> \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>failure.getMessage()</code> \u7b49\u4e8e <code>"ONS client is closed"</code>\u3002 */
     @Test
     void producerHandleRejectsPublishAfterClose() {
         Producer producer = mock(Producer.class);

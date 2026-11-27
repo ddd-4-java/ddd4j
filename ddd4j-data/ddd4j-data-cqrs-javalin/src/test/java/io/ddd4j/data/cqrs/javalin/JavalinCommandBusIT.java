@@ -61,12 +61,14 @@ class JavalinCommandBusIT {
      */
     private Javalin app;
 
+    /** \u6d4b\u8bd5\u6267\u884c\u524d\u6267\u884c <code>Javalin.create()</code> \u5b8c\u6210\u8d44\u6e90\u51c6\u5907\u3002 */
     @BeforeEach
     void startJavalin() {
         app = Javalin.create(cfg -> {
         }).start(0);
     }
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>app.stop()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterEach
     void stopJavalin() {
         if (app != null) {
@@ -101,6 +103,7 @@ class JavalinCommandBusIT {
         return executors;
     }
 
+    /** \u9a8c\u8bc1<code>result.isSuccess()</code>\u4e3a\u771f\uff0c<code>result.data()</code> \u5305\u542b <code>SampleCommandHandler.HANDLED</code>\u3002 */
     @Test
     void execute_已注册命令_应路由到真实Handler并返回成功() {
         JavalinCommandBus bus = assemble();
@@ -111,6 +114,7 @@ class JavalinCommandBusIT {
         assertThat(result.data()).contains(SampleCommandHandler.HANDLED);
     }
 
+    /** \u9a8c\u8bc1<code>exception</code>\u975e\u7a7a\uff0c<code>exception.getMessage()</code> \u5305\u542b <code>SampleCommand.class.getName()</code>\u3002 */
     @Test
     void 装配期冲突_整批拒绝应自工厂传播() {
         // 供入「多类型占位执行器（SampleCommand + CompanionCommand）+ 真实
@@ -128,6 +132,7 @@ class JavalinCommandBusIT {
         assertThat(exception.getMessage()).contains(SampleCommand.class.getName());
     }
 
+    /** \u9a8c\u8bc1<code>exception</code>\u975e\u7a7a\uff0c<code>exception.getMessage()</code> \u5305\u542b <code>UnknownCommand.class.getName()</code>\u3002 */
     @Test
     void execute_未注册命令_应抛ISE与ddd4j_core一致() {
         JavalinCommandBus bus = assemble();
@@ -139,9 +144,11 @@ class JavalinCommandBusIT {
         assertThat(exception.getMessage()).contains(UnknownCommand.class.getName());
     }
 
+    /** \u4e0e\u4e3b\u8981\u6d4b\u8bd5\u547d\u4ee4\u5e76\u884c\u6ce8\u518c\u7684\u7b2c\u4e8c\u79cd\u547d\u4ee4\u6837\u672c\u3002 */
     static class CompanionCommand implements Command {
     }
 
+    /** \u6ca1\u6709\u6ce8\u518c\u6267\u884c\u5668\u7684\u547d\u4ee4\u6837\u672c\uff0c\u7528\u6765\u9a8c\u8bc1\u547d\u4ee4\u5206\u53d1\u8fb9\u754c\u3002 */
     static class UnknownCommand implements Command {
     }
 
@@ -153,11 +160,13 @@ class JavalinCommandBusIT {
      */
     static class OverlappingMultiTypeHandler implements CommandExecutor<Command> {
 
+        /** {@inheritDoc} */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(SampleCommand.class, CompanionCommand.class)));
         }
 
+        /** {@inheritDoc} */
         @Override
         public Result execute(Command command) {
             return Result.ok();

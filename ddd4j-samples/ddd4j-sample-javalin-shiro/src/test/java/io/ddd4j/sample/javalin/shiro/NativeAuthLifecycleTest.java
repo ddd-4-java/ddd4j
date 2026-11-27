@@ -44,11 +44,25 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/** \u9a8c\u8bc1 <code>NativeAuthLifecycle</code> \u5728<code>restoresCallerBindings</code>\u3001<code>closeRestoresCallerState</code>\u7b49\u64cd\u4f5c\u4e2d\u7684\u884c\u4e3a\u5951\u7ea6\u3002 */
 class NativeAuthLifecycleTest {
+    /**
+     * \u901a\u8fc7 <code>servletProxy()</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+     * @param <T> \u5f53\u524d\u5951\u7ea6\u6d4b\u8bd5\u6240\u4f7f\u7528\u7684 Java \u7c7b\u578b
+     * @param type \u7528\u6765\u89e3\u6790\u3001\u68c0\u67e5\u6216\u6784\u9020\u6d4b\u8bd5\u5bf9\u8c61\u7684 Java \u7c7b\u578b
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>servletProxy(type, null)</code>
+     */
     private static <T> T servletProxy(Class<T> type) {
         return servletProxy(type, null);
     }
 
+    /**
+     * \u6309 <code>("getHeader".equals(method.getName()) &amp;&amp; "ddd4j-token".equals(args[0]))</code> \u7b49\u5b9e\u9645\u6761\u4ef6\u9009\u62e9\u5f53\u524d\u7528\u4f8b\u8fd4\u56de\u7684\u7ed3\u679c\u3002
+     * @param <T> \u5f53\u524d\u5951\u7ea6\u6d4b\u8bd5\u6240\u4f7f\u7528\u7684 Java \u7c7b\u578b
+     * @param type \u7528\u6765\u89e3\u6790\u3001\u68c0\u67e5\u6216\u6784\u9020\u6d4b\u8bd5\u5bf9\u8c61\u7684 Java \u7c7b\u578b
+     * @param token \u4ece\u6d4b\u8bd5\u767b\u5f55\u83b7\u5f97\u7684\u4f1a\u8bdd\u51ed\u636e
+     * @return \u6839\u636e\u6d4b\u8bd5\u6761\u4ef6\u8fd4\u56de\u7684\u53ef\u80fd\u503c\uff0c\u5305\u62ec <code>token</code>\u3001<code>fail("unexpected servlet call: " + method)</code>
+     */
     private static <T> T servletProxy(Class<T> type, String token) {
         return type.cast(Proxy.newProxyInstance(type.getClassLoader(), new Class<?>[]{type},
                 (proxy, method, args) -> {
@@ -59,6 +73,10 @@ class NativeAuthLifecycleTest {
                 }));
     }
 
+    /**
+     * \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>actual</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>failure</code>\uff0c<code>observations</code> \u7b49\u4e8e <code>List.of(Optional.of("framework-context-present"))</code>\u3002
+     * @throws Exception \u53cd\u5c04\u8bbf\u95ee\u88ab\u6d4b\u6210\u5458\u65f6\u5931\u8d25
+     */
     @Test
     void restoresCallerBindingsWhenSubjectProviderThrows() throws Exception {
         List<Optional<String>> observations = new ArrayList<>();
@@ -102,6 +120,7 @@ class NativeAuthLifecycleTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>GuiceContext.getInjector()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>injector</code>\uff0c<code>SubjectKit.subjectProvider</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>injector.getInstance(SubjectProvider.class)</code>\uff0c<code>org.apache.shiro.util.ThreadContext.getResources()</code> \u7b49\u4e8e <code>callerShiroResources</code>\u3002 */
     @Test
     void closeRestoresCallerStateWhenOwnedRuntimeThrows() {
         IllegalStateException failure = new IllegalStateException("owned Guice runtime close failure");
@@ -220,6 +239,10 @@ class NativeAuthLifecycleTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>actual</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>failure</code>\uff0c<code>observedShiro</code> \u7b49\u4e8e <code>Collections.singletonList(callerShiroResources)</code>\u3002
+     * @throws Exception \u53cd\u5c04\u8bbf\u95ee\u88ab\u6d4b\u6210\u5458\u65f6\u5931\u8d25
+     */
     @Test
     void restoresCallerBindingsWhenNativeSessionLookupThrows() throws Exception {
         IllegalStateException failure = new IllegalStateException("native session lookup failure");

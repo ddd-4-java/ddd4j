@@ -37,10 +37,17 @@ import static org.mockito.Mockito.*;
 /** 验证 MQ 投递事件的低基数指标契约。 */
 class OtelMQDeliveryObserverTest {
 
+    /** \u63d0\u4f9b\u6d4b\u8bd5\u6307\u6807\u6ce8\u518c\u80fd\u529b\u7684 OpenTelemetry Meter\u3002 */
     private Meter meter;
+    /** \u5f53\u524d\u6d4b\u8bd5\u4ece\u6837\u4f8b\u914d\u7f6e\u521b\u5efa\u88ab\u6d4b\u7ec4\u4ef6\u7684\u6784\u5efa\u5668\u3002 */
     private LongCounterBuilder builder;
+    /** \u7528\u6765\u9a8c\u8bc1\u6307\u6807\u6216\u7d2f\u8ba1\u72b6\u6001\u7684\u8ba1\u6570\u5668\u3002 */
     private LongCounter counter;
 
+    /**
+     * \u8c03\u7528 <code>Ddd4jOtel.class.getDeclaredField()</code>\u3001<code>field.setAccessible()</code>\u3001<code>field.get()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @param meter \u4f20\u7ed9 <code>((AtomicReference&lt;Meter&gt;)field.get(null)).set(meter)</code> \u7684 <code>Meter</code> \u8f93\u5165
+     */
     @SuppressWarnings("unchecked")
     private static void setMeterCache(Meter meter) {
         try {
@@ -52,6 +59,7 @@ class OtelMQDeliveryObserverTest {
         }
     }
 
+    /** \u6d4b\u8bd5\u6267\u884c\u524d\u6267\u884c <code>mock()</code>\u3001<code>meter.counterBuilder()</code>\u3001<code>any()</code>\u3001<code>builder.setUnit()</code> \u5b8c\u6210\u8d44\u6e90\u51c6\u5907\u3002 */
     @BeforeEach
     void setUp() {
         meter = mock(Meter.class);
@@ -64,11 +72,13 @@ class OtelMQDeliveryObserverTest {
         setMeterCache(meter);
     }
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>setMeterCache()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterEach
     void tearDown() {
         setMeterCache(null);
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>MQOutboxRecord.pending()</code>\u3001<code>Collections.emptyMap()</code>\u3001<code>observer.onOutboxPublished()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void shouldDelegateAllDeliveryOutcomesWithoutMessageAttributes() {
         OtelMQDeliveryObserver observer = new OtelMQDeliveryObserver("kafka");

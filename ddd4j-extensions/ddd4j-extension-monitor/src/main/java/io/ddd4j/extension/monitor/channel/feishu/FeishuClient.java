@@ -102,7 +102,10 @@ public class FeishuClient {
     }
 
     /**
-     * 拼接完整 URL：若设置了签名密钥，则追加 query；否则原样返回。
+     * \u62fc\u63a5\u5b8c\u6574 URL\uff1a\u82e5\u8bbe\u7f6e\u4e86\u7b7e\u540d\u5bc6\u94a5\uff0c\u5219\u8ffd\u52a0 query\uff1b\u5426\u5219\u539f\u6837\u8fd4\u56de\u3002
+     *
+     * @return \u8865\u5145\u7b7e\u540d\u67e5\u8be2\u53c2\u6570\u540e\u7684\u8bf7\u6c42 URL
+     * @throws Exception Webhook \u7b7e\u540d\u8ba1\u7b97\u5931\u8d25
      */
     private String buildUrl() throws Exception {
         if (StrKit.isEmpty(secret)) {

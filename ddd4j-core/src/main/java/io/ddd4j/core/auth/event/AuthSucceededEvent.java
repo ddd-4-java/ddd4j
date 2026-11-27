@@ -44,14 +44,19 @@ import java.time.Instant;
  */
 public final class AuthSucceededEvent {
 
+    /** Java 序列化版本标识。 */
     private static final long serialVersionUID = 0L;
 
+    /** \u83b7\u53d6\u767b\u5f55\u8bf7\u6c42\u3002 */
     private final AuthRequest request;
 
+    /** \u83b7\u53d6\u8ba4\u8bc1\u4e3b\u4f53\u3002 */
     private final AuthPrincipal principal;
 
+    /** \u83b7\u53d6\u4f1a\u8bdd\u51ed\u8bc1\u3002 */
     private final String token;
 
+    /** \u83b7\u53d6\u4e8b\u4ef6\u53d1\u751f\u65f6\u95f4\u3002 */
     private final Instant occurredAt;
 
     /**
@@ -146,6 +151,7 @@ public final class AuthSucceededEvent {
         return occurredAt;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -158,6 +164,7 @@ public final class AuthSucceededEvent {
         return Objects.equals(this.request, other.request) && Objects.equals(this.principal, other.principal) && Objects.equals(this.token, other.token) && Objects.equals(this.occurredAt, other.occurredAt);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int result = 0;
@@ -168,6 +175,7 @@ public final class AuthSucceededEvent {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "AuthSucceededEvent[request=" + request + ", principal=" + principal + ", token=" + token + ", occurredAt=" + occurredAt + "]";

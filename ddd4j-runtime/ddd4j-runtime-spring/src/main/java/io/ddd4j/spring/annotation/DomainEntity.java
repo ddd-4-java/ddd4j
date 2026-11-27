@@ -38,8 +38,10 @@ import java.lang.annotation.*;
 @Inherited
 public @interface DomainEntity {
 
+    /** @return \u662f\u5426\u6807\u8bb0\u805a\u5408\u6839 */
     boolean aggregateRoot() default false;
 
+    /** @return Spring \u7ec4\u4ef6\u540d\u79f0\uff1b\u7a7a\u5b57\u7b26\u4e32\u8868\u793a\u4f7f\u7528\u9ed8\u8ba4\u540d\u79f0 */
     @AliasFor(annotation = Component.class, attribute = "value")
     String value() default "";
 }

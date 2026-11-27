@@ -42,14 +42,23 @@ import java.util.Objects;
  */
 public final class AsyncStoredEvent {
 
+    /** \u9886\u57df\u4e8b\u4ef6\u6807\u8bc6\u3002 */
     private final EventId eventId;
+    /** \u7528\u4e8e\u533a\u5206\u805a\u5408\u7c7b\u578b\u7684\u903b\u8f91\u540d\u79f0\u3002 */
     private final String aggregateType;
+    /** \u4e8b\u4ef6\u6240\u5c5e\u805a\u5408\u6839\u7684\u6807\u8bc6\u3002 */
     private final AggregateRootId aggregateId;
+    /** \u4e8b\u4ef6\u6240\u5c5e\u805a\u5408\u6d41\u4e2d\u7684\u7248\u672c\u3002 */
     private final long version;
+    /** \u4e8b\u4ef6\u5728\u5168\u5c40\u6d41\u4e2d\u7684\u4f4d\u7f6e\u3002 */
     private final long position;
+    /** \u4e8b\u4ef6\u53d1\u751f\u65f6\u95f4\u3002 */
     private final ZonedDateTime timestamp;
+    /** \u5b58\u50a8\u4e2d\u7684\u9886\u57df\u4e8b\u4ef6\u8d1f\u8f7d\u3002 */
     private final DomainEvent<?> payload;
+    /** \u7528\u4e8e\u5173\u8054\u540c\u4e00\u6b21\u64cd\u4f5c\u4ea7\u751f\u7684\u4e8b\u4ef6\u6216\u6d88\u606f\u7684\u6807\u8bc6\u3002 */
     private final EventId correlationId;
+    /** \u89e6\u53d1\u8be5\u9886\u57df\u4e8b\u4ef6\u4ea7\u751f\u7684\u4e0a\u6e38\u4e8b\u4ef6\u6807\u8bc6\u3002 */
     private final EventId causationId;
 
     /**

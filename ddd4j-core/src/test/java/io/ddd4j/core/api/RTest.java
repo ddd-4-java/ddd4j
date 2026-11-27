@@ -34,6 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class RTest {
 
+    /** \u9a8c\u8bc1<code>response.getMsg()</code> \u7b49\u4e8e <code>"quota exceeded"</code>\uff0c<code>response.getData()</code>\u4e3a\u7a7a\uff0c<code>response.getCode()</code> \u7b49\u4e8e <code>ApiCode.FAIL.getCode()</code>\u3002 */
     @Test
     void fail_withString_shouldTreatArgumentAsMessage() {
         R<Object> response = R.fail("quota exceeded");
@@ -42,6 +43,7 @@ class RTest {
         assertThat(response.getCode()).isEqualTo(ApiCode.FAIL.getCode());
     }
 
+    /** \u9a8c\u8bc1<code>response.getData()</code>\u4e3a\u7a7a\uff0c<code>response.getCode()</code> \u7b49\u4e8e <code>ApiCode.FAIL.getCode()</code>\uff0c<code>response.getMsg()</code> \u7b49\u4e8e <code>ApiCode.FAIL.getDesc()</code>\u3002 */
     @Test
     void fail_withNullObject_shouldKeepFailureMetadata() {
         R<Object> response = ApiCode.FAIL.toResponse((Object) null);
@@ -50,6 +52,7 @@ class RTest {
         assertThat(response.getMsg()).isEqualTo(ApiCode.FAIL.getDesc());
     }
 
+    /** \u9a8c\u8bc1<code>response.getData()</code> \u6307\u5411\u540c\u4e00\u5b9e\u4f8b <code>payload</code>\uff0c<code>response.getCode()</code> \u7b49\u4e8e <code>ApiCode.FAIL.getCode()</code>\uff0c<code>response.isOk()</code>\u4e3a\u5047\u3002 */
     @Test
     void fail_withObjectData_shouldPreservePayload() {
         Map<String, String> payload = Collections.singletonMap("reason", "quota");
@@ -60,6 +63,7 @@ class RTest {
         assertThat(response.isOk()).isFalse();
     }
 
+    /** \u9a8c\u8bc1<code>r.getCode()</code> \u7b49\u4e8e <code>ApiCode.OK.getCode()</code>\uff0c<code>r.getMsg()</code> \u7b49\u4e8e <code>ApiCode.OK.getDesc()</code>\uff0c<code>r.isEmpty()</code>\u4e3a\u771f\u3002 */
     @Test
     void ok_shouldReturnSuccessCodeAndNullData() {
         R<String> r = R.ok();
@@ -71,6 +75,7 @@ class RTest {
         assertThat(r.isEmpty()).isTrue();
     }
 
+    /** \u9a8c\u8bc1<code>r.getCode()</code> \u7b49\u4e8e <code>ApiCode.OK.getCode()</code>\uff0c<code>r.getData()</code> \u7b49\u4e8e <code>"hello"</code>\uff0c<code>r.isEmpty()</code>\u4e3a\u5047\u3002 */
     @Test
     void ok_withData_shouldCarryPayload() {
         R<String> r = R.ok("hello");
@@ -81,6 +86,7 @@ class RTest {
         assertThat(r.isEmpty()).isFalse();
     }
 
+    /** \u9a8c\u8bc1<code>r.getMsg()</code> \u7b49\u4e8e <code>"custom-msg"</code>\uff0c<code>r.getData()</code> \u7b49\u4e8e <code>"data"</code>\uff0c<code>r.isOk()</code>\u4e3a\u771f\u3002 */
     @Test
     void ok_withMsgAndData_shouldUseProvidedMessage() {
         R<String> r = R.ok("custom-msg", "data");
@@ -90,6 +96,7 @@ class RTest {
         assertThat(r.isOk()).isTrue();
     }
 
+    /** \u9a8c\u8bc1<code>r.getCode()</code> \u7b49\u4e8e <code>ApiCode.FAIL.getCode()</code>\uff0c<code>r.isOk()</code>\u4e3a\u5047\u3002 */
     @Test
     void fail_shouldReturnFailCode() {
         R<String> r = R.fail();
@@ -98,6 +105,7 @@ class RTest {
         assertThat(r.isOk()).isFalse();
     }
 
+    /** \u9a8c\u8bc1<code>r.getCode()</code> \u7b49\u4e8e <code>ApiCode.FAIL.getCode()</code>\uff0c<code>r.getMsg()</code> \u7b49\u4e8e <code>"boom"</code>\uff0c<code>r.isOk()</code>\u4e3a\u5047\u3002 */
     @Test
     void fail_withMsg_shouldCarryMessage() {
         R<String> r = R.fail("boom");
@@ -107,6 +115,7 @@ class RTest {
         assertThat(r.isOk()).isFalse();
     }
 
+    /** \u9a8c\u8bc1<code>r.getCode()</code> \u7b49\u4e8e <code>403</code>\uff0c<code>r.getMsg()</code> \u7b49\u4e8e <code>"forbidden"</code>\uff0c<code>r.isOk()</code>\u4e3a\u5047\u3002 */
     @Test
     void fail_withCodeAndMsg_shouldCarryBoth() {
         R<String> r = R.of(403, "forbidden");
@@ -116,6 +125,7 @@ class RTest {
         assertThat(r.isOk()).isFalse();
     }
 
+    /** \u9a8c\u8bc1<code>response.getCode()</code> \u7b49\u4e8e <code>409</code>\uff0c<code>response.getMsg()</code> \u7b49\u4e8e <code>ApiCode.FAIL.getDesc()</code>\uff0c<code>response.getData()</code>\u4e3a\u7a7a\u3002 */
     @Test
     void fail_withSerializableCode_shouldPreserveCodeAndDefaultMessage() {
         R<Object> response = R.fail((Serializable) 409);
@@ -124,6 +134,7 @@ class RTest {
         assertThat(response.getData()).isNull();
     }
 
+    /** \u9a8c\u8bc1<code>r.isOk()</code>\u4e3a\u771f\u3002 */
     @Test
     void isOk_shouldAcceptSuccessCodeToo() {
         R<String> r = new R<>(ApiCode.SUCCESS.getCode(), ApiCode.SUCCESS.getDesc(), "data");
@@ -131,6 +142,7 @@ class RTest {
         assertThat(r.isOk()).isTrue();
     }
 
+    /** \u9a8c\u8bc1<code>R.empty(null)</code>\u4e3a\u771f\uff0c<code>R.empty(R.ok())</code>\u4e3a\u771f\uff0c<code>R.empty(R.ok("data"))</code>\u4e3a\u5047\u3002 */
     @Test
     void empty_shouldDetectNullDataOrNullResponse() {
         assertThat(R.empty(null)).isTrue();
@@ -138,6 +150,7 @@ class RTest {
         assertThat(R.empty(R.ok("data"))).isFalse();
     }
 
+    /** \u9a8c\u8bc1<code>target.getCode()</code> \u7b49\u4e8e <code>source.getCode()</code>\uff0c<code>target.getMsg()</code> \u7b49\u4e8e <code>source.getMsg()</code>\uff0c<code>target.getData()</code>\u4e3a\u7a7a\u3002 */
     @Test
     void transform_shouldCopyCodeAndMsg() {
         R<String> source = R.fail("error");
@@ -149,6 +162,7 @@ class RTest {
         assertThat(target.getData()).isNull();
     }
 
+    /** \u9a8c\u8bc1<code>response.getCode()</code> \u7b49\u4e8e <code>200</code>\uff0c<code>response.getMsg()</code> \u7b49\u4e8e <code>"created"</code>\uff0c<code>response.getData()</code>\u4e3a\u7a7a\u3002 */
     @Test
     void success_withString_shouldPreserveCustomMessage() {
         R<Object> response = R.success("created");
@@ -157,6 +171,7 @@ class RTest {
         assertThat(response.getData()).isNull();
     }
 
+    /** \u9a8c\u8bc1<code>response.getCode()</code> \u7b49\u4e8e <code>ApiCode.SUCCESS.getCode()</code>\uff0c<code>response.getMsg()</code> \u7b49\u4e8e <code>ApiCode.SUCCESS.getReason()</code>\uff0c<code>response.getData()</code> \u7b49\u4e8e <code>"payload"</code>\u3002 */
     @Test
     void success_withObjectString_shouldPreservePayload() {
         R<Object> response = R.success((Object) "payload");
@@ -164,6 +179,7 @@ class RTest {
         assertThat(response.getMsg()).isEqualTo(ApiCode.SUCCESS.getReason());
         assertThat(response.getData()).isEqualTo("payload");
     }
+    /** \u9a8c\u8bc1<code>response.getCode()</code> \u7b49\u4e8e <code>"404"</code>\uff0c<code>response.getMsg()</code> \u7b49\u4e8e <code>"missing"</code>\uff0c<code>response.getData()</code>\u4e3a\u7a7a\u3002 */
     @Test
     void of_withStringCode_shouldPreserveExplicitSerializableCode() {
         R<Object> response = R.of((Serializable) "404", "missing");
@@ -172,6 +188,10 @@ class RTest {
         assertThat(response.getData()).isNull();
     }
 
+    /**
+     * \u9a8c\u8bc1<code>json.get("code").asInt()</code> \u7b49\u4e8e <code>400</code>\uff0c<code>json.get("msg").asText()</code> \u7b49\u4e8e <code>"invalid input"</code>\uff0c<code>okJson.has("error")</code>\u4e3a\u5047\u3002
+     * @throws Exception \u5904\u7406\u6d4b\u8bd5\u6570\u636e\u7684\u5e8f\u5217\u5316\u65f6\u5931\u8d25
+     */
     @Test
     void jackson_shouldPreserveResponseFieldsAndValidationErrors() throws Exception {
         Map<String, String> error = new HashMap<>();
@@ -190,6 +210,7 @@ class RTest {
         assertThat(okJson.get("data").asText()).isEqualTo("payload");
         assertThat(okJson.has("error")).isFalse();
     }
+    /** \u9a8c\u8bc1<code>response.getCode()</code> \u7b49\u4e8e <code>42001</code>\uff0c<code>response.getMsg()</code> \u7b49\u4e8e <code>"retry later"</code>\uff0c<code>response.isOk()</code>\u4e3a\u5047\u3002 */
     @Test
     void customApiCode_shouldBuildResponseWithMessageAndPayload() {
         CustomApiCode customCode = new CustomApiCode() {
@@ -212,6 +233,7 @@ class RTest {
         assertThat(response.isOk()).isFalse();
     }
 
+    /** \u9a8c\u8bc1<code>exception.getCode()</code> \u7b49\u4e8e <code>400</code>\uff0c<code>exception.getMessage()</code> \u7b49\u4e8e <code>"invalid input"</code>\u3002 */
     @Test
     void validationFailure_shouldUseUnifiedBadRequestCode() {
         ValidateException exception = new ValidateException("invalid input");

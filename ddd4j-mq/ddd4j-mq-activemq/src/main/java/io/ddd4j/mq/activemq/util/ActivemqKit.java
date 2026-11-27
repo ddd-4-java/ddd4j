@@ -30,6 +30,7 @@ import java.util.Objects;
  */
 public final class ActivemqKit {
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>ActivemqKit</code> \u5b9e\u4f8b\u3002 */
     private ActivemqKit() {
     }
 
@@ -50,11 +51,13 @@ public final class ActivemqKit {
     }
 
     /**
-     * 根据物理地址前缀创建 JMS Destination。
-     * @param session 会话
-     * @param physical 字符串参数
-     * @return 创建的Destination
-     * @throws javax.jms.JMSException 执行对应操作失败时抛出
+     * \u6839\u636e\u7269\u7406\u5730\u5740\u524d\u7f00\u521b\u5efa JMS Destination\u3002
+     * @param session \u4f1a\u8bdd
+     * @param physical \u5b57\u7b26\u4e32\u53c2\u6570
+     * @return \u521b\u5efa\u7684Destination
+     * @throws javax.jms.JMSException \u6267\u884c\u5bf9\u5e94\u64cd\u4f5c\u5931\u8d25\u65f6\u629b\u51fa
+     *
+     * @throws JMSException \u521b\u5efa\u76ee\u7684\u5730\u5931\u8d25\u65f6\u629b\u51fa
      */
     public static Destination createDestination(Session session, String physical) throws JMSException {
         if (physical.startsWith("queue:")) {
@@ -67,10 +70,12 @@ public final class ActivemqKit {
     }
 
     /**
-     * 从 JMS Message 提取 payload 字符串（兼容 BytesMessage / TextMessage）。
-     * @param message 消息内容
-     * @return 提取的字符串内容
-     * @throws javax.jms.JMSException 执行对应操作失败时抛出
+     * \u4ece JMS Message \u63d0\u53d6 payload \u5b57\u7b26\u4e32\uff08\u517c\u5bb9 BytesMessage / TextMessage\uff09\u3002
+     * @param message \u6d88\u606f\u5185\u5bb9
+     * @return \u63d0\u53d6\u7684\u5b57\u7b26\u4e32\u5185\u5bb9
+     * @throws javax.jms.JMSException \u6267\u884c\u5bf9\u5e94\u64cd\u4f5c\u5931\u8d25\u65f6\u629b\u51fa
+     *
+     * @throws JMSException \u8bfb\u53d6\u6d88\u606f\u5931\u8d25\u65f6\u629b\u51fa
      */
     public static String extractPayload(Message message) throws JMSException {
         if (message instanceof BytesMessage) {
@@ -141,6 +146,11 @@ public final class ActivemqKit {
         }
     }
 
+    /**
+     * \u68c0\u67e5\u8f93\u5165\u662f\u5426\u5b58\u5728\u975e\u7a7a\u767d\u5b57\u7b26\u3002
+     * @param s \u5f85\u68c0\u67e5\u7684\u5b57\u7b26\u4e32
+     * @return \u542b\u6709\u6548\u6587\u672c\u65f6\u8fd4\u56de true
+     */
     private static boolean hasText(String s) {
         return StrKit.isNotEmpty(s);
     }

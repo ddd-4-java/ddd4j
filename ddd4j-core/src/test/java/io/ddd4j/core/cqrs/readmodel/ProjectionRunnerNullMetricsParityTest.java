@@ -9,8 +9,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+/** \u901a\u8fc7 <code>mock()</code>\u3001<code>view.getName()</code>\u3001<code>view.getStreamId()</code> \u9a8c\u8bc1 <code>ProjectionRunnerNullMetricsParity</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
 class ProjectionRunnerNullMetricsParityTest {
 
+    /** \u9a8c\u8bc1<code>runner.runOnce(view)</code> \u7b49\u4e8e <code>chunk</code>\u3002 */
     @Test
     void nullMetricsUsesNoopWhileProjectionStillAdvances() {
         ProjectionService service = mock(ProjectionService.class);

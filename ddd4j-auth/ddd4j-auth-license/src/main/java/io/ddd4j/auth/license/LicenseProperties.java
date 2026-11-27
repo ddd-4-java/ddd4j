@@ -18,9 +18,16 @@ package io.ddd4j.auth.license;
 import lombok.Data;
 
 // @ConfigurationProperties(prefix = LicenseProperties.PREFIX)
+/**
+ * \u8bb8\u53ef\u8bc1\u914d\u7f6e\u5c5e\u6027\u3002
+ *
+ *  <p>\u627f\u8f7d\u8bc1\u4e66 subject\u3001\u516c\u94a5\u522b\u79f0\u3001\u5bc6\u94a5\u5e93\u5bc6\u7801\u3001\u8bc1\u4e66\u751f\u6210\u8def\u5f84\u4e0e\u7b7e\u540d\u7b97\u6cd5\u7b49\u8bb8\u53ef\u8bc1\u6821\u9a8c\u6240\u9700\u914d\u7f6e\u9879\u3002
+ * @since 2.0.x
+ */
 @Data
 public class LicenseProperties {
 
+    /** \u8bb8\u53ef\u8bc1\u914d\u7f6e\u5c5e\u6027\u524d\u7f00\u3002 */
     public static final String PREFIX = "license";
 
     /**

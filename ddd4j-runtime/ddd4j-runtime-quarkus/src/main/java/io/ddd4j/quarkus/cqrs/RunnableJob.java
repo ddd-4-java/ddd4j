@@ -30,6 +30,10 @@ import java.util.Objects;
  */
 public class RunnableJob implements Job {
 
+    /**
+     * \u4ece Quartz \u4efb\u52a1\u4e0a\u4e0b\u6587\u627e\u51fa\u767b\u8bb0\u7684\u6295\u5f71\u56de\u8c03\u5e76\u6267\u884c\u3002
+     * @param context \u5f53\u524d\u6846\u67b6\u4f20\u5165\u7684\u6267\u884c\u6216\u5bb9\u5668\u4e0a\u4e0b\u6587
+     */
     @Override
     public void execute(JobExecutionContext context) {
         String identity = context.getJobDetail().getJobDataMap().getString(QuarkusViewScheduler.TASK_KEY);

@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class ApiVersionTest {
 
+    /** \u9a8c\u8bc1<code>ApiVersion.parse("v2").toString()</code> \u7b49\u4e8e <code>"2.0.0"</code>\uff0c<code>ApiVersion.parse("2").toString()</code> \u7b49\u4e8e <code>"2.0.0"</code>\uff0c<code>parsed.patch()</code> \u7b49\u4e8e <code>2</code>\u3002 */
     @Test
     void parseAcceptsCommonForms() {
         assertEquals("2.0.0", ApiVersion.parse("v2").toString());
@@ -43,6 +44,7 @@ class ApiVersionTest {
         assertEquals(2, parsed.patch());
     }
 
+    /** \u9a8c\u8bc1<code>ApiVersion.parse("2.1")</code> \u7b49\u4e8e <code>ApiVersion.parse("2.1.0")</code>\uff0c<code>ApiVersion.parse("v2.1")</code> \u7b49\u4e8e <code>ApiVersion.parse("2.1.0")</code>\uff0c<code>ApiVersion.parse("2.1").hashCode()</code> \u7b49\u4e8e <code>ApiVersion.parse("2.1.0").hashCode()</code>\u3002 */
     @Test
     void missingSegmentsAreZeroPadded() {
         //规格 Scenario：缺失段补零等价（2.1 == 2.1.0）。
@@ -55,6 +57,7 @@ class ApiVersionTest {
         assertEquals(ApiVersion.parse("2.1.0").hashCode(), ApiVersion.parse("2.1").hashCode());
     }
 
+    /** \u9a8c\u8bc1<code>ApiVersion.parse("2.10.0").compareTo(ApiVersion.parse("2.9.0")) &gt; 0</code>\u4e3a\u771f\uff0c<code>ApiVersion.parse("2.9.1").compareTo(ApiVersion.parse("2.10.0")) &lt; 0</code>\u4e3a\u771f\uff0c<code>ApiVersion.parse("2.10.0").compareTo(ApiVersion.parse("2.10.0"))</code> \u7b49\u4e8e <code>0</code>\u3002 */
     @Test
     void minorVersionsCompareNumerically() {
         //规格 Scenario：次版本数值比较（2.10.0 > 2.9.0，非字典序）。
@@ -65,6 +68,7 @@ class ApiVersionTest {
         assertEquals(0, ApiVersion.parse("2.10.0").compareTo(ApiVersion.parse("2.10.0")));
     }
 
+    /** \u9a8c\u8bc1<code>ApiVersion.parse(illegal)</code> \u629b\u51fa <code>IllegalArgumentException.class</code>\uff0c<code>ApiVersion.parse(null)</code> \u629b\u51fa <code>IllegalArgumentException.class</code>\uff0c<code>ApiVersion.of(1, -1, 0)</code> \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
     @Test
     void rejectsIllegalForms() {
         String[] illegals = {"", "  ", "2.x", "vx", "v", "1.2.3.4", "-1", "2..1", "abc", "2.1.", "+2", "9999999999999"};
@@ -77,6 +81,7 @@ class ApiVersionTest {
         assertThrows(IllegalArgumentException.class, () -> ApiVersion.of(1, -1, 0));
     }
 
+    /** \u9a8c\u8bc1<code>twoOne</code> \u7b49\u4e8e <code>twoOne</code>\uff0c<code>twoOneFull</code> \u7b49\u4e8e <code>twoOne</code>\uff0c<code>twoOne.isCompatibleWith(null)</code>\u4e3a\u5047\u3002 */
     @Test
     void equalsHashCodeAndCompatibility() {
         ApiVersion twoOne = ApiVersion.parse("2.1");
@@ -93,6 +98,7 @@ class ApiVersionTest {
         assertFalse(twoOne.isCompatibleWith(null));
     }
 
+    /** \u9a8c\u8bc1<code>ApiVersion.parse("1.9.9").compareTo(ApiVersion.parse("2.0.0")) &lt; 0</code>\u4e3a\u771f\uff0c<code>ApiVersion.of(2, 0, 1).compareTo(ApiVersion.parse("2.0.0")) &gt; 0</code>\u4e3a\u771f\uff0c<code>ApiVersion.parse("1.0.0").compareTo(null)</code> \u629b\u51fa <code>NullPointerException.class</code>\u3002 */
     @Test
     void compareToOrdersBySegmentInSequence() {
         assertTrue(ApiVersion.parse("1.9.9").compareTo(ApiVersion.parse("2.0.0")) < 0);

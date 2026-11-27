@@ -32,16 +32,27 @@ import java.util.Objects;
  */
 public final class MQOutboxRecord {
 
+    /** \u6d88\u606f\u6807\u8bc6\u3002 */
     private final String messageId;
+    /** \u8bb0\u5f55\u53d1\u5e03\u65f6\u4f7f\u7528\u7684\u76ee\u6807\u4e3b\u9898\u6216\u5730\u5740\u3002 */
     private final String destination;
+    /** \u4e8b\u4ef6\u5199\u5165 Outbox \u65f6\u5e8f\u5217\u5316\u7684\u6d88\u606f\u8d1f\u8f7d\u3002 */
     private final String payload;
+    /** \u6295\u9012\u8bb0\u5f55\u643a\u5e26\u7684\u6d88\u606f\u5143\u6570\u636e\u3002 */
     private final Map<String, String> headers;
+    /** \u5f53\u524d Outbox \u8bb0\u5f55\u7684\u6295\u9012\u72b6\u6001\u3002 */
     private final MQOutboxStatus status;
+    /** \u8bb0\u5f55\u4e0b\u6b21\u53ef\u88ab\u8ba4\u9886\u6295\u9012\u7684\u65f6\u95f4\u3002 */
     private final Instant availableAt;
+    /** \u5f53\u524d\u5bf9\u8be5\u8bb0\u5f55\u6301\u6709\u6295\u9012\u79df\u7ea6\u7684\u6d3e\u53d1\u5668\u6807\u8bc6\u3002 */
     private final String leaseOwner;
+    /** \u5f53\u524d\u72ec\u5360\u6295\u9012\u79df\u7ea6\u7684\u5931\u6548\u65f6\u95f4\u3002 */
     private final Instant leaseUntil;
+    /** \u5f53\u524d Outbox \u8bb0\u5f55\u7d2f\u8ba1\u5c1d\u8bd5\u7684\u53d1\u9001\u6b21\u6570\u3002 */
     private final int attempts;
+    /** \u4e0a\u6b21\u6295\u9012\u5931\u8d25\u7684\u8bca\u65ad\u8bf4\u660e\u3002 */
     private final String lastError;
+    /** \u6b64\u8bb0\u5f55\u6210\u529f\u6807\u8bb0\u4e3a\u53d1\u5e03\u5b8c\u6210\u7684\u65f6\u95f4\u3002 */
     private final Instant publishedAt;
 
     /**
@@ -176,6 +187,7 @@ public final class MQOutboxRecord {
         return publishedAt;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -198,6 +210,7 @@ public final class MQOutboxRecord {
                 && Objects.equals(publishedAt, that.publishedAt);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int result = messageId.hashCode();
@@ -214,6 +227,7 @@ public final class MQOutboxRecord {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "MQOutboxRecord[messageId=" + messageId + ", destination=" + destination

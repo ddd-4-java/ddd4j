@@ -37,6 +37,7 @@ final class PostgresEventStoreContainerSupport {
         }
     }
 
+    /** 初始化 <code>PostgresEventStoreContainerSupport</code> 并委托其默认构造路径。 */
     private PostgresEventStoreContainerSupport() {
     }
 }

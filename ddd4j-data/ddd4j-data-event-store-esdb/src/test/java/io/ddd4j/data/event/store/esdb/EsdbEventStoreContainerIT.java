@@ -47,11 +47,19 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  */
 class EsdbEventStoreContainerIT {
 
+    /** 保存 <code>"Order"</code>，供 <code>EsdbEventStoreContainerIT</code> 的处理流程复用。 */
     private static final String ORDER_TYPE = "Order";
 
+    /** 保存 <code>client</code> 对应的 <code>EventStoreDBClient</code> 数据。 */
     private static EventStoreDBClient client;
+    /** 保存 <code>store</code> 对应的 <code>EventStore</code> 数据。 */
     private EventStore store;
 
+    /**
+     * 初始化测试资源，调用 <code>DockerClientFactory.instance</code>、<code>ESDB.getHost</code>、<code>ESDB.getMappedPort</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @BeforeAll
     static void createClient() throws Exception {
         // 进程级单例夹具：Docker 不可用则整组跳过
@@ -90,6 +98,7 @@ class EsdbEventStoreContainerIT {
                 + EsdbContainerSupport.ESDB.getDockerImageName() + " port:" + port);
     }
 
+    /** 释放测试资源，调用 <code>client.shutdown</code>。 */
     @AfterAll
     static void closeClient() {
         if (client != null) {
@@ -97,12 +106,14 @@ class EsdbEventStoreContainerIT {
         }
     }
 
+    /** 初始化测试资源，调用 <code>System.nanoTime</code>。 */
     @BeforeEach
     void setUp() {
         // 每用例独立流前缀，避免单例容器内跨用例串流
         store = new EsdbEventStore(client, "it-singleton-" + System.nanoTime() + "-");
     }
 
+    /** 验证<code>store.append(ORDER_TYPE, id, Collections.singletonList(new TestEvent(id)), 0)</code> 抛出 <code>AggregateVersionConflictException.class</code>，<code>conflict.expectedVersion()</code> 等于 <code>0L</code>，<code>conflict.actualVersion()</code> 等于 <code>1L</code>。 */
     @Test
     void appendWithStaleVersionShouldRejectWithoutPartialWrites() {
         TestId id = new TestId("order-conflict");
@@ -120,6 +131,7 @@ class EsdbEventStoreContainerIT {
         System.out.println("ESDB_SINGLETON_IT_CONFLICT=expected:0,actual:1");
     }
 
+    /** 验证<code>events</code> 的大小为 <code>2</code>，<code>events.get(0).correlationId()</code>为空，<code>events.get(0).causationId()</code>为空。 */
     @Test
     void causalityMetadataShouldRoundTripThroughBrokerStorage() {
         TestId id = new TestId("order-causality");
@@ -139,54 +151,106 @@ class EsdbEventStoreContainerIT {
                 + ",causation:" + events.get(1).causationId());
     }
 
+    /** 为事件序列化回归提供固定类型的测试聚合标识。 */
     static final class TestId implements AggregateRootId {
+        /** 保存 <code>TYPE</code> 对应的 <code>EntityType</code> 数据。 */
         private static final EntityType TYPE = new StringEntityType("Order");
+        /** 保存 <code>value</code> 对应的 <code>String</code> 数据。 */
         private final String value;
 
+        /**
+         * 用给定值构造领域事件序列化测试使用的聚合标识。
+         *
+         * @param value 由当前成员保存或用于计算的值
+         */
         TestId(String value) {
             this.value = value;
         }
 
+        /**
+         * 返回测试聚合标识的类型前缀。
+         *
+         * @return 返回表达式 <code>TYPE</code>
+         */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
+        /**
+         * 返回不含类型前缀的聚合标识字符串。
+         *
+         * @return 返回表达式 <code>value</code>
+         */
         @Override
         public String asString() {
             return value;
         }
 
+        /**
+         * 返回包含类型前缀的聚合标识字符串。
+         *
+         * @return 返回表达式 <code>TYPE.asString() + ":" + value</code>
+         */
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
         }
 
+        /**
+         * 按 <code>equals</code> 的契约计算并返回结果。
+         *
+         * @param o 传入此操作的 <code>Object</code> 类型 <code>o</code>
+         * @return 返回表达式 <code>this == o || (o instanceof TestId &amp;&amp; java.util.Objects.equals(value, ((TestId) o).value))</code>
+         */
         @Override
         public boolean equals(Object o) {
             return this == o || (o instanceof TestId && java.util.Objects.equals(value, ((TestId) o).value));
         }
 
+        /**
+         * 按 <code>hash Code</code> 的契约计算并返回结果。
+         *
+         * @return 返回表达式 <code>java.util.Objects.hashCode(value)</code>
+         */
         @Override
         public int hashCode() {
             return java.util.Objects.hashCode(value);
         }
 
+        /**
+         * 按 <code>to String</code> 的契约计算并返回结果。
+         *
+         * @return 返回表达式 <code>"TestId{" + value + "}"</code>
+         */
         @Override
         public String toString() {
             return "TestId{" + value + "}";
         }
     }
 
+    /** 为测试场景提供 <code>DomainEvent</code> 的实现。 */
     static final class TestEvent extends DomainEvent<TestId> {
+        /** 初始化 <code>TestEvent</code> 并委托其默认构造路径。 */
         TestEvent() {
             super();
         }
 
+        /**
+         * 初始化 <code>TestEvent</code> 并委托其默认构造路径。
+         *
+         * @param id 传入此操作的 <code>TestId</code> 类型 <code>id</code>
+         */
         TestEvent(TestId id) {
             super(new EntityIdPath(id));
         }
 
+        /**
+         * 初始化 <code>TestEvent</code> 并委托其默认构造路径。
+         *
+         * @param id 传入此操作的 <code>TestId</code> 类型 <code>id</code>
+         * @param respondTo 传入此操作的 <code>DomainEvent&lt;TestId&gt;</code> 类型 <code>respondTo</code>
+         */
         TestEvent(TestId id, DomainEvent<TestId> respondTo) {
             super(new EntityIdPath(id), respondTo);
         }

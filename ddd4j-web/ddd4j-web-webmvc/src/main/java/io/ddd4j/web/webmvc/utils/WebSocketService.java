@@ -44,11 +44,11 @@ import java.util.function.Supplier;
 public class WebSocketService {
 
     /**
-     * 会话缓存（clientId -> WebSocketSession）
+     * 会话缓存（客户端标识映射到 WebSocket 会话）
      */
     private static final Map<String, WebSocketSession> SESSIONS = new ConcurrentHashMap<>();
     /**
-     * 连接管理器缓存（clientId -> WebSocketConnectionManager）
+     * 连接管理器缓存（客户端标识映射到 WebSocket 连接管理器）
      */
     private static final Map<String, WebSocketConnectionManager> MANAGERS = new ConcurrentHashMap<>();
 

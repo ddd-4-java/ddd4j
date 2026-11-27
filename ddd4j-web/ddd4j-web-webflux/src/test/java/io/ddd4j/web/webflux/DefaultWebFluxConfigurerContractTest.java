@@ -35,6 +35,7 @@ import static org.mockito.Mockito.when;
  */
 class DefaultWebFluxConfigurerContractTest {
 
+    /** \u9a8c\u8bc1<code>resolver.getValue().getClass().getSimpleName().endsWith("WebJarsResourceResolver")</code>\u4e3a\u771f\u3002 */
     @Test
     void registersWebJarsResolverForVersionlessPaths() {
         ResourceHandlerRegistry registry = mock(ResourceHandlerRegistry.class);

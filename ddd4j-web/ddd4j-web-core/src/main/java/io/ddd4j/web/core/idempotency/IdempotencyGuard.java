@@ -22,6 +22,12 @@ import java.util.Optional;
  */
 public interface IdempotencyGuard {
 
+    /**
+     * \u5c1d\u8bd5\u83b7\u53d6\u5e42\u7b49\u952e\u3002
+     * @param key \u5e42\u7b49\u952e
+     * @param ttl \u6709\u6548\u671f
+     * @return \u83b7\u53d6\u6210\u529f\u65f6\u4e3a true
+     */
     boolean acquire(String key, Duration ttl);
 
     /**
@@ -36,6 +42,10 @@ public interface IdempotencyGuard {
         return acquire(key, ttl) ? Optional.of(new IdempotencyLease(key, null, ttl)) : Optional.empty();
     }
 
+    /**
+     * \u6807\u8bb0\u6307\u5b9a\u5e42\u7b49\u952e\u7684\u4e1a\u52a1\u5904\u7406\u5df2\u5b8c\u6210\u3002
+     * @param key \u5e42\u7b49\u952e
+     */
     void complete(String key);
 
     /**
@@ -46,6 +56,10 @@ public interface IdempotencyGuard {
         complete(lease.key());
     }
 
+    /**
+     * \u91ca\u653e\u6307\u5b9a\u5e42\u7b49\u952e\uff0c\u5141\u8bb8\u91cd\u8bd5\u3002
+     * @param key \u5e42\u7b49\u952e
+     */
     void release(String key);
 
     /**

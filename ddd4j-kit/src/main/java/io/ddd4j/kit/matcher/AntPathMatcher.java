@@ -73,17 +73,27 @@ public class AntPathMatcher implements PathMatcher {
      */
     public static final String DEFAULT_PATH_SEPARATOR = "/";
 
+    /** \u81ea\u52a8\u505c\u7528\u6a21\u5f0f\u7f13\u5b58\u7684\u6761\u76ee\u6570\u9608\u503c\u3002 */
     private static final int CACHE_TURNOFF_THRESHOLD = 65536;
 
+    /** \u5339\u914d\u4e0d\u8de8\u8def\u5f84\u5206\u9694\u7b26\u7684 URI \u6a21\u677f\u53d8\u91cf\u3002 */
     private static final Pattern VARIABLE_PATTERN = Pattern.compile("\\{[^/]+?\\}");
 
+    /** \u8868\u793a\u901a\u914d\u6216 URI \u6a21\u677f\u5f00\u59cb\u7684\u5b57\u7b26\u3002 */
     private static final char[] WILDCARD_CHARS = {'*', '?', '{'};
+    /** \u7f13\u5b58\u8def\u5f84\u6bb5\u6a21\u5f0f\u7f16\u8bd1\u540e\u7684\u5339\u914d\u5668\u3002 */
     final Map<String, AntPathStringMatcher> stringMatcherCache = new ConcurrentHashMap<>(256);
+    /** \u7f13\u5b58\u6309\u8def\u5f84\u5206\u9694\u7b26\u5207\u5206\u7684\u6a21\u5f0f\u7247\u6bb5\u3002 */
     private final Map<String, String[]> tokenizedPatternCache = new ConcurrentHashMap<>(256);
+    /** \u8def\u5f84\u6216\u6a21\u5f0f\u5404\u6bb5\u4e4b\u95f4\u4f7f\u7528\u7684\u5206\u9694\u7b26\u3002 */
     private String pathSeparator;
+    /** \u4fdd\u5b58\u5f53\u524d\u5206\u9694\u7b26\u5bf9\u5e94\u7684\u901a\u914d\u540e\u7f00\u3002 */
     private PathSeparatorPatternCache pathSeparatorPatternCache;
+    /** \u5339\u914d\u5b57\u7b26\u65f6\u662f\u5426\u533a\u5206\u5927\u5c0f\u5199\u3002 */
     private boolean caseSensitive = true;
+    /** \u5206\u5272\u8def\u5f84\u6bb5\u540e\u662f\u5426\u53bb\u6389\u6bb5\u9996\u5c3e\u7a7a\u767d\u3002 */
     private boolean trimTokens = false;
+    /** \u63a7\u5236\u6a21\u5f0f\u7f13\u5b58\u542f\u7528\u3001\u505c\u7528\u6216\u81ea\u52a8\u9009\u62e9\u7684\u914d\u7f6e\u3002 */
     private volatile Boolean cachePatterns;
 
 
@@ -156,6 +166,7 @@ public class AntPathMatcher implements PathMatcher {
         this.cachePatterns = cachePatterns;
     }
 
+    /** \u505c\u7528\u6a21\u5f0f\u7f13\u5b58\u5e76\u6e05\u7a7a\u5df2\u7ecf\u7f13\u5b58\u7684\u8def\u5f84\u5206\u6bb5\u548c\u5339\u914d\u5668\u3002 */
     private void deactivatePatternCache() {
         this.cachePatterns = false;
         this.tokenizedPatternCache.clear();
@@ -163,6 +174,7 @@ public class AntPathMatcher implements PathMatcher {
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public boolean isPattern(String path) {
         if (Objects.isNull(path)) {
@@ -185,11 +197,13 @@ public class AntPathMatcher implements PathMatcher {
         return false;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean match(String pattern, String path) {
         return doMatch(pattern, path, true, null);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean matchStart(String pattern, String path) {
         return doMatch(pattern, path, false, null);
@@ -336,6 +350,12 @@ public class AntPathMatcher implements PathMatcher {
         return true;
     }
 
+    /**
+     * \u68c0\u67e5\u8def\u5f84\u53ca\u6a21\u5f0f\u7684\u5b9e\u4e49\u524d\u7f00\uff0c\u4ee5\u63d0\u524d\u6392\u9664\u4e0d\u5339\u914d\u7684\u5019\u9009\u3002
+     * @param path \u5f85\u5339\u914d\u7684\u8def\u5f84
+     * @param pattDirs \u6309\u8def\u5f84\u5206\u9694\u7b26\u5207\u5206\u7684\u6a21\u5f0f\u7247\u6bb5
+     * @return \u8fd8\u53ef\u80fd\u4e0e\u6a21\u5f0f\u5339\u914d\u65f6\u8fd4\u56de true
+     */
     private boolean isPotentialMatch(String path, String[] pattDirs) {
         if (!this.trimTokens) {
             int pos = 0;
@@ -352,6 +372,13 @@ public class AntPathMatcher implements PathMatcher {
         return true;
     }
 
+    /**
+     * \u7edf\u8ba1\u6a21\u5f0f\u5b9e\u4e49\u524d\u7f00\u4e2d\u53ef\u4e0e\u5f53\u524d\u4f4d\u7f6e\u5339\u914d\u7684\u5b57\u7b26\uff0c\u9047\u5230\u901a\u914d\u7b26\u65f6\u505c\u6b62\u3002
+     * @param path \u5f53\u524d\u88ab\u5339\u914d\u7684\u8def\u5f84
+     * @param pos \u8981\u5f00\u59cb\u5339\u914d\u7684\u8def\u5f84\u504f\u79fb
+     * @param prefix \u5f85\u5339\u914d\u7684\u6a21\u5f0f\u7247\u6bb5
+     * @return \u53ef\u4ee5\u8df3\u8fc7\u7684\u5b57\u7b26\u6570
+     */
     private int skipSegment(String path, int pos, String prefix) {
         int skipped = 0;
         for (int i = 0; i < prefix.length(); i++) {
@@ -370,6 +397,13 @@ public class AntPathMatcher implements PathMatcher {
         return skipped;
     }
 
+    /**
+     * \u4ece\u7ed9\u5b9a\u504f\u79fb\u8df3\u8fc7\u8fde\u7eed\u51fa\u73b0\u7684\u8def\u5f84\u5206\u9694\u7b26\u3002
+     * @param path \u542b\u8def\u5f84\u5206\u9694\u7b26\u7684\u5b57\u7b26\u4e32
+     * @param pos \u5f00\u59cb\u68c0\u67e5\u7684\u504f\u79fb
+     * @param separator \u8981\u8df3\u8fc7\u7684\u5206\u9694\u7b26
+     * @return \u8df3\u8fc7\u7684\u5b57\u7b26\u6570
+     */
     private int skipSeparator(String path, int pos, String separator) {
         int skipped = 0;
         while (path.startsWith(separator, pos + skipped)) {
@@ -378,6 +412,11 @@ public class AntPathMatcher implements PathMatcher {
         return skipped;
     }
 
+    /**
+     * \u5224\u65ad\u5b57\u7b26\u662f\u5426\u4e3a Ant \u901a\u914d\u7b26\u6216 URI \u6a21\u677f\u7684\u5f00\u59cb\u6807\u8bb0\u3002
+     * @param c \u5f85\u68c0\u67e5\u5b57\u7b26
+     * @return \u5c5e\u4e8e\u901a\u914d\u6216\u6a21\u677f\u5b57\u7b26\u65f6\u8fd4\u56de true
+     */
     private boolean isWildcardChar(char c) {
         for (char candidate : WILDCARD_CHARS) {
             if (c == candidate) {
@@ -429,10 +468,11 @@ public class AntPathMatcher implements PathMatcher {
 
     /**
      * Test whether a string matches against a pattern.
-     *
      * @param pattern the pattern to match against (never {@code null})
-     * @param str     the String which must be matched against the pattern (never {@code null})
+     * @param str the String which must be matched against the pattern (never {@code null})
      * @return {@code true} if the string matches against the pattern, or {@code false} otherwise
+     *
+     * @param uriTemplateVariables \u63a5\u6536\u5df2\u5339\u914d\u6a21\u677f\u53d8\u91cf\u53ca\u5176\u503c\u7684\u6620\u5c04
      */
     private boolean matchStrings(String pattern, String str,
                                  Map<String, String> uriTemplateVariables) {
@@ -478,16 +518,20 @@ public class AntPathMatcher implements PathMatcher {
 
     /**
      * Given a pattern and a full path, determine the pattern-mapped part. <p>For example: <ul>
-     * <li>'{@code /docs/cvs/commit.html}' and '{@code /docs/cvs/commit.html} &rarr; ''</li>
-     * <li>'{@code /docs/*}' and '{@code /docs/cvs/commit} &rarr; '{@code cvs/commit}'</li>
-     * <li>'{@code /docs/cvs/*.html}' and '{@code /docs/cvs/commit.html} &rarr; '{@code commit.html}'</li>
-     * <li>'{@code /docs/**}' and '{@code /docs/cvs/commit} &rarr; '{@code cvs/commit}'</li>
-     * <li>'{@code /docs/**\/*.html}' and '{@code /docs/cvs/commit.html} &rarr; '{@code cvs/commit.html}'</li>
-     * <li>'{@code /*.html}' and '{@code /docs/cvs/commit.html} &rarr; '{@code docs/cvs/commit.html}'</li>
-     * <li>'{@code *.html}' and '{@code /docs/cvs/commit.html} &rarr; '{@code /docs/cvs/commit.html}'</li>
-     * <li>'{@code *}' and '{@code /docs/cvs/commit.html} &rarr; '{@code /docs/cvs/commit.html}'</li> </ul>
-     * <p>Assumes that {@link #match} returns {@code true} for '{@code pattern}' and '{@code path}', but
-     * does <strong>not</strong> enforce this.
+     *  <li>'{@code /docs/cvs/commit.html}' and '{@code /docs/cvs/commit.html} &rarr; ''</li>
+     *  <li>'{@code /docs/*}' and '{@code /docs/cvs/commit} &rarr; '{@code cvs/commit}'</li>
+     *  <li>'{@code /docs/cvs/*.html}' and '{@code /docs/cvs/commit.html} &rarr; '{@code commit.html}'</li>
+     *  <li>'{@code /docs/**}' and '{@code /docs/cvs/commit} &rarr; '{@code cvs/commit}'</li>
+     *  <li>'{@code /docs/**\/*.html}' and '{@code /docs/cvs/commit.html} &rarr; '{@code cvs/commit.html}'</li>
+     *  <li>'{@code /*.html}' and '{@code /docs/cvs/commit.html} &rarr; '{@code docs/cvs/commit.html}'</li>
+     *  <li>'{@code *.html}' and '{@code /docs/cvs/commit.html} &rarr; '{@code /docs/cvs/commit.html}'</li>
+     *  <li>'{@code *}' and '{@code /docs/cvs/commit.html} &rarr; '{@code /docs/cvs/commit.html}'</li> </ul>
+     *  <p>Assumes that {@link #match} returns {@code true} for '{@code pattern}' and '{@code path}', but
+     *  does <strong>not</strong> enforce this.
+     *
+     * @param pattern \u7528\u4e8e\u5339\u914d\u7684 Ant \u8def\u5f84\u6a21\u5f0f
+     * @param path \u5f85\u5904\u7406\u7684\u8def\u5f84
+     * @return \u901a\u914d\u7b26\u5339\u914d\u5230\u7684\u8def\u5f84\u90e8\u5206
      */
     @Override
     public String extractPathWithinPattern(String pattern, String path) {
@@ -512,6 +556,7 @@ public class AntPathMatcher implements PathMatcher {
         return builder.toString();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Map<String, String> extractUriTemplateVariables(String pattern, String path) {
         Map<String, String> variables = new LinkedHashMap<>();
@@ -602,6 +647,12 @@ public class AntPathMatcher implements PathMatcher {
         return file2 + ext;
     }
 
+    /**
+     * \u6309\u914d\u7f6e\u5206\u9694\u7b26\u62fc\u63a5\u8def\u5f84\u7247\u6bb5\u5e76\u5904\u7406\u8fde\u63a5\u5904\u91cd\u590d\u7684\u5206\u9694\u7b26\u3002
+     * @param path1 \u5de6\u4fa7\u8def\u5f84\u7247\u6bb5
+     * @param path2 \u53f3\u4fa7\u8def\u5f84\u7247\u6bb5
+     * @return \u62fc\u63a5\u540e\u7684\u8def\u5f84
+     */
     private String concat(String path1, String path2) {
         boolean path1EndsWithSeparator = path1.endsWith(this.pathSeparator);
         boolean path2StartsWithSeparator = path2.startsWith(this.pathSeparator);
@@ -646,19 +697,31 @@ public class AntPathMatcher implements PathMatcher {
      */
     protected static class AntPathStringMatcher {
 
+        /** \u672a\u6307\u5b9a\u6b63\u5219\u65f6\u6355\u83b7 URI \u53d8\u91cf\u7684\u9ed8\u8ba4\u6a21\u5f0f\u3002 */
         private static final String DEFAULT_VARIABLE_PATTERN = "((?s).*)";
 
+        /** \u7f16\u8bd1\u524d\u7684\u8def\u5f84\u6bb5\u6a21\u5f0f\u3002 */
         private final String rawPattern;
 
+        /** \u5339\u914d\u5b57\u7b26\u65f6\u662f\u5426\u533a\u5206\u5927\u5c0f\u5199\u3002 */
         private final boolean caseSensitive;
 
+        /** \u8def\u5f84\u6bb5\u4e0d\u542b\u9700\u89e3\u91ca\u7684\u901a\u914d\u6216\u6a21\u677f\u65f6\u4f7f\u7528\u7684\u7cbe\u786e\u5339\u914d\u6807\u8bb0\u3002 */
         private final boolean exactMatch;
 
 
+        /** \u7f16\u8bd1\u540e\u7684\u8def\u5f84\u6bb5\u6b63\u5219\u8868\u8fbe\u5f0f\u3002 */
         private final Pattern pattern;
 
+        /** \u6309\u6355\u83b7\u7ec4\u987a\u5e8f\u4fdd\u5b58\u7684 URI \u6a21\u677f\u53d8\u91cf\u540d\u3002 */
         private final List<String> variableNames = new ArrayList<>();
 
+        /**
+         * \u521b\u5efa\u8def\u5f84\u7247\u6bb5\u5339\u914d\u5668\u3002
+         * @param pattern Ant \u98ce\u683c\u6a21\u5f0f
+         * @param pathSeparator \u8def\u5f84\u5206\u9694\u7b26
+         * @param caseSensitive \u662f\u5426\u533a\u5206\u5927\u5c0f\u5199
+         */
         protected AntPathStringMatcher(String pattern, String pathSeparator, boolean caseSensitive) {
             this.rawPattern = pattern;
             this.caseSensitive = caseSensitive;
@@ -700,11 +763,23 @@ patternBuilder.append('(');
             }
         }
 
+        /**
+         * \u6784\u9020\u8bc6\u522b\u95ee\u53f7\u3001\u661f\u53f7\u548c URI \u6a21\u677f\u53d8\u91cf\u7684\u6b63\u5219\u3002
+         * @param pathSeparator \u7981\u6b62\u5728\u6a21\u677f\u53d8\u91cf\u4e2d\u5339\u914d\u7684\u8def\u5f84\u5206\u9694\u7b26
+         * @return \u5c06 Ant \u6a21\u5f0f\u62c6\u5206\u4e3a\u53ef\u5904\u7406\u6807\u8bb0\u7684\u6b63\u5219
+         */
         private static Pattern getGlobPattern(String pathSeparator) {
             String pattern = "\\?|\\*|\\{((?:\\{[^" + pathSeparator + "]+?\\}|[^" + pathSeparator + "{}]|\\\\[{}])+?)\\}";
             return Pattern.compile(pattern);
         }
 
+        /**
+         * \u628a\u6307\u5b9a\u8303\u56f4\u7684\u5b57\u7b26\u4f5c\u4e3a\u6b63\u5219\u5b57\u9762\u91cf\u5904\u7406\u3002
+         * @param s \u539f\u59cb\u6a21\u5f0f
+         * @param start \u5f00\u59cb\u7d22\u5f15\uff0c\u5305\u542b\u8be5\u4f4d\u7f6e
+         * @param end \u7ed3\u675f\u7d22\u5f15\uff0c\u4e0d\u542b\u8be5\u4f4d\u7f6e
+         * @return \u5df2\u5f15\u7528\u7684\u6b63\u5219\u6587\u672c\uff0c\u8303\u56f4\u4e3a\u7a7a\u65f6\u8fd4\u56de\u7a7a\u4e32
+         */
         private String quote(String s, int start, int end) {
             if (start == end) {
                 return "";
@@ -766,14 +841,25 @@ patternBuilder.append('(');
      */
     protected static class AntPatternComparator implements Comparator<String> {
 
+        /** \u7528\u6765\u6bd4\u8f83\u4e0d\u540c\u6a21\u5f0f\u5339\u914d\u7cbe\u786e\u5ea6\u7684\u5b9e\u9645\u8def\u5f84\u3002 */
         private final String path;
 
+        /** \u8def\u5f84\u6216\u6a21\u5f0f\u5404\u6bb5\u4e4b\u95f4\u4f7f\u7528\u7684\u5206\u9694\u7b26\u3002 */
         private final String pathSeparator;
 
+        /**
+         * \u521b\u5efa\u4f7f\u7528\u9ed8\u8ba4\u5206\u9694\u7b26\u7684\u6a21\u5f0f\u6bd4\u8f83\u5668\u3002
+         * @param path \u5f85\u5339\u914d\u8def\u5f84
+         */
         public AntPatternComparator(String path) {
             this(path, DEFAULT_PATH_SEPARATOR);
         }
 
+        /**
+         * \u521b\u5efa\u6a21\u5f0f\u6bd4\u8f83\u5668\u3002
+         * @param path \u5f85\u5339\u914d\u8def\u5f84
+         * @param pathSeparator \u8def\u5f84\u5206\u9694\u7b26
+         */
         public AntPatternComparator(String path, String pathSeparator) {
             this.path = path;
             this.pathSeparator = pathSeparator;
@@ -781,10 +867,12 @@ patternBuilder.append('(');
 
         /**
          * Compare two patterns to determine which should match first, i.e. which
-         * is the most specific regarding the current path.
-         *
+         *  is the most specific regarding the current path.
          * @return a negative integer, zero, or a positive integer as pattern1 is
-         * more specific, equally specific, or less specific than pattern2.
+         *  more specific, equally specific, or less specific than pattern2.
+         *
+         * @param pattern1 \u7b2c\u4e00\u4e2a\u5f85\u6bd4\u8f83\u7684\u8def\u5f84\u6a21\u5f0f
+         * @param pattern2 \u7b2c\u4e8c\u4e2a\u5f85\u6bd4\u8f83\u7684\u8def\u5f84\u6a21\u5f0f
          */
         @Override
         public int compare(String pattern1, String pattern2) {
@@ -848,21 +936,33 @@ patternBuilder.append('(');
         private static class PatternInfo {
 
 
+            /** \u6b63\u5728\u5206\u6790\u548c\u6bd4\u8f83\u7684 Ant \u8def\u5f84\u6a21\u5f0f\u3002 */
             private final String pattern;
 
+            /** \u6a21\u5f0f\u4e2d URI \u6a21\u677f\u53d8\u91cf\u7684\u8ba1\u6570\u3002 */
             private int uriVars;
 
+            /** \u6a21\u5f0f\u4e2d\u5355\u661f\u901a\u914d\u7b26\u7684\u8ba1\u6570\u3002 */
             private int singleWildcards;
 
+            /** \u6a21\u5f0f\u4e2d\u53cc\u661f\u901a\u914d\u7b26\u7684\u8ba1\u6570\u3002 */
             private int doubleWildcards;
 
+            /** \u5f53\u524d\u6a21\u5f0f\u662f\u5426\u5339\u914d\u5168\u90e8\u8def\u5f84\u3002 */
             private boolean catchAllPattern;
 
+            /** \u5f53\u524d\u6a21\u5f0f\u662f\u5426\u4e3a\u4ee5\u53cc\u661f\u7ed3\u675f\u7684\u524d\u7f00\u6a21\u5f0f\u3002 */
             private boolean prefixPattern;
 
 
+            /** \u6bd4\u8f83\u6a21\u5f0f\u5339\u914d\u7cbe\u786e\u5ea6\u65f6\u4f7f\u7528\u7684\u7f13\u5b58\u957f\u5ea6\u3002 */
             private Integer length;
 
+            /**
+             * \u5206\u6790\u8def\u5f84\u6a21\u5f0f\u4e2d\u7684\u6a21\u677f\u3001\u901a\u914d\u7b26\u548c\u540e\u7f00\u7279\u5f81\u3002
+             * @param pattern \u5f85\u8bc4\u5206\u7684 Ant \u8def\u5f84\u6a21\u5f0f
+             * @param pathSeparator \u5224\u65ad\u901a\u914d\u540e\u7f00\u7684\u8def\u5f84\u5206\u9694\u7b26
+             */
             PatternInfo(String pattern, String pathSeparator) {
                 this.pattern = pattern;
                 if (Objects.nonNull(this.pattern)) {
@@ -875,6 +975,7 @@ patternBuilder.append('(');
                 }
             }
 
+            /** \u7edf\u8ba1\u6a21\u5f0f\u4e2d\u7684 URI \u6a21\u677f\u53d8\u91cf\u548c\u5355\u661f\u3001\u53cc\u661f\u901a\u914d\u7b26\u3002 */
             protected void initCounters() {
                 int pos = 0;
                 if (Objects.nonNull(this.pattern)) {
@@ -899,32 +1000,58 @@ patternBuilder.append('(');
                 }
             }
 
+            /**
+             * \u8bfb\u53d6<code>uriVars</code> \u5b57\u6bb5\u3002
+             * @return <code>uriVars</code> \u5b57\u6bb5
+             */
             public int getUriVars() {
                 return this.uriVars;
             }
 
+            /**
+             * \u8bfb\u53d6<code>singleWildcards</code> \u5b57\u6bb5\u3002
+             * @return <code>singleWildcards</code> \u5b57\u6bb5
+             */
             public int getSingleWildcards() {
                 return this.singleWildcards;
             }
 
+            /**
+             * \u8bfb\u53d6<code>doubleWildcards</code> \u5b57\u6bb5\u3002
+             * @return <code>doubleWildcards</code> \u5b57\u6bb5
+             */
             public int getDoubleWildcards() {
                 return this.doubleWildcards;
             }
 
+            /**
+             * \u5224\u65ad\u6a21\u5f0f\u662f\u5426\u5e94\u5728\u7cbe\u786e\u5ea6\u6392\u5e8f\u4e2d\u6392\u5230\u6700\u672b\u3002
+             * @return \u6a21\u5f0f\u4e3a\u7a7a\u6216\u5339\u914d\u5168\u90e8\u8def\u5f84\u65f6\u8fd4\u56de true
+             */
             public boolean isLeastSpecific() {
                 return (Objects.isNull(this.pattern) || this.catchAllPattern);
             }
 
+            /**
+             * \u8bfb\u53d6<code>prefixPattern</code> \u5b57\u6bb5\u3002
+             * @return <code>prefixPattern</code> \u5b57\u6bb5
+             */
             public boolean isPrefixPattern() {
                 return this.prefixPattern;
             }
 
+            /**
+             * \u8ba1\u7b97\u6a21\u5f0f\u901a\u914d\u6743\u91cd\uff0c\u53cc\u661f\u8ba1\u4e3a\u4e24\u9879\u3002
+             * @return URI \u6a21\u677f\u53d8\u91cf\u3001\u5355\u661f\u548c\u53cc\u661f\u6298\u7b97\u540e\u7684\u8ba1\u6570
+             */
             public int getTotalCount() {
                 return this.uriVars + this.singleWildcards + (2 * this.doubleWildcards);
             }
 
             /**
              * Returns the length of the given pattern, where template variables are considered to be 1 long.
+             *
+             * @return \u6bd4\u8f83\u6a21\u5f0f\u65f6\u4f7f\u7528\u7684\u957f\u5ea6
              */
             public int getLength() {
                 if (Objects.isNull(this.length)) {
@@ -942,19 +1069,33 @@ patternBuilder.append('(');
      */
     private static class PathSeparatorPatternCache {
 
+        /** \u5f53\u524d\u5206\u9694\u7b26\u52a0\u5355\u661f\u7684\u6a21\u5f0f\u540e\u7f00\u3002 */
         private final String endsOnWildCard;
 
+        /** \u5f53\u524d\u5206\u9694\u7b26\u52a0\u53cc\u661f\u7684\u6a21\u5f0f\u540e\u7f00\u3002 */
         private final String endsOnDoubleWildCard;
 
+        /**
+         * \u9884\u5148\u8ba1\u7b97\u5206\u9694\u7b26\u4e0e\u5355\u661f\u3001\u53cc\u661f\u7684\u7ec4\u5408\u3002
+         * @param pathSeparator \u7f13\u5b58\u7684\u8def\u5f84\u5206\u9694\u7b26
+         */
         public PathSeparatorPatternCache(String pathSeparator) {
             this.endsOnWildCard = pathSeparator + "*";
             this.endsOnDoubleWildCard = pathSeparator + "**";
         }
 
+        /**
+         * \u8bfb\u53d6<code>endsOnWildCard</code> \u5b57\u6bb5\u3002
+         * @return <code>endsOnWildCard</code> \u5b57\u6bb5
+         */
         public String getEndsOnWildCard() {
             return this.endsOnWildCard;
         }
 
+        /**
+         * \u8bfb\u53d6<code>endsOnDoubleWildCard</code> \u5b57\u6bb5\u3002
+         * @return <code>endsOnDoubleWildCard</code> \u5b57\u6bb5
+         */
         public String getEndsOnDoubleWildCard() {
             return this.endsOnDoubleWildCard;
         }

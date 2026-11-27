@@ -32,6 +32,7 @@ import java.util.Objects;
 @SuppressWarnings("unchecked")
 public class Ddd4jFieldCryptoHandler {
 
+    /** \u8d1f\u8d23\u5b57\u6bb5\u52a0\u89e3\u5bc6\u8fd0\u7b97\u7684\u7b56\u7565\u3002 */
     private final CryptoStrategy cryptoStrategy;
 
     /**

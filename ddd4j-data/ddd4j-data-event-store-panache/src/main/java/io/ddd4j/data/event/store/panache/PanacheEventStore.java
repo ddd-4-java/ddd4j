@@ -39,8 +39,11 @@ import java.util.stream.Collectors;
  */
 public class PanacheEventStore implements EventStore {
 
+    /** \u6267\u884c JPA \u67e5\u8be2\u548c\u6301\u4e45\u5316\u64cd\u4f5c\u7684\u5b9e\u4f53\u7ba1\u7406\u5668\u3002 */
     private final EntityManager entityManager;
+    /** \u5728\u6570\u636e\u5e93\u53ef\u91cd\u8bd5\u6545\u969c\u540e\u91cd\u65b0\u6267\u884c\u64cd\u4f5c\u7684\u7b56\u7565\u3002 */
     private final EventStoreRetry retry;
+    /** \u5c06\u9886\u57df\u4e8b\u4ef6\u8d1f\u8f7d\u5199\u4e3a\u5b58\u50a8\u683c\u5f0f\u5e76\u4ece\u5b58\u50a8\u683c\u5f0f\u6062\u590d\u7684\u5e8f\u5217\u5316\u5668\u3002 */
     private final EventPayloadSerializer serializer;
 
     /**
@@ -63,6 +66,12 @@ public class PanacheEventStore implements EventStore {
         this(entityManager, retry, new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()));
     }
 
+    /**
+     * \u7528\u7ed9\u5b9a\u503c\u521d\u59cb\u5316 <code>PanacheEventStore</code> \u5b9e\u4f8b\u3002
+     * @param entityManager \u6267\u884c JPA \u67e5\u8be2\u548c\u6301\u4e45\u5316\u64cd\u4f5c\u7684\u5b9e\u4f53\u7ba1\u7406\u5668
+     * @param retry <code>retry</code> \u5b57\u6bb5
+     * @param serializer <code>serializer</code> \u5b57\u6bb5
+     */
     PanacheEventStore(EntityManager entityManager, EventStoreRetry retry, EventPayloadSerializer serializer) {
         this.entityManager = Objects.requireNonNull(entityManager, "entityManager must not be null");
         this.retry = Objects.requireNonNull(retry, "retry must not be null");
@@ -70,7 +79,12 @@ public class PanacheEventStore implements EventStore {
     }
 
     /**
-     * 以聚合类型和聚合标识追加事件；版本冲突使用统一异常表示，位置号冲突可重试。
+     * \u4ee5\u805a\u5408\u7c7b\u578b\u548c\u805a\u5408\u6807\u8bc6\u8ffd\u52a0\u4e8b\u4ef6\uff1b\u7248\u672c\u51b2\u7a81\u4f7f\u7528\u7edf\u4e00\u5f02\u5e38\u8868\u793a\uff0c\u4f4d\u7f6e\u53f7\u51b2\u7a81\u53ef\u91cd\u8bd5\u3002
+     *
+     * @param aggregateType \u805a\u5408\u7c7b\u578b
+     * @param aggregateId \u805a\u5408\u6839\u6807\u8bc6
+     * @param events \u6309\u987a\u5e8f\u8ffd\u52a0\u6216\u56de\u653e\u7684\u9886\u57df\u4e8b\u4ef6
+     * @param expectedVersion \u9884\u671f\u7684\u5f53\u524d\u805a\u5408\u7248\u672c
      */
     @Override
     public void append(String aggregateType, AggregateRootId aggregateId,
@@ -124,7 +138,11 @@ public class PanacheEventStore implements EventStore {
     }
 
     /**
-     * 按版本升序读取一个聚合流。
+     * \u6309\u7248\u672c\u5347\u5e8f\u8bfb\u53d6\u4e00\u4e2a\u805a\u5408\u6d41\u3002
+     *
+     * @param aggregateType \u805a\u5408\u7c7b\u578b
+     * @param aggregateId \u805a\u5408\u6839\u6807\u8bc6
+     * @return \u6309\u7248\u672c\u987a\u5e8f\u8fd4\u56de\u7684\u9886\u57df\u4e8b\u4ef6\u6d41
      */
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId) {
@@ -143,7 +161,13 @@ public class PanacheEventStore implements EventStore {
     }
 
     /**
-     * 按闭合版本区间读取一个聚合流。
+     * \u6309\u95ed\u5408\u7248\u672c\u533a\u95f4\u8bfb\u53d6\u4e00\u4e2a\u805a\u5408\u6d41\u3002
+     *
+     * @param aggregateType \u805a\u5408\u7c7b\u578b
+     * @param aggregateId \u805a\u5408\u6839\u6807\u8bc6
+     * @param fromVersion \u8bfb\u53d6\u8d77\u59cb\u7248\u672c
+     * @param toVersion \u8bfb\u53d6\u7ed3\u675f\u7248\u672c
+     * @return \u6309\u7248\u672c\u987a\u5e8f\u8fd4\u56de\u7684\u9886\u57df\u4e8b\u4ef6\u6d41
      */
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId,
@@ -166,7 +190,11 @@ public class PanacheEventStore implements EventStore {
     }
 
     /**
-     * 按全局 position 升序分页读取事件。
+     * \u6309\u5168\u5c40 position \u5347\u5e8f\u5206\u9875\u8bfb\u53d6\u4e8b\u4ef6\u3002
+     *
+     * @param fromPosition \u8d77\u59cb\u6d41\u4f4d\u7f6e
+     * @param limit \u672c\u6b21\u6700\u591a\u8bfb\u53d6\u7684\u8bb0\u5f55\u6570
+     * @return \u6309\u5168\u5c40\u4f4d\u7f6e\u6392\u5e8f\u7684\u4e8b\u4ef6
      */
     @Override
     public List<StoredEvent> readAll(long fromPosition, int limit) {
@@ -182,6 +210,12 @@ public class PanacheEventStore implements EventStore {
                 .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
     }
 
+    /**
+     * \u7edf\u8ba1\u8be5\u805a\u5408\u5df2\u6301\u4e45\u5316\u7684\u4e8b\u4ef6\u4ee5\u83b7\u5f97\u5f53\u524d\u7248\u672c\u3002
+     * @param aggregateType \u805a\u5408\u7c7b\u578b\u540d\u79f0
+     * @param aggregateId \u805a\u5408\u6839\u6807\u8bc6
+     * @return \u7528\u4e8e\u4e50\u89c2\u9501\u6821\u9a8c\u7684\u805a\u5408\u5f53\u524d\u7248\u672c
+     */
     private long findCurrentVersion(String aggregateType, String aggregateId) {
         try {
             Long count = entityManager.createQuery(
@@ -197,6 +231,10 @@ public class PanacheEventStore implements EventStore {
         }
     }
 
+    /**
+     * \u5728\u4e8b\u4ef6\u8868\u6700\u5927\u5168\u5c40\u4f4d\u7f6e\u7684\u57fa\u7840\u4e0a\u751f\u6210\u4e0b\u4e00\u4f4d\u7f6e\u3002
+     * @return \u51c6\u5907\u5199\u5165\u4e8b\u4ef6\u7684\u4f4d\u7f6e
+     */
     private long nextPosition() {
         try {
             Long maximum = entityManager.createQuery(
@@ -208,6 +246,11 @@ public class PanacheEventStore implements EventStore {
         }
     }
 
+    /**
+     * \u8bfb\u53d6\u6301\u4e45\u5316\u884c\u7684\u4e8b\u4ef6\u7c7b\u578b\u5e76\u89e3\u7801\u8d1f\u8f7d\uff0c\u6062\u590d\u5b58\u50a8\u4e8b\u4ef6\u3002
+     * @param entity \u6570\u636e\u5e93\u8fd4\u56de\u7684\u6301\u4e45\u5316\u5b9e\u4f53
+     * @return \u4f9b\u4e8b\u4ef6\u8bfb\u53d6\u5165\u53e3\u8fd4\u56de\u7684\u5b58\u50a8\u4e8b\u4ef6
+     */
     private StoredEvent toStoredEvent(PanacheStoredEventEntity entity) {
         DomainEvent<?> payload = serializer.deserialize(entity.payload, resolveEventType(entity.eventType));
         return new StoredEvent(
@@ -222,6 +265,11 @@ public class PanacheEventStore implements EventStore {
                 EventId.valueOf(entity.causationId));
     }
 
+    /**
+     * \u6309\u6301\u4e45\u5316\u7684\u5168\u9650\u5b9a\u7c7b\u540d\u89e3\u6790\u4e8b\u4ef6\u8d1f\u8f7d\u7c7b\u578b\u3002
+     * @param eventType \u4e8b\u4ef6\u7684 Java \u7c7b\u578b\u6216\u6301\u4e45\u5316\u7c7b\u578b\u540d\u79f0
+     * @return \u7528\u4e8e\u53cd\u5e8f\u5217\u5316\u7684\u9886\u57df\u4e8b\u4ef6\u7c7b
+     */
     @SuppressWarnings("unchecked")
     private Class<? extends DomainEvent<?>> resolveEventType(String eventType) {
         try {
@@ -231,40 +279,56 @@ public class PanacheEventStore implements EventStore {
         }
     }
 
+    /** \u5c06\u4e8b\u4ef6\u5b58\u50a8\u4e2d\u7684\u5b57\u7b26\u4e32\u6807\u8bc6\u9002\u914d\u4e3a\u805a\u5408\u6839\u6807\u8bc6\u3002 */
     private final static class StringAggregateRootId implements AggregateRootId {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u4ece\u5b58\u50a8\u8bb0\u5f55\u4e2d\u8bfb\u53d6\u7684\u539f\u59cb\u5b57\u7b26\u4e32\u6807\u8bc6\u3002 */
         private final String value;
 
+        /** \u7528\u4e8e\u63cf\u8ff0\u5b57\u7b26\u4e32\u805a\u5408\u6807\u8bc6\u7684\u5b9e\u4f53\u7c7b\u578b\u3002 */
         private static final StringEntityType TYPE = new StringEntityType("String");
 
+        /** {@inheritDoc} */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
+        /** {@inheritDoc} */
         @Override
         @JsonValue
         public String asString() {
             return value;
         }
 
+        /** {@inheritDoc} */
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
         }
 
+        /**
+         * \u4ece\u6301\u4e45\u5316\u5b57\u7b26\u4e32\u6062\u590d\u805a\u5408\u6839\u6807\u8bc6\u3002
+         * @param value \u539f\u59cb\u6807\u8bc6\u6587\u672c
+         */
         @JsonCreator()
         private StringAggregateRootId(@JsonProperty("value") String value) {
             this.value = value;
         }
 
+        /**
+         * \u8bfb\u53d6<code>value</code> \u5b57\u6bb5\u3002
+         * @return <code>value</code> \u5b57\u6bb5
+         */
         @JsonProperty("value")
         public String value() {
             return value;
         }
 
+        /** {@inheritDoc} */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -277,6 +341,7 @@ public class PanacheEventStore implements EventStore {
             return Objects.equals(this.value, other.value);
         }
 
+        /** {@inheritDoc} */
         @Override
         public int hashCode() {
             int result = 0;
@@ -284,6 +349,7 @@ public class PanacheEventStore implements EventStore {
             return result;
         }
 
+        /** {@inheritDoc} */
         @Override
         public String toString() {
             return "StringAggregateRootId[value=" + value + "]";

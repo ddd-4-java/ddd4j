@@ -25,16 +25,24 @@ import javax.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class HelidonOrderBeans {
 
+    /** \u5b58\u653e\u5546\u54c1\u4ea4\u6613\u8bf7\u6c42\u5e42\u7b49\u8bb0\u5f55\u7684\u7f13\u5b58\u540d\u79f0\u3002 */
     private static final String IDEMPOTENCY_CACHE_NAME = "ddd4j-web-idempotency";
+    /** \u5e42\u7b49\u7f13\u5b58\u6761\u76ee\u5b58\u6d3b\u65f6\u95f4\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002 */
     private static final long IDEMPOTENCY_CACHE_TTL_SECONDS = 300L;
 
+    /** \u7531\u5f53\u524d Helidon \u5b9e\u4f8b\u521b\u5efa\u5e76\u8d1f\u8d23\u6ce8\u9500\u7684\u7f13\u5b58\u3002 */
     private Cache<String, Object> ownedIdempotencyCache;
 
+    /**
+     * \u5e94\u7528\u542f\u52a8\u540e\u767b\u8bb0\u4f9b\u5546\u54c1\u4ea4\u6613\u62e6\u622a\u5668\u590d\u7528\u7684\u5e42\u7b49\u7f13\u5b58\u3002
+     * @param startup \u6846\u67b6\u542f\u52a8\u9636\u6bb5\u53d1\u51fa\u7684\u5e94\u7528\u4e8b\u4ef6
+     */
     void initializeIdempotencyCache(@javax.enterprise.event.Observes
                                     @javax.enterprise.context.Initialized(ApplicationScoped.class) Object startup) {
         ownedIdempotencyCache = CacheKit.buildLocalIfAbsent(IDEMPOTENCY_CACHE_NAME, IDEMPOTENCY_CACHE_TTL_SECONDS);
     }
 
+    /** \u5e94\u7528\u505c\u6b62\u540e\u4ec5\u6e05\u7406\u5f53\u524d\u793a\u4f8b\u521b\u5efa\u7684\u5e42\u7b49\u7f13\u5b58\u3002 */
     @PreDestroy
     void destroyIdempotencyCache() {
         CacheKit.unregisterLocalIfOwned(IDEMPOTENCY_CACHE_NAME, ownedIdempotencyCache);

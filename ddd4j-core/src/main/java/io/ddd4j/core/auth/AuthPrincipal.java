@@ -143,6 +143,11 @@ public class AuthPrincipal implements Serializable {
      */
     private String userAgent;
 
+    /**
+     * \u89d2\u8272\u6807\u8bc6\u5bf9\u3002
+     *
+     *  <p>\u5c01\u88c5\u89d2\u8272\u7684 Id\u3001\u552f\u4e00\u7f16\u7801\u3001\u540d\u79f0\u4ee5\u53ca\u662f\u5426\u9700\u8981\u591a\u56e0\u5b50\u9a8c\u8bc1\u7b49\u6807\u8bc6\u4fe1\u606f\u3002
+     */
     @Accessors(chain = true)
     @Data
     public static class RolePair implements Serializable {

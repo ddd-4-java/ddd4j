@@ -40,11 +40,19 @@ import java.util.Objects;
 @Priority(Priorities.AUTHENTICATION)
 public class ShiroRequestFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
+    /** \u8bb0\u5f55\u8fdb\u5165\u8ba4\u8bc1\u8fc7\u6ee4\u5668\u4e4b\u524d\u7ebf\u7a0b\u7ed1\u5b9a\u7684\u8bf7\u6c42\u5c5e\u6027\u952e\u3002 */
     private static final String PREVIOUS = ShiroRequestFilter.class.getName() + ".previous";
+    /** \u4ece\u8ba4\u8bc1\u8bf7\u6c42\u5934\u63d0\u53d6\u4ee4\u724c\u65f6\u8bc6\u522b\u7684\u534f\u8bae\u524d\u7f00\u3002 */
     private static final String BEARER_PREFIX = "Bearer ";
+    /** \u8bfb\u53d6\u5df2\u5339\u914d JAX-RS \u8d44\u6e90\u548c\u65b9\u6cd5\u7684\u6ce8\u89e3\u4fe1\u606f\u3002 */
     @Context
     ResourceInfo resourceInfo;
 
+    /**
+     * \u5728 JAX-RS \u8c03\u7528\u8d44\u6e90\u65b9\u6cd5\u4e4b\u524d\u88c5\u914d\u5e76\u9a8c\u8bc1\u5f53\u524d\u539f\u751f\u8ba4\u8bc1\u4e0a\u4e0b\u6587\u3002
+     * @param requestContext \u5f53\u524d JAX-RS \u8bf7\u6c42\u4e0a\u4e0b\u6587
+     * @throws IOException \u88c5\u914d\u793a\u4f8b\u6216\u5904\u7406\u5f53\u524d HTTP \u8bf7\u6c42\u5931\u8d25
+     */
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
         Subject previous = ThreadContext.getSubject();
@@ -90,6 +98,12 @@ public class ShiroRequestFilter implements ContainerRequestFilter, ContainerResp
         }
     }
 
+    /**
+     * \u5728 JAX-RS \u751f\u6210\u54cd\u5e94\u540e\u6e05\u7406\u5f53\u524d\u8bf7\u6c42\u7684\u539f\u751f\u8ba4\u8bc1\u7ed1\u5b9a\u3002
+     * @param requestContext \u5f53\u524d JAX-RS \u8bf7\u6c42\u4e0a\u4e0b\u6587
+     * @param responseContext \u5f53\u524d JAX-RS \u54cd\u5e94\u4e0a\u4e0b\u6587
+     * @throws IOException \u88c5\u914d\u793a\u4f8b\u6216\u5904\u7406\u5f53\u524d HTTP \u8bf7\u6c42\u5931\u8d25
+     */
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
         Runnable cleanup = (Runnable) requestContext.getProperty(PREVIOUS + ".cleanup");

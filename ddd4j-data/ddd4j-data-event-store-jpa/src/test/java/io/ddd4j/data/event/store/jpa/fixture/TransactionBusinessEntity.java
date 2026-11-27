@@ -33,12 +33,19 @@ import javax.persistence.Table;
 @Table(name = "tx_test_business")
 public class TransactionBusinessEntity {
 
+    /** \u7528\u4e8e\u6784\u9020\u548c\u5b9a\u4f4d\u6d4b\u8bd5\u8bb0\u5f55\u7684\u4e3b\u952e\u3002 */
     @Id
     private String id;
 
+    /** \u4f9b\u6301\u4e45\u5316\u6216\u5e8f\u5217\u5316\u5f80\u8fd4\u6bd4\u8f83\u7684\u5b57\u6bb5\u503c\u3002 */
     @Column(name = "payload_value")
     private String value;
 
+    /**
+     * \u4ee5\u7ed9\u5b9a\u72b6\u6001\u6784\u9020 <code>TransactionBusinessEntity</code> \u6d4b\u8bd5\u5bf9\u8c61\u3002
+     * @param id \u7528\u4e8e\u6784\u9020\u548c\u5b9a\u4f4d\u6d4b\u8bd5\u8bb0\u5f55\u7684\u4e3b\u952e
+     * @param value \u4f9b\u6301\u4e45\u5316\u6216\u5e8f\u5217\u5316\u5f80\u8fd4\u6bd4\u8f83\u7684\u5b57\u6bb5\u503c
+     */
     public TransactionBusinessEntity(String id, String value) {
         this.id = id;
         this.value = value;

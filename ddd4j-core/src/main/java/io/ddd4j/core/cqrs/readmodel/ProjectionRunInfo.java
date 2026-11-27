@@ -31,12 +31,16 @@ import java.time.Instant;
 
 public final class ProjectionRunInfo {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 0L;
 
+    /** \u6700\u8fd1\u4e00\u6b21\u8fd0\u884c\u5b8c\u6210\u6216\u5931\u8d25\u7684\u65f6\u95f4\u3002 */
     private final Instant lastRunAt;
 
+    /** \u6700\u8fd1\u4e00\u6b21\u8bb0\u5f55\u5904\u7406\u7684\u4e8b\u4ef6\u6570\u3002 */
     private final int lastEventCount;
 
+    /** \u6700\u8fd1\u4e00\u6b21\u8fd0\u884c\u5931\u8d25\u65f6\u4fdd\u5b58\u7684\u8bca\u65ad\u6d88\u606f\u3002 */
     private final String lastError;
 
     /**
@@ -108,6 +112,7 @@ public final class ProjectionRunInfo {
         return lastError;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -120,6 +125,7 @@ public final class ProjectionRunInfo {
         return Objects.equals(this.lastRunAt, other.lastRunAt) && this.lastEventCount == other.lastEventCount && Objects.equals(this.lastError, other.lastError);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int result = 0;
@@ -129,6 +135,7 @@ public final class ProjectionRunInfo {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "ProjectionRunInfo[lastRunAt=" + lastRunAt + ", lastEventCount=" + lastEventCount + ", lastError=" + lastError + "]";

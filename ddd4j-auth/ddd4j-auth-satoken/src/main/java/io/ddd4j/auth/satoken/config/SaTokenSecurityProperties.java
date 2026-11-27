@@ -32,22 +32,31 @@ import java.util.Objects;
 @Data
 public class SaTokenSecurityProperties {
 
+    /** JWT \u7b7e\u540d\u5bc6\u94a5\u5141\u8bb8\u7684\u6700\u5c0f UTF-8 \u5b57\u8282\u6570\u3002 */
     private static final int MINIMUM_JWT_SECRET_BYTES = 32;
 
+    /** \u5f53\u524d\u5e94\u7528\u9694\u79bb\u4ee4\u724c\u4f7f\u7528\u7684\u547d\u540d\u7a7a\u95f4\u3002 */
     private String tokenNamespace = "ddd4j";
 
+    /** \u767b\u5f55\u4e0e\u6821\u9a8c\u4f7f\u7528\u7684 Sa-Token \u8d26\u53f7\u57df\u3002 */
     private String loginType = "login";
 
+    /** \u8bbe\u7f6e\u4ee4\u724c\u6709\u6548\u671f\u7684\u79d2\u6570\u3002 */
     private long tokenTtlSeconds = 7_200L;
 
+    /** \u4ee4\u724c\u8fde\u7eed\u65e0\u8bbf\u95ee\u65f6\u7684\u5931\u6548\u79d2\u6570\u3002 */
     private long activeTimeoutSeconds = -1L;
 
+    /** \u5f53\u524d\u542f\u7528\u7684\u8ba4\u8bc1\u6a21\u5f0f\u3002 */
     private SaTokenAuthenticationMode authenticationMode = SaTokenAuthenticationMode.SESSION;
 
+    /** \u7528\u4e8e\u7b7e\u53d1\u548c\u9a8c\u7b7e\u7684 JWT \u5bc6\u94a5\u914d\u7f6e\u3002 */
     private String jwtSecretKey;
 
+    /** JWT \u4e2d\u7ea6\u5b9a\u7684\u7b7e\u53d1\u65b9\u3002 */
     private String jwtIssuer;
 
+    /** JWT \u4e2d\u7ea6\u5b9a\u7684\u63a5\u6536\u65b9\u3002 */
     private String jwtAudience;
 
     /**
@@ -82,6 +91,10 @@ public class SaTokenSecurityProperties {
         }
     }
 
+    /**
+     * \u6821\u9a8c JWT \u5bc6\u94a5\u5b57\u8282\u957f\u5ea6\u548c\u5fc5\u586b\u7b7e\u53d1\u58f0\u660e\u3002
+     * @throws IllegalArgumentException JWT \u914d\u7f6e\u4e0d\u6ee1\u8db3\u5bc6\u94a5\u957f\u5ea6\u6216\u58f0\u660e\u8981\u6c42
+     */
     private void validateJwtConfiguration() {
         if (StrKit.isBlank(jwtSecretKey)
                 || jwtSecretKey.getBytes(StandardCharsets.UTF_8).length < MINIMUM_JWT_SECRET_BYTES) {

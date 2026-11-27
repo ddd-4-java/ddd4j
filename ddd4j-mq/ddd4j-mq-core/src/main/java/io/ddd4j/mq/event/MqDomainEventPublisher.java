@@ -65,6 +65,7 @@ public class MqDomainEventPublisher implements DomainEventPublisher {
      */
     static final String DOMAIN_EVENT_TAG = "domain-event";
 
+    /** \u5c06\u9886\u57df\u4e8b\u4ef6\u8f6c\u6362\u4e3a\u6d88\u606f\u8d1f\u8f7d\u7684\u534f\u8bae\u5e8f\u5217\u5316\u5668\u3002 */
     private final MQEventSerialization serialization;
 
     /**
@@ -83,6 +84,7 @@ public class MqDomainEventPublisher implements DomainEventPublisher {
         this.serialization = Objects.requireNonNull(serialization, "serialization must not be null");
     }
 
+    /** {@inheritDoc} */
     @Override
     public <ID extends EntityId> void publish(DomainEvent<ID> event) {
         if (Objects.isNull(event)) {
@@ -93,6 +95,7 @@ public class MqDomainEventPublisher implements DomainEventPublisher {
         carrier.publish();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void publish(Object event) {
         if (event instanceof DomainEvent<?>) {
@@ -103,6 +106,7 @@ public class MqDomainEventPublisher implements DomainEventPublisher {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public <ID extends EntityId> void publishAll(Collection<DomainEvent<ID>> events) {
         if (Objects.nonNull(events)) {

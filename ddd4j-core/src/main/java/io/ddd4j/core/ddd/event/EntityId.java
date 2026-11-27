@@ -21,9 +21,21 @@ import java.io.Serializable;
  * 领域实体标识的最小契约。
  */
 public interface EntityId extends Serializable {
+    /**
+     * \u8fd4\u56de\u5b9e\u4f53\u7c7b\u578b\u3002
+     * @return \u5b9e\u4f53\u7c7b\u578b
+     */
     EntityType getType();
 
+    /**
+     * \u8fd4\u56de\u4e0d\u5305\u542b\u7c7b\u578b\u524d\u7f00\u7684\u6807\u8bc6\u503c\u3002
+     * @return \u6807\u8bc6\u503c
+     */
     String asString();
 
+    /**
+     * \u8fd4\u56de\u5305\u542b\u7c7b\u578b\u524d\u7f00\u7684\u7a33\u5b9a\u6807\u8bc6\u503c\u3002
+     * @return \u7c7b\u578b\u5316\u6807\u8bc6\u503c
+     */
     String asTypedString();
 }

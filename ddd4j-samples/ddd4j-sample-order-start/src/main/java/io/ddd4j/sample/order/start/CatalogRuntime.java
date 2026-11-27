@@ -15,6 +15,7 @@ import java.util.Objects;
 
 /** 组装商品交易 HTTP 适配器、应用服务和四表持久化。 */
 public final class CatalogRuntime {
+    /** \u5c06\u5546\u54c1\u4ea4\u6613\u9886\u57df\u4e8b\u4ef6\u8f6c\u53d1\u7ed9\u8fd0\u884c\u6846\u67b6\u7684\u53d1\u5e03\u5668\u3002 */
     private static final DomainEventPublisher FRAMEWORK_EVENTS = new DomainEventPublisher() {
         @Override
         public <ID extends EntityId> void publish(DomainEvent<ID> event) {
@@ -22,6 +23,7 @@ public final class CatalogRuntime {
         }
     };
 
+    /** \u9650\u5236\u5de5\u5177\u7c7b\u5b9e\u4f8b\u5316\u3002 */
     private CatalogRuntime() {
     }
 
@@ -90,11 +92,23 @@ public final class CatalogRuntime {
         return assemble(CatalogDatabase.open(source), publisher);
     }
 
+    /**
+     * \u4f7f\u7528\u6307\u5b9a\u4e8b\u52a1\u5165\u53e3\u3001\u53d1\u5e03\u5668\u548c UTC \u65f6\u949f\u7ec4\u88c5\u5546\u54c1\u4ea4\u6613\u7528\u4f8b\u3002
+     * @param transactions \u5546\u54c1\u4ea4\u6613\u7684\u4e8b\u52a1\u5165\u53e3
+     * @param publisher \u9886\u57df\u4e8b\u4ef6\u53d1\u5e03\u5668
+     * @return \u4f9b\u5404\u8fd0\u884c\u6846\u67b6\u590d\u7528\u7684\u5546\u54c1\u4ea4\u6613 HTTP \u64cd\u4f5c
+     */
     private static CatalogApi assemble(TradeSession.Transactions transactions, DomainEventPublisher publisher) {
         CatalogService service = new CatalogService(transactions, Objects.requireNonNull(publisher), Clock.systemUTC());
         return new CatalogApi(service);
     }
 
+    /**
+     * \u8bfb\u53d6\u4e00\u4e2a\u5fc5\u586b\u7684\u8fd0\u884c\u73af\u5883\u53d8\u91cf\u3002
+     * @param key \u73af\u5883\u53d8\u91cf\u540d
+     * @return \u914d\u7f6e\u7684\u975e\u7a7a\u767d\u53d8\u91cf\u503c
+     * @throws IllegalStateException \u73af\u5883\u53d8\u91cf\u6ca1\u6709\u914d\u7f6e\u6216\u53ea\u5305\u542b\u7a7a\u767d
+     */
     private static String required(String key) {
         String value = System.getenv(key);
         if (StrKit.isBlank(value)) {

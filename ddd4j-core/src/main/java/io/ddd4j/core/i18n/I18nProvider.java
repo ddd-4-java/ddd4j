@@ -89,6 +89,7 @@ public interface I18nProvider {
      * JDK8 兼容：接口私有静态方法收敛到嵌套类。
      */
     final class Internals {
+        /** 初始化 <code>Internals</code> 并委托其默认构造路径。 */
         private Internals() {
         }
 
@@ -127,5 +128,11 @@ public interface I18nProvider {
      */
     }
 
+    /**
+     * \u83b7\u53d6\u56fd\u9645\u5316\u6d88\u606f
+     * @param key \u6d88\u606f key
+     * @param args \u683c\u5f0f\u5316\u53c2\u6570
+     * @return \u56fd\u9645\u5316\u540e\u7684\u6d88\u606f
+     */
     String getMessage(String key, Object... args);
 }

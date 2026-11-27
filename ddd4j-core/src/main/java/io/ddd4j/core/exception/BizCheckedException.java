@@ -34,30 +34,57 @@ import java.util.Objects;
  */
 public class BizCheckedException extends Exception {
 
+    /** \u4e1a\u52a1\u9519\u8bef\u7801\u3002 */
     @Getter
     private Integer code;
+    /** \u56fd\u9645\u5316\u8d44\u6e90\u952e\u3002 */
     @Getter
     private String i18nCode;
+    /** \u6d88\u606f\u683c\u5f0f\u5316\u53c2\u6570\u3002 */
     @Getter
     private Object[] args;
 
+    /**
+     * \u521b\u5efa\u53ef\u56fd\u9645\u5316\u7684\u4e1a\u52a1\u53d7\u68c0\u5f02\u5e38\u3002
+     * @param code \u4e1a\u52a1\u9519\u8bef\u7801
+     * @param message \u9519\u8bef\u6d88\u606f\u6216\u56fd\u9645\u5316\u8d44\u6e90\u952e
+     */
     public BizCheckedException(Integer code, String message) {
         super(I18nKit.get(message));
         this.code = code;
     }
 
+    /**
+     * \u521b\u5efa\u53ef\u56fd\u9645\u5316\u7684\u4e1a\u52a1\u53d7\u68c0\u5f02\u5e38\u3002
+     * @param code \u4e1a\u52a1\u9519\u8bef\u7801
+     * @param message \u9519\u8bef\u6d88\u606f\u6216\u56fd\u9645\u5316\u8d44\u6e90\u952e
+     * @param args \u6d88\u606f\u683c\u5f0f\u5316\u53c2\u6570
+     */
     public BizCheckedException(Integer code, String message, Object... args) {
         super(I18nKit.get(message, args));
         this.code = code;
         this.args = args;
     }
 
+    /**
+     * \u6309\u4e1a\u52a1\u7801\u548c\u56fd\u9645\u5316\u8d44\u6e90\u952e\u521b\u5efa\u4e1a\u52a1\u53d7\u68c0\u5f02\u5e38\u3002
+     * @param code \u4e1a\u52a1\u9519\u8bef\u7801
+     * @param i18nCode \u56fd\u9645\u5316\u8d44\u6e90\u952e
+     * @param message \u9519\u8bef\u6d88\u606f\u6216\u56fd\u9645\u5316\u8d44\u6e90\u952e
+     */
     public BizCheckedException(Integer code, String i18nCode, String message) {
         super(I18nKit.get(i18nCode, message));
         this.code = code;
         this.i18nCode = i18nCode;
     }
 
+    /**
+     * \u6309\u4e1a\u52a1\u7801\u548c\u56fd\u9645\u5316\u8d44\u6e90\u952e\u521b\u5efa\u4e1a\u52a1\u53d7\u68c0\u5f02\u5e38\u3002
+     * @param code \u4e1a\u52a1\u9519\u8bef\u7801
+     * @param i18nCode \u56fd\u9645\u5316\u8d44\u6e90\u952e
+     * @param args \u6d88\u606f\u683c\u5f0f\u5316\u53c2\u6570
+     * @param message \u9519\u8bef\u6d88\u606f\u6216\u56fd\u9645\u5316\u8d44\u6e90\u952e
+     */
     public BizCheckedException(Integer code, String i18nCode, Object[] args, String message) {
         super(I18nKit.get(i18nCode, Objects.nonNull(args) ? args : new Object[]{message}));
         this.code = code;
@@ -65,15 +92,29 @@ public class BizCheckedException extends Exception {
         this.args = args;
     }
 
+    /**
+     * \u521b\u5efa\u53ef\u56fd\u9645\u5316\u7684\u4e1a\u52a1\u53d7\u68c0\u5f02\u5e38\u3002
+     * @param message \u9519\u8bef\u6d88\u606f\u6216\u56fd\u9645\u5316\u8d44\u6e90\u952e
+     */
     public BizCheckedException(String message) {
         super(I18nKit.get(message));
     }
 
+    /**
+     * \u521b\u5efa\u53ef\u56fd\u9645\u5316\u7684\u4e1a\u52a1\u53d7\u68c0\u5f02\u5e38\u3002
+     * @param message \u9519\u8bef\u6d88\u606f\u6216\u56fd\u9645\u5316\u8d44\u6e90\u952e
+     * @param args \u6d88\u606f\u683c\u5f0f\u5316\u53c2\u6570
+     */
     public BizCheckedException(String message, Object... args) {
         super(I18nKit.get(message, args));
         this.code = 500;
     }
 
+    /**
+     * \u521b\u5efa\u53ef\u56fd\u9645\u5316\u7684\u4e1a\u52a1\u53d7\u68c0\u5f02\u5e38\u3002
+     * @param message \u9519\u8bef\u6d88\u606f\u6216\u56fd\u9645\u5316\u8d44\u6e90\u952e
+     * @param cause \u539f\u59cb\u5f02\u5e38
+     */
     public BizCheckedException(String message, Throwable cause) {
         super(I18nKit.get(message), cause);
     }
@@ -88,40 +129,78 @@ public class BizCheckedException extends Exception {
         this((CustomApiCode) code, i18nCode);
     }
 
+    /**
+     * \u6309\u4e1a\u52a1\u6269\u5c55\u7801\u548c\u56fd\u9645\u5316\u952e\u521b\u5efa\u5f02\u5e38\u3002
+     * @param code \u4e1a\u52a1\u6269\u5c55\u9519\u8bef\u7801
+     * @param i18nCode \u56fd\u9645\u5316\u8d44\u6e90\u952e
+     */
     public BizCheckedException(CustomApiCode code, String i18nCode) {
         super(I18nKit.get(i18nCode, code.getReason()));
         this.code = code.getCode();
         this.i18nCode = i18nCode;
     }
 
+    /**
+     * \u521b\u5efa\u53ef\u56fd\u9645\u5316\u7684\u4e1a\u52a1\u53d7\u68c0\u5f02\u5e38\u3002
+     * @param code \u4e1a\u52a1\u9519\u8bef\u7801
+     * @param message \u9519\u8bef\u6d88\u606f\u6216\u56fd\u9645\u5316\u8d44\u6e90\u952e
+     * @param cause \u539f\u59cb\u5f02\u5e38
+     */
     public BizCheckedException(Integer code, String message, Throwable cause) {
         super(I18nKit.get(message), cause);
         this.code = code;
     }
 
+    /**
+     * \u6309\u4e1a\u52a1\u7801\u548c\u56fd\u9645\u5316\u8d44\u6e90\u952e\u521b\u5efa\u4e1a\u52a1\u53d7\u68c0\u5f02\u5e38\u3002
+     * @param code \u4e1a\u52a1\u9519\u8bef\u7801
+     * @param i18nCode \u56fd\u9645\u5316\u8d44\u6e90\u952e
+     * @param defMsg \u8d44\u6e90\u7f3a\u5931\u65f6\u7684\u9ed8\u8ba4\u6d88\u606f
+     * @param cause \u539f\u59cb\u5f02\u5e38
+     */
     public BizCheckedException(Integer code, String i18nCode, String defMsg, Throwable cause) {
         super(I18nKit.get(i18nCode, defMsg), cause);
         this.code = code;
         this.i18nCode = i18nCode;
     }
 
+    /**
+     * \u6309\u81ea\u5b9a\u4e49\u4e1a\u52a1\u7801\u521b\u5efa\u4e1a\u52a1\u53d7\u68c0\u5f02\u5e38\u3002
+     * @param code \u4e1a\u52a1\u9519\u8bef\u7801
+     */
     public BizCheckedException(CustomApiCode code) {
         super(I18nKit.get(code.getReason()));
         this.code = code.getCode();
     }
 
+    /** \u521b\u5efa\u9ed8\u8ba4\u7684\u4e1a\u52a1\u53d7\u68c0\u5f02\u5e38\u3002 */
     public BizCheckedException() {
         this(500, "Internal Server Error");
     }
 
+    /**
+     * \u4ece\u539f\u5f02\u5e38\u521b\u5efa\u4e1a\u52a1\u53d7\u68c0\u5f02\u5e38\u3002
+     * @param e \u539f\u59cb\u5f02\u5e38
+     */
     public BizCheckedException(Throwable e) {
         this(e.getMessage(), e);
     }
 
+    /**
+     * \u521b\u5efa\u53ef\u56fd\u9645\u5316\u7684\u4e1a\u52a1\u53d7\u68c0\u5f02\u5e38\u3002
+     * @param message \u9519\u8bef\u6d88\u606f\u6216\u56fd\u9645\u5316\u8d44\u6e90\u952e
+     * @return \u65b0\u5efa\u7684\u4e1a\u52a1\u53d7\u68c0\u5f02\u5e38
+     */
     public static BizCheckedException e(String message) {
         return new BizCheckedException(message);
     }
 
+    /**
+     * \u6309\u4e1a\u52a1\u7801\u548c\u56fd\u9645\u5316\u8d44\u6e90\u952e\u521b\u5efa\u4e1a\u52a1\u53d7\u68c0\u5f02\u5e38\u3002
+     * @param i18nCode \u56fd\u9645\u5316\u8d44\u6e90\u952e
+     * @param message \u9519\u8bef\u6d88\u606f\u6216\u56fd\u9645\u5316\u8d44\u6e90\u952e
+     * @return \u65b0\u5efa\u7684\u4e1a\u52a1\u53d7\u68c0\u5f02\u5e38
+     */
     public static BizCheckedException e(String i18nCode, String message) {
         return new BizCheckedException(500, i18nCode, message);
     }

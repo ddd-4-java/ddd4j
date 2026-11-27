@@ -70,51 +70,61 @@ public class MicaMqttAcknowledgment implements Acknowledgment {
         this.correlationId = correlationId;
     }
 
+    /** {@inheritDoc} */
     @Override
     public long deliveryTag() {
         return messageId;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String messageId() {
         return Long.toString(messageId);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String correlationId() {
         return correlationId;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isOpen() {
         return true;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isAcknowledged() {
         return acknowledged.get();
     }
 
+    /** {@inheritDoc} */
     @Override
     public BrokerType brokerType() {
         return BrokerType.MQTT_MICA;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void ack() {
         ack(false);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void ack(boolean multiple) {
         runOnce();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void nack(boolean requeue) {
         nack(false, requeue);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void nack(boolean multiple, boolean requeue) {
         if (requeue) {
@@ -124,16 +134,19 @@ public class MicaMqttAcknowledgment implements Acknowledgment {
         runOnce();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void reject(boolean requeue) {
         nack(false, requeue);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void recover(boolean requeue) {
         nack(false, requeue);
     }
 
+    /** {@inheritDoc} */
     @Override
     public <T> Optional<T> unwrap(Class<T> type) {
         if (Objects.isNull(type)) {
@@ -153,6 +166,10 @@ public class MicaMqttAcknowledgment implements Acknowledgment {
         return topic;
     }
 
+    /**
+     * \u5360\u7528\u5f53\u524d\u6d88\u606f\u7684\u4e00\u6b21\u786e\u8ba4\u673a\u4f1a\u3002
+     * @throws UnsupportedOperationException \u5f53\u524d\u6d88\u606f\u7684\u786e\u8ba4\u673a\u4f1a\u5df2\u7ecf\u4f7f\u7528
+     */
     private void runOnce() {
         if (!acknowledged.compareAndSet(false, true)) {
             throw new UnsupportedOperationException("mica-mqtt message already ack'd, id=" + messageId);

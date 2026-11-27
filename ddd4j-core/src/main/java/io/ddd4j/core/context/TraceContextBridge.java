@@ -67,6 +67,7 @@ public final class TraceContextBridge {
      */
     public static final String TRACE_ID_MDC_KEY = "traceId";
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>TraceContextBridge</code> \u5b9e\u4f8b\u3002 */
     private TraceContextBridge() {
     }
 
@@ -183,16 +184,28 @@ public final class TraceContextBridge {
          */
         private boolean closed;
 
+        /**
+         * \u4fdd\u5b58\u5f53\u524d\u7ebf\u7a0b\u4e24\u4e2a\u8ddf\u8e2a\u4e0a\u4e0b\u6587\u4e2d\u7684\u539f\u59cb\u8ddf\u8e2a\u6807\u8bc6\u3002
+         * @param previousContextTraceId DDD4J \u4e0a\u4e0b\u6587\u4e2d\u7684\u539f\u8ddf\u8e2a\u6807\u8bc6
+         * @param previousMdcTraceId \u65e5\u5fd7 MDC \u4e2d\u7684\u539f\u8ddf\u8e2a\u6807\u8bc6
+         */
         private Scope(String previousContextTraceId, String previousMdcTraceId) {
             this(previousContextTraceId, previousMdcTraceId, false);
         }
 
+        /**
+         * \u7528\u7ed9\u5b9a\u503c\u521d\u59cb\u5316 <code>Scope</code> \u5b9e\u4f8b\u3002
+         * @param previousContextTraceId <code>previousContextTraceId</code> \u5b57\u6bb5
+         * @param previousMdcTraceId <code>previousMdcTraceId</code> \u5b57\u6bb5
+         * @param noop \u96f6\u64cd\u4f5c\u6807\u8bb0\uff08\u9ed8\u8ba4\u5173\u95ed\u65f6 close \u4e0d\u5f97\u89e6\u78b0\u4e0a\u4e0b\u6587\uff09
+         */
         private Scope(String previousContextTraceId, String previousMdcTraceId, boolean noop) {
             this.previousContextTraceId = previousContextTraceId;
             this.previousMdcTraceId = previousMdcTraceId;
             this.noop = noop;
         }
 
+        /** {@inheritDoc} */
         @Override
         public void close() {
             if (closed || noop) {

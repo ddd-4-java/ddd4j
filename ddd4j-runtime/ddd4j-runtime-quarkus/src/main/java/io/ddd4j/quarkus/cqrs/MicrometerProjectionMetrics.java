@@ -59,7 +59,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class MicrometerProjectionMetrics implements ProjectionMetrics {
 
+    /** \u6ce8\u518c\u548c\u8bfb\u53d6\u5f53\u524d\u7ec4\u4ef6 Micrometer \u6307\u6807\u7684\u6ce8\u518c\u8868\u3002 */
     private final MeterRegistry registry;
+    /** \u6309\u4e8b\u4ef6\u6d41\u6807\u8bc6\u4fdd\u5b58\u6700\u8fd1\u4e00\u6b21\u6295\u5f71\u8fd0\u884c\u7ed3\u679c\u3002 */
     private final ConcurrentMap<String, ProjectionRunInfo> runInfoMap = new ConcurrentHashMap<>();
 
     /**
@@ -72,6 +74,13 @@ public class MicrometerProjectionMetrics implements ProjectionMetrics {
         this.registry = Objects.requireNonNull(registry, "MeterRegistry must not be null");
     }
 
+    /**
+     * onRunCompleted() \u65b9\u6cd5\u3002
+     * @param streamId \u5b57\u7b26\u4e32\u53c2\u6570\u3002
+     * @param eventCount eventCount \u53c2\u6570\u3002
+     * @param durationNanos durationNanos \u53c2\u6570\u3002
+     * @param positionAdvance positionAdvance \u53c2\u6570\u3002
+     */
     @Override
     public void onRunCompleted(String streamId, int eventCount, long durationNanos, long positionAdvance) {
         Counter.builder(ProjectionConstants.METRIC_EVENTS_TOTAL)
@@ -89,6 +98,11 @@ public class MicrometerProjectionMetrics implements ProjectionMetrics {
         runInfoMap.put(streamId, new ProjectionRunInfo(Instant.now(), eventCount, null));
     }
 
+    /**
+     * onRunFailed() \u65b9\u6cd5\u3002
+     * @param streamId \u5b57\u7b26\u4e32\u53c2\u6570\u3002
+     * @param error \u6839\u56e0\u5f02\u5e38\u3002
+     */
     @Override
     public void onRunFailed(String streamId, Throwable error) {
         Counter.builder(ProjectionConstants.METRIC_ERRORS_TOTAL)
@@ -102,6 +116,7 @@ public class MicrometerProjectionMetrics implements ProjectionMetrics {
                 (old, newInfo) -> newInfo);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Optional<ProjectionRunInfo> getLastRunInfo(String streamId) {
         return Optional.ofNullable(runInfoMap.get(streamId));

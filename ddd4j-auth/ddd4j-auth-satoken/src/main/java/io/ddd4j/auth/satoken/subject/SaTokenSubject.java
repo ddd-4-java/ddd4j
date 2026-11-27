@@ -62,9 +62,12 @@ public class SaTokenSubject implements Subject {
     public static final String PRINCIPAL_KEY = "principal";
 
     /**
-     * 框架无关枚举映射：{@link AuthLogoutMode} -> sa-token 的 {@code SaLogoutMode}。
-     * <p>sa-token 1.42 并不暴露 {@code ReplacedLoginExitMode}/{@code ReplacedRange} 枚举类，
-     * 这两个字段我们仍写入 {@link AuthSessionConfig}，但具体生效需要在更新版 sa-token 下补全。
+     * \u6846\u67b6\u65e0\u5173\u679a\u4e3e\u6620\u5c04\uff1a{@link AuthLogoutMode} 转换为 sa-token \u7684 {@code SaLogoutMode}\u3002
+     *  <p>sa-token 1.42 \u5e76\u4e0d\u66b4\u9732 {@code ReplacedLoginExitMode}/{@code ReplacedRange} \u679a\u4e3e\u7c7b\uff0c
+     *  \u8fd9\u4e24\u4e2a\u5b57\u6bb5\u6211\u4eec\u4ecd\u5199\u5165 {@link AuthSessionConfig}\uff0c\u4f46\u5177\u4f53\u751f\u6548\u9700\u8981\u5728\u66f4\u65b0\u7248 sa-token \u4e0b\u8865\u5168\u3002
+     *
+     * @param mode DDD4J \u6ce8\u9500\u6a21\u5f0f
+     * @return \u5bf9\u5e94\u7684 Sa-Token \u6ce8\u9500\u6a21\u5f0f
      */
     private static cn.dev33.satoken.stp.parameter.enums.SaLogoutMode toSaLogoutMode(AuthLogoutMode mode) {
         if (Objects.isNull(mode)) {
@@ -82,6 +85,11 @@ public class SaTokenSubject implements Subject {
 
     // ==================== 身份与会话读取 ====================
 
+    /**
+     * \u628a\u660e\u786e\u8bbe\u7f6e\u7684 DDD4J Cookie \u5c5e\u6027\u8f6c\u6362\u4e3a Sa-Token \u539f\u751f\u914d\u7f6e\u3002
+     * @param auth DDD4J \u767b\u5f55\u4f7f\u7528\u7684 Cookie \u914d\u7f6e
+     * @return \u76f4\u63a5\u7528\u4e8e\u539f\u751f\u767b\u5f55\u7684 Cookie \u914d\u7f6e
+     */
     private static SaCookieConfig toSaCookieConfig(AuthCookieConfig auth) {
         SaCookieConfig sa = new SaCookieConfig();
         if (Objects.nonNull(auth.getDomain())) {
@@ -115,6 +123,7 @@ public class SaTokenSubject implements Subject {
         return SaManager.getStpLogic(realm, true);
     }
 
+    /** {@inheritDoc} */
     @Override
     public <T extends AuthPrincipal> T getPrincipal() {
         if (!StpUtil.isLogin()) {
@@ -129,6 +138,7 @@ public class SaTokenSubject implements Subject {
 
     // ==================== 会话生命周期（委托 StpUtil）====================
 
+    /** {@inheritDoc} */
     @Override
     public <T extends AuthPrincipal> T getPrincipalByLoginId(Object loginId) {
         SaSession session = StpUtil.getSessionByLoginId(loginId, false);
@@ -138,11 +148,13 @@ public class SaTokenSubject implements Subject {
         return (T) session.get(PRINCIPAL_KEY);
     }
 
+    /** {@inheritDoc} */
     @Override
     public <T extends AuthPrincipal> T getPrincipalByToken(String tokenValue) {
         return verify(tokenValue);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String login(AuthRequest request) {
         StpLogic logic = stpLogic(request.getRealm());
@@ -204,27 +216,32 @@ public class SaTokenSubject implements Subject {
         return token;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void logout() {
         StpUtil.stpLogic.logout();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void logout(Object loginId) {
         StpUtil.stpLogic.logout(loginId);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void kickout(Object loginId) {
         StpUtil.stpLogic.kickout(loginId);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String refresh() {
         StpUtil.stpLogic.renewTimeout(StpUtil.stpLogic.getConfigOrGlobal().getTimeout());
         return StpUtil.stpLogic.getTokenValue();
     }
 
+    /** {@inheritDoc} */
     @Override
     public <T extends AuthPrincipal> T verify(String token) {
         try {
@@ -278,6 +295,12 @@ public class SaTokenSubject implements Subject {
         return logic.getLoginIdByToken(token);
     }
 
+    /**
+     * \u7528\u5f53\u524d\u767b\u5f55\u903b\u8f91\u68c0\u67e5 JWT \u540e\u8bfb\u53d6\u767b\u5f55\u6807\u8bc6\u3002
+     * @param token \u5f85\u68c0\u67e5\u6216\u8bfb\u53d6\u4e0a\u4e0b\u6587\u7684\u8bbf\u95ee\u4ee4\u724c
+     * @param logic \u5bf9\u5e94\u8d26\u53f7\u57df\u7684\u539f\u751f\u767b\u5f55\u903b\u8f91
+     * @return \u6709\u6548\u4ee4\u724c\u4e2d\u7684\u767b\u5f55\u6807\u8bc6\uff0c\u65e0\u6548\u65f6\u4e3a\u7a7a
+     */
     private Object jwtLoginId(String token, StpLogicJwtForSimple logic) {
         try {
             if (logic instanceof Ddd4jStpLogicJwtForSimple) {
@@ -296,6 +319,7 @@ public class SaTokenSubject implements Subject {
 
     // ==================== 权限与角色（委托 SubjectDataProvider 数据源 SPI）====================
 
+    /** {@inheritDoc} */
     @Override
     public boolean isPermitted(String permission) {
         AuthPrincipal principal = getPrincipal();
@@ -306,6 +330,7 @@ public class SaTokenSubject implements Subject {
         return SubjectKit.getStrategy().hasElement.apply(perms, permission);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isPermitted(Object loginId, String permission) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
@@ -316,6 +341,7 @@ public class SaTokenSubject implements Subject {
         return SubjectKit.getStrategy().hasElement.apply(perms, permission);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean[] isPermitted(String... permissions) {
         AuthPrincipal principal = getPrincipal();
@@ -330,6 +356,7 @@ public class SaTokenSubject implements Subject {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean[] isPermitted(Object loginId, String... permissions) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
@@ -344,6 +371,7 @@ public class SaTokenSubject implements Subject {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isPermittedAny(String... permissions) {
         AuthPrincipal principal = getPrincipal();
@@ -359,6 +387,7 @@ public class SaTokenSubject implements Subject {
         return false;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isPermittedAny(Object loginId, String... permissions) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
@@ -374,6 +403,7 @@ public class SaTokenSubject implements Subject {
         return false;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isPermittedAll(String... permissions) {
         AuthPrincipal principal = getPrincipal();
@@ -389,6 +419,7 @@ public class SaTokenSubject implements Subject {
         return true;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isPermittedAll(Object loginId, String... permissions) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
@@ -404,6 +435,7 @@ public class SaTokenSubject implements Subject {
         return true;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean hasRole(String roleIdentifier) {
         AuthPrincipal principal = getPrincipal();
@@ -414,6 +446,7 @@ public class SaTokenSubject implements Subject {
         return SubjectKit.getStrategy().hasElement.apply(roles, roleIdentifier);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean hasRole(Object loginId, String roleIdentifier) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
@@ -424,6 +457,7 @@ public class SaTokenSubject implements Subject {
         return SubjectKit.getStrategy().hasElement.apply(roles, roleIdentifier);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean[] hasRoles(String... roleIdentifiers) {
         AuthPrincipal principal = getPrincipal();
@@ -438,6 +472,7 @@ public class SaTokenSubject implements Subject {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean[] hasRoles(Object loginId, String... roleIdentifiers) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
@@ -452,6 +487,7 @@ public class SaTokenSubject implements Subject {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean hasAnyRole(String... roleIdentifiers) {
         AuthPrincipal principal = getPrincipal();
@@ -467,6 +503,7 @@ public class SaTokenSubject implements Subject {
         return false;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean hasAnyRole(Object loginId, String... roleIdentifiers) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
@@ -482,6 +519,7 @@ public class SaTokenSubject implements Subject {
         return false;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean hasAllRole(String... roleIdentifiers) {
         AuthPrincipal principal = getPrincipal();
@@ -497,6 +535,7 @@ public class SaTokenSubject implements Subject {
         return true;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean hasAllRole(Object loginId, String... roleIdentifiers) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
@@ -514,54 +553,64 @@ public class SaTokenSubject implements Subject {
 
     // ==================== 状态判断 ====================
 
+    /** {@inheritDoc} */
     @Override
     public boolean isAuthenticated() {
         return StpUtil.isLogin();
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isAuthenticated(Object loginId) {
         return StpUtil.isLogin(loginId);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isRemembered() {
         return false;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isTrustDeviceId(String deviceId) {
         return StpUtil.isTrustDeviceId(StpKit.getUserIdAsLong(), deviceId);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isTrustDeviceId(Object userId, String deviceId) {
         return StpUtil.isTrustDeviceId(userId, deviceId);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Object getLoginId() {
         return StpUtil.getLoginId();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Object getUserId() {
         AuthPrincipal principal = getPrincipal();
         return Objects.nonNull(principal) ? principal.getUserId() : null;
     }
 
+    /** {@inheritDoc} */
     @Override
     public Object getOrgId() {
         AuthPrincipal principal = getPrincipal();
         return Objects.nonNull(principal) ? principal.getOrgId() : null;
     }
 
+    /** {@inheritDoc} */
     @Override
     public Object getRoleId() {
         AuthPrincipal principal = getPrincipal();
         return Objects.nonNull(principal) ? principal.getRoleId() : null;
     }
 
+    /** {@inheritDoc} */
     @Override
     public Object getExtra(String tokenValue, String key) {
         return StpUtil.getExtra(tokenValue, key);
@@ -569,16 +618,19 @@ public class SaTokenSubject implements Subject {
 
     // ==================== 封禁（委托 Sa-Token）====================
 
+    /** {@inheritDoc} */
     @Override
     public void disable(Object loginId, long timeout) {
         StpUtil.stpLogic.disable(loginId, timeout);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isDisabled(Object loginId) {
         return StpUtil.stpLogic.isDisable(loginId);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void untieDisable(Object loginId) {
         StpUtil.stpLogic.untieDisable(loginId);

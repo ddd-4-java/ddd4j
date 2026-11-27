@@ -26,15 +26,18 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class InMemoryQrCodeTemplateRegistry implements QrCodeTemplateRegistry {
 
+    /** \u6309\u6a21\u677f\u6807\u8bc6\u7d22\u5f15\u5df2\u6ce8\u518c\u7684\u4e8c\u7ef4\u7801\u6a21\u677f\u3002 */
     private final ConcurrentMap<String, QrCodeTemplateDefinition> templates =
             new ConcurrentHashMap<String, QrCodeTemplateDefinition>();
 
+    /** {@inheritDoc} */
     @Override
     public void register(QrCodeTemplateDefinition definition) {
         Objects.requireNonNull(definition, "definition must not be null");
         templates.put(definition.getId(), definition);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Optional<QrCodeTemplateDefinition> find(String id) {
         if (StringUtils.isBlank(id)) {
@@ -43,6 +46,7 @@ public class InMemoryQrCodeTemplateRegistry implements QrCodeTemplateRegistry {
         return Optional.ofNullable(templates.get(id));
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean remove(String id) {
         return StringUtils.isNotBlank(id) && Objects.nonNull(templates.remove(id));

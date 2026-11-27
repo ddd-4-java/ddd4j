@@ -93,6 +93,7 @@ public class SpringJpaViewManager implements ViewManager {
         this.projectionMetrics = projectionMetrics;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void start() {
         if (running.compareAndSet(false, true)) {
@@ -100,6 +101,7 @@ public class SpringJpaViewManager implements ViewManager {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void stop() {
         if (running.compareAndSet(true, false)) {
@@ -109,11 +111,13 @@ public class SpringJpaViewManager implements ViewManager {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isRunning() {
         return running.get();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void triggerOnce() {
         // 业务方可在测试或运维场景调用，由具体 View 实现增量拉取

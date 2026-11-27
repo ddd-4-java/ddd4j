@@ -48,6 +48,7 @@ import java.util.Set;
  */
 public final class RbacConfig {
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>RbacConfig</code> \u5b9e\u4f8b\u3002 */
     private RbacConfig() {
     }
 
@@ -132,7 +133,10 @@ public final class RbacConfig {
     }
 
     /**
-     * 派生用户最终权限码：用户直接权限 ∪ 角色持有的权限。
+     * \u6d3e\u751f\u7528\u6237\u6700\u7ec8\u6743\u9650\u7801\uff1a\u7528\u6237\u76f4\u63a5\u6743\u9650 \u222a \u89d2\u8272\u6301\u6709\u7684\u6743\u9650\u3002
+     *
+     * @param roleRepository \u7528\u4e8e\u8bfb\u53d6\u89d2\u8272\u7684\u4ed3\u50a8
+     * @return \u5408\u5e76\u7528\u6237\u76f4\u63a5\u6743\u9650\u548c\u89d2\u8272\u6743\u9650\u7684\u51fd\u6570
      */
     private static java.util.function.Function<User, List<String>> rbacServicePerms(InMemoryRoleRepository roleRepository) {
         return user -> {

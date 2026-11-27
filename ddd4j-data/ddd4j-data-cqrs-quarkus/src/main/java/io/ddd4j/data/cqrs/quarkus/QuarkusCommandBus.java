@@ -103,6 +103,12 @@ public class QuarkusCommandBus extends DefaultCommandBus {
         super(java.util.Collections.emptyList());
     }
 
+    /**
+     * 执行 <code>collect</code>，调用 <code>registry.register</code>、<code>registry.executors</code>。
+     *
+     * @param executors 传入此操作的 <code>Instance&lt;CommandExecutor&lt;?&gt;&gt;</code> 类型 <code>executors</code>
+     * @return 返回表达式 <code>registry.executors()</code>
+     */
     private static Collection<CommandExecutor<?>> collect(Instance<CommandExecutor<?>> executors) {
         Objects.requireNonNull(executors, "executors must not be null");
         CommandRegistry registry = new CommandRegistry();

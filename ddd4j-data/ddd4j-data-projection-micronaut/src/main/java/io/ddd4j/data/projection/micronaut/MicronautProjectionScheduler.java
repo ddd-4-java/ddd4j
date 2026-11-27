@@ -44,6 +44,7 @@ import java.util.concurrent.TimeUnit;
 @Singleton
 public class MicronautProjectionScheduler implements ViewScheduler {
 
+    /** \u6309\u8ba1\u5212\u6267\u884c\u5f53\u524d\u7ec4\u4ef6\u540e\u53f0\u4efb\u52a1\u7684\u5b9a\u65f6\u7ebf\u7a0b\u6c60\u3002 */
     private final ScheduledExecutorService executor;
 
     /** 创建由框架管理的调度器。 */
@@ -57,15 +58,21 @@ public class MicronautProjectionScheduler implements ViewScheduler {
                 }));
     }
 
+    /**
+     * \u4f7f\u7528\u6307\u5b9a\u6267\u884c\u5668\uff0c\u5173\u95ed\u65f6\u7ec8\u6b62\u8be5\u6267\u884c\u5668\u3002
+     * @param executor \u8c03\u5ea6\u6267\u884c\u5668
+     */
     MicronautProjectionScheduler(ScheduledExecutorService executor) {
         this.executor = Objects.requireNonNull(executor, "executor");
     }
 
+    /** \u5173\u95ed\u672c\u8c03\u5ea6\u5668\u62e5\u6709\u7684\u6267\u884c\u5668\u3002 */
     @PreDestroy
     void shutdown() {
         executor.shutdownNow();
     }
 
+    /** {@inheritDoc} */
     @Override
     public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
         Objects.requireNonNull(viewName, "viewName must not be null");
@@ -82,19 +89,32 @@ public class MicronautProjectionScheduler implements ViewScheduler {
      */
     private static class ReschedulingHandle implements ViewScheduleHandle, Runnable {
 
+        /** \u6309\u8ba1\u5212\u6267\u884c\u5f53\u524d\u7ec4\u4ef6\u540e\u53f0\u4efb\u52a1\u7684\u5b9a\u65f6\u7ebf\u7a0b\u6c60\u3002 */
         private final ScheduledExecutorService executor;
+        /** \u7528\u6765\u786e\u5b9a\u4efb\u52a1\u4e0b\u6b21\u89e6\u53d1\u65f6\u95f4\u7684 Cron \u8868\u8fbe\u5f0f\u3002 */
         private final CronExpression cron;
+        /** \u7531\u5f53\u524d\u8c03\u5ea6\u53e5\u67c4\u6267\u884c\u7684\u6295\u5f71\u4efb\u52a1\u3002 */
         private final Runnable task;
+        /** \u7528\u4e8e\u8ddf\u8e2a\u548c\u53d6\u6d88\u540e\u53f0\u8c03\u5ea6\u4efb\u52a1\u7684\u53e5\u67c4\u3002 */
         private volatile ScheduledFuture<?> future;
+        /** \u4efb\u52a1\u662f\u5426\u5df2\u53d6\u6d88\u5e76\u505c\u6b62\u7ee7\u7eed\u5b89\u6392\u65b0\u7684\u89e6\u53d1\u3002 */
         private volatile boolean cancelled = false;
+        /** \u6807\u8bc6\u5f53\u524d\u8ba1\u5212\u7248\u672c\uff0c\u4f9b\u505c\u7528\u5df2\u5931\u6548\u7684\u5f02\u6b65\u89e6\u53d1\u3002 */
         private long scheduleGeneration;
 
+        /**
+         * \u7528\u7ed9\u5b9a\u503c\u521d\u59cb\u5316 <code>ReschedulingHandle</code> \u5b9e\u4f8b\u3002
+         * @param executor \u6309\u8ba1\u5212\u6267\u884c\u5f53\u524d\u7ec4\u4ef6\u540e\u53f0\u4efb\u52a1\u7684\u5b9a\u65f6\u7ebf\u7a0b\u6c60
+         * @param cron <code>cron</code> \u5b57\u6bb5
+         * @param task <code>task</code> \u5b57\u6bb5
+         */
         ReschedulingHandle(ScheduledExecutorService executor, CronExpression cron, Runnable task) {
             this.executor = executor;
             this.cron = cron;
             this.task = task;
         }
 
+        /** \u6839\u636e Cron \u8ba1\u7b97\u4e0b\u4e00\u6b21\u6267\u884c\u65f6\u95f4\uff0c\u5e76\u5728\u8ba1\u5212\u4ecd\u6709\u6548\u65f6\u5411\u8c03\u5ea6\u7ebf\u7a0b\u6c60\u6ce8\u518c\u89e6\u53d1\u3002 */
         synchronized void scheduleNext() {
             if (cancelled) {
                 return;
@@ -116,6 +136,7 @@ public class MicronautProjectionScheduler implements ViewScheduler {
             }
         }
 
+        /** {@inheritDoc} */
         @Override
         public void run() {
             if (cancelled) {
@@ -128,6 +149,7 @@ public class MicronautProjectionScheduler implements ViewScheduler {
             }
         }
 
+        /** {@inheritDoc} */
         @Override
         public synchronized void cancel() {
             cancelled = true;
@@ -137,6 +159,7 @@ public class MicronautProjectionScheduler implements ViewScheduler {
             }
         }
 
+        /** {@inheritDoc} */
         @Override
         public synchronized boolean isActive() {
             if (cancelled) {
@@ -158,13 +181,29 @@ public class MicronautProjectionScheduler implements ViewScheduler {
      */
     static class CronExpression {
 
+        /** Cron 秒字段允许的取值。 */
         private final int[] seconds;
+        /** Cron 分字段允许的取值。 */
         private final int[] minutes;
+        /** Cron 小时字段允许的取值。 */
         private final int[] hours;
+        /** Cron 月内日期字段允许的取值。 */
         private final int[] daysOfMonth;
+        /** Cron 月字段允许的取值。 */
         private final int[] months;
+        /** Cron 星期字段允许的取值。 */
         private final int[] daysOfWeek;
 
+        /**
+         * 以各 Cron 字段允许的取值集合构造表达式。
+         *
+         * @param seconds Cron 秒字段允许的取值
+         * @param minutes Cron 分字段允许的取值
+         * @param hours Cron 小时字段允许的取值
+         * @param daysOfMonth Cron 月内日期字段允许的取值
+         * @param months Cron 月字段允许的取值
+         * @param daysOfWeek Cron 星期字段允许的取值
+         */
         private CronExpression(int[] seconds, int[] minutes, int[] hours,
                                int[] daysOfMonth, int[] months, int[] daysOfWeek) {
             this.seconds = seconds;
@@ -175,6 +214,12 @@ public class MicronautProjectionScheduler implements ViewScheduler {
             this.daysOfWeek = daysOfWeek;
         }
 
+        /**
+         * 解析按秒、分、时、日、月、星期排列的六段 Cron 表达式。
+         *
+         * @param expr 待解析的六字段 Cron 表达式文本
+         * @return 已按六个字段解析的 Cron 表达式
+         */
         static CronExpression parse(String expr) {
             String[] parts = expr.trim().split("\\s+");
             if (parts.length != 6) {
@@ -190,6 +235,11 @@ public class MicronautProjectionScheduler implements ViewScheduler {
             );
         }
 
+        /**
+         * \u4ece\u672c\u5730\u65f6\u95f4\u67e5\u627e\u4e0b\u4e00\u65f6\u95f4\u3002
+         * @param from \u8d77\u59cb\u672c\u5730\u65f6\u95f4
+         * @return \u4e0b\u4e00\u65f6\u95f4\uff0c\u672a\u6765\u516b\u5e74\u65e0\u5339\u914d\u8fd4\u56de null
+         */
         LocalDateTime next(LocalDateTime from) {
             LocalDateTime candidate = from.plusSeconds(1).withNano(0);
             for (int i = 0; i < 1_000_000; i++) {
@@ -201,6 +251,12 @@ public class MicronautProjectionScheduler implements ViewScheduler {
             return null;
         }
 
+        /**
+         * 检查日期时间是否符合当前 Cron 表达式。
+         *
+         * @param dt 传入此操作的 <code>LocalDateTime</code> 类型 <code>dt</code>
+         * @return 当前时间是否满足全部 Cron 条件
+         */
         private boolean matches(LocalDateTime dt) {
             return contains(seconds, dt.getSecond())
                     && contains(minutes, dt.getMinute())
@@ -210,11 +266,24 @@ public class MicronautProjectionScheduler implements ViewScheduler {
                     && matchesDayOfWeek(dt);
         }
 
+        /**
+         * 按 Cron 星期编号检查给定时间，兼容星期日的两种表示。
+         *
+         * @param dt 传入此操作的 <code>LocalDateTime</code> 类型 <code>dt</code>
+         * @return 当前时间是否符合星期字段
+         */
         private boolean matchesDayOfWeek(LocalDateTime dt) {
             int dow = dt.getDayOfWeek().getValue() % 7; // Monday=1 -> 1, Sunday=7 -> 0
             return contains(daysOfWeek, dow) || contains(daysOfWeek, dt.getDayOfWeek().getValue());
         }
 
+        /**
+         * 查找指定数值是否属于当前 Cron 字段允许的集合。
+         *
+         * @param values 查找指定值时使用的候选集合
+         * @param v 待检查是否存在的候选值
+         * @return 给定值是否在候选集合中
+         */
         private static boolean contains(int[] values, int v) {
             for (int val : values) {
                 if (val == v) {
@@ -224,6 +293,14 @@ public class MicronautProjectionScheduler implements ViewScheduler {
             return false;
         }
 
+        /**
+         * 展开 Cron 字段的通配符、列表、区间和步长，校验数值边界。
+         *
+         * @param field 当前待展开的 Cron 字段
+         * @param min 此字段允许的最小数值
+         * @param max 此字段允许的最大数值
+         * @return 此字段允许的数值集合
+         */
         private static int[] parseField(String field, int min, int max) {
             if ("*".equals(field)) {
                 int[] result = new int[max - min + 1];

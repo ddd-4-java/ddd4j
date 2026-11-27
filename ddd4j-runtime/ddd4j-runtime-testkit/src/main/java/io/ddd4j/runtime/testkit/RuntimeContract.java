@@ -23,12 +23,16 @@ import java.util.Map;
  */
 public interface RuntimeContract extends AutoCloseable {
 
+    /** \u542f\u52a8\u8fd0\u884c\u65f6\u3002 */
     void start();
 
+    /** @return \u8fd0\u884c\u65f6\u6ce8\u518c\u7684\u670d\u52a1\u952e\u4e0e\u63a5\u53e3\u7c7b\u578b */
     Map<String, Class<?>> services();
 
+    /** @return \u5f53\u524d\u5c31\u7eea\u72b6\u6001 */
     ReadinessReport readiness();
 
+    /** {@inheritDoc} */
     @Override
     void close();
 }

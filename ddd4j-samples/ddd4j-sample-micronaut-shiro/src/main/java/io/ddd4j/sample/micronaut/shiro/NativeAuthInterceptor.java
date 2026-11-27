@@ -21,14 +21,28 @@ import jakarta.inject.Singleton;
 @Singleton
 @InterceptorBean(NativeAuthenticated.class)
 final class NativeAuthInterceptor implements MethodInterceptor<Object, Object> {
+    /** 保存 <code>auth</code> 对应的 <code>NativeAuth</code> 数据。 */
     private final NativeAuth auth;
+    /** 保存 <code>subjects</code> 对应的 <code>SubjectProvider</code> 数据。 */
     private final SubjectProvider subjects;
 
+    /**
+     * 初始化 <code>NativeAuthInterceptor</code> 使用的 <code>auth</code>、<code>subjects</code>。
+     *
+     * @param auth 传入此操作的 <code>NativeAuth</code> 类型 <code>auth</code>
+     * @param subjects 传入此操作的 <code>SubjectProvider</code> 类型 <code>subjects</code>
+     */
     NativeAuthInterceptor(NativeAuth auth, SubjectProvider subjects) {
         this.auth = auth;
         this.subjects = subjects;
     }
 
+    /**
+     * 执行 <code>intercept</code>，调用 <code>ServerRequestContext.currentRequest</code>、<code>Subject.Builder</code>、<code>auth.manager</code>。
+     *
+     * @param invocation 传入此操作的 <code>MethodInvocationContext&lt;Object, Object&gt;</code> 类型 <code>invocation</code>
+     * @return 返回表达式 <code>invocation.proceed()</code>
+     */
     @Override
     public Object intercept(MethodInvocationContext<Object, Object> invocation) {
         HttpRequest<?> request = ServerRequestContext.currentRequest().orElseThrow(

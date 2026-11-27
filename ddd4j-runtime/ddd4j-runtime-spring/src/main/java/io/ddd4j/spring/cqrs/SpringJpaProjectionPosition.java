@@ -43,6 +43,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SpringJpaProjectionPosition implements ProjectionPosition, Serializable {
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -58,6 +59,7 @@ public class SpringJpaProjectionPosition implements ProjectionPosition, Serializ
     @Column(name = ProjectionConstants.COLUMN_NEXT_EVENT_NUMBER, nullable = false, updatable = true)
     private long nextEventNumber;
 
+    /** {@inheritDoc} */
     @Override
     public long getNextEventNumber() {
         return nextEventNumber;

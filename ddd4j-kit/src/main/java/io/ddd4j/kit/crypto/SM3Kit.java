@@ -30,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @UtilityClass
 public class SM3Kit {
 
+    /** \u6309\u76d0\u503c\u67e5\u627e\u548c\u590d\u7528 SM3 \u6458\u8981\u5bf9\u8c61\u3002 */
     private final Map<String, SM3> sm3Map = new ConcurrentHashMap<>();
 
     /**

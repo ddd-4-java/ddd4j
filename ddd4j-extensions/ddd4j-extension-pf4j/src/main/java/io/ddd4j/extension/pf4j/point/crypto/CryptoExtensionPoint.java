@@ -16,10 +16,28 @@ package io.ddd4j.extension.pf4j.point.crypto;
 
 import org.pf4j.ExtensionPoint;
 
+/**
+ * \u52a0\u89e3\u5bc6\uff08Crypto\uff09\u6269\u5c55\u70b9\u3002
+ *
+ *  <p>\u63d2\u4ef6\u5b9e\u73b0\u8be5\u63a5\u53e3\uff0c\u4e3a\u4e3b\u63a7\u63d0\u4f9b\u660e\u6587\u52a0\u5bc6\u4e0e\u5bc6\u6587\u89e3\u5bc6\u80fd\u529b\u3002
+ * @since 2.0.x
+ */
 public interface CryptoExtensionPoint extends ExtensionPoint {
 
+    /**
+     * \u52a0\u5bc6\u660e\u6587\u3002
+     * @param source \u5f85\u52a0\u5bc6\u660e\u6587
+     * @param secretKey \u5bc6\u94a5
+     * @return \u5bc6\u6587
+     */
     String encrypt(String source, Object secretKey);
 
+    /**
+     * \u89e3\u5bc6\u5bc6\u6587\u3002
+     * @param source \u5f85\u89e3\u5bc6\u5bc6\u6587
+     * @param secretKey \u5bc6\u94a5
+     * @return \u660e\u6587
+     */
     String decrypt(String source, Object secretKey);
 
 }

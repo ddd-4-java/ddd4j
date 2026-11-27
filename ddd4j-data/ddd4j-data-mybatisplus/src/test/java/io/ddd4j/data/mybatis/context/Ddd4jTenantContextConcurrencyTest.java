@@ -27,18 +27,28 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/** \u9a8c\u8bc1 <code>Ddd4jTenantContextConcurrency</code> \u5728 <code>rejectsForeignThreadClose</code> \u7b49\u573a\u666f\u4e2d\u7684\u884c\u4e3a\u3002 */
 class Ddd4jTenantContextConcurrencyTest {
 
+    /** \u7528\u4e8e\u68c0\u67e5\u5f53\u524d\u8bf7\u6c42\u4e0a\u4e0b\u6587\u662f\u5426\u4fdd\u7559\u6216\u5df2\u6e05\u9664\u7684\u6807\u8bb0\u3002 */
     private static final String REQUEST_MARKER = Ddd4jTenantContextConcurrencyTest.class.getName();
 
+    /** \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u6846\u67b6\u4e0a\u4e0b\u6587\u6216\u8bf7\u6c42\u4f5c\u7528\u57df\u3002 */
     private final Ddd4jTenantContext context = new Ddd4jTenantContext();
+    /** \u4f9b\u6d4b\u8bd5\u66ff\u8eab\u8f6c\u53d1\u5b9e\u9645\u884c\u4e3a\u7684\u5e95\u5c42\u5b9e\u73b0\u3002 */
     private final TenantContext delegate = context.asEnhanceContext();
 
+    /** \u6d4b\u8bd5\u540e\u4f9d\u6b21\u6e05\u9664<code>ThreadContext</code>\u3002 */
     @AfterEach
     void clearRequestContext() {
         ThreadContext.clear();
     }
 
+    /**
+     * \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>delegate.getCurrentTenantId()</code> \u7b49\u4e8e <code>"owner-original"</code>\u3002
+     * @param enhanceEntry \u53c2\u6570\u5316\u7528\u4f8b\u63d0\u4f9b\u7684\u5019\u9009 <code>enhanceEntry</code> \u503c
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @ParameterizedTest
     @ValueSource(booleans = {false, true})
     void rejectsForeignThreadCloseWithoutChangingEitherTenantOrConsumingScope(boolean enhanceEntry) throws Exception {
@@ -61,6 +71,11 @@ class Ddd4jTenantContextConcurrencyTest {
         assertEquals("owner-original", delegate.getCurrentTenantId());
     }
 
+    /**
+     * \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>delegate.getCurrentTenantId()</code>\u4e3a\u7a7a\u3002
+     * @param enhanceEntry \u53c2\u6570\u5316\u7528\u4f8b\u63d0\u4f9b\u7684\u5019\u9009 <code>enhanceEntry</code> \u503c
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @ParameterizedTest
     @ValueSource(booleans = {false, true})
     void rejectsForeignThreadCloseEvenAfterOwnerClosedScope(boolean enhanceEntry) throws Exception {
@@ -83,6 +98,11 @@ class Ddd4jTenantContextConcurrencyTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>delegate.getCurrentTenantId()</code> \u7b49\u4e8e <code>"original"</code>\uff0c<code>delegate.getCurrentTenantId()</code> \u7b49\u4e8e <code>"subsequent"</code>\u3002
+     * @param enhanceEntry \u53c2\u6570\u5316\u7528\u4f8b\u63d0\u4f9b\u7684\u5019\u9009 <code>enhanceEntry</code> \u503c
+     * @throws Exception \u51c6\u5907\u6216\u91ca\u653e\u88ab\u6d4b\u8fd0\u884c\u8d44\u6e90\u65f6\u5931\u8d25
+     */
     @ParameterizedTest
     @ValueSource(booleans = {false, true})
     void repeatedOwnerCloseDoesNotOverwriteSubsequentTenant(boolean enhanceEntry) throws Exception {
@@ -95,6 +115,10 @@ class Ddd4jTenantContextConcurrencyTest {
         assertEquals("subsequent", delegate.getCurrentTenantId());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>delegate.getCurrentTenantId()</code> \u7b49\u4e8e <code>tenant</code>\uff0c<code>delegate.getCurrentTenantId()</code>\u4e3a\u7a7a\uff0c<code>ThreadContext.get(REQUEST_MARKER)</code>\u4e3a\u7a7a\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void sharedDelegateKeepsOverlappingThreadScopesIsolated() throws Exception {
         ExecutorService executor = Executors.newFixedThreadPool(4);
@@ -140,6 +164,10 @@ class Ddd4jTenantContextConcurrencyTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>Thread.currentThread()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>worker</code>\uff0c<code>delegate.getCurrentTenantId()</code>\u4e3a\u7a7a\uff0c<code>error.getCause()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>failure</code>\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void reusedWorkerRestoresTenantAfterSuccessfulAndFailedScopes() throws Exception {
         ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -174,6 +202,10 @@ class Ddd4jTenantContextConcurrencyTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>release.await(10, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>started.await(10, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>delegate.getCurrentTenantId()</code> \u7b49\u4e8e <code>"parent-after-submission"</code>\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void queuedAsyncTasksCaptureSubmissionTenantAndRestoreWorkerAfterFailure() throws Exception {
         ExecutorService raw = Executors.newSingleThreadExecutor();
@@ -235,6 +267,10 @@ class Ddd4jTenantContextConcurrencyTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>delegate.getCurrentTenantId()</code> \u7b49\u4e8e <code>"request-tenant"</code>\uff0c<code>delegate.getCurrentTenantId()</code> \u7b49\u4e8e <code>"outer-tenant"</code>\uff0c<code>task.get(10, TimeUnit.SECONDS)</code> \u7b49\u4e8e <code>"request-tenant"</code>\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void nestedAsyncTasksRestoreEachWorkerAndDoNotWriteBackToParent() throws Exception {
         ExecutorService outerRaw = Executors.newSingleThreadExecutor();
@@ -272,6 +308,11 @@ class Ddd4jTenantContextConcurrencyTest {
         }
     }
 
+    /**
+     * \u8c03\u7528 <code>executor.shutdownNow()</code>\u3001<code>executor.awaitTermination()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @param executor \u5f53\u524d\u6d4b\u8bd5\u6d89\u53ca\u7684\u547d\u4ee4\u6267\u884c\u5668\u6216\u7ebf\u7a0b\u6267\u884c\u5668
+     * @throws InterruptedException \u7b49\u5f85\u6d4b\u8bd5\u64cd\u4f5c\u65f6\u88ab\u4e2d\u65ad
+     */
     private static void shutdown(ExecutorService executor) throws InterruptedException {
         executor.shutdownNow();
         assertTrue(executor.awaitTermination(10, TimeUnit.SECONDS));

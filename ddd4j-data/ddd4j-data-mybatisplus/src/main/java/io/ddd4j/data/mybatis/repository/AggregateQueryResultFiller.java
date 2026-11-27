@@ -48,6 +48,11 @@ public final class AggregateQueryResultFiller {
         }
     }
 
+    /**
+     * \u4ece\u6267\u884c\u53c2\u6570\u4e2d\u67e5\u627e\u9700\u8981\u7ed3\u679c\u586b\u5145\u7684 DDD4J \u67e5\u8be2\u3002
+     * @param parameters \u5f53\u524d\u8bed\u53e5\u7684\u8c03\u7528\u53c2\u6570
+     * @return \u627e\u5230\u7684\u67e5\u8be2\uff0c\u7f3a\u5c11\u65f6\u4e3a\u7a7a
+     */
     private Query<?> findQuery(Collection<Object> parameters) {
         for (Object candidate : parameters) {
             if (candidate instanceof Query<?>) {
@@ -57,6 +62,11 @@ public final class AggregateQueryResultFiller {
         return null;
     }
 
+    /**
+     * \u4ece\u8fd4\u56de\u5bf9\u8c61\u548c\u5bb9\u5668\u4e2d\u63d0\u53d6\u53ef\u7528\u4e8e\u7ed3\u679c\u586b\u5145\u7684\u805a\u5408\u5b9e\u4f8b\u3002
+     * @param result \u9700\u8981\u63d0\u53d6\u805a\u5408\u5bf9\u8c61\u7684\u8fd4\u56de\u503c
+     * @param aggregates \u672c\u6b21\u6279\u91cf\u5199\u5165\u7684\u805a\u5408\u5bf9\u8c61
+     */
     private void collectAggregates(Object result, List<AggregateRoot<?>> aggregates) {
         if (result instanceof AggregateRoot<?>) {
             aggregates.add((AggregateRoot<?>) result);

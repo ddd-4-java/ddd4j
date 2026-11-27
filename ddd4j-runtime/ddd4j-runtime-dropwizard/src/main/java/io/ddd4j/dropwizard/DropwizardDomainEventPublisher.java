@@ -32,12 +32,14 @@ import java.util.function.Consumer;
 @Slf4j
 public final class DropwizardDomainEventPublisher implements DomainEventPublisher {
 
+    /** \u63a5\u6536\u8fd0\u884c\u65f6\u53d1\u5e03\u9886\u57df\u4e8b\u4ef6\u7684\u76d1\u542c\u56de\u8c03\u3002 */
     private final List<Consumer<Object>> listeners;
 
     /**
-     * 使用指定事件监听器创建发布器。
+     * \u4f7f\u7528\u6307\u5b9a\u4e8b\u4ef6\u76d1\u542c\u5668\u521b\u5efa\u53d1\u5e03\u5668\u3002
+     * @param listeners \u4e8b\u4ef6\u76d1\u542c\u5668
      *
-     * @param listeners 事件监听器
+     * @throws NullPointerException \u76d1\u542c\u5668\u96c6\u5408\u6216\u5176\u4e2d\u4efb\u4e00\u5143\u7d20\u4e3a null
      */
     public DropwizardDomainEventPublisher(Collection<Consumer<Object>> listeners) {
         List<Consumer<Object>> copy = new ArrayList<>(Objects.requireNonNull(listeners, "listeners must not be null"));
@@ -45,11 +47,13 @@ public final class DropwizardDomainEventPublisher implements DomainEventPublishe
         this.listeners = Collections.unmodifiableList(copy);
     }
 
+    /** {@inheritDoc} */
     @Override
     public <ID extends EntityId> void publish(DomainEvent<ID> event) {
         publish((Object) event);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void publish(Object event) {
         if (Objects.nonNull(event)) {

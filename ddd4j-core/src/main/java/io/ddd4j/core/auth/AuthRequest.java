@@ -69,9 +69,14 @@ public class AuthRequest {
      */
     private Map<String, Object> extra = new HashMap<>();
 
+    /** \u521b\u5efa\u4f7f\u7528\u9ed8\u8ba4\u4f1a\u8bdd\u914d\u7f6e\u7684\u767b\u5f55\u8bf7\u6c42\u3002 */
     public AuthRequest() {
     }
 
+    /**
+     * \u521b\u5efa\u6307\u5b9a\u767b\u5f55\u6807\u8bc6\u7684\u8bf7\u6c42\u3002
+     * @param loginId \u767b\u5f55\u6807\u8bc6
+     */
     public AuthRequest(Object loginId) {
         this.loginId = loginId;
     }
@@ -85,6 +90,10 @@ public class AuthRequest {
         return new AuthRequest(loginId);
     }
 
+    /**
+     * \u4ee5\u5b57\u7b26\u4e32\u8bfb\u53d6\u767b\u5f55\u6807\u8bc6\u3002
+     * @return \u767b\u5f55\u6807\u8bc6\u7684\u5b57\u7b26\u4e32\u5f62\u5f0f\uff0c\u672a\u8bbe\u7f6e\u65f6\u4e3a null
+     */
     public String getLoginIdAsString() {
         return Objects.isNull(loginId) ? null : String.valueOf(loginId);
     }
@@ -98,6 +107,11 @@ public class AuthRequest {
         return sessionConfig.getTimeout();
     }
 
+    /**
+     * \u8bbe\u7f6e Token \u6709\u6548\u671f\u3002
+     * @param timeout \u6709\u6548\u671f\u79d2\u6570\uff0c-1 \u8868\u793a\u6c38\u4e45
+     * @return \u5f53\u524d\u767b\u5f55\u8bf7\u6c42
+     */
     public AuthRequest setTimeout(long timeout) {
         sessionConfig.setTimeout(timeout);
         return this;
@@ -112,6 +126,11 @@ public class AuthRequest {
         return sessionConfig.getDeviceType();
     }
 
+    /**
+     * \u8bbe\u7f6e\u591a\u7aef\u767b\u5f55\u9694\u79bb\u4f7f\u7528\u7684\u8bbe\u5907\u7c7b\u578b\u3002
+     * @param deviceType \u8bbe\u5907\u7c7b\u578b
+     * @return \u5f53\u524d\u767b\u5f55\u8bf7\u6c42
+     */
     public AuthRequest setDeviceType(String deviceType) {
         sessionConfig.setDeviceType(deviceType);
         return this;
@@ -131,6 +150,7 @@ public class AuthRequest {
         return this;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -143,11 +163,13 @@ public class AuthRequest {
         return Objects.equals(loginId, that.loginId);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return Objects.hash(loginId);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "AuthRequest{loginId=" + loginId

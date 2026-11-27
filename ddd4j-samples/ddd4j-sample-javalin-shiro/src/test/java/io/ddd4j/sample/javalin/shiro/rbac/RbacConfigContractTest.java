@@ -17,8 +17,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+/** \u901a\u8fc7 <code>RbacConfig.initSeedData()</code>\u3001<code>RbacConfig.createSubjectDataProvider()</code>\u3001<code>provider.getPermissionList()</code> \u9a8c\u8bc1 <code>RbacConfigContract</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
 class RbacConfigContractTest {
 
+    /** \u9a8c\u8bc1<code>roleCodes</code> \u7b49\u4e8e <code>Arrays.asList("user")</code>\uff0c<code>permissions.add("admin:*")</code> \u629b\u51fa <code>UnsupportedOperationException.class</code>\uff0c<code>roleCodes.add("admin")</code> \u629b\u51fa <code>UnsupportedOperationException.class</code>\u3002 */
     @Test
     void returnsImmutablePermissionAndRoleSnapshots() {
         InMemoryUserRepository users = new InMemoryUserRepository();
@@ -35,6 +37,7 @@ class RbacConfigContractTest {
         assertThrows(UnsupportedOperationException.class, () -> roleCodes.add("admin"));
     }
 
+    /** \u9a8c\u8bc1<code>provider.getPermissionList(new AuthPrincipal().setLoginId("ordered"))</code> \u7b49\u4e8e <code>Arrays.asList("z", "a")</code>\u3002 */
     @Test
     void preservesDirectPermissionInsertionOrder() {
         InMemoryUserRepository users = new InMemoryUserRepository();

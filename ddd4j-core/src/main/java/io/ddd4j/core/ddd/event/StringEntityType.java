@@ -23,6 +23,7 @@ import java.util.Objects;
  * 基于字符串的实体类型值对象。
  */
 public final class StringEntityType implements EntityType {
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -42,12 +43,14 @@ public final class StringEntityType implements EntityType {
         this.value = value;
     }
 
+    /** {@inheritDoc} */
     @Override
     @JsonValue
     public String asString() {
         return value;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object object) {
         if (this == object) {
@@ -60,11 +63,13 @@ public final class StringEntityType implements EntityType {
         return Objects.equals(value, that.value);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return Objects.hash(value);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return value;

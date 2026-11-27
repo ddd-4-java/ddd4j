@@ -60,8 +60,10 @@ import java.util.Set;
 @SuppressWarnings("unchecked")
 public abstract class DomainEvent<ID extends EntityId> implements Event, Serializable {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 1L;
 
+    /** \u7528\u4e8e\u6309\u7c7b\u578b\u67e5\u627e\u9886\u57df\u4e8b\u4ef6\u7684\u6ce8\u518c\u8868\u3002 */
     private static final ClassValue<EventType> EVENT_TYPES = new ClassValue<EventType>() {
         @Override
         protected EventType computeValue(Class<?> type) {

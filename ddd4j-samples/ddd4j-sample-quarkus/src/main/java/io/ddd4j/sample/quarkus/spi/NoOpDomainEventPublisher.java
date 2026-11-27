@@ -43,6 +43,7 @@ import java.util.Objects;
 @Slf4j
 public class NoOpDomainEventPublisher implements DomainEventPublisher {
 
+    /** {@inheritDoc} */
     @Override
     public <ID extends EntityId> void publish(DomainEvent<ID> event) {
         if (Objects.isNull(event)) {
@@ -51,6 +52,7 @@ public class NoOpDomainEventPublisher implements DomainEventPublisher {
         log.info("[DomainEvent] {} -> {}", event.getClass().getSimpleName(), event.source());
     }
 
+    /** {@inheritDoc} */
     @Override
     public <ID extends EntityId> void publishAll(Collection<DomainEvent<ID>> events) {
         if (Objects.nonNull(events)) {

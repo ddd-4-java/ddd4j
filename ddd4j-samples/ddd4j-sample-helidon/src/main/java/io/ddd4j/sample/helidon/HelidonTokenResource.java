@@ -28,6 +28,7 @@ import javax.ws.rs.core.MediaType;
 
 import java.util.Objects;
 
+/** \u63d0\u4f9b Helidon \u793a\u4f8b\u7684\u4ee4\u724c\u7b7e\u53d1\u63a5\u53e3\u3002 */
 @Path("/api")
 @Produces(MediaType.APPLICATION_JSON)
 public class HelidonTokenResource {
@@ -46,8 +47,10 @@ public class HelidonTokenResource {
      */
     public final static class TokenResponse {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u5f53\u524d\u793a\u4f8b\u7b7e\u53d1\u6216\u8fd4\u56de\u5ba2\u6237\u7aef\u7684\u4f1a\u8bdd\u4ee4\u724c\u3002 */
         private final String token;
 
         /**
@@ -74,6 +77,7 @@ public class HelidonTokenResource {
             return token;
         }
 
+        /** {@inheritDoc} */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -86,6 +90,7 @@ public class HelidonTokenResource {
             return Objects.equals(this.token, other.token);
         }
 
+        /** {@inheritDoc} */
         @Override
         public int hashCode() {
             int result = 0;
@@ -93,6 +98,7 @@ public class HelidonTokenResource {
             return result;
         }
 
+        /** {@inheritDoc} */
         @Override
         public String toString() {
             return "TokenResponse[token=" + token + "]";

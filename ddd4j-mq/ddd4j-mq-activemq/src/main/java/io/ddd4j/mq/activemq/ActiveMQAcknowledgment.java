@@ -68,6 +68,7 @@ public class ActiveMQAcknowledgment implements Acknowledgment {
      * 关联 ID
      */
     private final String correlationId;
+    /** \u8bb0\u5f55\u5df2\u786e\u8ba4\u6d88\u606f\u7684\u72b6\u6001\u6216\u7ed3\u679c\u3002 */
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 
     /**
@@ -88,51 +89,61 @@ public class ActiveMQAcknowledgment implements Acknowledgment {
         this.correlationId = correlationId;
     }
 
+    /** {@inheritDoc} */
     @Override
     public long deliveryTag() {
         return deliveryId;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String messageId() {
         return messageId;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String correlationId() {
         return correlationId;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isOpen() {
         return Objects.nonNull(session) && !acknowledged.get();
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isAcknowledged() {
         return acknowledged.get();
     }
 
+    /** {@inheritDoc} */
     @Override
     public BrokerType brokerType() {
         return BrokerType.ACTIVEMQ;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void ack() {
         ack(false);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void ack(boolean multiple) {
         runOnce(message::acknowledge);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void nack(boolean requeue) {
         nack(false, requeue);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void nack(boolean multiple, boolean requeue) {
         // JMS 没有 native 的 nack(requeue)，通过 Session.recover() 把已消费但未 ack 的消息重投
@@ -144,16 +155,19 @@ public class ActiveMQAcknowledgment implements Acknowledgment {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void reject(boolean requeue) {
         nack(false, requeue);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void recover(boolean requeue) {
         runOnce(session::recover);
     }
 
+    /** {@inheritDoc} */
     @Override
     public <T> Optional<T> unwrap(Class<T> nativeType) {
         if (Objects.isNull(nativeType)) {

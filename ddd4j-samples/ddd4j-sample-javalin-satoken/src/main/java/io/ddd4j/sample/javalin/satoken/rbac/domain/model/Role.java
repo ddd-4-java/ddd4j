@@ -34,6 +34,7 @@ import java.util.Set;
 @Getter
 public class Role extends AggregateRoot<String> {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -150,6 +151,10 @@ public class Role extends AggregateRoot<String> {
         this.permissionIds.remove(permissionId);
     }
 
+    /**
+     * \u8bfb\u53d6\u89d2\u8272 ID\u3002
+     * @return \u89d2\u8272 ID
+     */
     @Override
     public String id() {
         return roleId;

@@ -31,16 +31,23 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 @AnalyzeClasses(packages = "io.ddd4j.core.cqrs.command", importOptions = {ImportOption.DoNotIncludeTests.class})
 class CqrsModuleIndependenceTest {
 
+    /** SPI \u6a21\u5757\u4e0d\u5f97\u76f4\u63a5\u4f9d\u8d56 Spring Framework\u3002 */
     @ArchTest
     static final ArchRule no_spring_in_cqrs_module =
             noClasses().that().resideInAPackage("io.ddd4j.core.cqrs.command..")
                     .should().dependOnClassesThat().resideInAPackage("org.springframework..");
 
+    /** SPI \u6a21\u5757\u4e0d\u5f97\u76f4\u63a5\u4f9d\u8d56 Quarkus\u3002 */
     @ArchTest
     static final ArchRule no_quarkus_in_cqrs_module =
             noClasses().that().resideInAPackage("io.ddd4j.core.cqrs.command..")
                     .should().dependOnClassesThat().resideInAPackage("io.quarkus..");
 
+    /**
+     * SPI \u6a21\u5757\u4f9d\u8d56\u5141\u8bb8\u6e05\u5355\uff1a\u4ec5 JDK\uff08java..\uff09\u4e0e io.ddd4j \u5bb6\u65cf\u6a21\u5757
+     *  \uff08Command\uff0fCommandExecutor \u5951\u7ea6\u6765\u81ea ddd4j-core\uff09\u3002
+     *  \u65b0\u589e\u4f9d\u8d56\u5fc5\u987b\u663e\u5f0f\u52a0\u767d\u5e76\u7ecf ADR \u4fee\u8ba2\u3002
+     */
     @ArchTest
     static final ArchRule cqrs_deps_allowlist =
             classes().that().resideInAPackage("io.ddd4j.core.cqrs.command..")

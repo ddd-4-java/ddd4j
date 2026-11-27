@@ -30,6 +30,10 @@ import java.util.Objects;
  */
 public final class Ddd4jDropwizardResponseFilter implements ContainerResponseFilter {
 
+    /**
+     * \u5c1d\u8bd5\u5173\u95ed\u8bf7\u6c42\u4f5c\u7528\u57df\uff0c\u6e05\u7406\u6545\u969c\u4e0d\u6253\u65ad\u54cd\u5e94\u5904\u7406\u3002
+     * @param scope \u9700\u8981\u5728\u5f53\u524d\u8bf7\u6c42\u7ed3\u675f\u540e\u5173\u95ed\u7684\u4f5c\u7528\u57df
+     */
     private static void closeScope(Object scope) {
         if (scope instanceof AutoCloseable) {
             try {

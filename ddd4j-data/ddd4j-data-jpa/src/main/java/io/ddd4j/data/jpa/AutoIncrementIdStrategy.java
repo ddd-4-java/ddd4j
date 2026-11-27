@@ -34,6 +34,7 @@ package io.ddd4j.data.jpa;
  */
 public class AutoIncrementIdStrategy implements IdGenerationStrategy<Long> {
 
+    /** {@inheritDoc} */
     @Override
     public Long generate() {
         // 返回 null 表示由数据库自增列填充

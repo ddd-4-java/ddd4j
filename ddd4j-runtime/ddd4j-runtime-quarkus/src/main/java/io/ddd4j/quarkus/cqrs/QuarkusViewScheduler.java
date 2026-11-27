@@ -53,6 +53,7 @@ public class QuarkusViewScheduler implements ViewScheduler {
     @Inject
     Instance<Scheduler> schedulers;
 
+    /** {@inheritDoc} */
     @Override
     public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
         Scheduler scheduler = scheduler();
@@ -78,6 +79,11 @@ public class QuarkusViewScheduler implements ViewScheduler {
         }
     }
 
+    /**
+     * 执行 <code>scheduler</code>，调用 <code>schedulers.isUnsatisfied</code>、<code>schedulers.isAmbiguous</code>、<code>schedulers.get</code>。
+     *
+     * @return 返回表达式 <code>schedulers.get()</code>
+     */
     private Scheduler scheduler() {
         if (schedulers.isUnsatisfied()) {
             throw new IllegalStateException("Quartz Scheduler is unavailable; add the quarkus-quartz extension");

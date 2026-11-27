@@ -38,22 +38,26 @@ public interface WebInterceptor {
     int getOrder();
 
     /**
-     * 请求预处理。
-     * @param request 请求对象
-     * @param response 响应对象
-     * @param handler 处理器
-     * @return 条件成立（或操作成功）返回 true，否则返回 false
-     * @throws java.lang.Exception 执行对应操作失败时抛出
+     * \u8bf7\u6c42\u9884\u5904\u7406\u3002
+     * @param request \u8bf7\u6c42\u5bf9\u8c61
+     * @param response \u54cd\u5e94\u5bf9\u8c61
+     * @param handler \u5904\u7406\u5668
+     * @return \u6761\u4ef6\u6210\u7acb\uff08\u6216\u64cd\u4f5c\u6210\u529f\uff09\u8fd4\u56de true\uff0c\u5426\u5219\u8fd4\u56de false
+     * @throws java.lang.Exception \u6267\u884c\u5bf9\u5e94\u64cd\u4f5c\u5931\u8d25\u65f6\u629b\u51fa
+     *
+     * @throws Exception \u8bf7\u6c42\u5904\u7406\u5931\u8d25\u65f6\u629b\u51fa
      */
     boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception;
 
     /**
-     * 请求完成后清理（默认空实现）。
-     * @param request 请求对象
-     * @param response 响应对象
-     * @param handler 处理器
-     * @param ex 异常对象
-     * @throws java.lang.Exception 执行对应操作失败时抛出
+     * \u8bf7\u6c42\u5b8c\u6210\u540e\u6e05\u7406\uff08\u9ed8\u8ba4\u7a7a\u5b9e\u73b0\uff09\u3002
+     * @param request \u8bf7\u6c42\u5bf9\u8c61
+     * @param response \u54cd\u5e94\u5bf9\u8c61
+     * @param handler \u5904\u7406\u5668
+     * @param ex \u5f02\u5e38\u5bf9\u8c61
+     * @throws java.lang.Exception \u6267\u884c\u5bf9\u5e94\u64cd\u4f5c\u5931\u8d25\u65f6\u629b\u51fa
+     *
+     * @throws Exception \u8bf7\u6c42\u5904\u7406\u5931\u8d25\u65f6\u629b\u51fa
      */
     default void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
     }

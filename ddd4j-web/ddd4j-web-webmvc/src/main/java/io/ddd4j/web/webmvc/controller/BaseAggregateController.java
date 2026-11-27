@@ -128,18 +128,55 @@ public abstract class BaseAggregateController<M extends AggregateRoot<?>, Q, ID 
 
     // ------- 业务项目实现以下方法 -------
 
+    /**
+     * \u5206\u9875\u67e5\u8be2\u805a\u5408\u6839\u3002
+     * @param pageNum \u9875\u7801
+     * @param pageSize \u6bcf\u9875\u6570\u91cf
+     * @param query \u67e5\u8be2\u6761\u4ef6
+     * @return \u805a\u5408\u6839\u5206\u9875\u7ed3\u679c
+     */
     protected abstract Page<M> listPage(int pageNum, int pageSize, Q query);
 
+    /**
+     * \u67e5\u8be2\u805a\u5408\u6839\u8be6\u60c5\u3002
+     * @param id \u805a\u5408\u6839\u6807\u8bc6
+     * @return \u805a\u5408\u6839\u8be6\u60c5
+     */
     protected abstract M detail(ID id);
 
+    /**
+     * \u4fdd\u5b58\u805a\u5408\u6839\u3002
+     * @param model \u805a\u5408\u6839\u540d\u79f0\u6216\u6a21\u578b
+     * @return \u4fdd\u5b58\u540e\u7684\u805a\u5408\u6839
+     */
     protected abstract M save(M model);
 
+    /**
+     * \u4fee\u6539\u805a\u5408\u6839\u3002
+     * @param id \u805a\u5408\u6839\u6807\u8bc6
+     * @param model \u805a\u5408\u6839\u540d\u79f0\u6216\u6a21\u578b
+     * @return \u4fee\u6539\u540e\u7684\u805a\u5408\u6839
+     */
     protected abstract M modify(ID id, M model);
 
+    /**
+     * \u5220\u9664\u805a\u5408\u6839\u3002
+     * @param id \u805a\u5408\u6839\u6807\u8bc6
+     */
     protected abstract void remove(ID id);
 
+    /**
+     * \u7981\u7528\u805a\u5408\u6839\u3002
+     * @param id \u805a\u5408\u6839\u6807\u8bc6
+     * @return \u7981\u7528\u540e\u7684\u805a\u5408\u6839
+     */
     protected abstract M doDisable(ID id);
 
+    /**
+     * \u542f\u7528\u805a\u5408\u6839\u3002
+     * @param id \u805a\u5408\u6839\u6807\u8bc6
+     * @return \u542f\u7528\u540e\u7684\u805a\u5408\u6839
+     */
     protected abstract M doEnable(ID id);
 
 }

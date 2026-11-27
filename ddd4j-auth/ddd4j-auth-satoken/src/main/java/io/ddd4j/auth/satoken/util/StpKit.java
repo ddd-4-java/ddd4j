@@ -178,9 +178,10 @@ public class StpKit {
     }
 
     /**
-     * 获取当前会话的信息条目 ID（Long 类型）。
+     * \u83b7\u53d6\u5f53\u524d\u4f1a\u8bdd\u7684\u4fe1\u606f\u6761\u76ee ID\uff08Long \u7c7b\u578b\uff09\u3002
+     * @return \u4fe1\u606f\u6761\u76ee ID
      *
-     * @return 信息条目 ID
+     * @throws NumberFormatException \u5b57\u6bb5\u503c\u65e0\u6cd5\u8f6c\u6362\u4e3a Long \u65f6\u629b\u51fa
      */
     public static Long getInfoIdAsLong() {
         return getExtraAs(AuthConstants.FIELD_ORG_ID, FunctionKit.TO_LONG);

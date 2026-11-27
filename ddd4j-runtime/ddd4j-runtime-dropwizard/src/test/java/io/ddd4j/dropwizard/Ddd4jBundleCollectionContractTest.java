@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /** 校验三线 Bundle 对无效服务集合的共同构造契约。 */
 class Ddd4jBundleCollectionContractTest {
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>NullPointerException.class</code>\u3002 */
     @Test
     void constructorRejectsNullElementsInServiceCollections() {
         assertThrows(NullPointerException.class, () -> new Ddd4jBundle<>(

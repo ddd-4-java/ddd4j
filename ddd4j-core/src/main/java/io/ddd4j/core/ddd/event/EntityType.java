@@ -21,5 +21,9 @@ import java.io.Serializable;
  * 实体类型的稳定标识。
  */
 public interface EntityType extends Serializable {
+    /**
+     * \u8fd4\u56de\u53ef\u7528\u4e8e\u65e5\u5fd7\u3001\u5e8f\u5217\u5316\u548c\u7c7b\u578b\u5316\u6807\u8bc6\u7684\u6587\u672c\u3002
+     * @return \u5b9e\u4f53\u7c7b\u578b\u6587\u672c
+     */
     String asString();
 }

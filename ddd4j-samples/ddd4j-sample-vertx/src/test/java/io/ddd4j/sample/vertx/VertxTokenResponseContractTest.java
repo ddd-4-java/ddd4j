@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /** 三线 Vert.x 令牌响应值对象契约。 */
 class VertxTokenResponseContractTest {
 
+    /** \u9a8c\u8bc1<code>response.getToken()</code> \u7b49\u4e8e <code>"token-1"</code>\uff0c<code>response.token()</code> \u7b49\u4e8e <code>response.getToken()</code>\uff0c<code>response.toString().contains("token=token-1")</code>\u4e3a\u771f\u3002 */
     @Test
     void tokenResponseKeepsBeanAndComponentAccessors() {
         TokenResponse response = new TokenResponse("token-1");
@@ -30,6 +31,7 @@ class VertxTokenResponseContractTest {
         assertTrue(response.toString().contains("token=token-1"));
     }
 
+    /** \u9a8c\u8bc1<code>Json.decodeValue(json, TokenResponse.class)</code> \u7b49\u4e8e <code>response</code>\u3002 */
     @Test
     void tokenResponseRoundTripsUsingOnlyTheTokenField() {
         TokenResponse response = new TokenResponse("token-1");

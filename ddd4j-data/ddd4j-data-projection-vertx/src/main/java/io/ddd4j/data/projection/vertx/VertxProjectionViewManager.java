@@ -48,16 +48,27 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class VertxProjectionViewManager implements ViewManager {
 
+    /** 注册任务和取消任务所用的视图调度器。 */
     private final ViewScheduler scheduler;
 
+    /** 实际执行投影更新的运行器。 */
     private final ProjectionRunner<?> runner;
 
+    /** 已发现并参加调度的投影视图。 */
     private final Collection<ProjectionView<?>> views;
 
+    /** 以视图名称索引的当前调度任务句柄。 */
     private final Map<String, ViewScheduler.ViewScheduleHandle> handles = new ConcurrentHashMap<>();
 
+    /** 视图管理器是否已启动。 */
     private volatile boolean running = false;
 
+    /**
+     * \u501f\u7528\u5916\u90e8\u8c03\u5ea6\u5668\uff0c\u5173\u95ed\u65f6\u4e0d\u5173\u95ed\u5176\u8d44\u6e90\u3002
+     * @param scheduler \u5916\u90e8\u8c03\u5ea6\u5668
+     * @param runner \u5171\u4eab\u6267\u884c\u5668
+     * @param views \u89c6\u56fe\u5feb\u7167
+     */
     private VertxProjectionViewManager(ViewScheduler scheduler,
                                        ProjectionRunner<?> runner,
                                        Collection<ProjectionView<?>> views) {
@@ -110,6 +121,7 @@ public class VertxProjectionViewManager implements ViewManager {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void stop() {
         if (running) {
@@ -119,11 +131,13 @@ public class VertxProjectionViewManager implements ViewManager {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isRunning() {
         return running;
     }
 
+    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("unchecked")
     public void triggerOnce() {
@@ -134,6 +148,11 @@ public class VertxProjectionViewManager implements ViewManager {
         }
     }
 
+    /**
+     * 将本次调度触发的视图交给投影运行器执行。
+     *
+     * @param view 本次要执行投影更新的视图
+     */
     @SuppressWarnings("unchecked")
     private void runView(ProjectionView<?> view) {
         ((ProjectionRunner<Object>) runner).runOnce((ProjectionView<Object>) view);

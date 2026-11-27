@@ -47,11 +47,17 @@ import java.util.function.Consumer;
 @Slf4j(topic = "### DDD4J-MQ : PulsarMQClient ###")
 public class PulsarMQClient implements MQClient {
 
+    /** \u5f53\u524d\u6d88\u606f\u4ee3\u7406\u5ba2\u6237\u7aef\u4f7f\u7528\u7684\u8fde\u63a5\u548c\u8ba2\u9605\u914d\u7f6e\u3002 */
     private final PulsarProperties properties;
+    /** \u5f53\u524d\u9002\u914d\u5668\u5df2\u5efa\u7acb\u7684\u539f\u751f\u6d88\u8d39\u8005\u3002 */
     private final List<org.apache.pulsar.client.api.Consumer<?>> consumers = new CopyOnWriteArrayList<>();
+    /** \u6309\u4e3b\u9898\u7ba1\u7406\u7684 Pulsar \u539f\u751f\u751f\u4ea7\u8005\u3002 */
     private final ConcurrentMap<String, Producer<byte[]>> producers = new ConcurrentHashMap<>();
+    /** \u534f\u8c03\u6d88\u606f\u5ba2\u6237\u7aef\u542f\u52a8\u3001\u521d\u59cb\u5316\u548c\u5173\u95ed\u7684\u751f\u547d\u5468\u671f\u3002 */
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    /** \u7ec4\u4ef6\u7684\u542f\u52a8\u72b6\u6001\u548c\u542f\u52a8\u5931\u8d25\u8bca\u65ad\u4fe1\u606f\u3002 */
     private final MQStartupStatus startupStatus = new MQStartupStatus("pulsar");
+    /** \u5efa\u7acb Pulsar \u751f\u4ea7\u8005\u548c\u6d88\u8d39\u8005\u7684\u539f\u751f\u5ba2\u6237\u7aef\u3002 */
     private PulsarClient client;
 
     /**
@@ -76,12 +82,20 @@ public class PulsarMQClient implements MQClient {
         this.properties = Objects.requireNonNull(properties, "properties");
     }
 
+    /**
+     * \u5c06\u539f\u751f Pulsar \u6d88\u606f\u6807\u8bc6\u8f6c\u6362\u4e3a\u6587\u672c\u3002
+     * @param id \u539f\u751f\u4ee3\u7406\u63d0\u4f9b\u7684\u6d88\u606f\u6807\u8bc6
+     * @return \u6d88\u606f\u6807\u8bc6\u6587\u672c\uff0c\u539f\u751f\u503c\u4e3a\u7a7a\u65f6\u8fd4\u56de\u7a7a
+     */
     private static String messageIdString(MessageId id) {
         return Objects.isNull(id) ? null : id.toString();
     }
 
     /**
-     * 优先读取 ddd4j 标准消息 ID，兼容旧键，最后回退到 Pulsar 投递 ID。
+     * \u4f18\u5148\u8bfb\u53d6 ddd4j \u6807\u51c6\u6d88\u606f ID\uff0c\u517c\u5bb9\u65e7\u952e\uff0c\u6700\u540e\u56de\u9000\u5230 Pulsar \u6295\u9012 ID\u3002
+     *
+     * @param message \u6536\u5230\u7684\u539f\u751f Pulsar \u6d88\u606f
+     * @return \u7528\u4e8e\u6d88\u8d39\u786e\u8ba4\u6216\u65e5\u5fd7\u8bb0\u5f55\u7684\u6d88\u606f\u6807\u8bc6
      */
     static String messageId(Message<?> message) {
         String messageId = message.getProperty(MessageHeaders.HEADER_MESSAGE_ID);
@@ -91,6 +105,10 @@ public class PulsarMQClient implements MQClient {
         return Objects.nonNull(messageId) ? messageId : messageIdString(message.getMessageId());
     }
 
+    /**
+     * \u5173\u95ed\u539f\u751f\u6d88\u8d39\u8005\uff0c\u5e76\u5904\u7406\u539f\u751f\u5ba2\u6237\u7aef\u629b\u51fa\u7684\u5f02\u5e38\u3002
+     * @param consumer \u672c\u6b21\u64cd\u4f5c\u6d89\u53ca\u7684\u539f\u751f\u6d88\u8d39\u8005
+     */
     private static void closeConsumer(org.apache.pulsar.client.api.Consumer<?> consumer) {
         try {
             consumer.close();
@@ -99,6 +117,10 @@ public class PulsarMQClient implements MQClient {
         }
     }
 
+    /**
+     * \u5173\u95ed\u539f\u751f\u751f\u4ea7\u8005\uff0c\u5e76\u5904\u7406\u539f\u751f\u5ba2\u6237\u7aef\u629b\u51fa\u7684\u5f02\u5e38\u3002
+     * @param producer \u672c\u6b21\u64cd\u4f5c\u6d89\u53ca\u7684\u539f\u751f\u751f\u4ea7\u8005
+     */
     private static void closeProducer(Producer<byte[]> producer) {
         try {
             producer.flush();
@@ -108,6 +130,10 @@ public class PulsarMQClient implements MQClient {
         }
     }
 
+    /**
+     * \u5173\u95ed Pulsar \u5ba2\u6237\u7aef\uff0c\u5e76\u5904\u7406\u539f\u751f\u5ba2\u6237\u7aef\u629b\u51fa\u7684\u5f02\u5e38\u3002
+     * @param client \u5efa\u7acb Pulsar \u751f\u4ea7\u8005\u548c\u6d88\u8d39\u8005\u7684\u539f\u751f\u5ba2\u6237\u7aef
+     */
     private static void closePulsarClient(PulsarClient client) {
         try {
             client.close();
@@ -118,11 +144,13 @@ public class PulsarMQClient implements MQClient {
 
     // ========================= 生产者 =========================
 
+    /** {@inheritDoc} */
     @Override
     public String impl() {
         return "pulsar";
     }
 
+    /** {@inheritDoc} */
     @Override
     public MQClientLifecycle lifecycle() {
         return lifecycle;
@@ -130,25 +158,29 @@ public class PulsarMQClient implements MQClient {
 
     // ========================= 消费者 =========================
 
+    /** {@inheritDoc} */
     @Override
     public MQStartupStatus startupStatus() {
         return startupStatus;
     }
 
     /**
-     * 仿照 {@code KafkaMQClient}：根据 {@link io.ddd4j.mq.MQProperties#getPartitionKeyStrategy()}
-     * 计算 Pulsar 消息 routing key，保证同 key 进同 partition（顺序投递）。
+     * \u4eff\u7167 {@code KafkaMQClient}\uff1a\u6839\u636e {@link io.ddd4j.mq.MQProperties#getPartitionKeyStrategy()}
+     *  \u8ba1\u7b97 Pulsar \u6d88\u606f routing key\uff0c\u4fdd\u8bc1\u540c key \u8fdb\u540c partition\uff08\u987a\u5e8f\u6295\u9012\uff09\u3002
      *
-     * <p>Pulsar 在 {@code Key_Shared} 订阅下按此 key 做哈希路由；生产端通过
-     * {@code TypedMessageBuilder.key(...)} 写入。
+     *  <p>Pulsar \u5728 {@code Key_Shared} \u8ba2\u9605\u4e0b\u6309\u6b64 key \u505a\u54c8\u5e0c\u8def\u7531\uff1b\u751f\u4ea7\u7aef\u901a\u8fc7
+     *  {@code TypedMessageBuilder.key(...)} \u5199\u5165\u3002
      *
-     * <ul>
-     *   <li>NONE → {@code null}（轮询，无顺序保证）</li>
-     *   <li>TAG → event.tag</li>
-     *   <li>TENANT → event.tenantId</li>
-     *   <li>TAG_TENANT → 复用父类 {@code tag|tenant} 复合 key（默认）</li>
-     *   <li>CUSTOM → 父类默认（占位：子类自行覆写）</li>
-     * </ul>
+     *  <ul>
+     *    <li>NONE \u2192 {@code null}\uff08\u8f6e\u8be2\uff0c\u65e0\u987a\u5e8f\u4fdd\u8bc1\uff09</li>
+     *    <li>TAG \u2192 event.tag</li>
+     *    <li>TENANT \u2192 event.tenantId</li>
+     *    <li>TAG_TENANT \u2192 \u590d\u7528\u7236\u7c7b {@code tag|tenant} \u590d\u5408 key\uff08\u9ed8\u8ba4\uff09</li>
+     *    <li>CUSTOM \u2192 \u7236\u7c7b\u9ed8\u8ba4\uff08\u5360\u4f4d\uff1a\u5b50\u7c7b\u81ea\u884c\u8986\u5199\uff09</li>
+     *  </ul>
+     *
+     * @param event \u51b3\u5b9a\u6d88\u606f\u8def\u7531\u7684\u53d1\u5e03\u4e8b\u4ef6
+     * @return \u7528\u4e8e Pulsar \u6d88\u606f\u8def\u7531\u7684\u952e
      */
     @Override
     public String partitionKey(MQEvent event) {
@@ -169,6 +201,7 @@ public class PulsarMQClient implements MQClient {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         try {
@@ -215,6 +248,12 @@ public class PulsarMQClient implements MQClient {
 
     // ========================= 关闭 =========================
 
+    /**
+     * \u67e5\u627e\u6307\u5b9a\u4e3b\u9898\u7684\u539f\u751f Pulsar \u751f\u4ea7\u8005\uff0c\u7f3a\u5c11\u65f6\u521b\u5efa\u3002
+     * @param topic \u8981\u53d1\u5e03\u3001\u8ba2\u9605\u6216\u53d6\u6d88\u8ba2\u9605\u7684\u4ee3\u7406\u4e3b\u9898
+     * @return \u53ef\u5411\u6307\u5b9a\u4e3b\u9898\u53d1\u5e03\u7684\u751f\u4ea7\u8005
+     * @throws Exception \u539f\u751f\u4ee3\u7406\u6216\u5ba2\u6237\u7aef\u64cd\u4f5c\u5931\u8d25
+     */
     private Producer<byte[]> producer(String topic) throws Exception {
         return producers.computeIfAbsent(topic, t -> {
             try {
@@ -230,6 +269,7 @@ public class PulsarMQClient implements MQClient {
         });
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         Objects.requireNonNull(listener, "listener");
@@ -298,11 +338,13 @@ public class PulsarMQClient implements MQClient {
         return true;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void start() {
         // Pulsar consumer 在 .subscribe() 时已启动
     }
 
+    /** \u91ca\u653e\u6d88\u606f\u5ba2\u6237\u7aef\u62e5\u6709\u7684\u8fd0\u884c\u8d44\u6e90\uff0c\u5e76\u5728\u9000\u51fa\u65f6\u767b\u8bb0\u7ec4\u4ef6\u5df2\u505c\u6b62\u3002 */
     @Override
     public void close() {
         try {

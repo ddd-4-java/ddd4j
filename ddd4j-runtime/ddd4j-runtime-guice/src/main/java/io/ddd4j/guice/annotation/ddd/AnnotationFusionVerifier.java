@@ -29,9 +29,14 @@ import java.util.Objects;
 @Slf4j
 public final class AnnotationFusionVerifier {
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>AnnotationFusionVerifier</code> \u5b9e\u4f8b\u3002 */
     private AnnotationFusionVerifier() {
     }
 
+    /**
+     * \u9a8c\u8bc1 Guice DDD \u6ce8\u89e3\u7684\u5143\u6ce8\u89e3\u7ec4\u5408\u3002
+     * @param args \u547d\u4ee4\u884c\u53c2\u6570\uff0c\u5f53\u524d\u672a\u4f7f\u7528
+     */
     public static void main(String[] args) {
         int passed = 0;
         int failed = 0;
@@ -91,6 +96,12 @@ public final class AnnotationFusionVerifier {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1 DDD \u6ce8\u89e3\u53ca\u5f53\u524d\u6846\u67b6\u9700\u8981\u7684\u5143\u6ce8\u89e3\u3002
+     * @param name \u7528\u4e8e\u8bca\u65ad\u7684\u6ce8\u89e3\u540d\u79f0
+     * @param dddAnnotation \u5f85\u9a8c\u8bc1\u7684 DDD \u6ce8\u89e3\u7c7b\u578b
+     * @return \u6821\u9a8c\u901a\u8fc7\u8fd4\u56de 1\uff0c\u5931\u8d25\u8fd4\u56de 0
+     */
     private static int verify(
             String name,
             Class<? extends java.lang.annotation.Annotation> dddAnnotation) {
@@ -111,8 +122,13 @@ public final class AnnotationFusionVerifier {
 
 }
 
+/** \u63d0\u4f9b\u5e26\u9886\u57df\u670d\u52a1\u6ce8\u89e3\u7684\u793a\u4f8b Bean\uff0c\u7528\u4e8e\u9a8c\u8bc1\u6ce8\u89e3\u6574\u5408\u3002 */
 @DomainService
 class BusinessDomainService {
+    /**
+     * \u8fd4\u56de\u6ce8\u89e3\u878d\u5408\u6d4b\u8bd5\u4f7f\u7528\u7684\u670d\u52a1\u63a2\u9488\u7ed3\u679c\u3002
+     * @return \u56fa\u5b9a\u7684\u63a2\u9488\u6587\u672c
+     */
     public String hello() {
         return "hello";
     }

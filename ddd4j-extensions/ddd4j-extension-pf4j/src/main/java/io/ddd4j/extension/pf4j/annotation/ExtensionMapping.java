@@ -25,12 +25,16 @@ import java.lang.annotation.*;
 @Inherited
 public @interface ExtensionMapping {
 
+    /** @return \u6269\u5c55\u70b9\u6807\u8bc6 */
     public String id() default "";
 
+    /** @return \u6269\u5c55\u70b9\u6807\u9898 */
     public String title() default "";
 
+    /** @return \u6269\u5c55\u70b9\u7248\u672c */
     public String ver() default "1.0.0";
 
+    /** @return \u6269\u5c55\u70b9\u63cf\u8ff0 */
     public String desc() default "";
 
 }

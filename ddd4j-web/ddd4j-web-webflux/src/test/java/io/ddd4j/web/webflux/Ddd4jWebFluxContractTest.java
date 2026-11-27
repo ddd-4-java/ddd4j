@@ -65,10 +65,16 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/** \u9a8c\u8bc1 <code>Ddd4jWebFluxContract</code> \u5728 <code>shouldWriteCustomHttpStatus</code>\u3001<code>shouldReleaseIdempotencyLease</code> \u7b49\u573a\u666f\u4e2d\u7684\u884c\u4e3a\u3002 */
 class Ddd4jWebFluxContractTest {
 
+    /** \u4e3a\u6d4b\u8bd5\u6536\u96c6 OpenTelemetry \u8ddf\u8e2a\u4fe1\u606f\u7684\u63d0\u4f9b\u5668\u3002 */
     private SdkTracerProvider tracerProvider;
 
+    /**
+     * \u8c03\u7528 <code>GlobalOpenTelemetry.resetForTest()</code>\u3001<code>Class.forName()</code>\u3001<code>ddd4jOtel.getDeclaredField()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @throws Exception \u53cd\u5c04\u8bbf\u95ee\u88ab\u6d4b\u6210\u5458\u65f6\u5931\u8d25
+     */
     private static void resetOpenTelemetry() throws Exception {
         GlobalOpenTelemetry.resetForTest();
         Class<?> ddd4jOtel = Class.forName("io.ddd4j.extension.otel.Ddd4jOtel");
@@ -82,6 +88,10 @@ class Ddd4jWebFluxContractTest {
         available.setBoolean(null, false);
     }
 
+    /**
+     * \u6d4b\u8bd5\u6267\u884c\u524d\u6267\u884c <code>resetOpenTelemetry()</code>\u3001<code>SdkTracerProvider.builder()</code>\u3001<code>OpenTelemetrySdk.builder()</code>\u3001<code>ContextPropagators.create()</code> \u5b8c\u6210\u8d44\u6e90\u51c6\u5907\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @BeforeEach
     void setUpOpenTelemetry() throws Exception {
         resetOpenTelemetry();
@@ -92,6 +102,10 @@ class Ddd4jWebFluxContractTest {
                 .buildAndRegisterGlobal();
     }
 
+    /**
+     * \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>tracerProvider.close()</code>\u3001<code>resetOpenTelemetry()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @AfterEach
     void tearDownOpenTelemetry() throws Exception {
         if (tracerProvider != null) {
@@ -100,6 +114,7 @@ class Ddd4jWebFluxContractTest {
         resetOpenTelemetry();
     }
 
+    /** \u9a8c\u8bc1<code>requestContext</code>\u975e\u7a7a\uff0c<code>requestContext.tenantId()</code> \u7b49\u4e8e <code>"tenant-a"</code>\uff0c<code>exchange.getResponse().getHeaders().getFirst(WebHeaders.REQUEST_ID)</code> \u7b49\u4e8e <code>requestContext.requestId()</code>\u3002 */
     @Test
     void shouldPropagateRequestThroughReactorContext() {
         Ddd4jWebFluxFilter filter = new Ddd4jWebFluxFilter(new BearerSubjectAuthenticator(),
@@ -117,6 +132,7 @@ class Ddd4jWebFluxContractTest {
         assertEquals(requestContext.requestId(), exchange.getResponse().getHeaders().getFirst(WebHeaders.REQUEST_ID));
     }
 
+    /** \u9a8c\u8bc1<code>exchange.getResponse().getStatusCode()</code> \u7b49\u4e8e <code>HttpStatus.BAD_REQUEST</code>\uff0c<code>body</code>\u975e\u7a7a\uff0c<code>body.contains("400")</code>\u4e3a\u771f\u3002 */
     @Test
     void shouldUseTranslatedHttpStatusAndResponseBody() {
         GlobalErrorWebExceptionHandler handler = new GlobalErrorWebExceptionHandler(new GlobalErrorAttributes(),
@@ -132,6 +148,7 @@ class Ddd4jWebFluxContractTest {
         assertTrue(body.contains("400"));
     }
 
+    /** 验证<code>body</code>非空，<code>body.contains("599")</code>为真，<code>body.contains("custom status")</code>为真。 */
     @Test
     void shouldWriteCustomHttpStatusWithoutLosingErrorBody() {
         GlobalErrorWebExceptionHandler handler = new GlobalErrorWebExceptionHandler(new GlobalErrorAttributes(),
@@ -146,6 +163,10 @@ class Ddd4jWebFluxContractTest {
         assertTrue(body.contains("custom status"));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>headers.get("traceparent")</code> \u7b49\u4e8e <code>"00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01"</code>\uff0c<code>headers.get("X-Multi")</code> \u7b49\u4e8e <code>"first"</code>\u3002
+     * @throws Exception \u53cd\u5c04\u8bbf\u95ee\u88ab\u6d4b\u6210\u5458\u65f6\u5931\u8d25
+     */
     @Test
     @SuppressWarnings("unchecked")
     void shouldExtractRequestHeadersForTracePropagation() throws Exception {
@@ -163,6 +184,7 @@ class Ddd4jWebFluxContractTest {
         assertEquals("first", headers.get("X-Multi"));
     }
 
+    /** \u9a8c\u8bc1<code>Ddd4jOtel.isAvailable()</code>\u4e3a\u771f\uff0c<code>assemblyThreadLeaked</code>\u4e3a\u5047\uff0c<code>Span.current().getSpanContext().isValid()</code>\u4e3a\u5047\u3002 */
     @Test
     void shouldActivateServerSpanOnlyAtWebFluxChainBoundary() {
         assertTrue(Ddd4jOtel.isAvailable());
@@ -184,6 +206,10 @@ class Ddd4jWebFluxContractTest {
         assertTrue(chainObservedValidSpan.get());
         assertFalse(Span.current().getSpanContext().isValid());
     }
+    /**
+     * \u9a8c\u8bc1<code>firstContext.get()</code>\u975e\u7a7a\uff0c<code>firstContext.get().tenantId()</code> \u7b49\u4e8e <code>"tenant-a"</code>\uff0c<code>Ddd4jWebFluxContext.currentSubject().block()</code>\u4e3a\u7a7a\u3002
+     * @throws InterruptedException \u7b49\u5f85\u6d4b\u8bd5\u64cd\u4f5c\u65f6\u88ab\u4e2d\u65ad
+     */
     @Test
     void shouldReleaseIdempotencyLeaseAndRequestContextOnCancellation() throws InterruptedException {
         AtomicInteger completed = new AtomicInteger();
@@ -235,6 +261,10 @@ class Ddd4jWebFluxContractTest {
         assertNull(Ddd4jWebFluxContext.currentSubject().block());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>acquiring.await(3, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>acquired.await(3, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>released.await(3, TimeUnit.SECONDS)</code>\u4e3a\u771f\u3002
+     * @throws InterruptedException \u7b49\u5f85\u6d4b\u8bd5\u64cd\u4f5c\u65f6\u88ab\u4e2d\u65ad
+     */
     @Test
     void shouldReleaseIdempotencyLeaseWhenCancelledDuringAcquisition() throws InterruptedException {
         CountDownLatch acquiring = new CountDownLatch(1);
@@ -286,6 +316,7 @@ class Ddd4jWebFluxContractTest {
     }
 
 
+    /** \u9a8c\u8bc1<code>captured.get()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>subject</code>\uff0c<code>anonymousHasSubject.get()</code>\u4e3a\u5047\uff0c<code>Ddd4jWebFluxContext.currentSubject().block()</code>\u4e3a\u7a7a\u3002 */
     @Test
     void shouldClearAuthenticatedSubjectAfterCancellationAndRejectMissingBearer() {
         Subject subject = mock(Subject.class);

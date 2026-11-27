@@ -101,6 +101,11 @@ public abstract class SpringDomainEvent<T> extends ApplicationEvent {
         return (T) super.getSource();
     }
 
+    /**
+     * \u83b7\u53d6\u4e8b\u4ef6\u5904\u7406\u7ed3\u679c\u3002
+     * @param <R> \u7ed3\u679c\u7c7b\u578b
+     * @return \u5df2\u8bb0\u5f55\u7684\u5904\u7406\u7ed3\u679c
+     */
     @SuppressWarnings("unchecked")
     public <R> R result() {
         return (R) this.result;

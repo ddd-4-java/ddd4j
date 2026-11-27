@@ -30,22 +30,41 @@ import java.util.*;
  */
 public class LettuceRedisStreamOperations implements RedisStreamOperations {
 
+    /** \u5f53\u524d Lettuce \u8fde\u63a5\u63d0\u4f9b\u7684\u540c\u6b65 Redis \u547d\u4ee4\u5165\u53e3\u3002 */
     private final RedisCommands<String, String> commands;
+    /** \u5f53\u524d\u64cd\u4f5c\u7ec4\u4ef6\u9000\u51fa\u65f6\u5e94\u5173\u95ed\u7684\u539f\u751f\u8d44\u6e90\u3002 */
     private final AutoCloseable closeTarget;
+    /** \u5f53\u524d Redis \u64cd\u4f5c\u7ed1\u5b9a\u7684\u539f\u751f\u5ba2\u6237\u7aef\u6216\u8fde\u63a5\u3002 */
     private final Object nativeClient;
 
+    /**
+     * \u4ece Redis \u5730\u5740\u521b\u5efa Lettuce Stream \u64cd\u4f5c\u9002\u914d\u5668\u3002
+     * @param redisUrl Redis \u8fde\u63a5\u5730\u5740
+     */
     public LettuceRedisStreamOperations(String redisUrl) {
         this(createClient(redisUrl));
     }
 
+    /**
+     * \u590d\u7528\u5df2\u6709 Lettuce \u540c\u6b65\u547d\u4ee4\u63a5\u53e3\u3002
+     * @param commands Lettuce \u540c\u6b65\u547d\u4ee4\u63a5\u53e3
+     */
     public LettuceRedisStreamOperations(RedisCommands<String, String> commands) {
         this(commands, null, commands);
     }
 
+    /**
+     * \u590d\u7528\u5df2\u6709 Lettuce \u8fde\u63a5\u3002
+     * @param connection Lettuce \u8fde\u63a5
+     */
     public LettuceRedisStreamOperations(StatefulRedisConnection<String, String> connection) {
         this(connection.sync(), connection, connection);
     }
 
+    /**
+     * \u88c5\u914d\u64cd\u4f5c Redis Stream \u65f6\u4f7f\u7528\u7684 Lettuce \u8d44\u6e90\u53ca\u6240\u6709\u6743\u3002
+     * @param client \u5f53\u524d\u4f7f\u7528\u7684\u539f\u751f\u4ee3\u7406\u6216 Redis \u5ba2\u6237\u7aef
+     */
     private LettuceRedisStreamOperations(RedisClient client) {
         StatefulRedisConnection<String, String> connection = client.connect();
         this.commands = connection.sync();
@@ -56,6 +75,12 @@ public class LettuceRedisStreamOperations implements RedisStreamOperations {
         this.nativeClient = client;
     }
 
+    /**
+     * \u88c5\u914d\u64cd\u4f5c Redis Stream \u65f6\u4f7f\u7528\u7684 Lettuce \u8d44\u6e90\u53ca\u6240\u6709\u6743\u3002
+     * @param commands \u5f53\u524d Lettuce \u8fde\u63a5\u4e0a\u7684\u540c\u6b65\u547d\u4ee4\u5165\u53e3
+     * @param closeTarget \u5173\u95ed\u5f53\u524d\u64cd\u4f5c\u5bf9\u8c61\u65f6\u5e94\u91ca\u653e\u7684\u8d44\u6e90
+     * @param nativeClient \u4f9b\u8c03\u7528\u8005\u8bc6\u522b\u6216\u590d\u7528\u7684\u539f\u751f\u5ba2\u6237\u7aef\u5bf9\u8c61
+     */
     private LettuceRedisStreamOperations(
             RedisCommands<String, String> commands,
             AutoCloseable closeTarget,
@@ -65,15 +90,22 @@ public class LettuceRedisStreamOperations implements RedisStreamOperations {
         this.nativeClient = Objects.isNull(nativeClient) ? commands : nativeClient;
     }
 
+    /**
+     * \u6309\u7ed9\u5b9a\u5730\u5740\u521b\u5efa\u5f53\u524d\u9002\u914d\u5668\u4f7f\u7528\u7684 Redis \u5ba2\u6237\u7aef\u3002
+     * @param redisUrl Redis \u8fde\u63a5\u5730\u5740
+     * @return \u65b0\u5efa\u7684\u539f\u751f Redis \u5ba2\u6237\u7aef
+     */
     private static RedisClient createClient(String redisUrl) {
         return RedisClient.create(redisUrl);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String add(String stream, Map<String, String> fields) {
         return commands.xadd(stream, new XAddArgs().id("*"), fields);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void createGroup(String stream, String group) {
         try {
@@ -88,6 +120,7 @@ public class LettuceRedisStreamOperations implements RedisStreamOperations {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("unchecked")
     public Map<String, List<RedisStreamRecord>> readGroup(
@@ -112,16 +145,19 @@ public class LettuceRedisStreamOperations implements RedisStreamOperations {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void ack(String stream, String group, String entryId) {
         commands.xack(stream, group, entryId);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Object nativeClient() {
         return nativeClient;
     }
 
+    /** \u5173\u95ed\u5f53\u524d\u5b9e\u4f8b\u6301\u6709\u7684 Lettuce \u8d44\u6e90\uff0c\u501f\u7528\u72b6\u6001\u4e0b\u65e0\u9700\u6e05\u7406\u3002 */
     @Override
     public void close() {
         if (Objects.isNull(closeTarget)) {

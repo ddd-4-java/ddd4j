@@ -45,10 +45,14 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  */
 class R2dbcEventStorePostgresIT {
 
+    /** \u6d4b\u8bd5\u4e8b\u4ef6\u6d41\u4e2d\u4f7f\u7528\u7684\u805a\u5408\u7c7b\u578b\u540d\u79f0\u3002 */
     private static final String ORDER_TYPE = "Order";
+    /** \u4e3a\u53d7\u6d4b R2DBC \u7ec4\u4ef6\u63d0\u4f9b\u6570\u636e\u5e93\u8fde\u63a5\u7684\u5de5\u5382\u3002 */
     private ConnectionFactory connectionFactory;
+    /** \u8bfb\u53d6\u53ca\u8ffd\u52a0\u9886\u57df\u4e8b\u4ef6\u7684\u4e8b\u4ef6\u5b58\u50a8\u3002 */
     private EventStore eventStore;
 
+    /** 验证<code>PostgresEventStoreContainerSupport.POSTGRES.isRunning()</code>为真。 */
     @BeforeAll
     static void ensureContainerStarted() {
         // 进程级单例夹具：Docker 不可用则整组跳过
@@ -58,11 +62,13 @@ class R2dbcEventStorePostgresIT {
                 + PostgresEventStoreContainerSupport.POSTGRES.getDockerImageName());
     }
 
+    /** 执行 <code>note Singleton Lifecycle</code> 对应的处理。 */
     @AfterAll
     static void noteSingletonLifecycle() {
         // 进程级单例容器不在此关闭：同一 JVM 内可能还有其它 IT 复用（JVM 退出时由 Ryuk 回收）
     }
 
+    /** \u6d4b\u8bd5\u524d\u4f9d\u6b21\u6ce8\u518c<code>EntityIdRegistry</code>\u3002 */
     @BeforeEach
     void setUp() {
         PostgreSQLContainer<?> postgres = PostgresEventStoreContainerSupport.POSTGRES;
@@ -79,6 +85,7 @@ class R2dbcEventStorePostgresIT {
         eventStore = new R2dbcEventStore(connectionFactory);
     }
 
+    /** \u6d4b\u8bd5\u540e\u4f9d\u6b21\u6ce8\u9500<code>EntityIdRegistry</code>\u3001\u5173\u95ed<code>connection</code>\u3002 */
     @AfterEach
     void tearDown() {
         EntityIdRegistry.unregister(TestAggregateRootId.TYPE_NAME);
@@ -89,6 +96,7 @@ class R2dbcEventStorePostgresIT {
         }
     }
 
+    /** \u9a8c\u8bc1<code>events</code> \u7684\u5927\u5c0f\u4e3a <code>1</code>\uff0c<code>events.get(0).aggregateType()</code> \u7b49\u4e8e <code>ORDER_TYPE</code>\uff0c<code>events.get(0).eventId()</code> \u7b49\u4e8e <code>event.getEventId()</code>\u3002 */
     @Test
     void appendAndReadShouldRoundTripTypedMetadataOnPostgres() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-pg-1");
@@ -105,6 +113,7 @@ class R2dbcEventStorePostgresIT {
         System.out.println("R2DBC_PG_IT_ROUNDTRIP=events:" + events.size());
     }
 
+    /** \u9a8c\u8bc1<code>eventStore.read("Invoice", orderId)</code> \u7684\u5927\u5c0f\u4e3a <code>1</code>\u3002 */
     @Test
     void versionRangeAndAggregateTypeIsolationShouldFollowCoreContractOnPostgres() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-pg-shared");
@@ -120,6 +129,7 @@ class R2dbcEventStorePostgresIT {
         System.out.println("R2DBC_PG_IT_RANGE_AND_ISOLATION=ok");
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>eventStore.append()</code>\u3001<code>eventStore.readAll()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void readAllShouldPreserveGlobalPositionOrderOnPostgres() {
         eventStore.append(ORDER_TYPE, new TestAggregateRootId("order-pg-a"),
@@ -132,6 +142,7 @@ class R2dbcEventStorePostgresIT {
         System.out.println("R2DBC_PG_IT_GLOBAL_ORDER=positions:1,2");
     }
 
+    /** \u9a8c\u8bc1<code>eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId)), 0L)</code> \u629b\u51fa <code>AggregateVersionConflictException.class</code>\uff0c<code>conflict.expectedVersion()</code> \u7b49\u4e8e <code>0L</code>\uff0c<code>eventStore.read(ORDER_TYPE, orderId)</code> \u7684\u5927\u5c0f\u4e3a <code>1</code>\u3002 */
     @Test
     void appendWithStaleVersionShouldRejectOnPostgres() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-pg-conflict");
@@ -153,29 +164,45 @@ class R2dbcEventStorePostgresIT {
      * 测试聚合根标识（进程内注册 EntityIdRegistry 供 payload 反序列化）。
      */
     static final class TestAggregateRootId implements AggregateRootId {
+        /** 保存 <code>"R2dbcPgOrder"</code>，供 <code>TestAggregateRootId</code> 的处理流程复用。 */
         private static final String TYPE_NAME = "R2dbcPgOrder";
+        /** \u6d4b\u8bd5\u805a\u5408\u6ce8\u518c\u548c\u53cd\u5e8f\u5217\u5316\u6240\u7528\u7684\u5b9e\u4f53\u7c7b\u578b\u6807\u8bc6\u3002 */
         private static final EntityType TYPE = new StringEntityType(TYPE_NAME);
+        /** \u7528\u4e8e\u7ec4\u6210\u6d4b\u8bd5\u6807\u8bc6\u7684\u539f\u59cb\u503c\u3002 */
         private final String value;
 
+        /**
+         * \u4ee5\u7ed9\u5b9a\u72b6\u6001\u6784\u9020 <code>TestAggregateRootId</code> \u6d4b\u8bd5\u5bf9\u8c61\u3002
+         * @param value \u7528\u4e8e\u7ec4\u6210\u6d4b\u8bd5\u6807\u8bc6\u7684\u539f\u59cb\u503c
+         */
         TestAggregateRootId(String value) {
             this.value = value;
         }
 
+        /** {@inheritDoc} */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
+        /** {@inheritDoc} */
         @Override
         public String asString() {
             return value;
         }
 
+        /** {@inheritDoc} */
         @Override
         public String asTypedString() {
             return TYPE_NAME + ":" + value;
         }
 
+        /**
+         * 执行 <code>equals</code>，调用 <code>value.equals</code>。
+         *
+         * @param object 传入此操作的 <code>Object</code> 类型 <code>object</code>
+         * @return 按条件返回 <code>false</code>、<code>value.equals(other.value)</code>
+         */
         @Override
         public boolean equals(Object object) {
             if (!(object instanceof TestAggregateRootId)) {
@@ -185,6 +212,7 @@ class R2dbcEventStorePostgresIT {
             return value.equals(other.value);
         }
 
+        /** {@inheritDoc} */
         @Override
         public int hashCode() {
             return value.hashCode();
@@ -195,10 +223,15 @@ class R2dbcEventStorePostgresIT {
      * 业务事件样例：无参构造 + Jackson payload 序列化约定。
      */
     static final class OrderCreatedEvent extends DomainEvent<TestAggregateRootId> {
+        /** \u4f7f\u7528 <code>super()</code> \u521d\u59cb\u5316 <code>OrderCreatedEvent</code> \u6d4b\u8bd5\u5939\u5177\u3002 */
         OrderCreatedEvent() {
             super();
         }
 
+        /**
+         * \u4f7f\u7528 <code>super()</code> \u521d\u59cb\u5316 <code>OrderCreatedEvent</code> \u6d4b\u8bd5\u5939\u5177\u3002
+         * @param orderId \u6d4b\u8bd5\u4e2d\u8981\u5b9a\u4f4d\u7684\u8ba2\u5355\u6807\u8bc6
+         */
         OrderCreatedEvent(TestAggregateRootId orderId) {
             super(new EntityIdPath(orderId));
         }

@@ -47,11 +47,17 @@ class QuartzViewScheduleHandle implements ViewScheduler.ViewScheduleHandle {
      */
     private final AtomicBoolean active = new AtomicBoolean(true);
 
+    /**
+     * \u7528\u7ed9\u5b9a\u503c\u521d\u59cb\u5316 <code>QuartzViewScheduleHandle</code> \u5b9e\u4f8b\u3002
+     * @param scheduler Quartz \u8c03\u5ea6\u5668
+     * @param identity \u8c03\u5ea6\u6807\u8bc6
+     */
     QuartzViewScheduleHandle(Scheduler scheduler, String identity) {
         this.scheduler = scheduler;
         this.identity = identity;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void cancel() {
         if (active.compareAndSet(true, false)) {
@@ -65,6 +71,7 @@ class QuartzViewScheduleHandle implements ViewScheduler.ViewScheduleHandle {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isActive() {
         return active.get();

@@ -13,14 +13,24 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+/** \u901a\u8fc7 <code>mapper.readValue()</code>\u3001<code>request.userId()</code>\u3001<code>request.username()</code> \u9a8c\u8bc1 <code>AuthorizationRequestContract</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
 class AuthorizationRequestContractTest {
 
+    /**
+     * \u8c03\u7528 <code>constructed.hashCode()</code>\u3001<code>bean.hashCode()</code>\u3001<code>Modifier.isFinal()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @param bean \u4f20\u7ed9 <code>assertEquals()</code> \u7684 <code>Object</code> \u8f93\u5165
+     * @param constructed \u4f20\u7ed9 <code>assertEquals()</code> \u7684 <code>Object</code> \u8f93\u5165
+     */
     private static void valueContract(Object bean, Object constructed) {
         assertEquals(constructed, bean);
         assertEquals(constructed.hashCode(), bean.hashCode());
         assertFalse(Modifier.isFinal(bean.getClass().getModifiers()));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>request.userId()</code> \u7b49\u4e8e <code>"u1"</code>\uff0c<code>request.username()</code> \u7b49\u4e8e <code>"alice"</code>\uff0c<code>mapper.readValue(mapper.writeValueAsString(request), AuthorizationController.CreateUserRequest.class)</code> \u7b49\u4e8e <code>request</code>\u3002
+     * @throws Exception \u5904\u7406\u6d4b\u8bd5\u6570\u636e\u7684\u5e8f\u5217\u5316\u65f6\u5931\u8d25
+     */
     @Test
     void createUserRequestRetainsJsonFieldContract() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
@@ -35,6 +45,7 @@ class AuthorizationRequestContractTest {
                 AuthorizationController.CreateUserRequest.class));
     }
 
+    /** \u9a8c\u8bc1<code>create.userId()</code> \u7b49\u4e8e <code>create.getUserId()</code>\uff0c<code>create.username()</code> \u7b49\u4e8e <code>create.getUsername()</code>\uff0c<code>update.toString().contains("new-secret")</code>\u4e3a\u5047\u3002 */
     @Test
     void userRequestsRetainBeanAndComponentContracts() {
         AuthorizationController.CreateUserRequest create = new AuthorizationController.CreateUserRequest();
@@ -61,6 +72,7 @@ class AuthorizationRequestContractTest {
         assertFalse(update.toString().contains("new-secret"));
     }
 
+    /** \u9a8c\u8bc1<code>create.roleId()</code> \u7b49\u4e8e <code>create.getRoleId()</code>\uff0c<code>create.roleCode()</code> \u7b49\u4e8e <code>create.getRoleCode()</code>\uff0c<code>update.status()</code> \u7b49\u4e8e <code>update.getStatus()</code>\u3002 */
     @Test
     void roleRequestsRetainBeanAndComponentContracts() {
         AuthorizationController.CreateRoleRequest create = new AuthorizationController.CreateRoleRequest();
@@ -85,6 +97,7 @@ class AuthorizationRequestContractTest {
         valueContract(update, new AuthorizationController.UpdateRoleRequest("Admin", "manage", status));
     }
 
+    /** \u9a8c\u8bc1<code>create.permissionId()</code> \u7b49\u4e8e <code>create.getPermissionId()</code>\uff0c<code>create.permissionCode()</code> \u7b49\u4e8e <code>create.getPermissionCode()</code>\uff0c<code>update.status()</code> \u7b49\u4e8e <code>update.getStatus()</code>\u3002 */
     @Test
     void permissionRequestsRetainBeanAndComponentContracts() {
         AuthorizationController.CreatePermissionRequest create = new AuthorizationController.CreatePermissionRequest();
@@ -111,6 +124,7 @@ class AuthorizationRequestContractTest {
         valueContract(update, new AuthorizationController.UpdatePermissionRequest("Read goods", "goods", status));
     }
 
+    /** \u9a8c\u8bc1<code>roles.roleIds()</code> \u7b49\u4e8e <code>roles.getRoleIds()</code>\uff0c<code>permissions.permissionIds()</code> \u7b49\u4e8e <code>permissions.getPermissionIds()</code>\u3002 */
     @Test
     void assignmentRequestsRetainBeanAndComponentContracts() {
         AuthorizationController.AssignRolesRequest roles = new AuthorizationController.AssignRolesRequest();

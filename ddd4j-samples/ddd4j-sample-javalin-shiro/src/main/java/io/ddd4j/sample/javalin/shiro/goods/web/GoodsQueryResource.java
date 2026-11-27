@@ -36,6 +36,7 @@ import static io.javalin.apibuilder.ApiBuilder.get;
  */
 public class GoodsQueryResource {
 
+    /** \u5904\u7406\u5546\u54c1\u521b\u5efa\u3001\u7ef4\u62a4\u548c\u67e5\u8be2\u64cd\u4f5c\u7684\u5e94\u7528\u670d\u52a1\u3002 */
     private final GoodsApplicationService applicationService;
 
     /**
@@ -82,6 +83,11 @@ public class GoodsQueryResource {
         };
     }
 
+    /**
+     * \u5c06\u5206\u9875\u548c\u7b5b\u9009\u8bf7\u6c42\u5c5e\u6027\u7ed1\u5b9a\u5230\u9886\u57df\u5546\u54c1\u67e5\u8be2\u3002
+     * @param ctx \u5f53\u524d Web \u6846\u67b6\u7684\u8bf7\u6c42\u4e0a\u4e0b\u6587
+     * @return \u53ef\u7531\u4ed3\u50a8\u6267\u884c\u7684\u5546\u54c1\u67e5\u8be2
+     */
     private GoodsQuery buildQuery(io.javalin.http.Context ctx) {
         GoodsQuery query = new GoodsQuery();
         query.setCode(ctx.queryParam("code"));

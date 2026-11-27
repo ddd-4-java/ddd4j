@@ -34,6 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @UtilityClass
 public class SM4Kit {
 
+    /** \u590d\u7528\u7531\u6307\u5b9a\u5bc6\u94a5\u53ca\u521d\u59cb\u5316\u5411\u91cf\u521b\u5efa\u7684 SM4 \u8fd0\u7b97\u5bf9\u8c61\u3002 */
     private final Map<String, SM4> sm4Map = new ConcurrentHashMap<>();
 
     /**

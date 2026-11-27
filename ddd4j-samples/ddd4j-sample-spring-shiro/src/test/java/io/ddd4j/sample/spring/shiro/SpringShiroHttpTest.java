@@ -28,19 +28,26 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 /** 原生引擎通过真实 Servlet/HTTP/DI 执行鉴权；外层测试过滤器只观察，不清理上下文。 */
 @Testcontainers
 class SpringShiroHttpTest {
+    /** \u4e3a\u5f53\u524d\u96c6\u6210\u6d4b\u8bd5\u63d0\u4f9b\u72ec\u7acb MySQL \u670d\u52a1\u7684\u5bb9\u5668\u3002 */
     @Container
     static final MySQLContainer<?> MYSQL = new MySQLContainer<>("mysql:8.0.36");
 
+    /** \u9a8c\u8bc1 Shiro \u5728\u6839\u8def\u5f84\u4e0b\u7684\u771f\u5b9e HTTP \u8ba4\u8bc1\u53ca\u8bf7\u6c42\u7ed3\u675f\u540e\u7684\u4e0a\u4e0b\u6587\u6e05\u7406\u3002 */
     @Test
     void nativeAuthAndRequestCleanup() {
         verify("");
     }
 
+    /** \u9a8c\u8bc1 Shiro \u5728\u914d\u7f6e\u7684\u4e0a\u4e0b\u6587\u8def\u5f84\u4e0b\u4ecd\u5b8c\u6210\u8ba4\u8bc1\u548c\u8bf7\u6c42\u6e05\u7406\u3002 */
     @Test
     void nativeAuthWithContextPathAndRequestCleanup() {
         verify("/sample");
     }
 
+    /**
+     * \u8c03\u7528 <code>SpringApplication.run()</code>\u3001<code>MYSQL.getJdbcUrl()</code>\u3001<code>MYSQL.getUsername()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @param contextPath \u4f20\u7ed9 <code>SpringApplication.run()</code> \u7684 <code>String</code> \u8f93\u5165
+     */
     private void verify(String contextPath) {
         org.springframework.context.ConfigurableApplicationContext context = SpringApplication.run(SpringShiroSampleApplication.class, "--server.port=0", "--server.tomcat.threads.max=1", "--server.tomcat.threads.min-spare=1",
                 "--server.servlet.context-path=" + contextPath, "--CATALOG_JDBC_URL=" + MYSQL.getJdbcUrl(),
@@ -84,6 +91,14 @@ class SpringShiroHttpTest {
         assertFalse(context.isActive());
     }
 
+    /**
+     * \u6838\u5bf9<code>driver.call(method, path, token, body)</code> \u629b\u51fa <code>SecurityException.class</code>\uff0c<code>driver.lastStatus</code> \u7b49\u4e8e <code>403</code>\u3002
+     * @param driver \u4f20\u7ed9 <code>assertThrows()</code> \u7684 <code>AuthDriver</code> \u8f93\u5165
+     * @param method \u53d1\u7ed9\u88ab\u6d4b\u670d\u52a1\u7684 HTTP \u65b9\u6cd5
+     * @param path \u6d4b\u8bd5\u8bf7\u6c42\u7684\u8d44\u6e90\u8def\u5f84\u6216\u5f85\u8bbf\u95ee\u6587\u4ef6\u8def\u5f84
+     * @param token \u4ece\u6d4b\u8bd5\u767b\u5f55\u83b7\u5f97\u7684\u4f1a\u8bdd\u51ed\u636e
+     * @param body \u5f53\u524d\u8bf7\u6c42\u6216\u54cd\u5e94\u4e2d\u8981\u8bfb\u53d6\u7684\u6b63\u6587
+     */
     private static void assertForbidden(AuthDriver driver, String method, String path, String token, String body) {
         try {
             assertThrows(SecurityException.class, () -> driver.call(method, path, token, body));
@@ -93,10 +108,17 @@ class SpringShiroHttpTest {
         }
     }
 
+    /** \u5411\u6d4b\u8bd5\u5bb9\u5668\u6ce8\u518c <code>requestObservation()</code> \u7b49\u6d4b\u8bd5\u5165\u53e3\u6216\u7ec4\u4ef6\u3002 */
     @Configuration(proxyBeanMethods = false)
     static class Observation {
+        /** \u6267\u884c\u6d4b\u8bd5\u5de5\u4f5c\u4efb\u52a1\u7684\u7ebf\u7a0b\u6216\u6267\u884c\u7ec4\u4ef6\u3002 */
         final java.util.Set<Long> workers = java.util.concurrent.ConcurrentHashMap.newKeySet();
+        /** \u5f53\u524d\u6d4b\u8bd5\u8bb0\u5f55\u7684\u5c5e\u6027\u503c\u6216\u6279\u91cf\u8f93\u5165\u96c6\u5408\u3002 */
         final LinkedBlockingQueue<Optional<String>> values = new LinkedBlockingQueue<>();
+        /**
+         * \u8bfb\u53d6 <code>registration</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>registration</code>
+         */
         @Bean
         FilterRegistrationBean<Filter> requestObservation() {
             Filter filter = (request, response, chain) -> {
@@ -119,26 +141,57 @@ class SpringShiroHttpTest {
         }
     }
 
+    /** \u5c06 <code>base</code>\u3001<code>observation</code>\u3001<code>tenant</code>\u3001<code>client</code> \u7b49\u72b6\u6001\u4e00\u8d77\u4f20\u5165\u5f53\u524d\u6d4b\u8bd5\uff0c\u4f9b\u8c03\u7528\u6216\u7ed3\u679c\u65ad\u8a00\u4f7f\u7528\u3002 */
     private static class AuthDriver {
+        /** \u672c\u5730\u6d4b\u8bd5\u670d\u52a1\u7684\u57fa\u7840\u5730\u5740\u3002 */
         private final String base;
+        /** \u6536\u96c6\u5230\u7684\u6846\u67b6\u4e8b\u4ef6\u3001\u8c03\u7528\u6216 SQL \u89c2\u6d4b\u7ed3\u679c\u3002 */
         private final Observation observation;
+        /** \u4e1a\u52a1\u6570\u636e\u6216\u8ba4\u8bc1\u8bf7\u6c42\u6240\u5c5e\u7684\u6d4b\u8bd5\u79df\u6237\u3002 */
         private final String tenant = java.util.UUID.randomUUID().toString().substring(0, 20);
+        /** \u53d1\u9001\u4e0e\u63a5\u6536\u6d4b\u8bd5\u8bf7\u6c42\u7684\u5ba2\u6237\u7aef\u3002 */
         private final HttpClient client = HttpClient.newHttpClient();
+        /** \u4fdd\u5b58\u5f53\u524d\u5c1a\u672a\u6267\u884c\u6216\u5c1a\u672a\u5904\u7406\u5b8c\u6210\u7684\u6d4b\u8bd5\u64cd\u4f5c\u3002 */
         private int pending;
+        /** \u6700\u8fd1\u4e00\u6b21\u8bb0\u5f55\u7684\u54cd\u5e94\u6216\u6295\u9012\u72b6\u6001\u3002 */
         private int lastStatus;
+        /**
+         * \u7528\u7ed9\u5b9a\u503c\u521d\u59cb\u5316 <code>AuthDriver</code> \u5b9e\u4f8b\u3002
+         * @param base \u672c\u5730\u6d4b\u8bd5\u670d\u52a1\u7684\u57fa\u7840\u5730\u5740
+         * @param observation <code>observation</code> \u5b57\u6bb5
+         */
         AuthDriver(String base, Observation observation) {
             this.base = base;
             this.observation = observation;
         }
+        /**
+         * \u8c03\u7528 <code>call()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+         * @param username \u6d4b\u8bd5\u4f1a\u8bdd\u4f7f\u7528\u7684\u7528\u6237\u540d
+         * @param password \u6d4b\u8bd5\u8d26\u53f7\u7684\u53e3\u4ee4
+         * @return \u63d0\u4f9b\u7ed9\u540e\u7eed\u5951\u7ea6\u65ad\u8a00\u7684 <code>String</code> \u7ed3\u679c
+         */
         public String login(String username, String password) {
             return call("POST", "/auth/login?username=" + username + "&password=" + password, "", "");
         }
+        /**
+         * \u901a\u8fc7 <code>call()</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+         * @param token \u4ece\u6d4b\u8bd5\u767b\u5f55\u83b7\u5f97\u7684\u4f1a\u8bdd\u51ed\u636e
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>call("GET", "/auth/me", token, "")</code>
+         */
         public String authenticatedPrincipal(String token) {
             return call("GET", "/auth/me", token, "");
         }
+        /**
+         * \u8c03\u7528 <code>call()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+         * @param token \u4ece\u6d4b\u8bd5\u767b\u5f55\u83b7\u5f97\u7684\u4f1a\u8bdd\u51ed\u636e
+         */
         public void logout(String token) {
             call("POST", "/auth/logout", token, "");
         }
+        /**
+         * \u6309 <code>(pending == 0)</code> \u7b49\u5b9e\u9645\u6761\u4ef6\u9009\u62e9\u5f53\u524d\u7528\u4f8b\u8fd4\u56de\u7684\u7ed3\u679c\u3002
+         * @return \u6839\u636e\u6d4b\u8bd5\u6761\u4ef6\u8fd4\u56de\u7684\u53ef\u80fd\u503c\uff0c\u5305\u62ec <code>Optional.ofNullable(org.apache.shiro.util.ThreadContext.getSubject()).map(Object::toString)</code>\u3001<code>Objects.requireNonNull(observation.values.poll(10, TimeUnit.SECONDS), "request observation missing")</code>
+         */
         public Optional<String> contextPrincipal() {
             if (pending == 0) {
                 return Optional.ofNullable(org.apache.shiro.util.ThreadContext.getSubject()).map(Object::toString);
@@ -151,6 +204,14 @@ class SpringShiroHttpTest {
                 throw new IllegalStateException(exception);
             }
         }
+        /**
+         * \u6839\u636e\u672c\u6b21\u8c03\u7528\u66f4\u65b0 <code>lastStatus = response.statusCode()</code>\uff0c\u7528\u4e8e\u540e\u7eed\u6d4b\u8bd5\u6b65\u9aa4\u3002
+         * @param method \u53d1\u7ed9\u88ab\u6d4b\u670d\u52a1\u7684 HTTP \u65b9\u6cd5
+         * @param path \u6d4b\u8bd5\u8bf7\u6c42\u7684\u8d44\u6e90\u8def\u5f84\u6216\u5f85\u8bbf\u95ee\u6587\u4ef6\u8def\u5f84
+         * @param token \u4ece\u6d4b\u8bd5\u767b\u5f55\u83b7\u5f97\u7684\u4f1a\u8bdd\u51ed\u636e
+         * @param body \u5f53\u524d\u8bf7\u6c42\u6216\u54cd\u5e94\u4e2d\u8981\u8bfb\u53d6\u7684\u6b63\u6587
+         * @return \u8be5\u5f02\u5e38\u8def\u5f84\u6ca1\u6709\u6b63\u5e38\u8fd4\u56de\u7ed3\u679c
+         */
         private String call(String method, String path, String token, String body) {
             try {
                 HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(base + path)).header("Content-Type", "application/json").header("X-Tenant-Id", tenant)

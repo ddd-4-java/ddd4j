@@ -49,10 +49,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @org.junit.jupiter.api.parallel.Execution(org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD)
 class AuthorizationControllerTest {
 
+    /** \u7531\u5f53\u524d\u6d4b\u8bd5\u542f\u52a8\u548c\u5173\u95ed\u7684\u5e94\u7528\u5b9e\u4f8b\u3002 */
     private static Javalin app;
+    /** \u7528\u4e8e\u53d1\u9001 HTTP \u8bf7\u6c42\u7684\u5ba2\u6237\u7aef\u3002 */
     private static HttpClient httpClient;
+    /** \u5f53\u524d\u670d\u52a1\u7684 HTTP \u57fa\u7840\u5730\u5740\u3002 */
     private static String baseUrl;
 
+    /** \u6d4b\u8bd5\u6267\u884c\u524d\u6267\u884c <code>TestSupport.start()</code>\u3001<code>app.port()</code>\u3001<code>HttpClient.newBuilder()</code>\u3001<code>Duration.ofSeconds()</code> \u5b8c\u6210\u8d44\u6e90\u51c6\u5907\u3002 */
     @BeforeAll
     void startServer() {
         app = TestSupport.start();
@@ -60,6 +64,7 @@ class AuthorizationControllerTest {
         httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
     }
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>app.stop()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterAll
     void stopServer() {
         if (Objects.nonNull(app)) {
@@ -67,6 +72,7 @@ class AuthorizationControllerTest {
         }
     }
 
+    /** \u6d4b\u8bd5\u6267\u884c\u524d\u6267\u884c <code>app.stop()</code>\u3001<code>TestSupport.start()</code>\u3001<code>app.port()</code>\u3001<code>HttpClient.newBuilder()</code> \u5b8c\u6210\u8d44\u6e90\u51c6\u5907\u3002 */
     @BeforeEach
     void resetServerState() {
         app.stop();
@@ -78,6 +84,13 @@ class AuthorizationControllerTest {
 
     // ------------------- HTTP 助手 -------------------
 
+    /**
+     * \u8bfb\u53d6 <code>response</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
+     * @param path \u6d4b\u8bd5\u8bf7\u6c42\u7684\u8d44\u6e90\u8def\u5f84\u6216\u5f85\u8bbf\u95ee\u6587\u4ef6\u8def\u5f84
+     * @param body \u5f53\u524d\u8bf7\u6c42\u6216\u54cd\u5e94\u4e2d\u8981\u8bfb\u53d6\u7684\u6b63\u6587
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>response</code>
+     * @throws Exception \u53d1\u8d77\u6d4b\u8bd5\u8bf7\u6c42\u65f6\u5931\u8d25
+     */
     private HttpResponse<String> postJson(String path, String body) throws Exception {
         HttpResponse<String> response = httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
                         .header("Content-Type", "application/json")
@@ -87,6 +100,13 @@ class AuthorizationControllerTest {
         return response;
     }
 
+    /**
+     * \u8bfb\u53d6 <code>response</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
+     * @param path \u6d4b\u8bd5\u8bf7\u6c42\u7684\u8d44\u6e90\u8def\u5f84\u6216\u5f85\u8bbf\u95ee\u6587\u4ef6\u8def\u5f84
+     * @param body \u5f53\u524d\u8bf7\u6c42\u6216\u54cd\u5e94\u4e2d\u8981\u8bfb\u53d6\u7684\u6b63\u6587
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>response</code>
+     * @throws Exception \u53d1\u8d77\u6d4b\u8bd5\u8bf7\u6c42\u65f6\u5931\u8d25
+     */
     private HttpResponse<String> putJson(String path, String body) throws Exception {
         HttpResponse<String> response = httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
                         .header("Content-Type", "application/json")
@@ -96,6 +116,12 @@ class AuthorizationControllerTest {
         return response;
     }
 
+    /**
+     * \u8bfb\u53d6 <code>response</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
+     * @param path \u6d4b\u8bd5\u8bf7\u6c42\u7684\u8d44\u6e90\u8def\u5f84\u6216\u5f85\u8bbf\u95ee\u6587\u4ef6\u8def\u5f84
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>response</code>
+     * @throws Exception \u53d1\u8d77\u6d4b\u8bd5\u8bf7\u6c42\u65f6\u5931\u8d25
+     */
     private HttpResponse<String> delete(String path) throws Exception {
         HttpResponse<String> response = httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).DELETE().build(),
                 HttpResponse.BodyHandlers.ofString());
@@ -103,6 +129,12 @@ class AuthorizationControllerTest {
         return response;
     }
 
+    /**
+     * \u8bfb\u53d6 <code>response</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
+     * @param path \u6d4b\u8bd5\u8bf7\u6c42\u7684\u8d44\u6e90\u8def\u5f84\u6216\u5f85\u8bbf\u95ee\u6587\u4ef6\u8def\u5f84
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>response</code>
+     * @throws Exception \u53d1\u8d77\u6d4b\u8bd5\u8bf7\u6c42\u65f6\u5931\u8d25
+     */
     private HttpResponse<String> get(String path) throws Exception {
         HttpResponse<String> response = httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).GET().build(),
                 HttpResponse.BodyHandlers.ofString());
@@ -110,6 +142,11 @@ class AuthorizationControllerTest {
         return response;
     }
 
+    /**
+     * \u8c03\u7528 <code>response.uri()</code>\u3001<code>response.statusCode()</code>\u3001<code>response.version()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @param method \u53d1\u7ed9\u88ab\u6d4b\u670d\u52a1\u7684 HTTP \u65b9\u6cd5
+     * @param response \u5f53\u524d\u8bf7\u6c42\u5df2\u6536\u5230\u7684\u54cd\u5e94
+     */
     private void recordResponse(String method, HttpResponse<String> response) {
         log.info("RBAC HTTP diagnostic method={} uri={} status={} version={} headers={} body={} serverPort={}",
                 method, response.uri(), response.statusCode(), response.version(), response.headers().map(),
@@ -118,6 +155,10 @@ class AuthorizationControllerTest {
 
     // =================== 用户管理 ===================
 
+    /**
+     * \u8bf7\u6c42 <code>POST /rbac/admin/users</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 201\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void createUser_shouldReturn201() throws Exception {
         HttpResponse<String> r = postJson("/rbac/admin/users",
@@ -126,6 +167,10 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("30001"));
     }
 
+    /**
+     * \u8bf7\u6c42 <code>POST /rbac/admin/users</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 201\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void createUser_withDuplicateId_shouldFail() throws Exception {
         // 创建一个用户
@@ -138,6 +183,10 @@ class AuthorizationControllerTest {
         assertEquals(201, r.statusCode());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>r.statusCode()</code> \u7b49\u4e8e <code>200</code>\uff0c<code>r.body().contains("admin")</code>\u4e3a\u771f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void listUsers_shouldReturnSeedUsers() throws Exception {
         HttpResponse<String> r = get("/rbac/admin/users");
@@ -146,6 +195,10 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("user"));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>r.statusCode()</code> \u7b49\u4e8e <code>200</code>\uff0c<code>r.body().contains("admin")</code>\u4e3a\u771f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void getUser_byId_shouldReturnUser() throws Exception {
         HttpResponse<String> r = get("/rbac/admin/users/10001");
@@ -153,6 +206,10 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("admin"));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>r.statusCode()</code> \u7b49\u4e8e <code>200</code>\uff0c<code>r.body().contains("null") || r.body().contains("{}")</code>\u4e3a\u771f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void getUser_nonExistent_shouldReturnNull() throws Exception {
         HttpResponse<String> r = get("/rbac/admin/users/99999");
@@ -161,6 +218,10 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("null") || r.body().contains("{}"));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>r.statusCode()</code> \u7b49\u4e8e <code>200</code>\uff0c<code>r.body().contains("10001")</code>\u4e3a\u771f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void updateUser_shouldReturn200() throws Exception {
         HttpResponse<String> r = putJson("/rbac/admin/users/10001",
@@ -169,6 +230,10 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("10001"));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>r.statusCode() &gt;= 400</code>\u4e3a\u771f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void updateUser_nonExistent_shouldFail() throws Exception {
         HttpResponse<String> r = putJson("/rbac/admin/users/99999",
@@ -176,6 +241,10 @@ class AuthorizationControllerTest {
         assertTrue(r.statusCode() >= 400, "Expected error status but got: " + r.statusCode());
     }
 
+    /**
+     * \u8bf7\u6c42 <code>POST /rbac/admin/users</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void deleteUser_shouldReturn200() throws Exception {
         // 先创建
@@ -188,6 +257,10 @@ class AuthorizationControllerTest {
 
     // =================== 用户角色分配 ===================
 
+    /**
+     * \u8bf7\u6c42 <code>POST /rbac/admin/users/10002/roles</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void assignRolesToUser_shouldReturn200() throws Exception {
         HttpResponse<String> r = postJson("/rbac/admin/users/10002/roles",
@@ -196,6 +269,10 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("10002"));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>r.statusCode()</code> \u7b49\u4e8e <code>200</code>\uff0c<code>r.body().contains("userId")</code>\u4e3a\u771f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void getUserPermissions_shouldReturnPermissions() throws Exception {
         HttpResponse<String> r = get("/rbac/admin/users/10001/permissions");
@@ -205,6 +282,10 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("permissions"));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>r.statusCode()</code> \u7b49\u4e8e <code>200</code>\uff0c<code>r.body().contains("[]") || r.body().contains("null")</code>\u4e3a\u771f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void getUserPermissions_nonExistent_shouldReturnEmpty() throws Exception {
         HttpResponse<String> r = get("/rbac/admin/users/99999/permissions");
@@ -215,6 +296,10 @@ class AuthorizationControllerTest {
 
     // =================== 角色管理 ===================
 
+    /**
+     * \u8bf7\u6c42 <code>POST /rbac/admin/roles</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 201\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void createRole_shouldReturn201() throws Exception {
         HttpResponse<String> r = postJson("/rbac/admin/roles",
@@ -223,6 +308,10 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("R200"));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>r.statusCode()</code> \u7b49\u4e8e <code>200</code>\uff0c<code>r.body().contains("admin")</code>\u4e3a\u771f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void listRoles_shouldReturnSeedRoles() throws Exception {
         HttpResponse<String> r = get("/rbac/admin/roles");
@@ -232,6 +321,10 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("manager"));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>r.statusCode()</code> \u7b49\u4e8e <code>200</code>\uff0c<code>r.body().contains("admin")</code>\u4e3a\u771f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void getRole_byId_shouldReturnRole() throws Exception {
         HttpResponse<String> r = get("/rbac/admin/roles/R001");
@@ -239,6 +332,10 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("admin"));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>r.statusCode()</code> \u7b49\u4e8e <code>200</code>\uff0c<code>r.body().contains("null") || r.body().contains("{}")</code>\u4e3a\u771f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void getRole_nonExistent_shouldReturnNull() throws Exception {
         HttpResponse<String> r = get("/rbac/admin/roles/R999");
@@ -246,6 +343,10 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("null") || r.body().contains("{}"));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>r.statusCode()</code> \u7b49\u4e8e <code>200</code>\uff0c<code>r.body().contains("R001")</code>\u4e3a\u771f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void updateRole_shouldReturn200() throws Exception {
         HttpResponse<String> r = putJson("/rbac/admin/roles/R001",
@@ -254,6 +355,10 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("R001"));
     }
 
+    /**
+     * \u8bf7\u6c42 <code>POST /rbac/admin/roles</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void deleteRole_shouldReturn200() throws Exception {
         // 先创建
@@ -266,6 +371,10 @@ class AuthorizationControllerTest {
 
     // =================== 角色权限分配 ===================
 
+    /**
+     * \u8bf7\u6c42 <code>POST /rbac/admin/roles/R002/permissions</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void assignPermissionsToRole_shouldReturn200() throws Exception {
         HttpResponse<String> r = postJson("/rbac/admin/roles/R002/permissions",
@@ -274,6 +383,10 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("R002"));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>r.statusCode()</code> \u7b49\u4e8e <code>200</code>\uff0c<code>r.body().contains("roleId")</code>\u4e3a\u771f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void getRolePermissions_shouldReturnPermissions() throws Exception {
         HttpResponse<String> r = get("/rbac/admin/roles/R001/permissions");
@@ -284,6 +397,10 @@ class AuthorizationControllerTest {
 
     // =================== 权限管理 ===================
 
+    /**
+     * \u8bf7\u6c42 <code>POST /rbac/admin/permissions</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 201\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void createPermission_shouldReturn201() throws Exception {
         HttpResponse<String> r = postJson("/rbac/admin/permissions",
@@ -292,6 +409,10 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("P200"));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>r.statusCode()</code> \u7b49\u4e8e <code>200</code>\uff0c<code>r.body().contains("user:add")</code>\u4e3a\u771f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void listPermissions_shouldReturnSeedPermissions() throws Exception {
         HttpResponse<String> r = get("/rbac/admin/permissions");
@@ -301,6 +422,10 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("order:pay"));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>r.statusCode()</code> \u7b49\u4e8e <code>200</code>\uff0c<code>r.body().contains("user:add")</code>\u4e3a\u771f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void getPermission_byId_shouldReturnPermission() throws Exception {
         HttpResponse<String> r = get("/rbac/admin/permissions/P001");
@@ -308,6 +433,10 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("user:add"));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>r.statusCode()</code> \u7b49\u4e8e <code>200</code>\uff0c<code>r.body().contains("null") || r.body().contains("{}")</code>\u4e3a\u771f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void getPermission_nonExistent_shouldReturnNull() throws Exception {
         HttpResponse<String> r = get("/rbac/admin/permissions/P999");
@@ -315,6 +444,10 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("null") || r.body().contains("{}"));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>r.statusCode()</code> \u7b49\u4e8e <code>200</code>\uff0c<code>r.body().contains("P001")</code>\u4e3a\u771f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void updatePermission_shouldReturn200() throws Exception {
         HttpResponse<String> r = putJson("/rbac/admin/permissions/P001",
@@ -323,6 +456,10 @@ class AuthorizationControllerTest {
         assertTrue(r.body().contains("P001"));
     }
 
+    /**
+     * \u8bf7\u6c42 <code>POST /rbac/admin/permissions</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void deletePermission_shouldReturn200() throws Exception {
         // 先创建
@@ -335,6 +472,10 @@ class AuthorizationControllerTest {
 
     // =================== 边界情况 ===================
 
+    /**
+     * \u9a8c\u8bc1<code>r.statusCode() &gt;= 400</code>\u4e3a\u771f\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void createUser_withNullFields_shouldFail() throws Exception {
         HttpResponse<String> r = postJson("/rbac/admin/users",
@@ -342,6 +483,10 @@ class AuthorizationControllerTest {
         assertTrue(r.statusCode() >= 400, "Expected error status but got: " + r.statusCode());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>r.statusCode() &gt;= 200 &amp;&amp; r.statusCode() &lt; 600</code>\u4e3a\u771f\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void createRole_withEmptyCode_shouldFail() throws Exception {
         HttpResponse<String> r = postJson("/rbac/admin/roles",
@@ -351,6 +496,10 @@ class AuthorizationControllerTest {
         assertTrue(r.statusCode() >= 200 && r.statusCode() < 600);
     }
 
+    /**
+     * \u8bf7\u6c42 <code>POST /rbac/admin/users/10001/roles</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void assignRoles_withEmptyList_shouldSucceed() throws Exception {
         HttpResponse<String> r = postJson("/rbac/admin/users/10001/roles",
@@ -358,6 +507,10 @@ class AuthorizationControllerTest {
         assertEquals(200, r.statusCode());
     }
 
+    /**
+     * \u8bf7\u6c42 <code>POST /rbac/admin/roles/R001/permissions</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void assignPermissions_withEmptyList_shouldSucceed() throws Exception {
         HttpResponse<String> r = postJson("/rbac/admin/roles/R001/permissions",

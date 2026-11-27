@@ -38,6 +38,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class ExcelKitTest {
 
+    /** \u9a8c\u8bc1<code>bytes</code>\u975e\u7a7a\uff0c<code>read</code> \u7684\u5927\u5c0f\u4e3a <code>5</code>\uff0c<code>read.get(4).getId()</code> \u7b49\u4e8e <code>5L</code>\u3002 */
     @Test
     void export_then_read_should_return_same_data() {
         // given
@@ -61,6 +62,7 @@ class ExcelKitTest {
         assertThat(read.get(4).getId()).isEqualTo(5L);
     }
 
+    /** \u9a8c\u8bc1<code>bytes</code>\u975e\u7a7a\uff0c<code>read</code> \u7684\u5927\u5c0f\u4e3a <code>10</code>\u3002 */
     @Test
     void export_with_options_should_apply_freeze_and_zebra() {
         // given
@@ -82,6 +84,7 @@ class ExcelKitTest {
         assertThat(read).hasSize(10);
     }
 
+    /** \u9a8c\u8bc1<code>result.getData()</code> \u7684\u5927\u5c0f\u4e3a <code>3</code>\uff0c<code>result.hasErrors()</code>\u4e3a\u5047\u3002 */
     @Test
     void importExcel_should_collect_data_and_errors() {
         // given：写一份正常数据
@@ -100,6 +103,7 @@ class ExcelKitTest {
         assertThat(result.hasErrors()).isFalse();
     }
 
+    /** \u9a8c\u8bc1<code>bytes</code>\u975e\u7a7a\u3002 */
     @Test
     void exportError_should_return_non_empty_bytes() {
         // given
@@ -112,6 +116,7 @@ class ExcelKitTest {
         assertThat(bytes).isNotEmpty();
     }
 
+    /** \u9a8c\u8bc1<code>read</code>\u4e3a\u7a7a\u3002 */
     @Test
     void exportEmptyTemplate_should_have_only_header() {
         // when
@@ -123,6 +128,7 @@ class ExcelKitTest {
         assertThat(read).isEmpty();
     }
 
+    /** \u9a8c\u8bc1<code>result</code>\u975e\u7a7a\u3002 */
     @Test
     void errorCollectingListener_should_not_throw_on_parse_error() {
         // given：构造一个故意混入错误数据的 Excel。
@@ -155,21 +161,36 @@ class ExcelKitTest {
         Assertions.assertThat(result).isNotNull();
     }
 
+    /** \u5c06 <code>d</code> \u7b49\u72b6\u6001\u4e00\u8d77\u4f20\u5165\u5f53\u524d\u6d4b\u8bd5\uff0c\u4f9b\u8c03\u7528\u6216\u7ed3\u679c\u65ad\u8a00\u4f7f\u7528\u3002 */
     public static class DateVO {
+        /** \u4fdd\u5b58\u4f9b Excel \u65e5\u671f\u5217\u5f80\u8fd4\u8f6c\u6362\u7684\u65e5\u671f\u503c\u3002 */
         @com.alibaba.excel.annotation.ExcelProperty("日期")
         private java.util.Date d;
 
+        /** \u521b\u5efa\u5b57\u6bb5\u4f7f\u7528\u9ed8\u8ba4\u521d\u59cb\u503c\u7684 <code>DateVO</code> \u6d4b\u8bd5\u5bf9\u8c61\u3002 */
         public DateVO() {
         }
 
+        /**
+         * \u8bbe\u7f6e <code>d</code>\uff0c\u7528\u4e8e\u6784\u9020 <code>DateVO</code> \u6d4b\u8bd5\u5b9e\u4f8b\u3002
+         * @param d \u7528\u4e8e\u521d\u59cb\u5316 <code>DateVO</code> \u7684 <code>java.util.Date</code> \u503c
+         */
         public DateVO(java.util.Date d) {
             this.d = d;
         }
 
+        /**
+         * \u8bfb\u53d6<code>d</code> \u5b57\u6bb5\u3002
+         * @return <code>d</code> \u5b57\u6bb5
+         */
         public java.util.Date getD() {
             return d;
         }
 
+        /**
+         * \u8bbe\u7f6e<code>d</code> \u5b57\u6bb5\u3002
+         * @param d \u8981\u5199\u5165\u7684\u503c
+         */
         public void setD(java.util.Date d) {
             this.d = d;
         }

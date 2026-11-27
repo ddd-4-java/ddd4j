@@ -40,22 +40,39 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Testcontainers
 class NativeAuthHttpTest {
+    /** \u4e3a\u5f53\u524d\u96c6\u6210\u6d4b\u8bd5\u63d0\u4f9b\u72ec\u7acb MySQL \u670d\u52a1\u7684\u5bb9\u5668\u3002 */
     @Container
     static final MySQLContainer<?> MYSQL = new MySQLContainer<>("mysql:8.0.36");
+    /** \u7528\u4f8b\u67e5\u8be2\u6216\u5199\u5165\u6570\u636e\u65f6\u4f7f\u7528\u7684\u79df\u6237\u6807\u8bc6\u3002 */
     static final String TENANT = "dropwizard-auth";
+    /** \u7528\u4e8e\u533a\u5206\u8ba2\u5355\u8def\u7531\u3001\u6d88\u606f\u4e3b\u9898\u6216\u6295\u5f71\u4e8b\u4ef6\u6d41\u7684\u6d4b\u8bd5\u540d\u79f0\u3002 */
     static final String ORDERS = "/orders/catalog/orders/";
+    /** \u5546\u54c1\u6d4b\u8bd5\u6240\u4f7f\u7528\u7684\u8def\u7531\u6216\u4e1a\u52a1\u7f16\u7801\u3002 */
     static final String GOODS = "{\"spuName\":\"Book\",\"skuCode\":\"S1\",\"skuName\":\"Edition\",\"shopId\":7,\"salePriceCent\":500}\n";
+    /** \u6d4b\u8bd5\u8ba2\u5355\u7684\u56fa\u5b9a\u6807\u8bc6\uff0c\u7528\u4e8e\u7ec4\u7ec7\u548c\u67e5\u8be2\u6d4b\u8bd5\u6570\u636e\u3002 */
     static final String ORDER = "{\"shopId\":7,\"items\":[{\"skuCode\":\"S1\",\"quantity\":2}]}\n";
+    /** \u8d1f\u8d23\u8f6c\u6362\u6d4b\u8bd5\u6216\u534f\u8bae\u6b63\u6587\u4e2d JSON \u6570\u636e\u7684 Jackson \u6620\u5c04\u5668\u3002 */
     private final ObjectMapper mapper = new ObjectMapper();
+    /** \u53d1\u9001\u4e0e\u63a5\u6536\u6d4b\u8bd5\u8bf7\u6c42\u7684\u5ba2\u6237\u7aef\u3002 */
     private final HttpClient client = HttpClient.newHttpClient();
+    /** \u6309\u8bf7\u6c42\u6216\u4e1a\u52a1\u6807\u8bc6\u8bb0\u5f55\u5b8c\u6210\u548c\u4e0a\u4e0b\u6587\u6e05\u7406\u7ed3\u679c\u3002 */
     private final Map<String, Boolean> completions = new ConcurrentHashMap<>();
+    /** \u672c\u5730\u6d4b\u8bd5\u670d\u52a1\u7684\u57fa\u7840\u5730\u5740\u3002 */
     private String base;
 
+    /**
+     * \u8c03\u7528 <code>CatalogRuntime.start()</code>\u3001<code>MYSQL.getDriverClassName()</code>\u3001<code>MYSQL.getJdbcUrl()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @return \u63d0\u4f9b\u7ed9\u540e\u7eed\u5951\u7ea6\u65ad\u8a00\u7684 <code>CatalogEndpoints</code> \u7ed3\u679c
+     */
     static CatalogEndpoints catalog() {
         return CatalogRuntime.start(new UnpooledDataSource(MYSQL.getDriverClassName(), MYSQL.getJdbcUrl(),
                 MYSQL.getUsername(), MYSQL.getPassword()));
     }
 
+    /**
+     * \u8bfb\u53d6 <code>catalog</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>catalog</code>
+     */
     private static CatalogEndpoints seedCatalog() {
         CatalogEndpoints catalog = catalog();
         int status = catalog.createGoods(TENANT, "BOOK", GOODS).getStatus();
@@ -63,23 +80,58 @@ class NativeAuthHttpTest {
         return catalog;
     }
 
+    /**
+     * \u8c03\u7528 <code>Proxy.newProxyInstance()</code>\u3001<code>CatalogEndpoints.class.getClassLoader()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @param observer \u63a5\u6536\u6d4b\u8bd5\u72b6\u6001\u6216\u6e05\u7406\u7ed3\u679c\u7684\u89c2\u5bdf\u56de\u8c03
+     * @return \u63d0\u4f9b\u7ed9\u540e\u7eed\u5951\u7ea6\u65ad\u8a00\u7684 <code>CatalogEndpoints</code> \u7ed3\u679c
+     */
     private static CatalogEndpoints observing(InvocationHandler observer) {
         return (CatalogEndpoints) Proxy.newProxyInstance(CatalogEndpoints.class.getClassLoader(),
                 new Class<?>[]{CatalogEndpoints.class}, observer);
     }
 
+    /**
+     * \u901a\u8fc7 <code>Map.of()</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+     * @param authorization \u4f20\u7ed9 <code>Map.of()</code> \u7684 <code>String</code> \u8f93\u5165
+     * @param tokenName \u4f20\u7ed9 <code>Map.of()</code> \u7684 <code>String</code> \u8f93\u5165
+     * @param namedToken \u4f20\u7ed9 <code>Map.of()</code> \u7684 <code>String</code> \u8f93\u5165
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>Map.of("Authorization", authorization, tokenName, namedToken)</code>
+     */
     private static Map<String, String> bothCredentials(String authorization, String tokenName, String namedToken) {
         return ImmutableMap.of("Authorization", authorization, tokenName, namedToken);
     }
 
+    /**
+     * 按 <code>start</code> 的契约计算并返回结果。
+     *
+     * @param orders 传入此操作的 <code>CatalogEndpoints</code> 类型 <code>orders</code>
+     * @return 返回表达式 <code>start(orders, 0)</code>
+     * @throws Exception 完成 <code>start</code> 操作失败
+     */
     private DropwizardTestSupport<AuthConfiguration> start(CatalogEndpoints orders) throws Exception {
         return start(orders, 0);
     }
 
+    /**
+     * 按 <code>start</code> 的契约计算并返回结果。
+     *
+     * @param orders 传入此操作的 <code>CatalogEndpoints</code> 类型 <code>orders</code>
+     * @param port 传入此操作的 <code>int</code> 类型 <code>port</code>
+     * @return 返回表达式 <code>start(orders, port, new AuthConfiguration())</code>
+     * @throws Exception 完成 <code>start</code> 操作失败
+     */
     private DropwizardTestSupport<AuthConfiguration> start(CatalogEndpoints orders, int port) throws Exception {
         return start(orders, port, new AuthConfiguration());
     }
 
+    /**
+     * \u8bfb\u53d6 <code>support</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
+     * @param orders \u672c\u6b21\u8c03\u7528\u4f7f\u7528\u7684 <code>CatalogEndpoints</code> \u53c2\u6570 <code>orders</code>
+     * @param port \u6d4b\u8bd5\u670d\u52a1\u76d1\u542c\u7684\u672c\u5730\u7aef\u53e3
+     * @param config \u5f53\u524d\u7528\u4f8b\u88c5\u914d\u6846\u67b6\u65f6\u4f7f\u7528\u7684\u914d\u7f6e
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>support</code>
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     private DropwizardTestSupport<AuthConfiguration> start(CatalogEndpoints orders, int port, AuthConfiguration config) throws Exception {
         io.dropwizard.server.DefaultServerFactory server = (io.dropwizard.server.DefaultServerFactory) config.getServerFactory();
         io.dropwizard.jetty.HttpConnectorFactory applicationConnector = (io.dropwizard.jetty.HttpConnectorFactory) server.getApplicationConnectors().get(0);
@@ -99,16 +151,46 @@ class NativeAuthHttpTest {
         return support;
     }
 
+    /**
+     * \u901a\u8fc7 <code>requestWithHeaders()</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+     * @param method \u53d1\u7ed9\u88ab\u6d4b\u670d\u52a1\u7684 HTTP \u65b9\u6cd5
+     * @param path \u6d4b\u8bd5\u8bf7\u6c42\u7684\u8d44\u6e90\u8def\u5f84\u6216\u5f85\u8bbf\u95ee\u6587\u4ef6\u8def\u5f84
+     * @param token \u4ece\u6d4b\u8bd5\u767b\u5f55\u83b7\u5f97\u7684\u4f1a\u8bdd\u51ed\u636e
+     * @param body \u5f53\u524d\u8bf7\u6c42\u6216\u54cd\u5e94\u4e2d\u8981\u8bfb\u53d6\u7684\u6b63\u6587
+     * @param id \u5f53\u524d\u8981\u67e5\u627e\u7684\u6d4b\u8bd5\u8bb0\u5f55\u6807\u8bc6
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>requestWithHeaders(method, path, Objects.isNull(token) ? Map.of() : Map.of("Authorization", "Bearer " + token), body, id)</code>
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     private HttpResponse<String> request(String method, String path, String token, String body, String id) throws Exception {
         return requestWithHeaders(method, path, Objects.isNull(token) ? ImmutableMap.of()
                 : ImmutableMap.of("Authorization", "Bearer " + token), body, id);
     }
 
+    /**
+     * \u901a\u8fc7 <code>requestWithHeaders()</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+     * @param method \u53d1\u7ed9\u88ab\u6d4b\u670d\u52a1\u7684 HTTP \u65b9\u6cd5
+     * @param path \u6d4b\u8bd5\u8bf7\u6c42\u7684\u8d44\u6e90\u8def\u5f84\u6216\u5f85\u8bbf\u95ee\u6587\u4ef6\u8def\u5f84
+     * @param credentials \u4f20\u7ed9 <code>requestWithHeaders()</code> \u7684 <code>Map&lt;String, String&gt;</code> \u8f93\u5165
+     * @param body \u5f53\u524d\u8bf7\u6c42\u6216\u54cd\u5e94\u4e2d\u8981\u8bfb\u53d6\u7684\u6b63\u6587
+     * @param id \u5f53\u524d\u8981\u67e5\u627e\u7684\u6d4b\u8bd5\u8bb0\u5f55\u6807\u8bc6
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>requestWithHeaders(client, method, path, credentials, body, id)</code>
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     private HttpResponse<String> requestWithHeaders(String method, String path, Map<String, String> credentials,
                                                     String body, String id) throws Exception {
         return requestWithHeaders(client, method, path, credentials, body, id);
     }
 
+    /**
+     * \u901a\u8fc7 <code>requestWithHeaders()</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+     * @param method \u53d1\u7ed9\u88ab\u6d4b\u670d\u52a1\u7684 HTTP \u65b9\u6cd5
+     * @param path \u6d4b\u8bd5\u8bf7\u6c42\u7684\u8d44\u6e90\u8def\u5f84\u6216\u5f85\u8bbf\u95ee\u6587\u4ef6\u8def\u5f84
+     * @param credentials \u4f20\u7ed9 <code>requestWithHeaders()</code> \u7684 <code>Map&lt;String, String&gt;</code> \u8f93\u5165
+     * @param body \u5f53\u524d\u8bf7\u6c42\u6216\u54cd\u5e94\u4e2d\u8981\u8bfb\u53d6\u7684\u6b63\u6587
+     * @param id \u5f53\u524d\u8981\u67e5\u627e\u7684\u6d4b\u8bd5\u8bb0\u5f55\u6807\u8bc6
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>requestWithHeaders(isolatedClient, method, path, credentials, body, id)</code>
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     private HttpResponse<String> requestOnFreshConnection(String method, String path, Map<String, String> credentials,
                                                           String body, String id) throws Exception {
         // Jetty 的连接级头缓存可能复用同一令牌此前请求的方案写法。
@@ -116,6 +198,17 @@ class NativeAuthHttpTest {
         return requestWithHeaders(isolatedClient, method, path, credentials, body, id);
     }
 
+    /**
+     * \u8c03\u7528 <code>HttpRequest.newBuilder()</code>\u3001<code>URI.create()</code>\u3001<code>Duration.ofSeconds()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @param transport \u4f20\u7ed9 <code>transport.send()</code> \u7684 <code>HttpClient</code> \u8f93\u5165
+     * @param method \u53d1\u7ed9\u88ab\u6d4b\u670d\u52a1\u7684 HTTP \u65b9\u6cd5
+     * @param path \u6d4b\u8bd5\u8bf7\u6c42\u7684\u8d44\u6e90\u8def\u5f84\u6216\u5f85\u8bbf\u95ee\u6587\u4ef6\u8def\u5f84
+     * @param credentials \u4f20\u7ed9 <code>credentials.forEach()</code> \u7684 <code>Map&lt;String, String&gt;</code> \u8f93\u5165
+     * @param body \u5f53\u524d\u8bf7\u6c42\u6216\u54cd\u5e94\u4e2d\u8981\u8bfb\u53d6\u7684\u6b63\u6587
+     * @param id \u5f53\u524d\u8981\u67e5\u627e\u7684\u6d4b\u8bd5\u8bb0\u5f55\u6807\u8bc6
+     * @return \u63d0\u4f9b\u7ed9\u540e\u7eed\u5951\u7ea6\u65ad\u8a00\u7684 <code>HttpResponse&lt;String&gt;</code> \u7ed3\u679c
+     * @throws Exception \u53d1\u8d77\u6d4b\u8bd5\u8bf7\u6c42\u65f6\u5931\u8d25
+     */
     private HttpResponse<String> requestWithHeaders(HttpClient transport, String method, String path,
                                                     Map<String, String> credentials, String body, String id) throws Exception {
         HttpRequest.Builder request = HttpRequest.newBuilder(URI.create(base + path)).timeout(Duration.ofSeconds(10)).header("X-Request-Id", id).header("Idempotency-Key", id).header("X-Tenant-Id", TENANT);
@@ -126,12 +219,22 @@ class NativeAuthHttpTest {
         return transport.send(request.method(method, Objects.isNull(body) ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(body)).build(), HttpResponse.BodyHandlers.ofString());
     }
 
+    /**
+     * \u901a\u8fc7 <code>mapper.readTree()</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+     * @param user \u4f20\u7ed9 <code>request()</code> \u7684 <code>String</code> \u8f93\u5165
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>mapper.readTree(response.body()).path("token").asText()</code>
+     * @throws Exception \u5904\u7406\u6d4b\u8bd5\u6570\u636e\u7684\u5e8f\u5217\u5316\u65f6\u5931\u8d25
+     */
     private String login(String user) throws Exception {
         HttpResponse<java.lang.String> response = request("POST", "/auth/login", null, "{\"username\":\"" + user + "\",\"password\":\"sample-password\"}", "login-" + user);
         assertEquals(200, response.statusCode(), response.body());
         return mapper.readTree(response.body()).path("token").asText();
     }
 
+    /**
+     * \u9a8c\u8bc1<code>denied.statusCode()</code> \u7b49\u4e8e <code>403</code>\uff0c<code>catalog.order(TENANT, "denied").getStatus()</code> \u7b49\u4e8e <code>404</code>\uff0c<code>completions.get(key)</code> \u7b49\u4e8e <code>Boolean.TRUE</code>\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u3001\u5904\u7406\u6d4b\u8bd5\u6570\u636e\u7684\u5e8f\u5217\u5316\u65f6\u5931\u8d25
+     */
     @Test
     void nativeCredentialsPermissionsLogoutAndBusinessFailure() throws Exception {
         CatalogEndpoints catalog = seedCatalog();
@@ -167,6 +270,10 @@ class NativeAuthHttpTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>wrongMethod.getResponseCode()</code> \u7b49\u4e8e <code>405</code>\uff0c<code>mapper.readTree(body).path("code").asInt()</code> \u7b49\u4e8e <code>405</code>\uff0c<code>allow</code>\u975e\u7a7a\u3002
+     * @throws Exception \u51c6\u5907\u6216\u8bfb\u53d6\u5939\u5177\u6587\u4ef6\u3001\u5904\u7406\u6d4b\u8bd5\u6570\u636e\u7684\u5e8f\u5217\u5316\u65f6\u5931\u8d25
+     */
     @Test
     void unsupportedOrderMethodPreservesNativeAllowHeader() throws Exception {
         DropwizardTestSupport<AuthConfiguration> app = start(catalog());
@@ -195,6 +302,10 @@ class NativeAuthHttpTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>created.statusCode()</code> \u7b49\u4e8e <code>201</code>\uff0c<code>orderId.isEmpty()</code>\u4e3a\u5047\uff0c<code>request("GET", path, writerToken, null, "remaining-writer").statusCode()</code> \u7b49\u4e8e <code>200</code>\u3002
+     * @throws Exception \u53cd\u5c04\u8bbf\u95ee\u88ab\u6d4b\u6210\u5458\u3001\u5904\u7406\u6d4b\u8bd5\u6570\u636e\u7684\u5e8f\u5217\u5316\u65f6\u5931\u8d25
+     */
     @Test
     void bearerSchemeCaseDoesNotChangeOrderAuthorization() throws Exception {
         CatalogEndpoints catalog = seedCatalog();
@@ -257,6 +368,15 @@ class NativeAuthHttpTest {
         }
     }
 
+    /**
+     * \u6838\u5bf9<code>actual.statusCode()</code> \u7b49\u4e8e <code>200</code>\uff0c<code>principal.get()</code> \u7b49\u4e8e <code>"reader"</code>\u3002
+     * @param path \u6d4b\u8bd5\u8bf7\u6c42\u7684\u8d44\u6e90\u8def\u5f84\u6216\u5f85\u8bbf\u95ee\u6587\u4ef6\u8def\u5f84
+     * @param credentials \u4f20\u7ed9 <code>requestOnFreshConnection()</code> \u7684 <code>Map&lt;String, String&gt;</code> \u8f93\u5165
+     * @param requestId \u7528\u4e8e\u68c0\u67e5\u8bf7\u6c42\u5934\u53ca\u54cd\u5e94\u5bf9\u5e94\u5173\u7cfb\u7684\u6807\u8bc6
+     * @param canonical \u4f20\u7ed9 <code>assertEquals()</code> \u7684 <code>HttpResponse&lt;String&gt;</code> \u8f93\u5165
+     * @param principal \u4f20\u7ed9 <code>principal.set()</code> \u7684 <code>AtomicReference&lt;String&gt;</code> \u8f93\u5165
+     * @throws Exception \u5904\u7406\u6d4b\u8bd5\u6570\u636e\u7684\u5e8f\u5217\u5316\u65f6\u5931\u8d25
+     */
     private void assertSameOrder(String path, Map<String, String> credentials, String requestId,
                                  HttpResponse<String> canonical, AtomicReference<String> principal) throws Exception {
         principal.set(null);
@@ -267,6 +387,10 @@ class NativeAuthHttpTest {
         assertEquals(mapper.readTree(canonical.body()), mapper.readTree(actual.body()), requestId);
     }
 
+    /**
+     * \u9a8c\u8bc1<code>Thread.currentThread().getName().contains("dw-")</code>\u4e3a\u771f\uff0c<code>SubjectKit.getSubject().isAuthenticated()</code>\u4e3a\u771f\uff0c<code>catalog.order(TENANT, "HELD").getStatus()</code> \u7b49\u4e8e <code>200</code>\u3002
+     * @throws Exception \u51c6\u5907\u6216\u8bfb\u53d6\u5939\u5177\u6587\u4ef6\u3001\u53cd\u5c04\u8bbf\u95ee\u88ab\u6d4b\u6210\u5458\u3001\u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void disconnectedRequestFinishesBeforeNativeOwnerStops() throws Exception {
         CatalogEndpoints catalog = seedCatalog();
@@ -304,6 +428,10 @@ class NativeAuthHttpTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>CacheKit.getCache(name)</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>caller</code>\uff0c<code>CacheKit.get(name, "caller-entry")</code> \u7b49\u4e8e <code>"loaded"</code>\u3002
+     * @throws Exception \u88c5\u914d\u8fd0\u884c\u6d4b\u8bd5\u6240\u9700\u7684\u7ec4\u4ef6\u65f6\u5931\u8d25
+     */
     @Test
     void shutdownPreservesCallerReplacementAndLoadingCache() throws Exception {
         AuthConfiguration config = new AuthConfiguration();
@@ -328,6 +456,10 @@ class NativeAuthHttpTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>login("alice").isEmpty()</code>\u4e3a\u5047\uff0c<code>SubjectKit.subjectProvider</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>previousProvider</code>\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void disabledCacheStillRunsAndStopsNativeAuth() throws Exception {
         AuthConfiguration config = new AuthConfiguration();
@@ -344,6 +476,10 @@ class NativeAuthHttpTest {
         assertSame(previousProvider, SubjectKit.subjectProvider);
     }
 
+    /**
+     * \u9a8c\u8bc1<code>start(catalog(), occupied.getLocalPort())</code> \u629b\u51fa <code>Exception.class</code>\uff0c<code>io.ddd4j.core.util.SubjectKit.subjectProvider</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>prior</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void failedBindRestoresPriorSubjectOwner() throws Exception {
         io.ddd4j.core.subject.SubjectProvider prior = SubjectKit.subjectProvider;

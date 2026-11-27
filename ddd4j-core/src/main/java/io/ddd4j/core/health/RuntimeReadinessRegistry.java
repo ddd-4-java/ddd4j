@@ -25,6 +25,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public final class RuntimeReadinessRegistry {
 
+    /** \u53c2\u4e0e\u8fd0\u884c\u65f6\u5c31\u7eea\u72b6\u6001\u68c0\u67e5\u7684\u7ec4\u4ef6\u3002 */
     private final List<ReadinessContributor> contributors = new CopyOnWriteArrayList<>();
 
     /**

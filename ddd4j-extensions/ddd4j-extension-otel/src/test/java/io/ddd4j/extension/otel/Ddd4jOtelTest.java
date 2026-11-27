@@ -35,6 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class Ddd4jOtelTest {
 
+    /** \u8c03\u7528 <code>Ddd4jOtel.class.getDeclaredField()</code>\u3001<code>field.setAccessible()</code>\u3001<code>field.get()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002 */
     private static void resetTracerCache() {
         try {
             Field field = Ddd4jOtel.class.getDeclaredField("TRACER_CACHE");
@@ -45,12 +46,14 @@ class Ddd4jOtelTest {
         }
     }
 
+    /** \u6d4b\u8bd5\u6267\u884c\u524d\u6267\u884c <code>ThreadContext.clear()</code>\u3001<code>resetTracerCache()</code> \u5b8c\u6210\u8d44\u6e90\u51c6\u5907\u3002 */
     @BeforeEach
     void setUp() {
         ThreadContext.clear();
         resetTracerCache();
     }
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>ThreadContext.clear()</code>\u3001<code>OpenTelemetrySdkSetter.set()</code>\u3001<code>OpenTelemetry.noop()</code>\u3001<code>resetTracerCache()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterEach
     void tearDown() {
         ThreadContext.clear();
@@ -58,12 +61,14 @@ class Ddd4jOtelTest {
         resetTracerCache();
     }
 
+    /** \u9a8c\u8bc1<code>tracer</code>\u975e\u7a7a\u3002 */
     @Test
     void tracer_shouldReturnNonNullTracer() {
         Tracer tracer = Ddd4jOtel.tracer();
         assertThat(tracer).isNotNull();
     }
 
+    /** \u9a8c\u8bc1<code>t1</code> \u6307\u5411\u540c\u4e00\u5b9e\u4f8b <code>t2</code>\u3002 */
     @Test
     void tracer_shouldReturnSameInstanceOnRepeatedCalls() {
         Tracer t1 = Ddd4jOtel.tracer();
@@ -71,6 +76,7 @@ class Ddd4jOtelTest {
         assertThat(t1).isSameAs(t2);
     }
 
+    /** \u9a8c\u8bc1<code>Ddd4jOtel.isAvailable()</code> \u7b49\u4e8e <code>available</code>\u3002 */
     @Test
     void isAvailable_shouldReturnBoolean() {
         // 仅验证返回 boolean 类型（不关心具体值，因为依赖 OTel 状态）
@@ -79,6 +85,7 @@ class Ddd4jOtelTest {
         assertThat(Ddd4jOtel.isAvailable()).isEqualTo(available);
     }
 
+    /** \u9a8c\u8bc1<code>attrs.get(Ddd4jOtel.ATTR_TENANT_ID)</code> \u7b49\u4e8e <code>"tenant-XYZ"</code>\u3002 */
     @Test
     void businessContextAttributes_shouldIncludeTenantWhenSet() {
         ThreadContext.set(ContextConstants.TENANT_ID, "tenant-XYZ");
@@ -87,12 +94,14 @@ class Ddd4jOtelTest {
         assertThat(attrs.get(Ddd4jOtel.ATTR_TENANT_ID)).isEqualTo("tenant-XYZ");
     }
 
+    /** \u9a8c\u8bc1<code>attrs.get(Ddd4jOtel.ATTR_TENANT_ID)</code>\u4e3a\u7a7a\u3002 */
     @Test
     void businessContextAttributes_shouldBeEmptyWhenNoContext() {
         Attributes attrs = Ddd4jOtel.businessContextAttributes();
         assertThat(attrs.get(Ddd4jOtel.ATTR_TENANT_ID)).isNull();
     }
 
+    /** \u9a8c\u8bc1<code>Ddd4jOtel.ATTR_TENANT_ID.getKey()</code> \u7b49\u4e8e <code>"ddd4j.tenant.id"</code>\uff0c<code>Ddd4jOtel.ATTR_USER_ID.getKey()</code> \u7b49\u4e8e <code>"ddd4j.user.id"</code>\uff0c<code>Ddd4jOtel.ATTR_DOMAIN_EVENT_TYPE.getKey()</code> \u7b49\u4e8e <code>"ddd4j.event.type"</code>\u3002 */
     @Test
     void standardAttributeKeys_shouldHaveCorrectNames() {
         assertThat(Ddd4jOtel.ATTR_TENANT_ID.getKey()).isEqualTo("ddd4j.tenant.id");
@@ -110,6 +119,7 @@ class Ddd4jOtelTest {
         assertThat(Ddd4jOtel.ATTR_DOMAIN_EVENT_TYPE.getKey()).isEqualTo("ddd4j.event.type");
     }
 
+    /** \u9a8c\u8bc1<code>true</code>\u4e3a\u771f\u3002 */
     @Test
     void enrichWithBusinessContext_withNullSpan_shouldNotThrow() {
         ThreadContext.set(ContextConstants.TENANT_ID, "tenant-001");
@@ -118,11 +128,13 @@ class Ddd4jOtelTest {
         assertThat(true).isTrue();
     }
 
+    /** \u9a8c\u8bc1<code>Ddd4jOtel.TRACER_NAME</code> \u7b49\u4e8e <code>"io.ddd4j"</code>\u3002 */
     @Test
     void tracerName_shouldBeDdd4j() {
         assertThat(Ddd4jOtel.TRACER_NAME).isEqualTo("io.ddd4j");
     }
 
+    /** \u9a8c\u8bc1<code>Ddd4jOtel.ATTR_TENANT_ID</code> \u7684\u7c7b\u578b\u4e3a <code>AttributeKey.class</code>\uff0c<code>Ddd4jOtel.ATTR_USER_ID</code> \u7684\u7c7b\u578b\u4e3a <code>AttributeKey.class</code>\u3002 */
     @Test
     void businessContextAttributes_shouldBeAttributeKey() {
         assertThat(Ddd4jOtel.ATTR_TENANT_ID).isInstanceOf(AttributeKey.class);

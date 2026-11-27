@@ -34,6 +34,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class EventStoreRetryTest {
 
+    /**
+     * \u9a8c\u8bc1<code>sleeper.calls</code>\u4e3a\u7a7a\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void 首次成功_不调用Sleeper() throws Exception {
         RecordingSleeper sleeper = new RecordingSleeper();
@@ -44,6 +48,10 @@ class EventStoreRetryTest {
         assertThat(sleeper.calls).isEmpty();
     }
 
+    /**
+     * \u9a8c\u8bc1<code>sleeper.calls</code> \u7684\u5927\u5c0f\u4e3a <code>1</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void 第二次成功_调用一次Sleeper() throws Exception {
         RecordingSleeper sleeper = new RecordingSleeper();
@@ -59,6 +67,7 @@ class EventStoreRetryTest {
         assertThat(sleeper.calls).hasSize(1);
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>RuntimeException.class</code>\uff0c<code>sleeper.calls</code> \u7684\u5927\u5c0f\u4e3a <code>2</code>\u3002 */
     @Test
     void 可重试异常_耗尽所有重试后抛出() {
         RecordingSleeper sleeper = new RecordingSleeper();
@@ -76,6 +85,7 @@ class EventStoreRetryTest {
         assertThat(sleeper.calls).hasSize(2);
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>attempts.get()</code> \u7b49\u4e8e <code>1</code>\uff0c<code>sleeper.calls</code>\u4e3a\u7a7a\u3002 */
     @Test
     void IllegalStateException_乐观锁失败_不重试_立即抛出() {
         RecordingSleeper sleeper = new RecordingSleeper();
@@ -91,6 +101,7 @@ class EventStoreRetryTest {
         assertThat(sleeper.calls).isEmpty();
     }
 
+    /** \u9a8c\u8bc1<code>EventStoreRetry.isRetriable(wrapper)</code>\u4e3a\u771f\u3002 */
     @Test
     void JPA_PersistenceException_嵌套SQLException_含uk_position_可重试() {
         SQLException sqlCause = new SQLException("uk_position violation");
@@ -99,6 +110,7 @@ class EventStoreRetryTest {
         assertThat(EventStoreRetry.isRetriable(wrapper)).isTrue();
     }
 
+    /** \u9a8c\u8bc1<code>EventStoreRetry.isRetriable(new RuntimeException("other"))</code>\u4e3a\u5047\uff0c<code>EventStoreRetry.isRetriable(new NullPointerException())</code>\u4e3a\u5047\uff0c<code>EventStoreRetry.isRetriable(new IllegalArgumentException("bad input"))</code>\u4e3a\u5047\u3002 */
     @Test
     void 任意RuntimeException_非IllegalState_不可重试() {
         assertThat(EventStoreRetry.isRetriable(new RuntimeException("other"))).isFalse();
@@ -106,11 +118,13 @@ class EventStoreRetryTest {
         assertThat(EventStoreRetry.isRetriable(new IllegalArgumentException("bad input"))).isFalse();
     }
 
+    /** \u9a8c\u8bc1<code>EventStoreRetry.isRetriable(new SQLException("connection lost"))</code>\u4e3a\u5047\u3002 */
     @Test
     void SQLException_不含关键字_不可重试() {
         assertThat(EventStoreRetry.isRetriable(new SQLException("connection lost"))).isFalse();
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>EventStoreRetry.computeDelay()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void 退避延迟_指数增长() {
         assertThat(EventStoreRetry.computeDelay(1)).isBetween(10L, 20L);
@@ -120,6 +134,7 @@ class EventStoreRetryTest {
         assertThat(EventStoreRetry.computeDelay(5)).isBetween(160L, 170L);
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
     @Test
     void maxAttempts_小于1_构造失败() {
         assertThatThrownBy(() -> new EventStoreRetry(0, 1L, ms -> {
@@ -128,6 +143,7 @@ class EventStoreRetryTest {
                 .hasMessageContaining("maxAttempts");
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
     @Test
     void baseDelayMillis_负数_构造失败() {
         assertThatThrownBy(() -> new EventStoreRetry(3, -1L, ms -> {
@@ -136,9 +152,15 @@ class EventStoreRetryTest {
                 .hasMessageContaining("baseDelayMillis");
     }
 
+    /** \u6536\u96c6\u6536\u5230\u7684\u7b49\u5f85\u65f6\u957f\uff0c\u4f9b\u6d4b\u8bd5\u9a8c\u8bc1\u91cd\u8bd5\u95f4\u9694\u3002 */
     static final class RecordingSleeper implements EventStoreRetry.Sleeper {
+        /** \u8bb0\u5f55\u88ab\u6d4b\u5165\u53e3\u5b9e\u9645\u89e6\u53d1\u7684\u8c03\u7528\u3002 */
         final List<Long> calls = new ArrayList<>();
 
+        /**
+         * \u8c03\u7528 <code>calls.add()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+         * @param millis \u7b49\u5f85\u6216\u63a8\u8fdb\u7684\u6beb\u79d2\u6570
+         */
         @Override
         public void sleep(long millis) {
             calls.add(millis);

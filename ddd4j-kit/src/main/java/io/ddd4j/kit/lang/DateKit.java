@@ -32,6 +32,12 @@ import java.util.List;
 @UtilityClass
 public class DateKit extends DateUtil {
 
+    /**
+     * \u5217\u51fa\u4e24\u4e2a\u65f6\u95f4\u70b9\u4e4b\u95f4\u7684\u6708\u4efd\uff08\u5305\u542b\u9996\u5c3e\u6708\u4efd\uff09\u3002
+     * @param startDateTime \u8d77\u59cb\u65f6\u95f4\uff08\u542b\u6240\u5728\u6708\u4efd\uff09
+     * @param endDateTime \u7ed3\u675f\u65f6\u95f4\uff08\u542b\u6240\u5728\u6708\u4efd\uff09
+     * @return \u6309\u6708\u9012\u589e\u7684\u5e74\u6708\u5217\u8868
+     */
     public static List<String> getMonthsBetween(LocalDateTime startDateTime, LocalDateTime endDateTime) {
         List<String> months = new ArrayList<>();
         YearMonth startYearMonth = YearMonth.from(startDateTime);

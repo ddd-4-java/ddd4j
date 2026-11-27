@@ -29,12 +29,22 @@ package io.ddd4j.core.exception;
  * @since 3.0.0
  */
 public class AccountLockedException extends AuthenticationException {
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * \u4f7f\u7528\u9519\u8bef\u6d88\u606f\u521b\u5efa\u8d26\u53f7\u9501\u5b9a\u5f02\u5e38\u3002
+     * @param message \u9519\u8bef\u6d88\u606f
+     */
     public AccountLockedException(String message) {
         super(message);
     }
 
+    /**
+     * \u4f7f\u7528\u9519\u8bef\u6d88\u606f\u521b\u5efa\u8d26\u53f7\u9501\u5b9a\u5f02\u5e38\u3002
+     * @param message \u9519\u8bef\u6d88\u606f
+     * @param cause \u539f\u59cb\u5f02\u5e38
+     */
     public AccountLockedException(String message, Throwable cause) {
         super(message, cause);
     }

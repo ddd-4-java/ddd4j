@@ -37,6 +37,11 @@ import java.util.Objects;
 @Slf4j
 public class DddCdiExtension implements Extension {
 
+    /**
+     * \u68c0\u67e5\u4f7f\u7528 DDD \u7ec4\u4ef6\u6ce8\u89e3\u7684\u7c7b\u578b\u5e76\u8865\u5145\u9002\u7528\u7684 CDI \u5143\u6570\u636e\u3002
+     * @param <T> \u5f53\u524d\u5bb9\u5668\u5904\u7406\u7684\u7ec4\u4ef6\u6216\u4e8b\u4ef6\u7c7b\u578b
+     * @param event \u5f53\u524d\u6846\u67b6\u751f\u547d\u5468\u671f\u6216\u5bb9\u5668\u542f\u52a8\u4e8b\u4ef6
+     */
     <T> void processAnnotatedType(@Observes ProcessAnnotatedType<T> event) {
         AnnotatedType<T> type = event.getAnnotatedType();
         String annotationName = resolveAnnotationName(type);
@@ -49,6 +54,12 @@ public class DddCdiExtension implements Extension {
         }
     }
 
+    /**
+     * \u627e\u51fa\u5f85\u5904\u7406\u7c7b\u578b\u4e0a\u53ef\u8bc6\u522b\u7684 DDD \u6ce8\u89e3\u3002
+     * @param <T> \u5f53\u524d\u5bb9\u5668\u5904\u7406\u7684\u7ec4\u4ef6\u6216\u4e8b\u4ef6\u7c7b\u578b
+     * @param type \u8981\u89e3\u6790\u7684 Bean \u7c7b\u578b\u6216 CDI \u7c7b\u578b\u4fe1\u606f
+     * @return \u5df2\u8bc6\u522b\u7684 DDD \u6ce8\u89e3\u540d\uff0c\u6ca1\u6709\u65f6\u8fd4\u56de\u7a7a
+     */
     private <T> String resolveAnnotationName(AnnotatedType<T> type) {
         if (type.isAnnotationPresent(ApplicationService.class)) {
             return "@ApplicationService";
@@ -83,9 +94,11 @@ public class DddCdiExtension implements Extension {
         return null;
     }
 
+    /** \u4e3a\u52a8\u6001\u6ce8\u518c\u7684 CDI Bean \u63d0\u4f9b\u5e94\u7528\u7ea7\u4f5c\u7528\u57df\u6ce8\u89e3\u5b9e\u4f8b\u3002 */
     private static class ApplicationScopedLiteral extends javax.enterprise.util.AnnotationLiteral<ApplicationScoped>
             implements ApplicationScoped {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 1L;
     }
 }

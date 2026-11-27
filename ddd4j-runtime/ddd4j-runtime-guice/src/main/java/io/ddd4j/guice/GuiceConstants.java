@@ -35,6 +35,7 @@ public final class GuiceConstants {
      */
     public static final int DEFAULT_THREAD_POOL_SIZE = 2;
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>GuiceConstants</code> \u5b9e\u4f8b\u3002 */
     private GuiceConstants() {
     }
 }

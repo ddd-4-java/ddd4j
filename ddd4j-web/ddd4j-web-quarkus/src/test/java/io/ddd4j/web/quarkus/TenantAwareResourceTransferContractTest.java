@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /** 租户资源分页转换的三线行为契约。 */
 class TenantAwareResourceTransferContractTest {
 
+    /** \u9a8c\u8bc1<code>result.getTotal()</code> \u7b49\u4e8e <code>3L</code>\uff0c<code>result.getCurrent()</code> \u7b49\u4e8e <code>2L</code>\uff0c<code>result.getRecords()</code> \u7b49\u4e8e <code>Arrays.asList("1", "2")</code>\u3002 */
     @Test
     void transferPreservesMetadataAndMutableRecords() {
         Page<Integer> source = new Page<>();
@@ -41,7 +42,13 @@ class TenantAwareResourceTransferContractTest {
         assertEquals(Arrays.asList("1", "2"), result.getRecords());
     }
 
+    /** \u5b9e\u73b0 <code>TenantAwareResource</code>\uff0c\u4f9b\u6d4b\u8bd5\u8c03\u7528 <code>convert()</code> \u5e76\u89c2\u5bdf\u7ed3\u679c\u3002 */
     private static final class ExposedResource extends TenantAwareResource {
+        /**
+         * \u901a\u8fc7 <code>transfer()</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+         * @param source \u6d4b\u8bd5\u4e2d\u5f85\u8f6c\u6362\u3001\u8bfb\u53d6\u6216\u4f20\u64ad\u7684\u6570\u636e\u6765\u6e90
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>transfer(source, String::valueOf)</code>
+         */
         Page<String> convert(Page<Integer> source) {
             return transfer(source, String::valueOf);
         }

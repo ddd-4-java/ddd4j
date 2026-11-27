@@ -30,6 +30,10 @@ import io.ddd4j.extension.monitor.runtime.ApplicationStartReporter;
  */
 public class BaseMonitorConfig {
 
+    /**
+     * \u521b\u5efa\u57fa\u7840\u76d1\u63a7\u914d\u7f6e\u5c5e\u6027\u3002
+     * @return \u57fa\u7840\u76d1\u63a7\u914d\u7f6e\u5c5e\u6027
+     */
     public BaseMonitorProperties baseMonitorProperties() {
         return new BaseMonitorProperties();
     }

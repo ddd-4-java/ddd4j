@@ -31,6 +31,7 @@ import java.util.*;
  */
 public class FeishuRobotSender implements Sender {
 
+    /** \u5c06\u6d88\u606f\u8bf7\u6c42\u53d1\u9001\u5230\u98de\u4e66\u81ea\u5b9a\u4e49\u673a\u5668\u4eba\u7684 HTTP \u5ba2\u6237\u7aef\u3002 */
     private final FeishuClient client;
 
     /**
@@ -49,6 +50,7 @@ public class FeishuRobotSender implements Sender {
         return client;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void send(String msg) {
         // 入参 msg 是 markdown 文本，这里包一层为标准 post 富文本结构：
@@ -78,6 +80,7 @@ public class FeishuRobotSender implements Sender {
     @Data
     @NoArgsConstructor
     static class PostPayload {
+        /** \u98de\u4e66\u5bcc\u6587\u672c\u6d88\u606f\u7684\u6b63\u6587\u7ed3\u6784\u3002 */
         private Map<String, Object> post;
     }
 }

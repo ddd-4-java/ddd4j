@@ -52,18 +52,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 @QuarkusTest
 class QuarkusProjectionSchedulerIT {
 
+    /** 注册任务和取消任务所用的视图调度器。 */
     @Inject
     QuarkusProjectionScheduler scheduler;
 
+    /** 保存 <code>view Manager</code> 对应的 <code>QuarkusProjectionViewManager</code> 数据。 */
     @Inject
     QuarkusProjectionViewManager viewManager;
 
+    /** 保存 <code>startup Events</code> 对应的 <code>Event&lt;StartupEvent&gt;</code> 数据。 */
     @Inject
     Event<StartupEvent> startupEvents;
 
+    /** 保存 <code>shutdown Events</code> 对应的 <code>Event&lt;ShutdownEvent&gt;</code> 数据。 */
     @Inject
     Event<ShutdownEvent> shutdownEvents;
 
+    /** 验证<code>viewManager.isRunning()</code>为真。 */
     @Test
     void startupEvent_应启动视图管理器() {
         viewManager.stop();
@@ -72,6 +77,7 @@ class QuarkusProjectionSchedulerIT {
         viewManager.stop();
     }
 
+    /** 验证<code>viewManager.isRunning()</code>为假。 */
     @Test
     void shutdownEvent_应停止视图管理器() {
         viewManager.start();
@@ -79,6 +85,7 @@ class QuarkusProjectionSchedulerIT {
         assertThat(viewManager.isRunning()).isFalse();
     }
 
+    /** 验证<code>handle.isActive()</code>为真，<code>handle.isActive()</code>为假。 */
     @Test
     void scheduler_schedule_应返回activeHandle_cancel后应inactive() {
         ViewScheduler.ViewScheduleHandle handle = scheduler.schedule(
@@ -91,6 +98,7 @@ class QuarkusProjectionSchedulerIT {
         assertThat(handle.isActive()).isFalse();
     }
 
+    /** 验证<code>viewManager.isRunning()</code>为假，<code>viewManager.isRunning()</code>为真。 */
     @Test
     void viewManager_start_stop_应管理生命周期() {
         viewManager.stop();
@@ -107,6 +115,7 @@ class QuarkusProjectionSchedulerIT {
         assertThat(viewManager.isRunning()).isFalse();
     }
 
+    /** 验证<code>viewManager.isRunning()</code>为真。 */
     @Test
     void triggerOnce_应立即执行所有view的runOnce() {
         viewManager.start();
@@ -117,9 +126,15 @@ class QuarkusProjectionSchedulerIT {
 
     // ======== CDI 测试替身（@Produces 注册为 ArC Bean） ========
 
+    /** 集中保存 <code>TestProducer</code> 的声明，供当前模块使用。 */
     @ApplicationScoped
     static class TestProducer {
 
+        /**
+         * 读取<code>null</code> 的当前值。
+         *
+         * @return 返回表达式 <code>null</code>
+         */
         @Produces
         @ApplicationScoped
         ProjectionService projectionService() {
@@ -140,6 +155,11 @@ class QuarkusProjectionSchedulerIT {
             };
         }
 
+        /**
+         * 执行 <code>chunk Reader</code>，调用 <code>EventChunk.empty</code>。
+         *
+         * @return 当前操作得到的 <code>EventChunkReader&lt;Object&gt;</code> 结果
+         */
         @Produces
         @ApplicationScoped
         @SuppressWarnings("unchecked")
@@ -148,6 +168,13 @@ class QuarkusProjectionSchedulerIT {
                     EventChunk.empty(fromEventNumber);
         }
 
+        /**
+         * 按 <code>projection Runner</code> 的契约计算并返回结果。
+         *
+         * @param service 传入此操作的 <code>ProjectionService</code> 类型 <code>service</code>
+         * @param reader 传入此操作的 <code>EventChunkReader&lt;Object&gt;</code> 类型 <code>reader</code>
+         * @return 当前操作得到的 <code>ProjectionRunner&lt;Object&gt;</code> 结果
+         */
         @Produces
         @ApplicationScoped
         @SuppressWarnings("unchecked")
@@ -155,6 +182,11 @@ class QuarkusProjectionSchedulerIT {
             return new ProjectionRunner<>(service, reader);
         }
 
+        /**
+         * 按 <code>test View</code> 的契约计算并返回结果。
+         *
+         * @return 当前操作得到的 <code>ProjectionView&lt;Object&gt;</code> 结果
+         */
         @Produces
         @ApplicationScoped
         ProjectionView<Object> testView() {
@@ -162,31 +194,60 @@ class QuarkusProjectionSchedulerIT {
         }
     }
 
+    /** 为测试场景提供 <code>ProjectionView</code> 的实现。 */
     private static class ProjectionViewStub implements ProjectionView<Object> {
 
+        /** 保存 <code>name</code> 对应的 <code>String</code> 数据。 */
         private final String name;
+        /** 控制投影任务执行时点的 Cron 表达式。 */
         private final String cron;
 
+        /**
+         * 初始化 <code>ProjectionViewStub</code> 使用的 <code>name</code>、<code>cron</code>。
+         *
+         * @param name 传入此操作的 <code>String</code> 类型 <code>name</code>
+         * @param cron 控制任务触发时刻的 Cron 表达式
+         */
         ProjectionViewStub(String name, String cron) {
             this.name = name;
             this.cron = cron;
         }
 
+        /**
+         * 读取<code>name</code> 的当前值。
+         *
+         * @return 返回表达式 <code>name</code>
+         */
         @Override
         public String getName() {
             return name;
         }
 
+        /**
+         * 读取控制投影任务执行时点的 Cron 表达式。
+         *
+         * @return 返回表达式 <code>cron</code>
+         */
         @Override
         public String getCron() {
             return cron;
         }
 
+        /**
+         * 执行 <code>get Event Types</code>，调用 <code>Collections.singleton</code>。
+         *
+         * @return 返回表达式 <code>java.util.Collections.singleton("TestEvent")</code>
+         */
         @Override
         public Collection<String> getEventTypes() {
             return java.util.Collections.singleton("TestEvent");
         }
 
+        /**
+         * 提供测试夹具的空操作。
+         *
+         * @param events 传入此操作的 <code>Collection&lt;Object&gt;</code> 类型 <code>events</code>
+         */
         @Override
         public void handleEvents(Collection<Object> events) {
         }

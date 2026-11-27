@@ -44,9 +44,16 @@ import static org.hamcrest.Matchers.hasKey;
 @QuarkusTest
 class RbacResourceTest {
 
+    /** \u7528\u4e8e\u63a7\u5236\u793a\u4f8b\u8d26\u53f7\u4e0e\u89d2\u8272\u6570\u636e\u7684\u914d\u7f6e\u5bf9\u8c61\u3002 */
     @Inject
     RbacConfig rbacConfig;
 
+    /**
+     * \u901a\u8fc7 <code>given()</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+     * @param username \u6d4b\u8bd5\u4f1a\u8bdd\u4f7f\u7528\u7684\u7528\u6237\u540d
+     * @param password \u6d4b\u8bd5\u8d26\u53f7\u7684\u53e3\u4ee4
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>given().contentType("application/json").body(body).when().post("/auth/login").then().statusCode(200).extract().path("token")</code>
+     */
     private static String loginAs(String username, String password) {
         Map<String, String> body = new HashMap<>();
         body.put("username", username);
@@ -59,6 +66,14 @@ class RbacResourceTest {
 
     // ========== 登录 / 认证 ==========
 
+    /**
+     * \u8bfb\u53d6 <code>newUser</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
+     * @param id \u5f53\u524d\u8981\u67e5\u627e\u7684\u6d4b\u8bd5\u8bb0\u5f55\u6807\u8bc6
+     * @param username \u6d4b\u8bd5\u4f1a\u8bdd\u4f7f\u7528\u7684\u7528\u6237\u540d
+     * @param displayName \u4f20\u7ed9 <code>newUser.put()</code> \u7684 <code>String</code> \u8f93\u5165
+     * @param role \u672c\u6b21\u9274\u6743\u65ad\u8a00\u6240\u4f7f\u7528\u7684\u89d2\u8272\u6807\u8bc6
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>newUser</code>
+     */
     private static Map<String, Object> createUserBody(String id, String username, String displayName, Object role) {
         Map<String, Object> newUser = new HashMap<>();
         newUser.put("id", id);
@@ -69,11 +84,13 @@ class RbacResourceTest {
         return newUser;
     }
 
+    /** \u6d4b\u8bd5\u6267\u884c\u524d\u6267\u884c <code>rbacConfig.reset()</code> \u5b8c\u6210\u8d44\u6e90\u51c6\u5907\u3002 */
     @BeforeEach
     void resetRbacData() {
         rbacConfig.reset();
     }
 
+    /** \u4f7f\u7528\u7ba1\u7406\u5458\u4f1a\u8bdd\u65f6\u8bf7\u6c42 <code>POST /auth/login</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\uff0c\u54cd\u5e94\u4e2d\u7684 <code>data.principal.userCode</code> \u7b49\u4e8e <code>"admin"</code>\u3002 */
     @Test
     void shouldLoginSuccessfullyAsAdmin() {
         Map<String, String> body = new HashMap<>();
@@ -88,6 +105,7 @@ class RbacResourceTest {
                 .body("data.principal.userCode", equalTo("admin"));
     }
 
+    /** \u4f7f\u7528\u666e\u901a\u7528\u6237\u4f1a\u8bdd\u65f6\u8bf7\u6c42 <code>POST /auth/login</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\uff0c\u54cd\u5e94\u4e2d\u7684 <code>data.principal.userCode</code> \u7b49\u4e8e <code>"user"</code>\u3002 */
     @Test
     void shouldLoginSuccessfullyAsUser() {
         Map<String, String> body = new HashMap<>();
@@ -102,6 +120,7 @@ class RbacResourceTest {
                 .body("data.principal.userCode", equalTo("user"));
     }
 
+    /** \u8bf7\u6c42 <code>POST /auth/login</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 500\u3002 */
     @Test
     void shouldRejectInvalidPassword() {
         Map<String, String> body = new HashMap<>();
@@ -113,6 +132,7 @@ class RbacResourceTest {
                 .then().statusCode(500);
     }
 
+    /** \u8bf7\u6c42 <code>POST /auth/login</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 500\u3002 */
     @Test
     void shouldRejectLoginForDisabledUser() {
         Map<String, String> body = new HashMap<>();
@@ -124,6 +144,7 @@ class RbacResourceTest {
                 .then().statusCode(500);
     }
 
+    /** \u8bf7\u6c42 <code>POST /auth/login</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 500\u3002 */
     @Test
     void shouldRejectLoginWithUnknownUser() {
         Map<String, String> body = new HashMap<>();
@@ -135,6 +156,7 @@ class RbacResourceTest {
                 .then().statusCode(500);
     }
 
+    /** \u8bf7\u6c42 <code>GET /auth/status</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\uff0c\u54cd\u5e94\u4e2d\u7684 <code>data.login</code> \u7b49\u4e8e <code>false</code>\u3002 */
     @Test
     void shouldReturnLoginStatus() {
         given().when().get("/auth/status")
@@ -145,18 +167,21 @@ class RbacResourceTest {
 
     // ========== 鉴权（3 种鉴权方式） ==========
 
+    /** \u5df2\u767b\u5f55\u65f6\u8bf7\u6c42 <code>GET /auth/me</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 401\u3002 */
     @Test
     void shouldReturnNotAuthenticatedWhenNotLogin() {
         given().when().get("/auth/me")
                 .then().statusCode(401);
     }
 
+    /** \u8bf7\u6c42 <code>GET /admin/users</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 401\u3002 */
     @Test
     void shouldReturn401WhenAccessAdminUsersWithoutLogin() {
         given().when().get("/admin/users")
                 .then().statusCode(401);
     }
 
+    /** \u8bf7\u6c42 <code>GET /auth/me</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\uff0c\u54cd\u5e94\u4e2d\u7684 <code>data.userCode</code> \u7b49\u4e8e <code>"user"</code>\u3002 */
     @Test
     void shouldAccessMeWhenLoggedIn() {
         String token = loginAs("user", "123456");
@@ -168,6 +193,7 @@ class RbacResourceTest {
                 .body("data.userCode", equalTo("user"));
     }
 
+    /** \u4f7f\u7528\u7ba1\u7406\u5458\u4f1a\u8bdd\u65f6\u8bf7\u6c42 <code>GET /auth/me</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\uff0c\u54cd\u5e94\u4e2d\u7684 <code>data.roleCode</code> \u7b49\u4e8e <code>"admin"</code>\u3002 */
     @Test
     void shouldAccessMeAsAdmin() {
         String token = loginAs("admin", "123456");
@@ -179,6 +205,7 @@ class RbacResourceTest {
                 .body("data.roleCode", equalTo("admin"));
     }
 
+    /** \u8bf7\u6c42 <code>POST /admin/users</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 403\u3002 */
     @Test
     void shouldDenyAccessToAdminEndpointWithoutAdminRole() {
         String token = loginAs("user", "123456");
@@ -189,6 +216,7 @@ class RbacResourceTest {
                 .then().statusCode(403);
     }
 
+    /** \u8bf7\u6c42 <code>GET /auth/check/permission</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\uff0c\u54cd\u5e94\u4e2d\u7684 <code>data.has</code> \u7b49\u4e8e <code>true</code>\u3002 */
     @Test
     void shouldCheckPermissionAtRuntime() {
         String token = loginAs("admin", "123456");
@@ -201,6 +229,7 @@ class RbacResourceTest {
                 .body("data.has", is(true));
     }
 
+    /** \u8bf7\u6c42 <code>GET /auth/check/permission</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\uff0c\u54cd\u5e94\u4e2d\u7684 <code>data.has</code> \u7b49\u4e8e <code>false</code>\u3002 */
     @Test
     void shouldTreatMissingRuntimePermissionAsNotGranted() {
         String token = loginAs("admin", "123456");
@@ -214,6 +243,7 @@ class RbacResourceTest {
                 .body("data.has", is(false));
     }
 
+    /** \u8bf7\u6c42 <code>GET /auth/check/permission</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\uff0c\u54cd\u5e94\u4e2d\u7684 <code>data.has</code> \u7b49\u4e8e <code>false</code>\u3002 */
     @Test
     void shouldTreatBlankRuntimePermissionAsNotGranted() {
         String token = loginAs("user", "123456");
@@ -227,6 +257,7 @@ class RbacResourceTest {
                 .body("data.has", is(false));
     }
 
+    /** \u8bf7\u6c42 <code>GET /auth/check/role</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\uff0c\u54cd\u5e94\u4e2d\u7684 <code>data.has</code> \u7b49\u4e8e <code>true</code>\u3002 */
     @Test
     void shouldCheckRoleAtRuntime() {
         String token = loginAs("admin", "123456");
@@ -239,6 +270,7 @@ class RbacResourceTest {
                 .body("data.has", is(true));
     }
 
+    /** \u8bf7\u6c42 <code>GET /auth/check/permission</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\uff0c\u54cd\u5e94\u4e2d\u7684 <code>data.has</code> \u7b49\u4e8e <code>false</code>\u3002 */
     @Test
     void shouldCheckRuntimePermissionForNonExistingPermission() {
         String token = loginAs("admin", "123456");
@@ -250,6 +282,7 @@ class RbacResourceTest {
                 .body("data.has", is(false));
     }
 
+    /** \u8bf7\u6c42 <code>GET /auth/check/role</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\uff0c\u54cd\u5e94\u4e2d\u7684 <code>data.has</code> \u7b49\u4e8e <code>false</code>\u3002 */
     @Test
     void shouldCheckRuntimeRoleForNonExistingRole() {
         String token = loginAs("admin", "123456");
@@ -263,6 +296,7 @@ class RbacResourceTest {
 
     // ========== 业务侧鉴权：3 种鉴权组合 ==========
 
+    /** \u8bf7\u6c42 <code>GET /auth/check/permission?permission=anything</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 401\u3002 */
     @Test
     void shouldDenyAccessToCheckPermissionWithoutLogin() {
         given().when().get("/auth/check/permission")
@@ -273,12 +307,14 @@ class RbacResourceTest {
                 .then().statusCode(401);
     }
 
+    /** \u8bf7\u6c42 <code>GET /auth/check/role?role=anything</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 401\u3002 */
     @Test
     void shouldDenyAccessToCheckRoleWithoutLogin() {
         given().when().get("/auth/check/role?role=anything")
                 .then().statusCode(401);
     }
 
+    /** \u4f7f\u7528\u7ba1\u7406\u5458\u4f1a\u8bdd\u65f6\u8bf7\u6c42 <code>GET /auth/users</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\u3002 */
     @Test
     void shouldListUsersAsAdminViaAuthEndpoint() {
         String token = loginAs("admin", "123456");
@@ -289,6 +325,7 @@ class RbacResourceTest {
                 .body("data.items.size()", is(3));
     }
 
+    /** \u4f7f\u7528\u7ba1\u7406\u5458\u4f1a\u8bdd\u65f6\u8bf7\u6c42 <code>GET /admin/users</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\u3002 */
     @Test
     void shouldListUsersAsAdminViaAdminEndpoint() {
         String token = loginAs("admin", "123456");
@@ -299,6 +336,7 @@ class RbacResourceTest {
                 .body("data.size()", is(3));
     }
 
+    /** \u8bf7\u6c42 <code>POST /auth/orders/o-1001/pay</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 403\u3002 */
     @Test
     void shouldPayOrderWithOrderPayPermissionDenied() {
         String token = loginAs("user", "123456");
@@ -307,6 +345,7 @@ class RbacResourceTest {
                 .then().statusCode(403);
     }
 
+    /** \u8bf7\u6c42 <code>POST /auth/orders/o-1001/pay</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\uff0c\u54cd\u5e94\u4e2d\u7684 <code>data.paid</code> \u7b49\u4e8e <code>true</code>\u3002 */
     @Test
     void shouldPayOrderWithOrderPayPermissionAllowed() {
         String token = loginAs("admin", "123456");
@@ -316,6 +355,7 @@ class RbacResourceTest {
                 .body("data.paid", is(true));
     }
 
+    /** \u4f7f\u7528\u7ba1\u7406\u5458\u4f1a\u8bdd\u65f6\u8bf7\u6c42 <code>DELETE /auth/users/u-temp</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\uff0c\u54cd\u5e94\u4e2d\u7684 <code>data</code> \u7b49\u4e8e <code>true</code>\u3002 */
     @Test
     void shouldDeleteUserAsAdmin() {
         String token = loginAs("admin", "123456");
@@ -328,6 +368,7 @@ class RbacResourceTest {
 
     // ========== 用户 CRUD ==========
 
+    /** \u8bf7\u6c42 <code>DELETE /auth/users/u-temp</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 403\u3002 */
     @Test
     void shouldDenyDeleteUserAsRegularUser() {
         String token = loginAs("user", "123456");
@@ -336,12 +377,14 @@ class RbacResourceTest {
                 .then().statusCode(403);
     }
 
+    /** \u8bf7\u6c42 <code>GET /auth/users</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 401\u3002 */
     @Test
     void shouldDenyAccessToBusinessEndpointWithoutLogin() {
         given().when().get("/auth/users")
                 .then().statusCode(401);
     }
 
+    /** \u4f7f\u7528\u7ba1\u7406\u5458\u4f1a\u8bdd\u65f6\u8bf7\u6c42 <code>POST /admin/users</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\uff0c\u54cd\u5e94\u4e2d\u7684 <code>data.username</code> \u7b49\u4e8e <code>"shiroNew"</code>\u3002 */
     @Test
     void shouldCreateUserAsAdmin() {
         String token = loginAs("admin", "123456");
@@ -356,6 +399,7 @@ class RbacResourceTest {
                 .body("data.username", equalTo("shiroNew"));
     }
 
+    /** \u8bf7\u6c42 <code>GET /admin/users/{id}</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\uff0c\u54cd\u5e94\u4e2d\u7684 <code>data.username</code> \u7b49\u4e8e <code>"admin"</code>\u3002 */
     @Test
     void shouldFindUserById() {
         String token = loginAs("admin", "123456");
@@ -367,6 +411,7 @@ class RbacResourceTest {
                 .body("data.username", equalTo("admin"));
     }
 
+    /** \u4f7f\u7528\u7ba1\u7406\u5458\u4f1a\u8bdd\u65f6\u8bf7\u6c42 <code>PUT /admin/users/{id}</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\uff0c\u54cd\u5e94\u4e2d\u7684 <code>data.displayName</code> \u7b49\u4e8e <code>"\u66f4\u65b0\u540e"</code>\u3002 */
     @Test
     void shouldUpdateUserAsAdmin() {
         String token = loginAs("admin", "123456");
@@ -388,6 +433,7 @@ class RbacResourceTest {
                 .body("data.displayName", equalTo("更新后"));
     }
 
+    /** \u4f7f\u7528\u7ba1\u7406\u5458\u4f1a\u8bdd\u65f6\u8bf7\u6c42 <code>DELETE /admin/users/{id}</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\uff0c\u54cd\u5e94\u4e2d\u7684 <code>data</code> \u7b49\u4e8e <code>true</code>\u3002 */
     @Test
     void shouldDeleteUserAsAdminViaAdminEndpoint() {
         String token = loginAs("admin", "123456");
@@ -407,6 +453,7 @@ class RbacResourceTest {
 
     // ========== 角色 / 权限 CRUD ==========
 
+    /** \u4f7f\u7528\u7ba1\u7406\u5458\u4f1a\u8bdd\u65f6\u8bf7\u6c42 <code>POST /admin/users/{id}/roles/{code}</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\u3002 */
     @Test
     void shouldAssignRoleToUserAsAdmin() {
         String token = loginAs("admin", "123456");
@@ -424,6 +471,7 @@ class RbacResourceTest {
                 .body("data.roleCodes", notNullValue());
     }
 
+    /** \u4f7f\u7528\u7ba1\u7406\u5458\u4f1a\u8bdd\u65f6\u8bf7\u6c42 <code>DELETE /admin/users/{id}/roles/{code}</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\u3002 */
     @Test
     void shouldRevokeRoleFromUserAsAdmin() {
         String token = loginAs("admin", "123456");
@@ -440,6 +488,7 @@ class RbacResourceTest {
                 .statusCode(200);
     }
 
+    /** \u5df2\u767b\u5f55\u65f6\u8bf7\u6c42 <code>GET /admin/roles</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\u3002 */
     @Test
     void shouldListRolesAsAuthenticatedUser() {
         String token = loginAs("user", "123456");
@@ -450,6 +499,7 @@ class RbacResourceTest {
                 .body("data.size()", greaterThanOrEqualTo(2));
     }
 
+    /** \u8bf7\u6c42 <code>GET /admin/roles/{code}</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\uff0c\u54cd\u5e94\u4e2d\u7684 <code>data.code</code> \u7b49\u4e8e <code>"admin"</code>\u3002 */
     @Test
     void shouldFindRoleByCode() {
         String token = loginAs("admin", "123456");
@@ -460,6 +510,7 @@ class RbacResourceTest {
                 .body("data.code", equalTo("admin"));
     }
 
+    /** \u4f7f\u7528\u7ba1\u7406\u5458\u4f1a\u8bdd\u65f6\u8bf7\u6c42 <code>POST /admin/roles</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\uff0c\u54cd\u5e94\u4e2d\u7684 <code>data.code</code> \u7b49\u4e8e <code>roleCode</code>\u3002 */
     @Test
     void shouldCreateRoleAsAdmin() {
         String token = loginAs("admin", "123456");
@@ -477,6 +528,7 @@ class RbacResourceTest {
                 .body("data.code", equalTo(roleCode));
     }
 
+    /** \u4f7f\u7528\u7ba1\u7406\u5458\u4f1a\u8bdd\u65f6\u8bf7\u6c42 <code>PUT /admin/roles/{code}</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\u3002 */
     @Test
     void shouldUpdateRoleAsAdmin() {
         String token = loginAs("admin", "123456");
@@ -500,6 +552,7 @@ class RbacResourceTest {
                 .then().statusCode(200);
     }
 
+    /** \u4f7f\u7528\u7ba1\u7406\u5458\u4f1a\u8bdd\u65f6\u8bf7\u6c42 <code>DELETE /admin/roles/{code}</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\uff0c\u54cd\u5e94\u4e2d\u7684 <code>data</code> \u7b49\u4e8e <code>true</code>\u3002 */
     @Test
     void shouldDeleteRoleAsAdmin() {
         String token = loginAs("admin", "123456");
@@ -521,6 +574,7 @@ class RbacResourceTest {
                 .body("data", is(true));
     }
 
+    /** \u4f7f\u7528\u7ba1\u7406\u5458\u4f1a\u8bdd\u65f6\u8bf7\u6c42 <code>POST /admin/roles/{code}/permissions/{pcode}</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\u3002 */
     @Test
     void shouldGrantPermissionToRoleAsAdmin() {
         String token = loginAs("admin", "123456");
@@ -530,6 +584,7 @@ class RbacResourceTest {
                 .statusCode(200);
     }
 
+    /** \u4f7f\u7528\u7ba1\u7406\u5458\u4f1a\u8bdd\u65f6\u8bf7\u6c42 <code>DELETE /admin/roles/{code}/permissions/{pcode}</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\u3002 */
     @Test
     void shouldRevokePermissionFromRoleAsAdmin() {
         String token = loginAs("admin", "123456");
@@ -541,6 +596,7 @@ class RbacResourceTest {
                 .then().statusCode(200);
     }
 
+    /** \u5df2\u767b\u5f55\u65f6\u8bf7\u6c42 <code>GET /admin/permissions</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\u3002 */
     @Test
     void shouldListPermissionsAsAuthenticatedUser() {
         String token = loginAs("user", "123456");
@@ -551,6 +607,7 @@ class RbacResourceTest {
                 .body("data.size()", greaterThanOrEqualTo(5));
     }
 
+    /** \u4f7f\u7528\u7ba1\u7406\u5458\u4f1a\u8bdd\u65f6\u8bf7\u6c42 <code>POST /admin/permissions</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\uff0c\u54cd\u5e94\u4e2d\u7684 <code>data.code</code> \u7b49\u4e8e <code>permCode</code>\u3002 */
     @Test
     void shouldCreatePermissionAsAdmin() {
         String token = loginAs("admin", "123456");
@@ -567,6 +624,7 @@ class RbacResourceTest {
                 .body("data.code", equalTo(permCode));
     }
 
+    /** \u4f7f\u7528\u7ba1\u7406\u5458\u4f1a\u8bdd\u65f6\u8bf7\u6c42 <code>DELETE /admin/permissions/{code}</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\uff0c\u54cd\u5e94\u4e2d\u7684 <code>data</code> \u7b49\u4e8e <code>true</code>\u3002 */
     @Test
     void shouldDeletePermissionAsAdmin() {
         String token = loginAs("admin", "123456");
@@ -587,6 +645,7 @@ class RbacResourceTest {
                 .body("data", is(true));
     }
 
+    /** \u8bf7\u6c42 <code>POST /admin/users</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 403\u3002 */
     @Test
     void shouldDenyCreateUserForRegularUser() {
         String token = loginAs("user", "123456");
@@ -597,6 +656,7 @@ class RbacResourceTest {
                 .then().statusCode(403);
     }
 
+    /** \u8bf7\u6c42 <code>POST /admin/roles</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 403\u3002 */
     @Test
     void shouldDenyCreateRoleForRegularUser() {
         String token = loginAs("user", "123456");
@@ -611,6 +671,7 @@ class RbacResourceTest {
                 .then().statusCode(403);
     }
 
+    /** \u8bf7\u6c42 <code>POST /admin/permissions</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 403\u3002 */
     @Test
     void shouldDenyCreatePermissionForRegularUser() {
         String token = loginAs("user", "123456");
@@ -626,6 +687,7 @@ class RbacResourceTest {
 
     // ============ 工具方法 ============
 
+    /** \u8bf7\u6c42 <code>POST /admin/users/{id}/roles/{code}</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 403\u3002 */
     @Test
     void shouldDenyAssignRoleForRegularUser() {
         String token = loginAs("user", "123456");
@@ -634,6 +696,7 @@ class RbacResourceTest {
                 .then().statusCode(403);
     }
 
+    /** \u5df2\u767b\u5f55\u65f6\u8bf7\u6c42 <code>POST /auth/logout</code>\uff0c\u786e\u8ba4 HTTP \u54cd\u5e94\u72b6\u6001\u4e3a 200\uff0c\u54cd\u5e94\u4e2d\u7684 <code>data.success</code> \u7b49\u4e8e <code>true</code>\u3002 */
     @Test
     void shouldLogoutAsAuthenticatedUser() {
         String token = loginAs("user", "123456");

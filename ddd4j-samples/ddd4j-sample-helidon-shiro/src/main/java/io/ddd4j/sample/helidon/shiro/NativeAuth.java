@@ -24,7 +24,9 @@ import java.util.Set;
  */
 @ApplicationScoped
 public class NativeAuth {
+    /** \u542f\u52a8\u793a\u4f8b\u524d\u6ce8\u518c\u7684 Shiro \u5b89\u5168\u7ba1\u7406\u5668\u3002 */
     private final SecurityManager previous = current();
+    /** \u5f53\u524d\u793a\u4f8b\u5b89\u88c5\u5e76\u8d1f\u8d23\u5173\u95ed\u7684 Shiro \u5b89\u5168\u7ba1\u7406\u5668\u3002 */
     private final DefaultSecurityManager owned = new DefaultSecurityManager(new SampleRealm());
 
     /**
@@ -36,6 +38,10 @@ public class NativeAuth {
         }
     }
 
+    /**
+     * \u76f4\u63a5\u8bfb\u53d6\u5f53\u524d Shiro \u5168\u5c40\u5b89\u5168\u7ba1\u7406\u5668\u7684\u6ce8\u518c\u69fd\u4f4d\u3002
+     * @return \u5df2\u6ce8\u518c\u7684\u5b89\u5168\u7ba1\u7406\u5668\uff0c\u672a\u6ce8\u518c\u65f6\u4e3a\u7a7a
+     */
     private static SecurityManager current() {
         return (SecurityManager) ReflectUtil.getStaticFieldValue(Objects.requireNonNull(ReflectUtil.getField(SecurityUtils.class, "securityManager")));
     }
@@ -74,7 +80,9 @@ public class NativeAuth {
         owned.destroy();
     }
 
+    /** \u6839\u636e\u793a\u4f8b\u7528\u6237\u53ca\u8ba2\u5355\u6743\u9650\u6267\u884c\u539f\u751f Shiro \u8ba4\u8bc1\u4e0e\u6388\u6743\u3002 */
     private static final class SampleRealm extends AuthorizingRealm {
+        /** {@inheritDoc} */
         @Override
         protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) {
             String user = String.valueOf(token.getPrincipal());
@@ -84,6 +92,7 @@ public class NativeAuth {
             return new SimpleAuthenticationInfo(user, "sample-password", getName());
         }
 
+        /** {@inheritDoc} */
         @Override
         protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
             SimpleAuthorizationInfo result = new SimpleAuthorizationInfo();

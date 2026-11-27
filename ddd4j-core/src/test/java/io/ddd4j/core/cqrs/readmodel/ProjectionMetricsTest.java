@@ -45,9 +45,11 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ProjectionMetricsTest {
 
+    /** \u7528\u4e8e\u9694\u79bb <code>ProjectionService</code> \u8c03\u7528\u5e76\u8bb0\u5f55\u4ea4\u4e92\u7684\u6d4b\u8bd5\u66ff\u8eab\u3002 */
     @Mock
     private ProjectionService projectionService;
 
+    /** \u7528\u4e8e\u9694\u79bb <code>EventChunkReader&lt;String&gt;</code> \u8c03\u7528\u5e76\u8bb0\u5f55\u4ea4\u4e92\u7684\u6d4b\u8bd5\u66ff\u8eab\u3002 */
     @Mock
     private EventChunkReader<String> chunkReader;
 
@@ -56,19 +58,27 @@ class ProjectionMetricsTest {
      */
     static class RecordingMetrics implements ProjectionMetrics {
 
+        /** \u8bb0\u5f55\u88ab\u6d4b\u5165\u53e3\u5b9e\u9645\u89e6\u53d1\u7684\u8c03\u7528\u3002 */
         final List<String> calls = new ArrayList<>();
+        /** \u6700\u8fd1\u4e00\u6b21\u56de\u8c03\u6536\u5230\u7684\u6295\u5f71\u6d41\u6807\u8bc6\u3002 */
         String lastStreamId;
+        /** \u6700\u8fd1\u4e00\u6b21\u8bb0\u5f55\u7684\u5904\u7406\u4e8b\u4ef6\u6570\u3002 */
         int lastEventCount;
+        /** \u6700\u8fd1\u4e00\u6b21\u6536\u5230\u7684\u6295\u5f71\u5904\u7406\u8017\u65f6\uff0c\u5355\u4f4d\u4e3a\u7eb3\u79d2\u3002 */
         long lastDurationNanos;
+        /** \u6700\u8fd1\u4e00\u6b21\u6295\u5f71\u901a\u77e5\u4e2d\u89c2\u5bdf\u5230\u7684\u4f4d\u70b9\u63a8\u8fdb\u91cf\u3002 */
         long lastPositionAdvance;
+        /** \u6700\u8fd1\u4e00\u6b21\u89c2\u5bdf\u5230\u7684\u88ab\u6d4b\u64cd\u4f5c\u9519\u8bef\u4fe1\u606f\u3002 */
         Throwable lastError;
 
+        /** {@inheritDoc} */
         @Override
         public void onRunStarted(String streamId) {
             calls.add("started:" + streamId);
             this.lastStreamId = streamId;
         }
 
+        /** {@inheritDoc} */
         @Override
         public void onRunCompleted(String streamId, int eventCount, long durationNanos, long positionAdvance) {
             calls.add("completed:" + streamId);
@@ -78,6 +88,7 @@ class ProjectionMetricsTest {
             this.lastPositionAdvance = positionAdvance;
         }
 
+        /** {@inheritDoc} */
         @Override
         public void onRunFailed(String streamId, Throwable error) {
             calls.add("failed:" + streamId);
@@ -91,11 +102,22 @@ class ProjectionMetricsTest {
      */
     static class TestView implements ProjectionView<String> {
 
+        /** \u5f53\u524d\u6d4b\u8bd5\u6a21\u578b\u7528\u4e8e\u5c55\u793a\u548c\u65ad\u8a00\u7684\u540d\u79f0\u3002 */
         final String name;
+        /** \u6295\u5f71\u4efb\u52a1\u4f7f\u7528\u7684\u4e8b\u4ef6\u6d41\u6807\u8bc6\u3002 */
         final String streamId;
+        /** \u5206\u6279\u8bfb\u53d6\u4e8b\u4ef6\u65f6\u914d\u7f6e\u7684\u5355\u6279\u5927\u5c0f\u3002 */
         final int chunkSize;
+        /** \u5939\u5177\u5411\u6295\u5f71\u8fd0\u884c\u5668\u58f0\u660e\u8ba2\u9605\u7684\u4e8b\u4ef6\u7c7b\u578b\u3002 */
         final List<String> eventTypes;
 
+        /**
+         * \u7528\u7ed9\u5b9a\u503c\u521d\u59cb\u5316 <code>TestView</code> \u5b9e\u4f8b\u3002
+         * @param name <code>name</code> \u5b57\u6bb5
+         * @param streamId \u6295\u5f71\u4efb\u52a1\u4f7f\u7528\u7684\u4e8b\u4ef6\u6d41\u6807\u8bc6
+         * @param chunkSize <code>chunkSize</code> \u5b57\u6bb5
+         * @param eventTypes <code>eventTypes</code> \u5b57\u6bb5
+         */
         TestView(String name, String streamId, int chunkSize, List<String> eventTypes) {
             this.name = name;
             this.streamId = streamId;
@@ -103,41 +125,49 @@ class ProjectionMetricsTest {
             this.eventTypes = eventTypes;
         }
 
+        /** {@inheritDoc} */
         @Override
         public String getName() {
             return name;
         }
 
+        /** {@inheritDoc} */
         @Override
         public String getStreamId() {
             return Objects.nonNull(streamId) ? streamId : name;
         }
 
+        /** {@inheritDoc} */
         @Override
         public String getCron() {
             return "0/5 * * * * ?";
         }
 
+        /** {@inheritDoc} */
         @Override
         public int getChunkSize() {
             return chunkSize;
         }
 
+        /** {@inheritDoc} */
         @Override
         public Collection<String> getEventTypes() {
             return eventTypes;
         }
 
+        /** {@inheritDoc} */
         @Override
         public void handleEvents(Collection<String> events) {
             // no-op for metrics test
         }
     }
 
+    /** \u8986\u76d6 <code>runOnce \u6210\u529f\u65f6 metrics \u56de\u8c03</code> \u573a\u666f\u53ca\u5176\u9884\u671f\u884c\u4e3a\u3002 */
     @Nested
     @DisplayName("runOnce 成功时 metrics 回调")
     class RunOnceSuccessMetrics {
 
+        /** \u9a8c\u8bc1<code>metrics.calls</code> \u6309\u987a\u5e8f\u4ec5\u5305\u542b <code>"started:orders"</code>\u3001<code>"completed:orders"</code>\uff0c<code>metrics.lastStreamId</code> \u7b49\u4e8e <code>"orders"</code>\uff0c<code>metrics.lastDurationNanos</code> \u5927\u4e8e\u6216\u7b49\u4e8e <code>0</code>\u3002 */
         @Test
         void runOnce_有事件_应触发started和completed回调() {
             RecordingMetrics metrics = new RecordingMetrics();
@@ -158,6 +188,7 @@ class ProjectionMetricsTest {
             assertThat(metrics.lastDurationNanos).isGreaterThanOrEqualTo(0);
         }
 
+        /** \u9a8c\u8bc1<code>metrics.calls</code> \u6309\u987a\u5e8f\u4ec5\u5305\u542b <code>"started:orders"</code>\u3001<code>"completed:orders"</code>\uff0c<code>metrics.lastEventCount</code> \u7b49\u4e8e <code>0</code>\uff0c<code>metrics.lastPositionAdvance</code> \u7b49\u4e8e <code>0</code>\u3002 */
         @Test
         void runOnce_空chunk_应触发started和completed回调且eventCount为0() {
             RecordingMetrics metrics = new RecordingMetrics();
@@ -175,6 +206,7 @@ class ProjectionMetricsTest {
             assertThat(metrics.lastPositionAdvance).isEqualTo(0);
         }
 
+        /** \u9a8c\u8bc1<code>metrics.calls</code> \u6309\u987a\u5e8f\u4ec5\u5305\u542b <code>"started:orders"</code>\u3001<code>"completed:orders"</code>\uff0c<code>metrics.lastPositionAdvance</code> \u7b49\u4e8e <code>0</code>\u3002 */
         @Test
         void runOnce_位置未前进_应触发completed且positionAdvance为0() {
             RecordingMetrics metrics = new RecordingMetrics();
@@ -193,10 +225,12 @@ class ProjectionMetricsTest {
         }
     }
 
+    /** \u8986\u76d6 <code>runOnce \u5931\u8d25\u65f6 metrics \u56de\u8c03</code> \u573a\u666f\u53ca\u5176\u9884\u671f\u884c\u4e3a\u3002 */
     @Nested
     @DisplayName("runOnce 失败时 metrics 回调")
     class RunOnceFailureMetrics {
 
+        /** \u9a8c\u8bc1<code>metrics.calls</code> \u6309\u987a\u5e8f\u4ec5\u5305\u542b <code>"started:orders"</code>\u3001<code>"failed:orders"</code>\uff0c<code>metrics.lastError</code> \u6307\u5411\u540c\u4e00\u5b9e\u4f8b <code>expectedError</code>\u3002 */
         @Test
         void runOnce_chunkReader抛异常_应触发started和failed回调() {
             RecordingMetrics metrics = new RecordingMetrics();
@@ -215,6 +249,7 @@ class ProjectionMetricsTest {
             assertThat(metrics.lastError).isSameAs(expectedError);
         }
 
+        /** \u9a8c\u8bc1<code>runner.runOnce(null)</code> \u629b\u51fa <code>NullPointerException.class</code>\uff0c<code>metrics.calls</code>\u4e3a\u7a7a\u3002 */
         @Test
         void runOnce_view校验失败_不应触发任何metrics回调() {
             RecordingMetrics metrics = new RecordingMetrics();
@@ -228,15 +263,18 @@ class ProjectionMetricsTest {
         }
     }
 
+    /** \u8986\u76d6 <code>NoopProjectionMetrics</code> \u573a\u666f\u53ca\u5176\u9884\u671f\u884c\u4e3a\u3002 */
     @Nested
     @DisplayName("NoopProjectionMetrics")
     class NoopMetricsTests {
 
+        /** \u9a8c\u8bc1<code>NoopProjectionMetrics.INSTANCE</code>\u975e\u7a7a\u3002 */
         @Test
         void noopMetrics_单例不为null() {
             assertThat(NoopProjectionMetrics.INSTANCE).isNotNull();
         }
 
+        /** \u9a8c\u8bc1<code>result</code> \u6307\u5411\u540c\u4e00\u5b9e\u4f8b <code>chunk</code>\u3002 */
         @Test
         void 使用noopMetrics_不影响正常流程() {
             ProjectionRunner<String> runner = new ProjectionRunner<>(projectionService, chunkReader,
@@ -253,6 +291,7 @@ class ProjectionMetricsTest {
             assertThat(result).isSameAs(chunk);
         }
 
+        /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>Arrays.asList()</code>\u3001<code>projectionService.readProjectionPosition()</code>\u3001<code>chunkReader.read()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
         @Test
         void metrics参数为null_应默认使用noop() {
             ProjectionRunner<String> runner = new ProjectionRunner<>(projectionService, chunkReader, null);

@@ -259,6 +259,7 @@ public interface MQClient extends AutoCloseable {
         return MQStartupStatus.unmanaged();
     }
 
+    /** {@inheritDoc} */
     @Override
     default void close() {
         logger().info("Shutting down MQClient [{}]", impl());
@@ -325,10 +326,12 @@ public interface MQClient extends AutoCloseable {
     }
 
     /**
-     * 便捷重载：无 Acknowledgment 的消费（ack 能力由 broker 内部处理，如 RocketMQ 返回值语义）。
-     * @param listener 监听器
-     * @param event 事件
-     * @throws java.lang.Throwable 执行对应操作失败时抛出
+     * \u4fbf\u6377\u91cd\u8f7d\uff1a\u65e0 Acknowledgment \u7684\u6d88\u8d39\uff08ack \u80fd\u529b\u7531 broker \u5185\u90e8\u5904\u7406\uff0c\u5982 RocketMQ \u8fd4\u56de\u503c\u8bed\u4e49\uff09\u3002
+     * @param listener \u76d1\u542c\u5668
+     * @param event \u4e8b\u4ef6
+     * @throws java.lang.Throwable \u6267\u884c\u5bf9\u5e94\u64cd\u4f5c\u5931\u8d25\u65f6\u629b\u51fa
+     *
+     * @throws Throwable \u5df2\u89e3\u5305\u7684\u4e1a\u52a1\u5f02\u5e38
      */
     default void consume(MQListener listener, MQEvent event) throws Throwable {
         consume(listener, event, null);
@@ -608,7 +611,16 @@ public interface MQClient extends AutoCloseable {
      * <p>CUSTOM：业务子类覆写 {@link #partitionKey(MQEvent)}，本枚举不适用。
      */
     enum PartitionKeyStrategy {
-        NONE, TAG, TENANT, TAG_TENANT, CUSTOM
+        /** \u4e0d\u8bbe\u7f6e\u5206\u533a\u952e\u3002 */
+        NONE,
+            /** \u6309\u6d88\u606f\u6807\u7b7e\u5206\u533a\u3002 */
+            TAG,
+            /** \u6309\u79df\u6237\u6807\u8bc6\u5206\u533a\u3002 */
+            TENANT,
+            /** \u6309\u6807\u7b7e\u548c\u79df\u6237\u590d\u5408\u5206\u533a\u3002 */
+            TAG_TENANT,
+            /** \u7531\u4e1a\u52a1\u5b9e\u73b0\u81ea\u5b9a\u4e49\u5206\u533a\u952e\u3002 */
+            CUSTOM
     }
 
     /**
@@ -616,9 +628,17 @@ public interface MQClient extends AutoCloseable {
      */
     final class Internals {
 
+        /** 初始化 <code>Internals</code> 并委托其默认构造路径。 */
         private Internals() {
         }
 
+        /**
+         * 执行 <code>restore Context</code>，调用 <code>BaseContext.remove</code>、<code>BaseContext.inject</code>。
+         *
+         * @param properties 传入此操作的 <code>MQProperties</code> 类型 <code>properties</code>
+         * @param serialization 传入此操作的 <code>MQEventSerialization</code> 类型 <code>serialization</code>
+         * @param storer 传入此操作的 <code>MQEventStorer</code> 类型 <code>storer</code>
+         */
         static void restoreContext(MQProperties properties, MQEventSerialization serialization,
                                    MQEventStorer storer) {
             if (Objects.isNull(properties)) {
@@ -639,14 +659,20 @@ public interface MQClient extends AutoCloseable {
         }
 
         /**
-         * 简单转义单引号（防止 tags 内含单引号破坏 selector 解析）。
+         * \u7b80\u5355\u8f6c\u4e49\u5355\u5f15\u53f7\uff08\u9632\u6b62 tags \u5185\u542b\u5355\u5f15\u53f7\u7834\u574f selector \u89e3\u6790\uff09\u3002
+         *
+         * @param s 传入此操作的 <code>String</code> 类型 <code>s</code>
+         * @return 返回表达式 <code>s.replace("'", "''")</code>
          */
         static String escape(String s) {
             return s.replace("'", "''");
         }
 
         /**
-         * 反射调用异常解包（对齐 base-mq）。
+         * \u53cd\u5c04\u8c03\u7528\u5f02\u5e38\u89e3\u5305\uff08\u5bf9\u9f50 base-mq\uff09\u3002
+         *
+         * @param ex 传入此操作的 <code>Exception</code> 类型 <code>ex</code>
+         * @return 按条件返回 <code>cause.getCause()</code>、<code>Objects.nonNull(cause) ? cause : ex</code>
          */
         static Throwable unwrap(Exception ex) {
             Throwable cause = ex.getCause();
@@ -663,11 +689,14 @@ public interface MQClient extends AutoCloseable {
     @Slf4j(topic = "### DDD4J-MQ ###")
     final class LogHolder {
 
+        /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>LogHolder</code> \u5b9e\u4f8b\u3002 */
         private LogHolder() {
         }
 
         /**
-         * 兼容 {@link #logger()} 的共享 SLF4J 日志持有器。
+         * \u517c\u5bb9 {@link #logger()} \u7684\u5171\u4eab SLF4J \u65e5\u5fd7\u6301\u6709\u5668\u3002
+         *
+         * @return \u6d88\u606f\u5ba2\u6237\u7aef\u65e5\u5fd7\u8bb0\u5f55\u5668
          */
 
         private static Logger logger() {

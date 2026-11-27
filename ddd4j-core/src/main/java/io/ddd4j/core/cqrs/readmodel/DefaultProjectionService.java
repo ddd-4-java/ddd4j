@@ -24,17 +24,24 @@ import java.util.Objects;
  */
 public class DefaultProjectionService implements ProjectionService {
 
+    /** \u8bfb\u53d6\u5e76\u4fdd\u5b58\u6295\u5f71\u6d88\u8d39\u4f4d\u7f6e\u7684\u4ed3\u50a8\u3002 */
     private final ProjectionPositionRepository repository;
 
+    /**
+     * \u4f7f\u7528\u6295\u5f71\u4f4d\u7f6e\u4ed3\u50a8\u521b\u5efa\u670d\u52a1\u3002
+     * @param repository \u6295\u5f71\u4f4d\u7f6e\u4ed3\u50a8
+     */
     public DefaultProjectionService(ProjectionPositionRepository repository) {
         this.repository = Objects.requireNonNull(repository, "repository must not be null");
     }
 
+    /** {@inheritDoc} */
     @Override
     public void resetProjectionPosition(String streamId) {
         repository.resetToZero(streamId);
     }
 
+    /** {@inheritDoc} */
     @Override
     public long readProjectionPosition(String streamId) {
         return repository.findByStreamId(streamId)
@@ -42,6 +49,7 @@ public class DefaultProjectionService implements ProjectionService {
                 .orElse(0L);
     }
 
+    /** {@inheritDoc} */
     @Override
     public ProjectionPosition updateProjectionPosition(String streamId, long nextEventNumber) {
         ProjectionPosition current = repository.findByStreamId(streamId)

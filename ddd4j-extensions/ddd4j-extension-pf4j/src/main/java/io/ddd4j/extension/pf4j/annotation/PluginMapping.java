@@ -25,8 +25,10 @@ import java.lang.annotation.*;
 @Inherited
 public @interface PluginMapping {
 
+    /** @return \u63d2\u4ef6\u6807\u9898 */
     public String title() default "";
 
+    /** @return \u63d2\u4ef6\u8be6\u60c5 */
     public String detail() default "";
 
 }

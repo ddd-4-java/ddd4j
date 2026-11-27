@@ -29,17 +29,24 @@ import java.util.Objects;
  */
 public class InMemorySubjectProvider implements SubjectProvider {
 
+    /** \u8fd4\u56de\u7ed9\u8c03\u7528\u65b9\u7684\u5185\u5b58\u8ba4\u8bc1\u4e3b\u4f53\u9002\u914d\u5668\u3002 */
     private final InMemorySubject subject;
 
+    /**
+     * \u521b\u5efa\u5171\u4eab\u5185\u5b58\u4e3b\u4f53\u63d0\u4f9b\u8005\u3002
+     * @param subject \u5171\u4eab\u4e3b\u4f53\u5b9e\u4f8b
+     */
     public InMemorySubjectProvider(InMemorySubject subject) {
         this.subject = Objects.requireNonNull(subject, "subject must not be null");
     }
 
+    /** {@inheritDoc} */
     @Override
     public Subject getSubject() {
         return subject;
     }
 
+    /** {@inheritDoc} */
     @Override
     public Subject getSubject(String realm) {
         return subject;

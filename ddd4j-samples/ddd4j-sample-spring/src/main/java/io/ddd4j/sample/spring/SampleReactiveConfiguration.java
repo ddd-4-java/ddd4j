@@ -18,7 +18,9 @@ import org.springframework.web.server.i18n.LocaleContextResolver;
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
 public class SampleReactiveConfiguration extends DelegatingWebFluxConfiguration {
     /**
-     * 保留 WebFlux 为未匹配地址生成的原生 HTTP 状态。
+     * \u4fdd\u7559 WebFlux \u4e3a\u672a\u5339\u914d\u5730\u5740\u751f\u6210\u7684\u539f\u751f HTTP \u72b6\u6001\u3002
+     *
+     * @return \u6ce8\u518c\u5230 WebFlux \u5f02\u5e38\u5904\u7406\u94fe\u7684\u72b6\u6001\u5904\u7406\u5668
      */
     @Bean
     @Order(-3)
@@ -27,6 +29,10 @@ public class SampleReactiveConfiguration extends DelegatingWebFluxConfiguration 
         return new WebFluxResponseStatusExceptionHandler();
     }
 
+    /**
+     * \u6ce8\u518c\u5904\u7406\u5e42\u7b49\u8bf7\u6c42\u7684\u672c\u5730\u7f13\u5b58\uff0c\u5e76\u5728\u5e94\u7528\u5173\u95ed\u65f6\u6ce8\u9500\u672c Bean \u521b\u5efa\u7684\u5b9e\u4f8b\u3002
+     * @return \u6309\u6240\u6709\u6743\u6ce8\u9500\u7f13\u5b58\u7684\u5173\u95ed\u56de\u8c03
+     */
     @Bean(destroyMethod = "close")
     @Profile("catalog-trade")
     public AutoCloseable catalogIdempotencyCache() {
@@ -35,6 +41,7 @@ public class SampleReactiveConfiguration extends DelegatingWebFluxConfiguration 
         return () -> CacheKit.unregisterLocalIfOwned(name, cache);
     }
 
+    /** @return \u539f\u751f\u914d\u7f6e\u9ed8\u8ba4\u89e3\u6790\u5668\uff1b\u5b9e\u9645 WebHttpHandler \u4f7f\u7528\u5916\u90e8\u914d\u7f6e\u7684 localeContextResolver */
     @Override
     @Bean("nativeWebFluxLocaleContextResolver")
     public LocaleContextResolver localeContextResolver() {

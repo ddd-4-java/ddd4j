@@ -64,7 +64,9 @@ public class BaseWebConfig implements WebMvcConfigurer {
     final List<BaseWebSocketServer> baseWebSocketServers;
 
     /**
-     * 注册格式化器（日期、日期时间、时间）。
+     * \u6ce8\u518c\u683c\u5f0f\u5316\u5668\uff08\u65e5\u671f\u3001\u65e5\u671f\u65f6\u95f4\u3001\u65f6\u95f4\uff09\u3002
+     *
+     * @param registry MVC \u683c\u5f0f\u5316\u5668\u6ce8\u518c\u5668
      */
     public void addFormatters(FormatterRegistry registry) {
         registry.addFormatter(new DateFormatter("yyyy-MM-dd HH:mm:ss"));
@@ -127,7 +129,9 @@ public class BaseWebConfig implements WebMvcConfigurer {
     }
 
     /**
-     * 注册拦截器。
+     * \u6ce8\u518c\u62e6\u622a\u5668\u3002
+     *
+     * @param registry MVC \u8bf7\u6c42\u62e6\u622a\u5668\u6ce8\u518c\u5668
      */
     public void addInterceptors(InterceptorRegistry registry) {
         if (Objects.nonNull(baseWebInterceptors) && !baseWebInterceptors.isEmpty()) {
@@ -140,6 +144,7 @@ public class BaseWebConfig implements WebMvcConfigurer {
         }
     }
 
+    /** \u521d\u59cb\u5316 Web MVC \u914d\u7f6e\u3002 */
     @PostConstruct
     public void init() {
         // 启动WebSocket服务端

@@ -34,6 +34,7 @@ import java.util.Set;
 @Getter
 public class User extends AggregateRoot<String> {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -158,6 +159,10 @@ public class User extends AggregateRoot<String> {
         this.roleIds.remove(roleId);
     }
 
+    /**
+     * \u8bfb\u53d6\u7528\u6237 ID\u3002
+     * @return \u7528\u6237 ID
+     */
     @Override
     public String id() {
         return userId;

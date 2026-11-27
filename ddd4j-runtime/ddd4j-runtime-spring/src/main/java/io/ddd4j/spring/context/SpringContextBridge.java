@@ -71,12 +71,25 @@ public class SpringContextBridge implements ApplicationListener<ContextRefreshed
      * 命令总线提供者
      */
     private final ObjectProvider<CommandBus> commandBusProvider;
+    /** \u7ba1\u7406\u5f53\u524d\u793a\u4f8b\u6216\u6d4b\u8bd5\u6240\u62e5\u6709\u7684 SPI \u6ce8\u518c\u8d44\u6e90\u3002 */
     private SpiRegistrationScope registrationScope;
+    /** \u5f53\u524d\u6865\u63a5\u88c5\u914d\u5230\u517c\u5bb9\u4e3b\u4f53\u5165\u53e3\u7684\u6846\u67b6\u63d0\u4f9b\u5668\u3002 */
     private SubjectProvider registeredSubjectProvider;
+    /** \u4e3a\u8ba4\u8bc1\u4e3b\u4f53\u63d0\u4f9b\u89d2\u8272\u3001\u6743\u9650\u7b49\u4e1a\u52a1\u6570\u636e\u7684\u7ec4\u4ef6\u3002 */
     private SubjectDataProvider registeredSubjectDataProvider;
+    /** \u5b89\u88c5\u6846\u67b6\u4e3b\u4f53\u63d0\u4f9b\u5668\u524d\u5df2\u5b58\u5728\u7684\u5168\u5c40\u63d0\u4f9b\u5668\u3002 */
     private SubjectProvider previousSubjectProvider;
+    /** \u8fdb\u5165\u5f53\u524d\u6267\u884c\u8303\u56f4\u524d\u4fdd\u5b58\u7684\u7ec4\u4ef6\uff0c\u9000\u51fa\u65f6\u7528\u4e8e\u6062\u590d <code>SubjectDataProvider</code>\u3002 */
     private SubjectDataProvider previousSubjectDataProvider;
 
+    /**
+     * \u521b\u5efa Spring \u670d\u52a1\u5230\u6846\u67b6\u4e0a\u4e0b\u6587\u7684\u6865\u63a5\u5668\u3002
+     * @param domainEventPublisherProvider \u9886\u57df\u4e8b\u4ef6\u53d1\u5e03\u5668\u63d0\u4f9b\u8005
+     * @param subjectProviderProvider \u4e3b\u4f53\u63d0\u4f9b\u8005
+     * @param subjectDataProviderProvider \u4e3b\u4f53\u6570\u636e\u63d0\u4f9b\u8005
+     * @param i18nProviderProvider \u56fd\u9645\u5316\u63d0\u4f9b\u8005
+     * @param commandBusProvider \u547d\u4ee4\u603b\u7ebf\u63d0\u4f9b\u8005
+     */
     public SpringContextBridge(
             ObjectProvider<DomainEventPublisher> domainEventPublisherProvider,
             ObjectProvider<SubjectProvider> subjectProviderProvider,
@@ -90,6 +103,10 @@ public class SpringContextBridge implements ApplicationListener<ContextRefreshed
         this.commandBusProvider = commandBusProvider;
     }
 
+    /**
+     * \u5728 Spring \u5237\u65b0\u5b8c\u6210\u65f6\u628a\u5f53\u524d\u5e94\u7528\u670d\u52a1\u63a5\u5165 DDD4J \u5171\u4eab\u4e0a\u4e0b\u6587\u3002
+     * @param event \u5f53\u524d\u6846\u67b6\u751f\u547d\u5468\u671f\u6216\u5bb9\u5668\u542f\u52a8\u4e8b\u4ef6
+     */
     @Override
     public synchronized void onApplicationEvent(ContextRefreshedEvent event) {
         if (Objects.nonNull(registrationScope)) {
@@ -126,6 +143,7 @@ public class SpringContextBridge implements ApplicationListener<ContextRefreshed
         log.info("Spring ddd4j SPI services initialized");
     }
 
+    /** \u5728 Bean \u9500\u6bc1\u65f6\u64a4\u9500\u5f53\u524d\u6865\u63a5\u62e5\u6709\u7684\u8fd0\u884c\u65f6\u6ce8\u518c\u3002 */
     @Override
     public synchronized void destroy() {
         if (Objects.nonNull(registrationScope)) {
@@ -135,6 +153,11 @@ public class SpringContextBridge implements ApplicationListener<ContextRefreshed
         restoreLegacySubjectFacade();
     }
 
+    /**
+     * \u6309\u5f53\u524d\u4e3b\u4f53\u53ca\u5176\u6570\u636e\u63d0\u4f9b\u5668\u88c5\u914d\u517c\u5bb9\u8c03\u7528\u6240\u7528\u7684\u4e3b\u4f53\u5165\u53e3\u3002
+     * @param subjectProvider \u4ece\u5f53\u524d\u8ba4\u8bc1\u6846\u67b6\u89e3\u6790\u4e3b\u4f53\u7684\u7ec4\u4ef6
+     * @param subjectDataProvider \u63d0\u4f9b\u89d2\u8272\u548c\u6743\u9650\u6570\u636e\u7684\u6865\u63a5\u7ec4\u4ef6
+     */
     private void registerLegacySubjectFacade(SubjectProvider subjectProvider, SubjectDataProvider subjectDataProvider) {
         if (Objects.nonNull(subjectProvider)) {
             previousSubjectProvider = SubjectKit.subjectProvider;
@@ -148,6 +171,7 @@ public class SpringContextBridge implements ApplicationListener<ContextRefreshed
         }
     }
 
+    /** \u5f53\u5171\u4eab\u4e3b\u4f53\u5165\u53e3\u4ecd\u5f52\u5f53\u524d\u6865\u63a5\u6240\u6709\u65f6\u6062\u590d\u65e7\u63d0\u4f9b\u5668\u3002 */
     private void restoreLegacySubjectFacade() {
         if (Objects.equals(SubjectKit.subjectProvider, registeredSubjectProvider)) {
             SubjectKit.register(previousSubjectProvider);

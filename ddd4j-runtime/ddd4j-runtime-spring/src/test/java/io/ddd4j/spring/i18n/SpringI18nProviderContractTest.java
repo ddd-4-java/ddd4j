@@ -24,8 +24,10 @@ import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/** \u901a\u8fc7 <code>delegate.addMessage()</code>\u3001<code>LocaleContextHolder.getLocaleContext()</code>\u3001<code>LocaleContextHolder.setLocale()</code> \u9a8c\u8bc1 <code>SpringI18nProviderContract</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
 class SpringI18nProviderContractTest {
 
+    /** \u9a8c\u8bc1<code>provider.getMessage("welcome", "Alice")</code> \u7b49\u4e8e <code>"\u6b22\u8fce Alice"</code>\uff0c<code>provider.getMessage("welcome", "Alice")</code> \u7b49\u4e8e <code>"Hello Alice"</code>\u3002 */
     @Test
     void resolvesMessageArgumentsUsingCurrentLocale() {
         StaticMessageSource delegate = new StaticMessageSource();

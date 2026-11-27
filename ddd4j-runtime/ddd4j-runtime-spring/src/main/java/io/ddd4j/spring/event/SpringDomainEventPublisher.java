@@ -50,6 +50,7 @@ public class SpringDomainEventPublisher implements DomainEventPublisher {
         this.publisher = publisher;
     }
 
+    /** {@inheritDoc} */
     @Override
     public <ID extends EntityId> void publish(DomainEvent<ID> event) {
         if (Objects.isNull(event)) {

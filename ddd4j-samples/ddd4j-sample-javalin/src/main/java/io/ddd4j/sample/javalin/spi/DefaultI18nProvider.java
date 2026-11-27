@@ -24,6 +24,7 @@ import io.ddd4j.core.i18n.I18nProvider;
  */
 public class DefaultI18nProvider implements I18nProvider {
 
+    /** {@inheritDoc} */
     @Override
     public String getMessage(String key, Object... args) {
         return I18nProvider.DEFAULT.getMessage(key, args);

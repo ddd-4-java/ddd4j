@@ -127,6 +127,7 @@ public class Role {
         return permissions.contains(permissionCode) || permissions.contains("*");
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -139,11 +140,13 @@ public class Role {
         return Objects.equals(code, role.code);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return Objects.hash(code);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "Role{" + code + ", perms=" + permissions + "}";

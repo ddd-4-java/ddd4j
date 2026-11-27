@@ -24,6 +24,7 @@ import javax.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class AnonymousSubjectProvider implements SubjectProvider {
 
+    /** {@inheritDoc} */
     @Override
     public Subject getSubject() {
         return null;

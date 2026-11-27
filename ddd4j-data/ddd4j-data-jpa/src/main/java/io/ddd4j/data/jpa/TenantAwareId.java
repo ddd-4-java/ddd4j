@@ -25,21 +25,36 @@ import java.util.Objects;
  */
 public class TenantAwareId implements Serializable {
 
+    /** \u5b9e\u4f53\u4e3b\u952e\u3002 */
     private Long id;
+    /** \u79df\u6237\u6807\u8bc6\u3002 */
     private String tenantId;
 
+    /** \u521b\u5efa\u7a7a\u7684\u590d\u5408\u4e3b\u952e\uff0c\u4f9b JPA \u4f7f\u7528\u3002 */
     public TenantAwareId() {
     }
 
+    /**
+     * \u521b\u5efa\u79df\u6237\u590d\u5408\u4e3b\u952e\u3002
+     * @param id \u5b9e\u4f53\u4e3b\u952e
+     * @param tenantId \u79df\u6237\u6807\u8bc6
+     */
     public TenantAwareId(Long id, String tenantId) {
         this.id = id;
         this.tenantId = tenantId;
     }
 
+    /**
+     * \u521b\u5efa\u79df\u6237\u590d\u5408\u4e3b\u952e\u3002
+     * @param id \u5b9e\u4f53\u4e3b\u952e
+     * @param tenantId \u79df\u6237\u6807\u8bc6
+     * @return \u79df\u6237\u590d\u5408\u4e3b\u952e
+     */
     public static TenantAwareId of(Long id, String tenantId) {
         return new TenantAwareId(id, tenantId);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -52,6 +67,7 @@ public class TenantAwareId implements Serializable {
         return Objects.equals(id, that.id) && Objects.equals(tenantId, that.tenantId);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return Objects.hash(id, tenantId);

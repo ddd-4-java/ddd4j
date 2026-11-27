@@ -30,7 +30,9 @@ import lombok.extern.slf4j.Slf4j;
 @ApplicationScoped
 public class SampleSubjectProvider implements SubjectProvider {
 
+    /** \u5f53\u524d\u8fd0\u884c\u8ba4\u8bc1\u903b\u8f91\u4f7f\u7528\u7684\u539f\u751f\u4e3b\u4f53\u3002 */
     private final InMemorySubject subject;
+    /** \u5f53\u524d\u793a\u4f8b\u7b7e\u53d1\u6216\u8fd4\u56de\u5ba2\u6237\u7aef\u7684\u4f1a\u8bdd\u4ee4\u724c\u3002 */
     private final String token;
 
     /**
@@ -44,6 +46,7 @@ public class SampleSubjectProvider implements SubjectProvider {
                 .setPerms(new java.util.HashSet<>(java.util.Arrays.asList("order:read", "order:write")))));
     }
 
+    /** {@inheritDoc} */
     @Override
     public Subject getSubject() {
         return subject;

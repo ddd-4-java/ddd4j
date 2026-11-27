@@ -54,7 +54,9 @@ public class GeoBaiduTemplate {
      * 百度地图AK密钥
      */
     private final String ak;
+    /** \u5c06\u5730\u7406\u7f16\u7801\u8f93\u5165\u548c\u767e\u5ea6\u5bc6\u94a5\u586b\u5165\u8bf7\u6c42\u7684\u5730\u5740\u6a21\u677f\u3002 */
     private final String geocoderUrlTemplate;
+    /** \u7528\u4e8e\u62fc\u63a5\u767e\u5ea6 IP \u5b9a\u4f4d\u8bf7\u6c42\u7684\u5730\u5740\u6a21\u677f\u3002 */
     private final String ipUrlTemplate;
 
     /**
@@ -66,6 +68,12 @@ public class GeoBaiduTemplate {
         this(ak, geocoder, geocoder2);
     }
 
+    /**
+     * \u914d\u7f6e\u767e\u5ea6\u5730\u7406\u7f16\u7801\u53ca IP \u5b9a\u4f4d\u4e24\u4e2a\u63a5\u53e3\u3002
+     * @param ak \u767e\u5ea6\u5730\u56fe\u63a5\u53e3\u5bc6\u94a5
+     * @param geocoderUrlTemplate \u5730\u7406\u7f16\u7801\u63a5\u53e3\u5730\u5740\u6a21\u677f
+     * @param ipUrlTemplate IP \u5b9a\u4f4d\u63a5\u53e3\u5730\u5740\u6a21\u677f
+     */
     GeoBaiduTemplate(String ak, String geocoderUrlTemplate, String ipUrlTemplate) {
         super();
         this.ak = ak;
@@ -73,6 +81,11 @@ public class GeoBaiduTemplate {
         this.ipUrlTemplate = Objects.requireNonNull(ipUrlTemplate, "ipUrlTemplate");
     }
 
+    /**
+     * \u6f14\u793a\u5730\u5740\u4e0e IP \u5730\u7406\u4f4d\u7f6e\u67e5\u8be2\u3002
+     * @param args \u547d\u4ee4\u884c\u53c2\u6570
+     * @throws IOException \u767e\u5ea6\u5730\u56fe\u8bf7\u6c42\u5931\u8d25\u65f6\u629b\u51fa
+     */
     public static void main(String[] args) throws IOException {
 
         GeoBaiduTemplate template = new GeoBaiduTemplate("");

@@ -28,13 +28,21 @@ import java.util.Objects;
  * HTTP 请求在 ddd4j 内部的框架无关表示。
  */public final class WebRequestContext {
 
+    /** \u5f53\u524d\u8bf7\u6c42\u7684\u6807\u8bc6\u3002 */
     private final String requestId;
+    /** \u7528\u4e8e\u5173\u8054\u4e00\u6761\u8c03\u7528\u94fe\u7684\u8ddf\u8e2a\u6807\u8bc6\u3002 */
     private final String traceId;
+    /** \u5f53\u524d\u4e1a\u52a1\u6570\u636e\u6240\u5c5e\u7684\u79df\u6237\u6807\u8bc6\u3002 */
     private final String tenantId;
+    /** \u5f53\u524d\u8bf7\u6c42\u4e2d\u7528\u4e8e\u8ba4\u8bc1\u7684 Authorization \u5934\u539f\u503c\u3002 */
     private final String authorization;
+    /** \u5f53\u524d\u8bf7\u6c42\u4f7f\u7528\u7684\u8bed\u8a00\u53ca\u533a\u57df\u914d\u7f6e\u3002 */
     private final Locale locale;
+    /** \u6839\u636e\u539f\u751f\u8fde\u63a5\u548c\u53ef\u4fe1\u8f6c\u53d1\u5934\u89e3\u6790\u7684\u5ba2\u6237\u7aef\u5730\u5740\u3002 */
     private final String clientIp;
+    /** \u5f53\u524d HTTP \u8bf7\u6c42\u7684\u65b9\u6cd5\u3002 */
     private final String method;
+    /** \u5f53\u524d\u6846\u67b6\u89e3\u6790\u51fa\u7684\u8bf7\u6c42\u8def\u5f84\u3002 */
     private final String path;
 
     /**

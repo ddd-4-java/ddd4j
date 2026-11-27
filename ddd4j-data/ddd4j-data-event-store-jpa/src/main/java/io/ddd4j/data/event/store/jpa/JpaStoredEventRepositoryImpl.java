@@ -41,6 +41,7 @@ import java.util.Objects;
  */
 public class JpaStoredEventRepositoryImpl implements JpaStoredEventRepository {
 
+    /** \u6267\u884c JPA \u67e5\u8be2\u548c\u6301\u4e45\u5316\u64cd\u4f5c\u7684\u5b9e\u4f53\u7ba1\u7406\u5668\u3002 */
     private final EntityManager entityManager;
 
     /**
@@ -53,6 +54,7 @@ public class JpaStoredEventRepositoryImpl implements JpaStoredEventRepository {
         this.entityManager = Objects.requireNonNull(entityManager, "entityManager must not be null");
     }
 
+    /** {@inheritDoc} */
     @Override
     public long findCurrentVersion(String aggregateType, String aggregateId) {
         Objects.requireNonNull(aggregateType, "aggregateType must not be null");
@@ -70,6 +72,7 @@ public class JpaStoredEventRepositoryImpl implements JpaStoredEventRepository {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<StoredEventEntity> findByAggregateTypeAndAggregateIdOrderByVersionAsc(String aggregateType, String aggregateId) {
         Objects.requireNonNull(aggregateType, "aggregateType must not be null");
@@ -82,6 +85,7 @@ public class JpaStoredEventRepositoryImpl implements JpaStoredEventRepository {
                 .getResultList();
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<StoredEventEntity> findByAggregateTypeAndAggregateIdAndVersionBetweenOrderByVersionAsc(
             String aggregateType, String aggregateId, long fromVersion, long toVersion) {
@@ -95,6 +99,7 @@ public class JpaStoredEventRepositoryImpl implements JpaStoredEventRepository {
                 .getResultList();
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<StoredEventEntity> findByPositionGreaterThanEqualOrderByPositionAsc(long fromPosition, int limit) {
         return entityManager.createQuery(
@@ -105,12 +110,14 @@ public class JpaStoredEventRepositoryImpl implements JpaStoredEventRepository {
                 .getResultList();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void save(StoredEventEntity entity) {
         Objects.requireNonNull(entity, "entity must not be null");
         entityManager.persist(entity);
     }
 
+    /** {@inheritDoc} */
     @Override
     public long nextPosition() {
         try {

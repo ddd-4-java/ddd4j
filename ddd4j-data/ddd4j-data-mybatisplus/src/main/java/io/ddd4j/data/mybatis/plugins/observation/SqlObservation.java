@@ -29,9 +29,13 @@ import java.util.Objects;
  */
 public final class SqlObservation {
 
+    /** \u6267\u884c SQL \u5bf9\u5e94\u7684 MyBatis \u6620\u5c04\u8bed\u53e5\u6807\u8bc6\u3002 */
     private final String statementId;
+    /** \u672c\u6b21 SQL \u6267\u884c\u7684\u8bed\u53e5\u6587\u672c\u3002 */
     private final String sql;
+    /** SQL \u6267\u884c\u8017\u65f6\uff0c\u5355\u4f4d\u4e3a\u7eb3\u79d2\u3002 */
     private final long elapsedNanos;
+    /** SQL \u6267\u884c\u5931\u8d25\u65f6\u8bb0\u5f55\u7684\u5f02\u5e38\u3002 */
     private final Throwable error;
 
     /**
@@ -102,6 +106,7 @@ public final class SqlObservation {
         return error;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -117,6 +122,7 @@ public final class SqlObservation {
                 && Objects.equals(error, that.error);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int result = 0;
@@ -127,6 +133,7 @@ public final class SqlObservation {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "SqlObservation[statementId=" + statementId + ", sql=" + sql + ", elapsedNanos=" + elapsedNanos + ", error=" + error + "]";

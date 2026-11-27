@@ -63,7 +63,9 @@ public class JetCacheCacheManager implements CacheManager {
      * 默认 JetCache 区域名称
      */
     public static final String DEFAULT_AREA = "default";
+    /** \u7528\u4e8e\u83b7\u53d6\u6216\u521b\u5efa JetCache \u7f13\u5b58\u7684\u7ba1\u7406\u5668\u3002 */
     private final com.alicp.jetcache.CacheManager jetCacheManager;
+    /** \u5f53\u524d\u9002\u914d\u5668\u4f7f\u7528\u7684 JetCache \u7f13\u5b58\u533a\u57df\u3002 */
     private final String cacheArea;
 
     /**
@@ -92,6 +94,7 @@ public class JetCacheCacheManager implements CacheManager {
         this.cacheArea = Objects.nonNull(cacheArea) ? cacheArea : DEFAULT_AREA;
     }
 
+    /** {@inheritDoc} */
     @Override
     public <K, V> Cache<K, V> getOrCreateCache(String name, CacheConfig config) {
         return (Cache<K, V>) caches.computeIfAbsent(name, key -> {
@@ -102,16 +105,19 @@ public class JetCacheCacheManager implements CacheManager {
         });
     }
 
+    /** {@inheritDoc} */
     @Override
     public <K, V> Cache<K, V> getCache(String name) {
         return (Cache<K, V>) caches.get(name);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Set<String> getCacheNames() {
         return caches.keySet();
     }
 
+    /** {@inheritDoc} */
     @Override
     public <K, V> Cache<K, V> getOrCreateLoadingCache(String name, CacheConfig config, Function<K, V> loader) {
         return (Cache<K, V>) caches.computeIfAbsent(name, key -> {

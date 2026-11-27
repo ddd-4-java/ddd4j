@@ -58,9 +58,11 @@ import static org.assertj.core.api.Assertions.catchThrowableOfType;
 @QuarkusTest
 class QuarkusCommandBusIT {
 
+    /** 保存 <code>bus</code> 对应的 <code>QuarkusCommandBus</code> 数据。 */
     @Inject
     QuarkusCommandBus bus;
 
+    /** 验证<code>result.isSuccess()</code>为真，<code>result.data()</code> 包含 <code>SampleCommandHandler.HANDLED</code>。 */
     @Test
     void execute_已注册命令_应路由到真实Handler并返回成功() {
         Result<String> result = bus.execute(new SampleCommand());
@@ -69,6 +71,7 @@ class QuarkusCommandBusIT {
         assertThat(result.data()).contains(SampleCommandHandler.HANDLED);
     }
 
+    /** 验证<code>exception</code>非空，<code>exception.getMessage()</code> 包含 <code>ConflictCommand.class.getName()</code>。 */
     @Test
     void 装配期冲突_整批拒绝应传播为Bean创建失败() {
         Instance<CommandExecutor<?>> conflicting = new FixedInstance<>(java.util.Arrays.asList(
@@ -83,6 +86,7 @@ class QuarkusCommandBusIT {
         assertThat(exception.getMessage()).contains(ConflictCommand.class.getName());
     }
 
+    /** 验证<code>exception</code>非空，<code>exception.getMessage()</code> 包含 <code>UnknownCommand.class.getName()</code>。 */
     @Test
     void execute_未注册命令_应抛ISE与ddd4j_core一致() {
         IllegalStateException exception = catchThrowableOfType(
@@ -92,22 +96,37 @@ class QuarkusCommandBusIT {
         assertThat(exception.getMessage()).contains(UnknownCommand.class.getName());
     }
 
+    /** 为测试场景提供 <code>Command</code> 的实现。 */
     static class ConflictCommand implements Command {
     }
 
+    /** 与被测主命令一同注册以触发装配冲突的测试命令。 */
     static class CompanionCommand implements Command {
     }
 
+    /** \u6ca1\u6709\u6ce8\u518c\u6267\u884c\u5668\u7684\u547d\u4ee4\u6837\u672c\uff0c\u7528\u6765\u9a8c\u8bc1\u547d\u4ee4\u5206\u53d1\u8fb9\u754c\u3002 */
     static class UnknownCommand implements Command {
     }
 
+    /** 为测试场景提供 <code>CommandExecutor</code> 的实现。 */
     static class ExclusiveConflictHandler implements CommandExecutor<ConflictCommand> {
 
+        /**
+         * 执行 <code>supported Commands</code>，调用 <code>Collections.singleton</code>。
+         *
+         * @return 返回表达式 <code>java.util.Collections.singleton(ConflictCommand.class)</code>
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return java.util.Collections.singleton(ConflictCommand.class);
         }
 
+        /**
+         * 执行 <code>execute</code>，调用 <code>Result.ok</code>。
+         *
+         * @param command 传入此操作的 <code>ConflictCommand</code> 类型 <code>command</code>
+         * @return 返回表达式 <code>Result.ok()</code>
+         */
         @Override
         public Result execute(ConflictCommand command) {
             return Result.ok();
@@ -121,11 +140,22 @@ class QuarkusCommandBusIT {
      */
     static class OverlappingMultiTypeHandler implements CommandExecutor<Command> {
 
+        /**
+         * 执行 <code>supported Commands</code>，调用 <code>Arrays.asList</code>。
+         *
+         * @return 当前操作得到的 <code>Set&lt;Class&lt;? extends Command&gt;&gt;</code> 结果
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return new java.util.LinkedHashSet<>(java.util.Arrays.asList(ConflictCommand.class, CompanionCommand.class));
         }
 
+        /**
+         * 执行 <code>execute</code>，调用 <code>Result.ok</code>。
+         *
+         * @param command 传入此操作的 <code>Command</code> 类型 <code>command</code>
+         * @return 返回表达式 <code>Result.ok()</code>
+         */
         @Override
         public Result execute(Command command) {
             return Result.ok();
@@ -140,48 +170,101 @@ class QuarkusCommandBusIT {
      */
     private static final class FixedInstance<T> implements Instance<T> {
 
+        /** 保存 <code>elements</code> 对应的 <code>List&lt;T&gt;</code> 数据。 */
         private final List<T> elements;
 
+        /**
+         * 初始化 <code>FixedInstance</code> 使用的 <code>elements</code>。
+         *
+         * @param elements 传入此操作的 <code>List&lt;T&gt;</code> 类型 <code>elements</code>
+         */
         FixedInstance(List<T> elements) {
             this.elements = new java.util.ArrayList<>(elements);
         }
 
+        /**
+         * 执行 <code>iterator</code>，调用 <code>elements.iterator</code>。
+         *
+         * @return 返回表达式 <code>elements.iterator()</code>
+         */
         @Override
         public Iterator<T> iterator() {
             return elements.iterator();
         }
 
+        /**
+         * 执行 <code>get</code> 对应的处理。
+         *
+         * @return 当前操作得到的 <code>T</code> 结果
+         */
         @Override
         public T get() {
             throw new UnsupportedOperationException("fixed test instance");
         }
 
+        /**
+         * 执行 <code>select</code> 对应的处理。
+         *
+         * @param qualifiers 传入此操作的 <code>Annotation[]</code> 类型 <code>qualifiers</code>
+         * @return 当前操作得到的 <code>Instance&lt;T&gt;</code> 结果
+         */
         @Override
         public Instance<T> select(Annotation... qualifiers) {
             throw new UnsupportedOperationException("fixed test instance");
         }
 
+        /**
+         * 执行 <code>select</code> 对应的处理。
+         *
+         * @param <U> 当前操作使用的泛型类型
+         * @param subtype 传入此操作的 <code>Class&lt;U&gt;</code> 类型 <code>subtype</code>
+         * @param qualifiers 传入此操作的 <code>Annotation[]</code> 类型 <code>qualifiers</code>
+         * @return 当前操作得到的 <code>Instance&lt;U&gt;</code> 结果
+         */
         @Override
         public <U extends T> Instance<U> select(Class<U> subtype, Annotation... qualifiers) {
             throw new UnsupportedOperationException("fixed test instance");
         }
 
+        /**
+         * 执行 <code>select</code> 对应的处理。
+         *
+         * @param <U> 当前操作使用的泛型类型
+         * @param subtype 传入此操作的 <code>javax.enterprise.util.TypeLiteral&lt;U&gt;</code> 类型 <code>subtype</code>
+         * @param qualifiers 传入此操作的 <code>Annotation[]</code> 类型 <code>qualifiers</code>
+         * @return 当前操作得到的 <code>Instance&lt;U&gt;</code> 结果
+         */
         @Override
         public <U extends T> Instance<U> select(javax.enterprise.util.TypeLiteral<U> subtype,
                                                 Annotation... qualifiers) {
             throw new UnsupportedOperationException("fixed test instance");
         }
 
+        /**
+         * 读取<code>false</code> 的当前值。
+         *
+         * @return 返回表达式 <code>false</code>
+         */
         @Override
         public boolean isUnsatisfied() {
             return false;
         }
 
+        /**
+         * 读取<code>false</code> 的当前值。
+         *
+         * @return 返回表达式 <code>false</code>
+         */
         @Override
         public boolean isAmbiguous() {
             return false;
         }
 
+        /**
+         * 执行 <code>destroy</code> 对应的处理。
+         *
+         * @param instance 传入此操作的 <code>T</code> 类型 <code>instance</code>
+         */
         @Override
         public void destroy(T instance) {
             throw new UnsupportedOperationException("fixed test instance");

@@ -17,6 +17,7 @@ import javax.ws.rs.ext.Provider;
 @Priority(Priorities.USER)
 public class Ddd4jQuarkusWebResponseFilter implements ContainerResponseFilter {
 
+    /** 保存 <code>web Filter</code> 对应的 <code>Ddd4jQuarkusWebFilter</code> 数据。 */
     @Inject
     Ddd4jQuarkusWebFilter webFilter;
 
@@ -24,6 +25,12 @@ public class Ddd4jQuarkusWebResponseFilter implements ContainerResponseFilter {
     public Ddd4jQuarkusWebResponseFilter() {
     }
 
+    /**
+     * 执行 <code>filter</code>，调用 <code>webFilter.response</code>。
+     *
+     * @param request 待发送或处理的 HTTP 请求
+     * @param response 当前收到的 HTTP 响应
+     */
     @Override
     public void filter(ContainerRequestContext request, ContainerResponseContext response) {
         webFilter.response(request, response);

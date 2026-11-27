@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 /** 使用原生 Shiro 凭据匹配和 Servlet 会话的登录/退出入口。 */
 @RestController
 public class AuthenticationController {
+    /** \u89e3\u6790\u8bf7\u6c42\u8ba4\u8bc1\u4e3b\u4f53\u7684\u63d0\u4f9b\u5668\u6216\u7ba1\u7406\u5176\u6ce8\u518c\u751f\u547d\u5468\u671f\u7684\u4f5c\u7528\u57df\u3002 */
     private final SubjectProvider subjects;
     /**
      * @param subjects 外部 Boot 装配的 Shiro 主体适配器

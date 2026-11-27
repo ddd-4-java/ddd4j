@@ -42,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Testcontainers(disabledWithoutDocker = true)
 class SqsBrokerIntegrationTest {
 
+    /** \u4e3a\u96c6\u6210\u6d4b\u8bd5\u63d0\u4f9b\u9694\u79bb <code>Generic</code> \u670d\u52a1\u7684\u5bb9\u5668\u3002 */
     @Container
     static final GenericContainer<?> SQS = new GenericContainer<>(
             DockerImageName.parse("softwaremill/elasticmq:1.6.16"))
@@ -49,6 +50,10 @@ class SqsBrokerIntegrationTest {
             .waitingFor(Wait.forListeningPort())
             .withStartupTimeout(Duration.ofMinutes(2));
 
+    /**
+     * \u9a8c\u8bc1<code>adapter.initConsumer(listener, properties)</code>\u4e3a\u771f\uff0c<code>receiver.received.await(10, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>receiver.correlationId</code> \u7b49\u4e8e <code>event.getCorrelationId()</code>\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void publishesConsumesAndDeletesMessageThroughSqsProtocol() throws Exception {
         SqsProperties properties = new SqsProperties();
@@ -91,6 +96,10 @@ class SqsBrokerIntegrationTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>adapter.initConsumer(listener, properties)</code>\u4e3a\u771f\uff0c<code>receiver.receivedTwice.await(10, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>receiver.correlationId</code> \u7b49\u4e8e <code>event.getCorrelationId()</code>\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void redeliversAfterListenerFailureAndDeletesAfterSuccess() throws Exception {
         SqsProperties properties = new SqsProperties();
@@ -134,6 +143,12 @@ class SqsBrokerIntegrationTest {
         }
     }
 
+    /**
+     * \u8c03\u7528 <code>System.nanoTime()</code>\u3001<code>TimeUnit.SECONDS.toNanos()</code>\u3001<code>nativeClient.getQueueAttributes()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @param nativeClient \u4f20\u7ed9 <code>nativeClient.getQueueAttributes()</code> \u7684 <code>SqsClient</code> \u8f93\u5165
+     * @param queueUrl \u4f20\u7ed9 <code>nativeClient.getQueueAttributes()</code> \u7684 <code>String</code> \u8f93\u5165
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     private static void awaitQueueEmpty(SqsClient nativeClient, String queueUrl) throws Exception {
         long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
         int outstanding;
@@ -155,8 +170,11 @@ class SqsBrokerIntegrationTest {
 
     /** 记录实际消费到的消息值。 */
     public static final class RecordingListener {
+        /** \u7b49\u5f85\u6570\u636e\u5230\u8fbe\u7684\u540c\u6b65\u95e8\u95e9\u3002 */
         private final CountDownLatch received = new CountDownLatch(1);
+        /** \u6d88\u606f\u6807\u8bc6\u3002 */
         private volatile String messageId;
+        /** \u7528\u4e8e\u5173\u8054\u540c\u4e00\u6b21\u64cd\u4f5c\u4ea7\u751f\u7684\u4e8b\u4ef6\u6216\u6d88\u606f\u7684\u6807\u8bc6\u3002 */
         private volatile String correlationId;
 
         /** @param event 实际消费的消息 */
@@ -169,9 +187,13 @@ class SqsBrokerIntegrationTest {
 
     /** 第一次消费失败，第二次记录实际重投。 */
     public static final class FailOnceListener {
+        /** \u8ddf\u8e2a\u6d4b\u8bd5\u64cd\u4f5c\u7684\u8c03\u7528\u6216\u91cd\u8bd5\u6b21\u6570\u3002 */
         private final AtomicInteger attempts = new AtomicInteger();
+        /** \u534f\u8c03\u6d4b\u8bd5\u7ebf\u7a0b\u5728\u6307\u5b9a\u6267\u884c\u9636\u6bb5\u7b49\u5f85\u6216\u7ee7\u7eed\u7684\u95e8\u95e9\u3002 */
         private final CountDownLatch receivedTwice = new CountDownLatch(1);
+        /** \u6d88\u606f\u6807\u8bc6\u3002 */
         private volatile String messageId;
+        /** \u7528\u4e8e\u5173\u8054\u540c\u4e00\u6b21\u64cd\u4f5c\u4ea7\u751f\u7684\u4e8b\u4ef6\u6216\u6d88\u606f\u7684\u6807\u8bc6\u3002 */
         private volatile String correlationId;
 
         /** @param event 实际消费的消息 */

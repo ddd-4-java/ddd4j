@@ -46,17 +46,25 @@ import java.util.concurrent.ScheduledFuture;
 @Component
 public class SpringProjectionScheduler implements ViewScheduler, SmartLifecycle {
 
+    /** \u8d1f\u8d23\u5b89\u6392 Spring \u6295\u5f71\u89e6\u53d1\u7684\u7ebf\u7a0b\u8c03\u5ea6\u5668\u3002 */
     private final TaskScheduler taskScheduler;
 
+    /** \u5f53\u524d\u5df2\u7ecf\u6ce8\u518c\u7684\u6295\u5f71\u4efb\u52a1\u53ca\u5176\u53d6\u6d88\u53e5\u67c4\u3002 */
     private final Map<String, ViewScheduleHandle> handles = new ConcurrentHashMap<>();
 
+    /** \u5f53\u524d Spring \u8c03\u5ea6\u5668\u662f\u5426\u8fd0\u884c\u3002 */
     private volatile boolean running = false;
 
+    /**
+     * \u521b\u5efa Spring \u6295\u5f71\u8c03\u5ea6\u9002\u914d\u5668\u3002
+     * @param taskScheduler Spring \u4efb\u52a1\u8c03\u5ea6\u5668
+     */
     @Autowired
     public SpringProjectionScheduler(TaskScheduler taskScheduler) {
         this.taskScheduler = Objects.requireNonNull(taskScheduler, "taskScheduler must not be null");
     }
 
+    /** {@inheritDoc} */
     @Override
     public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
         Objects.requireNonNull(viewName, "viewName must not be null");
@@ -68,6 +76,7 @@ public class SpringProjectionScheduler implements ViewScheduler, SmartLifecycle 
         return handle;
     }
 
+    /** \u5141\u8bb8\u5f53\u524d Spring \u6295\u5f71\u8c03\u5ea6\u5668\u63a5\u53d7\u548c\u6267\u884c\u4efb\u52a1\u3002 */
     @Override
     public void start() {
         if (!running) {
@@ -75,6 +84,7 @@ public class SpringProjectionScheduler implements ViewScheduler, SmartLifecycle 
         }
     }
 
+    /** \u505c\u6b62\u5e76\u91ca\u653e\u5f53\u524d Spring \u6295\u5f71\u8c03\u5ea6\u5668\u5b89\u6392\u7684\u4efb\u52a1\u3002 */
     @Override
     public void stop() {
         if (running) {
@@ -84,11 +94,19 @@ public class SpringProjectionScheduler implements ViewScheduler, SmartLifecycle 
         }
     }
 
+    /**
+     * \u8bfb\u53d6<code>running</code> \u5b57\u6bb5\u3002
+     * @return <code>running</code> \u5b57\u6bb5
+     */
     @Override
     public boolean isRunning() {
         return running;
     }
 
+    /**
+     * \u58f0\u660e\u5f53\u524d\u7ec4\u4ef6\u5728 Spring \u751f\u547d\u5468\u671f\u4e2d\u7684\u542f\u505c\u987a\u5e8f\u3002
+     * @return \u5f53\u524d\u7ec4\u4ef6\u7684\u751f\u547d\u5468\u671f\u9636\u6bb5
+     */
     @Override
     public int getPhase() {
         return Integer.MAX_VALUE;
@@ -99,17 +117,24 @@ public class SpringProjectionScheduler implements ViewScheduler, SmartLifecycle 
      */
     private static class SpringViewScheduleHandle implements ViewScheduleHandle {
 
+        /** \u7528\u4e8e\u8ddf\u8e2a\u548c\u53d6\u6d88\u540e\u53f0\u8c03\u5ea6\u4efb\u52a1\u7684\u53e5\u67c4\u3002 */
         private final ScheduledFuture<?> future;
 
+        /**
+         * \u7528\u7ed9\u5b9a\u503c\u521d\u59cb\u5316 <code>SpringViewScheduleHandle</code> \u5b9e\u4f8b\u3002
+         * @param future \u7528\u4e8e\u8ddf\u8e2a\u548c\u53d6\u6d88\u540e\u53f0\u8c03\u5ea6\u4efb\u52a1\u7684\u53e5\u67c4
+         */
         SpringViewScheduleHandle(ScheduledFuture<?> future) {
             this.future = future;
         }
 
+        /** {@inheritDoc} */
         @Override
         public void cancel() {
             future.cancel(false);
         }
 
+        /** {@inheritDoc} */
         @Override
         public boolean isActive() {
             return !future.isCancelled() && !future.isDone();

@@ -40,16 +40,19 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class AuthSpanTest {
 
+    /** \u6d4b\u8bd5\u6267\u884c\u524d\u6267\u884c <code>OpenTelemetrySdkSetter.set()</code>\u3001<code>OpenTelemetry.noop()</code> \u5b8c\u6210\u8d44\u6e90\u51c6\u5907\u3002 */
     @BeforeEach
     void setUp() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
     }
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>OpenTelemetrySdkSetter.set()</code>\u3001<code>OpenTelemetry.noop()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterEach
     void tearDown() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
     }
 
+    /** \u9a8c\u8bc1<code>AuthSpan.ATTR_AUTH_FRAMEWORK.getKey()</code> \u7b49\u4e8e <code>"auth.framework"</code>\uff0c<code>AuthSpan.ATTR_AUTH_LOGIN_ID.getKey()</code> \u7b49\u4e8e <code>"auth.login_id"</code>\uff0c<code>AuthSpan.ATTR_AUTH_PERMISSION.getKey()</code> \u7b49\u4e8e <code>"auth.permission"</code>\u3002 */
     @Test
     void attributeKeys_shouldHaveCorrectNames() {
         assertThat(AuthSpan.ATTR_AUTH_FRAMEWORK.getKey()).isEqualTo("auth.framework");
@@ -60,6 +63,7 @@ class AuthSpanTest {
         assertThat(AuthSpan.ATTR_AUTH_PERMISSION.getKey()).isEqualTo("auth.permission");
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>OpenTelemetrySdkSetter.set()</code>\u3001<code>OpenTelemetry.noop()</code>\u3001<code>AuthSpan.hasRole()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void hasRole_shouldBeCallable_noopOTel() {
         // 即使无 SPI 也应能编译（无 OTel 时直接转发到 SubjectKit）
@@ -69,6 +73,7 @@ class AuthSpanTest {
                 .isInstanceOfAny(Exception.class);
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>OpenTelemetrySdkSetter.set()</code>\u3001<code>OpenTelemetry.noop()</code>\u3001<code>AuthSpan.hasPermission()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void hasPermission_shouldBeCallable_noopOTel() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -76,6 +81,7 @@ class AuthSpanTest {
                 .isInstanceOfAny(Exception.class);
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>OpenTelemetrySdkSetter.set()</code>\u3001<code>OpenTelemetry.noop()</code>\u3001<code>AuthSpan.isLogin()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void isLogin_shouldBeCallable_noopOTel() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -83,6 +89,7 @@ class AuthSpanTest {
                 .isInstanceOfAny(Exception.class);
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>OpenTelemetrySdkSetter.set()</code>\u3001<code>OpenTelemetry.noop()</code>\u3001<code>AuthSpan.login()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void login_shouldBeCallable_noopOTel() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -92,6 +99,7 @@ class AuthSpanTest {
                 .isInstanceOfAny(Exception.class);
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>OpenTelemetrySdkSetter.set()</code>\u3001<code>OpenTelemetry.noop()</code>\u3001<code>AuthSpan.logout()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void logout_shouldBeCallable_noopOTel() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -99,6 +107,7 @@ class AuthSpanTest {
                 .isInstanceOfAny(Exception.class);
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>OpenTelemetrySdkSetter.set()</code>\u3001<code>OpenTelemetry.noop()</code>\u3001<code>AuthSpan.logout()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void logout_withLoginId_shouldBeCallable_noopOTel() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -106,6 +115,7 @@ class AuthSpanTest {
                 .isInstanceOfAny(Exception.class);
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>OpenTelemetrySdkSetter.set()</code>\u3001<code>OpenTelemetry.noop()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void verify_shouldBeCallable_noopOTel() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -113,6 +123,7 @@ class AuthSpanTest {
                 .isInstanceOfAny(Exception.class);
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>OpenTelemetrySdkSetter.set()</code>\u3001<code>OpenTelemetry.noop()</code>\u3001<code>AuthSpan.kickout()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void kickout_shouldBeCallable_noopOTel() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -120,6 +131,7 @@ class AuthSpanTest {
                 .isInstanceOfAny(Exception.class);
     }
 
+    /** \u9a8c\u8bc1<code>true</code>\u4e3a\u771f\u3002 */
     @Test
     void hasRole_shouldHandleNullArgument() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -133,6 +145,7 @@ class AuthSpanTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>true</code>\u4e3a\u771f\u3002 */
     @Test
     void hasPermission_shouldHandleNullArgument() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -143,6 +156,7 @@ class AuthSpanTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>true</code>\u4e3a\u771f\u3002 */
     @Test
     void login_withNullRequest_shouldBeCallable() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -153,6 +167,7 @@ class AuthSpanTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>true</code>\u4e3a\u771f\u3002 */
     @Test
     void verify_withNullToken_shouldBeCallable() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -163,6 +178,7 @@ class AuthSpanTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>true</code>\u4e3a\u771f\u3002 */
     @Test
     void logout_withNullLoginId_shouldBeCallable() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -173,6 +189,7 @@ class AuthSpanTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>true</code>\u4e3a\u771f\u3002 */
     @Test
     void kickout_withNullLoginId_shouldBeCallable() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -183,6 +200,7 @@ class AuthSpanTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>invoked</code>\u975e\u7a7a\u3002 */
     @Test
     void verify_withAuthPrincipal_shouldSetLoginIdAttribute() {
         // 验证 verify 在 noop 模式下也能正确处理（即使抛异常也是预期的）
@@ -197,6 +215,7 @@ class AuthSpanTest {
         assertThat(invoked).isNotNull();
     }
 
+    /** \u9a8c\u8bc1<code>AuthSpan.ATTR_AUTH_FRAMEWORK</code>\u975e\u7a7a\uff0c<code>AuthSpan.ATTR_AUTH_LOGIN_ID</code>\u975e\u7a7a\uff0c<code>AuthSpan.ATTR_AUTH_OPERATION</code>\u975e\u7a7a\u3002 */
     @Test
     void authSpan_constants_shouldBeImmutable() {
         // 验证常量定义（防止重构改动破坏调用）

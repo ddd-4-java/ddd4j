@@ -23,8 +23,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/** \u9a8c\u8bc1 <code>AsyncCleanupInterceptor</code> \u5728<code>invokeClearsThreadContextEven</code>\u7b49\u64cd\u4f5c\u4e2d\u7684\u884c\u4e3a\u5951\u7ea6\u3002 */
 class AsyncCleanupInterceptorTest {
 
+    /** \u9a8c\u8bc1<code>ThreadContext.get("async-key")</code>\u4e3a\u7a7a\u3002 */
     @Test
     void invokeClearsThreadContextAfterProceed() {
         Injector injector = Guice.createInjector(new AbstractModule() {
@@ -41,6 +43,7 @@ class AsyncCleanupInterceptorTest {
         assertNull(ThreadContext.get("async-key"));
     }
 
+    /** \u9a8c\u8bc1<code>injector.getInstance(BoomWorker.class).boom()</code> \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>ThreadContext.get("async-key")</code>\u4e3a\u7a7a\u3002 */
     @Test
     void invokeClearsThreadContextEvenWhenProceedThrows() {
         Injector injector = Guice.createInjector(new AbstractModule() {
@@ -56,15 +59,19 @@ class AsyncCleanupInterceptorTest {
         assertNull(ThreadContext.get("async-key"));
     }
 
+    /** \u63d0\u4f9b <code>work()</code> \u7b49\u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u72ec\u7acb\u64cd\u4f5c\u3002 */
     public static class Worker {
 
+        /** \u4e3a\u5f02\u6b65\u62e6\u622a\u5668\u6d4b\u8bd5\u63d0\u4f9b\u6b63\u5e38\u7ed3\u675f\u5e76\u53ef\u88ab\u8c03\u7528\u7684\u65b9\u6cd5\u3002 */
         public void work() {
             assertTrue(true);
         }
     }
 
+    /** \u63d0\u4f9b <code>boom()</code> \u7b49\u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u72ec\u7acb\u64cd\u4f5c\u3002 */
     public static class BoomWorker {
 
+        /** \u6784\u9020 <code>IllegalStateException</code> \u4f5c\u4e3a\u5f53\u524d\u6d4b\u8bd5\u7684\u8f93\u5165\u6216\u7ed3\u679c\u3002 */
         public void boom() {
             throw new IllegalStateException("boom");
         }

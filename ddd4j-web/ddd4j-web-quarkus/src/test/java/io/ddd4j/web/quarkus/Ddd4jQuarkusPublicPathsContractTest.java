@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /** 公开路径配置的三线解析契约。 */
 class Ddd4jQuarkusPublicPathsContractTest {
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>Proxy.newProxyInstance()</code>\u3001<code>Config.class.getClassLoader()</code>\u3001<code>method.getName()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void trimsAndDiscardsBlankPaths() {
         Config config = (Config) Proxy.newProxyInstance(Config.class.getClassLoader(),

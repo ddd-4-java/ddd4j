@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class SagaMustTest {
 
+    /** \u9a8c\u8bc1<code>state</code> \u7b49\u4e8e <code>SagaState.COMPLETED</code>\uff0c<code>trace</code> \u6309\u987a\u5e8f\u4ec5\u5305\u542b <code>"reserve"</code>\u3001<code>"charge"</code>\u3001<code>"create"</code>\uff0c<code>saga.failure()</code>\u4e3a\u7a7a\u3002 */
     @Test
     void allStepsSucceedMustCompleteInRegistrationOrderWithoutCompensation() {
         List<String> trace = new ArrayList<>();
@@ -35,6 +36,7 @@ class SagaMustTest {
         assertThat(saga.failure()).isNull();
     }
 
+    /** \u9a8c\u8bc1<code>state</code> \u7b49\u4e8e <code>SagaState.COMPENSATED</code>\uff0c<code>saga.executedCompensations()</code> \u6309\u987a\u5e8f\u4ec5\u5305\u542b <code>"s2"</code>\u3001<code>"s1"</code>\uff0c<code>saga.failure()</code> \u7684\u7c7b\u578b\u4e3a <code>IllegalStateException.class</code>\u3002 */
     @Test
     void laterStepFailureMustCompensateExecutedStepsInReverseRegistrationOrder() {
         List<String> trace = new ArrayList<>();
@@ -57,6 +59,7 @@ class SagaMustTest {
                 .hasMessage("payment gateway down");
     }
 
+    /** \u9a8c\u8bc1<code>state</code> \u7b49\u4e8e <code>SagaState.FAILED</code>\uff0c<code>saga.executedCompensations()</code> \u6309\u987a\u5e8f\u4ec5\u5305\u542b <code>"s2"</code>\u3001<code>"s1"</code>\u3002 */
     @Test
     void compensationFailureMustNotBlockRemainingCompensationsAndConvergeToTerminalState() {
         List<String> trace = new ArrayList<>();
@@ -78,6 +81,7 @@ class SagaMustTest {
         assertThat(saga.executedCompensations()).containsExactly("s2", "s1");
     }
 
+    /** \u9a8c\u8bc1<code>first.execute()</code> \u7b49\u4e8e <code>SagaState.COMPENSATED</code>\uff0c<code>second.state()</code> \u7b49\u4e8e <code>SagaState.RUNNING</code>\uff0c<code>second.execute()</code> \u7b49\u4e8e <code>SagaState.COMPLETED</code>\u3002 */
     @Test
     void freshInstanceMustStartFromCleanState() {
         List<String> trace = new ArrayList<>();

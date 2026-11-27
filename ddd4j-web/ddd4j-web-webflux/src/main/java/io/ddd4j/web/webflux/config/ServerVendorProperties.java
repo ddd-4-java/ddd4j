@@ -70,6 +70,7 @@ public class ServerVendorProperties {
      */
     private String title;
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "ServiceVendor{" + "province='" + province + '\'' + ", city='" + city + '\'' + ", desc='" + desc + '\''

@@ -29,16 +29,30 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class Ddd4jQuarkusWebFilterRemoteAddressTest {
 
+    /**
+     * \u9a8c\u8bc1<code>remoteAddress("localhost")</code> \u7b49\u4e8e <code>"localhost"</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void preservesUnresolvedPeerHost() throws Exception {
         assertEquals("localhost", remoteAddress("localhost"));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>remoteAddress("192.0.2.10")</code> \u7b49\u4e8e <code>"192.0.2.10"</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void preservesPeerIpAddress() throws Exception {
         assertEquals("192.0.2.10", remoteAddress("192.0.2.10"));
     }
 
+    /**
+     * \u901a\u8fc7 <code>(String)method.invoke(filter)</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+     * @param host \u4f20\u7ed9 <code>SocketAddress.inetSocketAddress()</code> \u7684 <code>String</code> \u8f93\u5165
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>(String)method.invoke(filter)</code>
+     * @throws Exception \u53cd\u5c04\u8bbf\u95ee\u88ab\u6d4b\u6210\u5458\u65f6\u5931\u8d25
+     */
     private static String remoteAddress(String host) throws Exception {
         Ddd4jQuarkusWebFilter filter = new Ddd4jQuarkusWebFilter(new Ddd4jQuarkusWebConfiguration());
         SocketAddress address = SocketAddress.inetSocketAddress(8123, host);

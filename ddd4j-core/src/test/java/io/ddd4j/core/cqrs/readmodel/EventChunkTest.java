@@ -43,6 +43,7 @@ class EventChunkTest {
     @DisplayName("构造器")
     class Constructor {
 
+        /** \u9a8c\u8bc1<code>chunk.getEvents()</code> \u6309\u987a\u5e8f\u4ec5\u5305\u542b <code>"e1"</code>\u3001<code>"e2"</code>\u3001<code>"e3"</code>\uff0c<code>chunk.getNextEventNumber()</code> \u7b49\u4e8e <code>5L</code>\u3002 */
         @Test
         void 构造器_正常事件与位置_应保存事件并返回位置() {
             List<String> events = Arrays.asList("e1", "e2", "e3");
@@ -53,6 +54,7 @@ class EventChunkTest {
             assertThat(chunk.getNextEventNumber()).isEqualTo(5L);
         }
 
+        /** \u9a8c\u8bc1<code>chunk.getNextEventNumber()</code>\u4e3a\u96f6\u3002 */
         @Test
         void 构造器_nextEventNumber为零_应允许() {
             EventChunk<String> chunk = new EventChunk<>(Collections.singletonList("e1"), 0);
@@ -60,6 +62,7 @@ class EventChunkTest {
             assertThat(chunk.getNextEventNumber()).isZero();
         }
 
+        /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
         @Test
         void 构造器_nextEventNumber为负数_应抛IllegalArgumentException() {
             assertThatThrownBy(() -> new EventChunk<>(Collections.singletonList("e1"), -1))
@@ -67,6 +70,7 @@ class EventChunkTest {
                     .hasMessageContaining("nextEventNumber must not be negative");
         }
 
+        /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>NullPointerException.class</code>\u3002 */
         @Test
         void 构造器_events为null_应抛NullPointerException() {
             assertThatThrownBy(() -> new EventChunk<String>(null, 1))
@@ -74,6 +78,7 @@ class EventChunkTest {
                     .hasMessageContaining("events must not be null");
         }
 
+        /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>NullPointerException.class</code>\u3002 */
         @Test
         void 构造器_事件列表含null_应拒绝() {
             assertThatThrownBy(() -> new EventChunk<>(Arrays.asList("e1", null), 2))
@@ -81,6 +86,7 @@ class EventChunkTest {
                     .hasMessage("events must not contain null");
         }
 
+        /** \u9a8c\u8bc1<code>chunk.getEvents()</code>\u4e3a\u7a7a\uff0c<code>chunk.hasEvents()</code>\u4e3a\u5047\u3002 */
         @Test
         void 构造器_events为空列表_应创建空chunk且hasEvents为false() {
             EventChunk<String> chunk = new EventChunk<>(Arrays.asList(), 0);
@@ -89,6 +95,7 @@ class EventChunkTest {
             assertThat(chunk.hasEvents()).isFalse();
         }
 
+        /** \u9a8c\u8bc1<code>chunk.getEvents()</code> \u6309\u987a\u5e8f\u4ec5\u5305\u542b <code>"e1"</code>\u3002 */
         @Test
         void 构造器_传入可变List_应做防御性拷贝_原列表修改不影响chunk() {
             List<String> mutable = new ArrayList<>();
@@ -108,6 +115,7 @@ class EventChunkTest {
     @DisplayName("empty 工厂方法")
     class EmptyFactory {
 
+        /** \u9a8c\u8bc1<code>chunk.getEvents()</code>\u4e3a\u7a7a\uff0c<code>chunk.hasEvents()</code>\u4e3a\u5047\u3002 */
         @Test
         void empty_应返回不含事件的chunk() {
             EventChunk<String> chunk = EventChunk.empty(10);
@@ -116,6 +124,7 @@ class EventChunkTest {
             assertThat(chunk.hasEvents()).isFalse();
         }
 
+        /** \u9a8c\u8bc1<code>chunk.getNextEventNumber()</code> \u7b49\u4e8e <code>42L</code>\u3002 */
         @Test
         void empty_应保留传入的nextEventNumber() {
             EventChunk<String> chunk = EventChunk.empty(42);
@@ -123,6 +132,7 @@ class EventChunkTest {
             assertThat(chunk.getNextEventNumber()).isEqualTo(42L);
         }
 
+        /** \u9a8c\u8bc1<code>chunk.getNextEventNumber()</code>\u4e3a\u96f6\u3002 */
         @Test
         void empty_nextEventNumber为零_应允许() {
             EventChunk<String> chunk = EventChunk.empty(0);
@@ -130,6 +140,7 @@ class EventChunkTest {
             assertThat(chunk.getNextEventNumber()).isZero();
         }
 
+        /** \u9a8c\u8bc1<code>EventChunk.empty(-1)</code> \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
         @Test
         void empty_nextEventNumber为负数_应抛IllegalArgumentException() {
             assertThatThrownBy(() -> EventChunk.empty(-1))
@@ -144,6 +155,7 @@ class EventChunkTest {
     @DisplayName("hasEvents / getEvents")
     class QueryApi {
 
+        /** \u9a8c\u8bc1<code>chunk.hasEvents()</code>\u4e3a\u771f\u3002 */
         @Test
         void hasEvents_事件非空_应返回true() {
             EventChunk<String> chunk = new EventChunk<>(Collections.singletonList("e1"), 1);
@@ -151,6 +163,7 @@ class EventChunkTest {
             assertThat(chunk.hasEvents()).isTrue();
         }
 
+        /** \u9a8c\u8bc1<code>chunk.getEvents().add("e3")</code> \u629b\u51fa <code>UnsupportedOperationException.class</code>\u3002 */
         @Test
         void getEvents_返回不可变List_修改应抛UnsupportedOperationException() {
             EventChunk<String> chunk = new EventChunk<>(Arrays.asList("e1", "e2"), 2);
@@ -159,6 +172,7 @@ class EventChunkTest {
                     .isInstanceOf(UnsupportedOperationException.class);
         }
 
+        /** \u9a8c\u8bc1<code>chunk.getEvents().add("x")</code> \u629b\u51fa <code>UnsupportedOperationException.class</code>\u3002 */
         @Test
         void getEvents_empty返回的List_修改应抛UnsupportedOperationException() {
             EventChunk<String> chunk = EventChunk.empty(0);
@@ -167,6 +181,7 @@ class EventChunkTest {
                     .isInstanceOf(UnsupportedOperationException.class);
         }
 
+        /** \u9a8c\u8bc1<code>chunk.getNextEventNumber()</code> \u7b49\u4e8e <code>99L</code>\u3002 */
         @Test
         void getNextEventNumber_应返回构造时传入的值() {
             EventChunk<String> chunk = new EventChunk<>(Collections.singletonList("e1"), 99L);

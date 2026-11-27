@@ -41,9 +41,13 @@ import java.util.Objects;
  */
 public class AuthModule extends AbstractModule {
 
+    /** \u8bfb\u53d6\u548c\u4fdd\u5b58\u7528\u6237\u7684\u4ed3\u50a8\u3002 */
     private final InMemoryUserRepository userRepository;
+    /** \u8bfb\u53d6\u548c\u4fdd\u5b58\u89d2\u8272\u7684\u4ed3\u50a8\u3002 */
     private final InMemoryRoleRepository roleRepository;
+    /** \u67e5\u8be2\u548c\u7ef4\u62a4\u6743\u9650\u5b9a\u4e49\u7684\u4ed3\u50a8\u3002 */
     private final InMemoryPermissionRepository permissionRepository;
+    /** \u6267\u884c\u57fa\u4e8e\u89d2\u8272\u7684\u6388\u6743\u4e0e\u5206\u914d\u64cd\u4f5c\u7684\u5e94\u7528\u670d\u52a1\u3002 */
     private final RbacService rbacService;
 
     /**
@@ -75,6 +79,12 @@ public class AuthModule extends AbstractModule {
                 new InMemoryPermissionRepository());
     }
 
+    /**
+     * \u4fdd\u5b58\u6784\u5efa\u8ba4\u8bc1\u4e0e\u6388\u6743\u7ec4\u4ef6\u9700\u8981\u7684\u793a\u4f8b\u4ed3\u50a8\u3002
+     * @param userRepository \u5f53\u524d\u793a\u4f8b\u4f7f\u7528\u7684\u5185\u5b58\u7528\u6237\u4ed3\u50a8
+     * @param roleRepository \u5f53\u524d\u793a\u4f8b\u4f7f\u7528\u7684\u5185\u5b58\u89d2\u8272\u4ed3\u50a8
+     * @param permissionRepository \u5f53\u524d\u793a\u4f8b\u4f7f\u7528\u7684\u5185\u5b58\u6743\u9650\u4ed3\u50a8
+     */
     private AuthModule(InMemoryUserRepository userRepository,
                        InMemoryRoleRepository roleRepository,
                        InMemoryPermissionRepository permissionRepository) {
@@ -83,6 +93,7 @@ public class AuthModule extends AbstractModule {
         RbacConfig.initSeedData(rbacService);
     }
 
+    /** \u4e3a\u5f53\u524d\u8ba4\u8bc1\u793a\u4f8b\u5b89\u88c5\u7528\u6237\u3001\u89d2\u8272\u3001\u6743\u9650\u53ca\u4e3b\u4f53\u76f8\u5173 Guice \u7ed1\u5b9a\u3002 */
     @Override
     protected void configure() {
         // ========================= RBAC 模块 =========================

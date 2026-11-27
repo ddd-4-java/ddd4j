@@ -59,13 +59,23 @@ import static org.junit.jupiter.api.Assertions.*;
 @Testcontainers(disabledWithoutDocker = true)
 class JpaEventStorePostgresIT {
 
+    /** 保存 <code>PG</code> 对应的 <code>PostgreSQLContainer&lt;?&gt;</code> 数据。 */
     @Container
     static final PostgreSQLContainer<?> PG = new PostgreSQLContainer<>("postgres:16-alpine");
+    /** 保存 <code>"Order"</code>，供 <code>JpaEventStorePostgresIT</code> 的处理流程复用。 */
     private static final String ORDER_TYPE = "Order";
+    /** \u7528\u4e8e\u521b\u5efa JPA \u5b9e\u4f53\u7ba1\u7406\u5668\u7684\u5de5\u5382\u3002 */
     private static EntityManagerFactory entityManagerFactory;
+    /** \u6267\u884c JPA \u67e5\u8be2\u548c\u6301\u4e45\u5316\u64cd\u4f5c\u7684\u5b9e\u4f53\u7ba1\u7406\u5668\u3002 */
     private EntityManager entityManager;
+    /** \u8bfb\u53d6\u53ca\u8ffd\u52a0\u9886\u57df\u4e8b\u4ef6\u7684\u4e8b\u4ef6\u5b58\u50a8\u3002 */
     private EventStore eventStore;
 
+    /**
+     * 初始化测试资源，调用 <code>DriverManager.getConnection</code>、<code>PG.getJdbcUrl</code>、<code>PG.getUsername</code>。
+     *
+     * @throws Exception 执行数据库操作时失败
+     */
     @BeforeAll
     static void createEntityManagerFactory() throws Exception {
         // 用原生 JDBC 创建 DDL（TEXT payload，与 2.0/3.0 统一 schema 对齐）
@@ -104,6 +114,7 @@ class JpaEventStorePostgresIT {
         entityManagerFactory = cfg.buildSessionFactory();
     }
 
+    /** \u6d4b\u8bd5\u540e\u4f9d\u6b21\u5173\u95ed<code>entityManagerFactory</code>\u3002 */
     @AfterAll
     static void closeEntityManagerFactory() {
         if (entityManagerFactory != null && entityManagerFactory.isOpen()) {
@@ -111,6 +122,7 @@ class JpaEventStorePostgresIT {
         }
     }
 
+    /** \u9a8c\u8bc1<code>first.getTransaction().isActive()</code>\u4e3a\u771f\uff0c<code>second.getTransaction().isActive()</code>\u4e3a\u771f\u3002 */
     @Test
     void positionLookupMustLeaveCallerTransactionsActive() {
         EntityManager first = entityManagerFactory.createEntityManager();
@@ -136,6 +148,10 @@ class JpaEventStorePostgresIT {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>versionRead.await(10, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>allocatedBeforeCommit</code>\u4e3a\u5047\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void concurrentAppendsMustSerializeGlobalPositionAllocation() throws Exception {
         TestAggregateRootId seed = new TestAggregateRootId("position-seed");
@@ -209,12 +225,18 @@ class JpaEventStorePostgresIT {
         }
     }
 
+    /** \u6d4b\u8bd5\u524d\u4f9d\u6b21\u521d\u59cb\u5316<code>entityManager</code>\u3001\u521d\u59cb\u5316<code>eventStore</code>\u3002 */
     @BeforeEach
     void setUp() {
         entityManager = entityManagerFactory.createEntityManager();
         eventStore = new JpaEventStore(entityManager);
     }
 
+    /**
+     * 释放测试资源，调用 <code>entityManager.getTransaction</code>、<code>tx.isActive</code>、<code>tx.rollback</code>。
+     *
+     * @throws Exception 执行数据库操作时失败
+     */
     @AfterEach
     void tearDown() throws Exception {
         EntityTransaction tx = entityManager.getTransaction();
@@ -228,6 +250,7 @@ class JpaEventStorePostgresIT {
         }
     }
 
+    /** \u9a8c\u8bc1<code>tx.isActive()</code>\u4e3a\u771f\uff0c<code>entityManager.contains(business)</code>\u4e3a\u771f\uff0c<code>tx.isActive()</code>\u4e3a\u5047\u3002 */
     @Test
     void participatingAppendShouldCommitBusinessEventAndOutboxAtomically() {
         TestAggregateRootId aggregateId = new TestAggregateRootId("order-tx-commit");
@@ -254,6 +277,7 @@ class JpaEventStorePostgresIT {
         System.out.println("ATOMICITY_COMMIT_STATE=committed");
     }
 
+    /** \u9a8c\u8bc1<code>tx.isActive()</code>\u4e3a\u5047\u3002 */
     @Test
     void participatingAppendShouldRollBackBusinessEventAndOutboxTogether() {
         TestAggregateRootId controlAggregateId = new TestAggregateRootId("order-tx-rollback-control");
@@ -278,6 +302,7 @@ class JpaEventStorePostgresIT {
         System.out.println("ATOMICITY_ROLLBACK_STATE=rolled-back");
     }
 
+    /** \u9a8c\u8bc1<code>participating.append("Order", aggregateId, List.of(new OrderCreatedEvent(aggregateId)), 0)</code> \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>failure.getMessage()</code> \u7b49\u4e8e <code>"forced failure after event flush"</code>\uff0c<code>tx.isActive()</code>\u4e3a\u5047\u3002 */
     @Test
     void participatingFailureShouldMakeCaughtTransactionUncommittableWithoutPartialWrites() {
         TestAggregateRootId controlAggregateId = new TestAggregateRootId("order-tx-failure-control");
@@ -322,6 +347,12 @@ class JpaEventStorePostgresIT {
                 + (Objects.isNull(rollback) ? "rolled-back-without-exception" : rollback.getClass().getSimpleName()));
     }
 
+    /**
+     * \u8c03\u7528 <code>entityManager.getTransaction()</code>\u3001<code>tx.begin()</code>\u3001<code>entityManager.persist()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @param businessId \u4f20\u7ed9 <code>entityManager.persist()</code> \u7684 <code>String</code> \u8f93\u5165
+     * @param outboxId \u4f20\u7ed9 <code>entityManager.persist()</code> \u7684 <code>String</code> \u8f93\u5165
+     * @param aggregateId \u7528\u4e8e\u5b9a\u4f4d\u88ab\u6d4b\u805a\u5408\u7684\u6807\u8bc6
+     */
     private void commitControlRows(String businessId, String outboxId, TestAggregateRootId aggregateId) {
         EntityTransaction tx = entityManager.getTransaction();
         tx.begin();
@@ -332,6 +363,17 @@ class JpaEventStorePostgresIT {
         tx.commit();
     }
 
+    /**
+     * \u6838\u5bf9<code>observer.createNativeQuery("show transaction_isolation").getSingleResult()</code> \u7b49\u4e8e <code>"read committed"</code>\uff0c<code>businessCount</code> \u7b49\u4e8e <code>expectedBusiness</code>\u3002
+     * @param label \u4f20\u7ed9 <code>System.out.println()</code> \u7684 <code>String</code> \u8f93\u5165
+     * @param businessId \u4f20\u7ed9 <code>observer.createQuery()</code> \u7684 <code>String</code> \u8f93\u5165
+     * @param outboxId \u4f20\u7ed9 <code>observer.createQuery()</code> \u7684 <code>String</code> \u8f93\u5165
+     * @param aggregateId \u7528\u4e8e\u5b9a\u4f4d\u88ab\u6d4b\u805a\u5408\u7684\u6807\u8bc6
+     * @param expectedBusiness \u4f20\u7ed9 <code>assertEquals()</code> \u7684 <code>long</code> \u8f93\u5165
+     * @param expectedOutbox \u4f20\u7ed9 <code>assertEquals()</code> \u7684 <code>long</code> \u8f93\u5165
+     * @param expectedEvents \u4f20\u7ed9 <code>assertEquals()</code> \u7684 <code>long</code> \u8f93\u5165
+     * @param expectedBusinessValue \u4f20\u7ed9 <code>assertEquals()</code> \u7684 <code>String</code> \u8f93\u5165
+     */
     private void assertAtomicState(String label, String businessId, String outboxId,
                                    TestAggregateRootId aggregateId, long expectedBusiness,
                                    long expectedOutbox, long expectedEvents, String expectedBusinessValue) {
@@ -375,6 +417,7 @@ class JpaEventStorePostgresIT {
         }
     }
 
+    /** \u9a8c\u8bc1<code>events</code> \u7684\u5927\u5c0f\u4e3a <code>2</code>\uff0c<code>events.get(0).payload()</code> \u7684\u7c7b\u578b\u4e3a <code>OrderCreatedEvent.class</code>\uff0c<code>events.get(1).aggregateId().asString()</code> \u7b49\u4e8e <code>aggregateId.asString()</code>\u3002 */
     @Test
     void appendAndReadShouldRoundTripTypedEventOnPostgres() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-pg-1");
@@ -390,6 +433,11 @@ class JpaEventStorePostgresIT {
         assertEquals(orderId.asString(), events.get(0).aggregateId().asString());
     }
 
+    /**
+     * 验证<code>rs.next()</code>为真，<code>rs.getString("data_type")</code> 等于 <code>"text"</code>。
+     *
+     * @throws Exception 执行数据库操作时失败
+     */
     @Test
     void payloadColumnShouldUsePortableTextType() throws Exception {
         // PG 将列名折叠为小写；information_schema 中 table_schema = current_schema()
@@ -404,6 +452,7 @@ class JpaEventStorePostgresIT {
         }
     }
 
+    /** \u9a8c\u8bc1<code>eventStore.append("Order", aggregateId, List.of(new OrderCreatedEvent(aggregateId)), 0)</code> \u629b\u51fa <code>io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException.class</code>\uff0c<code>conflict.expectedVersion()</code>\u4e3a\u96f6\uff0c<code>eventStore.read("Order", aggregateId)</code> \u7684\u5927\u5c0f\u4e3a <code>1</code>\u3002 */
     @Test
     void appendWithStaleVersionShouldRejectOnPostgres() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-pg-2");
@@ -419,26 +468,36 @@ class JpaEventStorePostgresIT {
         assertEquals(1, eventStore.read(ORDER_TYPE, orderId).size());
     }
 
+    /** \u6d4b\u8bd5\u4e13\u7528\u805a\u5408\u6839\u6807\u8bc6\uff0c\u4f9b\u4ed3\u50a8\u3001\u4e8b\u4ef6\u5e8f\u5217\u5316\u6216\u547d\u4ee4\u8def\u7531\u6784\u9020\u72ec\u7acb\u7684\u805a\u5408\u5b9e\u4f8b\u3002 */
     private static final class TestAggregateRootId implements AggregateRootId {
 
+        /** \u6d4b\u8bd5\u805a\u5408\u6ce8\u518c\u548c\u53cd\u5e8f\u5217\u5316\u6240\u7528\u7684\u5b9e\u4f53\u7c7b\u578b\u6807\u8bc6\u3002 */
         private static final EntityType TYPE = new StringEntityType("Order");
 
+        /** \u7528\u4e8e\u7ec4\u6210\u6d4b\u8bd5\u6807\u8bc6\u7684\u539f\u59cb\u503c\u3002 */
         private final String value;
 
+        /**
+         * \u4ee5\u7ed9\u5b9a\u72b6\u6001\u6784\u9020 <code>TestAggregateRootId</code> \u6d4b\u8bd5\u5bf9\u8c61\u3002
+         * @param value \u7528\u4e8e\u7ec4\u6210\u6d4b\u8bd5\u6807\u8bc6\u7684\u539f\u59cb\u503c
+         */
         private TestAggregateRootId(String value) {
             this.value = value;
         }
 
+        /** {@inheritDoc} */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
+        /** {@inheritDoc} */
         @Override
         public String asString() {
             return value;
         }
 
+        /** {@inheritDoc} */
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
@@ -450,21 +509,38 @@ class JpaEventStorePostgresIT {
      */
     public static final class OrderCreatedEvent extends DomainEvent<TestAggregateRootId> {
 
+        /** 保存 <code>fact</code> 对应的 <code>String</code> 数据。 */
         private String fact;
 
+        /** \u4f7f\u7528 <code>super()</code> \u521d\u59cb\u5316 <code>OrderCreatedEvent</code> \u6d4b\u8bd5\u5939\u5177\u3002 */
         public OrderCreatedEvent() {
             super();
         }
 
+        /**
+         * 初始化 <code>OrderCreatedEvent</code> 使用的 <code>fact</code>。
+         *
+         * @param fact 传入此操作的 <code>String</code> 类型 <code>fact</code>
+         */
         private OrderCreatedEvent(String fact) {
             super(new EntityIdPath(new TestAggregateRootId("order-1")));
             this.fact = fact;
         }
 
+        /**
+         * 读取<code>fact</code> 的当前值。
+         *
+         * @return 返回表达式 <code>fact</code>
+         */
         public String getFact() {
             return fact;
         }
 
+        /**
+         * 执行 <code>set Fact</code> 对应的处理。
+         *
+         * @param fact 传入此操作的 <code>String</code> 类型 <code>fact</code>
+         */
         public void setFact(String fact) {
             this.fact = fact;
         }

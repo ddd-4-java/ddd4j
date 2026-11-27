@@ -35,8 +35,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/** \u9a8c\u8bc1 <code>Ddd4jGuiceModule</code> \u5728<code>dddAnnotationModule</code>\u7b49\u64cd\u4f5c\u4e2d\u7684\u884c\u4e3a\u5951\u7ea6\u3002 */
 class Ddd4jGuiceModuleTest {
 
+    /** \u9a8c\u8bc1<code>handled</code> \u7b49\u4e8e <code>java.util.Collections.singletonList("event")</code>\u3002 */
     @Test
     void projectionRunnerMustUseExplicitReaderBinding() {
         io.ddd4j.core.cqrs.readmodel.EventChunkReader<Object> reader = (stream, from, size, types) ->
@@ -80,6 +82,7 @@ class Ddd4jGuiceModuleTest {
         }
     }
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>CacheKit.unregister()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterEach
     void tearDown() {
         CacheKit.unregister("guice-local-1");
@@ -87,6 +90,7 @@ class Ddd4jGuiceModuleTest {
         CacheKit.unregister("guice-external");
     }
 
+    /** \u9a8c\u8bc1<code>injector.getInstance(ViewManager.class)</code>\u975e\u7a7a\uff0c<code>injector.getInstance(ViewManager.class).getClass()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>GuiceViewManager.class</code>\uff0c<code>injector.getInstance(io.ddd4j.guice.Ddd4jGuiceRuntime.class)</code>\u975e\u7a7a\u3002 */
     @Test
     void ddd4jGuiceModuleWiresCoreServices() {
         Injector injector = Guice.createInjector(new Ddd4jGuiceModule());
@@ -101,6 +105,7 @@ class Ddd4jGuiceModuleTest {
         assertNotNull(injector.getInstance(io.ddd4j.guice.Ddd4jGuiceRuntime.class));
     }
 
+    /** \u9a8c\u8bc1<code>injector</code>\u975e\u7a7a\uff0c<code>CacheKit.getCache("guice-local-1")</code>\u975e\u7a7a\uff0c<code>CacheKit.getCache("guice-external")</code>\u975e\u7a7a\u3002 */
     @Test
     void cacheGuiceModuleBuildsLocalAndExternalCaches() {
         CacheKit.build("guice-external", 300L);
@@ -118,6 +123,7 @@ class Ddd4jGuiceModuleTest {
         assertNotNull(CacheKit.getCache("guice-external"));
     }
 
+    /** \u9a8c\u8bc1<code>injector</code>\u975e\u7a7a\uff0c<code>injector.getInstance(RepositoryStub.class)</code>\u975e\u7a7a\uff0c<code>injector.getInstance(RepositoryStub.class)</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>injector.getInstance(RepositoryStub.class)</code>\u3002 */
     @Test
     void mybatisGuiceModuleBindsRepositories() {
         Injector injector = Guice.createInjector(new Ddd4jMybatisGuiceModule(new NoopDataSource())
@@ -129,6 +135,7 @@ class Ddd4jGuiceModuleTest {
         assertSame(injector.getInstance(RepositoryStub.class), injector.getInstance(RepositoryStub.class));
     }
 
+    /** \u9a8c\u8bc1<code>injector.getInstance(io.ddd4j.data.crypto.CryptoProperties.class)</code>\u975e\u7a7a\uff0c<code>injector.getInstance(io.ddd4j.data.logs.ApiOperationLogProvider.class)</code>\u975e\u7a7a\u3002 */
     @Test
     void cryptoAndLogsModulesProvideBindings() {
         Injector injector = Guice.createInjector(new Ddd4jCryptoGuiceModule(), new Ddd4jLogsGuiceModule());
@@ -137,11 +144,13 @@ class Ddd4jGuiceModuleTest {
         assertNotNull(injector.getInstance(io.ddd4j.data.logs.ApiOperationLogProvider.class));
     }
 
+    /** \u9a8c\u8bc1<code>AnnotationFusionVerifier.main(new String[0])</code> \u6b63\u5e38\u8fd4\u56de\u3002 */
     @Test
     void annotationFusionVerifierMainPasses() {
         assertDoesNotThrow(() -> AnnotationFusionVerifier.main(new String[0]));
     }
 
+    /** \u9a8c\u8bc1<code>provider.getMessage("plain")</code> \u7b49\u4e8e <code>"Plain message"</code>\uff0c<code>provider.getMessage("greeting", "World")</code> \u7b49\u4e8e <code>"Hello World"</code>\uff0c<code>provider.getMessage(null)</code> \u7b49\u4e8e <code>null</code>\u3002 */
     @Test
     void i18nProviderResolvesBundles() {
         GuiceI18nProvider provider = new GuiceI18nProvider();
@@ -152,6 +161,7 @@ class Ddd4jGuiceModuleTest {
         assertEquals(null, provider.getMessage(null));
     }
 
+    /** \u9a8c\u8bc1<code>received.get()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>event</code>\u3002 */
     @Test
     void domainEventPublisherPostsToEventBus() {
         com.google.common.eventbus.EventBus bus = new com.google.common.eventbus.EventBus();
@@ -174,6 +184,7 @@ class Ddd4jGuiceModuleTest {
         assertSame(event, received.get());
     }
 
+    /** \u9a8c\u8bc1<code>injector.getInstance(TestDomainService.class)</code>\u975e\u7a7a\uff0c<code>injector.getInstance(TestDomainService.class)</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>injector.getInstance(TestDomainService.class)</code>\u3002 */
     @Test
     void dddAnnotationModuleScansAndBindsAnnotatedBeans() {
         Injector injector = Guice.createInjector(new DddAnnotationModule(true, "io.ddd4j.guice"));
@@ -183,6 +194,7 @@ class Ddd4jGuiceModuleTest {
                 injector.getInstance(TestDomainService.class));
     }
 
+    /** \u9a8c\u8bc1<code>injector</code>\u975e\u7a7a\u3002 */
     @Test
     void dddAnnotationModuleWithScanDisabledIsSafe() {
         Injector injector = Guice.createInjector(new DddAnnotationModule(false, "io.ddd4j.guice"));
@@ -190,6 +202,7 @@ class Ddd4jGuiceModuleTest {
         assertNotNull(injector);
     }
 
+    /** \u9a8c\u8bc1<code>injector.getInstance(com.google.common.eventbus.EventBus.class)</code>\u975e\u7a7a\uff0c<code>injector.getInstance(io.ddd4j.core.cqrs.readmodel.ProjectionService.class)</code>\u975e\u7a7a\uff0c<code>injector.getInstance(io.ddd4j.core.cqrs.command.CommandBus.class)</code>\u975e\u7a7a\u3002 */
     @Test
     void providesMethodsInstantiateOnDemand() {
         Injector injector = Guice.createInjector(new Ddd4jGuiceModule());
@@ -202,6 +215,7 @@ class Ddd4jGuiceModuleTest {
         assertNotNull(injector.getInstance(io.ddd4j.core.cqrs.command.CommandBus.class));
     }
 
+    /** \u9a8c\u8bc1<code>provider.getSubject()</code>\u4e3a\u7a7a\uff0c<code>injected.getSubject()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>subject</code>\uff0c<code>emptyProvider.getSubject()</code>\u4e3a\u7a7a\u3002 */
     @Test
     void subjectProviderResolvesOptionalBinding() {
         io.ddd4j.guice.subject.GuiceSubjectProvider provider = new io.ddd4j.guice.subject.GuiceSubjectProvider();
@@ -227,6 +241,7 @@ class Ddd4jGuiceModuleTest {
         assertNull(emptyProvider.getSubject());
     }
 
+    /** \u9a8c\u8bc1<code>factory</code>\u975e\u7a7a\uff0c<code>session</code>\u975e\u7a7a\uff0c<code>((org.apache.ibatis.session.SqlSessionManager) session).isManagedSessionStarted()</code>\u4e3a\u5047\u3002 */
     @Test
     void mybatisModuleBuildsFactoryAndInjectsMappers() {
         Ddd4jMybatisGuiceModule module = new Ddd4jMybatisGuiceModule(new NoopDataSource())
@@ -245,6 +260,7 @@ class Ddd4jGuiceModuleTest {
         assertFalse(((SqlSessionManager) session).isManagedSessionStarted());
     }
 
+    /** \u9a8c\u8bc1<code>injector.getInstance(io.ddd4j.guice.testbeans.OrderService.class)</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>first</code>\u3002 */
     @Test
     void dddAnnotationModuleBindsTopLevelAnnotatedBean() {
         Injector injector = Guice.createInjector(
@@ -255,6 +271,7 @@ class Ddd4jGuiceModuleTest {
         assertSame(first, injector.getInstance(io.ddd4j.guice.testbeans.OrderService.class));
     }
 
+    /** \u9a8c\u8bc1<code>injector.getInstance(io.ddd4j.core.cqrs.command.CommandBus.class)</code>\u975e\u7a7a\u3002 */
     @Test
     void commandBusCollectsCommandExecutors() {
         Injector injector = Guice.createInjector(new AbstractModule() {
@@ -268,6 +285,7 @@ class Ddd4jGuiceModuleTest {
         assertNotNull(injector.getInstance(io.ddd4j.core.cqrs.command.CommandBus.class));
     }
 
+    /** \u9a8c\u8bc1<code>io.ddd4j.cache.CacheKit.getCache("guice-type-test")</code>\u975e\u7a7a\u3002 */
     @Test
     void cacheModuleSupportsDefaultTypeOverride() {
         Guice.createInjector(new Ddd4jCacheGuiceModule()
@@ -278,6 +296,7 @@ class Ddd4jGuiceModuleTest {
         io.ddd4j.cache.CacheKit.unregister("guice-type-test");
     }
 
+    /** \u9a8c\u8bc1<code>injector.getInstance(io.ddd4j.guice.testbeans.OrderService.class)</code>\u975e\u7a7a\u3002 */
     @Test
     void dddAnnotationModuleOneArgConstructorEnablesScan() {
         Injector injector = Guice.createInjector(
@@ -286,69 +305,117 @@ class Ddd4jGuiceModuleTest {
         assertNotNull(injector.getInstance(io.ddd4j.guice.testbeans.OrderService.class));
     }
 
+    /** \u4e3a\u6d4b\u8bd5\u6ce8\u5165\u63d0\u4f9b\u7684 Mapper \u66ff\u8eab\u63a5\u53e3\u3002 */
     public interface MapperStub {
     }
 
+    /** \u9a8c\u8bc1\u5bb9\u5668\u6309\u9886\u57df\u7ec4\u4ef6\u6ce8\u89e3\u53d1\u73b0\u670d\u52a1\u7684\u6d4b\u8bd5\u5bf9\u8c61\u3002 */
     @DomainService
     public static class TestDomainService {
     }
 
+    /** \u7528\u4e8e\u68c0\u67e5\u6ce8\u89e3\u7ec4\u4ef6\u80fd\u5426\u83b7\u5f97\u4ed3\u50a8\u4f9d\u8d56\u7684\u66ff\u8eab\u3002 */
     public static class RepositoryStub {
     }
 
+    /** \u5b9e\u73b0 <code>DataSource</code>\uff0c\u4f9b\u6d4b\u8bd5\u8c03\u7528 <code>getConnection()</code>\u3001<code>getConnection()</code>\u3001<code>getLogWriter()</code> \u5e76\u89c2\u5bdf\u7ed3\u679c\u3002 */
     public static final class NoopDataSource implements javax.sql.DataSource {
 
+        /**
+         * \u4e3a\u5f53\u524d\u7528\u4f8b\u63d0\u4f9b\u56fa\u5b9a\u7684 <code>getConnection</code> \u8fd4\u56de\u503c\u3002
+         * @return <code>null</code>
+         */
         @Override
         public java.sql.Connection getConnection() {
             return null;
         }
 
+        /**
+         * \u8bfb\u53d6 <code>null</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
+         * @param username \u6d4b\u8bd5\u4f1a\u8bdd\u4f7f\u7528\u7684\u7528\u6237\u540d
+         * @param password \u6d4b\u8bd5\u8d26\u53f7\u7684\u53e3\u4ee4
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>null</code>
+         */
         @Override
         public java.sql.Connection getConnection(String username, String password) {
             return null;
         }
 
+        /**
+         * \u4e3a\u5f53\u524d\u7528\u4f8b\u63d0\u4f9b\u56fa\u5b9a\u7684 <code>getLogWriter</code> \u8fd4\u56de\u503c\u3002
+         * @return <code>null</code>
+         */
         @Override
         public java.io.PrintWriter getLogWriter() {
             return null;
         }
 
+        /**
+         * \u4f5c\u4e3a\u7a7a\u5b9e\u73b0\u7684\u6d4b\u8bd5\u66ff\u8eab\uff0c\u8c03\u7528\u65f6\u4fdd\u6301\u5f53\u524d\u5939\u5177\u72b6\u6001\u3002
+         * @param out \u672c\u6b21\u8c03\u7528\u4f7f\u7528\u7684 <code>java.io.PrintWriter</code> \u53c2\u6570 <code>out</code>
+         */
         @Override
         public void setLogWriter(java.io.PrintWriter out) {
         }
 
+        /**
+         * \u4e3a\u5f53\u524d\u7528\u4f8b\u63d0\u4f9b\u56fa\u5b9a\u7684 <code>getLoginTimeout</code> \u8fd4\u56de\u503c\u3002
+         * @return <code>0</code>
+         */
         @Override
         public int getLoginTimeout() {
             return 0;
         }
 
+        /**
+         * \u4f5c\u4e3a\u7a7a\u5b9e\u73b0\u7684\u6d4b\u8bd5\u66ff\u8eab\uff0c\u8c03\u7528\u65f6\u4fdd\u6301\u5f53\u524d\u5939\u5177\u72b6\u6001\u3002
+         * @param seconds \u7b49\u5f85\u6216\u63a8\u8fdb\u7684\u79d2\u6570
+         */
         @Override
         public void setLoginTimeout(int seconds) {
         }
 
+        /**
+         * \u901a\u8fc7 <code>java.util.logging.Logger.getGlobal()</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>java.util.logging.Logger.getGlobal()</code>
+         */
         @Override
         public java.util.logging.Logger getParentLogger() {
             return java.util.logging.Logger.getGlobal();
         }
 
+        /**
+         * \u8bfb\u53d6 <code>null</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
+         * @param <T> \u5f53\u524d\u5951\u7ea6\u6d4b\u8bd5\u6240\u4f7f\u7528\u7684 Java \u7c7b\u578b
+         * @param iface \u672c\u6b21\u8c03\u7528\u4f7f\u7528\u7684 <code>Class&lt;T&gt;</code> \u53c2\u6570 <code>iface</code>
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>null</code>
+         */
         @Override
         public <T> T unwrap(Class<T> iface) {
             return null;
         }
 
+        /**
+         * \u8bfb\u53d6 <code>false</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
+         * @param iface \u672c\u6b21\u8c03\u7528\u4f7f\u7528\u7684 <code>Class&lt;?&gt;</code> \u53c2\u6570 <code>iface</code>
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>false</code>
+         */
         @Override
         public boolean isWrapperFor(Class<?> iface) {
             return false;
         }
     }
 
+    /** \u63a5\u6536\u6d4b\u8bd5\u547d\u4ee4\u5e76\u8fd4\u56de\u53ef\u65ad\u8a00\u7ed3\u679c\u7684\u6267\u884c\u5668\u66ff\u8eab\u3002 */
     public static class ExecutorStub implements io.ddd4j.core.cqrs.command.CommandExecutor<io.ddd4j.core.cqrs.command.Command> {
 
+        /** {@inheritDoc} */
         @Override
         public java.util.Set<Class<? extends io.ddd4j.core.cqrs.command.Command>> supportedCommands() {
             return java.util.Collections.emptySet();
         }
 
+        /** {@inheritDoc} */
         @Override
         public io.ddd4j.core.cqrs.command.Result execute(io.ddd4j.core.cqrs.command.Command command) {
             return io.ddd4j.core.cqrs.command.Result.ok();

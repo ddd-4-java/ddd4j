@@ -45,14 +45,18 @@ public class DefaultExceptionHandler extends BaseErrorConfiguration implements E
         super(translator);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected String frameworkName() {
         return "Quarkus";
     }
 
     /**
-     * 先归一 JAX-RS {@link WebApplicationException}（保留容器给出的状态与消息），
-     * 其余异常走 ddd4j 通用翻译。
+     * \u5148\u5f52\u4e00 JAX-RS {@link WebApplicationException}\uff08\u4fdd\u7559\u5bb9\u5668\u7ed9\u51fa\u7684\u72b6\u6001\u4e0e\u6d88\u606f\uff09\uff0c
+     *  \u5176\u4f59\u5f02\u5e38\u8d70 ddd4j \u901a\u7528\u7ffb\u8bd1\u3002
+     *
+     * @param exception \u5f53\u524d\u8bf7\u6c42\u629b\u51fa\u7684\u5f02\u5e38
+     * @return \u5171\u7528\u5f02\u5e38\u6620\u5c04\u8fd4\u56de\u7684\u54cd\u5e94
      */
     @Override
     protected WebError doTranslate(Throwable exception) {
@@ -64,6 +68,11 @@ public class DefaultExceptionHandler extends BaseErrorConfiguration implements E
         return super.doTranslate(exception);
     }
 
+    /**
+     * \u5c06\u8fd0\u884c\u65f6\u5f02\u5e38\u6620\u5c04\u4e3a Quarkus \u53ef\u8fd4\u56de\u7684 HTTP \u9519\u8bef\u3002
+     * @param exception \u5f53\u524d\u8bf7\u6c42\u5904\u7406\u65f6\u629b\u51fa\u7684\u5f02\u5e38
+     * @return \u6846\u67b6\u54cd\u5e94\u4e2d\u7684\u72b6\u6001\u548c\u9519\u8bef\u6b63\u6587
+     */
     @Override
     public Response toResponse(RuntimeException exception) {
         WebError error = translate(exception);

@@ -29,6 +29,10 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 /** 三线共同的 CDI 领域事件分派契约。 */
 class CdiDomainEventPublisherContractTest {
 
+    /**
+     * \u9a8c\u8bc1<code>fired.size()</code> \u7b49\u4e8e <code>2</code>\uff0c<code>fired.get(0)</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>domainEvent</code>\uff0c<code>fired.get(1)</code> \u7b49\u4e8e <code>"plain"</code>\u3002
+     * @throws Exception \u53cd\u5c04\u8bbf\u95ee\u88ab\u6d4b\u6210\u5458\u65f6\u5931\u8d25
+     */
     @Test
     void domainAndPlainObjectsFireOnceWhileNullIsIgnored() throws Exception {
         CdiDomainEventPublisher publisher = new CdiDomainEventPublisher();

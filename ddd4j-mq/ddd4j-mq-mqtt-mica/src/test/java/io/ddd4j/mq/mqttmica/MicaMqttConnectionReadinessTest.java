@@ -25,6 +25,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class MicaMqttConnectionReadinessTest {
 
+    /**
+     * \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>MicaMqttMQClient.awaitConnected()</code>\u3001<code>readinessChecks.incrementAndGet()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void waitsForNativeClientConnectionBeforeSubscription() throws Exception {
         AtomicInteger readinessChecks = new AtomicInteger();

@@ -51,6 +51,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Testcontainers(disabledWithoutDocker = true)
 class NatsJetStreamIntegrationTest {
 
+    /** \u4e3a\u96c6\u6210\u6d4b\u8bd5\u63d0\u4f9b\u9694\u79bb <code>Generic</code> \u670d\u52a1\u7684\u5bb9\u5668\u3002 */
     @Container
     static final GenericContainer<?> NATS = new GenericContainer<>(
             DockerImageName.parse("nats:2.14.6-alpine"))
@@ -60,6 +61,10 @@ class NatsJetStreamIntegrationTest {
             .waitingFor(Wait.forListeningPort())
             .withStartupTimeout(Duration.ofMinutes(2));
 
+    /**
+     * \u9a8c\u8bc1<code>connection.getStatus()</code> \u7b49\u4e8e <code>Connection.Status.CONNECTED</code>\uff0c<code>ack.getSeqno()</code> \u7b49\u4e8e <code>1L</code>\u3002
+     * @throws Exception \u88c5\u914d\u8fd0\u884c\u6d4b\u8bd5\u6240\u9700\u7684\u7ec4\u4ef6\u65f6\u5931\u8d25
+     */
     @Test
     void natsPropertiesConnectsAndJetStreamAcknowledgesPublish() throws Exception {
         NatsProperties properties = new NatsProperties();
@@ -83,6 +88,10 @@ class NatsJetStreamIntegrationTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>received</code>\u975e\u7a7a\uff0c<code>connection.getStatus()</code> \u7b49\u4e8e <code>Connection.Status.CONNECTED</code>\u3002
+     * @throws Exception \u51c6\u5907\u6216\u91ca\u653e\u88ab\u6d4b\u8fd0\u884c\u8d44\u6e90\u65f6\u5931\u8d25
+     */
     @Test
     void natsAdapterPublishesStableHeaderThroughJetStream() throws Exception {
         NatsProperties properties = new NatsProperties();
@@ -130,6 +139,10 @@ class NatsJetStreamIntegrationTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>client.initConsumer(listener, properties)</code>\u4e3a\u771f\uff0c<code>bean.received.await(10, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>connection.getStatus()</code> \u7b49\u4e8e <code>Connection.Status.CONNECTED</code>\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void natsAdapterConsumesJetStreamMessageAndKeepsInjectedConnectionOpen() throws Exception {
         NatsProperties properties = new NatsProperties();
@@ -183,6 +196,10 @@ class NatsJetStreamIntegrationTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>client.initConsumer(listener, properties)</code>\u4e3a\u771f\uff0c<code>bean.received.await(10, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>bean.causationId</code> \u7b49\u4e8e <code>"native-causation"</code>\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void natsAdapterPrefersNativeCausalityHeadersOverPayloadMirror() throws Exception {
         NatsProperties properties = new NatsProperties();
@@ -230,6 +247,10 @@ class NatsJetStreamIntegrationTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>client.initConsumer(listener, properties)</code>\u4e3a\u771f\uff0c<code>bean.receivedTwice.await(10, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>acknowledged</code> \u7b49\u4e8e <code>2L</code>\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void natsAdapterRedeliversAfterListenerFailureAndAcknowledgesSuccess() throws Exception {
         NatsProperties properties = new NatsProperties();
@@ -284,6 +305,10 @@ class NatsJetStreamIntegrationTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>client.initConsumer(listener, properties)</code>\u4e3a\u771f\uff0c<code>bean.received.await(10, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>bean.tags</code> \u6309\u987a\u5e8f\u4ec5\u5305\u542b <code>"allowed"</code>\u3001<code>"&lt;none&gt;"</code>\u3001<code>"allowed"</code>\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void natsAdapterRoutesTaggedAndUntaggedEventsThroughOneLogicalTopic() throws Exception {
         NatsProperties properties = new NatsProperties();
@@ -347,22 +372,38 @@ class NatsJetStreamIntegrationTest {
         }
     }
 
+    /** \u5c06 <code>received</code>\u3001<code>tags</code> \u7b49\u72b6\u6001\u4e00\u8d77\u4f20\u5165\u5f53\u524d\u6d4b\u8bd5\uff0c\u4f9b\u8c03\u7528\u6216\u7ed3\u679c\u65ad\u8a00\u4f7f\u7528\u3002 */
     public static final class TagFilteringListener {
+        /** \u7b49\u5f85\u6570\u636e\u5230\u8fbe\u7684\u540c\u6b65\u95e8\u95e9\u3002 */
         private final CountDownLatch received = new CountDownLatch(3);
+        /** \u6295\u9012\u6216\u8ba2\u9605\u7528\u4f8b\u4f7f\u7528\u7684\u6807\u7b7e\u8868\u8fbe\u5f0f\u3002 */
         private final List<String> tags = new CopyOnWriteArrayList<>();
 
+        /**
+         * \u8c03\u7528 <code>tags.add()</code>\u3001<code>event.getTag()</code>\u3001<code>received.countDown()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+         * @param event \u4ea4\u7ed9\u88ab\u6d4b\u5165\u53e3\u5904\u7406\u7684\u6d4b\u8bd5\u9886\u57df\u4e8b\u4ef6
+         */
         public void handle(MQEvent event) {
             tags.add(event.getTag() == null ? "<none>" : event.getTag());
             received.countDown();
         }
     }
 
+    /** \u4fdd\u5b58\u76d1\u542c\u56de\u8c03\u7ed3\u679c\uff0c\u4f9b\u65ad\u8a00\u68c0\u67e5\u4e8b\u4ef6\u4f20\u9012\u884c\u4e3a\u3002 */
     public static final class RecordingListener {
+        /** \u7b49\u5f85\u6570\u636e\u5230\u8fbe\u7684\u540c\u6b65\u95e8\u95e9\u3002 */
         private final CountDownLatch received = new CountDownLatch(1);
+        /** \u6d88\u606f\u6807\u8bc6\u3002 */
         private volatile String messageId;
+        /** \u7528\u4e8e\u5173\u8054\u540c\u4e00\u6b21\u64cd\u4f5c\u4ea7\u751f\u7684\u4e8b\u4ef6\u6216\u6d88\u606f\u7684\u6807\u8bc6\u3002 */
         private volatile String correlationId;
+        /** \u5f53\u524d\u4e8b\u4ef6\u643a\u5e26\u7684\u4e0a\u6e38\u4e8b\u4ef6\u6807\u8bc6\u3002 */
         private volatile String causationId;
 
+        /**
+         * \u6839\u636e\u672c\u6b21\u8c03\u7528\u66f4\u65b0 <code>messageId = event.getMsgId()</code>\u3001<code>correlationId = event.getCorrelationId()</code>\uff0c\u7528\u4e8e\u540e\u7eed\u6d4b\u8bd5\u6b65\u9aa4\u3002
+         * @param event \u4ea4\u7ed9\u88ab\u6d4b\u5165\u53e3\u5904\u7406\u7684\u6d4b\u8bd5\u9886\u57df\u4e8b\u4ef6
+         */
         public void handle(MQEvent event) {
             messageId = event.getMsgId();
             correlationId = event.getCorrelationId();
@@ -371,13 +412,23 @@ class NatsJetStreamIntegrationTest {
         }
     }
 
+    /** \u5c06 <code>attempts</code>\u3001<code>receivedTwice</code>\u3001<code>firstMessageId</code>\u3001<code>secondMessageId</code> \u7b49\u72b6\u6001\u4e00\u8d77\u4f20\u5165\u5f53\u524d\u6d4b\u8bd5\uff0c\u4f9b\u8c03\u7528\u6216\u7ed3\u679c\u65ad\u8a00\u4f7f\u7528\u3002 */
     public static final class FailOnceListener {
+        /** \u8ddf\u8e2a\u6d4b\u8bd5\u64cd\u4f5c\u7684\u8c03\u7528\u6216\u91cd\u8bd5\u6b21\u6570\u3002 */
         private final AtomicInteger attempts = new AtomicInteger();
+        /** \u534f\u8c03\u6d4b\u8bd5\u7ebf\u7a0b\u5728\u6307\u5b9a\u6267\u884c\u9636\u6bb5\u7b49\u5f85\u6216\u7ee7\u7eed\u7684\u95e8\u95e9\u3002 */
         private final CountDownLatch receivedTwice = new CountDownLatch(1);
+        /** \u9996\u6b21\u6295\u9012\u8bb0\u5f55\u7528\u6765\u5b9a\u4f4d\u8be5\u6d88\u606f\u7684\u6807\u8bc6\u3002 */
         private volatile String firstMessageId;
+        /** \u7b2c\u4e8c\u6761\u6d4b\u8bd5\u6295\u9012\u7684\u4e1a\u52a1\u6d88\u606f\u6807\u8bc6\u3002 */
         private volatile String secondMessageId;
+        /** \u7528\u6765\u533a\u5206\u7b2c\u4e8c\u6b21\u8bf7\u6c42\u6216\u4e8b\u4ef6\u7684\u5173\u8054\u6807\u8bc6\u3002 */
         private volatile String secondCorrelationId;
 
+        /**
+         * \u6839\u636e\u672c\u6b21\u8c03\u7528\u66f4\u65b0 <code>firstMessageId = event.getMsgId()</code>\u3001<code>secondMessageId = event.getMsgId()</code>\uff0c\u7528\u4e8e\u540e\u7eed\u6d4b\u8bd5\u6b65\u9aa4\u3002
+         * @param event \u4ea4\u7ed9\u88ab\u6d4b\u5165\u53e3\u5904\u7406\u7684\u6d4b\u8bd5\u9886\u57df\u4e8b\u4ef6
+         */
         public void handle(MQEvent event) {
             if (attempts.incrementAndGet() == 1) {
                 firstMessageId = event.getMsgId();

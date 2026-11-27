@@ -29,10 +29,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public final class MQOutboxDispatchResult {
 
+    /** \u672c\u8f6e\u6210\u529f\u83b7\u5f97\u79df\u7ea6\u7684\u5f85\u6295\u9012\u8bb0\u5f55\u6570\u3002 */
     private final int claimed;
+    /** \u672c\u8f6e\u5df2\u6210\u529f\u53d1\u9001\u5e76\u786e\u8ba4\u7684\u8bb0\u5f55\u6570\u3002 */
     private final int published;
+    /** \u53d1\u9001\u5931\u8d25\u4e14\u5df2\u91cd\u65b0\u5b89\u6392\u91cd\u8bd5\u7684\u8bb0\u5f55\u6570\u3002 */
     private final int rescheduled;
+    /** \u8fbe\u5230\u7ec8\u6b62\u6761\u4ef6\u5e76\u6807\u8bb0\u4e3a\u6b7b\u4ea1\u7684\u8bb0\u5f55\u6570\u3002 */
     private final int dead;
+    /** \u53d1\u9001\u540e\u7684\u5b58\u50a8\u786e\u8ba4\u56e0\u79df\u7ea6\u6216\u72b6\u6001\u53d8\u5316\u672a\u88ab\u63a5\u53d7\u7684\u8bb0\u5f55\u6570\u3002 */
     private final int confirmationLost;
 
     /**
@@ -83,6 +88,7 @@ public final class MQOutboxDispatchResult {
         return confirmationLost;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -97,6 +103,7 @@ public final class MQOutboxDispatchResult {
                 && confirmationLost == that.confirmationLost;
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int result = claimed;
@@ -107,6 +114,7 @@ public final class MQOutboxDispatchResult {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "MQOutboxDispatchResult[claimed=" + claimed + ", published=" + published

@@ -30,6 +30,7 @@ import java.util.Objects;
  * 从聚合根到事件源实体的有序标识路径。
  */
 public final class EntityIdPath implements Serializable {
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -187,6 +188,13 @@ public final class EntityIdPath implements Serializable {
         return new EntityIdPath(parsed);
     }
 
+    /**
+     * \u89e3\u6790\u5355\u4e2a\u5e26\u7c7b\u578b\u7684\u5b9e\u4f53\u6807\u8bc6\u8def\u5f84\u6bb5\u3002
+     * @param segment \u4ece\u8def\u5f84\u4e2d\u53d6\u5f97\u7684\u5b9e\u4f53\u6807\u8bc6\u6bb5
+     * @param path \u7528\u4e8e\u8bca\u65ad\u7684\u539f\u59cb\u8def\u5f84
+     * @return \u901a\u8fc7\u6807\u8bc6\u5de5\u5382\u6062\u590d\u7684\u5b9e\u4f53\u6807\u8bc6
+     * @throws IllegalArgumentException \u8def\u5f84\u6bb5\u4e3a\u7a7a\u6216\u7c7b\u578b\u548c\u6807\u8bc6\u5206\u9694\u683c\u5f0f\u65e0\u6548
+     */
     private static EntityId parseSegment(String segment, String path) {
         if (!StrKit.hasText(segment)) {
             throw new IllegalArgumentException(
@@ -231,10 +239,13 @@ public final class EntityIdPath implements Serializable {
     }
 
     /**
-     * 转义段分隔符与反斜杠。
+     * \u8f6c\u4e49\u6bb5\u5206\u9694\u7b26\u4e0e\u53cd\u659c\u6760\u3002
      *
-     * <p>仅在字符串包含 {@code /} 或 {@code \} 时才插入转义符；简单值
-     * （如 {@code "String:order-1"} 或 {@code "OrderId:o-1"}）保持原样输出。
+     *  <p>\u4ec5\u5728\u5b57\u7b26\u4e32\u5305\u542b {@code /} \u6216 {@code \} \u65f6\u624d\u63d2\u5165\u8f6c\u4e49\u7b26\uff1b\u7b80\u5355\u503c
+     *  \uff08\u5982 {@code "String:order-1"} \u6216 {@code "OrderId:o-1"}\uff09\u4fdd\u6301\u539f\u6837\u8f93\u51fa\u3002
+     *
+     * @param value \u5f85\u7f16\u7801\u7684\u6807\u8bc6\u5b57\u7b26\u4e32
+     * @return \u53ef\u4f5c\u4e3a\u8def\u5f84\u6bb5\u4f7f\u7528\u7684\u7f16\u7801\u6807\u8bc6
      */
     private static String escape(String value) {
         if (value.indexOf('\\') < 0 && value.indexOf('/') < 0) {
@@ -252,7 +263,10 @@ public final class EntityIdPath implements Serializable {
     }
 
     /**
-     * 反转义段分隔符（{@link #escape(String)} 的对偶）。
+     * \u53cd\u8f6c\u4e49\u6bb5\u5206\u9694\u7b26\uff08{@link #escape(String)} \u7684\u5bf9\u5076\uff09\u3002
+     *
+     * @param value \u5f85\u89e3\u7801\u7684\u8def\u5f84\u6bb5
+     * @return \u89e3\u7801\u540e\u7684\u539f\u59cb\u6807\u8bc6
      */
     private static String unescape(String value) {
         if (value.indexOf('\\') < 0) {
@@ -274,6 +288,12 @@ public final class EntityIdPath implements Serializable {
         return sb.toString();
     }
 
+    /**
+     * \u6309\u7d22\u5f15\u533a\u95f4\u622a\u53d6\u8fde\u7eed\u5b9e\u4f53\u6807\u8bc6\u3002
+     * @param fromIndex \u8d77\u59cb\u7d22\u5f15\uff0c\u5305\u542b\u8be5\u4f4d\u7f6e
+     * @param toIndex \u7ed3\u675f\u7d22\u5f15\uff0c\u4e0d\u542b\u8be5\u4f4d\u7f6e
+     * @return \u6807\u8bc6\u5b50\u8def\u5f84\uff0c\u533a\u95f4\u4e3a\u7a7a\u65f6\u8fd4\u56de\u7a7a
+     */
     private EntityIdPath subPath(int fromIndex, int toIndex) {
         if (toIndex - fromIndex <= 0) {
             return null;
@@ -281,6 +301,7 @@ public final class EntityIdPath implements Serializable {
         return new EntityIdPath(entityIds.subList(fromIndex, toIndex));
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object object) {
         if (this == object) {
@@ -293,11 +314,13 @@ public final class EntityIdPath implements Serializable {
         return Objects.equals(entityIds, that.entityIds);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return Objects.hash(entityIds);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return asString();

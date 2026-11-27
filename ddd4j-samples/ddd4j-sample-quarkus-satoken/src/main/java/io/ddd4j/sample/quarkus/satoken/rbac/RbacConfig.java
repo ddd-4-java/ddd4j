@@ -44,12 +44,15 @@ import java.util.*;
 @ApplicationScoped
 public class RbacConfig {
 
+    /** \u8bfb\u53d6\u548c\u4fdd\u5b58\u7528\u6237\u7684\u4ed3\u50a8\u3002 */
     @Inject
     InMemoryUserRepository userRepository;
 
+    /** \u8bfb\u53d6\u548c\u4fdd\u5b58\u89d2\u8272\u7684\u4ed3\u50a8\u3002 */
     @Inject
     InMemoryRoleRepository roleRepository;
 
+    /** \u67e5\u8be2\u548c\u7ef4\u62a4\u6743\u9650\u5b9a\u4e49\u7684\u4ed3\u50a8\u3002 */
     @Inject
     InMemoryPermissionRepository permissionRepository;
 
@@ -57,8 +60,13 @@ public class RbacConfig {
      * 应用启动时初始化演示数据。
      */
     private SubjectDataProvider previousData;
+    /** \u4e3a\u8ba4\u8bc1\u4e3b\u4f53\u63d0\u4f9b\u89d2\u8272\u3001\u6743\u9650\u7b49\u4e1a\u52a1\u6570\u636e\u7684\u7ec4\u4ef6\u3002 */
     private SubjectDataProvider ownedData;
 
+    /**
+     * \u5728\u793a\u4f8b\u5e94\u7528\u542f\u52a8\u540e\u88c5\u914d RBAC \u89d2\u8272\u548c\u6743\u9650\u7ec4\u4ef6\u3002
+     * @param event \u542f\u52a8\u3001\u505c\u6b62\u6216\u8bf7\u6c42\u5904\u7406\u671f\u95f4\u7684\u6846\u67b6\u4e8b\u4ef6
+     */
     void onStart(@Observes StartupEvent event) {
         previousData = SubjectKit.dataProvider;
         reset();
@@ -101,6 +109,10 @@ public class RbacConfig {
         SubjectKit.setDataProvider(ownedData);
     }
 
+    /**
+     * \u5728\u793a\u4f8b\u5e94\u7528\u505c\u6b62\u65f6\u91ca\u653e\u5f53\u524d RBAC \u88c5\u914d\u62e5\u6709\u7684\u7ec4\u4ef6\u3002
+     * @param event \u542f\u52a8\u3001\u505c\u6b62\u6216\u8bf7\u6c42\u5904\u7406\u671f\u95f4\u7684\u6846\u67b6\u4e8b\u4ef6
+     */
     void onStop(@Observes io.quarkus.runtime.ShutdownEvent event) {
         if (SubjectKit.dataProvider == ownedData) {
             SubjectKit.setDataProvider(previousData);
@@ -141,7 +153,10 @@ public class RbacConfig {
     }
 
     /**
-     * 聚合多角色下的全部权限编码（去重）。
+     * \u805a\u5408\u591a\u89d2\u8272\u4e0b\u7684\u5168\u90e8\u6743\u9650\u7f16\u7801\uff08\u53bb\u91cd\uff09\u3002
+     *
+     * @param roleCodes \u5f85\u67e5\u627e\u6216\u6821\u9a8c\u7684\u89d2\u8272\u7f16\u7801
+     * @return \u6240\u6709\u5339\u914d\u89d2\u8272\u62e5\u6709\u7684\u6743\u9650\u96c6\u5408
      */
     private List<String> aggregatePermissions(Set<String> roleCodes) {
         if (CollKit.isEmpty(roleCodes)) {

@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /** 三线共同的 Spring 就绪检查项装配契约。 */
 class SpringCoreConfigReadinessContractTest {
 
+    /** \u9a8c\u8bc1<code>registry.contributors().size()</code> \u7b49\u4e8e <code>2</code>\uff0c<code>registry.contributors().get(0)</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>context.getBean(EarlyContributor.class)</code>\uff0c<code>registry.readiness().ready()</code>\u4e3a\u771f\u3002 */
     @Test
     void registersContributorsInSpringOrder() {
         try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext()) {
@@ -42,16 +43,20 @@ class SpringCoreConfigReadinessContractTest {
         }
     }
 
+    /** \u5411\u8fd0\u884c\u65f6\u6d4b\u8bd5\u63d0\u4f9b\u53ef\u63a7\u7684\u5c31\u7eea\u72b6\u6001\u3002 */
     @Order(2)
     static final class LateContributor implements ReadinessContributor {
+        /** {@inheritDoc} */
         @Override
         public ReadinessResult check() {
             return ReadinessResult.ready("late");
         }
     }
 
+    /** \u5411\u8fd0\u884c\u65f6\u6d4b\u8bd5\u63d0\u4f9b\u53ef\u63a7\u7684\u5c31\u7eea\u72b6\u6001\u3002 */
     @Order(1)
     static final class EarlyContributor implements ReadinessContributor {
+        /** {@inheritDoc} */
         @Override
         public ReadinessResult check() {
             return ReadinessResult.ready("early");

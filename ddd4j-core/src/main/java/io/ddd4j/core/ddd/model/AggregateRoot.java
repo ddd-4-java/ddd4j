@@ -106,7 +106,7 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     /**
      * 事件处理器方法缓存（ClassValue 二级索引）。
      * 外层 key = 聚合根 Class，内层 key = 事件 Class → 处理器 Method（可能为 null）。
-     * 解析优先级：{@code @EventHandler} 注解方法 > {@code on<EventType>} 命名约定（3.0.x 兼容）。
+     * 解析优先级：{@code @EventHandler} 注解方法优先于 {@code on<EventType>} 命名约定（3.0.x 兼容）。
      */
     private static final ClassValue<ClassValue<Method>> EVENT_HANDLER_CACHE = new ClassValue<ClassValue<Method>>() {
         @Override
@@ -119,6 +119,7 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
             };
         }
     };
+    /** \u805a\u5408\u5f53\u524d\u5c1a\u672a\u6e05\u7406\u7684\u9886\u57df\u4e8b\u4ef6\u3002 */
     private transient List<DomainEvent<?>> domainEvents = new ArrayList<>();
 
     /**
@@ -384,6 +385,10 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
         return !mutableDomainEvents().isEmpty();
     }
 
+    /**
+     * \u5728\u7b2c\u4e00\u6b21\u5199\u5165\u524d\u521d\u59cb\u5316\u9886\u57df\u4e8b\u4ef6\u5217\u8868\u3002
+     * @return \u5f53\u524d\u805a\u5408\u53ef\u5199\u5165\u7684\u9886\u57df\u4e8b\u4ef6\u5217\u8868
+     */
     private List<DomainEvent<?>> mutableDomainEvents() {
         if (Objects.isNull(domainEvents)) {
             domainEvents = new ArrayList<>();
@@ -409,16 +414,17 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     }
 
     /**
-     * 事件应用内部实现。
+     * \u4e8b\u4ef6\u5e94\u7528\u5185\u90e8\u5b9e\u73b0\u3002
      *
-     * <p>反射派发到事件处理器（{@code @EventHandler} 优先，{@code on<Type>} 回退），
-     * 并注册进未提交事件列表（找不到处理器时抛 {@link IllegalStateException}）。
-     * 回放模式（{@code replay = true}）下跳过标有 {@code ignoreOnReplay = true} 的处理器。
+     *  <p>\u53cd\u5c04\u6d3e\u53d1\u5230\u4e8b\u4ef6\u5904\u7406\u5668\uff08{@code @EventHandler} \u4f18\u5148\uff0c{@code on<Type>} \u56de\u9000\uff09\uff0c
+     *  \u5e76\u6ce8\u518c\u8fdb\u672a\u63d0\u4ea4\u4e8b\u4ef6\u5217\u8868\uff08\u627e\u4e0d\u5230\u5904\u7406\u5668\u65f6\u629b {@link IllegalStateException}\uff09\u3002
+     *  \u56de\u653e\u6a21\u5f0f\uff08{@code replay = true}\uff09\u4e0b\u8df3\u8fc7\u6807\u6709 {@code ignoreOnReplay = true} \u7684\u5904\u7406\u5668\u3002
+     * @param event \u9886\u57df\u4e8b\u4ef6
+     * @param replay \u662f\u5426\u5904\u4e8e\u5386\u53f2\u56de\u653e\uff08{@code loadFromHistory}\uff09
+     * @return \u4f20\u5165\u7684\u4e8b\u4ef6
+     * @throws IllegalStateException \u627e\u4e0d\u5230\u5bf9\u5e94\u4e8b\u4ef6\u7c7b\u578b\u7684\u5904\u7406\u5668\uff0c\u6216\u53cd\u5c04\u8c03\u7528\u5931\u8d25
      *
-     * @param event  领域事件
-     * @param replay 是否处于历史回放（{@code loadFromHistory}）
-     * @return 传入的事件
-     * @throws IllegalStateException 找不到对应事件类型的处理器，或反射调用失败
+     * @param <E> \u805a\u5408\u53ef\u5e94\u7528\u7684\u9886\u57df\u4e8b\u4ef6\u7c7b\u578b
      */
     private <E extends DomainEvent<?>> E apply(E event, boolean replay) {
         Objects.requireNonNull(event, "event must not be null");

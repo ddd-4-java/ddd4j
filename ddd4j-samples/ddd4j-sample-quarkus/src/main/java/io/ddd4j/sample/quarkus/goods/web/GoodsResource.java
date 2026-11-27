@@ -64,6 +64,7 @@ import java.util.Locale;
 @ApplicationScoped
 public class GoodsResource extends TenantAwareResource {
 
+    /** \u5904\u7406\u5546\u54c1\u521b\u5efa\u3001\u7ef4\u62a4\u548c\u67e5\u8be2\u64cd\u4f5c\u7684\u5e94\u7528\u670d\u52a1\u3002 */
     private final GoodsApplicationService applicationService;
 
     /**
@@ -169,6 +170,11 @@ public class GoodsResource extends TenantAwareResource {
         return ok(GoodsResponse.from(applicationService.getByCode(code)));
     }
 
+    /**
+     * \u628a\u63d0\u4f9b\u7684\u67e5\u8be2\u72b6\u6001\u8f6c\u6362\u4e3a\u5546\u54c1\u72b6\u6001\u679a\u4e3e\uff0c\u7a7a\u767d\u503c\u4e0d\u9650\u5236\u72b6\u6001\u3002
+     * @param status \u5546\u54c1\u72b6\u6001\u6761\u4ef6\u6587\u672c
+     * @return \u89e3\u6790\u5230\u7684\u5546\u54c1\u72b6\u6001\uff0c\u6ca1\u6709\u503c\u65f6\u4e3a\u7a7a
+     */
     private GoodsStatus parseStatus(String status) {
         if (StrKit.isBlank(status)) {
             throw new IllegalArgumentException("status must not be blank");

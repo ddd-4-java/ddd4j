@@ -34,29 +34,35 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class InMemoryProjectionPositionRepository implements ProjectionPositionRepository {
 
+    /** \u6309\u4e8b\u4ef6\u6d41\u6807\u8bc6\u4fdd\u5b58\u6700\u8fd1\u8bfb\u53d6\u4f4d\u7f6e\u7684\u5185\u5b58\u6620\u5c04\u3002 */
     private final ConcurrentMap<String, ProjectionPosition> store = new ConcurrentHashMap<>();
 
+    /** {@inheritDoc} */
     @Override
     public Optional<ProjectionPosition> findByStreamId(String streamId) {
         return Optional.ofNullable(store.get(streamId));
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<ProjectionPosition> findAll() {
         return Collections.unmodifiableList(new ArrayList<>(store.values()));
     }
 
+    /** {@inheritDoc} */
     @Override
     public ProjectionPosition save(ProjectionPosition position) {
         store.put(position.getStreamId(), position);
         return position;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void deleteByStreamId(String streamId) {
         store.remove(streamId);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void resetToZero(String streamId) {
         save(DefaultProjectionPosition.zero(streamId));

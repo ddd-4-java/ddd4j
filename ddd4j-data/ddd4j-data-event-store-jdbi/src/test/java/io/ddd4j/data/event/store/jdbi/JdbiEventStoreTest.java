@@ -33,24 +33,34 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/** JDBI EventStore \u7684 H2 \u5f3a\u7c7b\u578b\u5951\u7ea6\u6d4b\u8bd5\u3002 */
 class JdbiEventStoreTest {
 
+    /** \u6d4b\u8bd5\u4e8b\u4ef6\u6d41\u4e2d\u4f7f\u7528\u7684\u805a\u5408\u7c7b\u578b\u540d\u79f0\u3002 */
     private static final String ORDER_TYPE = "Order";
 
+    /** \u8d1f\u8d23\u83b7\u53d6 JDBC \u8fde\u63a5\u5e76\u6267\u884c SQL \u64cd\u4f5c\u7684\u8bbf\u95ee\u5165\u53e3\u3002 */
     private Jdbi jdbi;
+    /** \u8bfb\u53d6\u53ca\u8ffd\u52a0\u9886\u57df\u4e8b\u4ef6\u7684\u4e8b\u4ef6\u5b58\u50a8\u3002 */
     private EventStore eventStore;
 
+    /** \u6d4b\u8bd5\u524d\u4f9d\u6b21\u521d\u59cb\u5316<code>jdbi</code>\u3001\u521d\u59cb\u5316<code>eventStore</code>\u3002 */
     @BeforeEach
     void setUp() {
         jdbi = Jdbi.create("jdbc:h2:mem:jdbi-event-store-test;DB_CLOSE_DELAY=-1", "sa", "");
         eventStore = new JdbiEventStore(jdbi);
     }
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>jdbi.useHandle()</code>\u3001<code>handle.execute()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterEach
     void tearDown() {
         jdbi.useHandle(handle -> handle.execute("DROP TABLE IF EXISTS " + EventStoreConstants.TABLE_NAME));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>json</code> \u7b49\u4e8e <code>"\"serialized-id\""</code>\u3002
+     * @throws Exception \u5904\u7406\u6d4b\u8bd5\u6570\u636e\u7684\u5e8f\u5217\u5316\u65f6\u5931\u8d25
+     */
     @Test
     void reconstructedAggregateIdShouldSerializeAsString() throws Exception {
         TestAggregateRootId orderId = new TestAggregateRootId("serialized-id");
@@ -62,6 +72,7 @@ class JdbiEventStoreTest {
         assertEquals("\"serialized-id\"", json);
     }
 
+    /** 验证<code>events.size()</code> 等于 <code>2</code>，<code>events.get(0).version()</code> 等于 <code>1L</code>，<code>events.get(1).version()</code> 等于 <code>2L</code>。 */
     @Test
     void appendAndReadShouldRoundTripBusinessPayload() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-a");
@@ -78,6 +89,7 @@ class JdbiEventStoreTest {
         assertEquals(orderId.asString(), events.get(0).aggregateId().asString());
     }
 
+    /** \u9a8c\u8bc1<code>eventStore.read(ORDER_TYPE, orderId)</code> \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>failure.getMessage()</code> \u7b49\u4e8e <code>"Unknown event type: io.ddd4j.events.MissingForContractTest"</code>\u3002 */
     @Test
     void unknownPersistedEventTypeMustFailInsteadOfReturningMap() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-unknown-type");
@@ -95,6 +107,7 @@ class JdbiEventStoreTest {
         assertEquals("Unknown event type: io.ddd4j.events.MissingForContractTest", failure.getMessage());
     }
 
+    /** \u9a8c\u8bc1<code>ObjectStreamClass.lookup(first.getClass()).getSerialVersionUID()</code> \u7b49\u4e8e <code>6652084670470061437L</code>\uff0c<code>second</code> \u7b49\u4e8e <code>first</code>\uff0c<code>unique.size()</code> \u7b49\u4e8e <code>1</code>\u3002 */
     @Test
     void readBackAggregateIdsUseValueEquality() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-id-equality");
@@ -112,6 +125,7 @@ class JdbiEventStoreTest {
         assertEquals(1, unique.size());
     }
 
+    /** \u9a8c\u8bc1<code>names.contains("UK_POSITION")</code>\u4e3a\u771f\u3002 */
     @Test
     void positionConstraintUsesSharedName() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-position-schema");
@@ -127,6 +141,7 @@ class JdbiEventStoreTest {
         assertTrue(names.contains("UK_POSITION"), "position unique constraint must be named uk_position: " + names);
     }
 
+    /** 验证被测调用 抛出 <code>AggregateVersionConflictException.class</code>，<code>conflict.expectedVersion()</code> 等于 <code>0L</code>，<code>conflict.actualVersion()</code> 等于 <code>1L</code>。 */
     @Test
     void appendWithStaleVersionShouldReject() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-b");
@@ -140,6 +155,7 @@ class JdbiEventStoreTest {
         assertEquals(1L, conflict.actualVersion());
     }
 
+    /** 验证<code>slice.size()</code> 等于 <code>2</code>，<code>slice.get(0).version()</code> 等于 <code>2L</code>，<code>slice.get(1).version()</code> 等于 <code>3L</code>。 */
     @Test
     void readVersionRangeShouldReturnInclusiveSlice() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-c");
@@ -152,6 +168,7 @@ class JdbiEventStoreTest {
         assertEquals(3L, slice.get(1).version());
     }
 
+    /** 验证<code>events.size()</code> 等于 <code>2</code>，<code>events.get(0).aggregateId().asString()</code> 等于 <code>first.asString()</code>，<code>events.get(1).aggregateId().asString()</code> 等于 <code>second.asString()</code>。 */
     @Test
     void readAllShouldPreserveGlobalPositionOrderAcrossAggregates() {
         TestAggregateRootId first = new TestAggregateRootId("order-d");
@@ -170,6 +187,7 @@ class JdbiEventStoreTest {
         assertEquals(2L, events.get(1).position());
     }
 
+    /** 验证<code>events.get(0).correlationId()</code>为空，<code>events.get(1).correlationId()</code> 等于 <code>cause.getEventId()</code>，<code>events.get(1).causationId()</code> 等于 <code>cause.getEventId()</code>。 */
     @Test
     void causalityColumnsShouldRoundTrip() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-f");
@@ -183,11 +201,13 @@ class JdbiEventStoreTest {
         assertEquals(cause.getEventId(), events.get(1).causationId());
     }
 
+    /** 验证<code>eventStore.read(ORDER_TYPE, new TestAggregateRootId("missing")).size()</code> 等于 <code>0</code>。 */
     @Test
     void readMissingStreamShouldReturnEmpty() {
         assertEquals(0, eventStore.read(ORDER_TYPE, new TestAggregateRootId("missing")).size());
     }
 
+    /** 验证<code>dataType != null &amp;&amp; dataType.startsWith("CHARACTER")</code>为真。 */
     @Test
     void payloadColumnShouldUseTextType() {
         eventStore.append(ORDER_TYPE, new TestAggregateRootId("order-g"),
@@ -205,6 +225,7 @@ class JdbiEventStoreTest {
         assertTrue(dataType != null && dataType.startsWith("CHARACTER"));
     }
 
+    /** \u9a8c\u8bc1<code>event.getAggregateVersion()</code>\u4e3a\u7a7a\u3002 */
     @Test
     void appendMustNotMutateInputAggregateVersion() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-input");
@@ -216,11 +237,16 @@ class JdbiEventStoreTest {
         assertNull(event.getAggregateVersion());
     }
 
+    /** \u9a8c\u8bc1<code>eventStore.readAll(0, 0)</code> \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
     @Test
     void readAllLimitMustBePositive() {
         assertThrows(IllegalArgumentException.class, () -> eventStore.readAll(0, 0));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>actual.toInstant()</code> \u7b49\u4e8e <code>expected.toInstant()</code>\uff0c<code>actual.getZone()</code> \u7b49\u4e8e <code>java.time.ZoneOffset.UTC</code>\u3002
+     * @throws Exception \u53cd\u5c04\u8bbf\u95ee\u88ab\u6d4b\u6210\u5458\u65f6\u5931\u8d25
+     */
     @Test
     void persistedTimestampMustComeFromEvent() throws Exception {
         TestAggregateRootId orderId = new TestAggregateRootId("order-time");
@@ -237,6 +263,7 @@ class JdbiEventStoreTest {
         assertEquals(java.time.ZoneOffset.UTC, actual.getZone());
     }
 
+    /** \u9a8c\u8bc1<code>eventStore.read(ORDER_TYPE, orderId)</code> \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>failure.getMessage()</code> \u7b49\u4e8e <code>"Missing persisted event timestamp"</code>\u3002 */
     @Test
     void nullPersistedTimestampMustFailInsteadOfInventingCurrentTime() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-1");
@@ -256,26 +283,36 @@ class JdbiEventStoreTest {
         org.junit.jupiter.api.Assertions.assertEquals("Missing persisted event timestamp", failure.getMessage());
     }
 
+    /** \u6d4b\u8bd5\u4e13\u7528\u805a\u5408\u6839\u6807\u8bc6\uff0c\u4f9b\u4ed3\u50a8\u3001\u4e8b\u4ef6\u5e8f\u5217\u5316\u6216\u547d\u4ee4\u8def\u7531\u6784\u9020\u72ec\u7acb\u7684\u805a\u5408\u5b9e\u4f8b\u3002 */
     private static final class TestAggregateRootId implements AggregateRootId {
 
+        /** \u6d4b\u8bd5\u805a\u5408\u6ce8\u518c\u548c\u53cd\u5e8f\u5217\u5316\u6240\u7528\u7684\u5b9e\u4f53\u7c7b\u578b\u6807\u8bc6\u3002 */
         private static final EntityType TYPE = new StringEntityType("Order");
 
+        /** \u7528\u4e8e\u7ec4\u6210\u6d4b\u8bd5\u6807\u8bc6\u7684\u539f\u59cb\u503c\u3002 */
         private final String value;
 
+        /**
+         * \u4ee5\u7ed9\u5b9a\u72b6\u6001\u6784\u9020 <code>TestAggregateRootId</code> \u6d4b\u8bd5\u5bf9\u8c61\u3002
+         * @param value \u7528\u4e8e\u7ec4\u6210\u6d4b\u8bd5\u6807\u8bc6\u7684\u539f\u59cb\u503c
+         */
         private TestAggregateRootId(String value) {
             this.value = value;
         }
 
+        /** {@inheritDoc} */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
+        /** {@inheritDoc} */
         @Override
         public String asString() {
             return value;
         }
 
+        /** {@inheritDoc} */
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
@@ -287,26 +324,49 @@ class JdbiEventStoreTest {
      */
     public static final class OrderCreatedEvent extends DomainEvent<TestAggregateRootId> {
 
+        /** 保存 <code>fact</code> 对应的 <code>String</code> 数据。 */
         private String fact;
 
+        /** \u4f7f\u7528 <code>super()</code> \u521d\u59cb\u5316 <code>OrderCreatedEvent</code> \u6d4b\u8bd5\u5939\u5177\u3002 */
         public OrderCreatedEvent() {
             super();
         }
 
+        /**
+         * 初始化 <code>OrderCreatedEvent</code> 使用的 <code>fact</code>。
+         *
+         * @param fact 传入此操作的 <code>String</code> 类型 <code>fact</code>
+         */
         private OrderCreatedEvent(String fact) {
             super(new EntityIdPath(new TestAggregateRootId("order-1")));
             this.fact = fact;
         }
 
+        /**
+         * 初始化 <code>OrderCreatedEvent</code> 使用的 <code>fact</code>。
+         *
+         * @param fact 传入此操作的 <code>String</code> 类型 <code>fact</code>
+         * @param causingEvent 传入此操作的 <code>io.ddd4j.core.ddd.event.Event</code> 类型 <code>causingEvent</code>
+         */
         private OrderCreatedEvent(String fact, io.ddd4j.core.ddd.event.Event causingEvent) {
             super(new EntityIdPath(new TestAggregateRootId("order-1")), causingEvent);
             this.fact = fact;
         }
 
+        /**
+         * 读取<code>fact</code> 的当前值。
+         *
+         * @return 返回表达式 <code>fact</code>
+         */
         public String getFact() {
             return fact;
         }
 
+        /**
+         * 执行 <code>set Fact</code> 对应的处理。
+         *
+         * @param fact 传入此操作的 <code>String</code> 类型 <code>fact</code>
+         */
         public void setFact(String fact) {
             this.fact = fact;
         }

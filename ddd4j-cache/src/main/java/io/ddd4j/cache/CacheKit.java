@@ -612,7 +612,10 @@ public final class CacheKit {
     }
 
     /**
-     * 获取生效的缓存实例（优先普通缓存，其次自动加载缓存）。
+     * \u83b7\u53d6\u751f\u6548\u7684\u7f13\u5b58\u5b9e\u4f8b\uff08\u4f18\u5148\u666e\u901a\u7f13\u5b58\uff0c\u5176\u6b21\u81ea\u52a8\u52a0\u8f7d\u7f13\u5b58\uff09\u3002
+     *
+     * @param biz \u4e1a\u52a1\u7f13\u5b58\u6ce8\u518c\u540d\u79f0
+     * @return \u53ef\u7528\u7684\u7f13\u5b58\u5b9e\u4f8b\uff0c\u672a\u6ce8\u518c\u65f6\u8fd4\u56de\u7a7a
      */
     private Cache<String, Object> getEffectiveCache(String biz) {
         Cache<String, Object> cache = caches.get(biz);
@@ -622,7 +625,12 @@ public final class CacheKit {
     // ==================== 内部方法 ====================
 
     /**
-     * 创建本地缓存实例。
+     * \u521b\u5efa\u672c\u5730\u7f13\u5b58\u5b9e\u4f8b\u3002
+     *
+     * @param type \u672c\u5730\u7f13\u5b58\u5b9e\u73b0\u7c7b\u578b
+     * @param config \u7f13\u5b58\u5bb9\u91cf\u3001\u8fc7\u671f\u548c\u7edf\u8ba1\u7b49\u914d\u7f6e
+     * @return \u65b0\u5efa\u7684\u672c\u5730\u7f13\u5b58
+     * @throws IllegalArgumentException \u6307\u5b9a\u7684\u7c7b\u578b\u4e0d\u53d7\u652f\u6301
      */
     private Cache<String, Object> createLocalCache(LocalCacheType type, CacheConfig config) {
         switch (type) {

@@ -28,7 +28,9 @@ import jakarta.inject.Singleton;
 @Singleton
 public class MicronautSampleIdempotencyCache {
 
+    /** \u5546\u54c1\u4ea4\u6613\u8bf7\u6c42\u5e42\u7b49\u68c0\u67e5\u4f7f\u7528\u7684\u672c\u5730\u7f13\u5b58\u540d\u5b57\u3002 */
     private static final String CACHE_NAME = "ddd4j-web-idempotency";
+    /** \u53bb\u91cd\u8bb0\u5f55\u5728\u793a\u4f8b\u7f13\u5b58\u4e2d\u4fdd\u7559\u7684\u79d2\u6570\u3002 */
     private static final long CACHE_TTL_SECONDS = 300L;
 
     /**
@@ -38,6 +40,7 @@ public class MicronautSampleIdempotencyCache {
         CacheKit.build(CACHE_NAME, CACHE_TTL_SECONDS);
     }
 
+    /** \u5728 Micronaut \u505c\u6b62\u65f6\u64a4\u9500\u5f53\u524d\u793a\u4f8b\u62e5\u6709\u7684\u5e42\u7b49\u7f13\u5b58\u6ce8\u518c\u3002 */
     @PreDestroy
     void destroy() {
         CacheKit.unregister(CACHE_NAME);

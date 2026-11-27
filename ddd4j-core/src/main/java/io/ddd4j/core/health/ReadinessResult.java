@@ -33,8 +33,11 @@ import java.util.Objects;
  */
 public final class ReadinessResult {
 
+    /** \u5f53\u524d\u5c31\u7eea\u68c0\u67e5\u7684\u540d\u79f0\u3002 */
     private final String name;
+    /** \u5f53\u524d\u88ab\u68c0\u67e5\u7ec4\u4ef6\u662f\u5426\u5c31\u7eea\u3002 */
     private final boolean ready;
+    /** \u89e3\u91ca\u68c0\u67e5\u7ed3\u679c\u7684\u9644\u52a0\u8bca\u65ad\u4fe1\u606f\u3002 */
     private final Map<String, String> details;
 
     /**
@@ -143,6 +146,7 @@ public final class ReadinessResult {
         return details;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -157,6 +161,7 @@ public final class ReadinessResult {
                 && Objects.equals(details, that.details);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int result = 0;
@@ -166,6 +171,7 @@ public final class ReadinessResult {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "ReadinessResult[name=" + name + ", ready=" + ready + ", details=" + details + ']';

@@ -48,6 +48,7 @@ import java.util.concurrent.Executors;
  */
 class SpringCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
 
+    /** {@inheritDoc} */
     @Override
     protected CqrsRuntimeContract createContract() {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SpringCqrsTestConfig.class);
@@ -91,36 +92,67 @@ class SpringCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
     @Configuration
     static class SpringCqrsTestConfig {
 
+        /**
+         * \u521b\u5efa <code>new SpringCommandBus</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+         * @param context \u5f53\u524d\u6846\u67b6\u4fdd\u5b58\u8bf7\u6c42\u6216\u8fd0\u884c\u65f6\u72b6\u6001\u7684\u4e0a\u4e0b\u6587
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new SpringCommandBus(context)</code>
+         */
         @Bean
         public SpringCommandBus springCommandBus(AnnotationConfigApplicationContext context) {
             return new SpringCommandBus(context);
         }
 
+        /**
+         * \u521b\u5efa <code>new AbstractCqrsRuntimeContractTest.StubExecutorA</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new AbstractCqrsRuntimeContractTest.StubExecutorA()</code>
+         */
         @Bean
         public AbstractCqrsRuntimeContractTest.StubExecutorA stubExecutorA() {
             return new AbstractCqrsRuntimeContractTest.StubExecutorA();
         }
 
+        /**
+         * \u521b\u5efa <code>new AbstractCqrsRuntimeContractTest.StubExecutorB</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new AbstractCqrsRuntimeContractTest.StubExecutorB()</code>
+         */
         @Bean
         public AbstractCqrsRuntimeContractTest.StubExecutorB stubExecutorB() {
             return new AbstractCqrsRuntimeContractTest.StubExecutorB();
         }
 
+        /**
+         * \u521b\u5efa <code>new ConcurrentTaskScheduler</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new ConcurrentTaskScheduler(Executors.newScheduledThreadPool(1))</code>
+         */
         @Bean
         public ConcurrentTaskScheduler taskScheduler() {
             return new ConcurrentTaskScheduler(Executors.newScheduledThreadPool(1));
         }
 
+        /**
+         * \u521b\u5efa <code>new SpringViewScheduler</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+         * @param taskScheduler \u7528\u4e8e\u6784\u9020\u672c\u6b21\u8fd4\u56de\u7ed3\u679c\u7684 <code>ConcurrentTaskScheduler</code> \u8f93\u5165
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new SpringViewScheduler(taskScheduler)</code>
+         */
         @Bean
         public SpringViewScheduler springViewScheduler(ConcurrentTaskScheduler taskScheduler) {
             return new SpringViewScheduler(taskScheduler);
         }
 
+        /**
+         * \u521b\u5efa <code>new SpringJpaViewManager</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+         * @param scheduler \u7528\u4e8e\u6784\u9020\u672c\u6b21\u8fd4\u56de\u7ed3\u679c\u7684 <code>SpringViewScheduler</code> \u8f93\u5165
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new SpringJpaViewManager(scheduler)</code>
+         */
         @Bean
         public SpringJpaViewManager springJpaViewManager(SpringViewScheduler scheduler) {
             return new SpringJpaViewManager(scheduler);
         }
 
+        /**
+         * \u521b\u5efa <code>new InMemoryProjectionPositionRepository</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new InMemoryProjectionPositionRepository()</code>
+         */
         @Bean
         public InMemoryProjectionPositionRepository inMemoryProjectionPositionRepository() {
             return new InMemoryProjectionPositionRepository();

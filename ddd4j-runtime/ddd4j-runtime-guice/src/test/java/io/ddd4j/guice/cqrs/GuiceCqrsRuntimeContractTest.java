@@ -42,6 +42,7 @@ import java.util.Arrays;
  */
 class GuiceCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
 
+    /** {@inheritDoc} */
     @Override
     protected CqrsRuntimeContract createContract() {
         StubExecutorA executorA = new StubExecutorA();
