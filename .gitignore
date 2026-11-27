@@ -156,6 +156,8 @@ Cargo.lock
 .claude/
 openspec
 AGENTS.md
+!/ddd4j-*/AGENTS.md
+!/ddd4j-*/ddd4j-*/AGENTS.md
 CLAUDE.md
 .agentscope/
 .mimocode/

@@ -7,6 +7,22 @@
   `python3 -m unittest discover -s scripts -p test_check_no_records.py`。
 - 涉及类型迁移时必须执行受影响模块构建与行为回归；源码扫描通过不代替编译、序列化或业务验证。
 
+## 在本仓库定位改动
+
+本线使用 JDK 17 和 Maven Wrapper 3.9.16。
+
+从对应模块的 AGENTS.md 进入。共享领域接口、消息协议、容器接线和业务示例分别由不同模块维护。
+
+| 要改的行为 | 首先检查 |
+|---|---|
+| 聚合、仓储、命令总线和事件存储的公共承诺 | [core](ddd4j-core/AGENTS.md)，持久化实现见 [data](ddd4j-data/AGENTS.md) |
+| broker 确认、重投和生产者所有权 | [MQ 协议与后端](ddd4j-mq/AGENTS.md) |
+| 请求上下文、身份或生命周期 | [Web 适配](ddd4j-web/AGENTS.md)、[鉴权引擎](ddd4j-auth/AGENTS.md)、[运行时装配](ddd4j-runtime/AGENTS.md) |
+| 四表交易或七种框架的 28 个入口 | [示例维护矩阵](ddd4j-samples/AGENTS.md) |
+| 对外工件、第三方版本或下游构建插件 | [BOM](ddd4j-bom/AGENTS.md)、[dependencies](ddd4j-dependencies/AGENTS.md)、[parent](ddd4j-parent/AGENTS.md) |
+
+模块中的 Maven 命令均从仓库根目录执行。带 `-am` 会构建所选项目的上游；测试位于消费模块时，直接选择消费模块。定向测试中的 `-Dsurefire.failIfNoSpecifiedTests=false` 允许上游缺少同名测试，验收时仍需在目标模块的 Surefire 报告中看到指定测试实际执行。
+
 # 绘图与可视化规则
 
 本节整合 `draw_architecture_rules.mdc`、`draw_mermaid_rules.mdc` 和 `draw_mindmap_rules.mdc`

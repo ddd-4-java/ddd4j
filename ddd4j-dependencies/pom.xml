@@ -71,12 +71,12 @@
         <bcmail.version>${bcprov.version}</bcmail.version>
         <bcpg.version>${bcprov.version}</bcpg.version>
         <bcpkix.version>${bcprov.version}</bcpkix.version>
-        <bouncycastle-lts.version>2.73.13</bouncycastle-lts.version>
         <bcprov.version>1.87</bcprov.version>
         <bctls.version>${bcprov.version}</bctls.version>
         <beetl.version>3.21.2.RELEASE</beetl.version>
         <berkeley-je.version>18.3.12</berkeley-je.version>
         <binlog4j.version>1.9.1</binlog4j.version>
+        <bouncycastle-lts.version>2.73.13</bouncycastle-lts.version>
         <brave.version>6.3.0</brave.version>
         <buji-pac4j.version>9.1.1</buji-pac4j.version>
         <byte-buddy.version>1.18.10</byte-buddy.version>
@@ -416,8 +416,8 @@
         <metrics-resteasy.version>2.0.x.20260630-SNAPSHOT</metrics-resteasy.version>
         <metrics-sigar2.version>2.0.x.20260630-SNAPSHOT</metrics-sigar2.version>
         <mica-mqtt.version>2.6.6</mica-mqtt.version>
-        <micrometer.version>1.17.2</micrometer.version>
         <micrometer-tracing.version>1.7.2</micrometer-tracing.version>
+        <micrometer.version>1.17.2</micrometer.version>
         <micronaut.core.version>4.10.26</micronaut.core.version>
         <micronaut.sourcegen.version>1.8.5</micronaut.sourcegen.version>
         <micronaut.version>4.10.21</micronaut.version>
@@ -475,13 +475,13 @@
         <openhtmltopdf.version>1.1.75</openhtmltopdf.version>
         <opensearch.version>3.9.0</opensearch.version>
         <opentelemetry-alpha.version>${opentelemetry.version}-alpha</opentelemetry-alpha.version>
-        <opentelemetry-instrumentation.version>2.33.1</opentelemetry-instrumentation.version>
         <opentelemetry-instrumentation-alpha.version>${opentelemetry-instrumentation.version}-alpha
         </opentelemetry-instrumentation-alpha.version>
-        <opentelemetry-semconv.version>1.44.0</opentelemetry-semconv.version>
+        <opentelemetry-instrumentation.version>2.33.1</opentelemetry-instrumentation.version>
+        <opentelemetry-javaagent.version>2.33.1</opentelemetry-javaagent.version>
         <opentelemetry-semconv-alpha.version>${opentelemetry-semconv.version}-alpha
         </opentelemetry-semconv-alpha.version>
-        <opentelemetry-javaagent.version>2.33.1</opentelemetry-javaagent.version>
+        <opentelemetry-semconv.version>1.44.0</opentelemetry-semconv.version>
         <opentelemetry.version>1.67.0</opentelemetry.version>
         <opentest4j.version>1.3.0</opentest4j.version>
         <opentracing.version>0.33.0</opentracing.version>
@@ -507,12 +507,12 @@
         <paho-mqttv3.version>1.2.5</paho-mqttv3.version>
         <paho-mqttv5.version>1.2.5</paho-mqttv5.version>
         <paimon.version>1.4.2</paimon.version>
+        <parsson.version>1.1.9</parsson.version>
         <paymentwall-sdk.version>2.0.4</paymentwall-sdk.version>
         <paypal-checkout-sdk.version>2.0.0</paypal-checkout-sdk.version>
         <paypal-payouts-sdk.version>1.1.1</paypal-payouts-sdk.version>
         <paypal-rest-api-sdk.version>1.14.0</paypal-rest-api-sdk.version>
         <paypal-server-sdk.version>2.3.0</paypal-server-sdk.version>
-        <parsson.version>1.1.9</parsson.version>
         <pdfbox.version>3.0.7</pdfbox.version>
         <perf4j-log4j2.version>2.0.x.20260630-SNAPSHOT</perf4j-log4j2.version>
         <perf4j.version>0.9.16</perf4j.version>
@@ -545,9 +545,9 @@
         <qiniu-java-sdk.version>7.19.0</qiniu-java-sdk.version>
         <qlexpress.version>4.1.2</qlexpress.version>
         <quarkus-agroal.version>3.2.1</quarkus-agroal.version>
+        <quarkus-bom.version>${quarkus.version}</quarkus-bom.version>
         <quarkus-hibernate.version>7.4.9.Final</quarkus-hibernate.version>
         <quarkus.version>3.40.1.2</quarkus.version>
-        <quarkus-bom.version>${quarkus.version}</quarkus-bom.version>
         <quartz.version>2.5.2</quartz.version>
         <querydsl.version>5.1.0</querydsl.version>
         <r2dbc-h2.version>1.1.0.RELEASE</r2dbc-h2.version>
@@ -737,10 +737,10 @@
         <woodstox-core.version>7.2.1</woodstox-core.version>
         <woodstox-stax2-api.version>4.3.0</woodstox-stax2-api.version>
         <wsdl4j.version>1.6.3</wsdl4j.version>
+        <wss4j.version>4.0.3</wss4j.version>
         <xalan.version>2.7.3</xalan.version>
         <xdocreport.version>2.2.0</xdocreport.version>
         <xmemcached.version>2.4.9</xmemcached.version>
-        <wss4j.version>4.0.3</wss4j.version>
         <xmlbeans.version>5.3.0</xmlbeans.version>
         <xmlschema-core.version>2.3.2</xmlschema-core.version>
         <xmlunit2.version>2.12.0</xmlunit2.version>
