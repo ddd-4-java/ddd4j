@@ -1,158 +1,186 @@
-/*
- * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.ddd4j.dropwizard.cqrs;
 
-import io.ddd4j.core.cqrs.readmodel.ProjectionRunner;
-import io.ddd4j.core.cqrs.readmodel.ProjectionView;
-import io.ddd4j.core.cqrs.readmodel.ViewManager;
-import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
+import io.ddd4j.core.cqrs.readmodel.*;
 import io.dropwizard.setup.Environment;
 
 import java.util.Collection;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * {@link ViewManager} 的 Dropwizard 5 装配适配器：以静态
- * {@link #create(Environment, Collection, ProjectionRunner)} 工厂创建管理器实例。
- *
- * <p>{@link #start()} 遍历所有 views 按 cron 调
- * {@link ViewScheduler#schedule}，{@link #stop()} 取消全部 handle，
- * {@link #triggerOnce()} 立即执行一次所有 view 的 runOnce。
- *
- * <p>生命周期由集成方在 {@code Application.run} 内手动调
- * {@code create} 后触发（manual-registration 模式，与 cqrs-dropwizard
- * 的 {@code create(Application, Collection)} 工厂对称）。
- *
- * <p><b>仅服务 Dropwizard 运行时</b>；Spring 系运行时用
- * {@code SpringProjectionViewManager}，Quarkus 用
- * {@code QuarkusProjectionViewManager}。
- *
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @see ViewManager
- * @see DropwizardProjectionScheduler
- * @see ProjectionRunner
- * @since 2.0.x
+ * Dropwizard 视图生命周期；共享管理器持有句柄，平台仅管理自有调度资源。
  */
-public class DropwizardProjectionViewManager implements ViewManager {
-
-    /** 注册任务和取消任务所用的视图调度器。 */
-    private final ViewScheduler scheduler;
-
-    /** \u5b9e\u9645\u8bfb\u53d6\u5e76\u5e94\u7528\u6295\u5f71\u4e8b\u4ef6\u7684\u6267\u884c\u5668\u3002 */
-    private final ProjectionRunner<?> runner;
-
-    /** \u7531\u5f53\u524d\u8fd0\u884c\u73af\u5883\u7ba1\u7406\u548c\u8c03\u5ea6\u7684\u6295\u5f71\u89c6\u56fe\u3002 */
-    private final Collection<ProjectionView<?>> views;
-
-    /** 以视图名称索引的当前调度任务句柄。 */
-    private final Map<String, ViewScheduler.ViewScheduleHandle> handles = new ConcurrentHashMap<>();
-
-    /** 视图管理器是否已启动。 */
-    private volatile boolean running = false;
-
+public class DropwizardProjectionViewManager implements ViewManager, AutoCloseable {
     /**
-     * \u4f7f\u7528\u501f\u7528\u8c03\u5ea6\u5668\uff0c\u4e0d\u53d6\u5f97\u8c03\u5ea6\u5668\u3001reader \u6216\u4ed3\u50a8\u6240\u6709\u6743\u3002
-     * @param scheduler \u8c03\u7528\u65b9\u8c03\u5ea6\u5668
-     * @param runner \u5171\u4eab\u8fd0\u884c\u5668
-     * @param views \u89c6\u56fe\u5feb\u7167
+     * 复制视图并在装配期拒绝空元素，避免外部修改影响下一次调度。
+     *
+     * @param views 待调度的视图集合
+     * @return 只读视图快照
      */
-    private DropwizardProjectionViewManager(ViewScheduler scheduler,
-                                            ProjectionRunner<?> runner,
-                                            Collection<ProjectionView<?>> views) {
-        this.scheduler = Objects.requireNonNull(scheduler, "scheduler must not be null");
-        this.runner = Objects.requireNonNull(runner, "runner must not be null");
-        this.views = Objects.requireNonNull(views, "views must not be null");
+    private static List<ProjectionView<?>> snapshot(Collection<ProjectionView<?>> views) {
+        List<ProjectionView<?>> snapshot = new ArrayList<>(views);
+        snapshot.forEach(Objects::requireNonNull);
+        return Collections.unmodifiableList(snapshot);
     }
 
     /**
-     * 静态装配工厂（集成方一行入口）：在 Dropwizard 应用装配期——集成方
-     * {@code Application.run} 内（Jetty 启动之前）调用一次，创建管理器实例。
+     * 实现实际视图启动和停止的共享管理器。
+     */
+    private final DefaultViewManager<Object> delegate;
+    /**
+     * 提供应用生命周期及容器配置的 Dropwizard 环境。
+     */
+    private final Environment environment;
+    /**
+     * 实际读取并应用投影事件的执行器。
+     */
+    private final ProjectionRunner<?> runner;
+    /**
+     * 由当前运行环境管理和调度的投影视图。
+     */
+    private final Collection<ProjectionView<?>> views;
+    /**
+     * 当前运行实例拥有并负责关闭的调度器。
+     */
+    private DropwizardProjectionScheduler ownedScheduler;
+
+    /**
+     * 使用借用调度器，不取得调度器、reader 或仓储所有权。
      *
-     * @param env    Dropwizard 环境（装配锚点），非空
-     * @param views  集成方供入的投影视图集合，非空
-     * @param runner 投影运行器，非空
-     * @return 管理器实例
+     * @param scheduler 调用方调度器
+     * @param runner    共享运行器
+     * @param views     视图快照
+     */
+    @SuppressWarnings("unchecked")
+    public DropwizardProjectionViewManager(ViewScheduler scheduler, ProjectionRunner<?> runner,
+                                           Collection<ProjectionView<?>> views) {
+        this.environment = null;
+        this.runner = Objects.requireNonNull(runner, "runner must not be null");
+        this.views = snapshot(views);
+        this.delegate = new DefaultViewManager<>(scheduler, (ProjectionRunner<Object>) runner,
+                (Collection<ProjectionView<Object>>) (Collection<?>) this.views);
+    }
+
+    /**
+     * 创建自有调度器的手动管理器，线程延迟到 start 创建。
+     *
+     * @param environment 原生环境
+     * @param runner      共享运行器
+     * @param views       视图快照
+     */
+    @SuppressWarnings("unchecked")
+    protected DropwizardProjectionViewManager(Environment environment, ProjectionRunner<?> runner,
+                                              Collection<ProjectionView<?>> views) {
+        this.environment = Objects.requireNonNull(environment, "env must not be null");
+        this.runner = Objects.requireNonNull(runner, "runner must not be null");
+        this.views = snapshot(views);
+        this.delegate = new DefaultViewManager<>((name, cron, task) -> ownedScheduler.schedule(name, cron, task),
+                (ProjectionRunner<Object>) runner,
+                (Collection<ProjectionView<Object>>) (Collection<?>) this.views);
+    }
+
+    /**
+     * 保留静态手动工厂；不会自行注册 Managed 或自动启动。
+     *
+     * @param env    原生环境锚点
+     * @param views  视图快照
+     * @param runner 共享运行器
+     * @return 未启动管理器
      */
     public static DropwizardProjectionViewManager create(Environment env,
-                                                         Collection<ProjectionView<?>> views,
-                                                         ProjectionRunner<?> runner) {
-        Objects.requireNonNull(env, "env must not be null");
-        Objects.requireNonNull(views, "views must not be null");
-        Objects.requireNonNull(runner, "runner must not be null");
-        DropwizardProjectionScheduler scheduler = DropwizardProjectionScheduler.create(env, views, runner);
-        return new DropwizardProjectionViewManager(scheduler, runner, views);
+                                                         Collection<ProjectionView<?>> views, ProjectionRunner<?> runner) {
+        return new DropwizardProjectionViewManager(env, runner, views);
     }
 
     /**
      * 启动当前组件并准备其运行资源。
      *
-     * <p>Dropwizard 实现调用 <code>view.getName()</code>。</p>
+     * <p>Dropwizard 实现调用 <code>delegate.isRunning()</code>。</p>
      */
     @Override
-    public void start() {
-        if (!running) {
-            running = true;
-            for (ProjectionView<?> view : views) {
-                ViewScheduler.ViewScheduleHandle handle = scheduler.schedule(
-                        view.getName(), view.getCron(), () -> runView(view));
-                handles.put(view.getName(), handle);
+    public synchronized void start() {
+        if (delegate.isRunning()) {
+            return;
+        }
+        if (Objects.nonNull(environment) && Objects.isNull(ownedScheduler)) {
+            ownedScheduler = DropwizardProjectionScheduler.create(environment, views, runner);
+        }
+        try {
+            delegate.start();
+        } catch (RuntimeException | Error failure) {
+            try {
+                stop();
+            } catch (RuntimeException | Error cleanup) {
+                if (failure != cleanup) {
+                    failure.addSuppressed(cleanup);
+                }
             }
+            throw failure;
         }
     }
 
     /**
      * 停止当前组件并清理已登记的运行资源。
      *
-     * <p>Dropwizard 实现调用 <code>handles.values()</code>。</p>
+     * <p>Dropwizard 实现调用 <code>delegate.stop()</code>。</p>
      */
     @Override
-    public void stop() {
-        if (running) {
-            running = false;
-            handles.values().forEach(ViewScheduler.ViewScheduleHandle::cancel);
-            handles.clear();
+    public synchronized void stop() {
+        try {
+            delegate.stop();
+        } finally {
+            if (Objects.nonNull(ownedScheduler)) {
+                // 仅成功等待退出后丢弃旧池；超时保留引用，以便后续 stop 重试。
+                ownedScheduler.shutdown();
+                ownedScheduler = null;
+            }
         }
     }
 
     /**
      * 检查当前组件是否仍处于运行状态。
      *
-     * @return 实际返回<code>running</code>，作为本次判断结果
+     * <p>Dropwizard 实现调用 <code>delegate.isRunning()</code>。</p>
+     *
+     * @return 实际返回<code>delegate.isRunning()</code>
      */
     @Override
     public boolean isRunning() {
-        return running;
-    }
-
-    /** 请求立即执行指定投影视图的一轮更新。 */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void triggerOnce() {
-        ((ProjectionRunner<Object>) runner).runAll(
-                (Collection<? extends ProjectionView<Object>>) (Collection<?>) views);
+        return delegate.isRunning();
     }
 
     /**
-     * 将本次调度触发的视图交给投影运行器执行。
+     * 请求立即执行指定投影视图的一轮更新。
      *
-     * @param view 本次要执行投影更新的视图
+     * <p>Dropwizard 实现调用 <code>delegate.triggerOnce()</code>。</p>
      */
-    @SuppressWarnings("unchecked")
-    private void runView(ProjectionView<?> view) {
-        ((ProjectionRunner<Object>) runner).runOnce((ProjectionView<Object>) view);
+    @Override
+    public void triggerOnce() {
+        delegate.triggerOnce();
+    }
+
+    /**
+     * 汇总当前登记的投影视图及其运行状态。
+     *
+     * <p>Dropwizard 实现调用 <code>delegate.getProjectionStatus(streamId)</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     * @return 实际返回<code>delegate.getProjectionStatus(streamId)</code>
+     */
+    @Override
+    public ProjectionStatus getProjectionStatus(String streamId) {
+        return delegate.getProjectionStatus(streamId);
+    }
+
+    /**
+     * 结束当前组件持有的资源。
+     *
+     * <p>Dropwizard 实现调用 <code>stop()</code>。</p>
+     */
+    @Override
+    public void close() {
+        stop();
     }
 }

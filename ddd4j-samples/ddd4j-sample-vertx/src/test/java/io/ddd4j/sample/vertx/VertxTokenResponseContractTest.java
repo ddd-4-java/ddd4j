@@ -10,14 +10,16 @@ import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** 三线 Vert.x 令牌响应值对象契约。 */
+/**
+ * 三线 Vert.x 令牌响应值对象契约。
+ */
 class VertxTokenResponseContractTest {
 
-    /** \u9a8c\u8bc1<code>response.getToken()</code> \u7b49\u4e8e <code>"token-1"</code>\uff0c<code>response.token()</code> \u7b49\u4e8e <code>response.getToken()</code>\uff0c<code>response.toString().contains("token=token-1")</code>\u4e3a\u771f\u3002 */
+    /**
+     * 验证<code>response.getToken()</code> 等于 <code>"token-1"</code>，<code>response.token()</code> 等于 <code>response.getToken()</code>，<code>response.toString().contains("token=token-1")</code>为真。
+     */
     @Test
     void tokenResponseKeepsBeanAndComponentAccessors() {
         TokenResponse response = new TokenResponse("token-1");
@@ -31,7 +33,9 @@ class VertxTokenResponseContractTest {
         assertTrue(response.toString().contains("token=token-1"));
     }
 
-    /** \u9a8c\u8bc1<code>Json.decodeValue(json, TokenResponse.class)</code> \u7b49\u4e8e <code>response</code>\u3002 */
+    /**
+     * 验证<code>Json.decodeValue(json, TokenResponse.class)</code> 等于 <code>response</code>。
+     */
     @Test
     void tokenResponseRoundTripsUsingOnlyTheTokenField() {
         TokenResponse response = new TokenResponse("token-1");

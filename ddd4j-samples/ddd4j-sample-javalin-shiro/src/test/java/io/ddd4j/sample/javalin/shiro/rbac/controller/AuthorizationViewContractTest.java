@@ -7,10 +7,14 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/** \u901a\u8fc7 <code>Collections.singleton()</code>\u3001<code>user.loginId()</code>\u3001<code>user.getLoginId()</code> \u9a8c\u8bc1 <code>AuthorizationViewContract</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
+/**
+ * 通过 <code>Collections.singleton()</code>、<code>user.loginId()</code>、<code>user.getLoginId()</code> 验证 <code>AuthorizationViewContract</code> 的运行行为。
+ */
 class AuthorizationViewContractTest {
 
-    /** \u9a8c\u8bc1<code>user.getLoginId()</code> \u7b49\u4e8e <code>user.loginId()</code>\uff0c<code>user.getDisplayName()</code> \u7b49\u4e8e <code>user.displayName()</code>\uff0c<code>permission.getDescription()</code> \u7b49\u4e8e <code>permission.description()</code>\u3002 */
+    /**
+     * 验证<code>user.getLoginId()</code> 等于 <code>user.loginId()</code>，<code>user.getDisplayName()</code> 等于 <code>user.displayName()</code>，<code>permission.getDescription()</code> 等于 <code>permission.description()</code>。
+     */
     @Test
     void viewsExposeMatchingBeanAndComponentAccessors() {
         Set<String> roles = Collections.singleton("admin");
@@ -34,7 +38,9 @@ class AuthorizationViewContractTest {
         assertEquals(permission.description(), permission.getDescription());
     }
 
-    /** \u9a8c\u8bc1<code>user.hashCode()</code> \u7b49\u4e8e <code>userHash</code>\uff0c<code>role.hashCode()</code> \u7b49\u4e8e <code>roleHash</code>\uff0c<code>permission.hashCode()</code> \u7b49\u4e8e <code>permissionHash</code>\u3002 */
+    /**
+     * 验证<code>user.hashCode()</code> 等于 <code>userHash</code>，<code>role.hashCode()</code> 等于 <code>roleHash</code>，<code>permission.hashCode()</code> 等于 <code>permissionHash</code>。
+     */
     @Test
     void viewsRetainThreeLineValueHashes() {
         Set<String> roles = Collections.singleton("admin");

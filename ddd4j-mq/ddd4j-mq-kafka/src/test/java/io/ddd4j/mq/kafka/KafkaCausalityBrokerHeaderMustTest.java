@@ -50,13 +50,17 @@ import static org.mockito.Mockito.*;
  */
 class KafkaCausalityBrokerHeaderMustTest {
 
-    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>BaseContext.clear()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
+    /**
+     * 测试结束后执行 <code>BaseContext.clear()</code> 完成资源回收或状态恢复。
+     */
     @AfterEach
     void clearContext() {
         BaseContext.clear();
     }
 
-    /** \u9a8c\u8bc1<code>correlationHeader</code>\u975e\u7a7a\uff0c<code>causationHeader</code>\u975e\u7a7a\u3002 */
+    /**
+     * 验证<code>correlationHeader</code>非空，<code>causationHeader</code>非空。
+     */
     @Test
     @SuppressWarnings("unchecked")
     void kafkaRecordMustCarryCausalityHeadersForNonJavaConsumers() {
@@ -88,8 +92,9 @@ class KafkaCausalityBrokerHeaderMustTest {
     }
 
     /**
-     * \u8bfb\u53d6 <code>properties</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
-     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>properties</code>
+     * 读取 <code>properties</code> 供当前测试使用。
+     *
+     * @return 当前测试使用的结果，取自 <code>properties</code>
      */
     private MQProperties properties() {
         MQProperties properties = new MQProperties();
@@ -100,8 +105,9 @@ class KafkaCausalityBrokerHeaderMustTest {
     }
 
     /**
-     * \u6784\u9020 <code>MQEventSerialization</code> \u4f5c\u4e3a\u5f53\u524d\u6d4b\u8bd5\u7684\u8f93\u5165\u6216\u7ed3\u679c\u3002
-     * @return \u63d0\u4f9b\u7ed9\u540e\u7eed\u5951\u7ea6\u65ad\u8a00\u7684 <code>MQEventSerialization</code> \u7ed3\u679c
+     * 构造 <code>MQEventSerialization</code> 作为当前测试的输入或结果。
+     *
+     * @return 提供给后续契约断言的 <code>MQEventSerialization</code> 结果
      */
     private MQEventSerialization serialization() {
         return new MQEventSerialization() {
@@ -125,8 +131,9 @@ class KafkaCausalityBrokerHeaderMustTest {
      */
     public static final class OrdersHandler {
         /**
-         * \u6ce8\u518c\u6d4b\u8bd5\u7528\u7684\u8ba2\u5355\u4e3b\u9898\u76d1\u542c\u5668\uff0c\u6d88\u8d39\u65f6\u4e0d\u6539\u53d8\u65ad\u8a00\u72b6\u6001\u3002
-         * @param event \u7531\u805a\u5408\u6216\u76d1\u542c\u5668\u6536\u5230\u7684\u6d4b\u8bd5\u4e8b\u4ef6
+         * 注册测试用的订单主题监听器，消费时不改变断言状态。
+         *
+         * @param event 由聚合或监听器收到的测试事件
          */
         @MQEventListener(topic = "orders", tags = "*")
         public void handle(MQEvent event) {

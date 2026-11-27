@@ -33,7 +33,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  */
 class MQClientTagsSelectorTest {
 
-    /** \u6d4b\u8bd5\u8c03\u7528\u7684\u547d\u4ee4\u5ba2\u6237\u7aef\u6216\u547d\u4ee4\u884c\u5165\u53e3\u3002 */
+    /**
+     * 测试调用的命令客户端或命令行入口。
+     */
     private final MQClient cli = new MQClient() {
         @Override
         public String impl() {
@@ -51,7 +53,9 @@ class MQClientTagsSelectorTest {
         }
     };
 
-    /** \u9a8c\u8bc1<code>cli.tagsToSelector("*")</code>\u4e3a\u7a7a\uff0c<code>cli.tagsToSelector("")</code>\u4e3a\u7a7a\uff0c<code>cli.tagsToSelector(" * ")</code>\u4e3a\u7a7a\u3002 */
+    /**
+     * 验证<code>cli.tagsToSelector("*")</code>为空，<code>cli.tagsToSelector("")</code>为空，<code>cli.tagsToSelector(" * ")</code>为空。
+     */
     @Test
     void wildcardShouldReturnNull() {
         assertNull(cli.tagsToSelector("*"));
@@ -60,27 +64,35 @@ class MQClientTagsSelectorTest {
         assertNull(cli.tagsToSelector("  *  "));
     }
 
-    /** \u9a8c\u8bc1<code>cli.tagsToSelector("paid")</code> \u7b49\u4e8e <code>"(ddd4jTag = 'paid' OR ddd4jTag IS NULL)"</code>\u3002 */
+    /**
+     * 验证<code>cli.tagsToSelector("paid")</code> 等于 <code>"(ddd4jTag = 'paid' OR ddd4jTag IS NULL)"</code>。
+     */
     @Test
     void singleTagShouldEqualMatch() {
         assertEquals("(ddd4jTag = 'paid' OR ddd4jTag IS NULL)", cli.tagsToSelector("paid"));
     }
 
-    /** \u9a8c\u8bc1<code>cli.tagsToSelector("paid || shipped")</code> \u7b49\u4e8e <code>"(ddd4jTag = 'paid' OR ddd4jTag = 'shipped' OR ddd4jTag IS NULL)"</code>\u3002 */
+    /**
+     * 验证<code>cli.tagsToSelector("paid || shipped")</code> 等于 <code>"(ddd4jTag = 'paid' OR ddd4jTag = 'shipped' OR ddd4jTag IS NULL)"</code>。
+     */
     @Test
     void orExpressionShouldGenerateOrChain() {
         assertEquals("(ddd4jTag = 'paid' OR ddd4jTag = 'shipped' OR ddd4jTag IS NULL)",
                 cli.tagsToSelector("paid || shipped"));
     }
 
-    /** \u9a8c\u8bc1<code>cli.tagsToSelector("* -cancelled")</code> \u7b49\u4e8e <code>"(1=1 AND (ddd4jTag &lt;&gt; 'cancelled' OR ddd4jTag IS NULL))"</code>\u3002 */
+    /**
+     * 验证<code>cli.tagsToSelector("* -cancelled")</code> 等于 <code>"(1=1 AND (ddd4jTag &lt;&gt; 'cancelled' OR ddd4jTag IS NULL))"</code>。
+     */
     @Test
     void wildcardExcludeShouldGenerateNotEqual() {
         assertEquals("(1=1 AND (ddd4jTag <> 'cancelled' OR ddd4jTag IS NULL))",
                 cli.tagsToSelector("* -cancelled"));
     }
 
-    /** \u9a8c\u8bc1<code>cli.tagsToSelector("paid -cancelled")</code> \u7b49\u4e8e <code>"((ddd4jTag = 'paid' OR ddd4jTag IS NULL) AND (ddd4jTag &lt;&gt; 'cancelled' OR ddd4jTag IS NULL))"</code>\u3002 */
+    /**
+     * 验证<code>cli.tagsToSelector("paid -cancelled")</code> 等于 <code>"((ddd4jTag = 'paid' OR ddd4jTag IS NULL) AND (ddd4jTag &lt;&gt; 'cancelled' OR ddd4jTag IS NULL))"</code>。
+     */
     @Test
     void singleExcludeShouldEqualMatchAndExclude() {
         assertEquals(
@@ -88,7 +100,9 @@ class MQClientTagsSelectorTest {
                 cli.tagsToSelector("paid -cancelled"));
     }
 
-    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>cli.tagsToSelector()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
+    /**
+     * 在测试框架中执行 <code>cli.tagsToSelector()</code>，验证该场景。
+     */
     @Test
     void orExpressionWithExclude() {
         assertEquals(
@@ -97,7 +111,9 @@ class MQClientTagsSelectorTest {
                 cli.tagsToSelector("paid || shipped -cancelled"));
     }
 
-    /** \u9a8c\u8bc1<code>result</code> \u7b49\u4e8e <code>"(ddd4jTag = 'a''b' OR ddd4jTag IS NULL)"</code>\u3002 */
+    /**
+     * 验证<code>result</code> 等于 <code>"(ddd4jTag = 'a''b' OR ddd4jTag IS NULL)"</code>。
+     */
     @Test
     void singleQuoteShouldBeEscaped() {
         // 防止 tags 内单引号破坏 selector 解析
@@ -106,7 +122,9 @@ class MQClientTagsSelectorTest {
         assertEquals("(ddd4jTag = 'a''b' OR ddd4jTag IS NULL)", result);
     }
 
-    /** \u9a8c\u8bc1<code>cli.tagHeaderKey().contains(".")</code>\u4e3a\u5047\u3002 */
+    /**
+     * 验证<code>cli.tagHeaderKey().contains(".")</code>为假。
+     */
     @Test
     void tagHeaderKeyShouldDefaultToNoDot() {
         // 必须无 .，否则 JMS selector 当 SQL identifier 会拒绝
