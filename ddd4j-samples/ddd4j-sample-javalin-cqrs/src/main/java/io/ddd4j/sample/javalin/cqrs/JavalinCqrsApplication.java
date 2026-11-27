@@ -99,7 +99,7 @@ public final class JavalinCqrsApplication {
             ctx.status(reply.getStatus()).contentType("application/json").result(reply.getBody());
         });
         io.javalin.apibuilder.ApiBuilder.post("/orders/catalog/orders/{orderNo}/payment", ctx -> {
-            Reply reply = catalog.confirmPayment(ctx.header("X-Tenant-Id"), ctx.pathParam("orderNo"), ctx.body());
+            Reply reply = catalog.confirmPayment(ctx.header("Idempotency-Key"), ctx.header("X-Tenant-Id"), ctx.pathParam("orderNo"), ctx.body());
             ctx.status(reply.getStatus()).contentType("application/json").result(reply.getBody());
         });
         io.javalin.apibuilder.ApiBuilder.post("/orders/catalog/orders/{orderNo}/cancel", ctx -> {

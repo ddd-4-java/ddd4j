@@ -97,7 +97,7 @@ public final class VertxOrderRoutes {
                 ctx.request().getHeader("X-Tenant-Id"), ctx.pathParam("code"))));
         router.post("/api/orders/:code").handler(ctx -> trade(lifecycle, ctx, () -> catalog.placeOrder(
                 ctx.request().getHeader("X-Tenant-Id"), ctx.pathParam("code"), ctx.body().asString())));
-        router.post("/api/orders/:code/payment").handler(ctx -> trade(lifecycle, ctx, () -> catalog.confirmPayment(
+        router.post("/api/orders/:code/payment").handler(ctx -> trade(lifecycle, ctx, () -> catalog.confirmPayment(ctx.request().getHeader("Idempotency-Key"),
                 ctx.request().getHeader("X-Tenant-Id"), ctx.pathParam("code"), ctx.body().asString())));
         router.post("/api/orders/:code/cancel").handler(ctx -> trade(lifecycle, ctx, () ->
                 catalog.cancelOrder(ctx.request().getHeader("X-Tenant-Id"), ctx.pathParam("code"))));

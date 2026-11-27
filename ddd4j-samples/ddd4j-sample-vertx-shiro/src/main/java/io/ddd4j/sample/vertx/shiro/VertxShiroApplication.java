@@ -224,7 +224,7 @@ public final class VertxShiroApplication {
                         case "catalog-goods":
                             return catalog.goods(tenant, code);
                         case "catalog-confirmPayment":
-                            return catalog.confirmPayment(tenant, code, ctx.body().asString());
+                            return catalog.confirmPayment(ctx.request().getHeader("Idempotency-Key"), tenant, code, ctx.body().asString());
                         case "catalog-cancelOrder":
                             return catalog.cancelOrder(tenant, code);
                         case "catalog-fulfillOrder":

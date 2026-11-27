@@ -58,7 +58,7 @@ public final class VertxCqrsApplication {
             router.post("/orders/catalog/orders/:code").handler(ctx -> catalogRequest(ctx, () ->
                     catalog.placeOrder(ctx.request().getHeader("X-Tenant-Id"), ctx.pathParam("code"), ctx.body().asString())));
             router.post("/orders/catalog/orders/:code/payment").handler(ctx -> catalogRequest(ctx, () ->
-                    catalog.confirmPayment(ctx.request().getHeader("X-Tenant-Id"), ctx.pathParam("code"), ctx.body().asString())));
+                    catalog.confirmPayment(ctx.request().getHeader("Idempotency-Key"), ctx.request().getHeader("X-Tenant-Id"), ctx.pathParam("code"), ctx.body().asString())));
             router.post("/orders/catalog/orders/:code/cancel").handler(ctx -> catalogRequest(ctx, () ->
                     catalog.cancelOrder(ctx.request().getHeader("X-Tenant-Id"), ctx.pathParam("code"))));
             router.post("/orders/catalog/orders/:code/fulfill").handler(ctx -> catalogRequest(ctx, () ->

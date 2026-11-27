@@ -293,7 +293,7 @@ class NativeAuthHttpTest {
          * @throws Exception \u5904\u7406\u6d4b\u8bd5\u6570\u636e\u7684\u5e8f\u5217\u5316\u3001\u53d1\u8d77\u6d4b\u8bd5\u8bf7\u6c42\u65f6\u5931\u8d25
          */
         HttpResponse<String> send(String method, String path, Object body, String token) throws Exception {
-            HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(base + path)).header("Content-Type", "application/json").header("X-Tenant-Id", TENANT);
+            HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(base + path)).header("Content-Type", "application/json").header("X-Tenant-Id", TENANT).header("Idempotency-Key", path.endsWith("/payment") ? "checkout-confirmation" : "");
             if (Objects.nonNull(token)) {
                 builder.header("Authorization", "Bearer " + token);
             }

@@ -105,7 +105,7 @@ class SpringCatalogCqrsHttpTest {
     private String expect(ServletWebServerApplicationContext app, String method, String path,
                           String body, int status) throws Exception {
         HttpRequest request = HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + app.getWebServer().getPort() + path))
-                .header("X-Tenant-Id", tenant)
+                .header("X-Tenant-Id", tenant).header("Idempotency-Key", path.endsWith("/payment") ? "checkout-confirmation" : "")
                 .header("Content-Type", "application/json")
                 .method(method, java.util.Objects.isNull(body) ? HttpRequest.BodyPublishers.noBody()
                         : HttpRequest.BodyPublishers.ofString(body)).build();

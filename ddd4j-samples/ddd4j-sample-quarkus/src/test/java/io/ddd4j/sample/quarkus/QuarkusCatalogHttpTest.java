@@ -100,7 +100,7 @@ class QuarkusCatalogHttpTest {
      */
     private String request(String method, String path, int status, String body) throws Exception {
         HttpRequest request = HttpRequest.newBuilder(base.resolve("/api" + path))
-                .header("X-Tenant-Id", tenant).header("Content-Type", "application/json")
+                .header("X-Tenant-Id", tenant).header("Idempotency-Key", path.endsWith("/payment") ? "checkout-confirmation" : "").header("Content-Type", "application/json")
                 .header("Authorization", "Bearer " + subject.token())
                 .method(method, HttpRequest.BodyPublishers.ofString(body)).build();
         HttpResponse<java.lang.String> response = http.send(request, HttpResponse.BodyHandlers.ofString());

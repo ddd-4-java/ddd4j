@@ -103,7 +103,7 @@ class NativeOrderAuthTest {
         given().header("Authorization", "Bearer " + admin).contentType("application/json").body(ORDER)
                 .post(ORDERS + checkout).then().statusCode(201);
         given().header("Authorization", "Bearer " + admin).contentType("application/json")
-                .body(ImmutableMap.of("paidAmountCent", 2500)).post(ORDERS + checkout + "/payment")
+                .header("Idempotency-Key", "checkout-confirmation").body(ImmutableMap.of("paidAmountCent", 2500)).post(ORDERS + checkout + "/payment")
                 .then().statusCode(200).body("orderState", equalTo("CONFIRMED"));
         verifyClientCancellation(admin, driver.orderId);
         assertEquals(Optional.empty(), completed());
@@ -220,6 +220,9 @@ class NativeOrderAuthTest {
         private io.restassured.response.Response call(String method, String path, String token, Object body) {
             observed.set(null);
             io.restassured.specification.RequestSpecification request = given().contentType("application/json");
+            if (path.endsWith("/payment")) {
+                request.header("Idempotency-Key", "checkout-confirmation");
+            }
             if (java.util.Objects.nonNull(token)) {
                 request.header("Authorization", "Bearer " + token);
             }

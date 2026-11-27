@@ -117,7 +117,7 @@ class DropwizardCatalogCqrsHttpTest {
     private String expect(DropwizardTestSupport<DropwizardCqrsConfiguration> app, String method,
                           String path, int status, String body) throws Exception {
         HttpRequest req = HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + app.getLocalPort() + "/orders/catalog" + path))
-                .header("X-Tenant-Id", tenant).header("Content-Type", "application/json")
+                .header("X-Tenant-Id", tenant).header("Idempotency-Key", path.endsWith("/payment") ? "checkout-confirmation" : "").header("Content-Type", "application/json")
                 .method(method, HttpRequest.BodyPublishers.ofString(body)).build();
         HttpResponse<java.lang.String> response = http.send(req, HttpResponse.BodyHandlers.ofString());
         assertEquals(status, response.statusCode(), response.body());

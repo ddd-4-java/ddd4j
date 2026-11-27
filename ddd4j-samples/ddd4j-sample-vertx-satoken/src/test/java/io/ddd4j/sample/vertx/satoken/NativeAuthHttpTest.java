@@ -114,7 +114,7 @@ class NativeAuthHttpTest {
     private HttpResponse<String> requestWithHeaders(String method, String path, Map<String, String> credentials,
                                                     String body, String id) throws Exception {
         HttpRequest.Builder request = HttpRequest.newBuilder(URI.create(base + path)).timeout(Duration.ofSeconds(10))
-                .header("X-Request-Id", id).header("X-Tenant-Id", TENANT);
+                .header("X-Request-Id", id).header("X-Tenant-Id", TENANT).header("Idempotency-Key", path.endsWith("/payment") ? "checkout-confirmation" : "");
         credentials.forEach(request::header);
         if (Objects.nonNull(body)) {
             request.header("Content-Type", "application/json");

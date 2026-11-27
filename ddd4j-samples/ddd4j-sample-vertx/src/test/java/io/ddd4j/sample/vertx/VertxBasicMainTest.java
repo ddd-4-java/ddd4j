@@ -160,12 +160,12 @@ class VertxBasicMainTest {
      * @param method \u53d1\u7ed9\u88ab\u6d4b\u670d\u52a1\u7684 HTTP \u65b9\u6cd5
      * @param path \u6d4b\u8bd5\u8bf7\u6c42\u7684\u8d44\u6e90\u8def\u5f84\u6216\u5f85\u8bbf\u95ee\u6587\u4ef6\u8def\u5f84
      * @param body \u5f53\u524d\u8bf7\u6c42\u6216\u54cd\u5e94\u4e2d\u8981\u8bfb\u53d6\u7684\u6b63\u6587
-     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>SampleHttpTransport.request(base(app) + path, method, Collections.emptyMap(), Map.of("X-Tenant-Id", "basic"), body)</code>
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>SampleHttpTransport.request(base(app) + path, method, Collections.emptyMap(), Map.of("X-Tenant-Id", "basic", "Idempotency-Key", path.endsWith("/payment") ? "checkout-confirmation" : ""), body)</code>
      * @throws Exception \u53d1\u8d77\u6d4b\u8bd5\u8bf7\u6c42\u65f6\u5931\u8d25
      */
     private static SampleHttpTransport.Response request(VertxOrderApplication app, String method, String path, String body)
             throws Exception {
-        return SampleHttpTransport.request(base(app) + path, method, Collections.emptyMap(), ImmutableMap.of("X-Tenant-Id", "basic"), body);
+        return SampleHttpTransport.request(base(app) + path, method, Collections.emptyMap(), ImmutableMap.of("X-Tenant-Id", "basic", "Idempotency-Key", path.endsWith("/payment") ? "checkout-confirmation" : ""), body);
     }
 
     /**

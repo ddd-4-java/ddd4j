@@ -161,7 +161,7 @@ public class JavalinSaTokenApplication {
                         if (!lifecycle.authorizeOrder(ctx, "order:pay")) {
                             return;
                         }
-                        io.ddd4j.sample.order.adapter.http.Reply reply = catalog.confirmPayment(ctx.header("X-Tenant-Id"), ctx.pathParam("orderNo"), ctx.body());
+                        io.ddd4j.sample.order.adapter.http.Reply reply = catalog.confirmPayment(ctx.header("Idempotency-Key"), ctx.header("X-Tenant-Id"), ctx.pathParam("orderNo"), ctx.body());
                         ctx.status(reply.getStatus()).contentType("application/json").result(reply.getBody());
                     });
                     ApiBuilder.post("/orders/catalog/orders/{orderNo}/cancel", ctx -> {

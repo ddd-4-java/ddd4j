@@ -101,7 +101,7 @@ class NativeBasicOrderTest {
                                                          String token, String tenant) throws Exception {
         Map<String, String> credentials = token.isEmpty() ? ImmutableMap.of() : ImmutableMap.of("Authorization", "Bearer " + token);
         return SampleHttpTransport.request("http://127.0.0.1:" + server.port() + path,
-                method, credentials, ImmutableMap.of("X-Tenant-Id", tenant),
+                method, credentials, ImmutableMap.of("X-Tenant-Id", tenant, "Idempotency-Key", path.endsWith("/payment") ? "checkout-confirmation" : ""),
                 Objects.isNull(body) ? null : new ObjectMapper().writeValueAsString(body));
     }
 

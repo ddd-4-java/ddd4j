@@ -23,12 +23,12 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
 /**
- * ddd4j-data-cqrs-quarkus 模块独立性自检：Quarkus 适配器的依赖面锁定（ADR-0004）。
+ * ddd4j-runtime-quarkus 模块独立性自检：Quarkus 适配器的依赖面锁定（ADR-0004）。
  *
  * <p>本模块是 CQRS 命令侧 SPI 在 Quarkus 运行时的装配适配器，允许依赖 Quarkus
  * ／ArC 与 Javax API（CDI），但不得：
  * <ul>
- *   <li>引入 Spring（Spring 系运行时适配归 ddd4j-data-cqrs-spring——注意两边
+ *   <li>引入 Spring（Spring 系运行时适配归 ddd4j-runtime-spring——注意两边
  *       {@code @Transactional}／{@code @ActivateRequestContext} 语义不同包，
  *       Quarkus 侧严禁混入 Spring 刻板）</li>
  *   <li>引入 javax.persistence／JPA（持久化实现归 ddd4j-data-event-store-panache

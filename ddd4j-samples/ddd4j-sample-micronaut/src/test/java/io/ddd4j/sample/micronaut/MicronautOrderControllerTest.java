@@ -121,7 +121,7 @@ class MicronautOrderControllerTest {
      */
     private HttpResponse<String> request(HttpClient client, String baseUrl, String method, String path, String token,
                                          String body, String tenant) throws Exception {
-        HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(baseUrl + path)).header("X-Tenant-Id", tenant);
+        HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(baseUrl + path)).header("X-Tenant-Id", tenant).header("Idempotency-Key", path.endsWith("/payment") ? "checkout-confirmation" : "");
         if (Objects.nonNull(token)) {
             builder.header("Authorization", "Bearer " + token);
         }
