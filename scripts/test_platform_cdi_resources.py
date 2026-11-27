@@ -53,6 +53,24 @@ class PlatformCdiResourcesTest(unittest.TestCase):
             [self.mapping], self.roots)
         self.assertIn(DESCRIPTOR, result)
 
+    def test_per_jdk_evidence_rejects_rehashed_missing_assertion(self):
+        hashes = {}
+        for jdk, root in zip(("8", "17", "21"), self.roots):
+            evidence = root / EVIDENCE
+            evidence.write_text(TEST + "// JDK " + jdk)
+            hashes[jdk] = hashlib.sha256(evidence.read_bytes()).hexdigest()
+        del self.mapping["testSha256"]
+        self.mapping["testSha256ByJdk"] = hashes
+        validate = PARITY.validate_platform_cdi_resources_only_on_jdk8
+        self.assertIn(DESCRIPTOR, validate([self.mapping], self.roots))
+        high = self.roots[2] / EVIDENCE
+        high.write_text(TEST.replace("ApplicationScoped", "Singleton"))
+        with self.assertRaises(ValueError):
+            validate([self.mapping], self.roots)
+        hashes["21"] = hashlib.sha256(high.read_bytes()).hexdigest()
+        with self.assertRaises(ValueError):
+            validate([self.mapping], self.roots)
+
     def test_rejects_changed_descriptor(self):
         (self.roots[0] / DESCRIPTOR).write_text(XML.replace("annotated", "all"))
         with self.assertRaises(ValueError):

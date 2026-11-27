@@ -769,14 +769,19 @@ def validate_platform_cdi_resources_only_on_jdk8(items: list[dict],
         source = path.as_posix()
         test = evidence.as_posix()
         digest = item.get("sha256", "")
-        test_digest = item.get("testSha256", "")
+        test_digest = item.get("testSha256")
+        jdks = ("8", "17", "21")
+        test_digests = item.get("testSha256ByJdk", dict.fromkeys(jdks, test_digest))
+        if ("testSha256ByJdk" in item and "testSha256" in item
+                or not isinstance(test_digests, dict) or set(test_digests) != set(jdks)):
+            raise ValueError(f"invalid CDI test digests: {source}")
         if (path.is_absolute() or ".." in path.parts
                 or not source.endswith("/src/main/resources/META-INF/beans.xml")
                 or source in validated
                 or evidence.is_absolute() or ".." in evidence.parts
                 or "/src/test/java/" not in test or evidence.suffix != ".java"
                 or not all(isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value)
-                           for value in (digest, test_digest))
+                           for value in (digest, *test_digests.values()))
                 or not item.get("reason")):
             raise ValueError(f"invalid JDK 8-only CDI descriptor: {source}")
         descriptor = roots[0] / path
@@ -792,10 +797,9 @@ def validate_platform_cdi_resources_only_on_jdk8(items: list[dict],
                 or hashlib.sha256(descriptor.read_bytes()).hexdigest() != digest
                 or any((root / path).exists() for root in roots[1:])
                 or not all(file.is_file()
-                           and hashlib.sha256(file.read_bytes()).hexdigest() == test_digest
-                           for file in tests)):
+                           and hashlib.sha256(file.read_bytes()).hexdigest() == test_digests[jdk]
+                           for jdk, file in zip(jdks, tests))):
             raise ValueError(f"stale JDK 8-only CDI descriptor evidence: {source}")
-        contents = tests[0].read_text(encoding="utf-8")
         assertion = item.get("assertion", "scope")
         if assertion == "scope":
             markers = ("@QuarkusTest", "Arc.container()", "ApplicationScoped")
@@ -823,7 +827,8 @@ def validate_platform_cdi_resources_only_on_jdk8(items: list[dict],
                     raise ValueError(f"missing CDI HTTP contract: {source}")
         else:
             raise ValueError(f"unsupported CDI assertion: {source}")
-        if not all(marker in contents for marker in markers):
+        if not all(all(marker in contents for marker in markers)
+                   for contents in (file.read_text(encoding="utf-8") for file in tests)):
             raise ValueError(f"missing CDI {assertion} assertion: {test}")
         beans = ET.fromstring(descriptor.read_bytes())
         if (beans.tag != "{http://xmlns.jcp.org/xml/ns/javaee}beans"

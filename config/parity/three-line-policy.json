@@ -172,29 +172,37 @@
       "path": "ddd4j-data/ddd4j-data-projection-panache/src/main/resources/META-INF/beans.xml",
       "sha256": "eeda5bb2f3e034daa25fb64f2c7ff46c3055921f5e6bb012e5e575666f28ef6c",
       "evidence": "ddd4j-data/ddd4j-data-projection-panache/src/test/java/io/ddd4j/data/projection/panache/ProjectionRepositoryCdiContractTest.java",
-      "testSha256": "4f45eb068434d6ca5280e7df6d2df0b0af3d42e2de7419af45a60f81e65788fb",
       "reason": "Quarkus 1/JDK 8 使用 Java EE 2.0 annotated beans.xml 启用 CDI；高两线省略旧命名空间文件。三线共同 QuarkusTest 从 Arc 容器验证 QuarkusProjectionPositionRepository 的 ApplicationScoped 作用域。",
-      "jdk17Evidence": "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/projection/panache/ProjectionRepositoryCdiContractTest.java"
+      "jdk17Evidence": "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/projection/panache/ProjectionRepositoryCdiContractTest.java",
+      "testSha256ByJdk": {
+        "8": "249ce607cf0d7f7865120d9d6dad08f6004e3afe4a868609c4ad4355b576b846",
+        "17": "7079a9c8ef6da0979651b5b81f43ecf7554621c754edf2410030ac6f2496e561",
+        "21": "249ce607cf0d7f7865120d9d6dad08f6004e3afe4a868609c4ad4355b576b846"
+      }
     },
     {
       "path": "ddd4j-web/ddd4j-web-quarkus/src/main/resources/META-INF/beans.xml",
       "sha256": "eeda5bb2f3e034daa25fb64f2c7ff46c3055921f5e6bb012e5e575666f28ef6c",
       "evidence": "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusFilterCdiContractTest.java",
-      "testSha256": "6f8f37bf04f320757c3ec2a80c6e35460892f73d5e6a039bb9c623d49c022ade",
       "assertion": "available",
       "httpEvidence": "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebContractTest.java",
       "httpTestSha256": [
-        "fb046d423efe84aeeab3754fa066df646350c12c5d854ef1e3cb4321c6728449",
-        "8e03833c56faabbbf2dc760b64333d2f5337b5781dc890fe862d7c61c59d540c",
-        "11f1047eedfb9765cf6385f097ad87d2e74ac8be17e5cbc328b2dc1cb85a766c"
+        "7dab1c09392ff43acb26f0ea1870823d020b877068015afe3666681f95387a21",
+        "047c09bac8c0e6212c65fe11b8b784af837688aee6e7afd7de7361d7bbf930e6",
+        "267547ca25e7a568fd8c075f29d09aac32999d70134e75a80e0fdab36b4dc826"
       ],
-      "reason": "Quarkus 1/JDK 8 的 Java EE 2.0 annotated beans.xml 是 CDI 发现入口；高线 Quarkus REST 的 Bean 作用域为 Singleton。三线 Arc 均能取得过滤器 Bean，且共同 HTTP 契约每线 6 项通过。"
+      "reason": "Quarkus 1/JDK 8 的 Java EE 2.0 annotated beans.xml 是 CDI 发现入口；高线 Quarkus REST 的 Bean 作用域为 Singleton。三线 Arc 均能取得过滤器 Bean，且共同 HTTP 契约每线 6 项通过。",
+      "testSha256ByJdk": {
+        "8": "01c43e58a85b08582c09445aa7d9f11e5db7f172c722fc7783428ba04612e9f2",
+        "17": "b5112f071a17dbb2a7b19b92769e81ae46895feddcf23fd736178bfca3365334",
+        "21": "01c43e58a85b08582c09445aa7d9f11e5db7f172c722fc7783428ba04612e9f2"
+      }
     }
   ],
   "platformFilesOnlyOnJdk8": [
     {
       "path": "ddd4j-web/ddd4j-web-quarkus/src/main/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebResponseFilter.java",
-      "sha256": "518b960158fb487fb190472f96de2d010cf481958c3fe72b27bd3512b2ba0d9c",
+      "sha256": "fb19f2d4e35104adcd4381b9dad84c6a2c1c8a56af4b75496daf7af2ada066db",
       "counterpart": "ddd4j-web/ddd4j-web-quarkus/src/main/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebFilter.java",
       "evidence": "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebContractTest.java",
       "reason": "Quarkus 1.x 以独立 JAX-RS ContainerResponseFilter Provider 委托响应清理；Quarkus 高线在共同过滤器上使用 RESTEasy Reactive @ServerResponseFilter。三线运行共同 HTTP 契约，平台入口源码由 SHA-256 锁定"
@@ -203,34 +211,34 @@
   "platformTestsOnlyOnJdk8": [
     {
       "path": "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbContainerSupport.java",
-      "sha256": "69a6f22092fb4f5af473dc35b1ab0773efc51fb2ffbb4de5a14cd812838fab61",
+      "sha256": "b032d558e680ce18497786fc15d683127868244c2ef1e2f9e7e96e6599ef1e70",
       "counterpart": "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreIT.java",
       "counterpartSha256": [
-        "de61d64921ad554a618388c898d8172bd8dd17d3f651a07b77359aa785e51aac",
-        "b977a3acfdd7635c8906014539e45cf2e96f5b40cc209befb29e1d219db6af70",
-        "c9ecb12935984809c56b20cf76d55473ff3307b292f9915039ac22fcfc1c896e"
+        "2c134d1b174b5f6f10b71448523939a7ba3aefd6444da74901e9e257d47f118d",
+        "8fefe5a36844b13fa632c7645d1c6c9942021a721abf4dd388374572dd66f565",
+        "c235e87b7f6b1a9ba428f131bd8a4ea9d534a3bdb6ebd5d8b99889eaccb323b6"
       ],
       "reason": "JDK 8 进程级单例 EventStoreDB 容器夹具；三线 EsdbEventStoreIT 均在真实容器执行，低线额外补充用例覆盖并发与因果元数据"
     },
     {
       "path": "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreContainerIT.java",
-      "sha256": "9919d78ab903abddac190e6feb18c8a107fa0b67b3c6b8127e38e06d067629af",
+      "sha256": "e3ecb3e1324e2308eb6d12b2199cd8c17640c45dfafefed7aabb49b538fd895d",
       "counterpart": "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreIT.java",
       "counterpartSha256": [
-        "de61d64921ad554a618388c898d8172bd8dd17d3f651a07b77359aa785e51aac",
-        "b977a3acfdd7635c8906014539e45cf2e96f5b40cc209befb29e1d219db6af70",
-        "c9ecb12935984809c56b20cf76d55473ff3307b292f9915039ac22fcfc1c896e"
+        "2c134d1b174b5f6f10b71448523939a7ba3aefd6444da74901e9e257d47f118d",
+        "8fefe5a36844b13fa632c7645d1c6c9942021a721abf4dd388374572dd66f565",
+        "c235e87b7f6b1a9ba428f131bd8a4ea9d534a3bdb6ebd5d8b99889eaccb323b6"
       ],
       "reason": "JDK 8 补充容器契约验证并发冲突与因果元数据；高两线 EsdbEventStoreIT 包含相同断言并在真实容器执行"
     },
     {
       "path": "ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/PostgresEventStoreContainerSupport.java",
-      "sha256": "4391fdd7bbd84ef05b3a248cffe8705b25e19f1ed1280d8b0e602edb3734e663",
+      "sha256": "90f631703676b6a95b3fbcadd9ee4a25d5f0dad464b0be84ff0795ef88398a4e",
       "counterpart": "ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStorePostgresIT.java",
       "counterpartSha256": [
-        "94b83e2b1fd0b7533e146e6a779c91d7d257d041f211c61d5f7af309f75f5cd6",
-        "135522200b45abaa4f0317712aa716b125d814a2334488a4d5dea355dae4681b",
-        "4f62b531d9d39f76fd2b18ca6250d4d2cfcee4ed923a3bda2df1fc84eb76916e"
+        "99a4948fd9a8a3dfa696e7f916a4d6d023ce3d41635193641e0db0ae150329cc",
+        "3ba5139538c370ff1a02f5236d8c9d52d02f4c49464b84904851b7f025c6e248",
+        "7ff8b912777b3884242112159a29453a3678fd1161be6fadb4d36aada24d51c4"
       ],
       "reason": "JDK 8 PostgreSQL 进程级单例容器夹具；高两线使用 @Container；三线 R2dbcEventStorePostgresIT 各 4 项真实 PostgreSQL 测试通过且无跳过"
     }
