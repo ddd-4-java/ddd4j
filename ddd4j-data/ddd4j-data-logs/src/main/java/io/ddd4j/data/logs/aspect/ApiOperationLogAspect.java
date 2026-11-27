@@ -16,10 +16,9 @@ package io.ddd4j.data.logs.aspect;
 
 import cn.hutool.core.lang.Snowflake;
 import com.google.common.base.Stopwatch;
-import io.ddd4j.core.constant.XHeaders;
 import io.ddd4j.data.logs.ApiOperationLogProvider;
+import io.ddd4j.data.logs.ApiOperationLogRequestContext;
 import io.ddd4j.kit.lang.StrKit;
-import io.ddd4j.web.webmvc.util.WebUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -27,7 +26,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.MDC;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
 /**
@@ -137,19 +135,7 @@ public class ApiOperationLogAspect {
      * @return 请求 ID
      */
     public String getRequestId() {
-        HttpServletRequest request = WebUtils.getHttpServletRequest();
-        String requestId = null;
-        if (Objects.nonNull(request)) {
-            String parameterRequestId = request.getParameter(REQUEST_ID_KEY);
-            if (StrKit.hasText(parameterRequestId)) {
-                requestId = parameterRequestId;
-            } else {
-                String headerRequestId = request.getHeader(XHeaders.X_REQUEST_ID);
-                if (StrKit.hasText(headerRequestId)) {
-                    requestId = headerRequestId;
-                }
-            }
-        }
+        String requestId = ApiOperationLogRequestContext.current().requestId();
         if (!StrKit.hasText(requestId)) {
             requestId = snowflake.nextIdStr();
         }

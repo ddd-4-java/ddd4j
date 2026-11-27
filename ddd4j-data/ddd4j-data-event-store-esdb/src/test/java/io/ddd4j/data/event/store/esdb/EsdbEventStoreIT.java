@@ -91,6 +91,34 @@ class EsdbEventStoreIT {
         assertThat(store.readAll(0, 10)).allSatisfy(event -> assertThat(event.aggregateType()).isEqualTo(ORDER_TYPE));
     }
 
+    /**
+     * 验证聚合重建和区间查询可以越过第一批事件。
+     */
+    @Test
+    void readsPastTheFirstBatch() {
+        TestId id = new TestId("long-stream");
+        for (int start = 0; start < 4098; start += 256) {
+            int count = Math.min(256, 4098 - start);
+            store.append(ORDER_TYPE, id, java.util.stream.IntStream.range(0, count)
+                    .mapToObj(index -> new TestEvent(id)).collect(java.util.stream.Collectors.toList()), start);
+        }
+        assertThat(store.read(ORDER_TYPE, id)).hasSize(4098);
+        assertThat(store.readAll(0L, 4098)).extracting(StoredEvent::version)
+                .containsExactlyElementsOf(java.util.stream.LongStream.rangeClosed(1L, 4098L).boxed().collect(java.util.stream.Collectors.toList()));
+        assertThat(store.read(ORDER_TYPE, id, 4095, 4098)).extracting(StoredEvent::version)
+                .containsExactly(4095L, 4096L, 4097L, 4098L);
+        List<StoredEvent> tail = store.read(ORDER_TYPE, id, 4097, 4098);
+        long lastPosition = tail.get(1).position();
+        assertThat(store.readAll(tail.get(0).position() + 1L, 1)).extracting(StoredEvent::version)
+                .containsExactly(4098L);
+        assertThat(store.readAll(lastPosition, 1)).extracting(StoredEvent::version)
+                .containsExactly(4098L);
+        EsdbEventStore otherPrefix = new EsdbEventStore(client, "after-long-stream-");
+        TestId after = new TestId("after");
+        otherPrefix.append(ORDER_TYPE, after, java.util.Collections.singletonList(new TestEvent(after)), 0L);
+        assertThat(otherPrefix.readAll(0L, 1)).hasSize(1);
+    }
+
     /** \u9a8c\u8bc1<code>store.append(ORDER_TYPE, id, List.of(new TestEvent(id)), 0)</code> \u629b\u51fa <code>AggregateVersionConflictException.class</code>\uff0c<code>conflict.expectedVersion()</code> \u7b49\u4e8e <code>0L</code>\uff0c<code>conflict.actualVersion()</code> \u7b49\u4e8e <code>1L</code>\u3002 */
     @Test
     void staleVersionRejectsWithoutPartialWrites() {

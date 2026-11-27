@@ -34,6 +34,12 @@
 
 ---
 
+## 从旧版日志与投影配置迁移
+
+仅依赖 `io.ddd4j:ddd4j-data-logs` 的应用可直接在 Guice 或其他非 Servlet 容器中记录操作日志。Spring MVC 应用要读取 HTTP 请求 ID、URI 和客户端地址，请同时声明 `io.ddd4j:ddd4j-web-webmvc`。Web MVC 工件通过 Java SPI 提供请求上下文。
+
+多个投影视图可以订阅同一种事件。每个视图名称必须唯一，位点按视图分别保存。需要向所有订阅视图分发时，调用 `ProjectionDispatcher.runByEvent`。旧的单订阅查询仍返回第一个注册的处理器。
+
 ## 1. 核心定位
 
 | 维度         | 定位                                                                                                                                                                                                        |

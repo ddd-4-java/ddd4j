@@ -13,21 +13,12 @@
  * limitations under the License.
  */
 package io.ddd4j.core.cqrs.readmodel.handler;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.StringEntityId;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,11 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * {@link ProjectionHandlerRegistry} 注册与路由契约测试。
  * <p>
- * 重点守护：register 的 <b>整批拒绝</b>（all-or-nothing）语义——多类型 handler
- * 任一事件类型冲突时，全部类型均不落库，不产生半注册状态；未注册类型的
- * {@code findHandler} 返回 {@link Optional#empty()}（兜底策略归
- * {@link ProjectionDispatcher}）。语义与 ddd4j-core 中 CommandRegistry 的
- * {@code CommandRegistry} 同源（ADR-0004）。
+ * 守护同名视图整批拒绝、多视图订阅和旧单值查询确定性；与命令单处理器规则独立。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
@@ -47,25 +34,17 @@ import static org.junit.jupiter.api.Assertions.*;
 class ProjectionHandlerRegistryTest {
 
     /**
-     * 执行 <code>set Of</code>，调用 <code>Collections.unmodifiableSet</code>、<code>Arrays.asList</code>。
-     *
-     * @param eventTypes 传入此操作的 <code>Class&lt;? extends DomainEvent&lt;?&gt;&gt;[]</code> 类型 <code>eventTypes</code>
-     * @return 返回表达式 <code>Collections.unmodifiableSet(new LinkedHashSet&lt;&gt;(Arrays.asList(eventTypes)))</code>
+     * 当前用例注册被测组件和观察指标的容器。
      */
-    @SafeVarargs
-    private static Set<Class<? extends DomainEvent<?>>> setOf(
-            Class<? extends DomainEvent<?>>... eventTypes) {
-        return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(eventTypes)));
-    }
-
-    /** \u5f53\u524d\u7528\u4f8b\u6ce8\u518c\u88ab\u6d4b\u7ec4\u4ef6\u548c\u89c2\u5bdf\u6307\u6807\u7684\u5bb9\u5668\u3002 */
     private final ProjectionHandlerRegistry registry = new ProjectionHandlerRegistry();
 
-    /** \u9a8c\u8bc1<code>registry.findHandler(OrderCreated.class).orElse(null)</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>handler</code>\uff0c<code>registry.findHandler(OrderPaid.class).orElse(null)</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>handler</code>\u3002 */
+    /**
+     * 验证<code>registry.findHandler(OrderCreated.class).orElse(null)</code> 与…为同一实例 <code>handler</code>，<code>registry.findHandler(OrderPaid.class).orElse(null)</code> 与…为同一实例 <code>handler</code>。
+     */
     @Test
     void registeredHandlerIsFoundByExactEventType() {
         RecordingHandler handler = new RecordingHandler("order-summary",
-                setOf(OrderCreated.class, OrderPaid.class));
+                new java.util.LinkedHashSet<>(java.util.Arrays.asList(OrderCreated.class, OrderPaid.class)));
 
         registry.register(handler);
 
@@ -75,10 +54,12 @@ class ProjectionHandlerRegistryTest {
                 "findHandler should return the registered handler for the second subscribed type");
     }
 
-    /** \u9a8c\u8bc1<code>found.isPresent()</code>\u4e3a\u5047\u3002 */
+    /**
+     * 验证<code>found.isPresent()</code>为假。
+     */
     @Test
     void findHandlerReturnsEmptyForUnregisteredEventType() {
-        registry.register(new RecordingHandler("order-summary", setOf(OrderCreated.class)));
+        registry.register(new RecordingHandler("order-summary", java.util.Collections.singleton(OrderCreated.class)));
 
         Optional<ProjectionHandler> found = registry.findHandler(OrderPaid.class);
 
@@ -86,19 +67,25 @@ class ProjectionHandlerRegistryTest {
                 "unregistered event type should yield Optional.empty() (dispatcher owns the fallback strategy)");
     }
 
-    /** \u9a8c\u8bc1<code>registry.findHandler(null)</code> \u629b\u51fa <code>NullPointerException.class</code>\u3002 */
+    /**
+     * 验证<code>registry.findHandler(null)</code> 抛出 <code>NullPointerException.class</code>。
+     */
     @Test
     void findHandlerRejectsNullEventType() {
         assertThrows(NullPointerException.class, () -> registry.findHandler(null));
     }
 
-    /** \u9a8c\u8bc1<code>registry.register(null)</code> \u629b\u51fa <code>NullPointerException.class</code>\u3002 */
+    /**
+     * 验证<code>registry.register(null)</code> 抛出 <code>NullPointerException.class</code>。
+     */
     @Test
     void registerRejectsNullHandler() {
         assertThrows(NullPointerException.class, () -> registry.register(null));
     }
 
-    /** \u9a8c\u8bc1<code>registry.register(new RecordingHandler("invalid", eventTypes))</code> \u629b\u51fa <code>NullPointerException.class</code>\uff0c<code>ex</code> \u7684\u5f02\u5e38\u6d88\u606f\u4e3a <code>"event type must not be null"</code>\uff0c<code>registry.findHandler(OrderPaid.class).isPresent()</code>\u4e3a\u5047\u3002 */
+    /**
+     * 验证<code>registry.register(new RecordingHandler("invalid", eventTypes))</code> 抛出 <code>NullPointerException.class</code>，<code>ex</code> 的异常消息为 <code>"event type must not be null"</code>，<code>registry.findHandler(OrderPaid.class).isPresent()</code>为假。
+     */
     @Test
     void registerRejectsNullEventTypeBeforeRegisteringAnyType() {
         Set<Class<? extends DomainEvent<?>>> eventTypes = new LinkedHashSet<>();
@@ -109,31 +96,36 @@ class ProjectionHandlerRegistryTest {
                 () -> registry.register(new RecordingHandler("invalid", eventTypes)));
 
         assertThat(ex).hasMessage("event type must not be null");
+        assertThat(registry.all()).isEmpty();
         assertFalse(registry.findHandler(OrderPaid.class).isPresent());
     }
 
-    /** 验证<code>registry.register(new RecordingHandler("another-view", setOf(OrderCreated.class)))</code> 抛出 <code>IllegalStateException.class</code>，<code>ex</code> 的异常消息包含 <code>OrderCreated.class.getName()</code>。 */
+    /**
+     * 验证<code>registry.register(new RecordingHandler("order-summary", java.util.Collections.singleton(OrderCreated.class)))</code> 抛出 <code>IllegalStateException.class</code>，<code>ex</code> 的异常消息包含 <code>"order-summary"</code>。
+     */
     @Test
-    void duplicateEventTypeRegistrationThrowsIllegalStateWithEventName() {
-        registry.register(new RecordingHandler("order-summary", setOf(OrderCreated.class)));
+    void duplicateViewRegistrationThrowsIllegalStateWithViewName() {
+        registry.register(new RecordingHandler("order-summary", java.util.Collections.singleton(OrderCreated.class)));
 
         IllegalStateException ex = assertThrows(IllegalStateException.class,
-                () -> registry.register(new RecordingHandler("another-view", setOf(OrderCreated.class))));
+                () -> registry.register(new RecordingHandler("order-summary", java.util.Collections.singleton(OrderCreated.class))));
 
-        assertThat(ex).hasMessageContaining(OrderCreated.class.getName());
+        assertThat(ex).hasMessageContaining("order-summary");
     }
 
-    /** \u9a8c\u8bc1<code>registry.register(multiTypeHandler)</code> \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>ex</code> \u7684\u5f02\u5e38\u6d88\u606f\u5305\u542b <code>"order-summary"</code>\uff0c<code>registry.all()</code> \u7684\u5927\u5c0f\u4e3a <code>1</code>\u3002 */
+    /**
+     * 验证<code>registry.register(multiTypeHandler)</code> 抛出 <code>IllegalStateException.class</code>，<code>ex</code> 的异常消息包含 <code>"order-summary"</code>，<code>registry.all()</code> 的大小为 <code>1</code>。
+     */
     @Test
     void conflictingBatchRegistrationIsRejectedEntirely() {
-        registry.register(new RecordingHandler("order-summary", setOf(OrderCreated.class)));
-        RecordingHandler multiTypeHandler = new RecordingHandler("order-lifecycle",
-                setOf(OrderCreated.class, OrderPaid.class));
+        registry.register(new RecordingHandler("order-summary", java.util.Collections.singleton(OrderCreated.class)));
+        RecordingHandler multiTypeHandler = new RecordingHandler("order-summary",
+                new java.util.LinkedHashSet<>(java.util.Arrays.asList(OrderCreated.class, OrderPaid.class)));
 
         IllegalStateException ex = assertThrows(IllegalStateException.class,
                 () -> registry.register(multiTypeHandler));
 
-        assertThat(ex).hasMessageContaining(OrderCreated.class.getName());
+        assertThat(ex).hasMessageContaining("order-summary");
         assertFalse(registry.findHandler(OrderPaid.class).isPresent(),
                 "non-conflicting types of the rejected handler must NOT be registered (all-or-nothing)");
         assertThat(registry.all())
@@ -141,22 +133,42 @@ class ProjectionHandlerRegistryTest {
                 .doesNotContain(multiTypeHandler);
     }
 
-    /** \u9a8c\u8bc1<code>registry.all().add(new RecordingHandler("another-view", Set.of(OrderPaid.class)))</code> \u629b\u51fa <code>UnsupportedOperationException.class</code>\u3002 */
+    /**
+     * 验证<code>registry.all()</code> 按顺序仅包含 <code>first</code>、<code>second</code>，<code>registry.findHandlers(OrderCreated.class)</code> 按顺序仅包含 <code>first</code>、<code>second</code>，<code>registry.findHandler(OrderCreated.class).orElseThrow(java.util.NoSuchElementException::new)</code> 与…为同一实例 <code>first</code>。
+     */
     @Test
-    void allViewIsImmutable() {
-        registry.register(new RecordingHandler("order-summary", setOf(OrderCreated.class)));
-
+    void independentViewsCanSubscribeToSameEventAndLegacyLookupUsesFirst() {
+        RecordingHandler first = new RecordingHandler("first", java.util.Collections.singleton(OrderCreated.class));
+        RecordingHandler second = new RecordingHandler("second", java.util.Collections.singleton(OrderCreated.class));
+        registry.register(first);
+        registry.register(second);
+        assertThat(registry.all()).containsExactly(first, second);
+        assertThat(registry.findHandlers(OrderCreated.class)).containsExactly(first, second);
         assertThrows(UnsupportedOperationException.class,
-                () -> registry.all().add(new RecordingHandler("another-view", setOf(OrderPaid.class))));
+                () -> registry.findHandlers(OrderCreated.class).clear());
+        assertSame(first, registry.findHandler(OrderCreated.class).orElseThrow(java.util.NoSuchElementException::new));
     }
 
-    /** \u9a8c\u8bc1<code>registry.findHandler(OrderCreated.class).orElse(null)</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>summaryHandler</code>\uff0c<code>registry.findHandler(OrderPaid.class).orElse(null)</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>paymentHandler</code>\uff0c<code>registry.all()</code> \u7684\u5927\u5c0f\u4e3a <code>3</code>\u3002 */
+    /**
+     * 验证<code>registry.all().add(new RecordingHandler("another-view", java.util.Collections.singleton(OrderPaid.class)))</code> 抛出 <code>UnsupportedOperationException.class</code>。
+     */
+    @Test
+    void allViewIsImmutable() {
+        registry.register(new RecordingHandler("order-summary", java.util.Collections.singleton(OrderCreated.class)));
+
+        assertThrows(UnsupportedOperationException.class,
+                () -> registry.all().add(new RecordingHandler("another-view", java.util.Collections.singleton(OrderPaid.class))));
+    }
+
+    /**
+     * 验证<code>registry.findHandler(OrderCreated.class).orElse(null)</code> 与…为同一实例 <code>summaryHandler</code>，<code>registry.findHandler(OrderPaid.class).orElse(null)</code> 与…为同一实例 <code>paymentHandler</code>，<code>registry.all()</code> 的大小为 <code>3</code>。
+     */
     @Test
     void multipleHandlersRouteToTheirOwnEventTypesAndMultiTypeHandlerAppearsOnce() {
-        RecordingHandler summaryHandler = new RecordingHandler("order-summary", setOf(OrderCreated.class));
-        RecordingHandler paymentHandler = new RecordingHandler("payment-view", setOf(OrderPaid.class));
+        RecordingHandler summaryHandler = new RecordingHandler("order-summary", java.util.Collections.singleton(OrderCreated.class));
+        RecordingHandler paymentHandler = new RecordingHandler("payment-view", java.util.Collections.singleton(OrderPaid.class));
         RecordingHandler lifecycleHandler = new RecordingHandler("order-lifecycle",
-                setOf(OrderShipped.class, OrderCancelled.class));
+                new java.util.LinkedHashSet<>(java.util.Arrays.asList(OrderShipped.class, OrderCancelled.class)));
 
         registry.register(summaryHandler);
         registry.register(paymentHandler);
@@ -171,10 +183,12 @@ class ProjectionHandlerRegistryTest {
                 .containsOnlyOnce(lifecycleHandler);
     }
 
-    /** \u9a8c\u8bc1<code>handler.getName()</code> \u7b49\u4e8e <code>"order-summary"</code>\uff0c<code>handler.getCron()</code> \u7b49\u4e8e <code>"0/5 * * * * *"</code>\uff0c<code>handler.getChunkSize()</code> \u7b49\u4e8e <code>100</code>\u3002 */
+    /**
+     * 验证<code>handler.getName()</code> 等于 <code>"order-summary"</code>，<code>handler.getCron()</code> 等于 <code>"0/5 * * * * *"</code>，<code>handler.getChunkSize()</code> 等于 <code>100</code>。
+     */
     @Test
     void defaultHandlerConfigurationMatchesContract() {
-        ProjectionHandler handler = new RecordingHandler("order-summary", setOf(OrderCreated.class));
+        ProjectionHandler handler = new RecordingHandler("order-summary", java.util.Collections.singleton(OrderCreated.class));
 
         assertThat(handler.getName()).isEqualTo("order-summary");
         assertThat(handler.getCron()).isEqualTo("0/5 * * * * *");
@@ -182,26 +196,101 @@ class ProjectionHandlerRegistryTest {
     }
 
     /**
+     * 验证<code>registry.findHandler(OrderCreated.class).orElseThrow(java.util.NoSuchElementException::new)</code> 与…为同一实例 <code>handler</code>，<code>registry.findHandlers(OrderCreated.class)</code> 按顺序仅包含 <code>handler</code>，<code>registry.all()</code> 按顺序仅包含 <code>handler</code>。
+     */
+    @Test
+    void mutableHandlerDoesNotChangeRegisteredSubscriptionsOrLegacyIdentity() {
+        MutableHandler handler = new MutableHandler();
+        registry.register(handler);
+        handler.types.clear();
+        handler.types.add(OrderPaid.class);
+        handler.name = "second";
+        assertSame(handler, registry.findHandler(OrderCreated.class).orElseThrow(java.util.NoSuchElementException::new));
+        assertThat(registry.findHandlers(OrderCreated.class)).containsExactly(handler);
+        assertThat(registry.findHandlers(OrderPaid.class)).isEmpty();
+        assertThat(registry.all()).containsExactly(handler);
+    }
+
+    /**
+     * 可变业务配置替身，用于验证登记快照与执行入口的一致性。
+     */
+    static final class MutableHandler implements ProjectionHandler {
+        /**
+         * 用于验证注册查找和泛型路由的候选类型。
+         */
+        final Set<Class<? extends DomainEvent<?>>> types = new LinkedHashSet<>(java.util.Collections.singleton(OrderCreated.class));
+        /**
+         * 当前测试中已经交给处理器的记录。
+         */
+        final List<DomainEvent<?>> handled = new java.util.ArrayList<>();
+        /**
+         * 当前测试模型用于展示和断言的名称。
+         */
+        String name = "first";
+
+        /**
+         * 返回当前配置、视图或处理器的名称。
+         *
+         * @return 实际返回<code>name</code>，供调用方取得当前值
+         */
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        /**
+         * 返回此处理器接受的事件类型。
+         *
+         * @return 实际返回<code>types</code>，供调用方取得当前值
+         */
+        @Override
+        public Collection<Class<? extends DomainEvent<?>>> eventTypes() {
+            return types;
+        }
+
+        /**
+         * 处理调用方传入的消息或请求。
+         *
+         * <p>测试夹具会调用 <code>handled.add(event)</code>。</p>
+         *
+         * @param event 订阅类型之一的领域事件，非空
+         */
+        @Override
+        public void handle(DomainEvent<?> event) {
+            handled.add(event);
+        }
+    }
+
+    /**
      * 记录型 handler 测试替身（可注入失败）。
      */
     static final class RecordingHandler implements ProjectionHandler {
 
-        /** \u5f53\u524d\u6d4b\u8bd5\u6a21\u578b\u7528\u4e8e\u5c55\u793a\u548c\u65ad\u8a00\u7684\u540d\u79f0\u3002 */
+        /**
+         * 当前测试模型用于展示和断言的名称。
+         */
         private final String name;
 
-        /** \u5939\u5177\u5411\u6295\u5f71\u8fd0\u884c\u5668\u58f0\u660e\u8ba2\u9605\u7684\u4e8b\u4ef6\u7c7b\u578b\u3002 */
+        /**
+         * 夹具向投影运行器声明订阅的事件类型。
+         */
         private final Set<Class<? extends DomainEvent<?>>> eventTypes;
 
-        /** \u5f53\u524d\u6d4b\u8bd5\u4e2d\u5df2\u7ecf\u4ea4\u7ed9\u5904\u7406\u5668\u7684\u8bb0\u5f55\u3002 */
+        /**
+         * 当前测试中已经交给处理器的记录。
+         */
         private final List<DomainEvent<?>> handled = new java.util.ArrayList<>();
 
-        /** \u5f53\u524d\u5931\u8d25\u8def\u5f84\u6240\u7528\u6216\u89c2\u5bdf\u5230\u7684\u539f\u59cb\u5f02\u5e38\u3002 */
+        /**
+         * 当前失败路径所用或观察到的原始异常。
+         */
         private RuntimeException failure;
 
         /**
-         * \u8bbe\u7f6e <code>name</code>\u3001<code>eventTypes</code>\uff0c\u7528\u4e8e\u6784\u9020 <code>RecordingHandler</code> \u6d4b\u8bd5\u5b9e\u4f8b\u3002
-         * @param name \u5f53\u524d\u6d4b\u8bd5\u6307\u5b9a\u7684\u5bf9\u8c61\u6216\u5c5e\u6027\u540d\u79f0
-         * @param eventTypes \u7528\u4e8e\u521d\u59cb\u5316 <code>RecordingHandler</code> \u7684 <code>Set&lt;Class&lt;? extends DomainEvent&lt;?&gt;&gt;&gt;</code> \u503c
+         * 设置 <code>name</code>、<code>eventTypes</code>，用于构造 <code>RecordingHandler</code> 测试实例。
+         *
+         * @param name       当前测试指定的对象或属性名称
+         * @param eventTypes 用于初始化 <code>RecordingHandler</code> 的 <code>Set&lt;Class&lt;? extends DomainEvent&lt;?&gt;&gt;&gt;</code> 值
          */
         RecordingHandler(String name, Set<Class<? extends DomainEvent<?>>> eventTypes) {
             this.name = name;
@@ -209,24 +298,27 @@ class ProjectionHandlerRegistryTest {
         }
 
         /**
-         * \u8bbe\u7f6e<code>failure</code> \u5b57\u6bb5\u3002
-         * @param failure \u8981\u5199\u5165\u7684\u503c
+         * 设置<code>failure</code> 字段。
+         *
+         * @param failure 要写入的值
          */
         void failWith(RuntimeException failure) {
             this.failure = failure;
         }
 
         /**
-         * \u8bfb\u53d6\u5f53\u524d\u6d4b\u8bd5\u4e2d\u5df2\u7ecf\u4ea4\u7ed9\u5904\u7406\u5668\u7684\u8bb0\u5f55\u3002
-         * @return \u5f53\u524d\u6d4b\u8bd5\u4e2d\u5df2\u7ecf\u4ea4\u7ed9\u5904\u7406\u5668\u7684\u8bb0\u5f55
+         * 读取当前测试中已经交给处理器的记录。
+         *
+         * @return 当前测试中已经交给处理器的记录
          */
         List<DomainEvent<?>> handled() {
             return handled;
         }
 
         /**
-         * 获取值。
-         * @return 结果字符串。
+         * 返回当前配置、视图或处理器的名称。
+         *
+         * @return 实际返回<code>name</code>，供调用方取得当前值
          */
         @Override
         public String getName() {
@@ -244,12 +336,15 @@ class ProjectionHandlerRegistryTest {
         }
 
         /**
-         * 处理请求。
-         * @param event 事件消息。
+         * 处理调用方传入的消息或请求。
+         *
+         * <p>测试夹具会调用 <code>handled.add(event)</code>。</p>
+         *
+         * @param event 订阅类型之一的领域事件，非空
          */
         @Override
         public void handle(DomainEvent<?> event) {
-            if (failure != null) {
+            if (Objects.nonNull(failure)) {
                 throw failure;
             }
             handled.add(event);
@@ -257,52 +352,52 @@ class ProjectionHandlerRegistryTest {
     }
 
     /**
-     * 类型说明。
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
-     * @since 3.0.x
+     * 表示订单创建的测试事件。
      */
     static final class OrderCreated extends DomainEvent<StringEntityId> {
 
-        /** \u4f7f\u7528 <code>super()</code> \u521d\u59cb\u5316 <code>OrderCreated</code> \u6d4b\u8bd5\u5939\u5177\u3002 */
+        /**
+         * 使用 <code>super()</code> 初始化 <code>OrderCreated</code> 测试夹具。
+         */
         OrderCreated() {
             super("order-1");
         }
     }
 
     /**
-     * 类型说明。
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
-     * @since 3.0.x
+     * 表示订单完成付款的测试事件。
      */
     static final class OrderPaid extends DomainEvent<StringEntityId> {
 
-        /** \u4f7f\u7528 <code>super()</code> \u521d\u59cb\u5316 <code>OrderPaid</code> \u6d4b\u8bd5\u5939\u5177\u3002 */
+        /**
+         * 使用 <code>super()</code> 初始化 <code>OrderPaid</code> 测试夹具。
+         */
         OrderPaid() {
             super("order-1");
         }
     }
 
     /**
-     * 类型说明。
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
-     * @since 3.0.x
+     * 表示订单已经发运的测试事件。
      */
     static final class OrderShipped extends DomainEvent<StringEntityId> {
 
-        /** \u4f7f\u7528 <code>super()</code> \u521d\u59cb\u5316 <code>OrderShipped</code> \u6d4b\u8bd5\u5939\u5177\u3002 */
+        /**
+         * 使用 <code>super()</code> 初始化 <code>OrderShipped</code> 测试夹具。
+         */
         OrderShipped() {
             super("order-1");
         }
     }
 
     /**
-     * 类型说明。
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
-     * @since 3.0.x
+     * 供传输、序列化或处理器分发验证的领域事件样本。
      */
     static final class OrderCancelled extends DomainEvent<StringEntityId> {
 
-        /** \u4f7f\u7528 <code>super()</code> \u521d\u59cb\u5316 <code>OrderCancelled</code> \u6d4b\u8bd5\u5939\u5177\u3002 */
+        /**
+         * 使用 <code>super()</code> 初始化 <code>OrderCancelled</code> 测试夹具。
+         */
         OrderCancelled() {
             super("order-1");
         }

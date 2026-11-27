@@ -15,7 +15,6 @@
 package io.ddd4j.data.logs;
 
 import io.ddd4j.core.constant.Constants;
-import io.ddd4j.web.webmvc.util.WebUtils;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +24,6 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Objects;
@@ -115,19 +111,17 @@ public class DefaultApiOperationLogProvider implements ApiOperationLogProvider {
         }
 
         // 5、获取 Request对象，解析请求来源
-        HttpServletRequest request = WebUtils.getHttpServletRequest();
-        String uri = "";
-        String ipAddress = "";
-        if (Objects.nonNull(request)) {
-            uri = request.getRequestURI();
-            ipAddress = WebUtils.getRemoteAddr(request);
+        ApiOperationLogRequestContext requestContext = ApiOperationLogRequestContext.current();
+        String uri = requestContext.requestUri();
+        String ipAddress = requestContext.clientIp();
+        if (Objects.nonNull(uri) || Objects.nonNull(ipAddress)) {
             log.info(ACCESS_MARKER, " >> URI {} IP {} ", uri, ipAddress);
         }
 
         // 6、筛选出有意义的参数
         Object[] args = joinPoint.getArgs();
         List<Object> methodArgs = Objects.isNull(args) ? null : Stream.of(args)
-                .filter(arg -> !(arg instanceof ServletRequest && arg instanceof ServletResponse))
+                .filter(requestContext::includeArgument)
                 .collect(Collectors.toList());
 
         // 5、如果开启日志，则发送日志消息
