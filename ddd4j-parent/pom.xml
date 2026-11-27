@@ -17,6 +17,7 @@
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <properties>
+        <surefire.maxMetaspace>256M</surefire.maxMetaspace>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -376,7 +377,7 @@
                             always：在一个进程中并行的运行脚本，Junit4.7以上版本才可以使用，surefire的版本要在2.6以上提供这个功能，其中 threadCount：执行时，指定可分配的线程数量。只和参数parallel配合使用有效。默认：5。 -->
                         <!--<forkMode>once</forkMode>-->
                         <argLine>@{argLine} -Dfile.encoding=UTF-8 ${jacocoArgLine} -Xmx1024M -XX:MetaspaceSize=256M
-                            -XX:MaxMetaspaceSize=256M
+                            -XX:MaxMetaspaceSize=${surefire.maxMetaspace}
                         </argLine>
                         <additionalClasspathElements>
                             <additionalClasspathElement>${basedir}/target/test-classes</additionalClasspathElement>

@@ -156,7 +156,7 @@ jobs:
         run: ./mvnw -U -Denforcer.skip=true -B -DskipTests install
       - name: Enforce 90% line coverage on gated modules
         run: >-
-          ./mvnw -U -Denforcer.skip=true -B -Pcoverage verify
+          ./mvnw -nsu -Denforcer.skip=true -B -Pcoverage verify
           -pl ddd4j-web/ddd4j-web-core,ddd4j-web/ddd4j-web-micronaut
 
   supply-chain-reports:

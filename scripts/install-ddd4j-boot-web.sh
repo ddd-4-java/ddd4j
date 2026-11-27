@@ -24,6 +24,6 @@ test "$(git -C "$source_dir" rev-parse HEAD)" = "$revision"
   for module in . ddd4j-boot-dependencies ddd4j-boot-core ddd4j-boot-web \
     ddd4j-boot-web/ddd4j-boot-web-webmvc ddd4j-boot-web/ddd4j-boot-web-webflux \
     ddd4j-boot-auth; do
-    bash mvnw -B --no-transfer-progress -N -f "$module/pom.xml" -DskipTests install
+    bash "$root/mvnw" -B --no-transfer-progress -N -f "$module/pom.xml" -DskipTests install
   done
 )
