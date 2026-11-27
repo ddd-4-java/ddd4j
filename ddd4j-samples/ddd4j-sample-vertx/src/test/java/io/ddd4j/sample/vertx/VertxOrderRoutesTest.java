@@ -152,7 +152,7 @@ class VertxOrderRoutesTest {
     private HttpResponse<String> request(HttpClient client, String baseUrl, String method, String path, String token,
                                          String body) throws Exception {
         HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(baseUrl + path))
-                .timeout(Duration.ofSeconds(10)).header("X-Tenant-Id", "route-test");
+                .timeout(Duration.ofSeconds(10)).header("X-Tenant-Id", "route-test").header("Idempotency-Key", path.endsWith("/payment") ? "checkout-confirmation" : "");
         if (Objects.nonNull(token)) {
             builder.header("Authorization", "Bearer " + token);
         }

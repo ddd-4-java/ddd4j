@@ -3,6 +3,9 @@ package io.ddd4j.web.core.idempotency;
 import io.ddd4j.kit.lang.StrKit;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ServiceLoader;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -22,6 +25,9 @@ public final class WebIdempotencyLifecycle {
     private final IdempotencyGuard guard;
     /** \u5e42\u7b49\u8bb0\u5f55\u4fdd\u7559\u7684\u65f6\u957f\u3002 */
     private final Duration ttl;
+
+    /** 当前应用声明的业务幂等入口，在创建生命周期时装载一次。 */
+    private final List<ApplicationIdempotencyPolicy> applicationPolicies = new ArrayList<>();
 
     /**
      * \u4f7f\u7528\u9ed8\u8ba4 TTL \u6784\u9020\u751f\u547d\u5468\u671f\u3002
@@ -43,6 +49,7 @@ public final class WebIdempotencyLifecycle {
         if (ttl.isZero() || ttl.isNegative()) {
             throw new IllegalArgumentException("ttl must be positive");
         }
+        ServiceLoader.load(ApplicationIdempotencyPolicy.class).forEach(applicationPolicies::add);
     }
 
     /**
@@ -50,6 +57,8 @@ public final class WebIdempotencyLifecycle {
      *
      *  <p>\u5e42\u7b49\u952e\u4e3a\u7a7a\u767d\u65f6\u89c6\u4e3a\u975e\u5e42\u7b49\u8bf7\u6c42\uff0c\u76f4\u63a5\u8fd4\u56de {@link Optional#empty()}\uff1b
      *  \u79df\u7ea6\u88ab\u5360\u7528\uff08\u91cd\u590d\u8bf7\u6c42\uff09\u65f6\u629b\u51fa 409 \u51b2\u7a81\u5f02\u5e38\u3002
+     * <p>匹配 {@link ApplicationIdempotencyPolicy} 的请求由业务事务处理重试，直接返回空作用域。
+     *
      * @param context Web \u8bf7\u6c42\u4e0a\u4e0b\u6587
      * @param idempotencyKey \u5ba2\u6237\u7aef\u63d0\u4f9b\u7684\u5e42\u7b49\u952e
      * @return \u5f00\u542f\u7684\u4f5c\u7528\u57df\uff1b\u5e42\u7b49\u952e\u4e3a\u7a7a\u767d\u65f6\u4e3a\u7a7a
@@ -60,6 +69,11 @@ public final class WebIdempotencyLifecycle {
             return Optional.empty();
         }
         WebRequestContext requestContext = Objects.requireNonNull(context, "context must not be null");
+        for (ApplicationIdempotencyPolicy policy : applicationPolicies) {
+            if (policy.handles(requestContext)) {
+                return Optional.empty();
+            }
+        }
         String storageKey = storageKey(requestContext, idempotencyKey.trim());
         Optional<IdempotencyLease> lease = guard.acquireLease(storageKey, ttl);
         if (lease.isEmpty()) {

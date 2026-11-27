@@ -96,6 +96,7 @@ public class CatalogTradeController {
     /**
      * 执行 <code>confirm Payment</code>，调用 <code>api.confirmPayment</code>、<code>JSON.valueToTree</code>。
      *
+     * @param idempotencyKey 支付请求幂等键
      * @param tenant 传入此操作的 <code>String</code> 类型 <code>tenant</code>
      * @param orderNo 传入此操作的 <code>String</code> 类型 <code>orderNo</code>
      * @param body 此 HTTP 消息携带的正文
@@ -103,9 +104,10 @@ public class CatalogTradeController {
      */
     @RawResponse
     @PostMapping("/orders/{orderNo}/payment")
-    public ResponseEntity<Object> confirmPayment(@RequestHeader("X-Tenant-Id") String tenant,
+    public ResponseEntity<Object> confirmPayment(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyKey,
+            @RequestHeader("X-Tenant-Id") String tenant,
             @PathVariable("orderNo") String orderNo, @RequestBody Map<String, Object> body) {
-        return respond(api.confirmPayment(tenant, orderNo, JSON.valueToTree(body).toString()));
+        return respond(api.confirmPayment(idempotencyKey, tenant, orderNo, JSON.valueToTree(body).toString()));
     }
 
     /**

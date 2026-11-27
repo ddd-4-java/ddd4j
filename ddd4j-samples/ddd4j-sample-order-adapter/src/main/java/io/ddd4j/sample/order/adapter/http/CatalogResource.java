@@ -84,6 +84,7 @@ public abstract class CatalogResource {
     /**
      * 确认订单支付。
      *
+     * @param idempotencyKey 支付请求幂等键
      * @param tenant 租户编号
      * @param orderNo 租户内订单编号
      * @param body 请求 JSON 正文
@@ -91,10 +92,11 @@ public abstract class CatalogResource {
      */
     @POST
     @Path("/orders/{orderNo}/payment")
-    public Response confirmPayment(@HeaderParam("X-Tenant-Id") String tenant,
+    public Response confirmPayment(@HeaderParam("Idempotency-Key") String idempotencyKey,
+            @HeaderParam("X-Tenant-Id") String tenant,
             @PathParam("orderNo") String orderNo, String body) {
         authorize("POST");
-        Reply reply = api.confirmPayment(tenant, orderNo, body);
+        Reply reply = api.confirmPayment(idempotencyKey, tenant, orderNo, body);
         return Response.status(reply.getStatus()).type(MediaType.APPLICATION_JSON).entity(reply.getBody()).build();
     }
 

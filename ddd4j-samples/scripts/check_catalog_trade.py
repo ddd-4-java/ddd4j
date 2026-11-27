@@ -9,9 +9,10 @@ from urllib.request import Request, urlopen
 def check(base, prefix="/api", cqrs=False, auth_headers=None, check_legacy_routes=False):
     tenant = "demo-" + uuid.uuid4().hex[:20]
 
-    def request(method, path, expected, body=None, tenant_id=tenant, decode=True):
-        headers = {"X-Tenant-Id": tenant_id, "Content-Type": "application/json",
-                   "Idempotency-Key": str(uuid.uuid4())}
+    def request(method, path, expected, body=None, tenant_id=tenant, decode=True, idempotency_key=None):
+        headers = {"X-Tenant-Id": tenant_id, "Content-Type": "application/json"}
+        if idempotency_key is not None:
+            headers["Idempotency-Key"] = idempotency_key
         headers.update(auth_headers or {})
         data = json.dumps(body).encode() if body is not None else None
         endpoint = path if path.startswith("/") else prefix + "/" + path
@@ -37,11 +38,14 @@ def check(base, prefix="/api", cqrs=False, auth_headers=None, check_legacy_route
     snapshot = request("GET", "orders/T001", 200)
     assert snapshot["grossAmountCent"] == 2500
     assert snapshot["items"][0]["productNameSnapshot"] == "Lunch"
-    request("POST", "orders/T001/payment", 409, {"paidAmountCent": 2499})
-    payment = request("POST", "orders/T001/payment", 200, {"paidAmountCent": 2500})
+    payment_key = uuid.uuid4().hex
+    request("POST", "orders/T001/payment", 400, {"paidAmountCent": 2500})
+    request("POST", "orders/T001/payment", 409, {"paidAmountCent": 2499}, idempotency_key=payment_key)
+    payment = request("POST", "orders/T001/payment", 200, {"paidAmountCent": 2500}, idempotency_key=payment_key)
     assert payment["orderState"] == "CONFIRMED"
     assert payment["paidAmountCent"] == 2500
-    assert request("POST", "orders/T001/payment", 200, {"paidAmountCent": 2500}) == payment
+    assert request("POST", "orders/T001/payment", 200, {"paidAmountCent": 2500}, idempotency_key=payment_key) == payment
+    request("POST", "orders/T001/payment", 409, {"paidAmountCent": 2499}, idempotency_key=payment_key)
     if cqrs:
         assert request("GET", "orders/T001", 200)["orderState"] == "AWAITING_PAYMENT"
         request("POST", "projections/orders/T001", 200)
