@@ -73,7 +73,8 @@ public class SpringContext implements ApplicationContextAware {
         for (StackTraceElement element : stackTraceElements) {
             if ("main".equals(element.getMethodName())) {
                 try {
-                    String projectPackage = Class.forName(element.getClassName()).getPackage().getName();
+                    Package mainPackage = Class.forName(element.getClassName()).getPackage();
+                    String projectPackage = Objects.isNull(mainPackage) ? "" : mainPackage.getName();
                     BaseContext.inject(ContextConstants.PROJECT_PACKAGE, projectPackage);
                     log.debug("PROJECT_PACKAGE: {}", projectPackage);
                 } catch (ClassNotFoundException e) {

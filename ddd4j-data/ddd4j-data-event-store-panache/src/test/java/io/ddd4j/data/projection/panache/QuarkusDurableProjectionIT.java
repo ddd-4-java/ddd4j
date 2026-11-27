@@ -47,7 +47,7 @@ class QuarkusDurableProjectionIT {
      * 当前用例注册和执行的投影视图。
      */
     @Inject
-    ProjectionViewBean view;
+    javax.enterprise.inject.Instance<ProjectionViewBean> view;
     /**
      * 测试驱动发送或记录的写入命令。
      */
@@ -79,13 +79,13 @@ class QuarkusDurableProjectionIT {
         manager.stop();
         positions.save(new DefaultProjectionPosition("r08-events", 7L));
         positions.save(new DefaultProjectionPosition("r08-read-model", 7L));
-        view.setFail(true);
+        view.get().setFail(true);
         assertThatThrownBy(manager::triggerOnce).isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("projection failed");
         entityManager.clear();
         assertThat(positions.findByStreamId("r08-events").orElseThrow(java.util.NoSuchElementException::new).getNextEventNumber()).isEqualTo(7L);
         assertThat(positions.findByStreamId("r08-read-model").orElseThrow(java.util.NoSuchElementException::new).getNextEventNumber()).isEqualTo(7L);
-        view.setFail(false);
+        view.get().setFail(false);
         manager.triggerOnce();
         entityManager.clear();
         assertThat(ProjectionBeans.readFrom.get()).isEqualTo(7L);

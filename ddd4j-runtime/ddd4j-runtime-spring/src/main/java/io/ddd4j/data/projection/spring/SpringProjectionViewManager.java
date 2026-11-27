@@ -23,9 +23,6 @@ import org.springframework.context.SmartLifecycle;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Spring 投影视图管理器（{@link ViewManager} SPI 的 Spring 实现）。
@@ -46,80 +43,76 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class SpringProjectionViewManager implements ViewManager, SmartLifecycle {
 
-    /** 注册任务和取消任务所用的视图调度器。 */
-    private final ViewScheduler scheduler;
-
-    /** 实际执行投影更新的运行器。 */
-    private final ProjectionRunner<?> runner;
-
-    /** 已发现并参加调度的投影视图。 */
-    private final Collection<ProjectionView<?>> views;
-
-    /** 以视图名称索引的当前调度任务句柄。 */
-    private final Map<String, ViewScheduler.ViewScheduleHandle> handles = new ConcurrentHashMap<>();
-
-    /** 视图管理器是否已启动。 */
-    private volatile boolean running = false;
+    /**
+     * 提供实际启动、停止和视图调度的共享管理器。
+     */
+    private final io.ddd4j.core.cqrs.readmodel.DefaultViewManager<Object> delegate;
 
     /**
-     * \u4ece Spring \u5bb9\u5668\u88c5\u914d\u6295\u5f71\u89c6\u56fe\u7ba1\u7406\u5668\u3002
-     * @param scheduler \u89c6\u56fe\u8c03\u5ea6\u5668
-     * @param runner \u6295\u5f71\u6267\u884c\u5668
-     * @param views \u53ef\u7528\u7684\u6295\u5f71\u89c6\u56fe
+     * 从 Spring 容器装配投影视图管理器。
+     *
+     * @param scheduler 视图调度器
+     * @param runner    投影执行器
+     * @param views     可用的投影视图
      */
     @Autowired
     public SpringProjectionViewManager(ViewScheduler scheduler,
                                        ProjectionRunner<?> runner,
                                        Collection<ProjectionView<?>> views) {
-        this.scheduler = Objects.requireNonNull(scheduler, "scheduler must not be null");
-        this.runner = Objects.requireNonNull(runner, "runner must not be null");
-        this.views = Objects.requireNonNull(views, "views must not be null");
+        this.delegate = createDelegate(scheduler, runner, views);
+    }
+
+    /**
+     * 从调度器、执行器及视图创建共享视图管理器。
+     *
+     * @param scheduler 调度投影任务的运行时组件
+     * @param runner    调用视图并维护事件位点的投影运行器
+     * @param views     当前运行时注册的投影视图集合
+     * @return 负责实际投影启停的共享管理器
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static io.ddd4j.core.cqrs.readmodel.DefaultViewManager<Object> createDelegate(
+            ViewScheduler scheduler, ProjectionRunner<?> runner, Collection<ProjectionView<?>> views) {
+        return new io.ddd4j.core.cqrs.readmodel.DefaultViewManager<>(scheduler,
+                (ProjectionRunner<Object>) runner, (Collection) views);
     }
 
     /**
      * 启动当前组件并准备其运行资源。
      *
-     * <p>Spring 实现调用 <code>view.getName()</code>。</p>
+     * <p>Spring 实现调用 <code>delegate.start()</code>。</p>
      */
     @Override
     public void start() {
-        if (!running) {
-            running = true;
-            for (ProjectionView<?> view : views) {
-                ViewScheduler.ViewScheduleHandle handle = scheduler.schedule(
-                        view.getName(), view.getCron(), () -> runView(view));
-                handles.put(view.getName(), handle);
-            }
-        }
+        delegate.start();
     }
 
     /**
      * 停止当前组件并清理已登记的运行资源。
      *
-     * <p>Spring 实现调用 <code>handles.values()</code>。</p>
+     * <p>Spring 实现调用 <code>delegate.stop()</code>。</p>
      */
     @Override
     public void stop() {
-        if (running) {
-            running = false;
-            handles.values().forEach(ViewScheduler.ViewScheduleHandle::cancel);
-            handles.clear();
-        }
+        delegate.stop();
     }
 
     /**
      * 检查当前组件是否仍处于运行状态。
      *
-     * @return 实际返回<code>running</code>，作为本次判断结果
+     * <p>Spring 实现调用 <code>delegate.isRunning()</code>。</p>
+     *
+     * @return 实际返回<code>delegate.isRunning()</code>
      */
     @Override
     public boolean isRunning() {
-        return running;
+        return delegate.isRunning();
     }
 
     /**
-     * \u58f0\u660e Spring \u662f\u5426\u5e94\u968f\u5e94\u7528\u4e0a\u4e0b\u6587\u81ea\u52a8\u542f\u52a8\u89c6\u56fe\u7ba1\u7406\u5668\u3002
-     * @return \u662f\u5426\u542f\u7528\u81ea\u52a8\u542f\u52a8
+     * 声明 Spring 是否应随应用上下文自动启动视图管理器。
+     *
+     * @return 是否启用自动启动
      */
     @Override
     public boolean isAutoStartup() {
@@ -127,8 +120,9 @@ public class SpringProjectionViewManager implements ViewManager, SmartLifecycle 
     }
 
     /**
-     * \u58f0\u660e\u5f53\u524d\u7ec4\u4ef6\u5728 Spring \u751f\u547d\u5468\u671f\u4e2d\u7684\u542f\u505c\u987a\u5e8f\u3002
-     * @return \u5f53\u524d\u7ec4\u4ef6\u7684\u751f\u547d\u5468\u671f\u9636\u6bb5
+     * 声明当前组件在 Spring 生命周期中的启停顺序。
+     *
+     * @return 当前组件的生命周期阶段
      */
     @Override
     public int getPhase() {
@@ -138,23 +132,23 @@ public class SpringProjectionViewManager implements ViewManager, SmartLifecycle 
     /**
      * 请求立即执行指定投影视图的一轮更新。
      *
-     * <p>Spring 实现调用 <code>((ProjectionRunner&lt;Object&gt;)runner).runOnce((ProjectionView&lt;Object&gt;)view)</code>。</p>
+     * <p>Spring 实现调用 <code>delegate.triggerOnce()</code>。</p>
      */
     @Override
-    @SuppressWarnings("unchecked")
     public void triggerOnce() {
-        for (ProjectionView<?> view : views) {
-            ((ProjectionRunner<Object>) runner).runOnce((ProjectionView<Object>) view);
-        }
+        delegate.triggerOnce();
     }
 
     /**
-     * 将本次调度触发的视图交给投影运行器执行。
+     * 汇总当前登记的投影视图及其运行状态。
      *
-     * @param view 本次要执行投影更新的视图
+     * <p>Spring 实现调用 <code>delegate.getProjectionStatus(streamId)</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     * @return 实际返回<code>delegate.getProjectionStatus(streamId)</code>
      */
-    @SuppressWarnings("unchecked")
-    private void runView(ProjectionView<?> view) {
-        ((ProjectionRunner<Object>) runner).runOnce((ProjectionView<Object>) view);
+    @Override
+    public io.ddd4j.core.cqrs.readmodel.ProjectionStatus getProjectionStatus(String streamId) {
+        return delegate.getProjectionStatus(streamId);
     }
 }
