@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * 充血聚合根基类（ddd4j 唯一推荐）。
+ * 聚合根基类，提供领域事件收集与可选的持久化便利方法。
  * <p>
  * 保留旧 ddd4j {@code Model.save()/update()/delete()/saveOrUpdate()/updateByKey()}
  * 的全部充血语义，但通过 {@link RepositoryRegistry}（基于 {@link io.ddd4j.core.context.Contexts}

@@ -51,7 +51,7 @@ public final class ColaDDDLayerRules {
     public static final ArchRule DOMAIN_NOT_DEPEND_ON_APPLICATION = noClasses()
             .that().resideInAPackage("..domain..")
             .should().dependOnClassesThat().resideInAnyPackage(
-                    "..application..", "..infrastructure..")
+                    "..app..", "..application..", "..client..", "..infrastructure..", "..start..")
             .because("COLA: domain 不得依赖 application / infrastructure");
     /**
      * 规则7：domain 包不得依赖 Spring/MyBatis 框架。
@@ -59,7 +59,10 @@ public final class ColaDDDLayerRules {
     public static final ArchRule DOMAIN_NOT_DEPEND_ON_FRAMEWORK = noClasses()
             .that().resideInAPackage("..domain..")
             .should().dependOnClassesThat().resideInAnyPackage(
-                    "org.springframework..", "com.baomidou..", "org.apache.ibatis..")
+                    "org.springframework..", "com.baomidou..", "org.apache.ibatis..",
+                    "jakarta.persistence..", "javax.persistence..", "org.hibernate..",
+                    "jakarta.ws.rs..", "javax.ws.rs..", "io.vertx..", "io.javalin..",
+                    "io.micronaut..", "jakarta.servlet..", "javax.servlet..")
             .because("领域层不得依赖 Spring/MyBatis/iBatis 等框架");
 
     /**
@@ -121,8 +124,8 @@ public final class ColaDDDLayerRules {
     public static ArchRule repositoryImplInAdapter(Class<? extends Annotation> domainRepositoryAnnotation) {
         return classes()
                 .that().areAnnotatedWith(domainRepositoryAnnotation)
-                .should().resideInAPackage("..adapter.persistence..")
-                .because("COLA: 仓储实现必须在 adapter.persistence（Clean 在 infrastructure）");
+                .should().resideInAnyPackage("..infrastructure.persistence..", "..adapter.persistence..")
+                .because("COLA: 仓储实现应位于持久化适配包");
     }
 
     /**
@@ -147,7 +150,7 @@ public final class ColaDDDLayerRules {
     public static ArchRule commandExecutorInApp(Class<? extends Annotation> commandExecutorAnnotation) {
         return classes()
                 .that().areAnnotatedWith(commandExecutorAnnotation)
-                .should().resideInAnyPackage("..application.executor..", "..application..")
+                .should().resideInAnyPackage("..app.executor..", "..application.executor..", "..application..")
                 .because("标了 @CommandExecutor 的类必须在 application.executor（COLA CQS 写侧）");
     }
 
@@ -160,7 +163,7 @@ public final class ColaDDDLayerRules {
     public static ArchRule queryServiceInApp(Class<? extends Annotation> queryServiceAnnotation) {
         return classes()
                 .that().areAnnotatedWith(queryServiceAnnotation)
-                .should().resideInAnyPackage("..application.query..", "..application..")
+                .should().resideInAnyPackage("..app.query..", "..application.query..", "..application..")
                 .because("标了 @QueryService 的类必须在 application.query（COLA CQS 读侧）");
     }
 }
