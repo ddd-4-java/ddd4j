@@ -23,6 +23,10 @@ class LicensePolicyTest(unittest.TestCase):
         self.assertEqual("EPL-1.0", normalize_license("Eclipse Public License v1.0"))
         self.assertEqual("EPL-2.0", normalize_license("Eclipse Public License 2.0"))
 
+    def test_normalizes_mpl_1_1_upstream_name(self):
+        self.assertEqual("MPL-1.1", normalize_license("Mozilla Public License Version 1.1"))
+        self.assertNotEqual("MPL-1.1", normalize_license("Mozilla Public License Version 1.0"))
+
     def write(self, name, content):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
