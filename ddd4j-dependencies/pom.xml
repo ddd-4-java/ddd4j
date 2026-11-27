@@ -24,8 +24,6 @@
         <!-- 版本约束：Spring Framework 锁定 6.x，不得升级至 7.x -->
         <!-- 版本约束：spring-kafka 锁定 3.3.x（适配 Spring Boot 3.4.x），不得升级至 4.x -->
         <!-- Maven Plugin versions -->
-        <ImpalaJDBC41.version>2.6.3</ImpalaJDBC41.version>
-        <UserAgentUtils.version>1.21</UserAgentUtils.version>
         <activation.version>1.1.1</activation.version>
         <activemq.version>6.2.0</activemq.version>
         <akka-http.version>10.5.3</akka-http.version>
@@ -42,10 +40,10 @@
         <aliyun-sdk-oss.version>3.18.5</aliyun-sdk-oss.version>
         <angus-mail.version>2.0.5</angus-mail.version>
         <ant-jsch.version>1.10.17</ant-jsch.version>
+        <antlr4.version>4.13.2</antlr4.version>
         <antlr-runtime.version>3.5.3</antlr-runtime.version>
         <antlr-st4.version>4.3.4</antlr-st4.version>
         <antlr.version>${antlr4.version}</antlr.version>
-        <antlr4.version>4.13.2</antlr4.version>
         <anyline.version>8.7.5-20260618</anyline.version>
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
         <appium.version>10.1.1</appium.version>
@@ -62,12 +60,12 @@
         <aws-java-sdk.version>1.12.797</aws-java-sdk.version>
         <awssdk.version>2.30.0</awssdk.version>
         <axiom.version>2.0.0</axiom.version>
-        <axis-schema.version>1.3</axis-schema.version>
-        <axis-wsdl4j.version>1.5.1</axis-wsdl4j.version>
-        <axis.version>1.4</axis.version>
         <axis2-api.version>1.4.1</axis2-api.version>
         <axis2-jaxbri.version>1.7.9</axis2-jaxbri.version>
         <axis2.version>1.8.2</axis2.version>
+        <axis-schema.version>1.3</axis-schema.version>
+        <axis-wsdl4j.version>1.5.1</axis-wsdl4j.version>
+        <axis.version>1.4</axis.version>
         <azure-ai-openai.version>1.0.0-beta.16</azure-ai-openai.version>
         <batik-js.version>1.8</batik-js.version>
         <batik.version>1.19</batik.version>
@@ -104,42 +102,42 @@
         <commons-chain.version>1.2</commons-chain.version>
         <commons-cli.version>1.11.0</commons-cli.version>
         <commons-codec.version>1.22.0</commons-codec.version>
-        <commons-collections.version>3.2.2</commons-collections.version>
         <commons-collections4.version>4.5.0</commons-collections4.version>
+        <commons-collections.version>3.2.2</commons-collections.version>
         <commons-compiler.version>3.1.12</commons-compiler.version>
         <commons-compress.version>1.28.0</commons-compress.version>
-        <commons-configuration.version>1.10</commons-configuration.version>
         <commons-configuration2.version>2.15.1</commons-configuration2.version>
+        <commons-configuration.version>1.10</commons-configuration.version>
         <commons-crypto.version>1.2.0</commons-crypto.version>
         <commons-csv.version>1.14.1</commons-csv.version>
         <commons-daemon.version>1.6.1</commons-daemon.version>
-        <commons-dbcp.version>1.4</commons-dbcp.version>
         <commons-dbcp2.version>2.14.0</commons-dbcp2.version>
+        <commons-dbcp.version>1.4</commons-dbcp.version>
         <commons-dbutils.version>1.8.1</commons-dbutils.version>
-        <commons-digester.version>2.1</commons-digester.version>
         <commons-digester3.version>3.2</commons-digester3.version>
+        <commons-digester.version>2.1</commons-digester.version>
         <commons-discovery.version>0.5</commons-discovery.version>
-        <commons-email.version>1.6.0</commons-email.version>
         <commons-email2.version>2.0.0-M1</commons-email2.version>
+        <commons-email.version>1.6.0</commons-email.version>
         <commons-exec.version>1.6.0</commons-exec.version>
-        <commons-fileupload.version>1.6.0</commons-fileupload.version>
         <commons-fileupload2.version>2.0.0-M4</commons-fileupload2.version>
+        <commons-fileupload.version>1.6.0</commons-fileupload.version>
         <commons-httpclient.version>3.1</commons-httpclient.version>
         <commons-imaging.version>1.0.0-alpha6</commons-imaging.version>
         <commons-io.version>2.22.0</commons-io.version>
         <commons-jci.version>1.1</commons-jci.version>
-        <commons-jexl.version>2.1.1</commons-jexl.version>
         <commons-jexl3.version>3.6.3</commons-jexl3.version>
+        <commons-jexl.version>2.1.1</commons-jexl.version>
         <commons-jxpath.version>1.4.0</commons-jxpath.version>
-        <commons-lang.version>2.6</commons-lang.version>
         <commons-lang3.version>3.20.0</commons-lang3.version>
+        <commons-lang.version>2.6</commons-lang.version>
         <commons-logging.version>1.4.0</commons-logging.version>
-        <commons-math.version>2.2</commons-math.version>
         <commons-math3.version>3.6.1</commons-math3.version>
         <commons-math4.version>4.0-beta1</commons-math4.version>
+        <commons-math.version>2.2</commons-math.version>
         <commons-net.version>3.13.0</commons-net.version>
-        <commons-pool.version>1.6</commons-pool.version>
         <commons-pool2.version>2.12.1</commons-pool2.version>
+        <commons-pool.version>1.6</commons-pool.version>
         <commons-proxy.version>1.0</commons-proxy.version>
         <commons-rdf.version>0.5.0</commons-rdf.version>
         <commons-ssl.version>0.3.9</commons-ssl.version>
@@ -155,8 +153,8 @@
         <curator.version>5.9.0</curator.version>
         <cxf-rt-javassist.version>4.0.x.20241003.RELEASE</cxf-rt-javassist.version>
         <cxf.version>4.2.2</cxf.version>
-        <db-meta.version>0.0.1-Release</db-meta.version>
         <db2jcc.version>12.1.5.0</db2jcc.version>
+        <db-meta.version>0.0.1-Release</db-meta.version>
         <debezium.version>3.6.0.Final</debezium.version>
         <dependency-management-plugin.version>1.1.7</dependency-management-plugin.version>
         <derby-locale.version>${derby.version}</derby-locale.version>
@@ -181,7 +179,6 @@
         <dubbo.version>3.3.6</dubbo.version>
         <dynamic-datasource.version>4.3.1</dynamic-datasource.version>
         <dynamic-tp.version>1.2.2-x</dynamic-tp.version>
-        <easy-captcha.version>1.0.2</easy-captcha.version>
         <easy4j-agora-java-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-agora-java-sdk.version>
         <easy4j-calibre-invoker.version>3.0.x.20260630-SNAPSHOT</easy4j-calibre-invoker.version>
         <easy4j-canal-client-plus-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-canal-client-plus-sdk.version>
@@ -201,8 +198,8 @@
         <easy4j-fetion4j-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-fetion4j-sdk.version>
         <easy4j-hermes-java-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-hermes-java-sdk.version>
         <easy4j-hitool.version>3.0.x.20260630-SNAPSHOT</easy4j-hitool.version>
-        <easy4j-httpclient-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-httpclient-extension.version>
         <easy4j-httpclient3-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-httpclient3-extension.version>
+        <easy4j-httpclient-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-httpclient-extension.version>
         <easy4j-ishumei-java-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-ishumei-java-sdk.version>
         <easy4j-jackson-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-jackson-extension.version>
         <easy4j-javassist-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-javassist-extension.version>
@@ -227,8 +224,8 @@
         <easy4j-pac4j-yiban.version>3.0.x.20260630-SNAPSHOT</easy4j-pac4j-yiban.version>
         <easy4j-pack-with-assembly.version>3.0.x.20260630-SNAPSHOT</easy4j-pack-with-assembly.version>
         <easy4j-perf4j-log4j2.version>3.0.x.20260630-SNAPSHOT</easy4j-perf4j-log4j2.version>
-        <easy4j-pf4j-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-pf4j-extension.version>
         <easy4j-pf4j3-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-pf4j3-extension.version>
+        <easy4j-pf4j-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-pf4j-extension.version>
         <easy4j-playwright-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-playwright-extension.version>
         <easy4j-rocketmq-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-rocketmq-extension.version>
         <easy4j-schemacrawler-hive.version>3.0.x.20260630-SNAPSHOT</easy4j-schemacrawler-hive.version>
@@ -237,8 +234,8 @@
         <easy4j-security-guard-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-security-guard-sdk.version>
         <easy4j-security-jwt-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-security-jwt-extension.version>
         <easy4j-shiro-biz-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-biz-sdk.version>
-        <easy4j-shiro-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-extension.version>
         <easy4j-shiro-dingtalk.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-dingtalk.version>
+        <easy4j-shiro-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-extension.version>
         <easy4j-shiro-j2cache.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-j2cache.version>
         <easy4j-shiro-jwt.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-jwt.version>
         <easy4j-shiro-oauth.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-oauth.version>
@@ -258,6 +255,7 @@
         <easy4j-wkhtmltopdf-invoker.version>3.0.x.20260630-SNAPSHOT</easy4j-wkhtmltopdf-invoker.version>
         <easy4j-xxljob-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-xxljob-extension.version>
         <easy4j-zxing-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-zxing-extension.version>
+        <easy-captcha.version>1.0.2</easy-captcha.version>
         <easyexcel.version>5.0.1</easyexcel.version>
         <easypoi.version>4.5.0</easypoi.version>
         <echarts.version>3.0.0.6</echarts.version>
@@ -265,8 +263,8 @@
         <elasticsearch-client.version>9.2.1</elasticsearch-client.version>
         <expressly.version>6.0.0</expressly.version>
         <fastdfs.version>1.27.2</fastdfs.version>
-        <fastjson.version>2.0.62</fastjson.version>
         <fastjson2.version>2.0.62</fastjson2.version>
+        <fastjson.version>2.0.62</fastjson.version>
         <feign.version>13.13</feign.version>
         <feshu-oapi.version>2.8.4</feshu-oapi.version>
         <findbugs-annotations.version>3.0.1u2</findbugs-annotations.version>
@@ -312,20 +310,20 @@
         <hbase.version>3.0.0-beta-1</hbase.version>
         <hdrhistogram.version>2.2.2</hdrhistogram.version>
         <helidon-bom.version>3.2.18</helidon-bom.version>
+        <hibernate4-sqlite-dialect.version>0.1.2</hibernate4-sqlite-dialect.version>
         <hibernate-validator.version>8.0.4.Final</hibernate-validator.version>
         <hibernate.version>6.6.40.Final</hibernate.version>
-        <hibernate4-sqlite-dialect.version>0.1.2</hibernate4-sqlite-dialect.version>
         <hikaricp.version>7.1.0</hikaricp.version>
         <hive.version>4.2.0</hive.version>
         <hsqldb.version>2.7.4</hsqldb.version>
         <htmlparser.version>2.1</htmlparser.version>
         <htmlunit.version>4.21.0</htmlunit.version>
         <httpasyncclient.version>4.1.5</httpasyncclient.version>
-        <httpclient.version>4.5.14</httpclient.version>
         <httpclient5.version>5.4.4</httpclient5.version>
+        <httpclient.version>4.5.14</httpclient.version>
         <httpconn.version>1.0.1.RELEASE</httpconn.version>
-        <httpcore.version>4.4.16</httpcore.version>
         <httpcore5.version>5.3.6</httpcore5.version>
+        <httpcore.version>4.4.16</httpcore.version>
         <httputils.version>1.0.0.RELEASE</httputils.version>
         <hudi.version>1.2.0</hudi.version>
         <hutool.version>5.8.46</hutool.version>
@@ -335,6 +333,7 @@
         <icu4j.version>78.3</icu4j.version>
         <imageio.version>3.13.1</imageio.version>
         <imagej.version>2.16.0</imagej.version>
+        <ImpalaJDBC41.version>2.6.3</ImpalaJDBC41.version>
         <infinispan.version>16.0.3</infinispan.version>
         <influxdb-client-java.version>7.5.0</influxdb-client-java.version>
         <influxdb-java.version>2.25</influxdb-java.version>
@@ -561,6 +560,8 @@
         <pf4j-update.version>2.3.0</pf4j-update.version>
         <pf4j.version>3.15.0</pf4j.version>
         <pgvector.version>0.1.6</pgvector.version>
+
+        <pi4j.version>4.0.2</pi4j.version>
         <picocli.version>4.7.7</picocli.version>
         <pinyin4j.version>2.5.1</pinyin4j.version>
         <png-encoder.version>1.5</png-encoder.version>
@@ -601,9 +602,9 @@
         <rocketmq-acl.version>5.3.2</rocketmq-acl.version>
         <rocketmq-client.version>5.5.0</rocketmq-client.version>
         <rsocket.version>1.1.5</rsocket.version>
-        <rxjava.version>1.3.8</rxjava.version>
         <rxjava2.version>2.2.21</rxjava2.version>
         <rxjava3.version>3.1.12</rxjava3.version>
+        <rxjava.version>1.3.8</rxjava.version>
         <sa-token.version>1.45.0</sa-token.version>
         <saaj-impl.version>3.0.4</saaj-impl.version>
         <scala3.version>3.5.2</scala3.version>
@@ -672,12 +673,12 @@
         <sshd-sftp.version>2.14.0</sshd-sftp.version>
         <sshd.version>2.14.0</sshd.version>
         <svnkit.version>1.10.11</svnkit.version>
+        <swagger2markup.version>1.3.4</swagger2markup.version>
+        <swagger3.version>2.2.52</swagger3.version>
         <swagger-bootstrap-ui.version>1.9.6</swagger-bootstrap-ui.version>
         <swagger-butler.version>2.0.0</swagger-butler.version>
         <swagger-codegen.version>2.4.19</swagger-codegen.version>
         <swagger.version>2.0.0-rc2</swagger.version>
-        <swagger2markup.version>1.3.4</swagger2markup.version>
-        <swagger3.version>2.2.52</swagger3.version>
         <tablesaw.version>0.44.4</tablesaw.version>
         <taos-jdbc.version>3.9.0</taos-jdbc.version>
         <tencentcloud-api-faceid.version>3.1.1472</tencentcloud-api-faceid.version>
@@ -704,6 +705,7 @@
         <undertow-metrics.version>1.0.0.RELEASE</undertow-metrics.version>
         <undertow.version>2.3.20.Final</undertow.version>
         <unirest-java.version>4.10.0</unirest-java.version>
+        <UserAgentUtils.version>1.21</UserAgentUtils.version>
         <vault-java-driver.version>6.2.2</vault-java-driver.version>
         <velocity.version>2.4.1</velocity.version>
         <vertx.version>5.1.5</vertx.version>
@@ -736,14 +738,12 @@
         <xxl-job.version>3.4.2</xxl-job.version>
         <yasson.version>3.0.4</yasson.version>
         <zip4j.version>2.11.6</zip4j.version>
-        <zipkin-reporter.version>3.5.1</zipkin-reporter.version>
         <zipkin2.version>3.5.1</zipkin2.version>
+        <zipkin-reporter.version>3.5.1</zipkin-reporter.version>
         <zkclient.version>0.11</zkclient.version>
         <zookeeper.version>3.9.5</zookeeper.version>
         <zstd-jni.version>1.5.7-11</zstd-jni.version>
         <zxing.version>3.5.4</zxing.version>
-
-        <pi4j.version>4.0.2</pi4j.version>
     </properties>
 
     <dependencyManagement>
