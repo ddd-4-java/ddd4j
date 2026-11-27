@@ -12,6 +12,11 @@
     <description>Spring Order -cqrs 独立样例入口。</description>
     <dependencies>
         <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
             <groupId>io.ddd4j.boot</groupId>
             <artifactId>ddd4j-boot-core</artifactId>
             <version>3.4.x.20260630-SNAPSHOT</version>
