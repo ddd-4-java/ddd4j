@@ -7,6 +7,7 @@ import java.util.Objects;
 
 /** 复用增强组件的租户作用域，将唯一租户来源桥接到 DDD4J 请求上下文。 */
 public class Ddd4jTenantContext {
+    /** \u4e0a\u6e38 ORM \u589e\u5f3a\u7ec4\u4ef6\u63d0\u4f9b\u7684\u79df\u6237\u4e0a\u4e0b\u6587\u59d4\u6258\u3002 */
     private final org.apache.ibatis.enhance.context.TenantContext delegate = new org.apache.ibatis.enhance.context.TenantContext() {
         @Override public Object getCurrentTenantId() { return Ddd4jTenantContext.this.getCurrentTenantId(); }
         @Override public void setCurrentTenantId(Object tenantId) { Ddd4jTenantContext.this.setCurrentTenantId(tenantId); }
@@ -61,12 +62,21 @@ public class Ddd4jTenantContext {
 
     /** 兼容既有 Ddd4jTenantContext.Scope 的薄包装。 */
     public static final class Scope implements AutoCloseable {
+        /** \u4e0a\u6e38\u79df\u6237\u4f5c\u7528\u57df\uff0c\u5173\u95ed\u65f6\u6062\u590d\u8fdb\u5165\u524d\u7684\u79df\u6237\u72b6\u6001\u3002 */
         private final org.apache.ibatis.enhance.context.TenantContext.Scope delegateScope;
 
+        /**
+         * \u5305\u88c5\u4e0a\u6e38\u79df\u6237\u4f5c\u7528\u57df\u4ee5\u4fbf\u968f DDD4J \u4e0a\u4e0b\u6587\u5173\u95ed\u3002
+         * @param scope \u4e0a\u6e38 ORM \u79df\u6237\u4e0a\u4e0b\u6587\u4f5c\u7528\u57df
+         */
         private Scope(org.apache.ibatis.enhance.context.TenantContext.Scope scope) {
             this.delegateScope = scope;
         }
 
+        /**
+         * \u5728\u521b\u5efa\u7ebf\u7a0b\u6062\u590d\u539f\u79df\u6237\uff1b\u540c\u7ebf\u7a0b\u91cd\u590d\u5173\u95ed\u4e0d\u518d\u6539\u53d8\u4e0a\u4e0b\u6587\u3002
+         * @throws IllegalStateException \u7531\u5176\u4ed6\u7ebf\u7a0b\u5173\u95ed\uff0c\u5305\u62ec\u5df2\u7ecf\u5173\u95ed\u7684\u4f5c\u7528\u57df
+         */
         @Override
         public void close() {
             delegateScope.close();

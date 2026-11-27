@@ -27,7 +27,9 @@ import java.util.Optional;
  */
 public final class WebRequestLifecycle {
 
+    /** \u89e3\u6790\u5e76\u9a8c\u8bc1\u5f53\u524d\u8bf7\u6c42\u4e3b\u4f53\u7684\u8ba4\u8bc1\u7ec4\u4ef6\u3002 */
     private final BearerSubjectAuthenticator authenticator;
+    /** \u9009\u62e9\u4e0d\u540c\u8bf7\u6c42\u8def\u5f84\u9274\u6743\u6a21\u5f0f\u7684\u8bbf\u95ee\u7b56\u7565\u3002 */
     private final WebAccessPolicy accessPolicy;
 
     /**

@@ -41,6 +41,7 @@ public class QuarkusJpaProjectionService {
     @Inject
     Instance<ProjectionPositionRepository> projectionPositionRepository;
 
+    /** \u6267\u884c\u517c\u5bb9\u8c03\u5ea6\u5165\u53e3\u89e6\u53d1\u7684\u6295\u5f71\u5904\u7406\u3002 */
     @Scheduled(cron = "${ddd4j.quarkus.cqrs.projection.cron:*/30 * * * * ?}")
     void scheduled() {
         runOnce();

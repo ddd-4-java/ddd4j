@@ -34,12 +34,15 @@ import java.util.Objects;
 @MappedSuperclass
 public abstract class TenantAwareEntityBase {
 
+    /** \u521b\u5efa\u65f6\u95f4\u3002 */
     @Column(name = "created_time", updatable = false)
     protected LocalDateTime createdTime;
 
+    /** \u6700\u540e\u66f4\u65b0\u65f6\u95f4\u3002 */
     @Column(name = "updated_time")
     protected LocalDateTime updatedTime;
 
+    /** \u9996\u6b21\u6301\u4e45\u5316\u65f6\u5199\u5165\u5ba1\u8ba1\u65f6\u95f4\u3002 */
     @PrePersist
     protected void onCreate() {
         LocalDateTime now = LocalDateTime.now();
@@ -49,15 +52,24 @@ public abstract class TenantAwareEntityBase {
         updatedTime = now;
     }
 
+    /** \u66f4\u65b0\u5b9e\u4f53\u65f6\u5237\u65b0\u5ba1\u8ba1\u65f6\u95f4\u3002 */
     @PreUpdate
     protected void onUpdate() {
         updatedTime = LocalDateTime.now();
     }
 
+    /**
+     * \u8fd4\u56de\u521b\u5efa\u65f6\u95f4\u3002
+     * @return \u521b\u5efa\u65f6\u95f4
+     */
     public LocalDateTime getCreatedTime() {
         return createdTime;
     }
 
+    /**
+     * \u8fd4\u56de\u6700\u540e\u66f4\u65b0\u65f6\u95f4\u3002
+     * @return \u6700\u540e\u66f4\u65b0\u65f6\u95f4
+     */
     public LocalDateTime getUpdatedTime() {
         return updatedTime;
     }

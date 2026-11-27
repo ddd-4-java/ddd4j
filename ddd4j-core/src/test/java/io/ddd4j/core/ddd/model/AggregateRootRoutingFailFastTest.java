@@ -46,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class AggregateRootRoutingFailFastTest {
 
+    /** \u9a8c\u8bc1<code>order.apply(new PathEvent(new EntityIdPath(new PlainId("order-1"))))</code> \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>exception.getMessage().contains("AggregateRootId")</code>\u4e3a\u771f\u3002 */
     @Test
     void applyRejectsPlainEntityIdRootSegment() {
         Order order = new Order("order-1");
@@ -57,6 +58,7 @@ class AggregateRootRoutingFailFastTest {
                 "fail-fast message should name the expected root segment type");
     }
 
+    /** \u9a8c\u8bc1<code>order.apply(new PathEvent(new EntityIdPath(new StringEntityId("order-1"))))</code> \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>exception.getMessage().contains("AggregateRootId")</code>\u4e3a\u771f\u3002 */
     @Test
     void applyRejectsStringEntityIdRootSegment() {
         Order order = new Order("order-1");
@@ -68,6 +70,7 @@ class AggregateRootRoutingFailFastTest {
                 "StringEntityId convenience root segment must also be rejected");
     }
 
+    /** \u9a8c\u8bc1<code>order.loadFromHistory(Arrays.asList(new PathEvent(new EntityIdPath(new PlainId("order-1")))))</code> \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>exception.getMessage().contains("AggregateRootId")</code>\u4e3a\u771f\u3002 */
     @Test
     void loadFromHistoryRejectsNonAggregateRootIdRootSegment() {
         Order order = new Order("order-1");
@@ -79,6 +82,7 @@ class AggregateRootRoutingFailFastTest {
                 "replay path must fail fast on the same assertion");
     }
 
+    /** \u9a8c\u8bc1<code>order.handled</code> \u7b49\u4e8e <code>1</code>\uff0c<code>order.domainEvents().contains(event)</code>\u4e3a\u771f\u3002 */
     @Test
     void applyAcceptsAggregateRootIdRootSegment() {
         Order order = new Order("order-1");
@@ -90,6 +94,7 @@ class AggregateRootRoutingFailFastTest {
         assertTrue(order.domainEvents().contains(event), "applied event should be registered");
     }
 
+    /** \u9a8c\u8bc1<code>order.handled</code> \u7b49\u4e8e <code>1</code>\u3002 */
     @Test
     void applyAcceptsSubEntityPathRootedAtAggregateRootId() {
         Order order = new Order("order-1");
@@ -105,29 +110,58 @@ class AggregateRootRoutingFailFastTest {
      */
     static final class PlainId implements EntityId {
 
+        /** \u6d4b\u8bd5\u805a\u5408\u6ce8\u518c\u548c\u53cd\u5e8f\u5217\u5316\u6240\u7528\u7684\u5b9e\u4f53\u7c7b\u578b\u6807\u8bc6\u3002 */
         private static final EntityType TYPE = new StringEntityType("Plain");
 
+        /** \u7ec4\u6210\u6d4b\u8bd5\u6807\u8bc6\u7684\u539f\u59cb\u503c\u3002 */
         private final String value;
 
+        /**
+         * \u8bbe\u7f6e <code>value</code>\uff0c\u7528\u4e8e\u6784\u9020 <code>PlainId</code> \u6d4b\u8bd5\u5b9e\u4f8b\u3002
+         * @param value \u7ec4\u6210\u6d4b\u8bd5\u6807\u8bc6\u7684\u539f\u59cb\u503c
+         */
         PlainId(String value) {
             this.value = value;
         }
 
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 实际返回<code>TYPE</code>，供调用方取得当前值
+         */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 实际返回<code>value</code>，供调用方取得当前值
+         */
         @Override
         public String asString() {
             return value;
         }
 
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * <p>测试夹具会调用 <code>TYPE.asString()</code>。</p>
+         *
+         * @return 实际返回<code>TYPE.asString() + ":" + value</code>
+         */
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
         }
 
+        /**
+         * 根据<code>value</code>比较对象的值是否相等。
+         *
+         * @param o 用来比较的另一个对象，允许为空
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object o) {
             if (this == o) {
@@ -140,11 +174,21 @@ class AggregateRootRoutingFailFastTest {
             return Objects.equals(this.value, other.value);
         }
 
+        /**
+         * 用<code>value</code>计算哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             return Objects.hash(value);
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>value</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "PlainId{" + "value=" + value + "}";
@@ -156,29 +200,58 @@ class AggregateRootRoutingFailFastTest {
      */
     static final class RootId implements AggregateRootId {
 
+        /** \u6d4b\u8bd5\u805a\u5408\u6ce8\u518c\u548c\u53cd\u5e8f\u5217\u5316\u6240\u7528\u7684\u5b9e\u4f53\u7c7b\u578b\u6807\u8bc6\u3002 */
         private static final EntityType TYPE = new StringEntityType("Order");
 
+        /** \u7ec4\u6210\u6d4b\u8bd5\u6807\u8bc6\u7684\u539f\u59cb\u503c\u3002 */
         private final String value;
 
+        /**
+         * \u8bbe\u7f6e <code>value</code>\uff0c\u7528\u4e8e\u6784\u9020 <code>RootId</code> \u6d4b\u8bd5\u5b9e\u4f8b\u3002
+         * @param value \u7ec4\u6210\u6d4b\u8bd5\u6807\u8bc6\u7684\u539f\u59cb\u503c
+         */
         RootId(String value) {
             this.value = value;
         }
 
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 实际返回<code>TYPE</code>，供调用方取得当前值
+         */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 实际返回<code>value</code>，供调用方取得当前值
+         */
         @Override
         public String asString() {
             return value;
         }
 
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * <p>测试夹具会调用 <code>TYPE.asString()</code>。</p>
+         *
+         * @return 实际返回<code>TYPE.asString() + ":" + value</code>
+         */
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
         }
 
+        /**
+         * 根据<code>value</code>比较对象的值是否相等。
+         *
+         * @param o 用来比较的另一个对象，允许为空
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object o) {
             if (this == o) {
@@ -191,11 +264,21 @@ class AggregateRootRoutingFailFastTest {
             return Objects.equals(this.value, other.value);
         }
 
+        /**
+         * 用<code>value</code>计算哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             return Objects.hash(value);
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>value</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "RootId{" + "value=" + value + "}";
@@ -208,6 +291,10 @@ class AggregateRootRoutingFailFastTest {
      */
     static final class PathEvent extends DomainEvent<EntityId> {
 
+        /**
+         * \u4f7f\u7528 <code>super()</code> \u521d\u59cb\u5316 <code>PathEvent</code> \u6d4b\u8bd5\u5939\u5177\u3002
+         * @param path \u6d4b\u8bd5\u8bf7\u6c42\u7684\u8d44\u6e90\u8def\u5f84\u6216\u5f85\u8bbf\u95ee\u6587\u4ef6\u8def\u5f84
+         */
         PathEvent(EntityIdPath path) {
             super(path);
         }
@@ -218,19 +305,33 @@ class AggregateRootRoutingFailFastTest {
      */
     static final class Order extends AggregateRoot<String> {
 
+        /** \u8ba2\u5355\u6807\u8bc6\u3002 */
         private final String orderId;
 
+        /** \u5f53\u524d\u6d4b\u8bd5\u4e2d\u5df2\u7ecf\u4ea4\u7ed9\u5904\u7406\u5668\u7684\u8bb0\u5f55\u3002 */
         int handled;
 
+        /**
+         * \u7528\u7ed9\u5b9a\u503c\u521d\u59cb\u5316 <code>Order</code> \u5b9e\u4f8b\u3002
+         * @param orderId \u8ba2\u5355\u6807\u8bc6
+         */
         Order(String orderId) {
             this.orderId = orderId;
         }
 
+        /**
+         * \u8bfb\u53d6\u8ba2\u5355\u6807\u8bc6\u3002
+         * @return \u8ba2\u5355\u6807\u8bc6
+         */
         @Override
         public String id() {
             return orderId;
         }
 
+        /**
+         * \u8bb0\u5f55\u805a\u5408\u5bf9\u4e00\u6761\u8def\u5f84\u4e8b\u4ef6\u7684\u5904\u7406\u6b21\u6570\u3002
+         * @param event \u7531\u805a\u5408\u6216\u76d1\u542c\u5668\u6536\u5230\u7684\u6d4b\u8bd5\u4e8b\u4ef6
+         */
         @EventHandler
         void on(PathEvent event) {
             this.handled++;

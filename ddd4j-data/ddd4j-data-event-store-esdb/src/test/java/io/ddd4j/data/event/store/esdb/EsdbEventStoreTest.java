@@ -58,18 +58,23 @@ import static org.mockito.Mockito.when;
  */
 @ExtendWith(MockitoExtension.class)
 class EsdbEventStoreTest {
+    /** \u6d4b\u8bd5\u4e8b\u4ef6\u6d41\u4e2d\u4f7f\u7528\u7684\u805a\u5408\u7c7b\u578b\u540d\u79f0\u3002 */
     private static final String ORDER_TYPE = "Order";
+    /** \u7528\u4e8e\u9694\u79bb <code>EventStoreDBClient</code> \u8c03\u7528\u5e76\u8bb0\u5f55\u4ea4\u4e92\u7684\u6d4b\u8bd5\u66ff\u8eab\u3002 */
     @Mock
     EventStoreDBClient client;
+    /** \u6355\u83b7\u88ab\u6d4b\u4ee3\u7801\u4f20\u5165\u7684 <code>String</code> \u53c2\u6570\u4ee5\u4fbf\u65ad\u8a00\u3002 */
     @Captor
     ArgumentCaptor<String> streamCaptor;
 
+    /** \u9a8c\u8bc1<code>EsdbEventStore.toExpectedRevision(0)</code> \u7b49\u4e8e <code>ExpectedRevision.noStream()</code>\uff0c<code>EsdbEventStore.toExpectedRevision(3)</code> \u7b49\u4e8e <code>ExpectedRevision.expectedRevision(2)</code>\u3002 */
     @Test
     void expectedRevisionShouldFollowCoreCurrentVersionContract() {
         assertThat(EsdbEventStore.toExpectedRevision(0)).isEqualTo(ExpectedRevision.noStream());
         assertThat(EsdbEventStore.toExpectedRevision(3)).isEqualTo(ExpectedRevision.expectedRevision(2));
     }
 
+    /** \u9a8c\u8bc1\u8c03\u7528\u4e86 <code>client.appendToStream(streamCaptor.capture(), any(AppendToStreamOptions.class), any(EventData[].class))</code>\u3002 */
     @Test
     void appendShouldUseAggregateTypeInStreamAndPreserveCoreEventIdentity() {
         TestId id = new TestId("order-1");
@@ -82,12 +87,14 @@ class EsdbEventStoreTest {
         assertThat(streamCaptor.getValue()).isEqualTo("test-Order::order-1");
     }
 
+    /** \u9a8c\u8bc1\u672a\u8c03\u7528 <code>client</code>\u3002 */
     @Test
     void appendEmptyEventsMustNotCallClient() {
         new EsdbEventStore(client).append(ORDER_TYPE, new TestId("empty"), List.of(), 0);
         verifyNoInteractions(client);
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>AggregateVersionConflictException.class</code>\u3002 */
     @Test
     void versionConflictMustUseCoreException() {
         WrongExpectedVersionException conflict = org.mockito.Mockito.mock(WrongExpectedVersionException.class);
@@ -100,6 +107,7 @@ class EsdbEventStoreTest {
                 .isInstanceOf(AggregateVersionConflictException.class);
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\u3002 */
     @Test
     void malformedMetadataMustFailBeforeDeserializingEvent() {
         com.eventstore.dbclient.ReadResult result = org.mockito.Mockito.mock(com.eventstore.dbclient.ReadResult.class);
@@ -115,6 +123,7 @@ class EsdbEventStoreTest {
                 .hasMessage("Invalid ESDB event metadata");
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\u3002 */
     @Test
     void nullMetadataMustFailBeforeDeserializingEvent() {
         com.eventstore.dbclient.ReadResult result = org.mockito.Mockito.mock(com.eventstore.dbclient.ReadResult.class);
@@ -130,6 +139,7 @@ class EsdbEventStoreTest {
                 .hasMessage("Invalid ESDB event metadata");
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>org.mockito.Mockito.mock()</code>\u3001<code>client.readStream()</code>\u3001<code>anyString()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void absentStronglyTypedStreamMustReadEmpty() {
         StreamNotFoundException absent = org.mockito.Mockito.mock(StreamNotFoundException.class);
@@ -137,6 +147,7 @@ class EsdbEventStoreTest {
         assertThat(new EsdbEventStore(client).read(ORDER_TYPE, new TestId("missing"))).isEmpty();
     }
 
+    /** \u9a8c\u8bc1<code>store.read(ORDER_TYPE, id).add(null)</code> \u629b\u51fa <code>UnsupportedOperationException.class</code>\uff0c<code>store.read(ORDER_TYPE, id, 1, 2).add(null)</code> \u629b\u51fa <code>UnsupportedOperationException.class</code>\u3002 */
     @Test
     void existingEmptyStreamMustReturnUnmodifiableReadResults() {
         com.eventstore.dbclient.ReadResult result = org.mockito.Mockito.mock(com.eventstore.dbclient.ReadResult.class);
@@ -151,6 +162,10 @@ class EsdbEventStoreTest {
                 .isInstanceOf(UnsupportedOperationException.class);
     }
 
+    /**
+     * \u9a8c\u8bc1<code>event.aggregateId().asString()</code> \u7b49\u4e8e <code>"order-1"</code>\uff0c<code>event.aggregateId().asTypedString()</code> \u7b49\u4e8e <code>"String:order-1"</code>\uff0c<code>JsonMapper.builder().build().writeValueAsString(event.aggregateId())</code> \u7b49\u4e8e <code>"\"order-1\""</code>\u3002
+     * @throws Exception \u5904\u7406\u6d4b\u8bd5\u6570\u636e\u7684\u5e8f\u5217\u5316\u65f6\u5931\u8d25
+     */
     @Test
     void readAllShouldExposeStableAggregateIdString() throws Exception {
         com.eventstore.dbclient.ReadResult result = org.mockito.Mockito.mock(com.eventstore.dbclient.ReadResult.class);
@@ -187,10 +202,13 @@ class EsdbEventStoreTest {
      */
     final static class TestId implements AggregateRootId {
 
+        /** Java \u5e8f\u5217\u5316\u4f7f\u7528\u7684\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u7528\u4e8e\u7ec4\u6210\u6d4b\u8bd5\u6807\u8bc6\u7684\u539f\u59cb\u503c\u3002 */
         private final String value;
 
+        /** \u6d4b\u8bd5\u805a\u5408\u6ce8\u518c\u548c\u53cd\u5e8f\u5217\u5316\u6240\u7528\u7684\u5b9e\u4f53\u7c7b\u578b\u6807\u8bc6\u3002 */
         private static final EntityType TYPE = new StringEntityType("Order");
 
         /**
@@ -230,11 +248,23 @@ class EsdbEventStoreTest {
             this.value = value;
         }
 
+        /**
+         * \u8bfb\u53d6<code>value</code> \u5b57\u6bb5\u3002
+         * @return <code>value</code> \u5b57\u6bb5
+         */
         @JsonProperty("value")
         public String value() {
             return value;
         }
 
+        /**
+         * 根据<code>value</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -247,6 +277,11 @@ class EsdbEventStoreTest {
             return Objects.equals(this.value, other.value);
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 0;
@@ -254,6 +289,11 @@ class EsdbEventStoreTest {
             return result;
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>value</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "TestId[value=" + value + "]";
@@ -266,10 +306,15 @@ class EsdbEventStoreTest {
      * @since 3.0.x
      */
     static final class TestEvent extends DomainEvent<TestId> {
+        /** \u4f7f\u7528 <code>super()</code> \u521d\u59cb\u5316 <code>TestEvent</code> \u6d4b\u8bd5\u5939\u5177\u3002 */
         TestEvent() {
             super();
         }
 
+        /**
+         * \u4f7f\u7528 <code>super()</code> \u521d\u59cb\u5316 <code>TestEvent</code> \u6d4b\u8bd5\u5939\u5177\u3002
+         * @param id \u5f53\u524d\u8981\u67e5\u627e\u7684\u6d4b\u8bd5\u8bb0\u5f55\u6807\u8bc6
+         */
         TestEvent(TestId id) {
             super(new EntityIdPath(id));
         }

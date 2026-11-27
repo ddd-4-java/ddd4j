@@ -35,15 +35,19 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class QuarkusJpaProjectionPositionRepositoryListTest {
 
+    /** \u7528\u4e8e\u9694\u79bb <code>Instance&lt;EntityManager&gt;</code> \u8c03\u7528\u5e76\u8bb0\u5f55\u4ea4\u4e92\u7684\u6d4b\u8bd5\u66ff\u8eab\u3002 */
     @Mock
     Instance<EntityManager> entityManagers;
 
+    /** \u7528\u4e8e\u9694\u79bb <code>EntityManager</code> \u8c03\u7528\u5e76\u8bb0\u5f55\u4ea4\u4e92\u7684\u6d4b\u8bd5\u66ff\u8eab\u3002 */
     @Mock
     EntityManager manager;
 
+    /** \u7528\u4e8e\u9694\u79bb <code>TypedQuery&lt;QuarkusJpaProjectionPosition&gt;</code> \u8c03\u7528\u5e76\u8bb0\u5f55\u4ea4\u4e92\u7684\u6d4b\u8bd5\u66ff\u8eab\u3002 */
     @Mock
     TypedQuery<QuarkusJpaProjectionPosition> query;
 
+    /** \u9a8c\u8bc1<code>snapshot</code>\u4e3a\u7a7a\uff0c<code>repository.findAll()</code> \u7684\u5927\u5c0f\u4e3a <code>1</code>\u3002 */
     @Test
     void findAllReturnsMutableDetachedList() {
         when(entityManagers.get()).thenReturn(manager);

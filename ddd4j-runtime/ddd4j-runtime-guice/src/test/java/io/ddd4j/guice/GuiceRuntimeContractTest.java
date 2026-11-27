@@ -24,6 +24,13 @@ import io.ddd4j.runtime.testkit.RuntimeFixtures;
 /** Guice 适配器的运行时启动、关闭及就绪契约。 */
 class GuiceRuntimeContractTest extends AbstractRuntimeContractTest {
 
+    /**
+     * 为契约测试构造当前框架的运行实例。
+     *
+     * <p>测试夹具会调用 <code>Guice.createInjector(new Ddd4jGuiceModule())</code>、<code>injector.getInstance(Ddd4jGuiceRuntime.class)</code>。</p>
+     *
+     * @return 待验证的运行时适配器
+     */
     @Override
     protected RuntimeContract createRuntime() {
         Injector injector = Guice.createInjector(new Ddd4jGuiceModule());

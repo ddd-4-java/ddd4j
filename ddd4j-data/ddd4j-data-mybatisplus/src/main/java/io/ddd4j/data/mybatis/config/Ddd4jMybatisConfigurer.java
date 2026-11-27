@@ -26,11 +26,17 @@ import java.util.function.Predicate;
 
 /** 框架中立的 MyBatis-Plus 增强链装配器；安全策略由应用显式提供。 */
 public final class Ddd4jMybatisConfigurer {
+    /** SQL \u79df\u6237\u9694\u79bb\u4f7f\u7528\u7684\u5217\u540d\u79f0\u3002 */
     private String tenantColumn;
+    /** \u5224\u65ad\u67d0\u5f20\u8868\u662f\u5426\u5e94\u8df3\u8fc7\u79df\u6237\u8fc7\u6ee4\u7684\u89c4\u5219\u3002 */
     private Predicate<String> ignoredTable;
+    /** \u4e3a\u6570\u636e\u6743\u9650\u6761\u4ef6\u63d0\u4f9b\u5f53\u524d\u8bbf\u95ee\u8303\u56f4\u7684\u7ec4\u4ef6\u3002 */
     private Function<String, String> scopeProvider;
+    /** \u751f\u6210 MyBatis-Plus \u6570\u636e\u6743\u9650\u6761\u4ef6\u7684\u5904\u7406\u5668\u3002 */
     private MultiDataPermissionHandler permissionHandler;
+    /** ORM \u9002\u914d\u5668\u4f7f\u7528\u7684\u5b57\u6bb5\u52a0\u89e3\u5bc6\u5904\u7406\u5668\u3002 */
     private EncryptedFieldHandler crypto;
+    /** \u5bf9\u6301\u4e45\u5316\u5b57\u6bb5\u6267\u884c\u7b7e\u540d\u76f8\u5173\u5904\u7406\u7684\u7ec4\u4ef6\u3002 */
     private boolean signature;
 
     /**

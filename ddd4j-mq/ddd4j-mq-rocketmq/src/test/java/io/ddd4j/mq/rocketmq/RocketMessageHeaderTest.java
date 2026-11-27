@@ -44,11 +44,13 @@ import static org.mockito.Mockito.*;
  */
 class RocketMessageHeaderTest {
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>BaseContext.clear()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterEach
     void clearContext() {
         BaseContext.clear();
     }
 
+    /** \u9a8c\u8bc1<code>RocketMQClient.messageId(stableMessage)</code> \u7b49\u4e8e <code>"stable-id"</code>\uff0c<code>RocketMQClient.messageId(legacyMessage)</code> \u7b49\u4e8e <code>"legacy-id"</code>\u3002 */
     @Test
     void shouldPreferStableHeaderAndReadLegacyHeader() {
         MessageExt stableMessage = new MessageExt();
@@ -61,6 +63,7 @@ class RocketMessageHeaderTest {
         assertEquals("legacy-id", RocketMQClient.messageId(legacyMessage));
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>mock()</code>\u3001<code>client.close()</code>\u3001<code>never()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void shouldNotShutdownExternallyInjectedProducer() {
         DefaultMQProducer producer = mock(DefaultMQProducer.class);
@@ -72,6 +75,10 @@ class RocketMessageHeaderTest {
         verify(producer, never()).shutdown();
     }
 
+    /**
+     * \u9a8c\u8bc1<code>sent.getValue().getTopic()</code> \u7b49\u4e8e <code>"tenant_orders"</code>\uff0c<code>sent.getValue().getTags()</code> \u7b49\u4e8e <code>"paid"</code>\u3002
+     * @throws Exception \u53d1\u8d77\u6d4b\u8bd5\u8bf7\u6c42\u65f6\u5931\u8d25
+     */
     @Test
     void shouldPublishToNamespacedTopicWithoutAppendingNativeTag() throws Exception {
         DefaultMQProducer producer = mock(DefaultMQProducer.class);
@@ -106,6 +113,10 @@ class RocketMessageHeaderTest {
         client.close();
     }
 
+    /**
+     * \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>mock()</code>\u3001<code>spy()</code>\u3001<code>properties.setNamespace()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void shouldSubscribeToNamespacedTopicWithNativeTagFilter() throws Exception {
         DefaultMQPushConsumer consumer = mock(DefaultMQPushConsumer.class);
@@ -122,6 +133,10 @@ class RocketMessageHeaderTest {
         client.close();
     }
 
+    /**
+     * \u9a8c\u8bc1<code>messages.getValue().getUserProperty(MQDeliveryHeaders.MESSAGE_ID)</code> \u7b49\u4e8e <code>"plain-id"</code>\uff0c<code>messages.getValue().getUserProperty(MQDeliveryHeaders.CORRELATION_ID)</code>\u4e3a\u7a7a\uff0c<code>sent.getUserProperty(MQDeliveryHeaders.CAUSATION_ID)</code> \u7b49\u4e8e <code>"causation-id"</code>\u3002
+     * @throws Exception \u53d1\u8d77\u6d4b\u8bd5\u8bf7\u6c42\u65f6\u5931\u8d25
+     */
     @Test
     void shouldPublishOnlyPresentCausalityInNativeProperties() throws Exception {
         DefaultMQProducer producer = mock(DefaultMQProducer.class);
@@ -167,6 +182,7 @@ class RocketMessageHeaderTest {
         client.close();
     }
 
+    /** \u9a8c\u8bc1<code>event.getCorrelationId()</code> \u7b49\u4e8e <code>"native-correlation"</code>\uff0c<code>event.getCausationId()</code> \u7b49\u4e8e <code>"native-causation"</code>\u3002 */
     @Test
     void shouldRestoreNativeCausalityOverPayloadMirror() {
         MessageExt message = new MessageExt();
@@ -182,6 +198,7 @@ class RocketMessageHeaderTest {
         assertEquals("native-causation", event.getCausationId());
     }
 
+    /** \u9a8c\u8bc1<code>event.getCorrelationId()</code> \u7b49\u4e8e <code>"native-correlation"</code>\uff0c<code>event.getCausationId()</code> \u7b49\u4e8e <code>"payload-causation"</code>\u3002 */
     @Test
     void shouldPreservePayloadWhenNativeCausalityIsAbsent() {
         MessageExt message = new MessageExt();
@@ -196,6 +213,7 @@ class RocketMessageHeaderTest {
         assertEquals("payload-causation", event.getCausationId());
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>nativeMessage.setKeys()</code>\u3001<code>nativeMessage.putUserProperty()</code>\u3001<code>legacyMessage.setKeys()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void shouldExposeNativeCorrelationInAcknowledgmentWithLegacyFallback() {
         MessageExt nativeMessage = new MessageExt();

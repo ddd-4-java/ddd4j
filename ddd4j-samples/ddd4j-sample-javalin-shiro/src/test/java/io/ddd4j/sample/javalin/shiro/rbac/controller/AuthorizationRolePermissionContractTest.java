@@ -8,8 +8,10 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/** \u901a\u8fc7 <code>create.setCode()</code>\u3001<code>create.setName()</code>\u3001<code>create.setPermissions()</code> \u9a8c\u8bc1 <code>AuthorizationRolePermissionContract</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
 class AuthorizationRolePermissionContractTest {
 
+    /** \u9a8c\u8bc1<code>create.code()</code> \u7b49\u4e8e <code>create.getCode()</code>\uff0c<code>create.name()</code> \u7b49\u4e8e <code>create.getName()</code>\uff0c<code>update.hashCode()</code> \u7b49\u4e8e <code>sameUpdate.hashCode()</code>\u3002 */
     @Test
     void roleRequestsRetainMutableBeanAndArrayValueContract() {
         AuthorizationController.CreateRoleRequest create = new AuthorizationController.CreateRoleRequest();
@@ -37,6 +39,7 @@ class AuthorizationRolePermissionContractTest {
         assertEquals(sameUpdate.hashCode(), update.hashCode());
     }
 
+    /** \u9a8c\u8bc1<code>request.code()</code> \u7b49\u4e8e <code>request.getCode()</code>\uff0c<code>request.description()</code> \u7b49\u4e8e <code>request.getDescription()</code>\uff0c<code>request.hashCode()</code> \u7b49\u4e8e <code>same.hashCode()</code>\u3002 */
     @Test
     void permissionRequestRetainsMutableBeanContract() {
         AuthorizationController.CreatePermissionRequest request =
@@ -51,6 +54,7 @@ class AuthorizationRolePermissionContractTest {
         assertEquals(same.hashCode(), request.hashCode());
     }
 
+    /** \u9a8c\u8bc1<code>user.loginId()</code> \u7b49\u4e8e <code>user.getLoginId()</code>\uff0c<code>user.displayName()</code> \u7b49\u4e8e <code>user.getDisplayName()</code>\uff0c<code>permission.description()</code> \u7b49\u4e8e <code>permission.getDescription()</code>\u3002 */
     @Test
     void viewsRetainReadOnlyBeanAndValueContract() {
         Set<String> roles = new HashSet<>(Arrays.asList("admin"));

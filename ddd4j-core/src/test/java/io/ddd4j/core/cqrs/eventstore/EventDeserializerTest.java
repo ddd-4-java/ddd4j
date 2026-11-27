@@ -34,6 +34,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class EventDeserializerTest {
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>EventDeserializer.setFilter()</code>\u3001<code>EventDeserializer.defaultFilter()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterEach
     void resetFilter() {
         EventDeserializer.setFilter(EventDeserializer.defaultFilter());
@@ -45,29 +46,34 @@ class EventDeserializerTest {
     @Nested
     class ClassNameValidation {
 
+        /** \u9a8c\u8bc1<code>EventDeserializer.isValidClassName("io.ddd4j.event.OrderCreated")</code>\u4e3a\u771f\uff0c<code>EventDeserializer.isValidClassName("com.example.$Inner$Class")</code>\u4e3a\u771f\u3002 */
         @Test
         void 合法全限定类名_返回true() {
             assertThat(EventDeserializer.isValidClassName("io.ddd4j.event.OrderCreated")).isTrue();
             assertThat(EventDeserializer.isValidClassName("com.example.$Inner$Class")).isTrue();
         }
 
+        /** \u9a8c\u8bc1<code>EventDeserializer.isValidClassName(null)</code>\u4e3a\u5047\uff0c<code>EventDeserializer.isValidClassName("")</code>\u4e3a\u5047\u3002 */
         @Test
         void 空字符串或null_返回false() {
             assertThat(EventDeserializer.isValidClassName(null)).isFalse();
             assertThat(EventDeserializer.isValidClassName("")).isFalse();
         }
 
+        /** \u9a8c\u8bc1<code>EventDeserializer.isValidClassName("OrderCreated")</code>\u4e3a\u5047\u3002 */
         @Test
         void 仅一个包段_返回false() {
             assertThat(EventDeserializer.isValidClassName("OrderCreated")).isFalse();
         }
 
+        /** \u9a8c\u8bc1<code>EventDeserializer.isValidClassName("1io.ddd4j.Foo")</code>\u4e3a\u5047\uff0c<code>EventDeserializer.isValidClassName("io.1dd4j.Foo")</code>\u4e3a\u5047\u3002 */
         @Test
         void 包段以数字开头_返回false() {
             assertThat(EventDeserializer.isValidClassName("1io.ddd4j.Foo")).isFalse();
             assertThat(EventDeserializer.isValidClassName("io.1dd4j.Foo")).isFalse();
         }
 
+        /** \u9a8c\u8bc1<code>EventDeserializer.isValidClassName("io.ddd4j;exec.Foo")</code>\u4e3a\u5047\uff0c<code>EventDeserializer.isValidClassName("io.ddd4j.Foo Bar")</code>\u4e3a\u5047\uff0c<code>EventDeserializer.isValidClassName("io.ddd4j.Foo[]")</code>\u4e3a\u5047\u3002 */
         @Test
         void 含特殊字符_返回false() {
             assertThat(EventDeserializer.isValidClassName("io.ddd4j;exec.Foo")).isFalse();
@@ -82,6 +88,7 @@ class EventDeserializerTest {
     @Nested
     class DeserializeFallback {
 
+        /** \u9a8c\u8bc1<code>result</code> \u7684\u7c7b\u578b\u4e3a <code>Map.class</code>\uff0c<code>(Map&lt;String, Object&gt;) result</code> \u542b\u5bf9\u5e94\u6761\u76ee <code>"a"</code>\u3001<code>1</code>\u3002 */
         @Test
         void 类名格式非法_回退Map() {
             Object result = EventDeserializer.deserialize("{\"a\":1}", "1io.bad.class");
@@ -89,6 +96,7 @@ class EventDeserializerTest {
             assertThat((Map<String, Object>) result).containsEntry("a", 1);
         }
 
+        /** \u9a8c\u8bc1<code>result</code> \u7684\u7c7b\u578b\u4e3a <code>Map.class</code>\uff0c<code>(Map&lt;String, Object&gt;) result</code> \u542b\u5bf9\u5e94\u6761\u76ee <code>"x"</code>\u3001<code>"y"</code>\u3002 */
         @Test
         void 类不存在_回退Map() {
             Object result = EventDeserializer.deserialize("{\"x\":\"y\"}", "io.ddd4j.NonexistentEventClass_12345");
@@ -103,12 +111,14 @@ class EventDeserializerTest {
     @Nested
     class ClassNameFilterSPI {
 
+        /** \u9a8c\u8bc1<code>EventDeserializer.defaultFilter().allows("io.ddd4j.X")</code>\u4e3a\u771f\uff0c<code>EventDeserializer.defaultFilter().allows("java.lang.String")</code>\u4e3a\u771f\u3002 */
         @Test
         void 默认过滤器_允许所有合法格式() {
             assertThat(EventDeserializer.defaultFilter().allows("io.ddd4j.X")).isTrue();
             assertThat(EventDeserializer.defaultFilter().allows("java.lang.String")).isTrue();
         }
 
+        /** \u9a8c\u8bc1<code>allowed</code> \u7684\u7c7b\u578b\u4e3a <code>Map.class</code>\uff0c<code>(Map&lt;String, Object&gt;) allowed</code> \u542b\u5bf9\u5e94\u6761\u76ee <code>"k"</code>\u3001<code>"v"</code>\uff0c<code>(Map&lt;String, Object&gt;) blocked</code> \u542b\u5bf9\u5e94\u6761\u76ee <code>"k"</code>\u3001<code>"v"</code>\u3002 */
         @Test
         void 注册白名单_拒绝不在白名单内的类名() {
             Set<String> allowedPrefixes = new HashSet<>(Arrays.asList("io.ddd4j.", "com.example."));
@@ -124,12 +134,14 @@ class EventDeserializerTest {
             assertThat((Map<String, Object>) blocked).containsEntry("k", "v");
         }
 
+        /** \u9a8c\u8bc1<code>EventDeserializer.setFilter(null)</code> \u629b\u51fa <code>NullPointerException.class</code>\u3002 */
         @Test
         void 注册null_抛NullPointerException() {
             assertThatThrownBy(() -> EventDeserializer.setFilter(null))
                     .isInstanceOf(NullPointerException.class);
         }
 
+        /** \u9a8c\u8bc1<code>EventDeserializer.filter()</code> \u6307\u5411\u540c\u4e00\u5b9e\u4f8b <code>EventDeserializer.defaultFilter()</code>\uff0c<code>EventDeserializer.filter()</code> \u6307\u5411\u540c\u4e00\u5b9e\u4f8b <code>custom</code>\u3002 */
         @Test
         void filter_getter返回当前生效过滤器() {
             assertThat(EventDeserializer.filter()).isSameAs(EventDeserializer.defaultFilter());

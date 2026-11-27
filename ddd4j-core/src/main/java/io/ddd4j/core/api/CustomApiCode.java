@@ -50,28 +50,44 @@ public interface CustomApiCode {
     String getReason();
 
     /**
-     * 构建统一响应（code/reason 取自定义码）。
+     * \u6784\u5efa\u7edf\u4e00\u54cd\u5e94\uff08code/reason \u53d6\u81ea\u5b9a\u4e49\u7801\uff09\u3002
+     *
+     * @param <T> \u54cd\u5e94\u6570\u636e\u7c7b\u578b
+     * @return \u4f7f\u7528\u5f53\u524d\u9519\u8bef\u7801\u4e0e\u539f\u56e0\u7684\u54cd\u5e94
      */
     default <T> R<T> toResponse() {
         return R.of(this);
     }
 
     /**
-     * 构建统一响应，覆盖消息。
+     * \u6784\u5efa\u7edf\u4e00\u54cd\u5e94\uff0c\u8986\u76d6\u6d88\u606f\u3002
+     *
+     * @param <T> \u54cd\u5e94\u6570\u636e\u7c7b\u578b
+     * @param message \u81ea\u5b9a\u4e49\u54cd\u5e94\u6d88\u606f
+     * @return \u4f7f\u7528\u81ea\u5b9a\u4e49\u6d88\u606f\u7684\u54cd\u5e94
      */
     default <T> R<T> toResponse(String message) {
         return new R<>(getCode(), message, null);
     }
 
     /**
-     * 构建统一响应，携带数据。
+     * \u6784\u5efa\u7edf\u4e00\u54cd\u5e94\uff0c\u643a\u5e26\u6570\u636e\u3002
+     *
+     * @param <T> \u54cd\u5e94\u6570\u636e\u7c7b\u578b
+     * @param data \u54cd\u5e94\u6570\u636e
+     * @return \u643a\u5e26\u6570\u636e\u7684\u54cd\u5e94
      */
     default <T> R<T> toResponse(T data) {
         return R.of(this, data);
     }
 
     /**
-     * 构建统一响应，覆盖消息并携带数据。
+     * \u6784\u5efa\u7edf\u4e00\u54cd\u5e94\uff0c\u8986\u76d6\u6d88\u606f\u5e76\u643a\u5e26\u6570\u636e\u3002
+     *
+     * @param <T> \u54cd\u5e94\u6570\u636e\u7c7b\u578b
+     * @param message \u81ea\u5b9a\u4e49\u54cd\u5e94\u6d88\u606f
+     * @param data \u54cd\u5e94\u6570\u636e
+     * @return \u643a\u5e26\u6d88\u606f\u548c\u6570\u636e\u7684\u54cd\u5e94
      */
     default <T> R<T> toResponse(String message, T data) {
         return new R<>(getCode(), message, data);

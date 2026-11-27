@@ -50,10 +50,13 @@ import static org.mockito.Mockito.when;
 @QuarkusTest
 class Ddd4jQuarkusWebContractTest extends AbstractWebContractTest {
 
+    /** \u6267\u884c\u771f\u5b9e\u8bf7\u6c42\u4f9b\u516c\u5171 HTTP \u5408\u540c\u65ad\u8a00\u4f7f\u7528\u7684\u5ba2\u6237\u7aef\u3002 */
     private final WebContractClient contractClient = new QuarkusContractClient();
+    /** \u8fde\u63a5\u9694\u79bb\u6d4b\u8bd5\u5e94\u7528\u7684\u57fa\u7840 URI\u3002 */
     @TestHTTPResource("/")
     URI baseUri;
 
+    /** \u6d4b\u8bd5\u6267\u884c\u524d\u6267\u884c <code>CacheKit.build()</code>\u3001<code>mock()</code>\u3001<code>BaseContext.inject()</code>\u3001<code>provider()</code> \u5b8c\u6210\u8d44\u6e90\u51c6\u5907\u3002 */
     @BeforeEach
     void setUp() {
         CacheKit.build("quarkus-contract", 300L);
@@ -62,6 +65,7 @@ class Ddd4jQuarkusWebContractTest extends AbstractWebContractTest {
         BaseContext.inject(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, provider(subject));
     }
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>ThreadContext.clear()</code>\u3001<code>BaseContext.clear()</code>\u3001<code>CacheKit.unregister()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterEach
     void tearDown() {
         ThreadContext.clear();
@@ -81,6 +85,11 @@ class Ddd4jQuarkusWebContractTest extends AbstractWebContractTest {
         return contractClient;
     }
 
+    /**
+     * \u521b\u5efa <code>new SubjectProvider</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+     * @param subject \u7528\u4e8e\u6784\u9020\u672c\u6b21\u8fd4\u56de\u7ed3\u679c\u7684 <code>Subject</code> \u8f93\u5165
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new SubjectProvider(){ &#64;Override public Subject getSubject() { return subject; } }</code>
+     */
     private SubjectProvider provider(Subject subject) {
         return new SubjectProvider() {
             /**
@@ -101,6 +110,7 @@ class Ddd4jQuarkusWebContractTest extends AbstractWebContractTest {
      */
     private final class QuarkusContractClient implements WebContractClient {
 
+        /** \u7528\u4e8e\u53d1\u9001 HTTP \u8bf7\u6c42\u7684\u5ba2\u6237\u7aef\u3002 */
         private final HttpClient httpClient = HttpClient.newHttpClient();
 
         /**

@@ -42,6 +42,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * 检查实际 Guice 默认日志回调，不以非空 Bean 代替日志行为。
  */
 class ThreeLineLogsParityTest {
+    /**
+     * \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>Guice.createInjector()</code>\u3001<code>LogManager.getLogger()</code>\u3001<code>logger.getLevel()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void guiceDefaultProviderEmitsSuccessAndFailureAccessLogs() throws Exception {
         ApiOperationLogProvider provider = Guice.createInjector(new Ddd4jLogsGuiceModule())

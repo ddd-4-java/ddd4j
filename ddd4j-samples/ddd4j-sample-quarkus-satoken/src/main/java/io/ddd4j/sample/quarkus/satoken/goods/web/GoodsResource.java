@@ -43,7 +43,9 @@ import java.util.List;
 @io.quarkus.arc.properties.IfBuildProperty(name = "sample.goods.standalone", stringValue = "true")
 public class GoodsResource {
 
+    /** \u5904\u7406\u5546\u54c1\u521b\u5efa\u3001\u7ef4\u62a4\u548c\u67e5\u8be2\u64cd\u4f5c\u7684\u5e94\u7528\u670d\u52a1\u3002 */
     private final GoodsApplicationService applicationService;
+    /** \u8d1f\u8d23\u5c06\u5546\u54c1\u67e5\u8be2\u6761\u4ef6\u8f6c\u6362\u4e3a\u7ed3\u679c\u7684\u8d44\u6e90\u7ec4\u4ef6\u3002 */
     private final GoodsQueryResource queryResource;
 
     /**

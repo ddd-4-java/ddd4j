@@ -54,6 +54,7 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
      * 数据源
      */
     private final DataSource dataSource;
+    /** \u914d\u7f6e MyBatis \u5bb9\u5668\u548c\u6570\u636e\u8bbf\u95ee\u80fd\u529b\u7684\u9002\u914d\u5165\u53e3\u3002 */
     private Ddd4jMybatisConfigurer configurer = new Ddd4jMybatisConfigurer();
     /**
      * 注册的 Mapper 接口集
@@ -108,6 +109,7 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
         return this;
     }
 
+    /** \u6309\u914d\u7f6e\u6ce8\u518c MyBatis \u4f1a\u8bdd\u548c ORM \u670d\u52a1\u7ed1\u5b9a\u3002 */
     @Override
     protected void configure() {
         for (Class<?> repositoryImpl : repositoryToMapper.keySet()) {

@@ -63,6 +63,7 @@ import java.math.BigDecimal;
  */
 public class GoodsQuery extends Query<Goods> {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -102,6 +103,10 @@ public class GoodsQuery extends Query<Goods> {
         return this;
     }
 
+    /**
+     * \u5c06\u6392\u5e8f\u8868\u8fbe\u5f0f\u89e3\u6790\u4e3a\u5546\u54c1\u67e5\u8be2\u652f\u6301\u7684\u5b57\u6bb5\u53ca\u65b9\u5411\u3002
+     * @param orderBy \u8bf7\u6c42\u4e2d\u4f20\u5165\u7684\u6392\u5e8f\u8868\u8fbe\u5f0f
+     */
     private void applyOrderBy(String orderBy) {
         String[] tokens = orderBy.trim().split("_");
         if (tokens.length != 2) {
@@ -126,6 +131,11 @@ public class GoodsQuery extends Query<Goods> {
         }
     }
 
+    /**
+     * \u6309\u65b9\u5411\u4e3a\u5546\u54c1\u67e5\u8be2\u8ffd\u52a0\u9886\u57df\u5c5e\u6027\u6392\u5e8f\u6761\u4ef6\u3002
+     * @param descending \u662f\u5426\u6309\u964d\u5e8f\u6392\u5217
+     * @param property \u5546\u54c1\u6392\u5e8f\u6240\u4f7f\u7528\u7684\u9886\u57df\u5c5e\u6027\u5f15\u7528
+     */
     private void applyOrder(boolean descending, SFunction<Goods, ?> property) {
         if (descending) {
             orderByDesc(property);
@@ -147,80 +157,70 @@ public class GoodsQuery extends Query<Goods> {
         return RepositoryRegistry.repository(Goods.class);
     }
 
-    /**
-     * @return 商品编码
-     */
+    /** @return \u5546\u54c1\u7f16\u7801 */
     public String getCode() {
         return code;
     }
 
     /**
-     * @param code 商品编码
-     * @return 当前查询对象
+     * @param code \u5546\u54c1\u7f16\u7801
+     * @return \u5f53\u524d\u67e5\u8be2\u5bf9\u8c61
      */
     public GoodsQuery setCode(String code) {
         this.code = code;
         return this;
     }
 
-    /**
-     * @return 模糊匹配的商品名称
-     */
+    /** @return \u6a21\u7cca\u5339\u914d\u7684\u5546\u54c1\u540d\u79f0 */
     public String getNameLike() {
         return nameLike;
     }
 
     /**
-     * @param nameLike 模糊匹配的商品名称
-     * @return 当前查询对象
+     * @param nameLike \u6a21\u7cca\u5339\u914d\u7684\u5546\u54c1\u540d\u79f0
+     * @return \u5f53\u524d\u67e5\u8be2\u5bf9\u8c61
      */
     public GoodsQuery setNameLike(String nameLike) {
         this.nameLike = nameLike;
         return this;
     }
 
-    /**
-     * @return 商品状态
-     */
+    /** @return \u5546\u54c1\u72b6\u6001 */
     public GoodsStatus getStatus() {
         return status;
     }
 
     /**
-     * @param status 商品状态
-     * @return 当前查询对象
+     * @param status \u5546\u54c1\u72b6\u6001
+     * @return \u5f53\u524d\u67e5\u8be2\u5bf9\u8c61
      */
     public GoodsQuery setStatus(GoodsStatus status) {
         this.status = status;
         return this;
     }
 
-    /**
-     * @return 最低价格
-     */
+    /** @return \u6700\u4f4e\u4ef7\u683c */
     public BigDecimal getPriceMin() {
         return priceMin;
     }
 
     /**
-     * @param priceMin 最低价格
-     * @return 当前查询对象
+     * @param priceMin \u6700\u4f4e\u4ef7\u683c
+     * @return \u5f53\u524d\u67e5\u8be2\u5bf9\u8c61
      */
     public GoodsQuery setPriceMin(BigDecimal priceMin) {
         this.priceMin = priceMin;
         return this;
     }
 
-    /**
-     * @return 最高价格
-     */
+    /** @return \u6700\u9ad8\u4ef7\u683c */
     public BigDecimal getPriceMax() {
         return priceMax;
     }
 
     /**
-     * @param priceMax 最高价格
-     * @return 当前查询对象
+     * @param priceMax \u6700\u9ad8\u4ef7\u683c
+     * @return \u5f53\u524d\u67e5\u8be2\u5bf9\u8c61
      */
     public GoodsQuery setPriceMax(BigDecimal priceMax) {
         this.priceMax = priceMax;

@@ -32,8 +32,13 @@ import java.util.Objects;
 @ApplicationScoped
 public class Ddd4jQuarkusReadinessHealthCheck implements HealthCheck {
 
+    /** \u6c47\u603b\u5f53\u524d\u7ec4\u4ef6\u5c31\u7eea\u72b6\u6001\u7684\u6ce8\u518c\u8868\u3002 */
     private final RuntimeReadinessRegistry readinessRegistry;
 
+    /**
+     * \u521b\u5efa Quarkus \u5c31\u7eea\u5065\u5eb7\u68c0\u67e5\u3002
+     * @param readinessRegistry \u8fd0\u884c\u65f6\u5c31\u7eea\u6ce8\u518c\u8868
+     */
     @Inject
     public Ddd4jQuarkusReadinessHealthCheck(RuntimeReadinessRegistry readinessRegistry) {
         this.readinessRegistry = Objects.requireNonNull(readinessRegistry,

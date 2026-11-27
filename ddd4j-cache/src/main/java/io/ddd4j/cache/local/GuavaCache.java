@@ -41,8 +41,13 @@ import java.util.function.Function;
  */
 public class GuavaCache<K, V> implements Cache<K, V> {
 
+    /** \u4fdd\u5b58\u672c\u5730\u7f13\u5b58\u6761\u76ee\u7684 Guava \u7f13\u5b58\u3002 */
     private final com.google.common.cache.Cache<K, V> cache;
 
+    /**
+     * \u5c01\u88c5\u5df2\u6784\u9020\u7684 Guava \u672c\u5730\u7f13\u5b58\u3002
+     * @param cache \u7528\u4e8e\u5b58\u653e\u952e\u503c\u7684\u5e95\u5c42\u7f13\u5b58
+     */
     private GuavaCache(com.google.common.cache.Cache<K, V> cache) {
         this.cache = Objects.requireNonNull(cache);
     }
@@ -69,11 +74,26 @@ public class GuavaCache<K, V> implements Cache<K, V> {
         return new GuavaCache<>(builder.build());
     }
 
+    /**
+     * 读取现有缓存值。
+     *
+     * <p>此实现调用 <code>cache.getIfPresent(key)</code>。</p>
+     *
+     * @param key 缓存键
+     * @return 实际返回<code>cache.getIfPresent(key)</code>
+     */
     @Override
     public V getIfPresent(K key) {
         return cache.getIfPresent(key);
     }
 
+    /**
+     * 读取调用指定的当前值。
+     *
+     * @param key 缓存键
+     * @param mappingFunction 值加载函数
+     * @return 缓存值
+     */
     @Override
     public V get(K key, Function<K, V> mappingFunction) {
         try {
@@ -83,36 +103,82 @@ public class GuavaCache<K, V> implements Cache<K, V> {
         }
     }
 
+    /**
+     * 将给定数据写入当前存储。
+     *
+     * <p>此实现调用 <code>cache.put(key, value)</code>。</p>
+     *
+     * @param key 缓存键
+     * @param value 缓存值
+     */
     @Override
     public void put(K key, V value) {
         cache.put(key, value);
     }
 
+    /**
+     * 批量设置缓存值。
+     *
+     * <p>此实现调用 <code>cache.putAll(map)</code>。</p>
+     *
+     * @param map 缓存键值对
+     */
     @Override
     public void putAll(Map<K, V> map) {
         cache.putAll(map);
     }
 
+    /**
+     * 使指定键的缓存条目失效。
+     *
+     * <p>此实现调用 <code>cache.invalidate(key)</code>。</p>
+     *
+     * @param key 缓存键
+     */
     @Override
     public void invalidate(K key) {
         cache.invalidate(key);
     }
 
+    /**
+     * 使当前缓存中的全部条目失效。
+     *
+     * <p>此实现调用 <code>cache.invalidateAll()</code>。</p>
+     */
     @Override
     public void invalidateAll() {
         cache.invalidateAll();
     }
 
+    /**
+     * 使当前缓存中的全部条目失效。
+     *
+     * <p>此实现调用 <code>cache.invalidateAll(keys)</code>。</p>
+     *
+     * @param keys 缓存键集合
+     */
     @Override
     public void invalidateAll(Iterable<K> keys) {
         cache.invalidateAll(keys);
     }
 
+    /**
+     * 返回当前缓存条目规模的估算值。
+     *
+     * <p>此实现调用 <code>cache.size()</code>。</p>
+     *
+     * @return 实际返回<code>cache.size()</code>
+     */
     @Override
     public long estimatedSize() {
         return cache.size();
     }
 
+    /**
+     * 返回当前缓存实现记录的统计信息。
+     *
+     * @return 此实现返回<code>null</code>
+     */
     @Override
     public CacheStats stats() {
         // Guava 统计信息不映射到 ddd4j CacheStats
@@ -121,6 +187,16 @@ public class GuavaCache<K, V> implements Cache<K, V> {
 
     // ==================== CAS 实现（基于 asMap().replace + 重试）====================
 
+    /**
+     * 比较缓存中的现值或版本并尝试原子修改。
+     *
+     * <p>此实现调用 <code>cache.asMap()</code>。</p>
+     *
+     * @param key 缓存键
+     * @param expireSeconds 过期时间（秒），0 表示不修改 TTL
+     * @param operation CAS 操作回调（基于当前值计算新值）
+     * @return 根据执行路径返回<code>null</code>、<code>newValue</code>
+     */
     @Override
     public V compareAndSet(K key, long expireSeconds, CASOperation<V, V> operation) {
         ConcurrentMap<K, V> map = cache.asMap();
@@ -159,6 +235,16 @@ public class GuavaCache<K, V> implements Cache<K, V> {
         return null;
     }
 
+    /**
+     * 比较缓存中的现值或版本并尝试原子修改。
+     *
+     * <p>此实现调用 <code>cache.asMap()</code>。</p>
+     *
+     * @param key 缓存键
+     * @param expectedOldValue 期望的旧值（null 表示仅当 key 不存在时写入 = putIfAbsent）
+     * @param newValue 新值
+     * @return 根据执行路径返回<code>Objects.isNull(map.putIfAbsent(key, newValue))</code>、<code>map.replace(key, expectedOldValue, newValue)</code>
+     */
     @Override
     public boolean compareAndSet(K key, V expectedOldValue, V newValue) {
         ConcurrentMap<K, V> map = cache.asMap();

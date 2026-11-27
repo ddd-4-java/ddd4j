@@ -14,22 +14,42 @@ import java.util.function.Consumer;
  */
 final class MQPublisherRegistration implements Consumer<MQEvent> {
 
+    /** \u5b9e\u9645\u5411\u5bf9\u5e94\u6d88\u606f\u4ee3\u7406\u53d1\u5e03\u4e8b\u4ef6\u7684\u56de\u8c03\u3002 */
     private final Consumer<MQEvent> delegate;
+    /** 保存 <code>true</code>，供 <code>MQPublisherRegistration</code> 的处理流程复用。 */
     private volatile boolean active = true;
 
+    /**
+     * 初始化 <code>MQPublisherRegistration</code> 使用的 <code>delegate</code>。
+     *
+     * @param delegate \u53d1\u9001\u56de\u8c03
+     */
     MQPublisherRegistration(Consumer<MQEvent> delegate) {
         this.delegate = Objects.requireNonNull(delegate, "delegate");
     }
 
+    /**
+     * 接收调用方提交的记录。
+     *
+     * <p>此实现调用 <code>delegate.accept(event)</code>。</p>
+     *
+     * @param event 当前发布、消费或处理的事件
+     */
     @Override
     public void accept(MQEvent event) {
         delegate.accept(event);
     }
 
+    /**
+     * 读取<code>active</code> 的当前值。
+     *
+     * @return 返回表达式 <code>active</code>
+     */
     boolean isActive() {
         return active;
     }
 
+    /** 执行 <code>deactivate</code> 对应的处理。 */
     void deactivate() {
         active = false;
     }

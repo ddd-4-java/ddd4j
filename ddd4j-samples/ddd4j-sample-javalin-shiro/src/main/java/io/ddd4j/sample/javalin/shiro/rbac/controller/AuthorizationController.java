@@ -51,6 +51,7 @@ import java.util.stream.Collectors;
  */
 public class AuthorizationController {
 
+    /** \u6267\u884c\u57fa\u4e8e\u89d2\u8272\u7684\u6388\u6743\u4e0e\u5206\u914d\u64cd\u4f5c\u7684\u5e94\u7528\u670d\u52a1\u3002 */
     private final RbacService rbacService;
 
     /**
@@ -66,7 +67,10 @@ public class AuthorizationController {
     // ============================ User CRUD ============================
 
     /**
-     * 数组 → Set 转换（保留顺序）。
+     * \u6570\u7ec4 \u2192 Set \u8f6c\u6362\uff08\u4fdd\u7559\u987a\u5e8f\uff09\u3002
+     *
+     * @param arr \u5f85\u8f6c\u6362\u7684\u6570\u7ec4
+     * @return \u6570\u7ec4\u4e2d\u7684\u4e0d\u540c\u5143\u7d20\u7ec4\u6210\u7684\u96c6\u5408
      */
     private static Set<String> toSet(String[] arr) {
         if (Objects.isNull(arr)) {
@@ -79,16 +83,31 @@ public class AuthorizationController {
         return set;
     }
 
+    /**
+     * \u628a\u8d26\u53f7\u5b9e\u4f53\u6620\u5c04\u4e3a\u4e0d\u542b\u53e3\u4ee4\u7684\u5bf9\u5916\u7ed3\u679c\u3002
+     * @param user \u5f85\u4fdd\u5b58\u6216\u5bf9\u5916\u8fd4\u56de\u7684\u8d26\u53f7\u5b9e\u4f53
+     * @return \u8d26\u53f7\u5c55\u793a\u5bf9\u8c61
+     */
     private static UserView toUserView(User user) {
         return new UserView(user.loginId(), user.displayName(),
                 new LinkedHashSet<>(user.roles()),
                 new LinkedHashSet<>(user.permissions()));
     }
 
+    /**
+     * \u628a\u89d2\u8272\u5b9e\u4f53\u53ca\u5176\u5206\u914d\u6743\u9650\u6620\u5c04\u4e3a\u5bf9\u5916\u7ed3\u679c\u3002
+     * @param role \u5f85\u4fdd\u5b58\u6216\u5bf9\u5916\u8fd4\u56de\u7684\u89d2\u8272\u5b9e\u4f53
+     * @return \u89d2\u8272\u5c55\u793a\u5bf9\u8c61
+     */
     private static RoleView toRoleView(Role role) {
         return new RoleView(role.code(), role.name(), new LinkedHashSet<>(role.permissions()));
     }
 
+    /**
+     * \u628a\u6743\u9650\u5b9e\u4f53\u6620\u5c04\u4e3a\u5bf9\u5916\u8fd4\u56de\u7684\u6743\u9650\u8bf4\u660e\u3002
+     * @param permission \u5f85\u4fdd\u5b58\u6216\u5bf9\u5916\u8fd4\u56de\u7684\u6743\u9650\u5b9e\u4f53
+     * @return \u6743\u9650\u5c55\u793a\u5bf9\u8c61
+     */
     private static PermissionView toPermissionView(Permission permission) {
         return new PermissionView(permission.code(), permission.description());
     }
@@ -284,7 +303,10 @@ public class AuthorizationController {
     }
 
     /**
-     * 校验当前会话是否为 admin 角色，否则直接返回 403 响应。
+     * \u6821\u9a8c\u5f53\u524d\u4f1a\u8bdd\u662f\u5426\u4e3a admin \u89d2\u8272\uff0c\u5426\u5219\u76f4\u63a5\u8fd4\u56de 403 \u54cd\u5e94\u3002
+     *
+     * @param ctx \u7528\u4e8e\u8bfb\u53d6\u8ba4\u8bc1\u4e0a\u4e0b\u6587\u7684\u5f53\u524d\u8bf7\u6c42
+     * @return \u5f53\u524d\u4e3b\u4f53\u62e5\u6709\u7ba1\u7406\u5458\u89d2\u8272\u65f6\u8fd4\u56de true\uff0c\u62d2\u7edd\u8bf7\u6c42\u540e\u8fd4\u56de false
      */
     private boolean requireAdmin(Context ctx) {
         if (!SubjectKit.hasRole("admin")) {
@@ -303,17 +325,23 @@ public class AuthorizationController {
     @NoArgsConstructor
     public static class CreateUserRequest {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u7528\u6765\u8bc6\u522b\u8d26\u53f7\u7684\u767b\u5f55\u6807\u8bc6\u3002 */
         private String loginId;
 
+        /** \u5f53\u524d\u767b\u5f55\u6216\u8d26\u53f7\u521b\u5efa\u8bf7\u6c42\u63d0\u4f9b\u7684\u53e3\u4ee4\u3002 */
         @ToString.Exclude
         private String password;
 
+        /** \u8d26\u53f7\u5728\u793a\u4f8b\u63a5\u53e3\u4e2d\u4f7f\u7528\u7684\u663e\u793a\u540d\u79f0\u3002 */
         private String displayName;
 
+        /** \u5f53\u524d\u8d26\u53f7\u6301\u6709\u6216\u5f85\u5206\u914d\u7684\u89d2\u8272\u7f16\u7801\u3002 */
         private String[] roles;
 
+        /** \u5f53\u524d\u89d2\u8272\u6216\u4e3b\u4f53\u5173\u8054\u7684\u6743\u9650\u7f16\u7801\u3002 */
         private String[] permissions;
 
         /**
@@ -393,15 +421,20 @@ public class AuthorizationController {
     @NoArgsConstructor
     public static class UpdateUserRequest {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u8d26\u53f7\u5728\u793a\u4f8b\u63a5\u53e3\u4e2d\u4f7f\u7528\u7684\u663e\u793a\u540d\u79f0\u3002 */
         private String displayName;
 
+        /** \u5f53\u524d\u767b\u5f55\u6216\u8d26\u53f7\u521b\u5efa\u8bf7\u6c42\u63d0\u4f9b\u7684\u53e3\u4ee4\u3002 */
         @ToString.Exclude
         private String password;
 
+        /** \u5f53\u524d\u8d26\u53f7\u6301\u6709\u6216\u5f85\u5206\u914d\u7684\u89d2\u8272\u7f16\u7801\u3002 */
         private String[] roles;
 
+        /** \u5f53\u524d\u89d2\u8272\u6216\u4e3b\u4f53\u5173\u8054\u7684\u6743\u9650\u7f16\u7801\u3002 */
         private String[] permissions;
 
         /**
@@ -469,12 +502,16 @@ public class AuthorizationController {
     @NoArgsConstructor
     public static class CreateRoleRequest {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u5f53\u524d\u8bf7\u6c42\u6216\u7ed3\u679c\u4f7f\u7528\u7684\u4e1a\u52a1\u7f16\u7801\u3002 */
         private String code;
 
+        /** \u5f53\u524d\u8bf7\u6c42\u6216\u7ed3\u679c\u4f7f\u7528\u7684\u663e\u793a\u540d\u79f0\u3002 */
         private String name;
 
+        /** \u5f53\u524d\u89d2\u8272\u6216\u4e3b\u4f53\u5173\u8054\u7684\u6743\u9650\u7f16\u7801\u3002 */
         private String[] permissions;
 
         /**
@@ -530,10 +567,13 @@ public class AuthorizationController {
     @NoArgsConstructor
     public static class UpdateRoleRequest {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u5f53\u524d\u8bf7\u6c42\u6216\u7ed3\u679c\u4f7f\u7528\u7684\u663e\u793a\u540d\u79f0\u3002 */
         private String name;
 
+        /** \u5f53\u524d\u89d2\u8272\u6216\u4e3b\u4f53\u5173\u8054\u7684\u6743\u9650\u7f16\u7801\u3002 */
         private String[] permissions;
 
         /**
@@ -577,10 +617,13 @@ public class AuthorizationController {
     @NoArgsConstructor
     public static class CreatePermissionRequest {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u5f53\u524d\u8bf7\u6c42\u6216\u7ed3\u679c\u4f7f\u7528\u7684\u4e1a\u52a1\u7f16\u7801\u3002 */
         private String code;
 
+        /** \u5f53\u524d\u89d2\u8272\u6216\u6743\u9650\u5b9a\u4e49\u7684\u8bf4\u660e\u3002 */
         private String description;
 
         /**
@@ -622,14 +665,19 @@ public class AuthorizationController {
      */
     public final static class UserView {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u7528\u6765\u8bc6\u522b\u8d26\u53f7\u7684\u767b\u5f55\u6807\u8bc6\u3002 */
         private final String loginId;
 
+        /** \u8d26\u53f7\u5728\u793a\u4f8b\u63a5\u53e3\u4e2d\u4f7f\u7528\u7684\u663e\u793a\u540d\u79f0\u3002 */
         private final String displayName;
 
+        /** \u5f53\u524d\u8d26\u53f7\u6301\u6709\u6216\u5f85\u5206\u914d\u7684\u89d2\u8272\u7f16\u7801\u3002 */
         private final Set<String> roles;
 
+        /** \u5bf9\u5916\u8fd4\u56de\u7684\u8d26\u53f7\u6743\u9650\u7f16\u7801\u96c6\u5408\u3002 */
         private final Set<String> permissions;
 
         /**
@@ -648,30 +696,22 @@ public class AuthorizationController {
             this.permissions = permissions;
         }
 
-        /**
-         * @return 登录标识
-         */
+        /** @return \u767b\u5f55\u6807\u8bc6 */
         public String getLoginId() {
             return loginId;
         }
 
-        /**
-         * @return 显示名称
-         */
+        /** @return \u663e\u793a\u540d\u79f0 */
         public String getDisplayName() {
             return displayName;
         }
 
-        /**
-         * @return 角色编码集合
-         */
+        /** @return \u89d2\u8272\u7f16\u7801\u96c6\u5408 */
         public Set<String> getRoles() {
             return roles;
         }
 
-        /**
-         * @return 权限编码集合
-         */
+        /** @return \u6743\u9650\u7f16\u7801\u96c6\u5408 */
         public Set<String> getPermissions() {
             return permissions;
         }
@@ -716,6 +756,14 @@ public class AuthorizationController {
             return permissions;
         }
 
+        /**
+         * 根据<code>loginId</code>、<code>displayName</code>、<code>roles</code>、<code>permissions</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -728,6 +776,11 @@ public class AuthorizationController {
             return Objects.equals(this.loginId, other.loginId) && Objects.equals(this.displayName, other.displayName) && Objects.equals(this.roles, other.roles) && Objects.equals(this.permissions, other.permissions);
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 1;
@@ -738,6 +791,11 @@ public class AuthorizationController {
             return result;
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>loginId</code>、<code>displayName</code>、<code>roles</code>、<code>permissions</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "AuthorizationController.UserView(loginId=" + loginId + ", displayName=" + displayName + ", roles=" + roles + ", permissions=" + permissions + ")";
@@ -749,12 +807,16 @@ public class AuthorizationController {
      */
     public final static class RoleView {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u5f53\u524d\u8bf7\u6c42\u6216\u7ed3\u679c\u4f7f\u7528\u7684\u4e1a\u52a1\u7f16\u7801\u3002 */
         private final String code;
 
+        /** \u5f53\u524d\u8bf7\u6c42\u6216\u7ed3\u679c\u4f7f\u7528\u7684\u663e\u793a\u540d\u79f0\u3002 */
         private final String name;
 
+        /** \u5bf9\u5916\u8fd4\u56de\u7684\u89d2\u8272\u6743\u9650\u7f16\u7801\u96c6\u5408\u3002 */
         private final Set<String> permissions;
 
         /**
@@ -771,23 +833,17 @@ public class AuthorizationController {
             this.permissions = permissions;
         }
 
-        /**
-         * @return 角色编码
-         */
+        /** @return \u89d2\u8272\u7f16\u7801 */
         public String getCode() {
             return code;
         }
 
-        /**
-         * @return 角色名称
-         */
+        /** @return \u89d2\u8272\u540d\u79f0 */
         public String getName() {
             return name;
         }
 
-        /**
-         * @return 权限编码集合
-         */
+        /** @return \u6743\u9650\u7f16\u7801\u96c6\u5408 */
         public Set<String> getPermissions() {
             return permissions;
         }
@@ -822,6 +878,14 @@ public class AuthorizationController {
             return permissions;
         }
 
+        /**
+         * 根据<code>code</code>、<code>name</code>、<code>permissions</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -834,6 +898,11 @@ public class AuthorizationController {
             return Objects.equals(this.code, other.code) && Objects.equals(this.name, other.name) && Objects.equals(this.permissions, other.permissions);
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 1;
@@ -843,6 +912,11 @@ public class AuthorizationController {
             return result;
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>code</code>、<code>name</code>、<code>permissions</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "AuthorizationController.RoleView(code=" + code + ", name=" + name + ", permissions=" + permissions + ")";
@@ -854,10 +928,13 @@ public class AuthorizationController {
      */
     public final static class PermissionView {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u5f53\u524d\u8bf7\u6c42\u6216\u7ed3\u679c\u4f7f\u7528\u7684\u4e1a\u52a1\u7f16\u7801\u3002 */
         private final String code;
 
+        /** \u5bf9\u5916\u8fd4\u56de\u7684\u6743\u9650\u63cf\u8ff0\u3002 */
         private final String description;
 
         /**
@@ -872,16 +949,12 @@ public class AuthorizationController {
             this.description = description;
         }
 
-        /**
-         * @return 权限编码
-         */
+        /** @return \u6743\u9650\u7f16\u7801 */
         public String getCode() {
             return code;
         }
 
-        /**
-         * @return 权限描述
-         */
+        /** @return \u6743\u9650\u63cf\u8ff0 */
         public String getDescription() {
             return description;
         }
@@ -906,6 +979,14 @@ public class AuthorizationController {
             return description;
         }
 
+        /**
+         * 根据<code>code</code>、<code>description</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -918,6 +999,11 @@ public class AuthorizationController {
             return Objects.equals(this.code, other.code) && Objects.equals(this.description, other.description);
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 1;
@@ -926,6 +1012,11 @@ public class AuthorizationController {
             return result;
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>code</code>、<code>description</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "AuthorizationController.PermissionView(code=" + code + ", description=" + description + ")";

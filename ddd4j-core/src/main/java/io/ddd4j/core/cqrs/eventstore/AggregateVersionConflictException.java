@@ -32,12 +32,17 @@ import java.util.List;
  */
 public class AggregateVersionConflictException extends RuntimeException {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /** \u53d1\u751f\u51b2\u7a81\u7684\u805a\u5408\u7c7b\u578b\u3002 */
     private final String aggregateType;
+    /** \u53d1\u751f\u51b2\u7a81\u7684\u805a\u5408\u6807\u8bc6\u3002 */
     private final String aggregateId;
+    /** \u5199\u5165\u65b9\u9884\u671f\u7248\u672c\u3002 */
     private final long expectedVersion;
+    /** \u5b58\u50a8\u4e2d\u7684\u5b9e\u9645\u7248\u672c\u3002 */
     private final long actualVersion;
 
     /**

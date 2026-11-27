@@ -64,11 +64,17 @@ class VertxCommandBusIT {
      */
     private Vertx vertx;
 
+    /** 初始化测试资源，调用 <code>Vertx.vertx</code>。 */
     @BeforeEach
     void startVertx() {
         vertx = Vertx.vertx();
     }
 
+    /**
+     * 释放测试资源，调用 <code>vertx.close</code>。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @AfterEach
     void closeVertx() throws Exception {
         if (vertx != null) {
@@ -105,6 +111,11 @@ class VertxCommandBusIT {
         return executors;
     }
 
+    /**
+     * 验证<code>result.isSuccess()</code>为真，<code>result.data()</code> 包含 <code>SampleCommandHandler.HANDLED</code>，<code>testContext.awaitCompletion(5, TimeUnit.SECONDS)</code>为真。
+     *
+     * @throws Exception 完成 <code>execute Vertx Handler</code> 操作失败
+     */
     @Test
     void execute_已在Vertx上下文线程同步执行_应路由到真实Handler并返回成功() throws Exception {
         VertxCommandBus bus = assemble();
@@ -125,6 +136,7 @@ class VertxCommandBusIT {
         assertThat(testContext.failed()).isFalse();
     }
 
+    /** 验证<code>exception</code>非空，<code>exception.getMessage()</code> 包含 <code>SampleCommand.class.getName()</code>。 */
     @Test
     void 装配期冲突_整批拒绝应自工厂传播() {
         // 供入「多类型占位执行器（SampleCommand + CompanionCommand）+ 真实
@@ -142,6 +154,7 @@ class VertxCommandBusIT {
         assertThat(exception.getMessage()).contains(SampleCommand.class.getName());
     }
 
+    /** 验证<code>exception</code>非空，<code>exception.getMessage()</code> 包含 <code>UnknownCommand.class.getName()</code>。 */
     @Test
     void execute_未注册命令_应抛ISE与ddd4j_core一致() {
         VertxCommandBus bus = assemble();
@@ -169,6 +182,11 @@ class VertxCommandBusIT {
      */
     static class OverlappingMultiTypeHandler implements CommandExecutor<Command> {
 
+        /**
+         * 执行 <code>supported Commands</code>，调用 <code>Collections.unmodifiableSet</code>、<code>Arrays.asList</code>。
+         *
+         * @return 当前操作得到的 <code>Set&lt;Class&lt;? extends Command&gt;&gt;</code> 结果
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(SampleCommand.class, CompanionCommand.class)));

@@ -42,6 +42,7 @@ import java.util.Objects;
  */
 public class JpaStoredEventRepositoryImpl implements JpaStoredEventRepository {
 
+    /** \u6267\u884c JPA \u67e5\u8be2\u548c\u6301\u4e45\u5316\u64cd\u4f5c\u7684\u5b9e\u4f53\u7ba1\u7406\u5668\u3002 */
     private final EntityManager entityManager;
 
     /**
@@ -54,6 +55,13 @@ public class JpaStoredEventRepositoryImpl implements JpaStoredEventRepository {
         this.entityManager = Objects.requireNonNull(entityManager, "entityManager must not be null");
     }
 
+    /**
+     * 查询指定聚合事件流的当前版本。
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId 聚合根标识
+     * @return 指定事件流当前的聚合版本
+     */
     @Override
     public long findCurrentVersion(String aggregateType, String aggregateId) {
         Objects.requireNonNull(aggregateType, "aggregateType must not be null");
@@ -71,6 +79,13 @@ public class JpaStoredEventRepositoryImpl implements JpaStoredEventRepository {
         }
     }
 
+    /**
+     * 按版本升序查询指定聚合的事件记录。
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId 聚合根标识
+     * @return 事件实体列表（版本升序）
+     */
     @Override
     public List<StoredEventEntity> findByAggregateTypeAndAggregateIdOrderByVersionAsc(String aggregateType, String aggregateId) {
         Objects.requireNonNull(aggregateType, "aggregateType must not be null");
@@ -83,6 +98,15 @@ public class JpaStoredEventRepositoryImpl implements JpaStoredEventRepository {
                 .getResultList();
     }
 
+    /**
+     * 按版本升序查询指定聚合在给定版本范围内的事件记录。
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId 聚合根标识
+     * @param fromVersion 起始版本（包含）
+     * @param toVersion 结束版本（包含）
+     * @return 事件实体列表（版本升序）
+     */
     @Override
     public List<StoredEventEntity> findByAggregateTypeAndAggregateIdAndVersionBetweenOrderByVersionAsc(
             String aggregateType, String aggregateId, long fromVersion, long toVersion) {
@@ -96,6 +120,13 @@ public class JpaStoredEventRepositoryImpl implements JpaStoredEventRepository {
                 .getResultList();
     }
 
+    /**
+     * 按全局位置升序读取起点及其后的事件记录。
+     *
+     * @param fromPosition 起始 position（包含）
+     * @param limit 最大返回条数
+     * @return 事件实体列表（position 升序）
+     */
     @Override
     public List<StoredEventEntity> findByPositionGreaterThanEqualOrderByPositionAsc(long fromPosition, int limit) {
         return entityManager.createQuery(
@@ -106,12 +137,26 @@ public class JpaStoredEventRepositoryImpl implements JpaStoredEventRepository {
                 .getResultList();
     }
 
+    /**
+     * 写入或更新给定的领域对象或存储记录。
+     *
+     * <p>JPA 实现调用 <code>entityManager.persist(entity)</code>。</p>
+     *
+     * @param entity 事件实体
+     */
     @Override
     public void save(StoredEventEntity entity) {
         Objects.requireNonNull(entity, "entity must not be null");
         entityManager.persist(entity);
     }
 
+    /**
+     * 分配事件存储中的下一个全局位置。
+     *
+     * <p>JPA 实现调用 <code>entityManager.createQuery("SELECT COALESCE(MAX(e.position), 0) FROM StoredEventEntity e", Long.class)</code>。</p>
+     *
+     * @return 新分配的事件全局位置
+     */
     @Override
     public long nextPosition() {
         try {

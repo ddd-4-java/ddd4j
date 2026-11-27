@@ -36,12 +36,17 @@ import static org.assertj.core.api.Assertions.assertThatNullPointerException;
  */
 class Ddd4jMicronautContextTest {
 
+    /**
+     * \u521b\u5efa <code>new WebRequestContext</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new WebRequestContext("req-1", "trace-1", "tenant-1", null, Locale.getDefault(), "127.0.0.1", "GET", "/test")</code>
+     */
     private WebRequestContext createContext() {
         return new WebRequestContext(
                 "req-1", "trace-1", "tenant-1", null, Locale.getDefault(),
                 "127.0.0.1", "GET", "/test");
     }
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>ThreadContext.clear()</code>\u3001<code>BaseContext.clear()</code>\u3001<code>PropagatedContext.getOrEmpty()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterEach
     void clear() {
         ThreadContext.clear();
@@ -49,12 +54,14 @@ class Ddd4jMicronautContextTest {
         PropagatedContext.getOrEmpty();
     }
 
+    /** \u9a8c\u8bc1<code>new Ddd4jMicronautContext(null, Optional.empty())</code> \u629b\u51fa <code>NullPointerException</code>\u3002 */
     @Test
     void constructorRejectsNullRequestContext() {
         assertThatNullPointerException()
                 .isThrownBy(() -> new Ddd4jMicronautContext(null, Optional.empty()));
     }
 
+    /** \u9a8c\u8bc1<code>new Ddd4jMicronautContext(ctx, null)</code> \u629b\u51fa <code>NullPointerException</code>\u3002 */
     @Test
     void constructorRejectsNullSubject() {
         WebRequestContext ctx = createContext();
@@ -62,6 +69,7 @@ class Ddd4jMicronautContextTest {
                 .isThrownBy(() -> new Ddd4jMicronautContext(ctx, null));
     }
 
+    /** \u9a8c\u8bc1<code>propagated.getRequestContext()</code> \u6307\u5411\u540c\u4e00\u5b9e\u4f8b <code>propagated.requestContext()</code>\uff0c<code>propagated.getSubject()</code> \u6307\u5411\u540c\u4e00\u5b9e\u4f8b <code>propagated.subject()</code>\u3002 */
     @Test
     void beanAccessorsExposeTheSameRequestContextAndSubject() {
         WebRequestContext ctx = createContext();
@@ -72,6 +80,7 @@ class Ddd4jMicronautContextTest {
         assertThat(propagated.getSubject()).isSameAs(propagated.subject());
     }
 
+    /** \u9a8c\u8bc1<code>requestId</code> \u7b49\u4e8e <code>"req-1"</code>\uff0c<code>scope</code>\u975e\u7a7a\u3002 */
     @Test
     void openingScopeWithSubjectBindsRequest() {
         WebRequestContext ctx = createContext();
@@ -90,6 +99,7 @@ class Ddd4jMicronautContextTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>requestId</code> \u7b49\u4e8e <code>"req-1"</code>\u3002 */
     @Test
     void openingScopeWithoutSubjectBindsRequest() {
         WebRequestContext ctx = createContext();
@@ -106,6 +116,7 @@ class Ddd4jMicronautContextTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>ThreadContext.getResources()</code>\u975e\u7a7a\uff0c<code>ThreadContext.getResources()</code>\u4e3a\u7a7a\u3002 */
     @Test
     void closingScopeRestoresThreadContext() {
         WebRequestContext ctx = createContext();
@@ -120,11 +131,13 @@ class Ddd4jMicronautContextTest {
         assertThat(ThreadContext.getResources()).isEmpty();
     }
 
+    /** \u9a8c\u8bc1<code>Ddd4jMicronautContext.current()</code>\u4e3a\u7a7a\u3002 */
     @Test
     void currentIsEmptyBeforeBinding() {
         assertThat(Ddd4jMicronautContext.current()).isEmpty();
     }
 
+    /** \u9a8c\u8bc1<code>found</code>\u5b58\u5728\u503c\uff0c<code>found.get().requestContext()</code> \u7b49\u4e8e <code>ctx</code>\u3002 */
     @Test
     void currentResolvesBoundContext() {
         WebRequestContext ctx = createContext();
@@ -139,6 +152,7 @@ class Ddd4jMicronautContextTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>first</code> \u7b49\u4e8e <code>equivalent</code>\uff0c<code>first</code> \u4e0d\u7b49\u4e8e <code>other</code>\uff0c<code>first.toString()</code> \u4ee5\u2026\u5f00\u5934 <code>"Ddd4jMicronautContext["</code>\u3002 */
     @Test
     void contextIdentityIncludesRequestAndSubject() {
         WebRequestContext request = createContext();

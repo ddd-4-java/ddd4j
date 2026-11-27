@@ -47,16 +47,28 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class JavalinProjectionViewManager implements ViewManager {
 
+    /** 注册任务和取消任务所用的视图调度器。 */
     private final ViewScheduler scheduler;
 
+    /** 实际执行投影更新的运行器。 */
     private final ProjectionRunner<?> runner;
 
+    /** 已发现并参加调度的投影视图。 */
     private final Collection<ProjectionView<?>> views;
 
+    /** 以视图名称索引的当前调度任务句柄。 */
     private final Map<String, ViewScheduler.ViewScheduleHandle> handles = new ConcurrentHashMap<>();
 
+    /** 视图管理器是否已启动。 */
     private volatile boolean running = false;
 
+    /**
+     * 初始化 <code>JavalinProjectionViewManager</code> 使用的 <code>scheduler</code>、<code>runner</code>、<code>views</code>。
+     *
+     * @param scheduler 安排视图投影触发时点的调度器
+     * @param runner 用于执行投影变更的运行器
+     * @param views 交给管理器调度的投影视图集合
+     */
     private JavalinProjectionViewManager(ViewScheduler scheduler,
                                          ProjectionRunner<?> runner,
                                          Collection<ProjectionView<?>> views) {
@@ -145,6 +157,11 @@ public class JavalinProjectionViewManager implements ViewManager {
         }
     }
 
+    /**
+     * 将本次调度触发的视图交给投影运行器执行。
+     *
+     * @param view 本次要执行投影更新的视图
+     */
     @SuppressWarnings("unchecked")
     private void runView(ProjectionView<?> view) {
         ((ProjectionRunner<Object>) runner).runOnce((ProjectionView<Object>) view);

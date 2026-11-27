@@ -49,21 +49,51 @@ public class SpringJpaProjectionPositionRepository
         this.jpaRepository = jpaRepository;
     }
 
+    /**
+     * 查询指定事件流的投影检查点。
+     *
+     * <p>JPA 实现调用 <code>jpaRepository.findById(streamId)</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     * @return 与给定流标识对应的投影检查点
+     */
     @Override
     public Optional<ProjectionPosition> findByStreamId(String streamId) {
         return jpaRepository.findById(streamId).map(p -> (ProjectionPosition) p);
     }
 
+    /**
+     * 查询存储中符合条件的记录。
+     *
+     * <p>JPA 实现调用 <code>jpaRepository.findAll().stream()</code>。</p>
+     *
+     * @return 满足条件的结果列表
+     */
     @Override
     public List<ProjectionPosition> findAll() {
         return jpaRepository.findAll().stream().map(p -> (ProjectionPosition) p).toList();
     }
 
+    /**
+     * 在持久化存储中写入指定事件流的投影检查点。
+     *
+     * <p>JPA 实现调用 <code>jpaRepository.save((SpringJpaProjectionPosition)position)</code>。</p>
+     *
+     * @param position 投影位置
+     * @return 实际返回<code>jpaRepository.save((SpringJpaProjectionPosition)position)</code>
+     */
     @Override
     public ProjectionPosition save(ProjectionPosition position) {
         return jpaRepository.save((SpringJpaProjectionPosition) position);
     }
 
+    /**
+     * 删除指定事件流的投影检查点。
+     *
+     * <p>JPA 实现调用 <code>jpaRepository.deleteById(streamId)</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     */
     @Override
     public void deleteByStreamId(String streamId) {
         jpaRepository.deleteById(streamId);

@@ -36,6 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class DefaultQrCodeServiceTests {
 
+    /** \u9a8c\u8bc1<code>artifact.getCorrelationId()</code> \u7b49\u4e8e <code>"correlation-1"</code>\uff0c<code>scan.getCorrelationId()</code> \u7b49\u4e8e <code>"correlation-2"</code>\u3002 */
     @Test
     void generateAndDecodePreserveCorrelationMetadata() {
         try (DefaultQrCodeService service = new DefaultQrCodeService()) {
@@ -56,6 +57,7 @@ class DefaultQrCodeServiceTests {
         }
     }
 
+    /** \u9a8c\u8bc1<code>result.getItems()</code> \u7684\u5927\u5c0f\u4e3a <code>100</code>\uff0c<code>result.successCount()</code> \u7b49\u4e8e <code>99</code>\uff0c<code>result.getItems().get(99).getItemId()</code> \u7b49\u4e8e <code>"item-99"</code>\u3002 */
     @Test
     void batchIsOrderedAndNonAtomic() {
         try (DefaultQrCodeService service = new DefaultQrCodeService()) {

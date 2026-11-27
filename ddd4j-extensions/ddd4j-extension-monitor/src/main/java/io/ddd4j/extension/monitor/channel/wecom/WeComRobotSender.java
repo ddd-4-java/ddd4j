@@ -23,17 +23,22 @@ import io.ddd4j.extension.monitor.Sender;
  */
 public class WeComRobotSender implements Sender {
 
+    /** \u5c06\u6d88\u606f\u8bf7\u6c42\u53d1\u9001\u5230\u4f01\u4e1a\u5fae\u4fe1\u673a\u5668\u4eba\u7684 HTTP \u5ba2\u6237\u7aef\u3002 */
     private final WeComClient client;
 
     /**
-     * @param key 企业微信机器人 Webhook key
+     * 初始化 <code>WeComRobotSender</code> 使用的 <code>client</code>。
+     *
+     * @param key \u4f01\u4e1a\u5fae\u4fe1\u673a\u5668\u4eba Webhook key
      */
     public WeComRobotSender(String key) {
         this.client = new WeComClient(key);
     }
 
     /**
-     * 暴露底层 HTTP 客户端，便于高级场景直接复用。
+     * \u66b4\u9732\u5e95\u5c42 HTTP \u5ba2\u6237\u7aef\uff0c\u4fbf\u4e8e\u9ad8\u7ea7\u573a\u666f\u76f4\u63a5\u590d\u7528\u3002
+     *
+     * @return \u4f01\u4e1a\u5fae\u4fe1 HTTP \u5ba2\u6237\u7aef
      */
     public WeComClient getClient() {
         return client;

@@ -44,10 +44,13 @@ import lombok.extern.slf4j.Slf4j;
 @ApplicationScoped
 public class GoodsConfig {
 
+    /** \u8bfb\u5199\u5f53\u524d\u793a\u4f8b\u5546\u54c1\u7684\u5185\u5b58\u4ed3\u50a8\u3002 */
     private final InMemoryGoodsRepository productRepository;
 
     /**
-     * @param productRepository 启动时注册的商品仓储
+     * 初始化 <code>GoodsConfig</code> 使用的 <code>productRepository</code>。
+     *
+     * @param productRepository \u542f\u52a8\u65f6\u6ce8\u518c\u7684\u5546\u54c1\u4ed3\u50a8
      */
     @Inject
     public GoodsConfig(InMemoryGoodsRepository productRepository) {

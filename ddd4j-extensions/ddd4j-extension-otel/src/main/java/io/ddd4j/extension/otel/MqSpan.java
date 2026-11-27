@@ -39,6 +39,7 @@ import java.util.Objects;
  */
 public final class MqSpan {
 
+    /** \u5c06\u8ddf\u8e2a\u4e0a\u4e0b\u6587\u5199\u5165 HTTP \u6216\u6d88\u606f\u4f20\u8f93\u5934\u7684\u4f20\u64ad\u9002\u914d\u5668\u3002 */
     private static final TextMapSetter<Map<String, String>> SETTER = new TextMapSetter<Map<String, String>>() {
         /**
          * set() 方法。
@@ -53,6 +54,7 @@ public final class MqSpan {
             }
         }
     };
+    /** \u4ece HTTP \u6216\u6d88\u606f\u4f20\u8f93\u5934\u8bfb\u53d6\u8ddf\u8e2a\u4e0a\u4e0b\u6587\u7684\u4f20\u64ad\u9002\u914d\u5668\u3002 */
     private static final TextMapGetter<Map<String, String>> GETTER = new TextMapGetter<Map<String, String>>() {
         @Override
         public Iterable<String> keys(Map<String, String> carrier) {
@@ -82,11 +84,17 @@ public final class MqSpan {
         }
     };
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>MqSpan</code> \u5b9e\u4f8b\u3002 */
     private MqSpan() {
     }
 
     /**
-     * 创建 PRODUCER span 并将 TraceContext 注入消息 headers。
+     * \u521b\u5efa PRODUCER span \u5e76\u5c06 TraceContext \u6ce8\u5165\u6d88\u606f headers\u3002
+     *
+     * @param broker Broker \u6807\u8bc6
+     * @param topic \u6d88\u606f\u4e3b\u9898
+     * @param headers \u6d88\u606f\u5934
+     * @param runnable \u5f85\u8ffd\u8e2a\u64cd\u4f5c
      */
     public static void producer(String broker, String topic, Map<String, String> headers, Runnable runnable) {
         if (!Ddd4jOtel.isAvailable()) {
@@ -114,7 +122,12 @@ public final class MqSpan {
     }
 
     /**
-     * 从消息 headers 提取 W3C TraceContext，并创建 CONSUMER span。
+     * \u4ece\u6d88\u606f headers \u63d0\u53d6 W3C TraceContext\uff0c\u5e76\u521b\u5efa CONSUMER span\u3002
+     *
+     * @param broker Broker \u6807\u8bc6
+     * @param topic \u6d88\u606f\u4e3b\u9898
+     * @param headers \u6d88\u606f\u5934
+     * @return \u6d88\u8d39\u8ffd\u8e2a\u4f5c\u7528\u57df
      */
     public static Scope consumer(String broker, String topic, Map<String, String> headers) {
         if (!Ddd4jOtel.isAvailable()) {
@@ -134,7 +147,10 @@ public final class MqSpan {
     }
 
     /**
-     * 完成 CONSUMER span（异常标记）。
+     * \u5b8c\u6210 CONSUMER span\uff08\u5f02\u5e38\u6807\u8bb0\uff09\u3002
+     *
+     * @param span \u8ffd\u8e2a\u7247\u6bb5
+     * @param error \u9519\u8bef
      */
     public static void endConsumer(Span span, Throwable error) {
         if (Objects.isNull(span)) {
@@ -148,12 +164,18 @@ public final class MqSpan {
     }
 
     /**
-     * 完成 CONSUMER span（正常）。
+     * \u5b8c\u6210 CONSUMER span\uff08\u6b63\u5e38\uff09\u3002
+     *
+     * @param span \u8ffd\u8e2a\u7247\u6bb5
      */
     public static void endConsumer(Span span) {
         endConsumer(span, null);
     }
 
+    /**
+     * \u628a\u5f53\u524d\u8ffd\u8e2a\u4e0a\u4e0b\u6587\u5199\u5165\u6d88\u606f\u4f20\u8f93\u5934\u3002
+     * @param headers \u4f20\u64ad\u8ffd\u8e2a\u4fe1\u606f\u4f7f\u7528\u7684\u4f20\u8f93\u5934\u5b57\u6bb5
+     */
     private static void injectContext(Map<String, String> headers) {
         if (Objects.isNull(headers)) {
             return;
@@ -169,6 +191,11 @@ public final class MqSpan {
         }
     }
 
+    /**
+     * \u4ece\u6d88\u606f\u5934\u6062\u590d\u8c03\u7528\u94fe\u4f20\u64ad\u4e0a\u4e0b\u6587\u3002
+     * @param headers \u4f20\u64ad\u8ffd\u8e2a\u4fe1\u606f\u4f7f\u7528\u7684\u4f20\u8f93\u5934\u5b57\u6bb5
+     * @return \u6d88\u606f\u4e2d\u4f20\u9012\u7684 OpenTelemetry \u4e0a\u4e0b\u6587
+     */
     private static Context extractContext(Map<String, String> headers) {
         if (Objects.isNull(headers)) {
             return Context.current();

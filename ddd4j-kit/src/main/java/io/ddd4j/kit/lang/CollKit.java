@@ -46,6 +46,12 @@ public class CollKit extends CollUtil {
         return coll.toArray((T[]) Array.newInstance(tClass, 0));
     }
 
+    /**
+     * \u5c06\u6570\u7ec4\u8f6c\u6362\u4e3a\u5217\u8868\u3002
+     * @param array \u6e90\u6570\u7ec4
+     * @param <T> \u5143\u7d20\u7c7b\u578b
+     * @return \u8f6c\u6362\u540e\u7684\u5217\u8868\uff1b\u6570\u7ec4\u4e3a\u7a7a\u65f6\u8fd4\u56de\u7a7a\u5217\u8868
+     */
     public <T> List<T> convert(T[] array) {
         if (Objects.isNull(array) || array.length == 0) {
             return new ArrayList<>();

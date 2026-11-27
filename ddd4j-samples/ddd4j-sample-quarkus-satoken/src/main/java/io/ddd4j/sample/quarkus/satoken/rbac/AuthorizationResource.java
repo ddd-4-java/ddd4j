@@ -61,6 +61,7 @@ import java.util.List;
 @ApplicationScoped
 public class AuthorizationResource {
 
+    /** \u6267\u884c\u57fa\u4e8e\u89d2\u8272\u7684\u6388\u6743\u4e0e\u5206\u914d\u64cd\u4f5c\u7684\u5e94\u7528\u670d\u52a1\u3002 */
     @Inject
     RbacService rbacService;
 

@@ -36,8 +36,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class ContextTest {
 
+    /** \u4f9b\u4e0d\u540c\u7528\u4f8b\u5b9a\u4f4d\u540c\u4e00\u9879\u6d4b\u8bd5\u8bbe\u7f6e\u7684\u952e\u3002 */
     private String testKey;
 
+    /** \u6d4b\u8bd5\u6267\u884c\u524d\u6267\u884c <code>UUID.randomUUID()</code>\u3001<code>BaseContext.clear()</code>\u3001<code>ThreadContext.clear()</code> \u5b8c\u6210\u8d44\u6e90\u51c6\u5907\u3002 */
     @BeforeEach
     void setUp() {
         testKey = "ddd4j.test." + UUID.randomUUID();
@@ -45,12 +47,18 @@ class ContextTest {
         ThreadContext.clear();
     }
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>BaseContext.clear()</code>\u3001<code>ThreadContext.clear()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterEach
     void tearDown() {
         BaseContext.clear();
         ThreadContext.clear();
     }
 
+    /**
+     * \u6784\u9020 <code>DomainEventPublisher</code> \u4f5c\u4e3a\u5f53\u524d\u6d4b\u8bd5\u7684\u8f93\u5165\u6216\u7ed3\u679c\u3002
+     * @param name \u5f53\u524d\u6d4b\u8bd5\u6307\u5b9a\u7684\u5bf9\u8c61\u6216\u5c5e\u6027\u540d\u79f0
+     * @return \u63d0\u4f9b\u7ed9\u540e\u7eed\u5951\u7ea6\u65ad\u8a00\u7684 <code>DomainEventPublisher</code> \u7ed3\u679c
+     */
     private DomainEventPublisher stub(String name) {
         return new DomainEventPublisher() {
             /**
@@ -93,6 +101,7 @@ class ContextTest {
 
     // ========================= BaseContext =========================
 
+    /** \u9a8c\u8bc1<code>resolved</code> \u5305\u542b <code>publisher</code>\u3002 */
     @Test
     void baseContext_injectTyped_shouldLookupBySameType() {
         DomainEventPublisher publisher = stub("p1");
@@ -103,18 +112,21 @@ class ContextTest {
         assertThat(resolved).contains(publisher);
     }
 
+    /** \u9a8c\u8bc1<code>BaseContext.inject(testKey, DomainEventPublisher.class, null)</code> \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
     @Test
     void baseContext_injectTyped_shouldRejectNullValue() {
         assertThatThrownBy(() -> BaseContext.inject(testKey, DomainEventPublisher.class, null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    /** \u9a8c\u8bc1<code>BaseContext.inject(null, DomainEventPublisher.class, stub("p"))</code> \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
     @Test
     void baseContext_injectTyped_shouldRejectNullKey() {
         assertThatThrownBy(() -> BaseContext.inject(null, DomainEventPublisher.class, stub("p")))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    /** \u9a8c\u8bc1<code>BaseContext.inject(testKey, targetType, "not-a-publisher")</code> \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
     @Test
     @SuppressWarnings({"unchecked", "rawtypes"})
     void baseContext_injectTyped_shouldRejectTypeMismatch() {
@@ -124,6 +136,7 @@ class ContextTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    /** \u9a8c\u8bc1<code>BaseContext.get(testKey, Integer.class)</code>\u4e3a\u7a7a\u3002 */
     @Test
     void baseContext_injectTyped_shouldReturnEmptyForTypeMismatch() {
         BaseContext.inject(testKey, "value");
@@ -131,6 +144,7 @@ class ContextTest {
         assertThat(BaseContext.get(testKey, Integer.class)).isEmpty();
     }
 
+    /** \u9a8c\u8bc1<code>(String) BaseContext.get(testKey)</code> \u7b49\u4e8e <code>"value"</code>\uff0c<code>BaseContext.contains(testKey)</code>\u4e3a\u771f\u3002 */
     @Test
     void baseContext_injectUntyped_shouldStoreAndRetrieveValue() {
         BaseContext.inject(testKey, "value");
@@ -139,21 +153,25 @@ class ContextTest {
         assertThat(BaseContext.contains(testKey)).isTrue();
     }
 
+    /** \u9a8c\u8bc1<code>(Object) BaseContext.get("missing")</code>\u4e3a\u7a7a\u3002 */
     @Test
     void baseContext_get_shouldReturnNullForMissingKey() {
         assertThat((Object) BaseContext.get("missing")).isNull();
     }
 
+    /** \u9a8c\u8bc1<code>BaseContext.get("missing", "default")</code> \u7b49\u4e8e <code>"default"</code>\u3002 */
     @Test
     void baseContext_getWithDefault_shouldReturnDefaultForMissingKey() {
         assertThat(BaseContext.get("missing", "default")).isEqualTo("default");
     }
 
+    /** \u9a8c\u8bc1<code>BaseContext.contains(null)</code>\u4e3a\u5047\u3002 */
     @Test
     void baseContext_contains_shouldReturnFalseForNullKey() {
         assertThat(BaseContext.contains(null)).isFalse();
     }
 
+    /** \u9a8c\u8bc1<code>BaseContext.contains(testKey)</code>\u4e3a\u771f\uff0c<code>BaseContext.contains(testKey)</code>\u4e3a\u5047\u3002 */
     @Test
     void baseContext_remove_shouldDeleteEntry() {
         BaseContext.inject(testKey, "value");
@@ -164,6 +182,7 @@ class ContextTest {
         assertThat(BaseContext.contains(testKey)).isFalse();
     }
 
+    /** \u9a8c\u8bc1<code>BaseContext.contains(testKey)</code>\u4e3a\u5047\u3002 */
     @Test
     void baseContext_clear_shouldRemoveAllEntries() {
         BaseContext.inject(testKey, "v1");
@@ -176,6 +195,7 @@ class ContextTest {
 
     // ========================= ThreadContext =========================
 
+    /** \u9a8c\u8bc1<code>resolved</code> \u5305\u542b <code>publisher</code>\u3002 */
     @Test
     void threadContext_injectTyped_shouldLookupOnSameThread() {
         DomainEventPublisher publisher = stub("tp");
@@ -186,6 +206,7 @@ class ContextTest {
         assertThat(resolved).contains(publisher);
     }
 
+    /** \u9a8c\u8bc1<code>ThreadContext.get(testKey, Integer.class)</code>\u4e3a\u7a7a\u3002 */
     @Test
     void threadContext_injectTyped_shouldReturnEmptyForTypeMismatch() {
         ThreadContext.inject(testKey, String.class, "value");
@@ -193,11 +214,13 @@ class ContextTest {
         assertThat(ThreadContext.get(testKey, Integer.class)).isEmpty();
     }
 
+    /** \u9a8c\u8bc1<code>ThreadContext.get(testKey, String.class)</code>\u4e3a\u7a7a\u3002 */
     @Test
     void threadContext_injectTyped_shouldReturnEmptyForMissing() {
         assertThat(ThreadContext.get(testKey, String.class)).isEmpty();
     }
 
+    /** \u9a8c\u8bc1<code>(String) ThreadContext.get(testKey)</code> \u7b49\u4e8e <code>"value"</code>\u3002 */
     @Test
     void threadContext_set_shouldStoreValue() {
         ThreadContext.set(testKey, "value");
@@ -205,6 +228,7 @@ class ContextTest {
         assertThat((String) ThreadContext.get(testKey)).isEqualTo("value");
     }
 
+    /** \u9a8c\u8bc1<code>(Object) ThreadContext.get(testKey)</code>\u4e3a\u7a7a\u3002 */
     @Test
     void threadContext_set_shouldIgnoreNullString() {
         ThreadContext.set(testKey, "");
@@ -212,6 +236,7 @@ class ContextTest {
         assertThat((Object) ThreadContext.get(testKey)).isNull();
     }
 
+    /** \u9a8c\u8bc1<code>(Object) ThreadContext.get(testKey)</code>\u4e3a\u7a7a\uff0c<code>(String) ThreadContext.get(testKey)</code> \u7b49\u4e8e <code>"v1"</code>\u3002 */
     @Test
     void threadContext_setConditional_shouldStoreOnlyWhenTrue() {
         ThreadContext.set(false, testKey, "v1");
@@ -221,6 +246,7 @@ class ContextTest {
         assertThat((String) ThreadContext.get(testKey)).isEqualTo("v1");
     }
 
+    /** \u9a8c\u8bc1<code>(Object) ThreadContext.get(testKey)</code>\u4e3a\u7a7a\u3002 */
     @Test
     void threadContext_remove_shouldDeleteEntry() {
         ThreadContext.set(testKey, "value");
@@ -229,6 +255,7 @@ class ContextTest {
         assertThat((Object) ThreadContext.get(testKey)).isNull();
     }
 
+    /** \u9a8c\u8bc1<code>(Object) ThreadContext.get(testKey)</code>\u4e3a\u7a7a\u3002 */
     @Test
     void threadContext_clear_shouldRemoveThreadBindings() {
         ThreadContext.set(testKey, "value");
@@ -239,6 +266,7 @@ class ContextTest {
 
     // ========================= Contexts =========================
 
+    /** \u9a8c\u8bc1<code>resolved</code> \u5305\u542b <code>publisher</code>\u3002 */
     @Test
     void contexts_inject_shouldFallbackToBaseContext() {
         DomainEventPublisher publisher = stub("base");
@@ -249,6 +277,7 @@ class ContextTest {
         assertThat(resolved).contains(publisher);
     }
 
+    /** \u9a8c\u8bc1<code>Contexts.getOrThrow(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class)</code> \u629b\u51fa <code>IllegalStateException.class</code>\u3002 */
     @Test
     void contexts_getOrThrow_shouldThrowWhenNotFound() {
         BaseContext.remove(SpiKeys.DOMAIN_EVENT_PUBLISHER);
@@ -259,6 +288,7 @@ class ContextTest {
                 .hasMessageContaining("SPI service not found");
     }
 
+    /** \u9a8c\u8bc1<code>resolved</code> \u5305\u542b <code>thread</code>\u3002 */
     @Test
     void contexts_inject_threadShouldOverrideBase() {
         DomainEventPublisher base = stub("base");
@@ -271,6 +301,7 @@ class ContextTest {
         assertThat(resolved).contains(thread);
     }
 
+    /** \u9a8c\u8bc1<code>BaseContext.get(testKey, DomainEventPublisher.class)</code> \u5305\u542b <code>publisher</code>\u3002 */
     @Test
     void contexts_register_shouldDelegateToBaseContext() {
         DomainEventPublisher publisher = stub("registered");

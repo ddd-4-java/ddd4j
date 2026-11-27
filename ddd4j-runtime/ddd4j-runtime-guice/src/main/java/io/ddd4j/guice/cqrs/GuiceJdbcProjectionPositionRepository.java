@@ -55,25 +55,32 @@ public class GuiceJdbcProjectionPositionRepository implements ProjectionPosition
      */
     private static final String TABLE_NAME = ProjectionConstants.TABLE_NAME;
 
+    /** \u66f4\u65b0\u5df2\u6709\u6295\u5f71\u6d41\u68c0\u67e5\u70b9\u7684 SQL\u3002 */
     private static final String UPSERT_UPDATE =
             "UPDATE " + TABLE_NAME + " SET " + ProjectionConstants.COLUMN_NEXT_EVENT_NUMBER + " = ? WHERE " + ProjectionConstants.COLUMN_STREAM_ID + " = ?";
 
+    /** \u63d2\u5165\u5c1a\u4e0d\u5b58\u5728\u7684\u6295\u5f71\u6d41\u68c0\u67e5\u70b9\u7684 SQL\u3002 */
     private static final String UPSERT_INSERT =
             "INSERT INTO " + TABLE_NAME + " (" + ProjectionConstants.COLUMN_STREAM_ID + ", " + ProjectionConstants.COLUMN_NEXT_EVENT_NUMBER + ") VALUES (?, ?)";
 
+    /** \u6839\u636e\u4e8b\u4ef6\u6d41\u6807\u8bc6\u8bfb\u53d6\u4e00\u4e2a\u68c0\u67e5\u70b9\u7684 SQL\u3002 */
     private static final String SELECT_BY_STREAM_ID =
             "SELECT " + ProjectionConstants.COLUMN_STREAM_ID + ", " + ProjectionConstants.COLUMN_NEXT_EVENT_NUMBER + " FROM " + TABLE_NAME + " WHERE " + ProjectionConstants.COLUMN_STREAM_ID + " = ?";
 
+    /** \u8bfb\u53d6\u6240\u6709\u5df2\u767b\u8bb0\u6295\u5f71\u4f4d\u70b9\u7684 SQL\u3002 */
     private static final String SELECT_ALL =
             "SELECT " + ProjectionConstants.COLUMN_STREAM_ID + ", " + ProjectionConstants.COLUMN_NEXT_EVENT_NUMBER + " FROM " + TABLE_NAME;
 
+    /** \u5220\u9664\u4e00\u4e2a\u4e8b\u4ef6\u6d41\u4f4d\u70b9\u7684 SQL\u3002 */
     private static final String DELETE_BY_STREAM_ID =
             "DELETE FROM " + TABLE_NAME + " WHERE " + ProjectionConstants.COLUMN_STREAM_ID + " = ?";
 
+    /** \u786e\u4fdd\u5f53\u524d\u6570\u636e\u5e93\u5b58\u5728\u6295\u5f71\u68c0\u67e5\u70b9\u8868\u7684 SQL\u3002 */
     private static final String CREATE_TABLE_IF_NOT_EXISTS =
             "CREATE TABLE IF NOT EXISTS " + TABLE_NAME
                     + " (" + ProjectionConstants.COLUMN_STREAM_ID + " VARCHAR(255) PRIMARY KEY, " + ProjectionConstants.COLUMN_NEXT_EVENT_NUMBER + " BIGINT NOT NULL DEFAULT 0)";
 
+    /** \u6267\u884c\u6295\u5f71\u4f4d\u70b9 SQL \u7684 JDBC \u6570\u636e\u6e90\u3002 */
     private final DataSource dataSource;
 
     /**
@@ -86,6 +93,14 @@ public class GuiceJdbcProjectionPositionRepository implements ProjectionPosition
         ensureTable();
     }
 
+    /**
+     * 查询指定事件流的投影检查点。
+     *
+     * <p>此实现调用 <code>dataSource.getConnection()</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     * @return 与给定流标识对应的投影检查点
+     */
     @Override
     public Optional<ProjectionPosition> findByStreamId(String streamId) {
         try (Connection conn = dataSource.getConnection();
@@ -102,6 +117,13 @@ public class GuiceJdbcProjectionPositionRepository implements ProjectionPosition
         }
     }
 
+    /**
+     * 查询存储中符合条件的记录。
+     *
+     * <p>此实现调用 <code>dataSource.getConnection()</code>。</p>
+     *
+     * @return 满足条件的结果列表
+     */
     @Override
     public List<ProjectionPosition> findAll() {
         try (Connection conn = dataSource.getConnection();
@@ -117,6 +139,14 @@ public class GuiceJdbcProjectionPositionRepository implements ProjectionPosition
         }
     }
 
+    /**
+     * 在持久化存储中写入指定事件流的投影检查点。
+     *
+     * <p>此实现调用 <code>position.getStreamId()</code>。</p>
+     *
+     * @param position 投影位置
+     * @return 根据执行路径返回<code>position</code>、<code>save(position)</code>
+     */
     @Override
     public ProjectionPosition save(ProjectionPosition position) {
         Objects.requireNonNull(position, "position must not be null");
@@ -153,16 +183,26 @@ public class GuiceJdbcProjectionPositionRepository implements ProjectionPosition
     }
 
     /**
-     * 判断是否为重复主键异常（跨数据库可移植）。
-     * <p>
-     * H2: SQL state 23505（Unique index or primary key violation）
-     * PostgreSQL: SQL state 23505
-     * MySQL: error code 1062
+     * \u5224\u65ad\u662f\u5426\u4e3a\u91cd\u590d\u4e3b\u952e\u5f02\u5e38\uff08\u8de8\u6570\u636e\u5e93\u53ef\u79fb\u690d\uff09\u3002
+     *  <p>
+     *  H2: SQL state 23505\uff08Unique index or primary key violation\uff09
+     *  PostgreSQL: SQL state 23505
+     *  MySQL: error code 1062
+     *
+     * @param e \u6570\u636e\u5e93\u5199\u5165\u629b\u51fa\u7684\u5f02\u5e38
+     * @return \u5f02\u5e38\u8868\u793a\u552f\u4e00\u952e\u51b2\u7a81\u65f6\u8fd4\u56de true
      */
     private boolean isDuplicateKeyException(SQLException e) {
         return "23505".equals(e.getSQLState()) || e.getErrorCode() == 1062;
     }
 
+    /**
+     * 删除指定事件流的投影检查点。
+     *
+     * <p>此实现调用 <code>dataSource.getConnection()</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     */
     @Override
     public void deleteByStreamId(String streamId) {
         try (Connection conn = dataSource.getConnection();
@@ -175,6 +215,13 @@ public class GuiceJdbcProjectionPositionRepository implements ProjectionPosition
         }
     }
 
+    /**
+     * 将指定流的投影检查点重置为零。
+     *
+     * <p>此实现调用 <code>save(DefaultProjectionPosition.zero(streamId))</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     */
     @Override
     public void resetToZero(String streamId) {
         save(DefaultProjectionPosition.zero(streamId));
@@ -194,7 +241,11 @@ public class GuiceJdbcProjectionPositionRepository implements ProjectionPosition
     }
 
     /**
-     * 从 ResultSet 读取一行投影位置。
+     * \u4ece ResultSet \u8bfb\u53d6\u4e00\u884c\u6295\u5f71\u4f4d\u7f6e\u3002
+     *
+     * @param rs \u5305\u542b\u6295\u5f71\u4f4d\u70b9\u67e5\u8be2\u7ed3\u679c\u7684 JDBC \u7ed3\u679c\u96c6
+     * @return \u6839\u636e\u7ed3\u679c\u884c\u6062\u590d\u7684\u6295\u5f71\u4f4d\u70b9
+     * @throws SQLException \u4ece\u6570\u636e\u5e93\u7ed3\u679c\u884c\u8bfb\u53d6\u6295\u5f71\u4f4d\u70b9\u5931\u8d25
      */
     private ProjectionPosition readPosition(ResultSet rs) throws SQLException {
         return new DefaultProjectionPosition(rs.getString(ProjectionConstants.COLUMN_STREAM_ID), rs.getLong(ProjectionConstants.COLUMN_NEXT_EVENT_NUMBER));

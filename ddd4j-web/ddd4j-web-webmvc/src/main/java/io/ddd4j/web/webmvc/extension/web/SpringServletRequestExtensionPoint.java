@@ -30,8 +30,20 @@ import java.util.Map;
  */
 public interface SpringServletRequestExtensionPoint extends ExtensionPoint {
 
+    /**
+     * \u5305\u88c5\u5916\u90e8\u8bf7\u6c42\u3002
+     * @param request HTTP \u8bf7\u6c42
+     * @param realParams \u539f\u59cb\u8bf7\u6c42\u53c2\u6570
+     * @return \u5305\u88c5\u540e\u7684\u8bf7\u6c42
+     */
     String wrap(HttpServletRequest request, Map<String, Object> realParams);
 
+    /**
+     * \u5305\u88c5\u5916\u90e8\u8bf7\u6c42\u3002
+     * @param requestEntity \u8bf7\u6c42\u5b9e\u4f53
+     * @param <T> \u8bf7\u6c42\u4f53\u7c7b\u578b
+     * @return \u5305\u88c5\u540e\u7684\u8bf7\u6c42
+     */
     <T> RequestEntity<T> wrap(RequestEntity<T> requestEntity);
 
 }

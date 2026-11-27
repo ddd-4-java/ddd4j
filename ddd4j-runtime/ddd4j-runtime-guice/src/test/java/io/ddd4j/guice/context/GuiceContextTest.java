@@ -37,12 +37,17 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class GuiceContextTest {
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>GuiceContext.clear()</code>\u3001<code>System.clearProperty()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterEach
     void tearDown() {
         GuiceContext.clear();
         System.clearProperty("guice.context.test.prop");
     }
 
+    /**
+     * \u8c03\u7528 <code>Guice.createInjector()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @return \u63d0\u4f9b\u7ed9\u540e\u7eed\u5951\u7ea6\u65ad\u8a00\u7684 <code>Injector</code> \u7ed3\u679c
+     */
     private Injector injector() {
         return Guice.createInjector(new AbstractModule() {
             /**
@@ -56,6 +61,7 @@ class GuiceContextTest {
         });
     }
 
+    /** \u9a8c\u8bc1<code>GuiceContext.isInitialized()</code>\u4e3a\u771f\uff0c<code>GuiceContext.getInjector()</code>\u975e\u7a7a\uff0c<code>GuiceContext.getInstance("greeting", String.class)</code> \u7b49\u4e8e <code>"hello"</code>\u3002 */
     @Test
     void setAndGetInjectorAndInstances() {
         GuiceContext.setInjector(injector());
@@ -65,6 +71,7 @@ class GuiceContextTest {
         assertEquals("hello", GuiceContext.getInstance("greeting", String.class));
     }
 
+    /** \u9a8c\u8bc1<code>runnables.size()</code> \u7b49\u4e8e <code>1</code>\uff0c<code>runnables.iterator().next() instanceof CountingRunnable</code>\u4e3a\u771f\u3002 */
     @Test
     void getInstancesCollectsSubtypeBindings() {
         GuiceContext.setInjector(injector());
@@ -75,6 +82,7 @@ class GuiceContextTest {
         assertTrue(runnables.iterator().next() instanceof CountingRunnable);
     }
 
+    /** \u9a8c\u8bc1<code>GuiceContext.getProperty("guice.context.test.prop")</code> \u7b49\u4e8e <code>"sys-value"</code>\u3002 */
     @Test
     void getPropertyResolvesSystemPropertyFirst() {
         System.setProperty("guice.context.test.prop", "sys-value");
@@ -83,6 +91,7 @@ class GuiceContextTest {
         assertEquals("sys-value", GuiceContext.getProperty("guice.context.test.prop"));
     }
 
+    /** \u9a8c\u8bc1<code>GuiceContext.getProperty("guice.context.attr")</code> \u7b49\u4e8e <code>"attr-value"</code>\uff0c<code>GuiceContext.getProperty("guice.context.missing", "fallback")</code> \u7b49\u4e8e <code>"fallback"</code>\uff0c<code>GuiceContext.getProperty("guice.context.missing")</code>\u4e3a\u7a7a\u3002 */
     @Test
     void getPropertyFallsBackToAttributesAndDefault() {
         GuiceContext.setAttribute("guice.context.attr", "attr-value");
@@ -92,6 +101,7 @@ class GuiceContextTest {
         assertNull(GuiceContext.getProperty("guice.context.missing"));
     }
 
+    /** \u9a8c\u8bc1<code>GuiceContext.getAttribute("k")</code> \u7b49\u4e8e <code>"v"</code>\uff0c<code>GuiceContext.getAttribute("missing")</code>\u4e3a\u7a7a\u3002 */
     @Test
     void attributesRoundTrip() {
         GuiceContext.setAttribute("k", "v");
@@ -100,6 +110,7 @@ class GuiceContextTest {
         assertNull(GuiceContext.getAttribute("missing"));
     }
 
+    /** \u9a8c\u8bc1<code>GuiceContext.getBoundTypes().contains(String.class)</code>\u4e3a\u771f\uff0c<code>GuiceContext.getBoundTypes().contains(Runnable.class)</code>\u4e3a\u771f\u3002 */
     @Test
     void getBoundTypesListsAllBindingTypes() {
         GuiceContext.setInjector(injector());
@@ -108,6 +119,7 @@ class GuiceContextTest {
         assertTrue(GuiceContext.getBoundTypes().contains(Runnable.class));
     }
 
+    /** \u9a8c\u8bc1<code>GuiceContext.isInitialized()</code>\u4e3a\u5047\uff0c<code>GuiceContext.getAttribute("k")</code>\u4e3a\u7a7a\u3002 */
     @Test
     void clearResetsState() {
         GuiceContext.setInjector(injector());
@@ -118,6 +130,10 @@ class GuiceContextTest {
         assertNull(GuiceContext.getAttribute("k"));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>captured.get()</code>\u975e\u7a7a\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void getInjectorInterruptedWhileWaitingThrows() throws Exception {
         GuiceContext.clear();
@@ -140,6 +156,7 @@ class GuiceContextTest {
         assertNotNull(captured.get());
     }
 
+    /** \u9a8c\u8bc1<code>runnables.isEmpty()</code>\u4e3a\u771f\u3002 */
     @Test
     void getInstancesSkipsBindingsThatFailInstantiation() {
         GuiceContext.setInjector(Guice.createInjector(new AbstractModule() {
@@ -157,6 +174,7 @@ class GuiceContextTest {
         assertTrue(runnables.isEmpty());
     }
 
+    /** \u9a8c\u8bc1<code>GuiceContext.getProperty("HOME")</code> \u7b49\u4e8e <code>home</code>\u3002 */
     @Test
     void getPropertyReadsEnvironmentVariables() {
         String home = System.getenv("HOME");
@@ -165,6 +183,7 @@ class GuiceContextTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>GuiceContext.getInstance("greeting", String.class)</code> \u7b49\u4e8e <code>"hello"</code>\u3002 */
     @Test
     void setInjectorTwiceWarnsButOverwrites() {
         GuiceContext.setInjector(injector());
@@ -191,6 +210,7 @@ class GuiceContextTest {
      */
     public static final class BrokenRunnable implements Runnable {
 
+        /** \u6784\u9020\u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684 <code>BrokenRunnable</code> \u5b9e\u4f8b\u3002 */
         public BrokenRunnable() {
             throw new IllegalStateException("cannot create");
         }

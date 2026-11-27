@@ -25,10 +25,9 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * 统一接口响应，标准的响应数据结构
- *
- * @param <T>
+ * \u7edf\u4e00\u63a5\u53e3\u54cd\u5e94\uff0c\u6807\u51c6\u7684\u54cd\u5e94\u6570\u636e\u7ed3\u6784
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @param <T> \u7531 R \u5904\u7406\u7684\u6cdb\u578b\u7c7b\u578b
  */
 @Data
 public class R<T> implements IR {
@@ -51,22 +50,45 @@ public class R<T> implements IR {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     protected List<Map<String, String>> error;
 
+    /** \u521b\u5efa\u54cd\u5e94\u5bf9\u8c61\u3002 */
     public R() {
         this(ApiCode.OK.getCode(), ApiCode.OK.getDesc());
     }
 
+    /**
+     * \u521b\u5efa\u54cd\u5e94\u5bf9\u8c61\u3002
+     * @param code \u54cd\u5e94\u7801
+     * @param msg \u54cd\u5e94\u6d88\u606f
+     */
     public R(Serializable code, String msg) {
         this(code, msg, null);
     }
 
+    /**
+     * \u521b\u5efa\u54cd\u5e94\u5bf9\u8c61\u3002
+     * @param data \u54cd\u5e94\u6570\u636e
+     */
     public R(T data) {
         this(ApiCode.OK.getCode(), ApiCode.OK.getDesc(), data);
     }
 
+    /**
+     * \u521b\u5efa\u54cd\u5e94\u5bf9\u8c61\u3002
+     * @param code \u54cd\u5e94\u7801
+     * @param msg \u54cd\u5e94\u6d88\u606f
+     * @param data \u54cd\u5e94\u6570\u636e
+     */
     public R(Serializable code, String msg, T data) {
         this(code, msg, data, null);
     }
 
+    /**
+     * \u521b\u5efa\u54cd\u5e94\u5bf9\u8c61\u3002
+     * @param code \u54cd\u5e94\u7801
+     * @param msg \u54cd\u5e94\u6d88\u606f
+     * @param data \u54cd\u5e94\u6570\u636e
+     * @param error \u6821\u9a8c\u5931\u8d25\u4fe1\u606f
+     */
     public R(Serializable code, String msg, T data, List<Map<String, String>> error) {
         this.code = code;
         this.msg = msg;
@@ -77,21 +99,33 @@ public class R<T> implements IR {
     // ok -----------------------------------------------------------------
 
     /**
-     * 请求/操作成功（code=0），不携带数据。
+     * \u8bf7\u6c42/\u64cd\u4f5c\u6210\u529f\uff08code=0\uff09\uff0c\u4e0d\u643a\u5e26\u6570\u636e\u3002
+     *
+     * @param <T> \u54cd\u5e94\u6570\u636e\u7c7b\u578b
+     * @return \u54cd\u5e94\u5bf9\u8c61
      */
     public static <T> R<T> ok() {
         return new R<>();
     }
 
     /**
-     * 请求/操作成功（code=0），携带数据。
+     * \u8bf7\u6c42/\u64cd\u4f5c\u6210\u529f\uff08code=0\uff09\uff0c\u643a\u5e26\u6570\u636e\u3002
+     *
+     * @param <T> \u54cd\u5e94\u6570\u636e\u7c7b\u578b
+     * @param payload \u54cd\u5e94\u6570\u636e
+     * @return \u54cd\u5e94\u5bf9\u8c61
      */
     public static <T> R<T> ok(T payload) {
         return new R<>(payload);
     }
 
     /**
-     * 请求/操作成功（code=0），携带自定义消息与数据。
+     * \u8bf7\u6c42/\u64cd\u4f5c\u6210\u529f\uff08code=0\uff09\uff0c\u643a\u5e26\u81ea\u5b9a\u4e49\u6d88\u606f\u4e0e\u6570\u636e\u3002
+     *
+     * @param <T> \u54cd\u5e94\u6570\u636e\u7c7b\u578b
+     * @param msg \u54cd\u5e94\u6d88\u606f
+     * @param data \u54cd\u5e94\u6570\u636e
+     * @return \u54cd\u5e94\u5bf9\u8c61
      */
     public static <T> R<T> ok(String msg, T data) {
         return of(ApiCode.OK.getCode(), msg, data);
@@ -100,21 +134,32 @@ public class R<T> implements IR {
     // success -----------------------------------------------------------------
 
     /**
-     * 请求/操作成功（code=200），不携带数据。
+     * \u8bf7\u6c42/\u64cd\u4f5c\u6210\u529f\uff08code=200\uff09\uff0c\u4e0d\u643a\u5e26\u6570\u636e\u3002
+     *
+     * @param <T> \u54cd\u5e94\u6570\u636e\u7c7b\u578b
+     * @return \u54cd\u5e94\u5bf9\u8c61
      */
     public static <T> R<T> success() {
         return of(ApiCode.SUCCESS);
     }
 
     /**
-     * 请求/操作成功（code=200），携带自定义消息。
+     * \u8bf7\u6c42/\u64cd\u4f5c\u6210\u529f\uff08code=200\uff09\uff0c\u643a\u5e26\u81ea\u5b9a\u4e49\u6d88\u606f\u3002
+     *
+     * @param <T> \u54cd\u5e94\u6570\u636e\u7c7b\u578b
+     * @param message \u54cd\u5e94\u6d88\u606f
+     * @return \u54cd\u5e94\u5bf9\u8c61
      */
     public static <T> R<T> success(String message) {
         return new R<>(ApiCode.SUCCESS.getCode(), message, null);
     }
 
     /**
-     * 请求/操作成功（code=200），携带数据。
+     * \u8bf7\u6c42/\u64cd\u4f5c\u6210\u529f\uff08code=200\uff09\uff0c\u643a\u5e26\u6570\u636e\u3002
+     *
+     * @param <T> \u54cd\u5e94\u6570\u636e\u7c7b\u578b
+     * @param data \u54cd\u5e94\u6570\u636e
+     * @return \u54cd\u5e94\u5bf9\u8c61
      */
     public static <T> R<T> success(T data) {
         return of(ApiCode.SUCCESS.getCode(), ApiCode.SUCCESS.getReason(), data);
@@ -123,21 +168,32 @@ public class R<T> implements IR {
     // fail -----------------------------------------------------------------
 
     /**
-     * 请求/操作失败（code=400），不携带数据。
+     * \u8bf7\u6c42/\u64cd\u4f5c\u5931\u8d25\uff08code=400\uff09\uff0c\u4e0d\u643a\u5e26\u6570\u636e\u3002
+     *
+     * @param <T> \u54cd\u5e94\u6570\u636e\u7c7b\u578b
+     * @return \u54cd\u5e94\u5bf9\u8c61
      */
     public static <T> R<T> fail() {
         return fail(ApiCode.FAIL.getCode());
     }
 
     /**
-     * 请求/操作失败（code=400），携带自定义消息。
+     * \u8bf7\u6c42/\u64cd\u4f5c\u5931\u8d25\uff08code=400\uff09\uff0c\u643a\u5e26\u81ea\u5b9a\u4e49\u6d88\u606f\u3002
+     *
+     * @param <T> \u54cd\u5e94\u6570\u636e\u7c7b\u578b
+     * @param code \u54cd\u5e94\u7801
+     * @return \u54cd\u5e94\u5bf9\u8c61
      */
     public static <T> R<T> fail(Serializable code) {
         return of(code, ApiCode.FAIL.getDesc());
     }
 
     /**
-     * 请求/操作失败（code=400），携带数据。
+     * \u8bf7\u6c42/\u64cd\u4f5c\u5931\u8d25\uff08code=400\uff09\uff0c\u643a\u5e26\u6570\u636e\u3002
+     *
+     * @param <T> \u54cd\u5e94\u6570\u636e\u7c7b\u578b
+     * @param message \u54cd\u5e94\u6d88\u606f
+     * @return \u54cd\u5e94\u5bf9\u8c61
      */
     public static <T> R<T> fail(String message) {
         return of(ApiCode.FAIL.getCode(), message);
@@ -146,14 +202,22 @@ public class R<T> implements IR {
     // error -----------------------------------------------------------------
 
     /**
-     * 错误响应（code=500），携带自定义消息。
+     * \u9519\u8bef\u54cd\u5e94\uff08code=500\uff09\uff0c\u643a\u5e26\u81ea\u5b9a\u4e49\u6d88\u606f\u3002
+     *
+     * @param <T> \u54cd\u5e94\u6570\u636e\u7c7b\u578b
+     * @param message \u54cd\u5e94\u6d88\u606f
+     * @return \u54cd\u5e94\u5bf9\u8c61
      */
     public static <T> R<T> error(String message) {
         return new R<>(ApiCode.SERVER_ERROR.getCode(), message, null);
     }
 
     /**
-     * 错误响应（code=500），携带数据。
+     * \u9519\u8bef\u54cd\u5e94\uff08code=500\uff09\uff0c\u643a\u5e26\u6570\u636e\u3002
+     *
+     * @param <T> \u54cd\u5e94\u6570\u636e\u7c7b\u578b
+     * @param data \u54cd\u5e94\u6570\u636e
+     * @return \u54cd\u5e94\u5bf9\u8c61
      */
     public static <T> R<T> error(T data) {
         return new R<>(ApiCode.SERVER_ERROR.getCode(), ApiCode.SERVER_ERROR.getReason(), data);
@@ -162,58 +226,105 @@ public class R<T> implements IR {
     // CustomApiCode -----------------------------------------------------------------
 
     /**
-     * 按 {@link CustomApiCode} 构建响应（code 与描述取自定义码）。
+     * \u6309 {@link CustomApiCode} \u6784\u5efa\u54cd\u5e94\uff08code \u4e0e\u63cf\u8ff0\u53d6\u81ea\u5b9a\u4e49\u7801\uff09\u3002
+     *
+     * @param <T> \u54cd\u5e94\u6570\u636e\u7c7b\u578b
+     * @param code \u54cd\u5e94\u7801
+     * @return \u54cd\u5e94\u5bf9\u8c61
      */
     public static <T> R<T> of(CustomApiCode code) {
         return new R<>(code.getCode(), code.getReason(), null);
     }
 
     /**
-     * 按 {@link CustomApiCode} 构建响应并携带自定义消息。
+     * \u6309 {@link CustomApiCode} \u6784\u5efa\u54cd\u5e94\u5e76\u643a\u5e26\u81ea\u5b9a\u4e49\u6d88\u606f\u3002
+     *
+     * @param <T> \u54cd\u5e94\u6570\u636e\u7c7b\u578b
+     * @param code \u54cd\u5e94\u7801
+     * @param message \u54cd\u5e94\u6d88\u606f
+     * @return \u54cd\u5e94\u5bf9\u8c61
      */
     public static <T> R<T> of(CustomApiCode code, String message) {
         return new R<>(code.getCode(), message, null);
     }
 
     /**
-     * 按 {@link CustomApiCode} 构建响应，并携带数据。
+     * \u6309 {@link CustomApiCode} \u6784\u5efa\u54cd\u5e94\uff0c\u5e76\u643a\u5e26\u6570\u636e\u3002
+     *
+     * @param <T> \u54cd\u5e94\u6570\u636e\u7c7b\u578b
+     * @param code \u54cd\u5e94\u7801
+     * @param data \u54cd\u5e94\u6570\u636e
+     * @return \u54cd\u5e94\u5bf9\u8c61
      */
     public static <T> R<T> of(CustomApiCode code, T data) {
         return new R<>(code.getCode(), code.getReason(), data);
     }
 
     /**
-     * 按 {@link CustomApiCode} 构建响应，并携带自定义消息与校验失败信息。
+     * \u6309 {@link CustomApiCode} \u6784\u5efa\u54cd\u5e94\uff0c\u5e76\u643a\u5e26\u81ea\u5b9a\u4e49\u6d88\u606f\u4e0e\u6821\u9a8c\u5931\u8d25\u4fe1\u606f\u3002
+     *
+     * @param <T> \u54cd\u5e94\u6570\u636e\u7c7b\u578b
+     * @param code \u54cd\u5e94\u7801
+     * @param message \u54cd\u5e94\u6d88\u606f
+     * @param error \u6821\u9a8c\u5931\u8d25\u4fe1\u606f
+     * @return \u54cd\u5e94\u5bf9\u8c61
      */
     public static <T> R<T> of(CustomApiCode code, String message, List<Map<String, String>> error) {
         return new R<>(code.getCode(), message, null, error);
     }
 
     /**
-     * 按字符串 code 构建响应（内部转数字）。
+     * \u6309\u5b57\u7b26\u4e32 code \u6784\u5efa\u54cd\u5e94\uff08\u5185\u90e8\u8f6c\u6570\u5b57\uff09\u3002
+     *
+     * @param <T> \u54cd\u5e94\u6570\u636e\u7c7b\u578b
+     * @param code \u54cd\u5e94\u7801
+     * @param message \u54cd\u5e94\u6d88\u606f
+     * @return \u54cd\u5e94\u5bf9\u8c61
      */
     public static <T> R<T> of(String code, String message) {
         return of(Integer.parseInt(code), message);
     }
 
     /**
-     * 按数字 code 构建响应。
+     * \u6309\u6570\u5b57 code \u6784\u5efa\u54cd\u5e94\u3002
+     *
+     * @param <T> \u54cd\u5e94\u6570\u636e\u7c7b\u578b
+     * @param code \u54cd\u5e94\u7801
+     * @param message \u54cd\u5e94\u6d88\u606f
+     * @return \u54cd\u5e94\u5bf9\u8c61
      */
     public static <T> R<T> of(Serializable code, String message) {
         return new R<>(code, message, null);
     }
 
     /**
-     * 按数字 code 构建响应并携带数据（status 参数为兼容占位）。
+     * \u6309\u6570\u5b57 code \u6784\u5efa\u54cd\u5e94\u5e76\u643a\u5e26\u6570\u636e\uff08status \u53c2\u6570\u4e3a\u517c\u5bb9\u5360\u4f4d\uff09\u3002
+     *
+     * @param <T> \u54cd\u5e94\u6570\u636e\u7c7b\u578b
+     * @param code \u54cd\u5e94\u7801
+     * @param message \u54cd\u5e94\u6d88\u606f
+     * @param data \u54cd\u5e94\u6570\u636e
+     * @return \u54cd\u5e94\u5bf9\u8c61
      */
     public static <T> R<T> of(Serializable code, String message, T data) {
         return new R<>(code, message, data);
     }
 
+    /**
+     * \u68c0\u67e5\u54cd\u5e94\u662f\u5426\u4e3a\u7a7a\u3002
+     * @param r \u5f85\u68c0\u67e5\u54cd\u5e94
+     * @return \u54cd\u5e94\u7f3a\u5931\u3001\u5931\u8d25\u6216\u6570\u636e\u4e3a\u7a7a\u65f6\u4e3a true
+     */
     public static boolean empty(R<?> r) {
         return Objects.isNull(r) || !Objects.equals(r.getCode(), ApiCode.OK.getCode()) || Objects.isNull(r.getData());
     }
 
+    /**
+     * \u590d\u5236\u54cd\u5e94\u7801\u548c\u6d88\u606f\u5230\u65b0\u54cd\u5e94\u3002
+     * @param <T> \u54cd\u5e94\u6570\u636e\u7c7b\u578b
+     * @param source \u5f85\u8f6c\u6362\u54cd\u5e94
+     * @return \u4fdd\u7559\u54cd\u5e94\u7801\u548c\u6d88\u606f\u7684\u65b0\u54cd\u5e94
+     */
     public static <T> R<T> transform(R<?> source) {
         R<T> target = new R<>();
         target.setCode(source.getCode());
@@ -221,10 +332,18 @@ public class R<T> implements IR {
         return target;
     }
 
+    /**
+     * \u5224\u65ad\u54cd\u5e94\u7801\u662f\u5426\u8868\u793a\u6210\u529f\u3002
+     * @return \u54cd\u5e94\u7801\u8868\u793a\u6210\u529f\u65f6\u4e3a true
+     */
     public Boolean isOk() {
         return Objects.equals(this.getCode(), ApiCode.OK.getCode()) || Objects.equals(this.getCode(), ApiCode.SUCCESS.getCode());
     }
 
+    /**
+     * \u5224\u65ad\u54cd\u5e94\u662f\u5426\u5931\u8d25\u6216\u65e0\u6570\u636e\u3002
+     * @return \u54cd\u5e94\u5931\u8d25\u6216\u6570\u636e\u4e3a\u7a7a\u65f6\u4e3a true
+     */
     public Boolean isEmpty() {
         return !isOk() || Objects.isNull(data);
     }
@@ -232,15 +351,19 @@ public class R<T> implements IR {
     // === ApiRestResponse 收编（实例方法） ===
 
     /**
-     * 是否成功（原 ApiRestResponse 语义：code == 200）。
+     * \u662f\u5426\u6210\u529f\uff08\u539f ApiRestResponse \u8bed\u4e49\uff1acode == 200\uff09\u3002
+     *
+     * @return \u54cd\u5e94\u7801\u4e3a\u6210\u529f\u7801\u65f6\u4e3a true
      */
     public boolean isSuccess() {
         return Objects.equals(this.getCode(), ApiCode.SUCCESS.getCode());
     }
 
     /**
-     * 原.ApiRestResponse#getMessage 兼容别名，等价于 {@link #getMsg()}。
-     * <p>加 {@code @JsonIgnore} 是为了避免 Jackson 把同一字段序列化成 msg/message 两份。
+     * \u539f.ApiRestResponse#getMessage \u517c\u5bb9\u522b\u540d\uff0c\u7b49\u4ef7\u4e8e {@link #getMsg()}\u3002
+     *  <p>\u52a0 {@code @JsonIgnore} \u662f\u4e3a\u4e86\u907f\u514d Jackson \u628a\u540c\u4e00\u5b57\u6bb5\u5e8f\u5217\u5316\u6210 msg/message \u4e24\u4efd\u3002
+     *
+     * @return \u54cd\u5e94\u6d88\u606f
      */
     @JsonIgnore
     public String getMessage() {
@@ -248,7 +371,9 @@ public class R<T> implements IR {
     }
 
     /**
-     * 转换为 Map（key：code / msg / data）。
+     * \u8f6c\u6362\u4e3a Map\uff08key\uff1acode / msg / data\uff09\u3002
+     *
+     * @return \u5305\u542b code\u3001msg\u3001data \u7684\u6620\u5c04
      */
     public Map<String, Object> toMap() {
         Map<String, Object> rtMap = new HashMap<String, Object>();

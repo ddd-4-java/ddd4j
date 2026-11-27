@@ -30,18 +30,21 @@ import java.util.Objects;
 @Controller("/api/auth")
 public class AuthenticationController {
 
+    /** \u6839\u636e\u5f53\u524d\u8c03\u7528\u8303\u56f4\u63d0\u4f9b\u8ba4\u8bc1\u4e3b\u4f53\u7684\u7ec4\u4ef6\u3002 */
     private final SubjectProvider subjectProvider;
 
     /**
-     * @param subjectProvider 主体访问端口
+     * 初始化 <code>AuthenticationController</code> 使用的 <code>subjectProvider</code>。
+     *
+     * @param subjectProvider \u4e3b\u4f53\u8bbf\u95ee\u7aef\u53e3
      */
     public AuthenticationController(SubjectProvider subjectProvider) {
         this.subjectProvider = Objects.requireNonNull(subjectProvider, "subjectProvider must not be null");
     }
 
     /**
-     * @param userId 演示用户标识
-     * @return 登录令牌响应
+     * @param userId \u6f14\u793a\u7528\u6237\u6807\u8bc6
+     * @return \u767b\u5f55\u4ee4\u724c\u54cd\u5e94
      */
     @Post("/tokens/{userId}")
     public R<TokenResponse> issueToken(String userId) {
@@ -54,26 +57,36 @@ public class AuthenticationController {
      */
     public final static class TokenResponse {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u5f53\u524d\u793a\u4f8b\u7b7e\u53d1\u6216\u8fd4\u56de\u5ba2\u6237\u7aef\u7684\u4f1a\u8bdd\u4ee4\u724c\u3002 */
         private final String token;
 
         /**
-         * @param token 登录令牌
+         * 初始化 <code>TokenResponse</code> 使用的 <code>token</code>。
+         *
+         * @param token \u767b\u5f55\u4ee4\u724c
          */
         @JsonCreator()
         public TokenResponse(@JsonProperty("token") String token) {
             this.token = token;
         }
 
-        /**
-         * @return 登录令牌
-         */
+        /** @return \u767b\u5f55\u4ee4\u724c */
         @JsonProperty("token")
         public String token() {
             return token;
         }
 
+        /**
+         * 根据<code>token</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -86,6 +99,11 @@ public class AuthenticationController {
             return Objects.equals(this.token, other.token);
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 0;
@@ -93,6 +111,11 @@ public class AuthenticationController {
             return result;
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>token</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "TokenResponse[token=" + token + "]";

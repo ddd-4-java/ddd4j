@@ -49,6 +49,7 @@ import java.util.Set;
 @Slf4j
 public final class AuthConfig {
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>AuthConfig</code> \u5b9e\u4f8b\u3002 */
     private AuthConfig() {
     }
 
@@ -109,8 +110,11 @@ public final class AuthConfig {
      */
     public static class RbacRealm extends AuthorizingRealm {
 
+        /** \u8bfb\u53d6\u548c\u4fdd\u5b58\u7528\u6237\u7684\u4ed3\u50a8\u3002 */
         private final InMemoryUserRepository userRepository;
+        /** \u8bfb\u53d6\u548c\u4fdd\u5b58\u89d2\u8272\u7684\u4ed3\u50a8\u3002 */
         private final InMemoryRoleRepository roleRepository;
+        /** \u6267\u884c\u57fa\u4e8e\u89d2\u8272\u7684\u6388\u6743\u4e0e\u5206\u914d\u64cd\u4f5c\u7684\u5e94\u7528\u670d\u52a1\u3002 */
         private final RbacService rbacService;
 
         /**
@@ -130,6 +134,12 @@ public final class AuthConfig {
             setCredentialsMatcher(new SimpleCredentialsMatcher());
         }
 
+        /**
+         * \u6839\u636e\u63d0\u4ea4\u7684\u51ed\u636e\u521b\u5efa Shiro \u53ef\u6821\u9a8c\u7684\u8ba4\u8bc1\u4fe1\u606f\u3002
+         * @param token \u7531 Shiro \u4f20\u5165\u7528\u4e8e\u8ba4\u8bc1\u7684\u539f\u751f\u767b\u5f55\u4ee4\u724c
+         * @return \u4e0e\u793a\u4f8b\u8d26\u53f7\u5bf9\u5e94\u7684\u8ba4\u8bc1\u4fe1\u606f
+         * @throws AuthenticationException \u88c5\u914d\u793a\u4f8b\u6216\u5904\u7406\u5f53\u524d HTTP \u8bf7\u6c42\u5931\u8d25
+         */
         @Override
         protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
             UsernamePasswordToken upt = (UsernamePasswordToken) token;
@@ -145,6 +155,11 @@ public final class AuthConfig {
             return new SimpleAuthenticationInfo(user, user.password().toCharArray(), getName());
         }
 
+        /**
+         * \u67e5\u627e\u5f53\u524d\u4e3b\u4f53\u5bf9\u5e94\u7684\u89d2\u8272\u548c\u6743\u9650\u5e76\u8fd4\u56de\u7ed9 Shiro\u3002
+         * @param principals \u5f53\u524d Shiro \u4f1a\u8bdd\u4e2d\u5df2\u8ba4\u8bc1\u7684\u8eab\u4efd\u4fe1\u606f
+         * @return \u7528\u4e8e\u89d2\u8272\u548c\u6743\u9650\u68c0\u67e5\u7684\u6388\u6743\u4fe1\u606f
+         */
         @Override
         protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
             Object primary = principals.getPrimaryPrincipal();

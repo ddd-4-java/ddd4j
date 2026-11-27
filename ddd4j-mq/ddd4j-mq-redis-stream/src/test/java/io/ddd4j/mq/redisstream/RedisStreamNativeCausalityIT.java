@@ -28,11 +28,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /** 通过真实 Redis Stream 字段验证跨语言可读取的因果头；需显式指定 ddd4j.redis.native.url。 */
 class RedisStreamNativeCausalityIT {
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>BaseContext.clear()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterEach
     void clearContext() {
         BaseContext.clear();
     }
 
+    /** \u9a8c\u8bc1<code>url != null &amp;&amp; url.startsWith("redis://")</code>\u4e3a\u771f\uff0c<code>entries.size()</code> \u7b49\u4e8e <code>3</code>\uff0c<code>third.get(MQDeliveryHeaders.CAUSATION_ID)</code> \u7b49\u4e8e <code>"causation-2"</code>\u3002 */
     @Test
     @SuppressWarnings("unchecked")
     void nativeStreamFieldsCoverAbsentSingleAndBothCausalityIds() {
@@ -87,12 +89,21 @@ class RedisStreamNativeCausalityIT {
         }
     }
 
+    /**
+     * \u8bfb\u53d6 <code>event</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
+     * @param topic \u4f20\u7ed9 <code>event.setTopic()</code> \u7684 <code>String</code> \u8f93\u5165
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>event</code>
+     */
     private MQEvent event(String topic) {
         MQEvent event = new MQEvent();
         event.setTopic(topic);
         return event;
     }
 
+    /**
+     * \u9a8c\u8bc1<code>url != null &amp;&amp; url.startsWith("redis://")</code>\u4e3a\u771f\uff0c<code>handler.received.await(15, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>client.acknowledgment.get().correlationId()</code> \u7b49\u4e8e <code>"correlation-from-header"</code>\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     @SuppressWarnings("unchecked")
     void nativeConsumerRestoresCausalityFromStreamFields() throws Exception {
@@ -139,16 +150,27 @@ class RedisStreamNativeCausalityIT {
         }
     }
 
+    /** \u5c06 <code>received</code>\u3001<code>event</code> \u7b49\u72b6\u6001\u4e00\u8d77\u4f20\u5165\u5f53\u524d\u6d4b\u8bd5\uff0c\u4f9b\u8c03\u7528\u6216\u7ed3\u679c\u65ad\u8a00\u4f7f\u7528\u3002 */
     public static final class Handler {
+        /** \u7b49\u5f85\u6570\u636e\u5230\u8fbe\u7684\u540c\u6b65\u95e8\u95e9\u3002 */
         private final CountDownLatch received = new CountDownLatch(1);
+        /** \u4f9b\u6d4b\u8bd5\u7ebf\u7a0b\u5b89\u5168\u4fdd\u5b58\u5f53\u524d\u89c2\u5bdf\u7ed3\u679c\u7684\u5f15\u7528\u3002 */
         private final AtomicReference<MQEvent> event = new AtomicReference<>();
 
+        /**
+         * \u8c03\u7528 <code>event.set()</code>\u3001<code>received.countDown()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+         * @param value \u5f53\u524d\u7528\u4f8b\u4f20\u5165\u7684\u503c
+         */
         public void handle(MQEvent value) {
             event.set(value);
             received.countDown();
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>url != null &amp;&amp; url.startsWith("redis://")</code>\u4e3a\u771f\uff0c<code>handler.succeeded.await(15, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>handler.attempts.get()</code> \u7b49\u4e8e <code>2</code>\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     @SuppressWarnings("unchecked")
     void failedDeliveryRemainsPendingUntilSuccessfulRetry() throws Exception {
@@ -201,10 +223,17 @@ class RedisStreamNativeCausalityIT {
         }
     }
 
+    /** \u5c06 <code>succeeded</code>\u3001<code>attempts</code> \u7b49\u72b6\u6001\u4e00\u8d77\u4f20\u5165\u5f53\u524d\u6d4b\u8bd5\uff0c\u4f9b\u8c03\u7528\u6216\u7ed3\u679c\u65ad\u8a00\u4f7f\u7528\u3002 */
     public static final class RetryHandler {
+        /** \u534f\u8c03\u6d4b\u8bd5\u7ebf\u7a0b\u5728\u6307\u5b9a\u6267\u884c\u9636\u6bb5\u7b49\u5f85\u6216\u7ee7\u7eed\u7684\u95e8\u95e9\u3002 */
         private final CountDownLatch succeeded = new CountDownLatch(1);
+        /** \u8ddf\u8e2a\u6d4b\u8bd5\u64cd\u4f5c\u7684\u8c03\u7528\u6216\u91cd\u8bd5\u6b21\u6570\u3002 */
         private final AtomicInteger attempts = new AtomicInteger();
 
+        /**
+         * \u8c03\u7528 <code>attempts.incrementAndGet()</code>\u3001<code>succeeded.countDown()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+         * @param value \u5f53\u524d\u7528\u4f8b\u4f20\u5165\u7684\u503c
+         */
         public void handle(MQEvent value) {
             if (attempts.incrementAndGet() == 1) {
                 throw new IllegalStateException("fail first delivery");
@@ -213,6 +242,10 @@ class RedisStreamNativeCausalityIT {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>url != null &amp;&amp; url.startsWith("redis://")</code>\u4e3a\u771f\uff0c<code>found</code>\u4e3a\u771f\u3002
+     * @throws Exception \u51c6\u5907\u6216\u91ca\u653e\u88ab\u6d4b\u8fd0\u884c\u8d44\u6e90\u65f6\u5931\u8d25
+     */
     @Test
     @SuppressWarnings("unchecked")
     void configuredConsumerNameIsVisibleInNativeConsumerGroup() throws Exception {
@@ -264,6 +297,10 @@ class RedisStreamNativeCausalityIT {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>url != null &amp;&amp; url.startsWith("redis://")</code>\u4e3a\u771f\uff0c<code>firstHandler.delivered.await(5, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>observer.xpending(streamKey, secondListener.getGroup()).getTotal()</code> \u7b49\u4e8e <code>0</code>\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     @SuppressWarnings("unchecked")
     void anotherConsumerCanClaimIdlePendingDelivery() throws Exception {
@@ -340,22 +377,42 @@ class RedisStreamNativeCausalityIT {
         }
     }
 
+    /** \u5c06 <code>delivered</code> \u7b49\u72b6\u6001\u4e00\u8d77\u4f20\u5165\u5f53\u524d\u6d4b\u8bd5\uff0c\u4f9b\u8c03\u7528\u6216\u7ed3\u679c\u65ad\u8a00\u4f7f\u7528\u3002 */
     public static final class AlwaysFailHandler {
+        /** \u534f\u8c03\u6d4b\u8bd5\u7ebf\u7a0b\u5728\u6307\u5b9a\u6267\u884c\u9636\u6bb5\u7b49\u5f85\u6216\u7ee7\u7eed\u7684\u95e8\u95e9\u3002 */
         private final CountDownLatch delivered = new CountDownLatch(1);
 
+        /**
+         * \u8c03\u7528 <code>delivered.countDown()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+         * @param value \u5f53\u524d\u7528\u4f8b\u4f20\u5165\u7684\u503c
+         */
         public void handle(MQEvent value) {
             delivered.countDown();
             throw new IllegalStateException("leave delivery pending");
         }
     }
 
+    /** \u5b9e\u73b0 <code>RedisStreamMQClient</code>\uff0c\u4f9b\u6d4b\u8bd5\u8c03\u7528 <code>consume()</code> \u5e76\u89c2\u5bdf\u7ed3\u679c\u3002 */
     private static final class AckCapturingClient extends RedisStreamMQClient {
+        /** \u4f9b\u6d4b\u8bd5\u7ebf\u7a0b\u5b89\u5168\u4fdd\u5b58\u5f53\u524d\u89c2\u5bdf\u7ed3\u679c\u7684\u5f15\u7528\u3002 */
         private final AtomicReference<Acknowledgment> acknowledgment = new AtomicReference<>();
 
+        /**
+         * \u4f7f\u7528 <code>super()</code> \u521d\u59cb\u5316 <code>AckCapturingClient</code> \u6d4b\u8bd5\u5939\u5177\u3002
+         * @param properties \u7528\u4e8e\u6784\u5efa\u5f53\u524d\u6d4b\u8bd5\u8fd0\u884c\u73af\u5883\u7684\u5c5e\u6027
+         */
         private AckCapturingClient(RedisStreamMQProperties properties) {
             super(properties);
         }
 
+        /**
+         * 通过<code>acknowledgment.set(ack)</code>、<code>listener.getMethod().invoke(listener.getBean(), event)</code>处理当前调用。
+         *
+         * @param listener 供当前客户端注册的消息监听器
+         * @param event 当前发布、消费或处理的事件
+         * @param ack 传给 <code>acknowledgment.set(ack)</code>
+         * @throws Throwable 反射访问被测成员时失败
+         */
         @Override
         public void consume(MQListener listener, MQEvent event, Acknowledgment ack) throws Throwable {
             acknowledgment.set(ack);

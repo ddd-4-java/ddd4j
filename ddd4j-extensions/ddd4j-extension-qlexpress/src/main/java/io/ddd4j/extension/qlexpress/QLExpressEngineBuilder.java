@@ -31,11 +31,17 @@ import java.util.Objects;
  */
 public final class QLExpressEngineBuilder {
 
+    /** \u6784\u9020\u5f15\u64ce\u524d\u6309\u63d2\u5165\u987a\u5e8f\u767b\u8bb0\u7684\u5177\u540d\u51fd\u6570\u3002 */
     private final Map<String, NamedQLFunction> functions = new LinkedHashMap<>();
+    /** \u662f\u5426\u6ce8\u518c\u6846\u67b6\u63d0\u4f9b\u7684\u5185\u7f6e\u8868\u8fbe\u5f0f\u51fd\u6570\u3002 */
     private boolean builtInFunctions = true;
+    /** \u521d\u59cb\u5316\u8868\u8fbe\u5f0f\u6267\u884c\u5668\u65f6\u662f\u5426\u5141\u8bb8\u8bbf\u95ee\u975e\u516c\u5f00\u6210\u5458\u3002 */
     private boolean allowPrivateAccess;
+    /** \u521d\u59cb\u5316\u6267\u884c\u5668\u65f6\u662f\u5426\u5f00\u542f\u8868\u8fbe\u5f0f\u8ddf\u8e2a\u3002 */
     private boolean traceExpression;
+    /** \u63a7\u5236\u8868\u8fbe\u5f0f\u53ef\u8bbf\u95ee\u5bf9\u8c61\u548c\u884c\u4e3a\u7684\u5f15\u64ce\u5b89\u5168\u7b56\u7565\u3002 */
     private QLSecurityStrategy securityStrategy = QLSecurityStrategy.isolation();
+    /** \u8c03\u7528\u65b9\u672a\u63d0\u4f9b\u6267\u884c\u9009\u9879\u65f6\u91c7\u7528\u7684\u9ed8\u8ba4\u914d\u7f6e\u3002 */
     private QLExpressExecutionOptions defaultExecutionOptions = QLExpressExecutionOptions.defaults();
 
     /**

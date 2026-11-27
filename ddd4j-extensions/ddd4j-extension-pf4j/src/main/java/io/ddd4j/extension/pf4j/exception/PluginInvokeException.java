@@ -24,15 +24,28 @@ import org.pf4j.PluginRuntimeException;
 @SuppressWarnings("serial")
 public class PluginInvokeException extends PluginRuntimeException {
 
+    /** \u51fa\u9519\u7684\u63d2\u4ef6 ID\u3002 */
     private String pluginId;
 
+    /** \u51fa\u9519\u7684\u6269\u5c55\u70b9 ID\u3002 */
     private String extensionId;
 
+    /**
+     * \u6784\u9020\u63d2\u4ef6\u7ea7\u8c03\u7528\u5f02\u5e38\u3002
+     * @param pluginId \u51fa\u9519\u7684\u63d2\u4ef6 ID
+     * @param cause \u5e95\u5c42\u5f02\u5e38
+     */
     public PluginInvokeException(String pluginId, Throwable cause) {
         super("Plugin '" + pluginId + "' invoke error.", cause);
         this.pluginId = pluginId;
     }
 
+    /**
+     * \u6784\u9020\u6269\u5c55\u70b9\u7ea7\u8c03\u7528\u5f02\u5e38\u3002
+     * @param pluginId \u51fa\u9519\u7684\u63d2\u4ef6 ID
+     * @param extensionId \u51fa\u9519\u7684\u6269\u5c55\u70b9 ID
+     * @param cause \u5e95\u5c42\u5f02\u5e38
+     */
     public PluginInvokeException(String pluginId, String extensionId, Throwable cause) {
         super("Plugin '" + pluginId + "' extensionId '" + extensionId + "' invoke error.", cause);
         this.pluginId = pluginId;

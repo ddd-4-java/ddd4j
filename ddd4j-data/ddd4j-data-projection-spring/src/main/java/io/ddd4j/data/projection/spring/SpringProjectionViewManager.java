@@ -46,16 +46,27 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class SpringProjectionViewManager implements ViewManager, SmartLifecycle {
 
+    /** 注册任务和取消任务所用的视图调度器。 */
     private final ViewScheduler scheduler;
 
+    /** 实际执行投影更新的运行器。 */
     private final ProjectionRunner<?> runner;
 
+    /** 已发现并参加调度的投影视图。 */
     private final Collection<ProjectionView<?>> views;
 
+    /** 以视图名称索引的当前调度任务句柄。 */
     private final Map<String, ViewScheduler.ViewScheduleHandle> handles = new ConcurrentHashMap<>();
 
+    /** 视图管理器是否已启动。 */
     private volatile boolean running = false;
 
+    /**
+     * \u4ece Spring \u5bb9\u5668\u88c5\u914d\u6295\u5f71\u89c6\u56fe\u7ba1\u7406\u5668\u3002
+     * @param scheduler \u89c6\u56fe\u8c03\u5ea6\u5668
+     * @param runner \u6295\u5f71\u6267\u884c\u5668
+     * @param views \u53ef\u7528\u7684\u6295\u5f71\u89c6\u56fe
+     */
     @Autowired
     public SpringProjectionViewManager(ViewScheduler scheduler,
                                        ProjectionRunner<?> runner,
@@ -65,6 +76,11 @@ public class SpringProjectionViewManager implements ViewManager, SmartLifecycle 
         this.views = Objects.requireNonNull(views, "views must not be null");
     }
 
+    /**
+     * 启动当前组件并准备其运行资源。
+     *
+     * <p>Spring 实现调用 <code>view.getName()</code>。</p>
+     */
     @Override
     public void start() {
         if (!running) {
@@ -77,6 +93,11 @@ public class SpringProjectionViewManager implements ViewManager, SmartLifecycle 
         }
     }
 
+    /**
+     * 停止当前组件并清理已登记的运行资源。
+     *
+     * <p>Spring 实现调用 <code>handles.values()</code>。</p>
+     */
     @Override
     public void stop() {
         if (running) {
@@ -86,21 +107,39 @@ public class SpringProjectionViewManager implements ViewManager, SmartLifecycle 
         }
     }
 
+    /**
+     * 检查当前组件是否仍处于运行状态。
+     *
+     * @return 实际返回<code>running</code>，作为本次判断结果
+     */
     @Override
     public boolean isRunning() {
         return running;
     }
 
+    /**
+     * \u58f0\u660e Spring \u662f\u5426\u5e94\u968f\u5e94\u7528\u4e0a\u4e0b\u6587\u81ea\u52a8\u542f\u52a8\u89c6\u56fe\u7ba1\u7406\u5668\u3002
+     * @return \u662f\u5426\u542f\u7528\u81ea\u52a8\u542f\u52a8
+     */
     @Override
     public boolean isAutoStartup() {
         return true;
     }
 
+    /**
+     * \u58f0\u660e\u5f53\u524d\u7ec4\u4ef6\u5728 Spring \u751f\u547d\u5468\u671f\u4e2d\u7684\u542f\u505c\u987a\u5e8f\u3002
+     * @return \u5f53\u524d\u7ec4\u4ef6\u7684\u751f\u547d\u5468\u671f\u9636\u6bb5
+     */
     @Override
     public int getPhase() {
         return Integer.MAX_VALUE - 100;
     }
 
+    /**
+     * 请求立即执行指定投影视图的一轮更新。
+     *
+     * <p>Spring 实现调用 <code>((ProjectionRunner&lt;Object&gt;)runner).runOnce((ProjectionView&lt;Object&gt;)view)</code>。</p>
+     */
     @Override
     @SuppressWarnings("unchecked")
     public void triggerOnce() {
@@ -109,6 +148,11 @@ public class SpringProjectionViewManager implements ViewManager, SmartLifecycle 
         }
     }
 
+    /**
+     * 将本次调度触发的视图交给投影运行器执行。
+     *
+     * @param view 本次要执行投影更新的视图
+     */
     @SuppressWarnings("unchecked")
     private void runView(ProjectionView<?> view) {
         ((ProjectionRunner<Object>) runner).runOnce((ProjectionView<Object>) view);

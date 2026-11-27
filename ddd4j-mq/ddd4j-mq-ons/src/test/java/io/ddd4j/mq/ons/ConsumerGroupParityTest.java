@@ -26,6 +26,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * 参数必须在任何 ONS 客户端创建之前完成校验。
  */
 class ConsumerGroupParityTest {
+    /**
+     * \u6784\u9020 <code>OnsProperties</code> \u4f5c\u4e3a\u5f53\u524d\u6d4b\u8bd5\u7684\u8f93\u5165\u6216\u7ed3\u679c\u3002
+     * @return \u63d0\u4f9b\u7ed9\u540e\u7eed\u5951\u7ea6\u65ad\u8a00\u7684 <code>OnsProperties</code> \u7ed3\u679c
+     */
     private static OnsProperties guardedProperties() {
         return new OnsProperties() {
             /**
@@ -40,6 +44,7 @@ class ConsumerGroupParityTest {
         };
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\u3002 */
     @Test
     void whitespaceGroupIsRejectedBeforeCreatingBroker() {
         OnsProperties properties = guardedProperties();
@@ -49,6 +54,7 @@ class ConsumerGroupParityTest {
         assertThrows(IllegalStateException.class, () -> new OnsMQClient(properties).initConsumer(listener, new MQProperties()));
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\u3002 */
     @Test
     void whitespaceTopicIsRejectedBeforeCreatingBroker() {
         OnsProperties properties = guardedProperties();

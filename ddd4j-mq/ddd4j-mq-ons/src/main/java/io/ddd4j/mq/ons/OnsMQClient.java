@@ -51,12 +51,19 @@ import java.util.function.Consumer;
 @Slf4j(topic = "### DDD4J-MQ : OnsMQClient ###")
 public class OnsMQClient implements MQClient {
 
+    /** \u5f53\u524d\u6d88\u606f\u4ee3\u7406\u5ba2\u6237\u7aef\u4f7f\u7528\u7684\u8fde\u63a5\u548c\u8ba2\u9605\u914d\u7f6e\u3002 */
     private final OnsProperties properties;
+    /** \u5f53\u524d\u9002\u914d\u5668\u5df2\u5efa\u7acb\u7684\u539f\u751f\u6d88\u8d39\u8005\u3002 */
     private final List<com.aliyun.openservices.ons.api.Consumer> consumers = new CopyOnWriteArrayList<>();
+    /** \u534f\u8c03\u6d88\u606f\u5ba2\u6237\u7aef\u542f\u52a8\u3001\u521d\u59cb\u5316\u548c\u5173\u95ed\u7684\u751f\u547d\u5468\u671f\u3002 */
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    /** \u7ec4\u4ef6\u7684\u542f\u52a8\u72b6\u6001\u548c\u542f\u52a8\u5931\u8d25\u8bca\u65ad\u4fe1\u606f\u3002 */
     private final MQStartupStatus startupStatus = new MQStartupStatus("ons");
+    /** 保存 <code>producer</code> 对应的 <code>Producer</code> 数据。 */
     private volatile Producer producer;
+    /** 保存 <code>producer Started</code> 对应的 <code>boolean</code> 数据。 */
     private volatile boolean producerStarted;
+    /** \u5f53\u524d\u5b9e\u4f8b\u662f\u5426\u5df2\u5173\u95ed\u3002 */
     private volatile boolean closed;
 
     /**
@@ -81,6 +88,11 @@ public class OnsMQClient implements MQClient {
         this.producer = producer;
     }
 
+    /**
+     * \u4f18\u5148\u4ece\u539f\u751f\u6d88\u606f\u7684\u6807\u51c6\u5934\u8bfb\u53d6\u6d88\u606f\u6807\u8bc6\uff0c\u7f3a\u5c11\u65f6\u56de\u9000\u5230\u517c\u5bb9\u5934\u3002
+     * @param message \u5f53\u524d\u63a5\u6536\u7684\u539f\u751f\u4ee3\u7406\u6d88\u606f
+     * @return \u7528\u4e8e\u540e\u7eed\u6d88\u8d39\u786e\u8ba4\u7684\u4e1a\u52a1\u6d88\u606f\u6807\u8bc6\uff0c\u5934\u5747\u7f3a\u5931\u65f6\u4e3a\u7a7a
+     */
     static String messageId(Message message) {
         String messageId = message.getUserProperties(MessageHeaders.HEADER_MESSAGE_ID);
         return StrKit.isNotEmpty(messageId)
@@ -88,6 +100,11 @@ public class OnsMQClient implements MQClient {
                 : message.getUserProperties(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
     }
 
+    /**
+     * \u5c06 DDD4J \u6d88\u606f\u5143\u6570\u636e\u5199\u5165 ONS \u539f\u751f\u6d88\u606f\u7528\u6237\u5c5e\u6027\u3002
+     * @param message \u5f53\u524d\u63a5\u6536\u7684\u539f\u751f\u4ee3\u7406\u6d88\u606f
+     * @param event \u5f53\u524d\u53d1\u5e03\u6216\u5f85\u8865\u9f50\u5143\u6570\u636e\u7684 DDD4J \u6d88\u606f\u4e8b\u4ef6
+     */
     static void applyNativeHeaders(Message message, MQEvent event) {
         String tenantId = message.getUserProperties(MessageHeaders.HEADER_TENANT_ID);
         if (StrKit.isNotEmpty(tenantId)) {
@@ -140,10 +157,23 @@ public class OnsMQClient implements MQClient {
 
     // ========================= 消费者 =========================
 
+    /**
+     * \u7528\u6307\u5b9a\u4f1a\u8bdd\u5c5e\u6027\u521b\u5efa ONS \u53d1\u5e03\u5ba2\u6237\u7aef\u3002
+     * @param sessionProperties \u5f53\u524d ONS \u5ba2\u6237\u7aef\u7684\u4f1a\u8bdd\u5c5e\u6027
+     * @return \u5c1a\u5f85\u542f\u52a8\u7684\u539f\u751f\u751f\u4ea7\u8005
+     */
     Producer createProducer(Properties sessionProperties) {
         return ONSFactory.createProducer(sessionProperties);
     }
 
+    /**
+     * 准备消息生产者并返回可发布事件的入口。
+     *
+     * <p>满足 <code>closed</code> 时抛出 <code>IllegalStateException</code>。 此实现调用 <code>createProducer(properties.sessionProperties(properties.getProducerId()))</code>。</p>
+     *
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 接收待发布事件的函数
+     */
     @Override
     public synchronized Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         if (closed) {
@@ -201,16 +231,25 @@ public class OnsMQClient implements MQClient {
     // ========================= 消费者 =========================
 
     /**
-     * initConsumer() 方法。
-     * @param listener 消息监听器。
-     * @param mqProperties MQ 连接属性。
-     * @return 判断结果。
-     * @throws Exception 执行过程中出现异常时抛出。
+     * initConsumer() \u65b9\u6cd5\u3002
+     * @return \u5224\u65ad\u7ed3\u679c\u3002
+     * @throws Exception \u6267\u884c\u8fc7\u7a0b\u4e2d\u51fa\u73b0\u5f02\u5e38\u65f6\u629b\u51fa\u3002
+     * @param sessionProperties \u5f53\u524d ONS \u5ba2\u6237\u7aef\u7684\u4f1a\u8bdd\u5c5e\u6027
      */
     com.aliyun.openservices.ons.api.Consumer createConsumer(Properties sessionProperties) {
         return ONSFactory.createConsumer(sessionProperties);
     }
 
+    /**
+     * 为监听器建立消息消费所需的订阅和客户端资源。
+     *
+     * <p>满足 <code>closed</code> 时抛出 <code>IllegalStateException</code>。 此实现调用 <code>StrKit.hasText(listener.getGroup())</code>。</p>
+     *
+     * @param listener 监听器定义
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 此实现返回<code>true</code>
+     * @throws Exception 当前框架、存储或底层客户端无法完成此操作时
+     */
     @Override
     public synchronized boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         if (closed) {

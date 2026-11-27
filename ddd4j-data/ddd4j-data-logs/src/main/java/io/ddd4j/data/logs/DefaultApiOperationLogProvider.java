@@ -48,16 +48,35 @@ public class DefaultApiOperationLogProvider implements ApiOperationLogProvider {
      */
     private static final Marker ACCESS_MARKER = MarkerFactory.getMarker(Constants.ACCESS_MARKER);
 
+    /**
+     * \u5728\u88ab\u62e6\u622a\u64cd\u4f5c\u6267\u884c\u524d\u4fdd\u7559\u6269\u5c55\u94a9\u5b50\u3002
+     * @param joinPoint \u5f53\u524d API \u8c03\u7528\u8fde\u63a5\u70b9
+     * @param apiOperation \u88ab\u62e6\u622a\u65b9\u6cd5\u58f0\u660e\u7684\u64cd\u4f5c\u8bf4\u660e
+     */
     @Override
     public void doBefore(JoinPoint joinPoint, Operation apiOperation) {
 
     }
 
+    /**
+     * \u7528\u6267\u884c\u7ed3\u679c\u548c\u8ba1\u65f6\u8bb0\u5f55\u6210\u529f\u7ed3\u675f\u7684 API \u8c03\u7528\u3002
+     * @param joinPoint \u5f53\u524d API \u8c03\u7528\u8fde\u63a5\u70b9
+     * @param apiOperation \u88ab\u62e6\u622a\u65b9\u6cd5\u58f0\u660e\u7684\u64cd\u4f5c\u8bf4\u660e
+     * @param rt \u4e1a\u52a1\u65b9\u6cd5\u8fd4\u56de\u503c
+     * @param stopWatch \u8bb0\u5f55\u672c\u6b21\u64cd\u4f5c\u8017\u65f6\u7684\u8ba1\u65f6\u5668
+     */
     @Override
     public void afterReturing(JoinPoint joinPoint, Operation apiOperation, Object rt, com.google.common.base.Stopwatch stopWatch) {
         this.doApiOperationLog(joinPoint, apiOperation, rt, null, stopWatch);
     }
 
+    /**
+     * \u7528\u539f\u59cb\u5f02\u5e38\u548c\u8ba1\u65f6\u8bb0\u5f55\u5f02\u5e38\u7ed3\u675f\u7684 API \u8c03\u7528\u3002
+     * @param joinPoint \u5f53\u524d API \u8c03\u7528\u8fde\u63a5\u70b9
+     * @param apiOperation \u88ab\u62e6\u622a\u65b9\u6cd5\u58f0\u660e\u7684\u64cd\u4f5c\u8bf4\u660e
+     * @param ex \u4e1a\u52a1\u65b9\u6cd5\u629b\u51fa\u7684\u5f02\u5e38
+     * @param stopWatch \u8bb0\u5f55\u672c\u6b21\u64cd\u4f5c\u8017\u65f6\u7684\u8ba1\u65f6\u5668
+     */
     @Override
     public void afterThrowing(JoinPoint joinPoint, Operation apiOperation, Throwable ex, com.google.common.base.Stopwatch stopWatch) {
         this.doApiOperationLog(joinPoint, apiOperation, null, ex, stopWatch);

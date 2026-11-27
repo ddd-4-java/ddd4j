@@ -33,8 +33,10 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+/** \u901a\u8fc7 <code>mock()</code>\u3001<code>org.mockito.Mockito.doThrow()</code>\u3001<code>anyMap()</code> \u9a8c\u8bc1 <code>KafkaAcknowledgmentContract</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
 class KafkaAcknowledgmentContractTest {
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>acknowledgment.isAcknowledged()</code>\u4e3a\u5047\uff0c<code>acknowledgment.isAcknowledged()</code>\u4e3a\u771f\u3002 */
     @Test
     void failedCommitMustLeaveAcknowledgmentOpenForRetry() {
         Consumer<?, ?> consumer = mock(Consumer.class);
@@ -50,6 +52,7 @@ class KafkaAcknowledgmentContractTest {
         org.mockito.Mockito.verify(consumer, org.mockito.Mockito.times(2)).commitSync(anyMap());
     }
 
+    /** \u9a8c\u8bc1<code>acknowledgment.messageId()</code> \u7b49\u4e8e <code>"stable-id"</code>\uff0c<code>acknowledgment.isAcknowledged()</code>\u4e3a\u771f\u3002 */
     @Test
     void shouldReadStableMessageIdAndCommitOffsetOnAck() {
         ConsumerRecord<String, String> record = new ConsumerRecord<>("orders", 1, 8L, "key", "body");

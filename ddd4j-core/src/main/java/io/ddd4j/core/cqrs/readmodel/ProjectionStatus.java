@@ -36,18 +36,25 @@ import java.util.Objects;
 
 public final class ProjectionStatus {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 0L;
 
+    /** \u6295\u5f71\u4efb\u52a1\u4f7f\u7528\u7684\u4e8b\u4ef6\u6d41\u6807\u8bc6\u3002 */
     private final String streamId;
 
+    /** \u6295\u5f71\u6062\u590d\u65f6\u5e94\u8bfb\u53d6\u7684\u4e0b\u4e00\u6761\u6e90\u4e8b\u4ef6\u5e8f\u53f7\u3002 */
     private final long nextEventNumber;
 
+    /** \u5f53\u524d\u89c6\u56fe\u7684\u6295\u5f71\u8c03\u5ea6\u662f\u5426\u6b63\u5728\u8fd0\u884c\u3002 */
     private final boolean running;
 
+    /** \u6700\u8fd1\u4e00\u6b21\u6267\u884c\u7684\u65f6\u95f4\u3002 */
     private final Instant lastRunAt;
 
+    /** \u6700\u8fd1\u4e00\u6b21\u5904\u7406\u7684\u4e8b\u4ef6\u6570\u3002 */
     private final int lastEventCount;
 
+    /** \u6700\u8fd1\u4e00\u6b21\u5931\u8d25\u7684\u8bca\u65ad\u4fe1\u606f\u3002 */
     private final String lastError;
 
     /**
@@ -205,6 +212,14 @@ public final class ProjectionStatus {
         return lastError;
     }
 
+    /**
+     * 根据<code>streamId</code>、<code>lastRunAt</code>、<code>lastError</code>、<code>nextEventNumber</code>、<code>running</code>、<code>lastEventCount</code>比较对象的值是否相等。
+     *
+     * <p>只比较运行时类型相同的对象。</p>
+     *
+     * @param obj 用来比较或转换的输入对象
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -217,6 +232,11 @@ public final class ProjectionStatus {
         return Objects.equals(this.streamId, other.streamId) && this.nextEventNumber == other.nextEventNumber && this.running == other.running && Objects.equals(this.lastRunAt, other.lastRunAt) && this.lastEventCount == other.lastEventCount && Objects.equals(this.lastError, other.lastError);
     }
 
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         int result = 0;
@@ -229,6 +249,11 @@ public final class ProjectionStatus {
         return result;
     }
 
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>streamId</code>、<code>nextEventNumber</code>、<code>running</code>、<code>lastRunAt</code>、<code>lastEventCount</code>、<code>lastError</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "ProjectionStatus[streamId=" + streamId + ", nextEventNumber=" + nextEventNumber + ", running=" + running + ", lastRunAt=" + lastRunAt + ", lastEventCount=" + lastEventCount + ", lastError=" + lastError + "]";

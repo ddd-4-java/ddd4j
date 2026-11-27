@@ -28,6 +28,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 /** Verifies the shared Feishu post-message contract across the three JDK lines. */
 class FeishuRobotSenderContractTest {
 
+    /**
+     * \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>HttpServer.create()</code>\u3001<code>server.createContext()</code>\u3001<code>exchange.getRequestBody()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002
+     * @throws Exception \u51c6\u5907\u6216\u8bfb\u53d6\u5939\u5177\u6587\u4ef6\u3001\u53d1\u8d77\u6d4b\u8bd5\u8bf7\u6c42\u65f6\u5931\u8d25
+     */
     @Test
     void sendsMarkdownAsPostParagraph() throws Exception {
         AtomicReference<String> body = new AtomicReference<>();

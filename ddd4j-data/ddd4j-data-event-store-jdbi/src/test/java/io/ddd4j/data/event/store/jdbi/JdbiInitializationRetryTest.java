@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /** Verifies that a failed lazy schema creation can be retried. */
 class JdbiInitializationRetryTest {
 
+    /** \u9a8c\u8bc1<code>store.readAll(0, 10)</code> \u629b\u51fa <code>RuntimeException.class</code>\uff0c<code>store.readAll(0, 10).isEmpty()</code>\u4e3a\u771f\uff0c<code>attempts.get()</code> \u7b49\u4e8e <code>2</code>\u3002 */
     @Test
     void failedSchemaCreationShouldRetryOnNextOperation() {
         Jdbi jdbi = Jdbi.create("jdbc:h2:mem:jdbi_init_retry_" + System.nanoTime() + ";DB_CLOSE_DELAY=-1");

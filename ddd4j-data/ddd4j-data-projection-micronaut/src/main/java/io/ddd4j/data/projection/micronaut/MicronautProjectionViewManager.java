@@ -46,16 +46,27 @@ import java.util.concurrent.ConcurrentHashMap;
 @Singleton
 public class MicronautProjectionViewManager implements ViewManager {
 
+    /** 注册任务和取消任务所用的视图调度器。 */
     private final ViewScheduler scheduler;
 
+    /** 实际执行投影更新的运行器。 */
     private final ProjectionRunner<?> runner;
 
+    /** 已发现并参加调度的投影视图。 */
     private final Collection<ProjectionView<?>> views;
 
+    /** 以视图名称索引的当前调度任务句柄。 */
     private final Map<String, ViewScheduler.ViewScheduleHandle> handles = new ConcurrentHashMap<>();
 
+    /** 视图管理器是否已启动。 */
     private volatile boolean running = false;
 
+    /**
+     * \u6536\u96c6\u539f\u751f\u89c6\u56fe\uff0c\u4fdd\u7559\u6784\u9020\u65f6\u5feb\u7167\u3002
+     * @param scheduler \u8c03\u5ea6\u5668
+     * @param runner \u8fd0\u884c\u5668
+     * @param context \u5bb9\u5668
+     */
     @Inject
     @SuppressWarnings("unchecked")
     public MicronautProjectionViewManager(ViewScheduler scheduler,
@@ -77,16 +88,23 @@ public class MicronautProjectionViewManager implements ViewManager {
         this.views = null;
     }
 
+    /** 容器初始化组件后启动投影视图管理器。 */
     @PostConstruct
     void onPostConstruct() {
         start();
     }
 
+    /** 容器销毁组件前停止管理器并释放调度任务。 */
     @PreDestroy
     void onPreDestroy() {
         stop();
     }
 
+    /**
+     * 启动当前组件并准备其运行资源。
+     *
+     * <p>Micronaut 实现调用 <code>view.getName()</code>。</p>
+     */
     @Override
     public void start() {
         if (!running && scheduler != null && views != null) {
@@ -99,6 +117,11 @@ public class MicronautProjectionViewManager implements ViewManager {
         }
     }
 
+    /**
+     * 停止当前组件并清理已登记的运行资源。
+     *
+     * <p>Micronaut 实现调用 <code>handles.values()</code>。</p>
+     */
     @Override
     public void stop() {
         if (running) {
@@ -108,11 +131,21 @@ public class MicronautProjectionViewManager implements ViewManager {
         }
     }
 
+    /**
+     * 检查当前组件是否仍处于运行状态。
+     *
+     * @return 实际返回<code>running</code>，作为本次判断结果
+     */
     @Override
     public boolean isRunning() {
         return running;
     }
 
+    /**
+     * 请求立即执行指定投影视图的一轮更新。
+     *
+     * <p>Micronaut 实现调用 <code>((ProjectionRunner&lt;Object&gt;)runner).runOnce((ProjectionView&lt;Object&gt;)view)</code>。</p>
+     */
     @Override
     @SuppressWarnings("unchecked")
     public void triggerOnce() {
@@ -123,6 +156,11 @@ public class MicronautProjectionViewManager implements ViewManager {
         }
     }
 
+    /**
+     * 将本次调度触发的视图交给投影运行器执行。
+     *
+     * @param view 本次要执行投影更新的视图
+     */
     @SuppressWarnings("unchecked")
     private void runView(ProjectionView<?> view) {
         ((ProjectionRunner<Object>) runner).runOnce((ProjectionView<Object>) view);

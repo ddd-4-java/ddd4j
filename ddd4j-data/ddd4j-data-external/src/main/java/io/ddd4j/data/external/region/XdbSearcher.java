@@ -24,6 +24,7 @@ public final class XdbSearcher {
     /** 未匹配到地区时的兜底地区地址对象。 */
     public static final RegionAddress NOT_MATCH_REGION_ADDRESS = new RegionAddress(NOT_MATCH.split("\\|"));
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>XdbSearcher</code> \u5b9e\u4f8b\u3002 */
     private XdbSearcher() {
     }
 }

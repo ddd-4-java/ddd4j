@@ -41,6 +41,7 @@ class InMemoryEventStoreTest extends EventStoreContractTest {
         return new InMemoryEventStore();
     }
 
+    /** \u9a8c\u8bc1<code>events.size()</code> \u7b49\u4e8e <code>2</code>\uff0c<code>events.get(0).version()</code> \u7b49\u4e8e <code>1L</code>\uff0c<code>store.append("Order", id, Collections.&lt;DomainEvent&lt;?&gt;&gt;singletonList(new TestEvent(id)), 0)</code> \u629b\u51fa <code>AggregateVersionConflictException.class</code>\u3002 */
     @Test
     void shouldAppendReadAndRejectWrongVersion() {
         InMemoryEventStore store = new InMemoryEventStore();
@@ -56,30 +57,56 @@ class InMemoryEventStoreTest extends EventStoreContractTest {
         assertThrows(AggregateVersionConflictException.class, () -> store.append("Order", id, Collections.<DomainEvent<?>>singletonList(new TestEvent(id)), 0));
     }
 
+    /** \u4e3a\u6d4b\u8bd5\u805a\u5408\u63d0\u4f9b\u72ec\u7acb\u6807\u8bc6\u7684\u503c\u5bf9\u8c61\u3002 */
     private static final class TestId implements AggregateRootId {
+        /** \u7ec4\u6210\u6d4b\u8bd5\u6807\u8bc6\u7684\u539f\u59cb\u503c\u3002 */
         private final String value;
 
+        /**
+         * \u8bbe\u7f6e <code>value</code>\uff0c\u7528\u4e8e\u6784\u9020 <code>TestId</code> \u6d4b\u8bd5\u5b9e\u4f8b\u3002
+         * @param value \u7ec4\u6210\u6d4b\u8bd5\u6807\u8bc6\u7684\u539f\u59cb\u503c
+         */
         private TestId(String value) {
             this.value = value;
         }
 
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 此操作产生的<code>EntityType</code>结果
+         */
         @Override
         public EntityType getType() {
             return new StringEntityType("Order");
         }
 
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 实际返回<code>value</code>，供调用方取得当前值
+         */
         @Override
         public String asString() {
             return value;
         }
 
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * @return 实际返回<code>"Order:" + value</code>，供调用方取得当前值
+         */
         @Override
         public String asTypedString() {
             return "Order:" + value;
         }
     }
 
+    /** \u6d4b\u8bd5\u4e13\u7528\u9886\u57df\u4e8b\u4ef6\uff0c\u7528\u4e8e\u63a7\u5236\u4e8b\u4ef6\u7c7b\u578b\u548c\u8d1f\u8f7d\u3002 */
     private static final class TestEvent extends DomainEvent<TestId> {
+        /**
+         * \u4f7f\u7528 <code>super()</code> \u521d\u59cb\u5316 <code>TestEvent</code> \u6d4b\u8bd5\u5939\u5177\u3002
+         * @param id \u5f53\u524d\u8981\u67e5\u627e\u7684\u6d4b\u8bd5\u8bb0\u5f55\u6807\u8bc6
+         */
         private TestEvent(TestId id) {
             super(new EntityIdPath(id));
         }

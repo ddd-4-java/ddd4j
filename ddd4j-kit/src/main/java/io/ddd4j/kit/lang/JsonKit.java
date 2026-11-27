@@ -79,7 +79,9 @@ public class JsonKit {
     /** 双精度 JSON 类型引用。 */
     public static final TypeReference<Double> DOUBLE_TYPE = new TypeReference<Double>() {
     };
+    /** \u53ea\u542b\u5e74\u6708\u65e5\u7684\u517c\u5bb9\u65e5\u671f\u683c\u5f0f\u3002 */
     private static final String DATE_PATTERN = "yyyy-MM-dd";
+    /** \u542b\u5e74\u6708\u65e5\u53ca\u79d2\u7684\u517c\u5bb9\u65e5\u671f\u65f6\u95f4\u683c\u5f0f\u3002 */
     private static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
     /**
      * 默认 ObjectMapper（用于普通 JSON 序列化）
@@ -474,17 +476,30 @@ public class JsonKit {
         }
     }
 
+    /**
+     * \u6309 JSON \u6570\u5b57\u3001\u5e03\u5c14\u3001\u6587\u672c\u6216\u5176\u4ed6\u8282\u70b9\u7c7b\u578b\u53d6\u51fa Java \u503c\u3002
+     * @param childNode \u5f85\u8f6c\u6362\u7684 Jackson \u6811\u8282\u70b9
+     * @return JSON \u8282\u70b9\u5bf9\u5e94\u7684 Java \u503c
+     */
     private static Object getNodeValue(JsonNode childNode) {
         return childNode.isBigDecimal() ? childNode.decimalValue() : childNode.isDouble() ? childNode.asDouble() :
                 childNode.isFloat() ? childNode.floatValue() : childNode.isLong() ? childNode.asLong() :
                         childNode.isInt() ? childNode.asInt() : childNode.isBoolean() ? childNode.asBoolean() : childNode.asText();
     }
 
+    /** \u89e3\u6790\u79d2\u7ea7\u548c\u6beb\u79d2\u7ea7\u65f6\u95f4\u6587\u672c\uff0c\u7f3a\u5c11\u5c0f\u6570\u90e8\u5206\u65f6\u8865\u9f50\u6beb\u79d2\u3002 */
     private static class BaseSimpleDateFormat extends SimpleDateFormat {
+        /** \u4f7f\u7528\u5e26\u6beb\u79d2\u7684\u65e5\u671f\u65f6\u95f4\u6a21\u5f0f\u521d\u59cb\u5316\u683c\u5f0f\u5668\u3002 */
         public BaseSimpleDateFormat() {
             super("yyyy-MM-dd HH:mm:ss.SSS");
         }
 
+        /**
+         * \u5728\u7f3a\u5c11\u6beb\u79d2\u540e\u7f00\u7684\u79d2\u7ea7\u6587\u672c\u4e0a\u8865\u96f6\uff0c\u518d\u4ea4\u7ed9\u65e5\u671f\u65f6\u95f4\u683c\u5f0f\u5668\u89e3\u6790\u3002
+         * @param source \u79d2\u7ea7\u6216\u6beb\u79d2\u7ea7\u65e5\u671f\u65f6\u95f4\u6587\u672c
+         * @return \u89e3\u6790\u540e\u7684\u65e5\u671f
+         * @throws ParseException \u6587\u672c\u4e0d\u80fd\u6309\u65e5\u671f\u65f6\u95f4\u6a21\u5f0f\u89e3\u6790
+         */
         public Date parse(String source) throws ParseException {
             if (source.length() == 19) {
                 source = source.concat(".000");

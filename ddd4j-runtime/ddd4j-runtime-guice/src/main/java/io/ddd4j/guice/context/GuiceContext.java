@@ -56,11 +56,14 @@ public class GuiceContext {
      */
     private static volatile Injector injector;
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>GuiceContext</code> \u5b9e\u4f8b\u3002 */
     private GuiceContext() {
     }
 
     /**
-     * 获取 Injector（阻塞等待初始化完成）
+     * \u83b7\u53d6 Injector\uff08\u963b\u585e\u7b49\u5f85\u521d\u59cb\u5316\u5b8c\u6210\uff09
+     *
+     * @return \u5df2\u521d\u59cb\u5316\u7684 Guice Injector
      */
     public static Injector getInjector() {
         if (Objects.isNull(injector)) {
@@ -75,7 +78,9 @@ public class GuiceContext {
     }
 
     /**
-     * 设置 Injector（应用启动时调用一次）
+     * \u8bbe\u7f6e Injector\uff08\u5e94\u7528\u542f\u52a8\u65f6\u8c03\u7528\u4e00\u6b21\uff09
+     *
+     * @param inj Guice Injector
      */
     public static void setInjector(Injector inj) {
         if (Objects.nonNull(injector)) {
@@ -87,28 +92,46 @@ public class GuiceContext {
     }
 
     /**
-     * 按类型获取实例
+     * \u6309\u7c7b\u578b\u83b7\u53d6\u5b9e\u4f8b
+     *
+     * @param <T> \u5b9e\u4f8b\u7c7b\u578b
+     * @param clazz \u5b9e\u4f8b\u7c7b\u578b
+     * @return \u5bb9\u5668\u4e2d\u7684\u5b9e\u4f8b
      */
     public static <T> T getInstance(Class<T> clazz) {
         return getInjector().getInstance(clazz);
     }
 
     /**
-     * 按名称获取实例
+     * \u6309\u540d\u79f0\u83b7\u53d6\u5b9e\u4f8b
+     *
+     * @param <T> \u5b9e\u4f8b\u7c7b\u578b
+     * @param name \u7ed1\u5b9a\u540d\u79f0
+     * @param clazz \u5b9e\u4f8b\u7c7b\u578b
+     * @return \u5bb9\u5668\u4e2d\u7684\u5b9e\u4f8b
      */
     public static <T> T getInstance(String name, Class<T> clazz) {
         return getInjector().getInstance(Key.get(clazz, Names.named(name)));
     }
 
     /**
-     * 按注解获取实例
+     * \u6309\u6ce8\u89e3\u83b7\u53d6\u5b9e\u4f8b
+     *
+     * @param <T> \u5b9e\u4f8b\u7c7b\u578b
+     * @param clazz \u5b9e\u4f8b\u7c7b\u578b
+     * @param annotationType \u7ed1\u5b9a\u6ce8\u89e3\u7c7b\u578b
+     * @return \u5bb9\u5668\u4e2d\u7684\u5b9e\u4f8b
      */
     public static <T> T getInstance(Class<T> clazz, Class<? extends Annotation> annotationType) {
         return getInjector().getInstance(Key.get(clazz, annotationType));
     }
 
     /**
-     * 获取某类型的所有绑定实例
+     * \u83b7\u53d6\u67d0\u7c7b\u578b\u7684\u6240\u6709\u7ed1\u5b9a\u5b9e\u4f8b
+     *
+     * @param <T> \u5b9e\u4f8b\u7c7b\u578b
+     * @param clazz \u5b9e\u4f8b\u7c7b\u578b
+     * @return \u53ef\u5b9e\u4f8b\u5316\u7684\u7ed1\u5b9a\u96c6\u5408
      */
     public static <T> Collection<T> getInstances(Class<T> clazz) {
         List<T> instances = new ArrayList<>();
@@ -129,14 +152,21 @@ public class GuiceContext {
     }
 
     /**
-     * 获取环境属性
+     * \u83b7\u53d6\u73af\u5883\u5c5e\u6027
+     *
+     * @param key \u5c5e\u6027\u540d\u79f0
+     * @return \u5c5e\u6027\u503c\uff0c\u7f3a\u5931\u65f6\u4e3a\u7a7a
      */
     public static String getProperty(String key) {
         return getProperty(key, null);
     }
 
     /**
-     * 获取环境属性（带默认值）
+     * \u83b7\u53d6\u73af\u5883\u5c5e\u6027\uff08\u5e26\u9ed8\u8ba4\u503c\uff09
+     *
+     * @param key \u5c5e\u6027\u540d\u79f0
+     * @param defaultValue \u7f3a\u5931\u65f6\u7684\u9ed8\u8ba4\u503c
+     * @return \u5c5e\u6027\u503c\u6216\u9ed8\u8ba4\u503c
      */
     public static String getProperty(String key, String defaultValue) {
         // 优先从系统属性获取
@@ -158,21 +188,29 @@ public class GuiceContext {
     }
 
     /**
-     * 设置自定义属性
+     * \u8bbe\u7f6e\u81ea\u5b9a\u4e49\u5c5e\u6027
+     *
+     * @param key \u5c5e\u6027\u540d\u79f0
+     * @param value \u5c5e\u6027\u503c
      */
     public static void setAttribute(String key, Object value) {
         ATTRIBUTES.put(key, value);
     }
 
     /**
-     * 获取自定义属性
+     * \u83b7\u53d6\u81ea\u5b9a\u4e49\u5c5e\u6027
+     *
+     * @param key \u5c5e\u6027\u540d\u79f0
+     * @return \u5c5e\u6027\u503c\uff0c\u7f3a\u5931\u65f6\u4e3a\u7a7a
      */
     public static Object getAttribute(String key) {
         return ATTRIBUTES.get(key);
     }
 
     /**
-     * 判断 Injector 是否已初始化
+     * \u5224\u65ad Injector \u662f\u5426\u5df2\u521d\u59cb\u5316
+     *
+     * @return \u5df2\u521d\u59cb\u5316\u65f6\u4e3a true
      */
     public static boolean isInitialized() {
         return Objects.nonNull(injector);
@@ -188,7 +226,9 @@ public class GuiceContext {
     }
 
     /**
-     * 获取注入器中所有绑定的类型
+     * \u83b7\u53d6\u6ce8\u5165\u5668\u4e2d\u6240\u6709\u7ed1\u5b9a\u7684\u7c7b\u578b
+     *
+     * @return \u6240\u6709\u7ed1\u5b9a\u7c7b\u578b
      */
     public static Set<Class<?>> getBoundTypes() {
         Set<Class<?>> types = new HashSet<>();

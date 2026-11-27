@@ -38,6 +38,11 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @EnableAspectJAutoProxy(exposeProxy = true)
 public class SpringCoreConfig {
 
+    /**
+     * \u6c47\u96c6 Spring \u5bb9\u5668\u4e2d\u7684\u5c31\u7eea\u68c0\u67e5\u9879\u3002
+     * @param readinessContributors \u5c31\u7eea\u68c0\u67e5\u9879\u63d0\u4f9b\u8005
+     * @return \u8fd0\u884c\u65f6\u5c31\u7eea\u6ce8\u518c\u8868
+     */
     @Bean
     /**
      * Spring 核心配置

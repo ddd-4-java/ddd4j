@@ -47,9 +47,14 @@ import java.util.Objects;
 @UtilityClass
 public class IpKit extends Ipv4Util {
 
+    /** \u53ef\u590d\u7528\u7684\u672c\u673a\u5730\u5740\u7f13\u5b58\u3002 */
     public String HOST_ADDRESS = "";
 
     // 获取本机Ip
+    /**
+     * \u83b7\u53d6\u672c\u673a\u53ef\u7528\u5730\u5740\u3002
+     * @return \u672c\u673a\u5730\u5740
+     */
     public String getLocalAddress() {
         if (StrKit.isNotBlank(HOST_ADDRESS)) {
             return HOST_ADDRESS;
@@ -79,6 +84,10 @@ public class IpKit extends Ipv4Util {
         return "";
     }
 
+    /**
+     * \u83b7\u53d6\u672c\u673a IP \u5730\u5740\u3002
+     * @return \u672c\u673a IP \u5730\u5740
+     */
     public String getHostIp() {
         try {
             return InetAddress.getLocalHost().getHostAddress();
@@ -87,6 +96,10 @@ public class IpKit extends Ipv4Util {
         return "127.0.0.1";
     }
 
+    /**
+     * \u83b7\u53d6\u672c\u673a\u4e3b\u673a\u540d\u3002
+     * @return \u672c\u673a\u4e3b\u673a\u540d
+     */
     public String getHostName() {
         try {
             return InetAddress.getLocalHost().getHostName();
@@ -96,6 +109,11 @@ public class IpKit extends Ipv4Util {
     }
 
     // 通过IP获取地址信息
+    /**
+     * \u67e5\u8be2 IP \u5730\u5740\u5bf9\u5e94\u7684\u5730\u57df\u4fe1\u606f\u3002
+     * @param ip \u5f85\u67e5\u8be2\u7684 IP \u5730\u5740
+     * @return \u5730\u57df\u4fe1\u606f
+     */
     public String getAddresses(String ip) {
         try {
             // 这里调用pconline的接口
@@ -117,6 +135,11 @@ public class IpKit extends Ipv4Util {
     }
 
     // 通过IP获取省市
+    /**
+     * \u67e5\u8be2 IP \u5730\u5740\u5bf9\u5e94\u7684\u7701\u5e02\u4fe1\u606f\u3002
+     * @param ip \u5f85\u67e5\u8be2\u7684 IP \u5730\u5740
+     * @return \u7701\u5e02\u4fe1\u606f\u6620\u5c04
+     */
     public static Map<String, String> getProCity(String ip) {
         try {
             // 这里调用pconline的接口

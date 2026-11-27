@@ -30,22 +30,30 @@ import java.lang.annotation.*;
 public @interface ApiOperationLog {
 
     /**
-     * 操作模块
+     * \u64cd\u4f5c\u6a21\u5757
+     *
+     * @return \u64cd\u4f5c\u6a21\u5757
      */
     String module() default "";
 
     /**
-     * 业务名称
+     * \u4e1a\u52a1\u540d\u79f0
+     *
+     * @return \u4e1a\u52a1\u540d\u79f0
      */
     String business() default "";
 
     /**
-     * 操作类型
+     * \u64cd\u4f5c\u7c7b\u578b
+     *
+     * @return \u64cd\u4f5c\u7c7b\u578b
      */
     BusinessType opt();
 
     /**
-     * 是否马上处理
+     * \u662f\u5426\u9a6c\u4e0a\u5904\u7406
+     *
+     * @return \u662f\u5426\u7acb\u5373\u5904\u7406
      */
     boolean immediate() default false;
 

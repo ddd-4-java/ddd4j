@@ -56,9 +56,14 @@ import java.util.Objects;
  */
 public final class TestSupport {
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>TestSupport</code> \u5b9e\u4f8b\u3002 */
     private TestSupport() {
     }
 
+    /**
+     * \u8bfb\u53d6 <code>app</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>app</code>
+     */
     public static Javalin start() {
         // 0) 注入 SPI
         BaseContext.inject(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, new NoopDomainEventPublisher());
@@ -191,13 +196,28 @@ public final class TestSupport {
         return app;
     }
 
+    /** \u628a\u9886\u57df\u4e8b\u4ef6\u4ea4\u7ed9\u53ef\u68c0\u67e5\u7684\u6d4b\u8bd5\u66ff\u8eab\u3002 */
     private static final class NoopDomainEventPublisher implements DomainEventPublisher {
+        /**
+         * 提供测试替身回调，调用时保持夹具状态。
+         *
+         * @param <ID> 实体标识类型
+         * @param event 领域事件
+         */
         @Override
         public <ID extends EntityId> void publish(io.ddd4j.core.ddd.event.DomainEvent<ID> event) {
         }
     }
 
+    /** \u8fd4\u56de\u7528\u4e8e\u6821\u9a8c\u672c\u5730\u5316\u5165\u53e3\u7684\u56fa\u5b9a\u6d88\u606f\u3002 */
     private static final class NoopI18nProvider implements I18nProvider {
+        /**
+         * 按提供的条件读取或解析消息文本。
+         *
+         * @param key 消息 key
+         * @param args 格式化参数
+         * @return 实际返回<code>key</code>，供调用方取得当前值
+         */
         @Override
         public String getMessage(String key, Object... args) {
             return key;

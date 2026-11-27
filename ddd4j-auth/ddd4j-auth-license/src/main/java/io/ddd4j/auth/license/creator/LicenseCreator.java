@@ -31,17 +31,25 @@ import java.util.prefs.Preferences;
 @Slf4j
 public class LicenseCreator {
 
+    /** \u672a\u6307\u5b9a\u6301\u6709\u4eba\u6216\u7b7e\u53d1\u8005\u65f6\u4f7f\u7528\u7684\u9ed8\u8ba4\u4e3b\u4f53\u6807\u8bc6\u3002 */
     private static final X500Principal DEFAULT_HOLDER_AND_ISSUER =
             new X500Principal("CN=localhost, OU=localhost, O=localhost, L=SH, ST=SH, C=CN");
 
+    /** \u751f\u6210\u8bb8\u53ef\u8bc1\u6240\u9700\u7684\u7b7e\u53d1\u914d\u7f6e\u548c\u4e1a\u52a1\u5185\u5bb9\u3002 */
     private final LicenseCreatorParam param;
 
+    /**
+     * \u4f7f\u7528\u8bb8\u53ef\u8bc1\u751f\u6210\u53c2\u6570\u521b\u5efa\u751f\u6210\u5668\u3002
+     * @param param \u8bb8\u53ef\u8bc1\u751f\u6210\u53c2\u6570
+     */
     public LicenseCreator(LicenseCreatorParam param) {
         this.param = Objects.requireNonNull(param, "param");
     }
 
     /**
-     * 生成License证书。
+     * \u751f\u6210License\u8bc1\u4e66\u3002
+     *
+     * @return \u751f\u6210\u6210\u529f\u65f6\u4e3a true
      */
     public boolean generateLicense() {
         try {
@@ -57,7 +65,9 @@ public class LicenseCreator {
     }
 
     /**
-     * 初始化证书生成密钥库参数。
+     * \u521d\u59cb\u5316\u8bc1\u4e66\u751f\u6210\u5bc6\u94a5\u5e93\u53c2\u6570\u3002
+     *
+     * @return \u542b\u5bc6\u94a5\u5e93\u8def\u5f84\u3001\u522b\u540d\u548c\u51ed\u636e\u7684\u53c2\u6570
      */
     private CustomKeyStoreParam initKeyStoreParam() {
         return new CustomKeyStoreParam(LicenseCreator.class,
@@ -69,7 +79,9 @@ public class LicenseCreator {
     }
 
     /**
-     * 设置证书生成正文信息。
+     * \u8bbe\u7f6e\u8bc1\u4e66\u751f\u6210\u6b63\u6587\u4fe1\u606f\u3002
+     *
+     * @return \u5f85\u7b7e\u53d1\u7684\u8bb8\u53ef\u8bc1\u5185\u5bb9
      */
     private License initLicenseContent() {
         License content = V1.builder().subject(param.getSubject()).build().licenseFactory().license();

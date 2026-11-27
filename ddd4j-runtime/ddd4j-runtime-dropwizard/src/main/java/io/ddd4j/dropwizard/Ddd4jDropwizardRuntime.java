@@ -33,8 +33,11 @@ import java.util.List;
  */
 public final class Ddd4jDropwizardRuntime implements Managed, AutoCloseable {
 
+    /** \u7ba1\u7406\u5f53\u524d\u793a\u4f8b\u6216\u6d4b\u8bd5\u6240\u62e5\u6709\u7684 SPI \u6ce8\u518c\u8d44\u6e90\u3002 */
     private final SpiRegistrationScope registrations;
+    /** \u7ba1\u7406\u5f53\u524d\u8fd0\u884c\u65f6\u6ce8\u518c\u7684\u8ba4\u8bc1\u4e3b\u4f53\u63d0\u4f9b\u5668\u53ca\u5176\u6062\u590d\u52a8\u4f5c\u3002 */
     private final SubjectKitRegistrationScope subjectRegistration;
+    /** \u6c47\u603b\u5f53\u524d\u7ec4\u4ef6\u5c31\u7eea\u72b6\u6001\u7684\u6ce8\u518c\u8868\u3002 */
     private final RuntimeReadinessRegistry readinessRegistry;
 
     /**
@@ -71,6 +74,7 @@ public final class Ddd4jDropwizardRuntime implements Managed, AutoCloseable {
         this.readinessRegistry = new RuntimeReadinessRegistry(readinessContributors);
     }
 
+    /** \u542f\u52a8 DDD4J \u8fd0\u884c\u65f6\u5e76\u63a5\u5165\u5df2\u88c5\u914d\u7684\u6295\u5f71\u7ba1\u7406\u5668\u3002 */
     @Override
     public void start() {
         registrations.start();
@@ -86,11 +90,17 @@ public final class Ddd4jDropwizardRuntime implements Managed, AutoCloseable {
         return readinessRegistry;
     }
 
+    /** \u505c\u6b62\u6295\u5f71\u4efb\u52a1\u5e76\u5173\u95ed\u5f53\u524d\u8fd0\u884c\u65f6\u3002 */
     @Override
     public void stop() {
         close();
     }
 
+    /**
+     * 结束当前组件持有的资源。
+     *
+     * <p>Dropwizard 实现调用 <code>subjectRegistration.close()</code>。</p>
+     */
     @Override
     public void close() {
         subjectRegistration.close();

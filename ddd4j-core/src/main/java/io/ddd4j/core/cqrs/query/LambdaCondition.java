@@ -40,6 +40,7 @@ import java.util.Objects;
 
 public final class LambdaCondition implements Serializable {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = -4292780888118581043L;
 
     /**
@@ -58,10 +59,12 @@ public final class LambdaCondition implements Serializable {
     private final Object value;
 
     /**
- * @param propertyRef 类型安全属性引用
- * @param operator 操作符（如 {@code "="}、{@code "LIKE"}、{@code ">"}）
- * @param value 条件值
- */
+     * 将属性引用、比较运算和值绑定为查询条件。
+     *
+     * @param propertyRef \u7c7b\u578b\u5b89\u5168\u5c5e\u6027\u5f15\u7528
+     * @param operator \u64cd\u4f5c\u7b26\uff08\u5982 {@code "="}\u3001{@code "LIKE"}\u3001{@code ">"}\uff09
+     * @param value \u6761\u4ef6\u503c
+     */
 
     @JsonCreator()
     public LambdaCondition(@JsonProperty("propertyRef") PropertyRef propertyRef, @JsonProperty("operator") String operator, @JsonProperty("value") Object value) {
@@ -184,6 +187,14 @@ public final class LambdaCondition implements Serializable {
         }
     }
 
+    /**
+     * 根据<code>propertyRef</code>、<code>operator</code>、<code>value</code>比较对象的值是否相等。
+     *
+     * <p>只比较运行时类型相同的对象。</p>
+     *
+     * @param obj 用来比较或转换的输入对象
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -196,6 +207,11 @@ public final class LambdaCondition implements Serializable {
         return Objects.equals(this.propertyRef, other.propertyRef) && Objects.equals(this.operator, other.operator) && Objects.equals(this.value, other.value);
     }
 
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         int result = 0;
@@ -205,6 +221,11 @@ public final class LambdaCondition implements Serializable {
         return result;
     }
 
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>propertyRef</code>、<code>operator</code>、<code>value</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "LambdaCondition[propertyRef=" + propertyRef + ", operator=" + operator + ", value=" + value + "]";

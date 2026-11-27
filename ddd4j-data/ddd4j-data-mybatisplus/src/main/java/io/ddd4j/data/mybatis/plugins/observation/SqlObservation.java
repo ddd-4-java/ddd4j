@@ -29,9 +29,13 @@ import java.util.Objects;
  */
 public final class SqlObservation {
 
+    /** \u6267\u884c SQL \u5bf9\u5e94\u7684 MyBatis \u6620\u5c04\u8bed\u53e5\u6807\u8bc6\u3002 */
     private final String statementId;
+    /** \u672c\u6b21 SQL \u6267\u884c\u7684\u8bed\u53e5\u6587\u672c\u3002 */
     private final String sql;
+    /** SQL \u6267\u884c\u8017\u65f6\uff0c\u5355\u4f4d\u4e3a\u7eb3\u79d2\u3002 */
     private final long elapsedNanos;
+    /** SQL \u6267\u884c\u5931\u8d25\u65f6\u8bb0\u5f55\u7684\u5f02\u5e38\u3002 */
     private final Throwable error;
 
     /**
@@ -53,55 +57,97 @@ public final class SqlObservation {
         this.error = error;
     }
 
-    /** @return SQL 执行耗时，单位为毫秒 */
+    /**
+     * 按 <code>elapsed Millis</code> 的契约计算并返回结果。
+     *
+     * @return SQL \u6267\u884c\u8017\u65f6\uff0c\u5355\u4f4d\u4e3a\u6beb\u79d2
+     */
     public long elapsedMillis() {
         return elapsedNanos / 1_000_000L;
     }
 
-    /** @return MyBatis 语句标识 */
+    /**
+     * 读取<code>statementId</code> 的当前值。
+     *
+     * @return MyBatis \u8bed\u53e5\u6807\u8bc6
+     */
     @JsonProperty("statementId")
     public String statementId() {
         return statementId;
     }
 
-    /** @return 已执行的 SQL */
+    /**
+     * 读取<code>sql</code> 的当前值。
+     *
+     * @return \u5df2\u6267\u884c\u7684 SQL
+     */
     @JsonProperty("sql")
     public String sql() {
         return sql;
     }
 
-    /** @return SQL 执行耗时，单位为纳秒 */
+    /**
+     * 读取<code>elapsedNanos</code> 的当前值。
+     *
+     * @return SQL \u6267\u884c\u8017\u65f6\uff0c\u5355\u4f4d\u4e3a\u7eb3\u79d2
+     */
     @JsonProperty("elapsedNanos")
     public long elapsedNanos() {
         return elapsedNanos;
     }
 
-    /** @return 执行异常；成功时为空 */
+    /**
+     * 读取按字段描述的输入校验错误集合。
+     *
+     * @return \u6267\u884c\u5f02\u5e38\uff1b\u6210\u529f\u65f6\u4e3a\u7a7a
+     */
     @JsonProperty("error")
     public Throwable error() {
         return error;
     }
 
-    /** @return MyBatis 语句标识 */
+    /**
+     * 读取<code>statementId</code> 的当前值。
+     *
+     * @return MyBatis \u8bed\u53e5\u6807\u8bc6
+     */
     public String getStatementId() {
         return statementId;
     }
 
-    /** @return 已执行的 SQL */
+    /**
+     * 读取<code>sql</code> 的当前值。
+     *
+     * @return \u5df2\u6267\u884c\u7684 SQL
+     */
     public String getSql() {
         return sql;
     }
 
-    /** @return SQL 执行耗时，单位为纳秒 */
+    /**
+     * 读取<code>elapsedNanos</code> 的当前值。
+     *
+     * @return SQL \u6267\u884c\u8017\u65f6\uff0c\u5355\u4f4d\u4e3a\u7eb3\u79d2
+     */
     public long getElapsedNanos() {
         return elapsedNanos;
     }
 
-    /** @return 执行异常；成功时为空 */
+    /**
+     * 读取按字段描述的输入校验错误集合。
+     *
+     * @return \u6267\u884c\u5f02\u5e38\uff1b\u6210\u529f\u65f6\u4e3a\u7a7a
+     */
     public Throwable getError() {
         return error;
     }
 
+    /**
+     * 根据<code>statementId</code>、<code>sql</code>、<code>error</code>、<code>elapsedNanos</code>比较对象的值是否相等。
+     *
+     * @param o 用来比较的另一个对象，允许为空
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -117,6 +163,11 @@ public final class SqlObservation {
                 && Objects.equals(error, that.error);
     }
 
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         int result = 0;
@@ -127,6 +178,11 @@ public final class SqlObservation {
         return result;
     }
 
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>statementId</code>、<code>sql</code>、<code>elapsedNanos</code>、<code>error</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "SqlObservation[statementId=" + statementId + ", sql=" + sql + ", elapsedNanos=" + elapsedNanos + ", error=" + error + "]";

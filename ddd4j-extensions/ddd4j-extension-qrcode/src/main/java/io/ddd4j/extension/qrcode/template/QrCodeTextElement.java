@@ -22,12 +22,21 @@ import lombok.Getter;
 @Getter
 public final class QrCodeTextElement extends QrCodeFrameElement {
 
+    /** \u6a21\u677f\u753b\u5e03\u4e0a\u663e\u793a\u7684\u6587\u672c\uff0c\u53ef\u5728\u6e32\u67d3\u524d\u7ed1\u5b9a\u53d8\u91cf\u3002 */
     private final String text;
+    /** \u7528\u4e8e\u7ed8\u5236\u6587\u672c\u5143\u7d20\u7684\u5b57\u4f53\u540d\u79f0\u3002 */
     private final String fontName;
+    /** \u7ed8\u5236\u6587\u672c\u5143\u7d20\u65f6\u4f7f\u7528\u7684\u5b57\u53f7\u3002 */
     private final int fontSize;
+    /** \u662f\u5426\u4ee5\u7c97\u4f53\u7ed8\u5236\u6587\u672c\u5143\u7d20\u3002 */
     private final boolean bold;
+    /** \u7ed8\u5236\u6587\u672c\u5143\u7d20\u6240\u7528\u7684\u989c\u8272\u3002 */
     private final String color;
 
+    /**
+     * \u4fdd\u5b58\u6a21\u677f\u6587\u672c\u5143\u7d20\u7684\u8fb9\u754c\u3001\u5c42\u7ea7\u3001\u6587\u672c\u4e0e\u5b57\u4f53\u6837\u5f0f\u3002
+     * @param builder \u63d0\u4f9b\u6587\u672c\u548c\u7ed8\u5236\u53c2\u6570\u7684\u6784\u5efa\u5668
+     */
     private QrCodeTextElement(Builder builder) {
         super(builder.x, builder.y, builder.width, builder.height, builder.zIndex);
         this.text = builder.text;
@@ -50,17 +59,31 @@ public final class QrCodeTextElement extends QrCodeFrameElement {
      * 文本外框元素的构建器，用于链式设置文本位置、字体、颜色与层级并构建元素。
      */
     public static final class Builder {
+        /** \u8981\u89e3\u7801\u6216\u7ed8\u5236\u7684\u4e8c\u7ef4\u7801\u6a21\u677f\u6587\u672c\u5185\u5bb9\u3002 */
         private final String text;
+        /** \u5143\u7d20\u5728\u6a21\u677f\u753b\u5e03\u4e2d\u7684\u6a2a\u5411\u50cf\u7d20\u5750\u6807\u3002 */
         private int x;
+        /** \u5143\u7d20\u5728\u6a21\u677f\u753b\u5e03\u4e2d\u7684\u7eb5\u5411\u50cf\u7d20\u5750\u6807\u3002 */
         private int y;
+        /** \u5728\u7f16\u7801\u6216\u7ed8\u5236\u65f6\u4f7f\u7528\u7684\u50cf\u7d20\u5bbd\u5ea6\u3002 */
         private int width;
+        /** \u5728\u7f16\u7801\u6216\u7ed8\u5236\u65f6\u4f7f\u7528\u7684\u50cf\u7d20\u9ad8\u5ea6\u3002 */
         private int height;
+        /** \u91cd\u53e0\u5143\u7d20\u5728\u753b\u5e03\u4e2d\u7684\u53e0\u653e\u987a\u5e8f\u3002 */
         private int zIndex;
+        /** \u7528\u4e8e\u7ed8\u5236\u6587\u672c\u5143\u7d20\u7684\u5b57\u4f53\u540d\u79f0\u3002 */
         private String fontName = "SansSerif";
+        /** \u7ed8\u5236\u6587\u672c\u5143\u7d20\u65f6\u4f7f\u7528\u7684\u5b57\u53f7\u3002 */
         private int fontSize = 16;
+        /** \u662f\u5426\u4ee5\u7c97\u4f53\u7ed8\u5236\u6587\u672c\u5143\u7d20\u3002 */
         private boolean bold;
+        /** \u7ed8\u5236\u6587\u672c\u5143\u7d20\u6240\u7528\u7684\u989c\u8272\u3002 */
         private String color = "#000000";
 
+        /**
+         * \u7528\u6307\u5b9a\u6587\u672c\u521d\u59cb\u5316\u53ef\u8fdb\u4e00\u6b65\u914d\u7f6e\u4f4d\u7f6e\u548c\u5b57\u4f53\u7684\u6784\u5efa\u5668\u3002
+         * @param text \u8981\u7ed8\u5236\u7684\u6587\u672c
+         */
         private Builder(String text) {
             this.text = text;
         }

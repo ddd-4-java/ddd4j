@@ -65,7 +65,9 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
     public static final String SESSION_KEY_CONFIG = "ddd4j:auth:sessionConfig";
 
     /**
-     * 当前线程绑定的 Shiro Subject。
+     * \u5f53\u524d\u7ebf\u7a0b\u7ed1\u5b9a\u7684 Shiro Subject\u3002
+     *
+     * @return \u5f53\u524d\u7ebf\u7a0b\u4e0a\u7684 Shiro \u4e3b\u4f53
      */
     private Subject shiroSubject() {
         try {
@@ -78,6 +80,14 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
 
     // ==================== 身份与会话读取 ====================
 
+    /**
+     * 读取当前会话的认证主体。
+     *
+     * <p>Shiro 实现调用 <code>shiroSubject()</code>。</p>
+     *
+     * @param <T> AuthPrincipal 子类型
+     * @return 当前会话绑定的主体
+     */
     @Override
     public <T extends AuthPrincipal> T getPrincipal() {
         Subject subject = shiroSubject();
@@ -100,6 +110,15 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
         return null;
     }
 
+    /**
+     * 查询指定登录标识关联的认证主体。
+     *
+     * <p>Shiro 实现调用 <code>getPrincipal()</code>。</p>
+     *
+     * @param <T> AuthPrincipal 子类型
+     * @param loginId 登录账号 ID
+     * @return 给定登录标识关联的主体
+     */
     @Override
     public <T extends AuthPrincipal> T getPrincipalByLoginId(Object loginId) {
         // Shiro 不直接支持按 loginId 查询 principal；委托业务侧 Realm 实现
@@ -114,12 +133,30 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
         return null;
     }
 
+    /**
+     * 查询指定令牌关联的认证主体。
+     *
+     * <p>Shiro 实现调用 <code>getPrincipal()</code>。</p>
+     *
+     * @param <T> AuthPrincipal 子类型
+     * @param tokenValue 会话凭证（Token / SessionId）
+     * @return 给定令牌关联的主体
+     */
     @Override
     public <T extends AuthPrincipal> T getPrincipalByToken(String tokenValue) {
         // Shiro 不内置按 token 查 principal；委托业务侧 SessionDAO/Realm 扩展
         return getPrincipal();
     }
 
+    /**
+     * 校验当前调用传入的数据或凭据。
+     *
+     * <p>Shiro 实现调用 <code>getPrincipal()</code>。</p>
+     *
+     * @param <T> AuthPrincipal 子类型
+     * @param token 会话凭证
+     * @return 实际返回<code>getPrincipal()</code>
+     */
     @Override
     public <T extends AuthPrincipal> T verify(String token) {
         // 委托业务侧 Realm 扩展；降级返回当前 principal
@@ -128,18 +165,43 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
 
     // ==================== 权限校验（直接调用 Shiro API）====================
 
+    /**
+     * 检查身份是否拥有指定权限。
+     *
+     * <p>Shiro 实现调用 <code>shiroSubject()</code>。</p>
+     *
+     * @param permission 权限标识（如 {@code "order:create"}）
+     * @return 请求的权限被授予时为真
+     */
     @Override
     public boolean isPermitted(String permission) {
         Subject subject = shiroSubject();
         return Objects.nonNull(subject) && subject.isPermitted(permission);
     }
 
+    /**
+     * 检查身份是否拥有指定权限。
+     *
+     * <p>Shiro 实现调用 <code>isPermitted(permission)</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @param permission 权限标识
+     * @return 请求的权限被授予时为真
+     */
     @Override
     public boolean isPermitted(Object loginId, String permission) {
         // Shiro 同一 Subject 线程下只能拿当前用户；按 loginId 校验需要业务侧 Realm 扩展
         return isPermitted(permission);
     }
 
+    /**
+     * 检查身份是否拥有指定权限。
+     *
+     * <p>Shiro 实现调用 <code>shiroSubject()</code>。</p>
+     *
+     * @param permissions 权限标识列表
+     * @return 请求的权限被授予时为真
+     */
     @Override
     public boolean[] isPermitted(String... permissions) {
         if (Objects.isNull(permissions) || permissions.length == 0) {
@@ -152,11 +214,28 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
         return subject.isPermitted(permissions);
     }
 
+    /**
+     * 检查身份是否拥有指定权限。
+     *
+     * <p>Shiro 实现调用 <code>isPermitted(permissions)</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @param permissions 权限标识列表
+     * @return 请求的权限被授予时为真
+     */
     @Override
     public boolean[] isPermitted(Object loginId, String... permissions) {
         return isPermitted(permissions);
     }
 
+    /**
+     * 检查身份是否具有全部给定权限。
+     *
+     * <p>Shiro 实现调用 <code>shiroSubject()</code>。</p>
+     *
+     * @param permissions 权限标识列表
+     * @return 所有请求权限都被授予时为真
+     */
     @Override
     public boolean isPermittedAll(String... permissions) {
         if (Objects.isNull(permissions) || permissions.length == 0) {
@@ -169,11 +248,28 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
         return subject.isPermittedAll(permissions);
     }
 
+    /**
+     * 检查身份是否具有全部给定权限。
+     *
+     * <p>Shiro 实现调用 <code>isPermittedAll(permissions)</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @param permissions 权限标识列表
+     * @return 所有请求权限都被授予时为真
+     */
     @Override
     public boolean isPermittedAll(Object loginId, String... permissions) {
         return isPermittedAll(permissions);
     }
 
+    /**
+     * 检查身份是否具有给定权限中的任意一项。
+     *
+     * <p>Shiro 实现调用 <code>shiroSubject()</code>。</p>
+     *
+     * @param permissions 权限标识列表
+     * @return 至少有一项请求权限被授予时为真
+     */
     @Override
     public boolean isPermittedAny(String... permissions) {
         if (Objects.isNull(permissions) || permissions.length == 0) {
@@ -190,6 +286,15 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
         return false;
     }
 
+    /**
+     * 检查身份是否具有给定权限中的任意一项。
+     *
+     * <p>Shiro 实现调用 <code>isPermittedAny(permissions)</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @param permissions 权限标识列表
+     * @return 至少有一项请求权限被授予时为真
+     */
     @Override
     public boolean isPermittedAny(Object loginId, String... permissions) {
         return isPermittedAny(permissions);
@@ -197,17 +302,42 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
 
     // ==================== 角色校验（直接调用 Shiro API）====================
 
+    /**
+     * 检查身份是否具有指定角色。
+     *
+     * <p>Shiro 实现调用 <code>shiroSubject()</code>。</p>
+     *
+     * @param roleIdentifier 角色标识（角色 ID 或角色名）
+     * @return 具有指定角色时为真
+     */
     @Override
     public boolean hasRole(String roleIdentifier) {
         Subject subject = shiroSubject();
         return Objects.nonNull(subject) && subject.hasRole(roleIdentifier);
     }
 
+    /**
+     * 检查身份是否具有指定角色。
+     *
+     * <p>Shiro 实现调用 <code>hasRole(roleIdentifier)</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @param roleIdentifier 角色标识
+     * @return 具有指定角色时为真
+     */
     @Override
     public boolean hasRole(Object loginId, String roleIdentifier) {
         return hasRole(roleIdentifier);
     }
 
+    /**
+     * 按输入顺序逐项判断身份的角色归属。
+     *
+     * <p>Shiro 实现调用 <code>shiroSubject()</code>。</p>
+     *
+     * @param roleIdentifiers 角色标识列表
+     * @return 实际返回<code>subject.hasRoles(java.util.Arrays.asList(roleIdentifiers))</code>
+     */
     @Override
     public boolean[] hasRoles(String... roleIdentifiers) {
         if (Objects.isNull(roleIdentifiers) || roleIdentifiers.length == 0) {
@@ -221,11 +351,28 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
         return subject.hasRoles(java.util.Arrays.asList(roleIdentifiers));
     }
 
+    /**
+     * 按输入顺序逐项判断身份的角色归属。
+     *
+     * <p>Shiro 实现调用 <code>hasRoles(roleIdentifiers)</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @param roleIdentifiers 角色标识列表
+     * @return 实际返回<code>hasRoles(roleIdentifiers)</code>
+     */
     @Override
     public boolean[] hasRoles(Object loginId, String... roleIdentifiers) {
         return hasRoles(roleIdentifiers);
     }
 
+    /**
+     * 检查身份是否具有给定角色中的任意一个。
+     *
+     * <p>Shiro 实现调用 <code>shiroSubject()</code>。</p>
+     *
+     * @param roleIdentifiers 角色标识列表
+     * @return 至少具有一个指定角色时为真
+     */
     @Override
     public boolean hasAnyRole(String... roleIdentifiers) {
         if (Objects.isNull(roleIdentifiers) || roleIdentifiers.length == 0) {
@@ -242,11 +389,28 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
         return false;
     }
 
+    /**
+     * 检查身份是否具有给定角色中的任意一个。
+     *
+     * <p>Shiro 实现调用 <code>hasAnyRole(roleIdentifiers)</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @param roleIdentifiers 角色标识列表
+     * @return 至少具有一个指定角色时为真
+     */
     @Override
     public boolean hasAnyRole(Object loginId, String... roleIdentifiers) {
         return hasAnyRole(roleIdentifiers);
     }
 
+    /**
+     * 检查身份是否具有全部给定角色。
+     *
+     * <p>Shiro 实现调用 <code>shiroSubject()</code>。</p>
+     *
+     * @param roleIdentifiers 角色标识列表
+     * @return 具有全部指定角色时为真
+     */
     @Override
     public boolean hasAllRole(String... roleIdentifiers) {
         if (Objects.isNull(roleIdentifiers) || roleIdentifiers.length == 0) {
@@ -256,6 +420,15 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
         return Objects.nonNull(subject) && subject.hasAllRoles(java.util.Arrays.asList(roleIdentifiers));
     }
 
+    /**
+     * 检查身份是否具有全部给定角色。
+     *
+     * <p>Shiro 实现调用 <code>hasAllRole(roleIdentifiers)</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @param roleIdentifiers 角色标识列表
+     * @return 具有全部指定角色时为真
+     */
     @Override
     public boolean hasAllRole(Object loginId, String... roleIdentifiers) {
         return hasAllRole(roleIdentifiers);
@@ -263,12 +436,27 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
 
     // ==================== 状态判断 ====================
 
+    /**
+     * 检查当前会话是否已经认证。
+     *
+     * <p>Shiro 实现调用 <code>shiroSubject()</code>。</p>
+     *
+     * @return 当前会话通过身份认证时为真
+     */
     @Override
     public boolean isAuthenticated() {
         Subject subject = shiroSubject();
         return Objects.nonNull(subject) && subject.isAuthenticated();
     }
 
+    /**
+     * 检查当前会话是否已经认证。
+     *
+     * <p>Shiro 实现调用 <code>getPrincipal()</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @return 当前会话通过身份认证时为真
+     */
     @Override
     public boolean isAuthenticated(Object loginId) {
         // Shiro 不直接支持按 loginId 查登录态；当前用户匹配即视为认证
@@ -279,47 +467,106 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
         return Objects.nonNull(principal) && Objects.equals(principal.getLoginId(), loginId) && isAuthenticated();
     }
 
+    /**
+     * 判断当前身份是否由记住登录状态恢复。
+     *
+     * <p>Shiro 实现调用 <code>shiroSubject()</code>。</p>
+     *
+     * @return 实际返回<code>Objects.nonNull(subject) &amp;&amp; subject.isRemembered()</code>
+     */
     @Override
     public boolean isRemembered() {
         Subject subject = shiroSubject();
         return Objects.nonNull(subject) && subject.isRemembered();
     }
 
+    /**
+     * 检查当前认证实现是否将给定设备识别为受信设备。
+     *
+     * @param deviceId 设备标识
+     * @return 此实现返回<code>false</code>
+     */
     @Override
     public boolean isTrustDeviceId(String deviceId) {
         // Shiro 不内置设备信任机制；委托业务侧 Realm/Authorizer 扩展
         return false;
     }
 
+    /**
+     * 检查当前认证实现是否将给定设备识别为受信设备。
+     *
+     * <p>Shiro 实现调用 <code>isTrustDeviceId(deviceId)</code>。</p>
+     *
+     * @param userId 用户 ID
+     * @param deviceId 设备标识
+     * @return 实际返回<code>isTrustDeviceId(deviceId)</code>
+     */
     @Override
     public boolean isTrustDeviceId(Object userId, String deviceId) {
         return isTrustDeviceId(deviceId);
     }
 
+    /**
+     * 返回当前会话关联的登录标识。
+     *
+     * <p>Shiro 实现调用 <code>getPrincipal()</code>。</p>
+     *
+     * @return 实际返回<code>Objects.nonNull(principal) ? principal.getLoginId() : null</code>
+     */
     @Override
     public Object getLoginId() {
         AuthPrincipal principal = getPrincipal();
         return Objects.nonNull(principal) ? principal.getLoginId() : null;
     }
 
+    /**
+     * 读取认证主体的用户标识。
+     *
+     * <p>Shiro 实现调用 <code>getPrincipal()</code>。</p>
+     *
+     * @return 实际返回<code>Objects.nonNull(principal) ? principal.getUserId() : null</code>
+     */
     @Override
     public Object getUserId() {
         AuthPrincipal principal = getPrincipal();
         return Objects.nonNull(principal) ? principal.getUserId() : null;
     }
 
+    /**
+     * 读取认证主体的组织标识。
+     *
+     * <p>Shiro 实现调用 <code>getPrincipal()</code>。</p>
+     *
+     * @return 实际返回<code>Objects.nonNull(principal) ? principal.getOrgId() : null</code>
+     */
     @Override
     public Object getOrgId() {
         AuthPrincipal principal = getPrincipal();
         return Objects.nonNull(principal) ? principal.getOrgId() : null;
     }
 
+    /**
+     * 读取认证主体的角色标识。
+     *
+     * <p>Shiro 实现调用 <code>getPrincipal()</code>。</p>
+     *
+     * @return 实际返回<code>Objects.nonNull(principal) ? principal.getRoleId() : null</code>
+     */
     @Override
     public Object getRoleId() {
         AuthPrincipal principal = getPrincipal();
         return Objects.nonNull(principal) ? principal.getRoleId() : null;
     }
 
+    /**
+     * 从指定 Token 的会话中获取扩展属性。
+     *
+     * <p>Shiro 实现调用 <code>shiroSubject()</code>。</p>
+     *
+     * @param tokenValue 会话凭证
+     * @param key 扩展属性键
+     * @return 根据执行路径返回<code>session.getAttribute(key)</code>、<code>null</code>
+     */
     @Override
     public Object getExtra(String tokenValue, String key) {
         Subject subject = shiroSubject();
@@ -334,6 +581,14 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
 
     // ==================== 会话生命周期（委托 Shiro Subject）====================
 
+    /**
+     * 以传入的凭据启动认证会话。
+     *
+     * <p>Shiro 实现调用 <code>request.getLoginId()</code>。</p>
+     *
+     * @param request 登录请求（loginId + 密码 + 扩展信息 + 有效期）
+     * @return 实际返回<code>session.getId().toString()</code>
+     */
     @Override
     public String login(AuthRequest request) {
         Objects.requireNonNull(request, "request must not be null");
@@ -392,6 +647,11 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
         return session.getId().toString();
     }
 
+    /**
+     * 结束由当前调用指定的认证会话。
+     *
+     * <p>Shiro 实现调用 <code>shiroSubject()</code>。</p>
+     */
     @Override
     public void logout() {
         Subject subject = shiroSubject();
@@ -400,6 +660,13 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
         }
     }
 
+    /**
+     * 结束由当前调用指定的认证会话。
+     *
+     * <p>Shiro 实现调用 <code>getLoginId()</code>。</p>
+     *
+     * @param loginId 账号 ID
+     */
     @Override
     public void logout(Object loginId) {
         // Shiro 通过 SessionDAO + SessionManager 强踢指定账号的所有 session：
@@ -410,6 +677,13 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
         }
     }
 
+    /**
+     * 强制结束指定身份关联的登录会话。
+     *
+     * <p>Shiro 实现调用 <code>SecurityUtils.getSecurityManager()</code>。</p>
+     *
+     * @param loginId 账号 ID
+     */
     @Override
     public void kickout(Object loginId) {
         if (Objects.isNull(loginId)) {
@@ -429,6 +703,13 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
         }
     }
 
+    /**
+     * 刷新当前实现所持有的数据或状态。
+     *
+     * <p>Shiro 实现调用 <code>shiroSubject()</code>。</p>
+     *
+     * @return 根据执行路径返回<code>session.getId().toString()</code>、<code>null</code>
+     */
     @Override
     public String refresh() {
         Subject subject = shiroSubject();
@@ -444,18 +725,35 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
 
     // ==================== 封禁（委托业务层 / Shiro CacheManager）====================
 
+    /**
+     * 接收<code>disable</code>回调，当前实现无需在此步骤更新状态。
+     *
+     * @param loginId 账号 ID
+     * @param timeout 封禁时长（秒），{@code -1} 代表永久封禁
+     */
     @Override
     public void disable(Object loginId, long timeout) {
         // Shiro 封禁通常通过 CacheManager + 自定义 Realm；
         // 委托业务侧实现。
     }
 
+    /**
+     * 判断当前限制是否禁止指定身份执行相应操作。
+     *
+     * @param loginId 账号 ID
+     * @return 此实现返回<code>false</code>
+     */
     @Override
     public boolean isDisabled(Object loginId) {
         // 委托业务侧 Realm/CacheManager；Shiro 默认不内置
         return false;
     }
 
+    /**
+     * 接收<code>untieDisable</code>回调，当前实现无需在此步骤更新状态。
+     *
+     * @param loginId 账号 ID
+     */
     @Override
     public void untieDisable(Object loginId) {
         // 同 disable：委托业务侧

@@ -37,12 +37,16 @@ public @interface SaMixCheckLogin {
     String type() default "";
 
     /**
-     * 临时Token是否是一次性使用的；用完即弃的
+     * \u4e34\u65f6Token\u662f\u5426\u662f\u4e00\u6b21\u6027\u4f7f\u7528\u7684\uff1b\u7528\u5b8c\u5373\u5f03\u7684
+     *
+     * @return \u662f\u5426\u4e00\u6b21\u6027\u4f7f\u7528
      */
     boolean throwaway() default false;
 
     /**
-     * 是否使用临时Token的信息进行登录，仅当 throwaway=false 时有效
+     * \u662f\u5426\u4f7f\u7528\u4e34\u65f6Token\u7684\u4fe1\u606f\u8fdb\u884c\u767b\u5f55\uff0c\u4ec5\u5f53 throwaway=false \u65f6\u6709\u6548
+     *
+     * @return \u662f\u5426\u4f7f\u7528\u4e34\u65f6 Token \u767b\u5f55
      */
     boolean login() default true;
 

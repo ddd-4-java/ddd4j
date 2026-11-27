@@ -32,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class GuicePropertyLoaderTest {
 
+    /** \u9a8c\u8bc1<code>injector.getInstance(Key.get(String.class, Names.named("ddd4j.test.key")))</code> \u7b49\u4e8e <code>"from-default"</code>\u3002 */
     @Test
     void loadsDefaultConfigFile() {
         Injector injector = Guice.createInjector(new GuicePropertyLoader());
@@ -40,6 +41,7 @@ class GuicePropertyLoaderTest {
                 injector.getInstance(Key.get(String.class, Names.named("ddd4j.test.key"))));
     }
 
+    /** \u9a8c\u8bc1<code>injector.getInstance(Key.get(String.class, Names.named("custom.key")))</code> \u7b49\u4e8e <code>"custom-value"</code>\u3002 */
     @Test
     void loadsCustomConfigFile() {
         Injector injector = Guice.createInjector(new GuicePropertyLoader("custom-config.properties"));
@@ -48,6 +50,7 @@ class GuicePropertyLoaderTest {
                 injector.getInstance(Key.get(String.class, Names.named("custom.key"))));
     }
 
+    /** \u9a8c\u8bc1<code>injector</code>\u975e\u7a7a\uff0c<code>injector.getInstance(Key.get(String.class, Names.named("missing.key")))</code> \u629b\u51fa <code>com.google.inject.ConfigurationException.class</code>\u3002 */
     @Test
     void toleratesMissingConfigFile() {
         Injector injector = Guice.createInjector(new GuicePropertyLoader("no-such-file.properties"));

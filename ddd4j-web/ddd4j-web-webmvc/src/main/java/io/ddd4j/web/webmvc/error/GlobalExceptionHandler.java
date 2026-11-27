@@ -82,9 +82,11 @@ import java.util.*;
 @Slf4j
 public class GlobalExceptionHandler {
 
+    /** \u89e3\u6790 Spring MVC \u9519\u8bef\u6d88\u606f\u4f7f\u7528\u7684\u56fd\u9645\u5316\u8d44\u6e90\u3002 */
     @Getter
     @Autowired
     private NestedMessageSource messageSource;
+    /** \u4e3a\u670d\u52a1\u7aef\u5f02\u5e38\u54cd\u5e94\u9009\u62e9\u8bed\u8a00\u7684\u914d\u7f6e\u3002 */
     @Autowired
     private ServerI18nProperties serverI18NProperties;
 
@@ -92,6 +94,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 404 (Not Found)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler({NoHandlerFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -107,6 +112,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 405 (Method Not Allowed)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
@@ -122,6 +130,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 406 (Not Acceptable)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler({HttpMediaTypeNotAcceptableException.class})
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
@@ -142,6 +153,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 415 (Unsupported Media Type)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler({HttpMediaTypeNotSupportedException.class})
     @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
@@ -157,7 +171,10 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
-     * <a href="https://www.jianshu.com/p/4df0cac308dc">...</a>
+     *  <a href="https://www.jianshu.com/p/4df0cac308dc">...</a>
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler({MissingMatrixVariableException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -173,6 +190,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler({MissingPathVariableException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -188,6 +208,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler({MissingRequestCookieException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -203,6 +226,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler({MissingRequestHeaderException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -218,6 +244,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler({MissingServletRequestParameterException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -233,6 +262,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler({MissingServletRequestPartException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -248,6 +280,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler({UnsatisfiedServletRequestParameterException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -262,6 +297,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler({ServletRequestBindingException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -276,6 +314,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler(JacksonException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -290,6 +331,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler({HttpMessageNotReadableException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -304,6 +348,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler({ConstraintViolationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -326,6 +373,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler({MethodArgumentNotValidException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -336,10 +386,12 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
-     *
      * @see jakarta.validation.Valid
      * @see org.springframework.validation.Validator
      * @see org.springframework.validation.DataBinder
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler({BindException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -349,6 +401,11 @@ public class GlobalExceptionHandler {
     }
 
 
+    /**
+     * \u5904\u7406 WebFlux \u7ed1\u5b9a\u6821\u9a8c\u5f02\u5e38\u3002
+     * @param ex \u7ed1\u5b9a\u6821\u9a8c\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
+     */
     @ExceptionHandler(WebExchangeBindException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public R<?> webExchangeBindException(WebExchangeBindException ex) {
@@ -356,6 +413,12 @@ public class GlobalExceptionHandler {
         return this.bindException(ex, ex.getBindingResult());
     }
 
+    /**
+     * \u5c06\u7ed1\u5b9a\u9519\u8bef\u8f6c\u6362\u4e3a\u6807\u51c6\u9519\u8bef\u54cd\u5e94\u3002
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @param result \u7ed1\u5b9a\u9519\u8bef\u8be6\u60c5
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
+     */
     protected R<?> bindException(Exception ex, BindingResult result) {
         if (result.getErrorCount() > 0) {
             List<Map<String, String>> errorList = new ArrayList<>();
@@ -378,6 +441,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler({InvalidFormatException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -393,7 +459,10 @@ public class GlobalExceptionHandler {
 
     /**
      * /**
-     * 400 (Bad Request)
+     *  400 (Bad Request)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler({TypeMismatchException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -409,6 +478,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler({MethodArgumentTypeMismatchException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -424,6 +496,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler({MethodArgumentConversionNotSupportedException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -439,6 +514,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler({ValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -454,6 +532,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 413 (Payload Too Large)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
@@ -469,6 +550,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 413 (Payload Too Large)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler(MaxUploadSizePerFileExceededException.class)
     @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
@@ -486,6 +570,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler({ConstraintDeclarationException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -501,6 +588,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler({ConstraintDefinitionException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -516,6 +606,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler({GroupDefinitionException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -531,6 +624,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler({UnexpectedTypeException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -546,6 +642,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler({ConversionNotSupportedException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -560,6 +659,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler({HttpMessageConversionException.class, HttpMessageNotWritableException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -574,6 +676,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler(NullPointerException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -588,6 +693,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler(ClassCastException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -602,6 +710,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler(IOException.class)
     @ResponseStatus(HttpStatus.OK)
@@ -616,6 +727,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler(NoSuchMethodException.class)
     @ResponseStatus(HttpStatus.OK)
@@ -630,6 +744,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler(IndexOutOfBoundsException.class)
     @ResponseStatus(HttpStatus.OK)
@@ -644,6 +761,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.OK)
@@ -660,6 +780,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler(BizRuntimeException.class)
     @ResponseStatus(HttpStatus.OK)
@@ -674,6 +797,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler(BizCheckedException.class)
     @ResponseStatus(HttpStatus.OK)
@@ -688,6 +814,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler(BizIOException.class)
     @ResponseStatus(HttpStatus.OK)
@@ -702,6 +831,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler(IdempotentException.class)
     @ResponseStatus(HttpStatus.OK)
@@ -718,6 +850,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler(DataAccessException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -739,6 +874,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler(BatchUpdateException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -754,6 +892,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -769,6 +910,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler(SQLClientInfoException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -784,6 +928,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler(SQLRecoverableException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -799,6 +946,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler(SQLSyntaxErrorException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -814,6 +964,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler(SQLTimeoutException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -829,6 +982,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler(SQLTransactionRollbackException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -844,6 +1000,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler(SQLTransientConnectionException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -861,6 +1020,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler(SQLTransientException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -876,6 +1038,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler(DuplicateKeyException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -891,6 +1056,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     @ExceptionHandler(SQLException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -907,8 +1075,12 @@ public class GlobalExceptionHandler {
     /*---------------------默认全局异常----------------------------*/
 
     /**
-     * 全局异常捕捉处理
-     * 500 (Internal Server Error)
+     * \u5168\u5c40\u5f02\u5e38\u6355\u6349\u5904\u7406
+     *  500 (Internal Server Error)
+     *
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
+     * @throws Exception \u5f02\u5e38\u5904\u7406\u5931\u8d25\u65f6\u629b\u51fa
      */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.OK)
@@ -923,7 +1095,12 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 异常信息国际化
+     * \u5f02\u5e38\u4fe1\u606f\u56fd\u9645\u5316
+     *
+     * @param message \u9ed8\u8ba4\u9519\u8bef\u6d88\u606f
+     * @param i18nCode \u56fd\u9645\u5316\u6d88\u606f\u952e
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
      */
     protected String getLocaleMessage(Exception ex, String i18nCode, String message) {
         Object[] args = null;

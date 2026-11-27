@@ -43,6 +43,7 @@ import java.util.Objects;
  */
 public class Goods extends AggregateRoot<Long> implements Serializable {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -108,116 +109,96 @@ public class Goods extends AggregateRoot<Long> implements Serializable {
         this.updateTime = updateTime;
     }
 
+    /**
+     * \u8bfb\u53d6\u5546\u54c1\u4e3b\u952e ID\u3002
+     * @return \u5546\u54c1\u4e3b\u952e ID
+     */
     @Override
     public Long id() {
         return id;
     }
 
-    /**
-     * @param id 商品标识
-     */
+    /** @param id \u5546\u54c1\u6807\u8bc6 */
     public void setId(Long id) {
         this.id = id;
     }
 
-    /**
-     * @return 商品编码
-     */
+    /** @return \u5546\u54c1\u7f16\u7801 */
     public String getCode() {
         return code;
     }
 
-    /**
-     * @param code 商品编码
-     */
+    /** @param code \u5546\u54c1\u7f16\u7801 */
     public void setCode(String code) {
         this.code = code;
     }
 
-    /**
-     * @return 商品名称
-     */
+    /** @return \u5546\u54c1\u540d\u79f0 */
     public String getName() {
         return name;
     }
 
-    /**
-     * @param name 商品名称
-     */
+    /** @param name \u5546\u54c1\u540d\u79f0 */
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * @return 商品价格
-     */
+    /** @return \u5546\u54c1\u4ef7\u683c */
     public BigDecimal getPrice() {
         return price;
     }
 
-    /**
-     * @param price 商品价格
-     */
+    /** @param price \u5546\u54c1\u4ef7\u683c */
     public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
-    /**
-     * @return 库存数量
-     */
+    /** @return \u5e93\u5b58\u6570\u91cf */
     public Integer getStock() {
         return stock;
     }
 
-    /**
-     * @param stock 库存数量
-     */
+    /** @param stock \u5e93\u5b58\u6570\u91cf */
     public void setStock(Integer stock) {
         this.stock = stock;
     }
 
-    /**
-     * @return 商品状态
-     */
+    /** @return \u5546\u54c1\u72b6\u6001 */
     public GoodsStatus getStatus() {
         return status;
     }
 
-    /**
-     * @param status 商品状态
-     */
+    /** @param status \u5546\u54c1\u72b6\u6001 */
     public void setStatus(GoodsStatus status) {
         this.status = status;
     }
 
-    /**
-     * @return 创建时间
-     */
+    /** @return \u521b\u5efa\u65f6\u95f4 */
     public LocalDateTime getCreateTime() {
         return createTime;
     }
 
-    /**
-     * @param createTime 创建时间
-     */
+    /** @param createTime \u521b\u5efa\u65f6\u95f4 */
     public void setCreateTime(LocalDateTime createTime) {
         this.createTime = createTime;
     }
 
-    /**
-     * @return 更新时间
-     */
+    /** @return \u66f4\u65b0\u65f6\u95f4 */
     public LocalDateTime getUpdateTime() {
         return updateTime;
     }
 
-    /**
-     * @param updateTime 更新时间
-     */
+    /** @param updateTime \u66f4\u65b0\u65f6\u95f4 */
     public void setUpdateTime(LocalDateTime updateTime) {
         this.updateTime = updateTime;
     }
 
+    /**
+     * 根据<code>id</code>比较对象的值是否相等。
+     *
+     * @param o 用来比较的另一个对象，允许为空
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -230,11 +211,21 @@ public class Goods extends AggregateRoot<Long> implements Serializable {
         return Objects.equals(id, product.id);
     }
 
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
     }
 
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>id</code>、<code>code</code>、<code>name</code>、<code>price</code>、<code>stock</code>、<code>status</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "Goods{id=" + id + ", code='" + code + "', name='" + name + "', price=" + price

@@ -28,7 +28,9 @@ import java.util.Optional;
 public interface RoleRepository extends Repository<Role, String> {
 
     /**
-     * 查询全部角色。
+     * \u67e5\u8be2\u5168\u90e8\u89d2\u8272\u3002
+     *
+     * @return \u4ed3\u50a8\u4e2d\u5df2\u6709\u7684\u89d2\u8272\u96c6\u5408
      */
     List<Role> findAll();
 

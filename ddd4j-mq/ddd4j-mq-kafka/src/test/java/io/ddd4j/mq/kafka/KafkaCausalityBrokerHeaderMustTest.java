@@ -50,11 +50,13 @@ import static org.mockito.Mockito.*;
  */
 class KafkaCausalityBrokerHeaderMustTest {
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>BaseContext.clear()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterEach
     void clearContext() {
         BaseContext.clear();
     }
 
+    /** \u9a8c\u8bc1<code>correlationHeader</code>\u975e\u7a7a\uff0c<code>causationHeader</code>\u975e\u7a7a\u3002 */
     @Test
     @SuppressWarnings("unchecked")
     void kafkaRecordMustCarryCausalityHeadersForNonJavaConsumers() {
@@ -85,6 +87,10 @@ class KafkaCausalityBrokerHeaderMustTest {
                 new String(causationHeader.value(), StandardCharsets.UTF_8));
     }
 
+    /**
+     * \u8bfb\u53d6 <code>properties</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>properties</code>
+     */
     private MQProperties properties() {
         MQProperties properties = new MQProperties();
         properties.setEnabled(true);
@@ -93,6 +99,10 @@ class KafkaCausalityBrokerHeaderMustTest {
         return properties;
     }
 
+    /**
+     * \u6784\u9020 <code>MQEventSerialization</code> \u4f5c\u4e3a\u5f53\u524d\u6d4b\u8bd5\u7684\u8f93\u5165\u6216\u7ed3\u679c\u3002
+     * @return \u63d0\u4f9b\u7ed9\u540e\u7eed\u5951\u7ea6\u65ad\u8a00\u7684 <code>MQEventSerialization</code> \u7ed3\u679c
+     */
     private MQEventSerialization serialization() {
         return new MQEventSerialization() {
             @Override
@@ -114,6 +124,10 @@ class KafkaCausalityBrokerHeaderMustTest {
      * 供 MQListener.of 反射使用的占位监听器（对齐既有契约测试写法）。
      */
     public static final class OrdersHandler {
+        /**
+         * \u6ce8\u518c\u6d4b\u8bd5\u7528\u7684\u8ba2\u5355\u4e3b\u9898\u76d1\u542c\u5668\uff0c\u6d88\u8d39\u65f6\u4e0d\u6539\u53d8\u65ad\u8a00\u72b6\u6001\u3002
+         * @param event \u7531\u805a\u5408\u6216\u76d1\u542c\u5668\u6536\u5230\u7684\u6d4b\u8bd5\u4e8b\u4ef6
+         */
         @MQEventListener(topic = "orders", tags = "*")
         public void handle(MQEvent event) {
             // 测试占位：不参与断言

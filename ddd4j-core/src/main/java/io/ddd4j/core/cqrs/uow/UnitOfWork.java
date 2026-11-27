@@ -46,10 +46,14 @@ import java.util.function.Supplier;
 @Slf4j
 public final class UnitOfWork implements AutoCloseable {
 
+    /** \u5de5\u4f5c\u5355\u5143\u63d0\u4ea4\u65f6\u6309\u6ce8\u518c\u987a\u5e8f\u6267\u884c\u7684\u56de\u8c03\u3002 */
     private final List<Runnable> commitActions = new ArrayList<>();
+    /** \u5de5\u4f5c\u5355\u5143\u56de\u6eda\u65f6\u6267\u884c\u7684\u56de\u8c03\u3002 */
     private final List<Runnable> rollbackActions = new ArrayList<>();
+    /** \u5f53\u524d\u5de5\u4f5c\u5355\u5143\u6240\u5904\u7684\u4e8b\u52a1\u9636\u6bb5\u3002 */
     private State state = State.ACTIVE;
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>UnitOfWork</code> \u5b9e\u4f8b\u3002 */
     private UnitOfWork() {
     }
 
@@ -165,6 +169,10 @@ public final class UnitOfWork implements AutoCloseable {
         }
     }
 
+    /**
+     * \u6309\u5217\u8868\u987a\u5e8f\u8fd0\u884c\u56de\u8c03\u5e76\u8bb0\u5f55\u5931\u8d25\uff0c\u540e\u7eed\u56de\u8c03\u4ecd\u7ee7\u7eed\u6267\u884c\u3002
+     * @param actions \u5df2\u767b\u8bb0\u7684\u4e8b\u52a1\u5b8c\u6210\u56de\u8c03\u5217\u8868
+     */
     private void runActions(List<Runnable> actions) {
         for (Runnable action : actions) {
             try {
@@ -176,6 +184,10 @@ public final class UnitOfWork implements AutoCloseable {
         }
     }
 
+    /**
+     * \u53ea\u5141\u8bb8\u5c1a\u672a\u5b8c\u6210\u7684\u5de5\u4f5c\u5355\u5143\u767b\u8bb0\u6216\u7ec8\u7ed3\u64cd\u4f5c\u3002
+     * @throws IllegalStateException \u5de5\u4f5c\u5355\u5143\u5df2\u7ecf\u7ec8\u6b62
+     */
     private void requireActive() {
         if (state != State.ACTIVE) {
             throw new IllegalStateException("UnitOfWork is already terminated: " + state);

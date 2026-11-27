@@ -40,6 +40,7 @@ import java.util.Objects;
 
 public final class PropertyRef implements Serializable {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = -3906849612189306727L;
 
     /**
@@ -58,10 +59,12 @@ public final class PropertyRef implements Serializable {
     private final String property;
 
     /**
- * @param space 属性空间
- * @param ownerType 声明属性方法的类型
- * @param property Java 属性名
- */
+     * 组合属性空间、属性名称和 Java 类型。
+     *
+     * @param space \u5c5e\u6027\u7a7a\u95f4
+     * @param ownerType \u58f0\u660e\u5c5e\u6027\u65b9\u6cd5\u7684\u7c7b\u578b
+     * @param property Java \u5c5e\u6027\u540d
+     */
 
     @JsonCreator()
     public PropertyRef(@JsonProperty("space") PropertySpace space, @JsonProperty("ownerType") Class<?> ownerType, @JsonProperty("property") String property) {
@@ -140,6 +143,13 @@ public final class PropertyRef implements Serializable {
         return Objects.equals(PropertySpace.PERSISTENCE, space);
     }
 
+    /**
+     * \u6784\u9020\u5c5e\u6027\u58f0\u660e\u7c7b\u578b\u4e0e\u5f53\u524d\u67e5\u8be2\u4f5c\u7528\u57df\u4e0d\u517c\u5bb9\u7684\u9519\u8bef\u3002
+     * @param space \u9886\u57df\u6216\u6301\u4e45\u5316\u5c5e\u6027\u7a7a\u95f4
+     * @param ownerType \u5c5e\u6027\u58f0\u660e\u6240\u5728\u7684 Java \u7c7b\u578b
+     * @param expectedType \u5f53\u524d\u4f5c\u7528\u57df\u63a5\u53d7\u7684\u7c7b\u578b
+     * @return \u63cf\u8ff0\u5c5e\u6027\u7c7b\u578b\u4e0d\u517c\u5bb9\u7684\u53c2\u6570\u5f02\u5e38
+     */
     private static IllegalArgumentException incompatible(PropertySpace space, Class<?> ownerType, Class<?> expectedType) {
         return new IllegalArgumentException("Query " + space + " property owner " + ownerType.getName() + " is incompatible with repository type " + expectedType.getName());
     }
@@ -217,6 +227,14 @@ public final class PropertyRef implements Serializable {
         }
     }
 
+    /**
+     * 根据<code>space</code>、<code>ownerType</code>、<code>property</code>比较对象的值是否相等。
+     *
+     * <p>只比较运行时类型相同的对象。</p>
+     *
+     * @param obj 用来比较或转换的输入对象
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -229,6 +247,11 @@ public final class PropertyRef implements Serializable {
         return Objects.equals(this.space, other.space) && Objects.equals(this.ownerType, other.ownerType) && Objects.equals(this.property, other.property);
     }
 
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         int result = 0;
@@ -238,6 +261,11 @@ public final class PropertyRef implements Serializable {
         return result;
     }
 
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>space</code>、<code>ownerType</code>、<code>property</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "PropertyRef[space=" + space + ", ownerType=" + ownerType + ", property=" + property + "]";

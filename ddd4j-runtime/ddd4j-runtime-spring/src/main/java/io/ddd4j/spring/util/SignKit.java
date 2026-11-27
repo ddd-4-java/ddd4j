@@ -40,14 +40,12 @@ import java.util.TreeMap;
 public class SignKit {
 
     /**
-     * 1、获取密钥
-     *
-     * @param appId       客户端id
-     * @param appVersion  版本号
-     * @param appChannel  渠道
-     * @param fixedSecret 固定密钥
-     * @return 密钥
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * 1\u3001\u83b7\u53d6\u5bc6\u94a5
+     * @param appId \u5ba2\u6237\u7aefid
+     * @param appVersion \u7248\u672c\u53f7
+     * @param appChannel \u6e20\u9053
+     * @param fixedSecret \u56fa\u5b9a\u5bc6\u94a5
+     * @return \u5bc6\u94a5
      */
     public static String salt(String appId, String appVersion, String appChannel, String fixedSecret) {
         String originStr = appId + appVersion + appChannel + fixedSecret;
@@ -131,16 +129,18 @@ public class SignKit {
     }
 
     /**
-     * 执行验证。
-     * @param token 访问令牌。
-     * @param appId 字符串参数。
-     * @param appVersion 字符串参数。
-     * @param appChannel 字符串参数。
-     * @param fixedSecret 字符串参数。
-     * @param clientSign 字符串参数。
-     * @param params 参数数组。
-     * @param body 字符串参数。
-     * @return 判断结果。
+     * \u6267\u884c\u9a8c\u8bc1\u3002
+     * @param token \u8bbf\u95ee\u4ee4\u724c\u3002
+     * @param appId \u5b57\u7b26\u4e32\u53c2\u6570\u3002
+     * @param appVersion \u5b57\u7b26\u4e32\u53c2\u6570\u3002
+     * @param appChannel \u5b57\u7b26\u4e32\u53c2\u6570\u3002
+     * @param fixedSecret \u5b57\u7b26\u4e32\u53c2\u6570\u3002
+     * @param clientSign \u5b57\u7b26\u4e32\u53c2\u6570\u3002
+     * @param params \u53c2\u6570\u6570\u7ec4\u3002
+     * @param body \u5b57\u7b26\u4e32\u53c2\u6570\u3002
+     * @return \u5224\u65ad\u7ed3\u679c\u3002
+     *
+     * @throws UnsupportedEncodingException \u8bf7\u6c42\u53c2\u6570\u7f16\u7801\u5931\u8d25\u65f6\u629b\u51fa
      */
     public static boolean verify(String token, String appId, String appVersion, String appChannel,
                                  String fixedSecret, String clientSign, MultiValueMap<String, String> params, String body)
@@ -237,16 +237,18 @@ public class SignKit {
     }
 
     /**
-     * 执行验证。
-     * @param token 访问令牌。
-     * @param appId 字符串参数。
-     * @param appVersion 字符串参数。
-     * @param appChannel 字符串参数。
-     * @param fixedSecret 字符串参数。
-     * @param clientSign 字符串参数。
-     * @param formData 属性映射。
-     * @param body 字符串参数。
-     * @return 判断结果。
+     * \u6267\u884c\u9a8c\u8bc1\u3002
+     * @param token \u8bbf\u95ee\u4ee4\u724c\u3002
+     * @param appId \u5b57\u7b26\u4e32\u53c2\u6570\u3002
+     * @param appVersion \u5b57\u7b26\u4e32\u53c2\u6570\u3002
+     * @param appChannel \u5b57\u7b26\u4e32\u53c2\u6570\u3002
+     * @param fixedSecret \u5b57\u7b26\u4e32\u53c2\u6570\u3002
+     * @param clientSign \u5b57\u7b26\u4e32\u53c2\u6570\u3002
+     * @param formData \u5c5e\u6027\u6620\u5c04\u3002
+     * @param body \u5b57\u7b26\u4e32\u53c2\u6570\u3002
+     * @return \u5224\u65ad\u7ed3\u679c\u3002
+     *
+     * @throws UnsupportedEncodingException \u8bf7\u6c42\u53c2\u6570\u7f16\u7801\u5931\u8d25\u65f6\u629b\u51fa
      */
     public static boolean verify(String token, String appId, String appVersion, String appChannel,
                                  String fixedSecret, String clientSign, Map<String, String[]> formData, String body)

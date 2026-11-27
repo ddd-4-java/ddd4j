@@ -32,8 +32,13 @@ import java.util.*;
  */
 public class JedisRedisStreamOperations implements RedisStreamOperations {
 
+    /** \u6267\u884c Redis Stream \u64cd\u4f5c\u7684 Jedis \u5ba2\u6237\u7aef\u3002 */
     private final UnifiedJedis jedis;
 
+    /**
+     * \u521b\u5efa Jedis Stream \u64cd\u4f5c\u9002\u914d\u5668\u3002
+     * @param jedis Jedis \u5ba2\u6237\u7aef
+     */
     public JedisRedisStreamOperations(UnifiedJedis jedis) {
         this.jedis = Objects.requireNonNull(jedis, "jedis");
     }
@@ -65,6 +70,18 @@ public class JedisRedisStreamOperations implements RedisStreamOperations {
         }
     }
 
+    /**
+     * 以指定消费者组和消费者身份读取 Redis Stream 消息。
+     *
+     * <p>Jedis 实现调用 <code>XReadGroupParams.xReadGroupParams().count(count).block(blockMillis)</code>。</p>
+     *
+     * @param group 消费者组名
+     * @param consumer 消费者名称
+     * @param count 每次读取的最大条数
+     * @param blockMillis 阻塞等待毫秒数
+     * @param streams 要读取的 Stream 集合
+     * @return 实际返回<code>result</code>
+     */
     @Override
     public Map<String, List<RedisStreamRecord>> readGroup(
             String group,

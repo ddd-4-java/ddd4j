@@ -29,11 +29,21 @@ import java.util.Optional;
  */
 public final class SynchronousWebRequestSession implements AutoCloseable {
 
+    /** \u5f53\u524d HTTP \u8bf7\u6c42\u89e3\u6790\u540e\u7528\u4e8e\u8de8\u5c42\u4f20\u9012\u7684\u4e0a\u4e0b\u6587\u3002 */
     private final WebRequestContext requestContext;
+    /** \u5f53\u524d\u8bf7\u6c42\u83b7\u5f97\u7684 DDD4J \u7ebf\u7a0b\u4e0a\u4e0b\u6587\u4f5c\u7528\u57df\u3002 */
     private final WebContextScope contextScope;
+    /** \u5f53\u524d\u8bf7\u6c42\u53d6\u5f97\u7684\u5e42\u7b49\u5904\u7406\u4f5c\u7528\u57df\u3002 */
     private final Optional<WebIdempotencyLifecycle.Scope> idempotencyScope;
+    /** \u5f53\u524d\u5b9e\u4f8b\u662f\u5426\u5df2\u5173\u95ed\u3002 */
     private boolean closed;
 
+    /**
+     * \u4fdd\u5b58\u540c\u6b65\u8bf7\u6c42\u7684\u4e0a\u4e0b\u6587\u4ee5\u53ca\u7ed3\u675f\u65f6\u8981\u6e05\u7406\u7684\u76f8\u5173\u4f5c\u7528\u57df\u3002
+     * @param requestContext \u5f53\u524d HTTP \u8bf7\u6c42\u5df2\u7ecf\u89e3\u6790\u7684 DDD4J \u4e0a\u4e0b\u6587
+     * @param contextScope \u7ba1\u7406\u5f53\u524d\u7ebf\u7a0b\u8bf7\u6c42\u8d44\u6e90\u7684\u4f5c\u7528\u57df
+     * @param idempotencyScope \u5f53\u524d\u8bf7\u6c42\u83b7\u53d6\u7684\u53ef\u9009\u5e42\u7b49\u4f5c\u7528\u57df
+     */
     private SynchronousWebRequestSession(WebRequestContext requestContext, WebContextScope contextScope,
                                          Optional<WebIdempotencyLifecycle.Scope> idempotencyScope) {
         this.requestContext = requestContext;

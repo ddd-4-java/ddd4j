@@ -56,10 +56,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("DropwizardProjectionScheduler + ViewManager 真实 Dropwizard 启动 IT")
 class DropwizardProjectionSchedulerIT {
 
+    /** 保存 <code>support</code> 对应的 <code>DropwizardTestSupport&lt;Configuration&gt;</code> 数据。 */
     private static DropwizardTestSupport<Configuration> support;
+    /** 注册任务和取消任务所用的视图调度器。 */
     private static DropwizardProjectionScheduler scheduler;
+    /** 保存 <code>view Manager</code> 对应的 <code>DropwizardProjectionViewManager</code> 数据。 */
     private static DropwizardProjectionViewManager viewManager;
 
+    /**
+     * 初始化测试资源，调用 <code>support.before</code>、<code>support.getApplication</code>。
+     *
+     * @throws Exception 完成 <code>start Dropwizard</code> 操作失败
+     */
     @BeforeAll
     static void startDropwizard() throws Exception {
         support = new DropwizardTestSupport<>(TestApplication.class, randomPortConfiguration());
@@ -69,6 +77,7 @@ class DropwizardProjectionSchedulerIT {
         viewManager = app.viewManager;
     }
 
+    /** 释放测试资源，调用 <code>viewManager.isRunning</code>、<code>viewManager.stop</code>、<code>scheduler.shutdown</code>。 */
     @AfterAll
     static void stopDropwizard() {
         if (viewManager != null && viewManager.isRunning()) {
@@ -82,6 +91,7 @@ class DropwizardProjectionSchedulerIT {
         }
     }
 
+    /** 验证<code>handle.isActive()</code>为真，<code>handle.isActive()</code>为假。 */
     @Test
     void scheduler_schedule_应返回activeHandle_cancel后应inactive() {
         ViewScheduler.ViewScheduleHandle handle = scheduler.schedule(
@@ -94,6 +104,7 @@ class DropwizardProjectionSchedulerIT {
         assertThat(handle.isActive()).isFalse();
     }
 
+    /** 验证<code>viewManager.isRunning()</code>为假，<code>viewManager.isRunning()</code>为真。 */
     @Test
     void viewManager_start_stop_应管理生命周期() {
         assertThat(viewManager.isRunning()).isFalse();
@@ -109,6 +120,7 @@ class DropwizardProjectionSchedulerIT {
         assertThat(viewManager.isRunning()).isFalse();
     }
 
+    /** 验证<code>viewManager.isRunning()</code>为真。 */
     @Test
     void triggerOnce_应立即执行所有view的runOnce() {
         viewManager.start();
@@ -118,8 +130,10 @@ class DropwizardProjectionSchedulerIT {
     }
 
     /**
-     * 随机端口配置（application/admin 连接器 port 0 → 内核分配空闲端口），
-     * 避免真实 Jetty 启动撞固定 8080/8081。
+     * \u968f\u673a\u7aef\u53e3\u914d\u7f6e\uff08application/admin \u8fde\u63a5\u5668 port 0 \u2192 \u5185\u6838\u5206\u914d\u7a7a\u95f2\u7aef\u53e3\uff09\uff0c
+     *  \u907f\u514d\u771f\u5b9e Jetty \u542f\u52a8\u649e\u56fa\u5b9a 8080/8081\u3002
+     *
+     * @return 返回表达式 <code>configuration</code>
      */
     private static Configuration randomPortConfiguration() {
         Configuration configuration = new Configuration();
@@ -141,7 +155,9 @@ class DropwizardProjectionSchedulerIT {
      */
     public static class TestApplication extends Application<Configuration> {
 
+        /** 注册任务和取消任务所用的视图调度器。 */
         volatile DropwizardProjectionScheduler scheduler;
+        /** 保存 <code>view Manager</code> 对应的 <code>DropwizardProjectionViewManager</code> 数据。 */
         volatile DropwizardProjectionViewManager viewManager;
 
         /**
@@ -160,6 +176,11 @@ class DropwizardProjectionSchedulerIT {
             this.viewManager = DropwizardProjectionViewManager.create(environment, views, runner);
         }
 
+        /**
+         * 执行 <code>create Test Runner</code>，调用 <code>EventChunk.empty</code>。
+         *
+         * @return 当前操作得到的 <code>ProjectionRunner&lt;Object&gt;</code> 结果
+         */
         @SuppressWarnings("unchecked")
         private ProjectionRunner<Object> createTestRunner() {
             ProjectionService projectionService = new ProjectionService() {
@@ -205,9 +226,17 @@ class DropwizardProjectionSchedulerIT {
      */
     private static class ProjectionViewStub implements ProjectionView<Object> {
 
+        /** 保存 <code>name</code> 对应的 <code>String</code> 数据。 */
         private final String name;
+        /** 控制投影任务执行时点的 Cron 表达式。 */
         private final String cron;
 
+        /**
+         * 初始化 <code>ProjectionViewStub</code> 使用的 <code>name</code>、<code>cron</code>。
+         *
+         * @param name 传入此操作的 <code>String</code> 类型 <code>name</code>
+         * @param cron 控制任务触发时刻的 Cron 表达式
+         */
         ProjectionViewStub(String name, String cron) {
             this.name = name;
             this.cron = cron;
@@ -231,6 +260,11 @@ class DropwizardProjectionSchedulerIT {
             return cron;
         }
 
+        /**
+         * 执行 <code>get Event Types</code>，调用 <code>Set.of</code>。
+         *
+         * @return 返回表达式 <code>Set.of("TestEvent")</code>
+         */
         @Override
         public Collection<String> getEventTypes() {
             return Set.of("TestEvent");

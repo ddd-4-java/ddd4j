@@ -37,10 +37,17 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /** 使用真实 MyBatis 映射验证继承主键、异名对象转换和普通 id 字段的隔离。 */
 class NativePrimaryKeyMappingTest {
+    /** \u6d4b\u8bd5\u4e2d\u7528\u4e8e\u6267\u884c Mapper \u64cd\u4f5c\u7684\u6570\u636e\u5e93\u4f1a\u8bdd\u3002 */
     private SqlSession session;
+    /** \u5f53\u524d\u88ab\u9a8c\u8bc1\u6216\u66ff\u6362\u7684\u6301\u4e45\u5316 Mapper \u5b9e\u4f8b\u3002 */
     private OrderMapper mapper;
+    /** \u88ab\u6d4b\u4ed3\u50a8\u6216\u7528\u4e8e\u63d0\u4f9b\u6d4b\u8bd5\u6570\u636e\u7684\u4ed3\u50a8\u5b9e\u4f8b\u3002 */
     private OrderRepository repository;
 
+    /**
+     * \u6d4b\u8bd5\u524d\u4f9d\u6b21\u521d\u59cb\u5316<code>session</code>\u3001\u521d\u59cb\u5316<code>mapper</code>\u3001\u521d\u59cb\u5316<code>repository</code>\u3002
+     * @throws Exception \u6267\u884c\u6570\u636e\u5e93\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @BeforeEach
     void openSession() throws Exception {
         JdbcDataSource source = new JdbcDataSource();
@@ -57,11 +64,13 @@ class NativePrimaryKeyMappingTest {
         repository = new OrderRepository(mapper);
     }
 
+    /** \u6d4b\u8bd5\u540e\u4f9d\u6b21\u5173\u95ed<code>session</code>\u3002 */
     @AfterEach
     void closeSession() {
         session.close();
     }
 
+    /** \u9a8c\u8bc1<code>mapper.selectById(101L).getName()</code> \u7b49\u4e8e <code>"after"</code>\uff0c<code>mapper.selectRows(null)</code> \u7684\u5927\u5c0f\u4e3a <code>1</code>\uff0c<code>repository.findById(101L).get().id()</code> \u7b49\u4e8e <code>101L</code>\u3002 */
     @Test
     void saveUsesInheritedMappedKeyInsteadOfOrdinaryId() {
         seed(101L, 901L, "before");
@@ -74,6 +83,7 @@ class NativePrimaryKeyMappingTest {
         assertThat(repository.findById(101L).get().id()).isEqualTo(101L);
     }
 
+    /** \u9a8c\u8bc1<code>saved.id()</code>\u975e\u7a7a\uff0c<code>mapper.selectById(901L).getName()</code> \u7b49\u4e8e <code>"existing"</code>\uff0c<code>mapper.selectById(saved.id()).getId()</code> \u7b49\u4e8e <code>901L</code>\u3002 */
     @Test
     void nullMappedKeyIsNotReplacedByOrdinaryIdAndGeneratedKeyIsReturned() {
         seed(901L, 55L, "existing");
@@ -86,6 +96,7 @@ class NativePrimaryKeyMappingTest {
         assertThat(mapper.selectById(saved.id()).getId()).isEqualTo(901L);
     }
 
+    /** \u9a8c\u8bc1<code>repository.update(order(999L, 77L, "updated"), new OrderQuery())</code>\u4e3a\u771f\uff0c<code>mapper.selectById(101L).getName()</code> \u7b49\u4e8e <code>"updated"</code>\uff0c<code>mapper.selectById(999L)</code>\u4e3a\u7a7a\u3002 */
     @Test
     void conditionalUpdateCopiesMatchedIdentityThroughResultMap() {
         seed(101L, 901L, "one");
@@ -98,6 +109,7 @@ class NativePrimaryKeyMappingTest {
         assertThat(mapper.selectById(999L)).isNull();
     }
 
+    /** \u9a8c\u8bc1<code>repository.deleteByQuery(query)</code>\u4e3a\u771f\uff0c<code>mapper.selectById(101L)</code>\u4e3a\u7a7a\uff0c<code>mapper.selectById(901L)</code>\u975e\u7a7a\u3002 */
     @Test
     void conditionalDeleteUsesDomainIdentityRatherThanIdNamedField() {
         seed(101L, 901L, "one");
@@ -111,6 +123,7 @@ class NativePrimaryKeyMappingTest {
         assertThat(mapper.selectById(901L)).isNotNull();
     }
 
+    /** \u9a8c\u8bc1<code>mapper.selectById(101L).getName()</code> \u7b49\u4e8e <code>"after"</code>\uff0c<code>mapper.selectRows(null)</code> \u7684\u5927\u5c0f\u4e3a <code>1</code>\u3002 */
     @Test
     void generatedKeyPropertyIsUsedWhenResultMapHasNoExplicitId() {
         seed(101L, 901L, "before");
@@ -122,6 +135,7 @@ class NativePrimaryKeyMappingTest {
         assertThat(mapper.selectRows(null)).hasSize(1);
     }
 
+    /** \u9a8c\u8bc1<code>conventional.extractId(po)</code> \u7b49\u4e8e <code>901L</code>\u3002 */
     @Test
     void conventionalIdIsOnlyFallbackWhenNoKeyMetadataExists() {
         OrderRepository conventional = repositoryFor(ConventionalMapper.class);
@@ -130,6 +144,7 @@ class NativePrimaryKeyMappingTest {
         assertThat(conventional.extractId(po)).isEqualTo(901L);
     }
 
+    /** \u9a8c\u8bc1<code>composite.save(order(101L, 901L, "invalid"))</code> \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>mapper.selectRows(null)</code>\u4e3a\u7a7a\u3002 */
     @Test
     void multipleExplicitKeysAreRejectedBeforeWriting() {
         OrderRepository composite = repositoryFor(CompositeKeyMapper.class);
@@ -139,15 +154,33 @@ class NativePrimaryKeyMappingTest {
         assertThat(mapper.selectRows(null)).isEmpty();
     }
 
+    /**
+     * \u521b\u5efa <code>new OrderRepository</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+     * @param mapperType \u4f20\u7ed9 <code>session.getConfiguration()</code> \u7684 <code>Class&lt;? extends OrderMapper&gt;</code> \u8f93\u5165
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new OrderRepository(session.getMapper(mapperType))</code>
+     */
     private OrderRepository repositoryFor(Class<? extends OrderMapper> mapperType) {
         session.getConfiguration().addMapper(mapperType);
         return new OrderRepository(session.getMapper(mapperType));
     }
 
+    /**
+     * \u8c03\u7528 <code>mapper.insert()</code>\u3001<code>repository.toPersistenceObject()</code>\u3001<code>order()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @param key \u7528\u4e8e\u5728\u6d4b\u8bd5\u4e0a\u4e0b\u6587\u6216\u7f13\u5b58\u4e2d\u7d22\u5f15\u6570\u636e\u7684\u952e
+     * @param ordinaryId \u4f20\u7ed9 <code>mapper.insert()</code> \u7684 <code>Long</code> \u8f93\u5165
+     * @param name \u5f53\u524d\u6d4b\u8bd5\u6307\u5b9a\u7684\u5bf9\u8c61\u6216\u5c5e\u6027\u540d\u79f0
+     */
     private void seed(Long key, Long ordinaryId, String name) {
         mapper.insert(repository.toPersistenceObject(order(key, ordinaryId, name)));
     }
 
+    /**
+     * \u8bfb\u53d6 <code>model</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
+     * @param key \u7528\u4e8e\u5728\u6d4b\u8bd5\u4e0a\u4e0b\u6587\u6216\u7f13\u5b58\u4e2d\u7d22\u5f15\u6570\u636e\u7684\u952e
+     * @param ordinaryId \u4f20\u7ed9 <code>model.setId()</code> \u7684 <code>Long</code> \u8f93\u5165
+     * @param name \u5f53\u524d\u6d4b\u8bd5\u6307\u5b9a\u7684\u5bf9\u8c61\u6216\u5c5e\u6027\u540d\u79f0
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>model</code>
+     */
     private static Order order(Long key, Long ordinaryId, String name) {
         Order model = new Order();
         model.setBusinessId(key);
@@ -156,41 +189,62 @@ class NativePrimaryKeyMappingTest {
         return model;
     }
 
+    /** \u4f9b\u6d4b\u8bd5\u9a8c\u8bc1\u4e8b\u4ef6\u5e94\u7528\u548c\u6301\u4e45\u5316\u7684\u805a\u5408\u6837\u672c\u3002 */
     @Getter
     @Setter
     public static class OrderIdentity extends AggregateRoot<Long> {
+        /** \u533a\u5206\u6d4b\u8bd5\u4ea4\u6613\u8bb0\u5f55\u7684\u4e1a\u52a1\u6807\u8bc6\u3002 */
         private Long businessId;
 
+        /**
+         * \u8bfb\u53d6<code>businessId</code> \u5b57\u6bb5\u3002
+         * @return <code>businessId</code> \u5b57\u6bb5
+         */
         @Override
         public Long id() {
             return businessId;
         }
     }
 
+    /** \u4f7f\u7528 <code>id</code>\u3001<code>name</code> \u9a8c\u8bc1\u5f53\u524d\u6d4b\u8bd5\u7684\u8f93\u5165\u548c\u6570\u636e\u6620\u5c04\u3002 */
     @Getter
     @Setter
     public static class Order extends OrderIdentity {
+        /** \u7528\u4e8e\u6784\u9020\u548c\u5b9a\u4f4d\u6d4b\u8bd5\u8bb0\u5f55\u7684\u4e3b\u952e\u3002 */
         private Long id;
+        /** \u6d4b\u8bd5\u5bf9\u8c61\u7684\u663e\u793a\u540d\u79f0\u3002 */
         private String name;
     }
 
+    /** \u5c06 <code>orderKey</code> \u7b49\u72b6\u6001\u4e00\u8d77\u4f20\u5165\u5f53\u524d\u6d4b\u8bd5\uff0c\u4f9b\u8c03\u7528\u6216\u7ed3\u679c\u65ad\u8a00\u4f7f\u7528\u3002 */
     @Getter
     @Setter
     public static class PoIdentity {
+        /** \u7528\u4e8e\u5b9a\u4f4d\u540c\u4e00\u8ba2\u5355\u8bb0\u5f55\u7684\u6d4b\u8bd5\u4e1a\u52a1\u952e\u3002 */
         private Long orderKey;
     }
 
+    /** \u6301\u4e45\u5316\u5c42\u4f7f\u7528\u7684\u8ba2\u5355\u6d4b\u8bd5\u6570\u636e\u6a21\u578b\u3002 */
     @Getter
     @Setter
     public static class OrderPO extends PoIdentity {
+        /** \u7528\u4e8e\u6784\u9020\u548c\u5b9a\u4f4d\u6d4b\u8bd5\u8bb0\u5f55\u7684\u4e3b\u952e\u3002 */
         private Long id;
+        /** \u6d4b\u8bd5\u5bf9\u8c61\u7684\u663e\u793a\u540d\u79f0\u3002 */
         private String name;
     }
 
+    /** \u8ba2\u5355\u6d4b\u8bd5\u67e5\u8be2\u5bf9\u8c61\uff0c\u4f9b\u6784\u9020\u4ed3\u50a8\u68c0\u7d22\u6761\u4ef6\u3002 */
     public static class OrderQuery extends Query<Order> {
     }
 
+    /** \u63d0\u4f9b MyBatis \u589e\u5f3a Mapper \u7684\u6d4b\u8bd5\u63a5\u53e3\uff0c\u4f9b\u4ed3\u50a8\u6216\u6620\u5c04\u5951\u7ea6\u7528\u4f8b\u5b9e\u4f8b\u5316\u3002 */
     interface IdentityMapper extends EnhanceMapper<OrderPO> {
+        /**
+         * \u6309\u6620\u5c04 SQL \u8bfb\u53d6\u6d4b\u8bd5\u8bb0\u5f55\u3002
+         * @param key \u8981\u7528\u4e8e\u547d\u4e2d\u6d4b\u8bd5\u8868\u7684\u539f\u751f\u4e3b\u952e
+         * @return \u4e0e\u67e5\u8be2\u5339\u914d\u7684\u6620\u5c04\u7ed3\u679c
+         */
         @Override
         @Select("SELECT order_pk, id, name FROM order_identity WHERE order_pk = #{key}")
         @Results(id = "identity", value = {
@@ -200,27 +254,54 @@ class NativePrimaryKeyMappingTest {
         OrderPO selectById(@Param("key") Serializable key);
     }
 
+    /** \u4e3a\u8ba2\u5355\u6301\u4e45\u5316\u6d4b\u8bd5\u63d0\u4f9b\u7684\u6620\u5c04\u5165\u53e3\u3002 */
     interface OrderMapper extends IdentityMapper {
+        /**
+         * \u628a\u7ed9\u5b9a\u5939\u5177\u6570\u636e\u63d2\u5165\u5f53\u524d\u6d4b\u8bd5\u8868\u3002
+         * @param entity \u5f85\u5199\u5165\u7684\u6d4b\u8bd5\u8868\u6301\u4e45\u5316\u5bf9\u8c61
+         * @return \u63d2\u5165\u64cd\u4f5c\u5f71\u54cd\u7684\u884c\u6570
+         */
         @Override
         @Insert("<script>INSERT INTO order_identity(<if test='orderKey != null'>order_pk,</if> id, name)"
                 + " VALUES(<if test='orderKey != null'>#{orderKey},</if> #{id}, #{name})</script>")
         @Options(useGeneratedKeys = true, keyProperty = "orderKey", keyColumn = "order_pk")
         int insert(OrderPO entity);
 
+        /**
+         * \u6309\u6307\u5b9a\u4e3b\u952e\u66f4\u65b0\u5f53\u524d\u6d4b\u8bd5\u8868\u4e2d\u7684\u8bb0\u5f55\u3002
+         * @param entity \u5f85\u5199\u5165\u7684\u6d4b\u8bd5\u8868\u6301\u4e45\u5316\u5bf9\u8c61
+         * @return \u66f4\u65b0\u64cd\u4f5c\u5f71\u54cd\u7684\u884c\u6570
+         */
         @Override
         @Update("UPDATE order_identity SET id = #{id}, name = #{name} WHERE order_pk = #{orderKey}")
         int updateById(OrderPO entity);
 
+        /**
+         * \u6309\u6620\u5c04 SQL \u8bfb\u53d6\u6d4b\u8bd5\u8bb0\u5f55\u3002
+         * @param key \u8981\u7528\u4e8e\u547d\u4e2d\u6d4b\u8bd5\u8868\u7684\u539f\u751f\u4e3b\u952e
+         * @return \u4e0e\u67e5\u8be2\u5339\u914d\u7684\u6620\u5c04\u7ed3\u679c
+         */
         @Select("<script>SELECT order_pk, id, name FROM order_identity"
                 + "<if test='key != null'> WHERE order_pk = #{key}</if> ORDER BY order_pk</script>")
         @ResultMap("identity")
         List<OrderPO> selectRows(@Param("key") Long key);
 
+        /**
+         * \u4f9d\u636e\u4e3b\u952e\u6761\u4ef6\u79fb\u9664\u6d4b\u8bd5\u8868\u4e2d\u5339\u914d\u7684\u8bb0\u5f55\u3002
+         * @param key \u8981\u7528\u4e8e\u547d\u4e2d\u6d4b\u8bd5\u8868\u7684\u539f\u751f\u4e3b\u952e
+         * @return \u5220\u9664\u64cd\u4f5c\u5f71\u54cd\u7684\u884c\u6570
+         */
         @Delete("DELETE FROM order_identity WHERE order_pk = #{key}")
         int remove(Long key);
     }
 
+    /** \u5b9e\u73b0 <code>OrderMapper</code>\uff0c\u4f9b\u6d4b\u8bd5\u8c03\u7528 <code>selectById()</code> \u5e76\u89c2\u5bdf\u7ed3\u679c\u3002 */
     interface GeneratedKeyMapper extends OrderMapper {
+        /**
+         * \u6309\u6620\u5c04 SQL \u8bfb\u53d6\u6d4b\u8bd5\u8bb0\u5f55\u3002
+         * @param key \u8981\u7528\u4e8e\u547d\u4e2d\u6d4b\u8bd5\u8868\u7684\u539f\u751f\u4e3b\u952e
+         * @return \u4e0e\u67e5\u8be2\u5339\u914d\u7684\u6620\u5c04\u7ed3\u679c
+         */
         @Override
         @Select("SELECT order_pk, id, name FROM order_identity WHERE order_pk = #{key}")
         @Results(id = "identity", value = {
@@ -230,13 +311,25 @@ class NativePrimaryKeyMappingTest {
         OrderPO selectById(@Param("key") Serializable key);
     }
 
+    /** \u5b9e\u73b0 <code>GeneratedKeyMapper</code>\uff0c\u4f9b\u6d4b\u8bd5\u8c03\u7528 <code>insert()</code> \u5e76\u89c2\u5bdf\u7ed3\u679c\u3002 */
     interface ConventionalMapper extends GeneratedKeyMapper {
+        /**
+         * \u628a\u7ed9\u5b9a\u5939\u5177\u6570\u636e\u63d2\u5165\u5f53\u524d\u6d4b\u8bd5\u8868\u3002
+         * @param entity \u5f85\u5199\u5165\u7684\u6d4b\u8bd5\u8868\u6301\u4e45\u5316\u5bf9\u8c61
+         * @return \u63d2\u5165\u64cd\u4f5c\u5f71\u54cd\u7684\u884c\u6570
+         */
         @Override
         @Insert("INSERT INTO order_identity(order_pk, id, name) VALUES(#{orderKey}, #{id}, #{name})")
         int insert(OrderPO entity);
     }
 
+    /** \u5b9e\u73b0 <code>OrderMapper</code>\uff0c\u4f9b\u6d4b\u8bd5\u8c03\u7528 <code>selectById()</code> \u5e76\u89c2\u5bdf\u7ed3\u679c\u3002 */
     interface CompositeKeyMapper extends OrderMapper {
+        /**
+         * \u6309\u6620\u5c04 SQL \u8bfb\u53d6\u6d4b\u8bd5\u8bb0\u5f55\u3002
+         * @param key \u8981\u7528\u4e8e\u547d\u4e2d\u6d4b\u8bd5\u8868\u7684\u539f\u751f\u4e3b\u952e
+         * @return \u4e0e\u67e5\u8be2\u5339\u914d\u7684\u6620\u5c04\u7ed3\u679c
+         */
         @Override
         @Select("SELECT order_pk, id, name FROM order_identity WHERE order_pk = #{key}")
         @Results(id = "identity", value = {
@@ -245,11 +338,21 @@ class NativePrimaryKeyMappingTest {
         OrderPO selectById(@Param("key") Serializable key);
     }
 
+    /** \u5b9e\u73b0 <code>MybatisAggregateRepository</code>\uff0c\u4f9b\u6d4b\u8bd5\u8c03\u7528 <code>toModel()</code>\u3001<code>toPersistenceObject()</code>\u3001<code>selectRows()</code> \u5e76\u89c2\u5bdf\u7ed3\u679c\u3002 */
     static class OrderRepository extends MybatisAggregateRepository<OrderMapper, Order, OrderPO, OrderQuery, Long> {
+        /**
+         * \u4f7f\u7528 <code>super()</code> \u521d\u59cb\u5316 <code>OrderRepository</code> \u6d4b\u8bd5\u5939\u5177\u3002
+         * @param mapper \u5f53\u524d\u6d4b\u8bd5\u767b\u8bb0\u6216\u4f7f\u7528\u7684\u6301\u4e45\u5316\u6620\u5c04\u7ec4\u4ef6
+         */
         OrderRepository(OrderMapper mapper) {
             super(mapper, Order.class, OrderPO.class);
         }
 
+        /**
+         * \u8bfb\u53d6 <code>model</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
+         * @param po \u4f20\u7ed9 <code>BeanKit.copy()</code> \u7684 <code>OrderPO</code> \u8f93\u5165
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>model</code>
+         */
         @Override
         public Order toModel(OrderPO po) {
             Order model = BeanKit.copy(po, Order.class);
@@ -257,6 +360,11 @@ class NativePrimaryKeyMappingTest {
             return model;
         }
 
+        /**
+         * \u8bfb\u53d6 <code>po</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
+         * @param model \u4f20\u7ed9 <code>BeanKit.copy()</code> \u7684 <code>Order</code> \u8f93\u5165
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>po</code>
+         */
         @Override
         public OrderPO toPersistenceObject(Order model) {
             OrderPO po = BeanKit.copy(model, OrderPO.class);
@@ -264,22 +372,53 @@ class NativePrimaryKeyMappingTest {
             return po;
         }
 
+        /**
+         * 查询符合条件的持久化记录。
+         *
+         * <p>测试夹具会调用 <code>query.getWhereConditions().isEmpty()</code>、<code>query.getWhereConditions()</code>。</p>
+         *
+         * @param query 领域查询，null 表示无额外条件
+         * @param offset 从零开始的偏移量
+         * @param limit 最大行数，负数表示不分页
+         * @return 实际返回<code>baseMapper.selectRows(key)</code>
+         */
         @Override
         protected List<OrderPO> selectRows(Query<Order> query, long offset, long limit) {
             Long key = query.getWhereConditions().isEmpty() ? null : (Long) query.getWhereConditions().get(0).value();
             return baseMapper.selectRows(key);
         }
 
+        /**
+         * 统计符合条件的持久化记录数。
+         *
+         * <p>测试夹具会调用 <code>selectRows(query, 0, -1).size()</code>、<code>selectRows(query, 0, -1)</code>。</p>
+         *
+         * @param query 领域查询，null 表示无额外条件
+         * @return 实际返回<code>selectRows(query, 0, -1).size()</code>
+         */
         @Override
         protected long countRows(Query<Order> query) {
             return selectRows(query, 0, -1).size();
         }
 
+        /**
+         * \u901a\u8fc7 <code>baseMapper.remove()</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+         * @param key \u7528\u4e8e\u5728\u6d4b\u8bd5\u4e0a\u4e0b\u6587\u6216\u7f13\u5b58\u4e2d\u7d22\u5f15\u6570\u636e\u7684\u952e
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>baseMapper.remove(key)</code>
+         */
         @Override
         protected int deleteRow(Long key) {
             return baseMapper.remove(key);
         }
 
+        /**
+         * 删除符合条件的持久化记录。
+         *
+         * <p>测试夹具会调用 <code>baseMapper.remove(key)</code>。</p>
+         *
+         * @param keys 用于此操作的 <code>keys</code>（<code>Collection&lt;Long&gt;</code>）
+         * @return 实际返回<code>count</code>
+         */
         @Override
         protected int deleteRows(Collection<Long> keys) {
             int count = 0;

@@ -35,12 +35,20 @@ import java.util.Objects;
  */
 public final class ActivemqKit {
 
+    /**
+     * \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>ActivemqKit</code> \u5b9e\u4f8b\u3002
+     */
     private ActivemqKit() {
     }
 
     /**
-     * 拼接物理地址：{@code namespace.topic[.tag]}，
-     * 支持 {@code queue:} / {@code topic:} 前缀强制类型。
+     * \u62fc\u63a5\u7269\u7406\u5730\u5740\uff1a{@code namespace.topic[.tag]}\uff0c
+     *  \u652f\u6301 {@code queue:} / {@code topic:} \u524d\u7f00\u5f3a\u5236\u7c7b\u578b\u3002
+     *
+     * @param namespace \u6d88\u606f\u547d\u540d\u7a7a\u95f4
+     * @param topic \u4e3b\u9898\u540d\u79f0
+     * @param tag \u6d88\u606f\u6807\u7b7e
+     * @return \u7269\u7406\u76ee\u7684\u5730\u540d\u79f0
      */
     public static String resolvePhysical(String namespace, String topic, String tag) {
         String base = hasText(topic) ? topic : "ddd4j.default.topic";
@@ -51,7 +59,12 @@ public final class ActivemqKit {
     }
 
     /**
-     * 根据物理地址前缀创建 JMS Destination。
+     * \u6839\u636e\u7269\u7406\u5730\u5740\u524d\u7f00\u521b\u5efa JMS Destination\u3002
+     *
+     * @param session JMS \u4f1a\u8bdd
+     * @param physical \u7269\u7406\u76ee\u7684\u5730\u540d\u79f0
+     * @return JMS \u76ee\u7684\u5730
+     * @throws JMSException \u521b\u5efa\u76ee\u7684\u5730\u5931\u8d25\u65f6\u629b\u51fa
      */
     public static Destination createDestination(Session session, String physical) throws JMSException {
         if (physical.startsWith("queue:")) {
@@ -64,7 +77,11 @@ public final class ActivemqKit {
     }
 
     /**
-     * 从 JMS Message 提取 payload 字符串（兼容 BytesMessage / TextMessage）。
+     * \u4ece JMS Message \u63d0\u53d6 payload \u5b57\u7b26\u4e32\uff08\u517c\u5bb9 BytesMessage / TextMessage\uff09\u3002
+     *
+     * @param message JMS \u6d88\u606f
+     * @return \u6d88\u606f\u6587\u672c
+     * @throws JMSException \u8bfb\u53d6\u6d88\u606f\u5931\u8d25\u65f6\u629b\u51fa
      */
     public static String extractPayload(Message message) throws JMSException {
         if (message instanceof BytesMessage bm) {
@@ -80,7 +97,11 @@ public final class ActivemqKit {
     }
 
     /**
-     * 安全读取 JMS String 属性（异常返回 null）。
+     * \u5b89\u5168\u8bfb\u53d6 JMS String \u5c5e\u6027\uff08\u5f02\u5e38\u8fd4\u56de null\uff09\u3002
+     *
+     * @param message JMS \u6d88\u606f
+     * @param key \u5c5e\u6027\u540d
+     * @return \u5c5e\u6027\u503c\uff1b\u8bfb\u53d6\u5931\u8d25\u65f6\u8fd4\u56de {@code null}
      */
     public static String stringProperty(Message message, String key) {
         try {
@@ -91,7 +112,10 @@ public final class ActivemqKit {
     }
 
     /**
-     * 读取 JMS MessageID，异常返回 null。
+     * \u8bfb\u53d6 JMS MessageID\uff0c\u5f02\u5e38\u8fd4\u56de null\u3002
+     *
+     * @param message JMS \u6d88\u606f
+     * @return \u6d88\u606f\u6807\u8bc6\uff1b\u8bfb\u53d6\u5931\u8d25\u65f6\u8fd4\u56de {@code null}
      */
     public static String messageIdOf(Message message) {
         try {
@@ -102,7 +126,10 @@ public final class ActivemqKit {
     }
 
     /**
-     * 读取 JMS CorrelationID，异常返回 null。
+     * \u8bfb\u53d6 JMS CorrelationID\uff0c\u5f02\u5e38\u8fd4\u56de null\u3002
+     *
+     * @param message JMS \u6d88\u606f
+     * @return \u5173\u8054\u6807\u8bc6\uff1b\u8bfb\u53d6\u5931\u8d25\u65f6\u8fd4\u56de {@code null}
      */
     public static String correlationIdOf(Message message) {
         try {
@@ -113,7 +140,10 @@ public final class ActivemqKit {
     }
 
     /**
-     * 把 JMS MessageID 哈希为 long 投递标签，异常返回 0。
+     * \u628a JMS MessageID \u54c8\u5e0c\u4e3a long \u6295\u9012\u6807\u7b7e\uff0c\u5f02\u5e38\u8fd4\u56de 0\u3002
+     *
+     * @param message JMS \u6d88\u606f
+     * @return \u6d88\u606f\u6807\u8bc6\u7684\u54c8\u5e0c\u503c\uff1b\u8bfb\u53d6\u5931\u8d25\u65f6\u8fd4\u56de 0
      */
     public static long messageIdHash(Message message) {
         try {
@@ -124,6 +154,11 @@ public final class ActivemqKit {
         }
     }
 
+    /**
+     * \u68c0\u67e5\u8f93\u5165\u662f\u5426\u5b58\u5728\u975e\u7a7a\u767d\u5b57\u7b26\u3002
+     * @param s \u5f85\u68c0\u67e5\u7684\u5b57\u7b26\u4e32
+     * @return \u542b\u6709\u6548\u6587\u672c\u65f6\u8fd4\u56de true
+     */
     private static boolean hasText(String s) {
         return StrKit.isNotEmpty(s);
     }

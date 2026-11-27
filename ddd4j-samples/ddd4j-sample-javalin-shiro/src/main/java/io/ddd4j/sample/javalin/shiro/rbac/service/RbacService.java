@@ -37,8 +37,11 @@ import java.util.*;
  */
 public class RbacService {
 
+    /** \u8bfb\u53d6\u548c\u4fdd\u5b58\u7528\u6237\u7684\u4ed3\u50a8\u3002 */
     private final InMemoryUserRepository userRepository;
+    /** \u8bfb\u53d6\u548c\u4fdd\u5b58\u89d2\u8272\u7684\u4ed3\u50a8\u3002 */
     private final InMemoryRoleRepository roleRepository;
+    /** \u67e5\u8be2\u548c\u7ef4\u62a4\u6743\u9650\u5b9a\u4e49\u7684\u4ed3\u50a8\u3002 */
     private final InMemoryPermissionRepository permissionRepository;
 
     /**
@@ -302,7 +305,9 @@ public class RbacService {
     }
 
     /**
-     * 校验角色编码全部存在。
+     * \u6821\u9a8c\u89d2\u8272\u7f16\u7801\u5168\u90e8\u5b58\u5728\u3002
+     *
+     * @param roleCodes \u5f85\u67e5\u627e\u6216\u6821\u9a8c\u7684\u89d2\u8272\u7f16\u7801
      */
     private void validateRoleCodes(Set<String> roleCodes) {
         if (Objects.isNull(roleCodes)) {

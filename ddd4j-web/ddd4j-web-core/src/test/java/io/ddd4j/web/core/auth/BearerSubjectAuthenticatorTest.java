@@ -38,14 +38,17 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class BearerSubjectAuthenticatorTest {
 
+    /** \u7528\u4e8e\u9694\u79bb <code>Subject</code> \u8c03\u7528\u5e76\u8bb0\u5f55\u4ea4\u4e92\u7684\u6d4b\u8bd5\u66ff\u8eab\u3002 */
     @Mock
     private Subject subject;
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>BaseContext.clear()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterEach
     void tearDown() {
         BaseContext.clear();
     }
 
+    /** \u9a8c\u8bc1<code>result</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>principal</code>\u3002 */
     @Test
     void authenticateReturnsPrincipalOfVerifiedSubject() {
         AuthPrincipal principal = new AuthPrincipal().setUserId("user-1");
@@ -57,6 +60,7 @@ class BearerSubjectAuthenticatorTest {
         assertSame(principal, result);
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>WebStatusException.class</code>\u3002 */
     @Test
     void authenticateRejectsInvalidToken() {
         BaseContext.inject(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, provider(subject));
@@ -65,12 +69,18 @@ class BearerSubjectAuthenticatorTest {
                 () -> new BearerSubjectAuthenticator().authenticate("Bearer invalid"));
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>WebStatusException.class</code>\u3002 */
     @Test
     void authenticateRejectsMissingProvider() {
         assertThrows(WebStatusException.class,
                 () -> new BearerSubjectAuthenticator().authenticate("Bearer valid-token"));
     }
 
+    /**
+     * \u521b\u5efa <code>new SubjectProvider</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+     * @param subject \u7528\u4e8e\u9694\u79bb <code>Subject</code> \u8c03\u7528\u5e76\u8bb0\u5f55\u4ea4\u4e92\u7684\u6d4b\u8bd5\u66ff\u8eab
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new SubjectProvider(){ &#64;Override public Subject getSubject() { return subject; } }</code>
+     */
     private SubjectProvider provider(Subject subject) {
         return new SubjectProvider() {
             /**

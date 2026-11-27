@@ -84,6 +84,7 @@ public final class HttpSpan {
     public static final AttributeKey<String> ATTR_DDD4J_REQUEST_ID = AttributeKey.stringKey("ddd4j.request.id");
     /** 业务级租户标识属性键，记录请求所属的租户 ID。 */
     public static final AttributeKey<String> ATTR_DDD4J_TENANT_ID = AttributeKey.stringKey("ddd4j.tenant.id");
+    /** \u5c06\u8ddf\u8e2a\u4e0a\u4e0b\u6587\u5199\u5165 HTTP \u6216\u6d88\u606f\u4f20\u8f93\u5934\u7684\u4f20\u64ad\u9002\u914d\u5668\u3002 */
     private static final TextMapSetter<Map<String, String>> SETTER = new TextMapSetter<Map<String, String>>() {
         /**
          * set() 方法。
@@ -98,6 +99,7 @@ public final class HttpSpan {
             }
         }
     };
+    /** \u4ece HTTP \u6216\u6d88\u606f\u4f20\u8f93\u5934\u8bfb\u53d6\u8ddf\u8e2a\u4e0a\u4e0b\u6587\u7684\u4f20\u64ad\u9002\u914d\u5668\u3002 */
     private static final TextMapGetter<Map<String, String>> GETTER = new TextMapGetter<Map<String, String>>() {
         @Override
         public Iterable<String> keys(Map<String, String> carrier) {
@@ -127,6 +129,7 @@ public final class HttpSpan {
         }
     };
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>HttpSpan</code> \u5b9e\u4f8b\u3002 */
     private HttpSpan() {
     }
 
@@ -194,7 +197,10 @@ public final class HttpSpan {
     }
 
     /**
-     * 在 span 上记录异常并标记 ERROR。
+     * \u5728 span \u4e0a\u8bb0\u5f55\u5f02\u5e38\u5e76\u6807\u8bb0 ERROR\u3002
+     *
+     * @param span \u8ffd\u8e2a\u7247\u6bb5
+     * @param t \u5f02\u5e38
      */
     public static void recordError(Span span, Throwable t) {
         if (Objects.isNull(span) || Objects.isNull(t)) {
@@ -225,7 +231,10 @@ public final class HttpSpan {
     }
 
     /**
-     * 安全获取当前 Context 的 Scope（noop fallback）。
+     * \u5b89\u5168\u83b7\u53d6\u5f53\u524d Context \u7684 Scope\uff08noop fallback\uff09\u3002
+     *
+     * @param span \u8ffd\u8e2a\u7247\u6bb5
+     * @return \u5f53\u524d\u4f5c\u7528\u57df
      */
     public static Scope makeCurrent(Span span) {
         if (Objects.isNull(span) || !span.getSpanContext().isValid()) {

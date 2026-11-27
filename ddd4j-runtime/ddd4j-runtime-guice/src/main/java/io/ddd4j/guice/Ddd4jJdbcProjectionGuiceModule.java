@@ -56,6 +56,7 @@ import java.util.Objects;
 @Slf4j
 public class Ddd4jJdbcProjectionGuiceModule extends AbstractModule {
 
+    /** \u6267\u884c\u6295\u5f71\u4f4d\u70b9 SQL \u7684 JDBC \u6570\u636e\u6e90\u3002 */
     private final DataSource dataSource;
 
     /**

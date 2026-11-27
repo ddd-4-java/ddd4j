@@ -35,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class Ddd4jMicronautWebConfigurationTest {
 
+    /** \u9a8c\u8bc1<code>cfg.getDefaultAuthenticationMode()</code> \u7b49\u4e8e <code>AuthenticationMode.REQUIRED</code>\uff0c<code>cfg.isIdempotencyEnabled()</code>\u4e3a\u771f\uff0c<code>cfg.isTrustForwardedHeaders()</code>\u4e3a\u5047\u3002 */
     @Test
     void defaults() {
         Ddd4jMicronautWebConfiguration cfg = new Ddd4jMicronautWebConfiguration();
@@ -46,6 +47,7 @@ class Ddd4jMicronautWebConfigurationTest {
         assertFalse(cfg.isTrustForwardedHeaders());
     }
 
+    /** \u9a8c\u8bc1<code>cfg.getPublicPaths()</code> \u7b49\u4e8e <code>List.of("/api")</code>\uff0c<code>cfg.getPublicPaths()</code> \u4e0e\u2026\u4e3a\u4e0d\u540c\u7684\u5b9e\u4f8b <code>paths</code>\uff0c<code>cfg.isIdempotencyEnabled()</code>\u4e3a\u5047\u3002 */
     @Test
     void setters() {
         Ddd4jMicronautWebConfiguration cfg = new Ddd4jMicronautWebConfiguration();
@@ -73,6 +75,7 @@ class Ddd4jMicronautWebConfigurationTest {
         assertFalse(cfg.isIdempotencyEnabled());
     }
 
+    /** \u9a8c\u8bc1<code>cfg.setPublicPaths(null)</code> \u629b\u51fa <code>NullPointerException.class</code>\uff0c<code>cfg.setDefaultAuthenticationMode(null)</code> \u629b\u51fa <code>NullPointerException.class</code>\uff0c<code>cfg.setIdempotencyTtl(null)</code> \u629b\u51fa <code>NullPointerException.class</code>\u3002 */
     @Test
     void nullRejected() {
         Ddd4jMicronautWebConfiguration cfg = new Ddd4jMicronautWebConfiguration();

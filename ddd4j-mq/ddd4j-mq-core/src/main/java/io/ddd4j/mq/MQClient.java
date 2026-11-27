@@ -70,14 +70,20 @@ public interface MQClient extends AutoCloseable {
     String MQ_STORER = MQEvent.MQ_EVENT_PUBLISHER + ".storer";
 
     /**
-     * 简单转义单引号（防止 tags 内含单引号破坏 selector 解析）。
+     * \u7b80\u5355\u8f6c\u4e49\u5355\u5f15\u53f7\uff08\u9632\u6b62 tags \u5185\u542b\u5355\u5f15\u53f7\u7834\u574f selector \u89e3\u6790\uff09\u3002
+     *
+     * @param s \u5f85\u8f6c\u4e49\u7684\u6587\u672c
+     * @return \u53ef\u7528\u4e8e\u62fc\u63a5\u6d88\u606f\u5143\u6570\u636e\u7684\u8f6c\u4e49\u6587\u672c
      */
     private static String escape(String s) {
         return s.replace("'", "''");
     }
 
     /**
-     * 反射调用异常解包（对齐 base-mq）。
+     * \u53cd\u5c04\u8c03\u7528\u5f02\u5e38\u89e3\u5305\uff08\u5bf9\u9f50 base-mq\uff09\u3002
+     *
+     * @param ex \u5f85\u89e3\u5305\u7684\u5f02\u5e38
+     * @return \u89e3\u5305\u540e\u7684\u5f02\u5e38
      */
     private static Throwable unwrap(Exception ex) {
         Throwable cause = ex.getCause();
@@ -87,9 +93,7 @@ public interface MQClient extends AutoCloseable {
         return Objects.nonNull(cause) ? cause : ex;
     }
 
-    /**
-     * @return MQ 实现标识（如 {@code "kafka"} / {@code "rocket"} / {@code "rabbit"} / {@code "redis"} / {@code "redisStream"}）
-     */
+    /** @return MQ \u5b9e\u73b0\u6807\u8bc6\uff08\u5982 {@code "kafka"} / {@code "rocket"} / {@code "rabbit"} / {@code "redis"} / {@code "redisStream"}\uff09 */
     String impl();
 
     /**
@@ -261,6 +265,11 @@ public interface MQClient extends AutoCloseable {
         return MQStartupStatus.unmanaged();
     }
 
+    /**
+     * 结束当前组件持有的资源。
+     *
+     * <p>此实现调用 <code>logger().info("Shutting down MQClient [{}]", impl())</code>。</p>
+     */
     @Override
     default void close() {
         logger().info("Shutting down MQClient [{}]", impl());
@@ -271,6 +280,13 @@ public interface MQClient extends AutoCloseable {
         }
     }
 
+    /**
+     * \u6839\u636e\u76d1\u542c\u5668\u548c\u4ee3\u7406\u5f02\u5e38\u751f\u6210\u53ef\u8bca\u65ad\u7684\u521d\u59cb\u5316\u5931\u8d25\u8bb0\u5f55\u3002
+     * @param listener \u521d\u59cb\u5316\u5931\u8d25\u7684\u76d1\u542c\u5668
+     * @param required \u8be5\u76d1\u542c\u5668\u662f\u5426\u8981\u6c42\u6210\u529f\u521d\u59cb\u5316
+     * @param exception \u521d\u59cb\u5316\u65f6\u629b\u51fa\u7684\u5f02\u5e38
+     * @return \u5f53\u524d\u76d1\u542c\u5668\u7684\u542f\u52a8\u5931\u8d25\u8bb0\u5f55
+     */
     private MQListenerInitializationFailure failure(MQListener listener, boolean required,
                                                     Throwable exception) {
         String topic = Objects.isNull(listener) ? "" : Objects.toString(listener.getTopic(), "");
@@ -282,12 +298,24 @@ public interface MQClient extends AutoCloseable {
                 exception.getClass().getSimpleName());
     }
 
+    /**
+     * \u5c06\u76d1\u542c\u5668\u542f\u52a8\u5931\u8d25\u4fe1\u606f\u4e0e\u539f\u59cb\u5f02\u5e38\u5408\u5e76\u4e3a\u521d\u59cb\u5316\u5f02\u5e38\u3002
+     * @param failure \u5df2\u6574\u7406\u7684\u76d1\u542c\u5668\u521d\u59cb\u5316\u5931\u8d25\u4fe1\u606f
+     * @param cause \u539f\u59cb\u5f02\u5e38
+     * @return \u4f9b\u542f\u52a8\u72b6\u6001\u548c\u8c03\u7528\u65b9\u5904\u7406\u7684\u6d88\u606f\u521d\u59cb\u5316\u5f02\u5e38
+     */
     private MQInitializationException initializationException(MQListenerInitializationFailure failure,
                                                               Throwable cause) {
         return new MQInitializationException(failure.broker(), failure.topic(), failure.group(),
                 failure.listenerMethod(), cause);
     }
 
+    /**
+     * \u56de\u6eda\u5f53\u524d\u521d\u59cb\u5316\u68c0\u67e5\u70b9\u4e4b\u540e\u767b\u8bb0\u7684\u8d44\u6e90\uff0c\u4fdd\u7559\u539f\u6765\u7684\u521d\u59cb\u5316\u5f02\u5e38\u3002
+     * @param lifecycle \u8d1f\u8d23\u56de\u6536\u5df2\u767b\u8bb0\u8d44\u6e90\u7684\u751f\u547d\u5468\u671f
+     * @param checkpoint \u521d\u59cb\u5316\u524d\u8bb0\u5f55\u7684\u8d44\u6e90\u68c0\u67e5\u70b9
+     * @param initializationException \u89e6\u53d1\u56de\u6eda\u7684\u521d\u59cb\u5316\u5f02\u5e38
+     */
     private void rollback(MQClientLifecycle lifecycle, int checkpoint,
                           MQInitializationException initializationException) {
         try {
@@ -297,6 +325,13 @@ public interface MQClient extends AutoCloseable {
         }
     }
 
+    /**
+     * 执行 <code>restore Context</code>，调用 <code>BaseContext.remove</code>、<code>BaseContext.inject</code>。
+     *
+     * @param properties 传入此操作的 <code>MQProperties</code> 类型 <code>properties</code>
+     * @param serialization 传入此操作的 <code>MQEventSerialization</code> 类型 <code>serialization</code>
+     * @param storer 传入此操作的 <code>MQEventStorer</code> 类型 <code>storer</code>
+     */
     private static void restoreContext(MQProperties properties, MQEventSerialization serialization,
                                        MQEventStorer storer) {
         if (Objects.isNull(properties)) {
@@ -317,14 +352,18 @@ public interface MQClient extends AutoCloseable {
     }
 
     /**
-     * 序列化器（从 {@link BaseContext} 查找，由 {@link #init} 注册）。
+     * \u5e8f\u5217\u5316\u5668\uff08\u4ece {@link BaseContext} \u67e5\u627e\uff0c\u7531 {@link #init} \u6ce8\u518c\uff09\u3002
+     *
+     * @return \u5f53\u524d\u6ce8\u518c\u7684 MQ \u4e8b\u4ef6\u5e8f\u5217\u5316\u5668
      */
     default MQEventSerialization serialization() {
         return BaseContext.<String, MQEventSerialization>get(MQ_SERIALIZATION);
     }
 
     /**
-     * MQ 配置（从 {@link BaseContext} 查找）。
+     * MQ \u914d\u7f6e\uff08\u4ece {@link BaseContext} \u67e5\u627e\uff09\u3002
+     *
+     * @return \u5f53\u524d MQ \u914d\u7f6e
      */
     default MQProperties properties() {
         return BaseContext.<String, MQProperties>get(MQEvent.MQ_PROPERTIES);
@@ -372,14 +411,20 @@ public interface MQClient extends AutoCloseable {
     // ========================= 物理地址拼接（生产者和消费者侧共享）=========================
 
     /**
-     * 便捷重载：无 Acknowledgment 的消费（ack 能力由 broker 内部处理，如 RocketMQ 返回值语义）。
+     * \u4fbf\u6377\u91cd\u8f7d\uff1a\u65e0 Acknowledgment \u7684\u6d88\u8d39\uff08ack \u80fd\u529b\u7531 broker \u5185\u90e8\u5904\u7406\uff0c\u5982 RocketMQ \u8fd4\u56de\u503c\u8bed\u4e49\uff09\u3002
+     *
+     * @param listener \u76d1\u542c\u5668\u5b9a\u4e49
+     * @param event \u5df2\u53cd\u5e8f\u5217\u5316\u7684 MQ \u4e8b\u4ef6
+     * @throws Throwable \u5df2\u89e3\u5305\u7684\u4e1a\u52a1\u5f02\u5e38
      */
     default void consume(MQListener listener, MQEvent event) throws Throwable {
         consume(listener, event, null);
     }
 
     /**
-     * 日志器（各实现可覆写自定义 topic）。
+     * \u65e5\u5fd7\u5668\uff08\u5404\u5b9e\u73b0\u53ef\u8986\u5199\u81ea\u5b9a\u4e49 topic\uff09\u3002
+     *
+     * @return \u5f53\u524d Client \u7684\u65e5\u5fd7\u5668
      */
     default Logger logger() {
         return LogHolder.logger();
@@ -469,15 +514,23 @@ public interface MQClient extends AutoCloseable {
     }
 
     /**
-     * 便捷重载：从 {@link MQEvent} + {@link MQProperties} 解析物理地址（生产者侧）。
+     * \u4fbf\u6377\u91cd\u8f7d\uff1a\u4ece {@link MQEvent} + {@link MQProperties} \u89e3\u6790\u7269\u7406\u5730\u5740\uff08\u751f\u4ea7\u8005\u4fa7\uff09\u3002
+     *
+     * @param event \u5f85\u53d1\u5e03\u4e8b\u4ef6
+     * @param properties MQ \u914d\u7f6e
+     * @return \u751f\u4ea7\u8005\u4fa7\u7269\u7406\u5730\u5740
      */
     default String resolveTopic(MQEvent event, MQProperties properties) {
         return resolveTopic(namespace(event, properties), event.getTopic(), event.getTag(), concat(event));
     }
 
     /**
-     * 便捷重载：从 {@link MQListener} + {@link MQProperties} 解析物理目的地（消费者侧，
-     * tag 取监听器声明的 tags 首个正向 tag，保持订阅定位一致）。
+     * \u4fbf\u6377\u91cd\u8f7d\uff1a\u4ece {@link MQListener} + {@link MQProperties} \u89e3\u6790\u7269\u7406\u76ee\u7684\u5730\uff08\u6d88\u8d39\u8005\u4fa7\uff0c
+     *  tag \u53d6\u76d1\u542c\u5668\u58f0\u660e\u7684 tags \u9996\u4e2a\u6b63\u5411 tag\uff0c\u4fdd\u6301\u8ba2\u9605\u5b9a\u4f4d\u4e00\u81f4\uff09\u3002
+     *
+     * @param listener \u76d1\u542c\u5668\u5b9a\u4e49
+     * @param properties MQ \u914d\u7f6e
+     * @return \u6d88\u8d39\u8005\u4fa7\u7269\u7406\u5730\u5740
      */
     default String resolveTopic(MQListener listener, MQProperties properties) {
         return resolveTopic(namespace(listener.getNamespace(), properties),
@@ -524,13 +577,15 @@ public interface MQClient extends AutoCloseable {
     }
 
     /**
-     * tag 消息头的 key（producer 写入 + consumer 读取 + selector 引用）统一用同一个常量。
+     * tag \u6d88\u606f\u5934\u7684 key\uff08producer \u5199\u5165 + consumer \u8bfb\u53d6 + selector \u5f15\u7528\uff09\u7edf\u4e00\u7528\u540c\u4e00\u4e2a\u5e38\u91cf\u3002
      *
-     * <p>默认 {@code "ddd4jTag"}（无 {@code .}，保证是合法 SQL-92 identifier，
-     * JMS Message Selector 可直接当 property 名用）。broker 可覆写。
+     *  <p>\u9ed8\u8ba4 {@code "ddd4jTag"}\uff08\u65e0 {@code .}\uff0c\u4fdd\u8bc1\u662f\u5408\u6cd5 SQL-92 identifier\uff0c
+     *  JMS Message Selector \u53ef\u76f4\u63a5\u5f53 property \u540d\u7528\uff09\u3002broker \u53ef\u8986\u5199\u3002
      *
-     * <p>应用层读 header 仍可读 {@link io.ddd4j.mq.message.MessageHeaders#HEADER_DESTINATION_TAG}
-     * 作为兼容，但 selector 必须用此 key。
+     *  <p>\u5e94\u7528\u5c42\u8bfb header \u4ecd\u53ef\u8bfb {@link io.ddd4j.mq.message.MessageHeaders#HEADER_DESTINATION_TAG}
+     *  \u4f5c\u4e3a\u517c\u5bb9\uff0c\u4f46 selector \u5fc5\u987b\u7528\u6b64 key\u3002
+     *
+     * @return tag \u6d88\u606f\u5934\u540d\u79f0
      */
     default String tagHeaderKey() {
         return "ddd4jTag";
@@ -622,10 +677,12 @@ public interface MQClient extends AutoCloseable {
     }
 
     /**
-     * 是否在 broker 端做 tag 过滤（不是所有 broker 都支持，返回 false 时调用方应 fallback 应用层）。
+     * \u662f\u5426\u5728 broker \u7aef\u505a tag \u8fc7\u6ee4\uff08\u4e0d\u662f\u6240\u6709 broker \u90fd\u652f\u6301\uff0c\u8fd4\u56de false \u65f6\u8c03\u7528\u65b9\u5e94 fallback \u5e94\u7528\u5c42\uff09\u3002
      *
-     * <p>默认 true 表示「我会用 tagsToSelector 传给 broker」。子 broker 可覆写返回 false 强制应用层过滤
-     * （如 Redis Stream / MQTT 等无 selector 机制的 broker）。
+     *  <p>\u9ed8\u8ba4 true \u8868\u793a\u300c\u6211\u4f1a\u7528 tagsToSelector \u4f20\u7ed9 broker\u300d\u3002\u5b50 broker \u53ef\u8986\u5199\u8fd4\u56de false \u5f3a\u5236\u5e94\u7528\u5c42\u8fc7\u6ee4
+     *  \uff08\u5982 Redis Stream / MQTT \u7b49\u65e0 selector \u673a\u5236\u7684 broker\uff09\u3002
+     *
+     * @return \u652f\u6301 broker \u7aef tag \u8fc7\u6ee4\u65f6\u4e3a true
      */
     default boolean supportsBrokerTagFilter() {
         return true;
@@ -641,7 +698,16 @@ public interface MQClient extends AutoCloseable {
      * <p>CUSTOM：业务子类覆写 {@link #partitionKey(MQEvent)}，本枚举不适用。
      */
     enum PartitionKeyStrategy {
-        NONE, TAG, TENANT, TAG_TENANT, CUSTOM
+        /** \u4e0d\u8bbe\u7f6e\u5206\u533a\u952e\u3002 */
+        NONE,
+            /** \u6309\u6d88\u606f\u6807\u7b7e\u5206\u533a\u3002 */
+            TAG,
+            /** \u6309\u79df\u6237\u6807\u8bc6\u5206\u533a\u3002 */
+            TENANT,
+            /** \u6309\u6807\u7b7e\u548c\u79df\u6237\u590d\u5408\u5206\u533a\u3002 */
+            TAG_TENANT,
+            /** \u7531\u4e1a\u52a1\u5b9e\u73b0\u81ea\u5b9a\u4e49\u5206\u533a\u952e\u3002 */
+            CUSTOM
     }
 
     /**
@@ -650,9 +716,14 @@ public interface MQClient extends AutoCloseable {
     @Slf4j(topic = "### DDD4J-MQ ###")
     final class LogHolder {
 
+        /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>LogHolder</code> \u5b9e\u4f8b\u3002 */
         private LogHolder() {
         }
 
+        /**
+         * \u8fd4\u56de\u5171\u4eab\u6d88\u606f\u5ba2\u6237\u7aef\u4f7f\u7528\u7684\u65e5\u5fd7\u8bb0\u5f55\u5668\u3002
+         * @return \u6d88\u606f\u5ba2\u6237\u7aef\u65e5\u5fd7\u8bb0\u5f55\u5668
+         */
         private static Logger logger() {
             return log;
         }

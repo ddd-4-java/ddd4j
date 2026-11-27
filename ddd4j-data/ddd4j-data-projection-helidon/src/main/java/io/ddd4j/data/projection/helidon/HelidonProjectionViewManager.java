@@ -49,14 +49,19 @@ import java.util.concurrent.ConcurrentHashMap;
 @Singleton
 public class HelidonProjectionViewManager implements ViewManager {
 
+    /** 注册任务和取消任务所用的视图调度器。 */
     private final ViewScheduler scheduler;
 
+    /** 实际执行投影更新的运行器。 */
     private final ProjectionRunner<?> runner;
 
+    /** 已发现并参加调度的投影视图。 */
     private final Collection<ProjectionView<?>> views;
 
+    /** 以视图名称索引的当前调度任务句柄。 */
     private final Map<String, ViewScheduler.ViewScheduleHandle> handles = new ConcurrentHashMap<>();
 
+    /** 视图管理器是否已启动。 */
     private volatile boolean running = false;
 
     /**
@@ -132,6 +137,11 @@ public class HelidonProjectionViewManager implements ViewManager {
         }
     }
 
+    /**
+     * 将本次调度触发的视图交给投影运行器执行。
+     *
+     * @param view 本次要执行投影更新的视图
+     */
     @SuppressWarnings("unchecked")
     private void runView(ProjectionView<?> view) {
         ((ProjectionRunner<Object>) runner).runOnce((ProjectionView<Object>) view);

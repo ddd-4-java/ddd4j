@@ -28,11 +28,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class SaTokenSecurityPropertiesTest {
 
+    /** \u9a8c\u8bc1\u7f3a\u7701\u8ba4\u8bc1\u5b89\u5168\u914d\u7f6e\u53ef\u76f4\u63a5\u901a\u8fc7\u6821\u9a8c\u3002 */
     @Test
     void defaultsAreValid() {
         assertDoesNotThrow(new SaTokenSecurityProperties()::validate);
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
     @Test
     void validateRejectsInvalidTokenNamespace() {
         SaTokenSecurityProperties properties = new SaTokenSecurityProperties();
@@ -40,6 +42,7 @@ class SaTokenSecurityPropertiesTest {
         assertThrows(IllegalArgumentException.class, properties::validate);
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
     @Test
     void validateRejectsInvalidLoginType() {
         SaTokenSecurityProperties properties = new SaTokenSecurityProperties();
@@ -47,6 +50,7 @@ class SaTokenSecurityPropertiesTest {
         assertThrows(IllegalArgumentException.class, properties::validate);
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
     @Test
     void validateRejectsNonPositiveTokenTtl() {
         SaTokenSecurityProperties properties = new SaTokenSecurityProperties();
@@ -54,6 +58,7 @@ class SaTokenSecurityPropertiesTest {
         assertThrows(IllegalArgumentException.class, properties::validate);
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
     @Test
     void validateRejectsInvalidActiveTimeout() {
         SaTokenSecurityProperties properties = new SaTokenSecurityProperties();
@@ -61,6 +66,7 @@ class SaTokenSecurityPropertiesTest {
         assertThrows(IllegalArgumentException.class, properties::validate);
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
     @Test
     void validateRejectsNullAuthenticationMode() {
         SaTokenSecurityProperties properties = new SaTokenSecurityProperties();
@@ -68,6 +74,7 @@ class SaTokenSecurityPropertiesTest {
         assertThrows(IllegalArgumentException.class, properties::validate);
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
     @Test
     void validateJwtModeRequiresAudienceAndIssuer() {
         SaTokenSecurityProperties properties = new SaTokenSecurityProperties();
@@ -82,6 +89,7 @@ class SaTokenSecurityPropertiesTest {
         assertThrows(IllegalArgumentException.class, missingIssuer::validate);
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>properties.setAuthenticationMode()</code>\u3001<code>properties.setJwtSecretKey()</code>\u3001<code>properties.setJwtIssuer()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void validateJwtModeAcceptsCompleteConfiguration() {
         SaTokenSecurityProperties properties = new SaTokenSecurityProperties();
@@ -92,6 +100,7 @@ class SaTokenSecurityPropertiesTest {
         assertDoesNotThrow(properties::validate);
     }
 
+    /** \u9a8c\u8bc1\u9ed8\u8ba4\u547d\u540d\u7a7a\u95f4\u4e0e\u8ba4\u8bc1\u57df\u62fc\u63a5\u6210 ddd4j-token\u3002 */
     @Test
     void tokenNameCombinesNamespaceAndLoginType() {
         assertEquals("ddd4j-token", new SaTokenSecurityProperties().tokenName());

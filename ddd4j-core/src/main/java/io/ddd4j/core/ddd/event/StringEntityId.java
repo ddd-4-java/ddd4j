@@ -28,9 +28,12 @@ import java.util.Objects;
  */
 public final class StringEntityId implements EntityId {
 
+    /** \u5b57\u7b26\u4e32\u5b9e\u4f53\u6807\u8bc6\u7684\u5b9e\u4f53\u7c7b\u578b\u5b9a\u4e49\u3002 */
     static final EntityType TYPE = new StringEntityType("String");
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     @Serial
     private static final long serialVersionUID = 1L;
+    /** \u5b57\u7b26\u4e32\u5b9e\u4f53\u6807\u8bc6\u503c\u3002 */
     private final String value;
 
     /**
@@ -45,22 +48,45 @@ public final class StringEntityId implements EntityId {
         this.value = value;
     }
 
+    /**
+     * 返回当前值或标识公开的类型。
+     *
+     * @return 实际返回<code>TYPE</code>，供调用方取得当前值
+     */
     @Override
     public EntityType getType() {
         return TYPE;
     }
 
+    /**
+     * 返回聚合或实体标识的业务字符串。
+     *
+     * @return 不含类型标记的业务标识
+     */
     @Override
     @JsonValue
     public String asString() {
         return value;
     }
 
+    /**
+     * 返回带类型前缀的标识字符串。
+     *
+     * <p>此实现调用 <code>TYPE.asString()</code>。</p>
+     *
+     * @return 包含类型标记的标识
+     */
     @Override
     public String asTypedString() {
         return TYPE.asString() + ":" + value;
     }
 
+    /**
+     * 根据<code>value</code>比较对象的值是否相等。
+     *
+     * @param object 用于此操作的 <code>object</code>（<code>Object</code>）
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object object) {
         if (this == object) {
@@ -73,11 +99,21 @@ public final class StringEntityId implements EntityId {
         return Objects.equals(value, that.value);
     }
 
+    /**
+     * 用<code>value</code>计算哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         return Objects.hash(value);
     }
 
+    /**
+     * 生成用于调试和日志的对象描述。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return value;

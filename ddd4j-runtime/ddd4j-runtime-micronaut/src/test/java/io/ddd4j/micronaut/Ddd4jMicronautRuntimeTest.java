@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /** Micronaut 生命周期和就绪状态的运行时契约。 */
 class Ddd4jMicronautRuntimeTest extends AbstractRuntimeContractTest {
 
+    /** \u9a8c\u8bc1<code>runtime.readiness().contributors().isEmpty()</code>\u4e3a\u771f\u3002 */
     @Test
     void defaultConstructorStartsWithNoReadinessContributors() {
         RuntimeFixtures fixtures = new RuntimeFixtures();
@@ -35,6 +36,13 @@ class Ddd4jMicronautRuntimeTest extends AbstractRuntimeContractTest {
         runtime.close();
     }
 
+    /**
+     * 为契约测试构造当前框架的运行实例。
+     *
+     * <p>测试夹具会调用 <code>fixtures.publisher()</code>、<code>fixtures.subjectProvider()</code>。</p>
+     *
+     * @return 待验证的运行时适配器
+     */
     @Override
     protected RuntimeContract createRuntime() {
         RuntimeFixtures fixtures = new RuntimeFixtures();

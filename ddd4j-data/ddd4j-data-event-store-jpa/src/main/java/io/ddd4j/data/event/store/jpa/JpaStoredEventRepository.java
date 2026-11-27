@@ -28,18 +28,20 @@ import java.util.List;
 public interface JpaStoredEventRepository {
 
     /**
-     * 查询指定聚合的当前最大版本号。
+     * \u67e5\u8be2\u6307\u5b9a\u805a\u5408\u7684\u5f53\u524d\u6700\u5927\u7248\u672c\u53f7\u3002
+     * @param aggregateId \u805a\u5408\u6839\u6807\u8bc6
+     * @return \u5f53\u524d\u6700\u5927\u7248\u672c\u53f7\uff1b\u805a\u5408\u4e0d\u5b58\u5728\u65f6\u8fd4\u56de 0
      *
-     * @param aggregateId 聚合根标识
-     * @return 当前最大版本号；聚合不存在时返回 0
+     * @param aggregateType \u805a\u5408\u7c7b\u578b
      */
     long findCurrentVersion(String aggregateType, String aggregateId);
 
     /**
-     * 按版本升序查询指定聚合的全部事件。
+     * \u6309\u7248\u672c\u5347\u5e8f\u67e5\u8be2\u6307\u5b9a\u805a\u5408\u7684\u5168\u90e8\u4e8b\u4ef6\u3002
+     * @param aggregateId \u805a\u5408\u6839\u6807\u8bc6
+     * @return \u4e8b\u4ef6\u5b9e\u4f53\u5217\u8868\uff08\u7248\u672c\u5347\u5e8f\uff09
      *
-     * @param aggregateId 聚合根标识
-     * @return 事件实体列表（版本升序）
+     * @param aggregateType \u805a\u5408\u7c7b\u578b
      */
     List<StoredEventEntity> findByAggregateTypeAndAggregateIdOrderByVersionAsc(String aggregateType, String aggregateId);
 

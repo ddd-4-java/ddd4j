@@ -58,8 +58,10 @@ import java.util.function.Function;
 @SuppressWarnings("unchecked")
 public final class DomainModelHelper {
 
+    /** \u6309\u9886\u57df\u548c\u6301\u4e45\u5316\u6a21\u578b\u7c7b\u578b\u7f13\u5b58\u7684\u6620\u5c04\u5143\u6570\u636e\u3002 */
     private static final Map<ModelMappingKey, DomainModelInfo<?>> MODEL_INFO_CACHE = new ConcurrentHashMap<>();
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>DomainModelHelper</code> \u5b9e\u4f8b\u3002 */
     private DomainModelHelper() {
     }
 
@@ -140,14 +142,27 @@ public final class DomainModelHelper {
      * 按领域模型类型与持久化映射类型隔离的缓存键。
      */
     private static final class ModelMappingKey {
+        /** \u9886\u57df\u6a21\u578b\u7684 Java \u7c7b\u578b\u3002 */
         private final Class<?> modelType;
+        /** \u8981\u4e0e\u9886\u57df\u6a21\u578b\u7ec4\u5408\u6620\u5c04\u7684\u6301\u4e45\u5316\u7c7b\u578b\u3002 */
         private final Class<?> persistenceType;
 
+        /**
+         * \u7528\u9886\u57df\u548c\u6301\u4e45\u5316\u7c7b\u578b\u6784\u9020\u5143\u6570\u636e\u7f13\u5b58\u952e\u3002
+         * @param modelType \u9886\u57df\u6a21\u578b\u7c7b\u578b
+         * @param persistenceType \u5bf9\u5e94\u7684\u6301\u4e45\u5316\u7c7b\u578b
+         */
         private ModelMappingKey(Class<?> modelType, Class<?> persistenceType) {
             this.modelType = modelType;
             this.persistenceType = persistenceType;
         }
 
+        /**
+         * 比较两个对象的值是否相等。
+         *
+         * @param o 用来比较的另一个对象，允许为空
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object o) {
             if (this == o) {
@@ -160,6 +175,11 @@ public final class DomainModelHelper {
             return modelType.equals(that.modelType) && persistenceType.equals(that.persistenceType);
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             return 31 * modelType.hashCode() + persistenceType.hashCode();

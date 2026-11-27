@@ -32,9 +32,10 @@ import java.util.Objects;
 public interface DomainEventPublisher {
 
     /**
-     * 发布领域事件
+     * \u53d1\u5e03\u9886\u57df\u4e8b\u4ef6
+     * @param event \u9886\u57df\u4e8b\u4ef6
      *
-     * @param event 领域事件
+     * @param <ID> \u5b9e\u4f53\u6807\u8bc6\u7c7b\u578b
      */
     <ID extends EntityId> void publish(DomainEvent<ID> event);
 
@@ -51,9 +52,10 @@ public interface DomainEventPublisher {
     }
 
     /**
-     * 批量发布领域事件
+     * \u6279\u91cf\u53d1\u5e03\u9886\u57df\u4e8b\u4ef6
+     * @param events \u9886\u57df\u4e8b\u4ef6\u96c6\u5408
      *
-     * @param events 领域事件集合
+     * @param <ID> \u5b9e\u4f53\u6807\u8bc6\u7c7b\u578b
      */
     default <ID extends EntityId> void publishAll(Collection<DomainEvent<ID>> events) {
         if (Objects.nonNull(events)) {

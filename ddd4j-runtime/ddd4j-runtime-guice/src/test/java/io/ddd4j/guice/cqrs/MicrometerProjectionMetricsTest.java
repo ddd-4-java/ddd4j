@@ -36,15 +36,19 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @DisplayName("MicrometerProjectionMetrics")
 class MicrometerProjectionMetricsTest {
 
+    /** \u5f53\u524d\u7528\u4f8b\u6ce8\u518c\u88ab\u6d4b\u7ec4\u4ef6\u548c\u89c2\u5bdf\u6307\u6807\u7684\u5bb9\u5668\u3002 */
     private SimpleMeterRegistry registry;
+    /** \u5f53\u524d\u7528\u4f8b\u89c2\u5bdf\u6216\u9a71\u52a8\u7684\u6295\u5f71\u6307\u6807\u5b9e\u73b0\u3002 */
     private MicrometerProjectionMetrics metrics;
 
+    /** \u6839\u636e\u672c\u6b21\u8c03\u7528\u66f4\u65b0 <code>registry = new SimpleMeterRegistry()</code>\u3001<code>metrics = new MicrometerProjectionMetrics(registry)</code>\uff0c\u7528\u4e8e\u540e\u7eed\u6d4b\u8bd5\u6b65\u9aa4\u3002 */
     @BeforeEach
     void setUp() {
         registry = new SimpleMeterRegistry();
         metrics = new MicrometerProjectionMetrics(registry);
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>NullPointerException.class</code>\u3002 */
     @Test
     void constructor_nullRegistry_shouldThrowNPE() {
         assertThatThrownBy(() -> new MicrometerProjectionMetrics(null))
@@ -58,6 +62,7 @@ class MicrometerProjectionMetricsTest {
     @DisplayName("onRunCompleted")
     class OnRunCompletedTests {
 
+        /** \u5e94\u8bb0\u5f55\u4e8b\u4ef6\u8ba1\u6570\u5668\u548c\u8fd0\u884c\u8017\u65f6\u3002 */
         @Test
         @DisplayName("应记录事件计数器和运行耗时")
         void shouldRecordEventCounterAndDuration() {
@@ -77,6 +82,7 @@ class MicrometerProjectionMetricsTest {
             assertThat(durationTimer.totalTime(TimeUnit.NANOSECONDS)).isEqualTo(5_000_000.0);
         }
 
+        /** \u591a\u6b21\u8c03\u7528\u5e94\u7d2f\u52a0\u3002 */
         @Test
         @DisplayName("多次调用应累加")
         void multipleCalls_shouldAccumulate() {
@@ -94,6 +100,7 @@ class MicrometerProjectionMetricsTest {
             assertThat(durationTimer.count()).isEqualTo(2);
         }
 
+        /** \u4e0d\u540c streamId \u5e94\u72ec\u7acb\u8ba1\u6570\u3002 */
         @Test
         @DisplayName("不同 streamId 应独立计数")
         void differentStreamIds_shouldBeIndependent() {
@@ -117,6 +124,7 @@ class MicrometerProjectionMetricsTest {
     @DisplayName("onRunFailed")
     class OnRunFailedTests {
 
+        /** \u5e94\u8bb0\u5f55\u9519\u8bef\u8ba1\u6570\u5668\u3002 */
         @Test
         @DisplayName("应记录错误计数器")
         void shouldRecordErrorCounter() {
@@ -129,6 +137,7 @@ class MicrometerProjectionMetricsTest {
             assertThat(errorCounter.count()).isEqualTo(1.0);
         }
 
+        /** \u591a\u6b21\u5931\u8d25\u5e94\u7d2f\u52a0\u3002 */
         @Test
         @DisplayName("多次失败应累加")
         void multipleFailures_shouldAccumulate() {
@@ -149,6 +158,7 @@ class MicrometerProjectionMetricsTest {
     @DisplayName("onRunStarted")
     class OnRunStartedTests {
 
+        /** onRunStarted \u4e0d\u4ea7\u751f\u6307\u6807\uff08\u9ed8\u8ba4 no-op\uff09\u3002 */
         @Test
         @DisplayName("onRunStarted 不产生指标（默认 no-op）")
         void shouldNotRecordAnything() {

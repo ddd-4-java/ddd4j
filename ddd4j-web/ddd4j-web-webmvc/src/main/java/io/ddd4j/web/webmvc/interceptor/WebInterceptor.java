@@ -32,17 +32,31 @@ import jakarta.servlet.http.HttpServletResponse;
 public interface WebInterceptor {
 
     /**
-     * 拦截器顺序（数字越小越先执行）。
+     * \u62e6\u622a\u5668\u987a\u5e8f\uff08\u6570\u5b57\u8d8a\u5c0f\u8d8a\u5148\u6267\u884c\uff09\u3002
+     *
+     * @return \u62e6\u622a\u5668\u987a\u5e8f
      */
     int getOrder();
 
     /**
-     * 请求预处理。
+     * \u8bf7\u6c42\u9884\u5904\u7406\u3002
+     *
+     * @throws Exception \u8bf7\u6c42\u5904\u7406\u5931\u8d25\u65f6\u629b\u51fa
+     * @return \u662f\u5426\u7ee7\u7eed\u5904\u7406\u8bf7\u6c42
+     * @param response HTTP \u54cd\u5e94
+     * @param request HTTP \u8bf7\u6c42
+     * @param handler \u76ee\u6807\u5904\u7406\u5668
      */
     boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception;
 
     /**
-     * 请求完成后清理（默认空实现）。
+     * \u8bf7\u6c42\u5b8c\u6210\u540e\u6e05\u7406\uff08\u9ed8\u8ba4\u7a7a\u5b9e\u73b0\uff09\u3002
+     *
+     * @throws Exception \u8bf7\u6c42\u5904\u7406\u5931\u8d25\u65f6\u629b\u51fa
+     * @param response HTTP \u54cd\u5e94
+     * @param request HTTP \u8bf7\u6c42
+     * @param handler \u76ee\u6807\u5904\u7406\u5668
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
      */
     default void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
     }

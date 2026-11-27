@@ -31,8 +31,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class WebUtils {
 
+    /** \u5c06\u5ba2\u6237\u7aef\u8bed\u8a00\u6807\u8bb0\u6620\u5c04\u6210 Locale \u7684\u8868\u3002 */
     private static final Map<String, String> LANG_MAP = new ConcurrentHashMap<>();
 
+    /** \u52a0\u8f7d Web \u672c\u5730\u5316\u63d0\u793a\u6587\u672c\u65f6\u4f7f\u7528\u7684\u8d44\u6e90\u5305\u540d\u3002 */
     private static final String BUNDLE_BASENAME = "i18n/messages";
 
     static {
@@ -128,6 +130,11 @@ public class WebUtils {
         return Objects.isNull(parameters) || parameters.length == 0 ? pattern : MessageFormat.format(pattern, parameters);
     }
 
+    /**
+     * \u5c06\u8bed\u8a00\u4ee3\u7801\u5206\u9694\u7b26\u89c4\u8303\u5316\u540e\u8f6c\u6362\u4e3a Locale\uff0c\u7a7a\u767d\u503c\u56de\u9000\u5230\u9ed8\u8ba4\u533a\u57df\u3002
+     * @param lang \u8c03\u7528\u65b9\u4f20\u5165\u7684\u8bed\u8a00\u4e0e\u5730\u533a\u6807\u8bb0
+     * @return \u8bf7\u6c42\u5bf9\u5e94\u7684\u533a\u57df
+     */
     private static Locale resolveLocale(String lang) {
         if (StrKit.isBlank(lang)) {
             return Locale.getDefault();

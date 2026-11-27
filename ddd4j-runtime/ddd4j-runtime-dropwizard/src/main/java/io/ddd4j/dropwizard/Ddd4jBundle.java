@@ -33,14 +33,21 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
- * Dropwizard 应用通过 bootstrap.addBundle(new Ddd4jBundle&lt;&gt;()) 接入 ddd4j。
+ * Dropwizard \u5e94\u7528\u901a\u8fc7 bootstrap.addBundle(new Ddd4jBundle&lt;&gt;()) \u63a5\u5165 ddd4j\u3002
+ *
+ * @param <C> 由 Ddd4jBundle 处理的泛型类型
  */
 public final class Ddd4jBundle<C extends Configuration> implements ConfiguredBundle<C> {
 
+    /** \u6846\u67b6\u5bb9\u5668\u4e2d\u9700\u8981\u767b\u8bb0\u5230\u547d\u4ee4\u603b\u7ebf\u7684\u6267\u884c\u5668\u3002 */
     private final Collection<CommandExecutor<?>> executors;
+    /** \u63a5\u6536\u8fd0\u884c\u65f6\u53d1\u5e03\u9886\u57df\u4e8b\u4ef6\u7684\u76d1\u542c\u56de\u8c03\u3002 */
     private final Collection<Consumer<Object>> listeners;
+    /** \u6839\u636e\u5f53\u524d\u8c03\u7528\u8303\u56f4\u63d0\u4f9b\u8ba4\u8bc1\u4e3b\u4f53\u7684\u7ec4\u4ef6\u3002 */
     private final SubjectProvider subjectProvider;
+    /** \u5f53\u524d\u8fd0\u884c\u6846\u67b6\u6ce8\u518c\u7684\u56fd\u9645\u5316\u6d88\u606f\u63d0\u4f9b\u5668\u3002 */
     private final I18nProvider i18nProvider;
+    /** \u53c2\u4e0e\u5e94\u7528\u5c31\u7eea\u72b6\u6001\u6c47\u603b\u7684\u8fd0\u884c\u7ec4\u4ef6\u3002 */
     private final Collection<ReadinessContributor> readinessContributors;
 
     /** 使用默认服务集合创建 Dropwizard Bundle。 */
@@ -81,11 +88,20 @@ public final class Ddd4jBundle<C extends Configuration> implements ConfiguredBun
                 "readinessContributors must not be null"));
     }
 
+    /**
+     * \u6267\u884c Bundle \u7684\u5f15\u5bfc\u521d\u59cb\u5316\u5165\u53e3\u3002
+     * @param bootstrap Dropwizard \u5e94\u7528\u5f15\u5bfc\u5bf9\u8c61
+     */
     @Override
     public void initialize(Bootstrap<?> bootstrap) {
         Objects.requireNonNull(bootstrap, "bootstrap must not be null");
     }
 
+    /**
+     * \u628a DDD4J \u670d\u52a1\u548c\u5c31\u7eea\u68c0\u67e5\u88c5\u914d\u5230 Dropwizard \u5e94\u7528\u3002
+     * @param configuration \u5f53\u524d\u5e94\u7528\u5b9e\u4f8b\u52a0\u8f7d\u7684\u914d\u7f6e
+     * @param environment \u5f53\u524d Dropwizard \u6216 Spring \u5e94\u7528\u73af\u5883
+     */
     @Override
     public void run(C configuration, Environment environment) {
         Objects.requireNonNull(configuration, "configuration must not be null");

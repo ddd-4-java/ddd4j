@@ -51,7 +51,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 @Testcontainers(disabledWithoutDocker = true)
 class EsdbEventStoreIT {
+    /** \u6d4b\u8bd5\u4e8b\u4ef6\u6d41\u4e2d\u4f7f\u7528\u7684\u805a\u5408\u7c7b\u578b\u540d\u79f0\u3002 */
     private static final String ORDER_TYPE = "Order";
+    /** \u4e3a\u5f53\u524d\u96c6\u6210\u6d4b\u8bd5\u63d0\u4f9b\u9694\u79bb\u670d\u52a1\u7684\u5bb9\u5668\u3002 */
     @Container
     static final GenericContainer<?> ESDB = new GenericContainer<>(DockerImageName.parse("eventstore/eventstore:24.10.0-bookworm-slim"))
             .withExposedPorts(2113)
@@ -63,9 +65,12 @@ class EsdbEventStoreIT {
             .waitingFor(Wait.forHttp("/health/live").forPort(2113)
                     .forStatusCodeMatching(status -> status >= 200 && status < 300))
             .withStartupTimeout(Duration.ofMinutes(2));
+    /** \u53d1\u9001\u4e0e\u63a5\u6536\u6d4b\u8bd5\u8bf7\u6c42\u7684\u5ba2\u6237\u7aef\u3002 */
     private static EventStoreDBClient client;
+    /** \u4fdd\u5b58\u6d4b\u8bd5\u6570\u636e\u7684\u5185\u5b58\u5b58\u50a8\u3002 */
     private EventStore store;
 
+    /** \u6d4b\u8bd5\u524d\u4f9d\u6b21\u521d\u59cb\u5316<code>client</code>\u3002 */
     @BeforeAll
     static void createClient() {
         client = EventStoreDBClient.create(EventStoreDBConnectionString.parseOrThrow(
@@ -73,16 +78,19 @@ class EsdbEventStoreIT {
                         + "?tls=false&maxDiscoverAttempts=3"));
     }
 
+    /** \u6d4b\u8bd5\u540e\u4f9d\u6b21\u5173\u95ed<code>client</code>\u3002 */
     @AfterAll
     static void closeClient() {
         if (client != null) client.shutdown();
     }
 
+    /** \u6d4b\u8bd5\u524d\u4f9d\u6b21\u521d\u59cb\u5316<code>store</code>\u3002 */
     @BeforeEach
     void setUp() {
         store = new EsdbEventStore(client, "it-" + System.nanoTime() + "-");
     }
 
+    /** \u9a8c\u8bc1<code>event.aggregateType()</code> \u7b49\u4e8e <code>ORDER_TYPE</code>\u3002 */
     @Test
     void appendReadRangeAndGlobalReadFollowStrongContract() {
         TestId id = new TestId("order-1");
@@ -93,6 +101,7 @@ class EsdbEventStoreIT {
         assertThat(store.readAll(0, 10)).allSatisfy(event -> assertThat(event.aggregateType()).isEqualTo(ORDER_TYPE));
     }
 
+    /** \u9a8c\u8bc1<code>store.append(ORDER_TYPE, id, List.of(new TestEvent(id)), 0)</code> \u629b\u51fa <code>AggregateVersionConflictException.class</code>\uff0c<code>conflict.expectedVersion()</code> \u7b49\u4e8e <code>0L</code>\uff0c<code>conflict.actualVersion()</code> \u7b49\u4e8e <code>1L</code>\u3002 */
     @Test
     void staleVersionRejectsWithoutPartialWrites() {
         TestId id = new TestId("order-conflict");
@@ -108,6 +117,7 @@ class EsdbEventStoreIT {
         assertThat(store.read(ORDER_TYPE, id)).extracting(StoredEvent::version).containsExactly(1L);
     }
 
+    /** \u9a8c\u8bc1<code>events</code> \u7684\u5927\u5c0f\u4e3a <code>2</code>\uff0c<code>events.get(0).correlationId()</code>\u4e3a\u7a7a\uff0c<code>events.get(1).causationId()</code> \u7b49\u4e8e <code>root.getEventId()</code>\u3002 */
     @Test
     void causalityMetadataRoundTripsThroughEventStoreDb() {
         TestId id = new TestId("order-causality");
@@ -129,10 +139,13 @@ class EsdbEventStoreIT {
      */
     final static class TestId implements AggregateRootId {
 
+        /** Java \u5e8f\u5217\u5316\u4f7f\u7528\u7684\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u7528\u4e8e\u7ec4\u6210\u6d4b\u8bd5\u6807\u8bc6\u7684\u539f\u59cb\u503c\u3002 */
         private final String value;
 
+        /** \u6d4b\u8bd5\u805a\u5408\u6ce8\u518c\u548c\u53cd\u5e8f\u5217\u5316\u6240\u7528\u7684\u5b9e\u4f53\u7c7b\u578b\u6807\u8bc6\u3002 */
         private static final EntityType TYPE = new StringEntityType("Order");
 
         /**
@@ -172,11 +185,23 @@ class EsdbEventStoreIT {
             this.value = value;
         }
 
+        /**
+         * \u8bfb\u53d6<code>value</code> \u5b57\u6bb5\u3002
+         * @return <code>value</code> \u5b57\u6bb5
+         */
         @JsonProperty("value")
         public String value() {
             return value;
         }
 
+        /**
+         * 根据<code>value</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -189,6 +214,11 @@ class EsdbEventStoreIT {
             return Objects.equals(this.value, other.value);
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 0;
@@ -196,6 +226,11 @@ class EsdbEventStoreIT {
             return result;
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>value</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "TestId[value=" + value + "]";
@@ -208,14 +243,24 @@ class EsdbEventStoreIT {
      * @since 3.0.x
      */
     static final class TestEvent extends DomainEvent<TestId> {
+        /** \u4f7f\u7528 <code>super()</code> \u521d\u59cb\u5316 <code>TestEvent</code> \u6d4b\u8bd5\u5939\u5177\u3002 */
         TestEvent() {
             super();
         }
 
+        /**
+         * \u4f7f\u7528 <code>super()</code> \u521d\u59cb\u5316 <code>TestEvent</code> \u6d4b\u8bd5\u5939\u5177\u3002
+         * @param id \u5f53\u524d\u8981\u67e5\u627e\u7684\u6d4b\u8bd5\u8bb0\u5f55\u6807\u8bc6
+         */
         TestEvent(TestId id) {
             super(new EntityIdPath(id));
         }
 
+        /**
+         * \u4f7f\u7528 <code>super()</code> \u521d\u59cb\u5316 <code>TestEvent</code> \u6d4b\u8bd5\u5939\u5177\u3002
+         * @param id \u5f53\u524d\u8981\u67e5\u627e\u7684\u6d4b\u8bd5\u8bb0\u5f55\u6807\u8bc6
+         * @param respondTo \u7528\u4e8e\u521d\u59cb\u5316 <code>TestEvent</code> \u7684 <code>DomainEvent&lt;TestId&gt;</code> \u503c
+         */
         TestEvent(TestId id, DomainEvent<TestId> respondTo) {
             super(new EntityIdPath(id), respondTo);
         }

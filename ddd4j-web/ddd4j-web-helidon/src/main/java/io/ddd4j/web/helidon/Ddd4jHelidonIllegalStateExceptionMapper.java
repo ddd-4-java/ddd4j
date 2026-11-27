@@ -27,6 +27,7 @@ import jakarta.ws.rs.ext.Provider;
 @Priority(Priorities.USER)
 public final class Ddd4jHelidonIllegalStateExceptionMapper implements ExceptionMapper<IllegalStateException> {
 
+    /** \u6267\u884c\u5b9e\u9645\u5f02\u5e38\u8f6c\u6362\u7684\u6846\u67b6\u6620\u5c04\u5668\u3002 */
     private final Ddd4jHelidonExceptionMapper delegate = new Ddd4jHelidonExceptionMapper();
 
     /**

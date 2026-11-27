@@ -42,8 +42,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  */
 class JpaManagedParticipationTest {
 
+    /** \u6d4b\u8bd5\u4e8b\u4ef6\u6d41\u4e2d\u4f7f\u7528\u7684\u805a\u5408\u7c7b\u578b\u540d\u79f0\u3002 */
     private static final String ORDER_TYPE = "Order";
 
+    /** \u9a8c\u8bc1<code>entityManagerAccesses.get()</code> \u7b49\u4e8e <code>0</code>\u3002 */
     @Test
     void managedFactoryConstructionMustNotRequireAnActiveTransaction() {
         AtomicInteger entityManagerAccesses = new AtomicInteger();
@@ -57,6 +59,7 @@ class JpaManagedParticipationTest {
         assertEquals(0, entityManagerAccesses.get());
     }
 
+    /** \u9a8c\u8bc1<code>JpaEventStore.participatingManaged(null, repository, serializer, marker)</code> \u629b\u51fa <code>NullPointerException.class</code>\uff0c<code>JpaEventStore.participatingManaged(entityManager, (Runnable) null)</code> \u629b\u51fa <code>NullPointerException.class</code>\uff0c<code>entityManagerAccesses.get()</code> \u7b49\u4e8e <code>0</code>\u3002 */
     @Test
     void managedFactoriesMustRejectNullArgumentsBeforeAccessingEntityManager() {
         AtomicInteger entityManagerAccesses = new AtomicInteger();
@@ -79,6 +82,7 @@ class JpaManagedParticipationTest {
         assertEquals(0, entityManagerAccesses.get());
     }
 
+    /** \u9a8c\u8bc1<code>eventStore.read(ORDER_TYPE, new TestAggregateRootId("not-joined"))</code> \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>markerCalls.get()</code> \u7b49\u4e8e <code>0</code>\u3002 */
     @Test
     void managedReadMustRejectWhenEntityManagerIsNotJoinedWithoutMarkingRollback() {
         AtomicInteger markerCalls = new AtomicInteger();
@@ -91,6 +95,7 @@ class JpaManagedParticipationTest {
         assertEquals(0, markerCalls.get());
     }
 
+    /** \u9a8c\u8bc1<code>eventStore.append(ORDER_TYPE, new TestAggregateRootId("empty"), Collections.emptyList(), 0)</code> \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>markerCalls.get()</code> \u7b49\u4e8e <code>0</code>\u3002 */
     @Test
     void managedEmptyAppendMustRejectWhenEntityManagerIsNotJoinedWithoutMarkingRollback() {
         AtomicInteger markerCalls = new AtomicInteger();
@@ -103,6 +108,7 @@ class JpaManagedParticipationTest {
         assertEquals(0, markerCalls.get());
     }
 
+    /** \u9a8c\u8bc1<code>repository.savedEvents</code> \u7b49\u4e8e <code>1</code>\uff0c<code>flushCalls.get()</code> \u7b49\u4e8e <code>1</code>\u3002 */
     @Test
     void managedOperationsMustNotUseResourceLocalOrEntityManagerLifecycleMethods() {
         AtomicInteger flushCalls = new AtomicInteger();
@@ -118,6 +124,7 @@ class JpaManagedParticipationTest {
         assertEquals(1, flushCalls.get());
     }
 
+    /** \u9a8c\u8bc1<code>eventStore.read(ORDER_TYPE, new TestAggregateRootId("repository-failure"))</code> \u629b\u51fa <code>RuntimeException.class</code>\uff0c<code>failure</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>original</code>\uff0c<code>failure.getSuppressed()[0]</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>markerFailure</code>\u3002 */
     @Test
     void managedRepositoryFailureMustKeepOriginalAndSuppressMarkerFailure() {
         RuntimeException original = new IllegalStateException("repository failure");
@@ -136,6 +143,7 @@ class JpaManagedParticipationTest {
         assertSame(markerFailure, failure.getSuppressed()[0]);
     }
 
+    /** \u9a8c\u8bc1<code>eventStore.read(ORDER_TYPE, new TestAggregateRootId("serializer-failure"))</code> \u629b\u51fa <code>RuntimeException.class</code>\uff0c<code>failure</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>original</code>\uff0c<code>markerCalls.get()</code> \u7b49\u4e8e <code>1</code>\u3002 */
     @Test
     void managedSerializerFailureMustKeepOriginalAndMarkRollback() {
         RuntimeException original = new IllegalStateException("serializer failure");
@@ -162,10 +170,21 @@ class JpaManagedParticipationTest {
         assertEquals(1, markerCalls.get());
     }
 
+    /**
+     * \u521b\u5efa <code>new EventPayloadSerializer</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build())</code>
+     */
     private static EventPayloadSerializer serializer() {
         return new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build());
     }
 
+    /**
+     * \u6309 <code>("isJoinedToTransaction".equals(name))</code> \u7b49\u5b9e\u9645\u6761\u4ef6\u9009\u62e9\u5f53\u524d\u7528\u4f8b\u8fd4\u56de\u7684\u7ed3\u679c\u3002
+     * @param joined \u4f20\u7ed9 <code>Proxy.newProxyInstance()</code> \u7684 <code>boolean</code> \u8f93\u5165
+     * @param accesses \u4f20\u7ed9 <code>Proxy.newProxyInstance()</code> \u7684 <code>AtomicInteger</code> \u8f93\u5165
+     * @param flushCalls \u4f20\u7ed9 <code>Proxy.newProxyInstance()</code> \u7684 <code>AtomicInteger</code> \u8f93\u5165
+     * @return \u6839\u636e\u6d4b\u8bd5\u6761\u4ef6\u8fd4\u56de\u7684\u53ef\u80fd\u503c\uff0c\u5305\u62ec <code>joined</code>\u3001<code>emptyQuery()</code>
+     */
     private static EntityManager entityManager(boolean joined, AtomicInteger accesses, AtomicInteger flushCalls) {
         return (EntityManager) Proxy.newProxyInstance(EntityManager.class.getClassLoader(),
                 new Class<?>[]{EntityManager.class}, (proxy, method, arguments) -> {
@@ -199,6 +218,10 @@ class JpaManagedParticipationTest {
                 });
     }
 
+    /**
+     * \u6309 <code>("setMaxResults".equals(name) || "setLockMode".equals(name))</code> \u7b49\u5b9e\u9645\u6761\u4ef6\u9009\u62e9\u5f53\u524d\u7528\u4f8b\u8fd4\u56de\u7684\u7ed3\u679c\u3002
+     * @return \u6839\u636e\u6d4b\u8bd5\u6761\u4ef6\u8fd4\u56de\u7684\u53ef\u80fd\u503c\uff0c\u5305\u62ec <code>proxy</code>\u3001<code>Collections.emptyList()</code>
+     */
     private static TypedQuery<?> emptyQuery() {
         return (TypedQuery<?>) Proxy.newProxyInstance(TypedQuery.class.getClassLoader(),
                 new Class<?>[]{TypedQuery.class}, (proxy, method, arguments) -> {
@@ -220,8 +243,11 @@ class JpaManagedParticipationTest {
      */
     private static final class RecordingRepository implements JpaStoredEventRepository {
 
+        /** \u6d4b\u8bd5\u4e8b\u4ef6\u8bfb\u64cd\u4f5c\u8981\u62a5\u544a\u6216\u8bb0\u5f55\u7684\u5931\u8d25\u3002 */
         private RuntimeException readFailure;
+        /** \u4fdd\u5b58\u7528\u4f8b\u4ece\u4e8b\u4ef6\u6216\u4ed3\u50a8\u8bfb\u56de\u7684\u7ed3\u679c\u3002 */
         private List<StoredEventEntity> readResults = Collections.emptyList();
+        /** \u5185\u5b58\u5b58\u50a8\u5b9e\u9645\u6536\u5230\u7684\u9886\u57df\u4e8b\u4ef6\u3002 */
         private int savedEvents;
 
         /**
@@ -235,6 +261,13 @@ class JpaManagedParticipationTest {
             return 0;
         }
 
+        /**
+         * 按版本升序查询指定聚合的事件记录。
+         *
+         * @param aggregateType 聚合类型
+         * @param aggregateId 聚合根标识
+         * @return 实际返回<code>readResults</code>，供调用方取得当前值
+         */
         @Override
         public List<StoredEventEntity> findByAggregateTypeAndAggregateIdOrderByVersionAsc(
                 String aggregateType, String aggregateId) {
@@ -244,12 +277,28 @@ class JpaManagedParticipationTest {
             return readResults;
         }
 
+        /**
+         * 按版本升序查询指定聚合在给定版本范围内的事件记录。
+         *
+         * @param aggregateType 聚合类型
+         * @param aggregateId 聚合根标识
+         * @param fromVersion 起始版本（包含）
+         * @param toVersion 结束版本（包含）
+         * @return 实际返回<code>readResults</code>，供调用方取得当前值
+         */
         @Override
         public List<StoredEventEntity> findByAggregateTypeAndAggregateIdAndVersionBetweenOrderByVersionAsc(
                 String aggregateType, String aggregateId, long fromVersion, long toVersion) {
             return readResults;
         }
 
+        /**
+         * 按全局位置升序读取起点及其后的事件记录。
+         *
+         * @param fromPosition 起始 position（包含）
+         * @param limit 最大返回条数
+         * @return 实际返回<code>readResults</code>，供调用方取得当前值
+         */
         @Override
         public List<StoredEventEntity> findByPositionGreaterThanEqualOrderByPositionAsc(
                 long fromPosition, int limit) {
@@ -282,9 +331,15 @@ class JpaManagedParticipationTest {
      */
     private static final class TestAggregateRootId implements AggregateRootId {
 
+        /** \u6d4b\u8bd5\u805a\u5408\u6ce8\u518c\u548c\u53cd\u5e8f\u5217\u5316\u6240\u7528\u7684\u5b9e\u4f53\u7c7b\u578b\u6807\u8bc6\u3002 */
         private static final EntityType TYPE = new StringEntityType("Order");
+        /** \u7528\u4e8e\u7ec4\u6210\u6d4b\u8bd5\u6807\u8bc6\u7684\u539f\u59cb\u503c\u3002 */
         private final String value;
 
+        /**
+         * \u4ee5\u7ed9\u5b9a\u72b6\u6001\u6784\u9020 <code>TestAggregateRootId</code> \u6d4b\u8bd5\u5bf9\u8c61\u3002
+         * @param value \u7528\u4e8e\u7ec4\u6210\u6d4b\u8bd5\u6807\u8bc6\u7684\u539f\u59cb\u503c
+         */
         private TestAggregateRootId(String value) {
             this.value = value;
         }
@@ -324,6 +379,7 @@ class JpaManagedParticipationTest {
      */
     private static final class TestEvent extends DomainEvent<TestAggregateRootId> {
 
+        /** \u4f7f\u7528 <code>super()</code> \u521d\u59cb\u5316 <code>TestEvent</code> \u6d4b\u8bd5\u5939\u5177\u3002 */
         private TestEvent() {
             super(new EntityIdPath(new TestAggregateRootId("event")));
         }

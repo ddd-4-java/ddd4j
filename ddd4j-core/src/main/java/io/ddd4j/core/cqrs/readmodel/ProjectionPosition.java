@@ -40,12 +40,16 @@ import java.io.Serializable;
 public interface ProjectionPosition extends Serializable {
 
     /**
-     * 投影流 ID（EventStore 中标识该视图对应的流）。
+     * \u6295\u5f71\u6d41 ID\uff08EventStore \u4e2d\u6807\u8bc6\u8be5\u89c6\u56fe\u5bf9\u5e94\u7684\u6d41\uff09\u3002
+     *
+     * @return \u6295\u5f71\u6d41\u6807\u8bc6
      */
     String getStreamId();
 
     /**
-     * 下一个待处理事件号（0-based）。
+     * \u4e0b\u4e00\u4e2a\u5f85\u5904\u7406\u4e8b\u4ef6\u53f7\uff080-based\uff09\u3002
+     *
+     * @return \u4e0b\u4e00\u5f85\u5904\u7406\u4e8b\u4ef6\u53f7
      */
     long getNextEventNumber();
 

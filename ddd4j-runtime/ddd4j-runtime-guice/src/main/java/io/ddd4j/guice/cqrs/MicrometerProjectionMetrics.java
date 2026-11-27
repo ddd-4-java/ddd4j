@@ -52,7 +52,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class MicrometerProjectionMetrics implements ProjectionMetrics {
 
+    /** \u6ce8\u518c\u548c\u8bfb\u53d6\u5f53\u524d\u7ec4\u4ef6 Micrometer \u6307\u6807\u7684\u6ce8\u518c\u8868\u3002 */
     private final MeterRegistry registry;
+    /** \u6309\u4e8b\u4ef6\u6d41\u6807\u8bc6\u4fdd\u5b58\u6700\u8fd1\u4e00\u6b21\u6295\u5f71\u8fd0\u884c\u7ed3\u679c\u3002 */
     private final ConcurrentMap<String, ProjectionRunInfo> runInfoMap = new ConcurrentHashMap<>();
 
     /**
@@ -107,6 +109,14 @@ public class MicrometerProjectionMetrics implements ProjectionMetrics {
                 (old, newInfo) -> newInfo);
     }
 
+    /**
+     * 读取投影最近一次运行的记录。
+     *
+     * <p>此实现调用 <code>Optional.ofNullable(runInfoMap.get(streamId))</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     * @return 最近一次运行的时间和结果等信息
+     */
     @Override
     public Optional<ProjectionRunInfo> getLastRunInfo(String streamId) {
         return Optional.ofNullable(runInfoMap.get(streamId));

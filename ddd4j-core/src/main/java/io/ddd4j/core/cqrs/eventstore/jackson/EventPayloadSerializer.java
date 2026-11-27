@@ -39,6 +39,7 @@ import java.util.Objects;
  */
 public class EventPayloadSerializer {
 
+    /** \u7528\u4e8e\u8bfb\u5199 JSON \u6570\u636e\u7684 Jackson \u6620\u5c04\u5668\u3002 */
     private final ObjectMapper objectMapper;
 
     /**

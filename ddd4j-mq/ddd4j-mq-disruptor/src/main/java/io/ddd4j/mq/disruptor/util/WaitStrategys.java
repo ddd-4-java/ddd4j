@@ -73,7 +73,9 @@ public enum WaitStrategys {
     };
 
     /**
-     * 获取对应的 {@link WaitStrategy} 实例。
+     * \u83b7\u53d6\u5bf9\u5e94\u7684 {@link WaitStrategy} \u5b9e\u4f8b\u3002
+     *
+     * @return \u5bf9\u5e94\u7684\u7b49\u5f85\u7b56\u7565\u5b9e\u4f8b
      */
     public abstract WaitStrategy instance();
 }

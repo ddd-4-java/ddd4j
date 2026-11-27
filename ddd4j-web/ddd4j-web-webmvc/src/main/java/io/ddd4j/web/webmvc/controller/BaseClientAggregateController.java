@@ -40,6 +40,13 @@ import java.io.Serializable;
  */
 public abstract class BaseClientAggregateController<V, Q, ID extends Serializable> {
 
+    /**
+     * \u5206\u9875\u67e5\u8be2\u805a\u5408\u6839\u3002
+     * @param pageNum \u9875\u7801
+     * @param pageSize \u6bcf\u9875\u6570\u91cf
+     * @param query \u67e5\u8be2\u6761\u4ef6
+     * @return \u805a\u5408\u6839\u5206\u9875\u7ed3\u679c
+     */
     @GetMapping
     public R<Page<V>> page(@RequestParam(defaultValue = "1") int pageNum,
                            @RequestParam(defaultValue = "20") int pageSize,
@@ -47,6 +54,11 @@ public abstract class BaseClientAggregateController<V, Q, ID extends Serializabl
         return R.ok(clientListPage(pageNum, pageSize, query));
     }
 
+    /**
+     * \u6309\u6807\u8bc6\u67e5\u8be2\u805a\u5408\u6839\u8be6\u60c5\u3002
+     * @param id \u805a\u5408\u6839\u6807\u8bc6
+     * @return \u805a\u5408\u6839\u8be6\u60c5\u54cd\u5e94
+     */
     @GetMapping("/{id}")
     public R<V> getById(@PathVariable ID id) {
         return R.ok(clientDetail(id));
@@ -54,6 +66,13 @@ public abstract class BaseClientAggregateController<V, Q, ID extends Serializabl
 
     // ------- 业务项目实现以下方法（只读） -------
 
+    /**
+     * \u5206\u9875\u67e5\u8be2\u5ba2\u6237\u7aef\u89c6\u56fe\u3002
+     * @param pageNum \u9875\u7801
+     * @param pageSize \u6bcf\u9875\u6570\u91cf
+     * @param query \u67e5\u8be2\u6761\u4ef6
+     * @return \u5ba2\u6237\u7aef\u89c6\u56fe\u5206\u9875\u7ed3\u679c
+     */
     protected abstract Page<V> clientListPage(int pageNum, int pageSize, Q query);
 
     /**

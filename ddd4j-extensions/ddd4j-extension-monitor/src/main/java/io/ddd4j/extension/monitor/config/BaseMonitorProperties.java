@@ -67,6 +67,7 @@ public class BaseMonitorProperties {
      */
     public static final String PREFIX = "monitor";
 
+    /** \u76d1\u63a7\u6269\u5c55\u7684\u65e5\u5fd7\u76f8\u5173\u914d\u7f6e\u3002 */
     private Log log = new Log();
 
     /**

@@ -61,6 +61,11 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
 
     // ========================= GoodsRepository =========================
 
+    /**
+     * \u6309\u4e3b\u952e\u5728\u5f53\u524d\u5185\u5b58\u4ed3\u50a8\u67e5\u627e\u5bf9\u5e94\u805a\u5408\u3002
+     * @param id \u5f85\u67e5\u8be2\u6216\u79fb\u9664\u7684\u4e1a\u52a1\u8bb0\u5f55\u6807\u8bc6
+     * @return \u5df2\u627e\u5230\u7684\u805a\u5408\uff0c\u4e0d\u5b58\u5728\u65f6\u8fd4\u56de\u7a7a\u7ed3\u679c
+     */
     @Override
     public Optional<Goods> findById(Long id) {
         if (Objects.isNull(id)) {
@@ -69,6 +74,14 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
         return Optional.ofNullable(rows.get(id)).map(this::copy);
     }
 
+    /**
+     * 写入或更新给定的领域对象或存储记录。
+     *
+     * <p>此实现调用 <code>aggregate.id()</code>。</p>
+     *
+     * @param aggregate 待处理聚合根
+     * @return 实际返回<code>copy(snapshot)</code>
+     */
     @Override
     public Goods save(Goods aggregate) {
         Objects.requireNonNull(aggregate, "aggregate must not be null");
@@ -78,6 +91,10 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
         return copy(snapshot);
     }
 
+    /**
+     * \u6309\u4e3b\u952e\u4ece\u5f53\u524d\u5185\u5b58\u4ed3\u50a8\u79fb\u9664\u5bf9\u5e94\u8bb0\u5f55\u3002
+     * @param id \u5f85\u67e5\u8be2\u6216\u79fb\u9664\u7684\u4e1a\u52a1\u8bb0\u5f55\u6807\u8bc6
+     */
     @Override
     public void deleteById(Long id) {
         if (Objects.nonNull(id)) {
@@ -85,6 +102,14 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
         }
     }
 
+    /**
+     * 按业务编码查找对应记录。
+     *
+     * <p>此实现调用 <code>StrKit.isBlank(code)</code>。</p>
+     *
+     * @param code 商品编码
+     * @return 实际返回<code>Optional.empty()</code>
+     */
     @Override
     public Optional<Goods> findByCode(String code) {
         if (StrKit.isBlank(code)) {
@@ -96,6 +121,14 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
                 .map(this::copy);
     }
 
+    /**
+     * 查询匹配指定状态的记录。
+     *
+     * <p>此实现调用 <code>java.util.Collections.emptyList()</code>。</p>
+     *
+     * @param status 商品状态
+     * @return 实际返回<code>java.util.Collections.emptyList()</code>
+     */
     @Override
     public List<Goods> findByStatus(GoodsStatus status) {
         if (Objects.isNull(status)) {
@@ -109,16 +142,38 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
 
     // ========================= Repository =========================
 
+    /**
+     * 读取满足条件的第一条记录。
+     *
+     * <p>此实现调用 <code>rows.values().stream().findFirst()</code>。</p>
+     *
+     * @return 第一个匹配条件的结果
+     */
     @Override
     public Optional<Goods> findFirst() {
         return rows.values().stream().findFirst().map(this::copy);
     }
 
+    /**
+     * 查询存储中符合条件的记录。
+     *
+     * <p>此实现调用 <code>rows.values().stream()</code>。</p>
+     *
+     * @return 满足条件的结果列表
+     */
     @Override
     public List<Goods> findAll() {
         return rows.values().stream().map(this::copy).collect(Collectors.toList());
     }
 
+    /**
+     * 根据分页参数和查询条件读取结果。
+     *
+     * <p>此实现调用 <code>filter(query)</code>。</p>
+     *
+     * @param query 查询条件
+     * @return 实际返回<code>Page.succeed(pageData, total, current, size)</code>
+     */
     @Override
     public Page<Goods> page(Query<Goods> query) {
         Objects.requireNonNull(query, "query must not be null");
@@ -136,24 +191,57 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
         return Page.succeed(pageData, total, current, size);
     }
 
+    /**
+     * 统计符合查询范围的数据数量。
+     *
+     * <p>此实现调用 <code>filter(query).size()</code>。</p>
+     *
+     * @param query 查询条件
+     * @return 满足筛选条件的记录数量
+     */
     @Override
     public long count(Query<Goods> query) {
         Objects.requireNonNull(query, "query must not be null");
         return filter(query).size();
     }
 
+    /**
+     * 读取满足条件的第一条记录。
+     *
+     * <p>此实现调用 <code>filter(query).stream().findFirst()</code>。</p>
+     *
+     * @param query 查询条件
+     * @return 第一个匹配条件的结果
+     */
     @Override
     public Optional<Goods> findFirst(Query<Goods> query) {
         Objects.requireNonNull(query, "query must not be null");
         return filter(query).stream().findFirst().map(this::copy);
     }
 
+    /**
+     * 按查询条件读取记录列表。
+     *
+     * <p>此实现调用 <code>filter(query)</code>。</p>
+     *
+     * @param query 查询条件
+     * @return 满足条件的结果列表
+     */
     @Override
     public List<Goods> findList(Query<Goods> query) {
         Objects.requireNonNull(query, "query must not be null");
         return filter(query);
     }
 
+    /**
+     * 更新已经存在的记录。
+     *
+     * <p>此实现调用 <code>save((Goods)aggregate)</code>。</p>
+     *
+     * @param aggregate 待处理聚合根
+     * @param query 查询条件
+     * @return 根据执行路径返回<code>true</code>、<code>false</code>
+     */
     @Override
     public boolean update(AggregateRoot<?> aggregate, Query<Goods> query) {
         // 内存实现：单条更新走 save，按条件更新简化为 find + save
@@ -164,6 +252,14 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
         return false;
     }
 
+    /**
+     * 删除匹配查询条件的记录。
+     *
+     * <p>此实现调用 <code>filter(query)</code>。</p>
+     *
+     * @param query 查询条件
+     * @return 实际返回<code>!matched.isEmpty()</code>
+     */
     @Override
     public boolean deleteByQuery(Query<Goods> query) {
         Objects.requireNonNull(query, "query must not be null");
@@ -172,6 +268,12 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
         return !matched.isEmpty();
     }
 
+    /**
+     * 接收<code>fill</code>回调，当前实现无需在此步骤更新状态。
+     *
+     * @param query 查询条件
+     * @param model 待填充聚合根
+     */
     @Override
     public void fill(Query<Goods> query, AggregateRoot<?> model) {
         // 内存实现无关联聚合，no-op
@@ -180,10 +282,13 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
     // ========================= 私有辅助方法 =========================
 
     /**
-     * 按 {@link GoodsQuery} 条件过滤内存中的商品。
-     * <p>
-     * 演示 ddd4j Query 的充血过滤：业务侧只需定义查询字段，
-     * 仓储实现根据字段值进行匹配。
+     * \u6309 {@link GoodsQuery} \u6761\u4ef6\u8fc7\u6ee4\u5185\u5b58\u4e2d\u7684\u5546\u54c1\u3002
+     *  <p>
+     *  \u6f14\u793a ddd4j Query \u7684\u5145\u8840\u8fc7\u6ee4\uff1a\u4e1a\u52a1\u4fa7\u53ea\u9700\u5b9a\u4e49\u67e5\u8be2\u5b57\u6bb5\uff0c
+     *  \u4ed3\u50a8\u5b9e\u73b0\u6839\u636e\u5b57\u6bb5\u503c\u8fdb\u884c\u5339\u914d\u3002
+     *
+     * @param query \u7528\u4e8e\u751f\u6210\u7b5b\u9009\u6761\u4ef6\u7684\u805a\u5408\u67e5\u8be2
+     * @return \u6ee1\u8db3\u67e5\u8be2\u6761\u4ef6\u7684\u5546\u54c1\u6d41
      */
     private List<Goods> filter(Query<Goods> query) {
         GoodsQuery productQuery = (query instanceof GoodsQuery) ? (GoodsQuery) query : new GoodsQuery();
@@ -194,6 +299,12 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
                 .collect(Collectors.toList());
     }
 
+    /**
+     * \u6839\u636e\u5546\u54c1\u67e5\u8be2\u7684\u7f16\u7801\u3001\u540d\u79f0\u3001\u4ef7\u683c\u6216\u72b6\u6001\u6761\u4ef6\u5224\u5b9a\u8bb0\u5f55\u662f\u5426\u53ef\u89c1\u3002
+     * @param product \u9700\u8981\u4e0e\u67e5\u8be2\u6761\u4ef6\u6bd4\u8f83\u7684\u5546\u54c1
+     * @param query \u5f85\u5e94\u7528\u7684\u5546\u54c1\u7b5b\u9009\u548c\u6392\u5e8f\u6761\u4ef6
+     * @return \u5f53\u524d\u5546\u54c1\u6ee1\u8db3\u5df2\u63d0\u4f9b\u6761\u4ef6\u65f6\u8fd4\u56de true
+     */
     private boolean matches(Goods product, GoodsQuery query) {
         if (StrKit.isNotBlank(query.getCode()) && !Objects.equals(query.getCode(), product.getCode())) {
             return false;
@@ -216,6 +327,11 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
         return true;
     }
 
+    /**
+     * \u6784\u9020\u5546\u54c1\u7ed3\u679c\u7684\u7ec4\u5408\u6bd4\u8f83\u5668\uff0c\u6ca1\u6709\u6392\u5e8f\u6761\u4ef6\u65f6\u6309\u4e3b\u952e\u987a\u5e8f\u3002
+     * @param query \u5f85\u5e94\u7528\u7684\u5546\u54c1\u7b5b\u9009\u548c\u6392\u5e8f\u6761\u4ef6
+     * @return \u7528\u4e8e\u6574\u7406\u5185\u5b58\u67e5\u8be2\u7ed3\u679c\u7684\u6bd4\u8f83\u5668
+     */
     private Comparator<Goods> orderBy(GoodsQuery query) {
         List<LambdaCondition> orderByConditions = query.getOrderByConditions();
         if (orderByConditions.isEmpty()) {
@@ -259,7 +375,10 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
     }
 
     /**
-     * 浅拷贝：避免返回内部状态的引用（防御性复制）。
+     * \u6d45\u62f7\u8d1d\uff1a\u907f\u514d\u8fd4\u56de\u5185\u90e8\u72b6\u6001\u7684\u5f15\u7528\uff08\u9632\u5fa1\u6027\u590d\u5236\uff09\u3002
+     *
+     * @param source \u88ab\u590d\u5236\u7684\u5546\u54c1\u5bf9\u8c61
+     * @return \u72ec\u7acb\u7684\u5546\u54c1\u526f\u672c
      */
     private Goods copy(Goods source) {
         return new Goods(

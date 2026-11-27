@@ -74,16 +74,12 @@ public class FeishuClient {
         this.secret = secret;
     }
 
-    /**
-     * @return 配置的 webhook 完整 URL
-     */
+    /** @return \u914d\u7f6e\u7684 webhook \u5b8c\u6574 URL */
     public String webhookUrl() {
         return webhookUrl;
     }
 
-    /**
-     * @return 配置的加签密钥（无则为空字符串）
-     */
+    /** @return \u914d\u7f6e\u7684\u52a0\u7b7e\u5bc6\u94a5\uff08\u65e0\u5219\u4e3a\u7a7a\u5b57\u7b26\u4e32\uff09 */
     public String secret() {
         return secret;
     }
@@ -117,7 +113,10 @@ public class FeishuClient {
     }
 
     /**
-     * 拼接完整 URL：若设置了签名密钥，则追加 query；否则原样返回。
+     * \u62fc\u63a5\u5b8c\u6574 URL\uff1a\u82e5\u8bbe\u7f6e\u4e86\u7b7e\u540d\u5bc6\u94a5\uff0c\u5219\u8ffd\u52a0 query\uff1b\u5426\u5219\u539f\u6837\u8fd4\u56de\u3002
+     *
+     * @return \u8865\u5145\u7b7e\u540d\u67e5\u8be2\u53c2\u6570\u540e\u7684\u8bf7\u6c42 URL
+     * @throws Exception Webhook \u7b7e\u540d\u8ba1\u7b97\u5931\u8d25
      */
     private String buildUrl() throws Exception {
         if (StrKit.isEmpty(secret)) {

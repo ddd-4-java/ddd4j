@@ -28,8 +28,13 @@ import java.lang.reflect.Proxy;
  */
 public class JdkProxy implements InvocationHandler {
 
+    /** \u8f6c\u53d1\u63a5\u53e3\u4ee3\u7406\u65b9\u6cd5\u8c03\u7528\u7684\u76ee\u6807\u5b9e\u4f8b\u3002 */
     private Object target;//需要代理的目标对象
 
+    /**
+     * \u6784\u9020\u8c03\u7528\u5904\u7406\u5668\u3002
+     * @param target \u9700\u8981\u4ee3\u7406\u7684\u76ee\u6807\u5bf9\u8c61
+     */
     public JdkProxy(Object target) {
         this.target = target;
     }

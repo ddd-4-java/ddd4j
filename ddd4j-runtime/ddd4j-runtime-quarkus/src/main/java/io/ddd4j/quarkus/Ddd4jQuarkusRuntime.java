@@ -32,7 +32,9 @@ import java.util.Objects;
  */
 public final class Ddd4jQuarkusRuntime implements AutoCloseable {
 
+    /** \u7ba1\u7406\u5f53\u524d\u793a\u4f8b\u6216\u6d4b\u8bd5\u6240\u62e5\u6709\u7684 SPI \u6ce8\u518c\u8d44\u6e90\u3002 */
     private final SpiRegistrationScope registrations;
+    /** \u6c47\u603b\u5f53\u524d\u7ec4\u4ef6\u5c31\u7eea\u72b6\u6001\u7684\u6ce8\u518c\u8868\u3002 */
     private final RuntimeReadinessRegistry readinessRegistry;
 
     /**
@@ -94,11 +96,16 @@ public final class Ddd4jQuarkusRuntime implements AutoCloseable {
         registrations.start();
     }
 
-    /** @return 运行时就绪状态注册表 */
+    /** @return \u8fd0\u884c\u65f6\u5c31\u7eea\u72b6\u6001\u6ce8\u518c\u8868 */
     public RuntimeReadinessRegistry readiness() {
         return readinessRegistry;
     }
 
+    /**
+     * 结束当前组件持有的资源。
+     *
+     * <p>Quarkus 实现调用 <code>registrations.close()</code>。</p>
+     */
     @Override
     public void close() {
         registrations.close();

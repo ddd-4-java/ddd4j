@@ -69,15 +69,23 @@ public class AuthRequest {
      */
     private Map<String, Object> extra = new HashMap<>();
 
+    /** \u521b\u5efa\u4f7f\u7528\u9ed8\u8ba4\u4f1a\u8bdd\u914d\u7f6e\u7684\u767b\u5f55\u8bf7\u6c42\u3002 */
     public AuthRequest() {
     }
 
+    /**
+     * \u521b\u5efa\u6307\u5b9a\u767b\u5f55\u6807\u8bc6\u7684\u8bf7\u6c42\u3002
+     * @param loginId \u767b\u5f55\u6807\u8bc6
+     */
     public AuthRequest(Object loginId) {
         this.loginId = loginId;
     }
 
     /**
-     * 快速构造登录请求。
+     * \u5feb\u901f\u6784\u9020\u767b\u5f55\u8bf7\u6c42\u3002
+     *
+     * @param loginId \u767b\u5f55\u6807\u8bc6
+     * @return \u767b\u5f55\u8bf7\u6c42
      */
     public static AuthRequest of(Object loginId) {
         return new AuthRequest(loginId);
@@ -92,8 +100,10 @@ public class AuthRequest {
     }
 
     /**
-     * Token 有效期（秒），-1 表示永久。
-     * <p>便捷访问器，转发到 {@link #sessionConfig}。
+     * Token \u6709\u6548\u671f\uff08\u79d2\uff09\uff0c-1 \u8868\u793a\u6c38\u4e45\u3002
+     *  <p>\u4fbf\u6377\u8bbf\u95ee\u5668\uff0c\u8f6c\u53d1\u5230 {@link #sessionConfig}\u3002
+     *
+     * @return Token \u6709\u6548\u671f\uff0c\u5355\u4f4d\u4e3a\u79d2
      */
     public long getTimeout() {
         return sessionConfig.getTimeout();
@@ -110,8 +120,10 @@ public class AuthRequest {
     }
 
     /**
-     * 设备类型（多端登录隔离用）。
-     * <p>便捷访问器，转发到 {@code sessionConfig.deviceType}。
+     * \u8bbe\u5907\u7c7b\u578b\uff08\u591a\u7aef\u767b\u5f55\u9694\u79bb\u7528\uff09\u3002
+     *  <p>\u4fbf\u6377\u8bbf\u95ee\u5668\uff0c\u8f6c\u53d1\u5230 {@code sessionConfig.deviceType}\u3002
+     *
+     * @return \u8bbe\u5907\u7c7b\u578b
      */
     public String getDeviceType() {
         return sessionConfig.getDeviceType();
@@ -128,7 +140,11 @@ public class AuthRequest {
     }
 
     /**
-     * 添加扩展信息。
+     * \u6dfb\u52a0\u6269\u5c55\u4fe1\u606f\u3002
+     *
+     * @param key \u6269\u5c55\u4fe1\u606f\u952e\uff0c\u4e0d\u53ef\u4e3a null
+     * @param value \u6269\u5c55\u4fe1\u606f\u503c
+     * @return \u5f53\u524d\u767b\u5f55\u8bf7\u6c42
      */
     public AuthRequest extra(String key, Object value) {
         if (Objects.isNull(extra)) {

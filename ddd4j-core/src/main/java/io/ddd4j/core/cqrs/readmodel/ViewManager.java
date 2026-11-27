@@ -49,7 +49,9 @@ public interface ViewManager {
     void stop();
 
     /**
-     * 判断是否已启动。
+     * \u5224\u65ad\u662f\u5426\u5df2\u542f\u52a8\u3002
+     *
+     * @return \u5df2\u542f\u52a8\u65f6\u4e3a true
      */
     boolean isRunning();
 

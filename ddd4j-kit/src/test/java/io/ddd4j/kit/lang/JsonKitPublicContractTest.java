@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /** 验证 Jackson 2/3 下相同的公开 JSON 转换契约。 */
 class JsonKitPublicContractTest {
 
+    /** \u9a8c\u8bc1<code>result.get("name")</code> \u7b49\u4e8e <code>"order"</code>\uff0c<code>result.get("count")</code> \u7b49\u4e8e <code>2</code>\uff0c<code>result.get("items")</code> \u7b49\u4e8e <code>Arrays.asList("first", 3, Collections.singletonMap("code", 9))</code>\u3002 */
     @Test
     void nestedObjectsAndArraysKeepScalarTypes() {
         Map<String, Object> result = JsonKit.toMap("{\"name\":\"order\",\"count\":2,\"active\":true,"
@@ -32,6 +33,7 @@ class JsonKitPublicContractTest {
                 JsonKit.toMapList("[{\"id\":1},{\"id\":2}]"));
     }
 
+    /** \u9a8c\u8bc1<code>JsonKit.toJson(null)</code>\u4e3a\u7a7a\uff0c<code>JsonKit.toJson("raw")</code> \u7b49\u4e8e <code>"raw"</code>\uff0c<code>JsonKit.toMap("invalid")</code> \u7b49\u4e8e <code>Collections.emptyMap()</code>\u3002 */
     @Test
     void nullBlankAndExistingValuesKeepTheirDocumentedResults() {
         assertNull(JsonKit.toJson(null));
@@ -51,6 +53,10 @@ class JsonKitPublicContractTest {
         assertEquals(Collections.emptyMap(), JsonKit.toMap("invalid"));
     }
 
+    /**
+     * \u9a8c\u8bc1<code>bean.getName()</code> \u7b49\u4e8e <code>"after"</code>\uff0c<code>date</code> \u7b49\u4e8e <code>"\"19/10/2026\""</code>\uff0c<code>time</code> \u7b49\u4e8e <code>"\"03:04:05\""</code>\u3002
+     * @throws Exception \u5904\u7406\u6d4b\u8bd5\u6570\u636e\u7684\u5e8f\u5217\u5316\u65f6\u5931\u8d25
+     */
     @Test
     void updatesExistingBeanAndUsesCustomTimeFormats() throws Exception {
         MutableValue bean = new MutableValue();
@@ -71,13 +77,23 @@ class JsonKitPublicContractTest {
                 .contains("\"name\""));
     }
 
+    /** \u7528\u4e8e\u9a8c\u8bc1 Jackson \u8bfb\u5199\u666e\u901a\u53ef\u53d8 Java Bean \u7684\u6837\u672c\u3002 */
     public static class MutableValue {
+        /** \u7528\u4e8e\u9a8c\u8bc1 JSON \u8bfb\u5199\u5f80\u8fd4\u7684\u53ef\u4fee\u6539\u5c5e\u6027\u3002 */
         private String name;
 
+        /**
+         * \u8bfb\u53d6<code>name</code> \u5b57\u6bb5\u3002
+         * @return <code>name</code> \u5b57\u6bb5
+         */
         public String getName() {
             return name;
         }
 
+        /**
+         * \u8bbe\u7f6e<code>name</code> \u5b57\u6bb5\u3002
+         * @param name \u8981\u5199\u5165\u7684\u503c
+         */
         public void setName(String name) {
             this.name = name;
         }

@@ -33,6 +33,7 @@ import java.util.Optional;
  */
 public final class BearerSubjectAuthenticator {
 
+    /** \u4ece HTTP Authorization \u5934\u8bfb\u53d6 Bearer \u4ee4\u724c\u7684\u7ec4\u4ef6\u3002 */
     private final BearerTokenResolver tokenResolver;
 
     /**
@@ -86,6 +87,11 @@ public final class BearerSubjectAuthenticator {
         return tokenResolver.resolve(authorization).map(this::authenticateToken);
     }
 
+    /**
+     * \u6821\u9a8c Bearer \u4ee4\u724c\u5e76\u89e3\u6790\u5f53\u524d\u8bf7\u6c42\u4e3b\u4f53\u3002
+     * @param token \u4ece Authorization \u8bfb\u53d6\u7684 Bearer \u8bbf\u95ee\u4ee4\u724c
+     * @return \u4ee4\u724c\u6709\u6548\u65f6\u7684\u8ba4\u8bc1\u7ed3\u679c
+     */
     private Authentication authenticateToken(String token) {
         SubjectProvider provider = Contexts.get(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class)
                 .orElseThrow(() -> new WebStatusException(401, "Subject provider is unavailable"));
@@ -102,12 +108,16 @@ public final class BearerSubjectAuthenticator {
      */
     public final static class Authentication {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u5df2\u4ece\u5f53\u524d\u8bf7\u6c42\u8bfb\u51fa\u5e76\u6821\u9a8c\u7684\u8ba4\u8bc1\u4ee4\u724c\u3002 */
         private final String token;
 
+        /** \u5f53\u524d\u8bf7\u6c42\u8ba4\u8bc1\u540e\u7684\u4e1a\u52a1\u4e3b\u4f53\u4fe1\u606f\u3002 */
         private final AuthPrincipal principal;
 
+        /** \u5f53\u524d\u8bf7\u6c42\u6240\u7ed1\u5b9a\u7684\u4e3b\u4f53\u64cd\u4f5c\u5165\u53e3\u3002 */
         private final Subject subject;
 
         /**
@@ -181,6 +191,14 @@ public final class BearerSubjectAuthenticator {
             return subject;
         }
 
+        /**
+         * 根据<code>token</code>、<code>principal</code>、<code>subject</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -193,6 +211,11 @@ public final class BearerSubjectAuthenticator {
             return Objects.equals(this.token, other.token) && Objects.equals(this.principal, other.principal) && Objects.equals(this.subject, other.subject);
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 0;
@@ -202,6 +225,11 @@ public final class BearerSubjectAuthenticator {
             return result;
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>token</code>、<code>principal</code>、<code>subject</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "Authentication[token=" + token + ", principal=" + principal + ", subject=" + subject + "]";

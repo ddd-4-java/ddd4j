@@ -67,6 +67,7 @@ public class WeatherTemplate {
      */
     private final HttpClient httpClient;
 
+    /** \u5929\u6c14\u670d\u52a1\u8bf7\u6c42\u4f7f\u7528\u7684\u5730\u5740\u6a21\u677f\u3002 */
     private final String weatherUrlTemplate;
 
     /**
@@ -78,15 +79,25 @@ public class WeatherTemplate {
         this(httpClient, SOJSON_WEATHER_URL);
     }
 
+    /**
+     * \u4f7f\u7528\u6307\u5b9a\u63a5\u53e3\u5730\u5740\u6a21\u677f\u521b\u5efa\u5929\u6c14\u67e5\u8be2\u5ba2\u6237\u7aef\u3002
+     * @param weatherUrlTemplate \u5929\u6c14\u63a5\u53e3\u8bf7\u6c42\u5730\u5740\u6a21\u677f
+     */
     WeatherTemplate(String weatherUrlTemplate) {
         this(HttpClient.newHttpClient(), weatherUrlTemplate);
     }
 
+    /**
+     * \u7528\u7ed9\u5b9a\u503c\u521d\u59cb\u5316 <code>WeatherTemplate</code> \u5b9e\u4f8b\u3002
+     * @param httpClient HTTP \u5ba2\u6237\u7aef
+     * @param weatherUrlTemplate <code>weatherUrlTemplate</code> \u5b57\u6bb5
+     */
     private WeatherTemplate(HttpClient httpClient, String weatherUrlTemplate) {
         this.httpClient = httpClient;
         this.weatherUrlTemplate = Objects.requireNonNull(weatherUrlTemplate, "weatherUrlTemplate must not be null");
     }
 
+    /** \u4f7f\u7528\u9ed8\u8ba4 HTTP \u5ba2\u6237\u7aef\u521b\u5efa\u5929\u6c14\u67e5\u8be2\u5668\u3002 */
     public WeatherTemplate() {
         this(HttpClient.newHttpClient());
     }

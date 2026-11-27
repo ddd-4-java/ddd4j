@@ -49,6 +49,7 @@ import java.util.function.Function;
  */
 public final class EntityIdRegistry {
 
+    /** \u4ece\u6587\u672c\u6062\u590d\u6307\u5b9a\u5b9e\u4f53\u6807\u8bc6\u7c7b\u578b\u7684\u5de5\u5382\u6620\u5c04\u3002 */
     private static final Map<String, Function<String, EntityId>> FACTORIES = new ConcurrentHashMap<>();
 
     /**
@@ -61,6 +62,7 @@ public final class EntityIdRegistry {
         FACTORIES.put(STRING_ENTITY_TYPE, StringEntityId::new);
     }
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>EntityIdRegistry</code> \u5b9e\u4f8b\u3002 */
     private EntityIdRegistry() {
     }
 

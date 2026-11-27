@@ -53,6 +53,12 @@ public class QuarkusCqrsProducer {
         return new DefaultProjectionService(repository);
     }
 
+    /**
+     * \u521b\u5efa\u6295\u5f71\u6267\u884c\u5668\u3002
+     * @param projectionService \u6295\u5f71\u670d\u52a1
+     * @param chunkReaders \u4e8b\u4ef6\u5757\u8bfb\u53d6\u5668
+     * @return \u6295\u5f71\u6267\u884c\u5668
+     */
     @Produces
     @DefaultBean
     @Singleton

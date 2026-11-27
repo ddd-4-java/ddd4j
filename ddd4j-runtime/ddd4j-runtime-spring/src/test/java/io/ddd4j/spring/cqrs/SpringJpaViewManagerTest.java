@@ -42,12 +42,15 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class SpringJpaViewManagerTest {
 
+    /** \u7528\u4e8e\u9694\u79bb <code>ViewScheduler</code> \u8c03\u7528\u5e76\u8bb0\u5f55\u4ea4\u4e92\u7684\u6d4b\u8bd5\u66ff\u8eab\u3002 */
     @Mock
     private ViewScheduler scheduler;
 
+    /** \u7528\u4e8e\u9694\u79bb <code>ProjectionPositionRepository</code> \u8c03\u7528\u5e76\u8bb0\u5f55\u4ea4\u4e92\u7684\u6d4b\u8bd5\u66ff\u8eab\u3002 */
     @Mock
     private ProjectionPositionRepository positionRepository;
 
+    /** \u7528\u4e8e\u9694\u79bb <code>ProjectionMetrics</code> \u8c03\u7528\u5e76\u8bb0\u5f55\u4ea4\u4e92\u7684\u6d4b\u8bd5\u66ff\u8eab\u3002 */
     @Mock
     private ProjectionMetrics projectionMetrics;
 
@@ -56,6 +59,7 @@ class SpringJpaViewManagerTest {
     @DisplayName("getProjectionStatus")
     class GetProjectionStatusTests {
 
+        /** \u9a8c\u8bc1<code>status.streamId()</code> \u7b49\u4e8e <code>"orders"</code>\uff0c<code>status.nextEventNumber()</code> \u7b49\u4e8e <code>42L</code>\uff0c<code>status.lastError()</code> \u7b49\u4e8e <code>"last failure"</code>\u3002 */
         @Test
         void withMetricsIncludesLatestRunInfo() {
             Instant lastRunAt = Instant.parse("2026-10-18T00:00:00Z");
@@ -75,6 +79,7 @@ class SpringJpaViewManagerTest {
             assertThat(status.lastError()).isEqualTo("last failure");
         }
 
+        /** \u65e0\u4f4d\u7f6e\u4ed3\u50a8\u65f6\u5e94\u8fd4\u56de\u57fa\u7ebf\u72b6\u6001\u3002 */
         @Test
         @DisplayName("无位置仓储时应返回基线状态")
         void withoutRepository_shouldReturnBaseline() {
@@ -91,6 +96,7 @@ class SpringJpaViewManagerTest {
             assertThat(status.lastError()).isNull();
         }
 
+        /** \u6709\u4f4d\u7f6e\u4ed3\u50a8\u4e14\u4f4d\u7f6e\u5b58\u5728\u65f6\u5e94\u8fd4\u56de\u771f\u5b9e\u4f4d\u7f6e\u3002 */
         @Test
         @DisplayName("有位置仓储且位置存在时应返回真实位置")
         void withRepositoryAndPositionExists_shouldReturnRealPosition() {
@@ -110,6 +116,7 @@ class SpringJpaViewManagerTest {
             assertThat(status.lastError()).isNull();
         }
 
+        /** \u6709\u4f4d\u7f6e\u4ed3\u50a8\u4f46\u4f4d\u7f6e\u4e0d\u5b58\u5728\u65f6\u5e94\u8fd4\u56de nextEventNumber=0\u3002 */
         @Test
         @DisplayName("有位置仓储但位置不存在时应返回 nextEventNumber=0")
         void withRepositoryButNoPosition_shouldReturnZeroPosition() {
@@ -126,6 +133,7 @@ class SpringJpaViewManagerTest {
             assertThat(status.running()).isTrue();
         }
 
+        /** \u7ba1\u7406\u5668\u505c\u6b62\u65f6 running \u5e94\u4e3a false\u3002 */
         @Test
         @DisplayName("管理器停止时 running 应为 false")
         void whenStopped_runningShouldBeFalse() {

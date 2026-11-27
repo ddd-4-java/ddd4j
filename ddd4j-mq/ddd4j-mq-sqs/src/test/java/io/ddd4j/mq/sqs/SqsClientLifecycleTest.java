@@ -37,8 +37,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+/** \u9a8c\u8bc1 <code>SqsClientLifecycle</code> \u5728 <code>consumer</code>\u3001<code>requiredListenerRollbackAllowsSameAdapterToRestart</code>\u3001<code>closedAdapter</code>\u3001<code>invalidPollInterval</code> \u7b49\u573a\u666f\u4e2d\u7684\u884c\u4e3a\u3002 */
 class SqsClientLifecycleTest {
 
+    /**
+     * \u9a8c\u8bc1<code>adapter.initConsumer(listener, properties)</code>\u4e3a\u771f\uff0c<code>polled.await(5, TimeUnit.SECONDS)</code>\u4e3a\u771f\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void consumerWithoutProducerCreatesAndClosesOwnedClient() throws Exception {
         SqsClient nativeClient = mock(SqsClient.class);
@@ -69,6 +74,7 @@ class SqsClientLifecycleTest {
         verify(nativeClient, times(1)).close();
     }
 
+    /** \u9a8c\u8bc1<code>adapter.initConsumer(listener, properties)</code> \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>creations.get()</code> \u7b49\u4e8e <code>0</code>\u3002 */
     @Test
     void closedAdapterRejectsNewConsumerWithoutCreatingClient() {
         SqsClient nativeClient = mock(SqsClient.class);
@@ -90,6 +96,7 @@ class SqsClientLifecycleTest {
         verify(nativeClient, never()).close();
     }
 
+    /** \u9a8c\u8bc1<code>adapter.initConsumer(listener, properties)</code> \u629b\u51fa <code>IllegalArgumentException.class</code>\uff0c<code>creations.get()</code> \u7b49\u4e8e <code>0</code>\u3002 */
     @Test
     void invalidPollIntervalRejectsConsumerBeforeCreatingClient() {
         AtomicInteger creations = new AtomicInteger();
@@ -114,6 +121,7 @@ class SqsClientLifecycleTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>publisher.accept(new MQEvent())</code> \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>failure.getMessage()</code> \u7b49\u4e8e <code>"SQS client is closed"</code>\u3002 */
     @Test
     void producerHandleRejectsPublishAfterClose() {
         SqsClient nativeClient = mock(SqsClient.class);
@@ -126,6 +134,10 @@ class SqsClientLifecycleTest {
         assertEquals("SQS client is closed", failure.getMessage());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>releaseSend.await(5, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>closing.await(5, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>close.get(150, TimeUnit.MILLISECONDS)</code> \u629b\u51fa <code>TimeoutException.class</code>\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void closeWaitsForAnInFlightSendBeforeClosingOwnedClient() throws Exception {
         SqsClient nativeClient = mock(SqsClient.class);
@@ -192,6 +204,10 @@ class SqsClientLifecycleTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>adapter.initConsumer(listener, properties)</code>\u4e3a\u771f\uff0c<code>receiving.await(5, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>close.get(150, TimeUnit.MILLISECONDS)</code> \u629b\u51fa <code>TimeoutException.class</code>\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void closeWaitsForAnInFlightReceiveBeforeClosingOwnedClient() throws Exception {
         SqsClient nativeClient = mock(SqsClient.class);

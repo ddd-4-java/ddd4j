@@ -27,6 +27,7 @@ import java.util.Date;
 @Data
 public class LicenseCreatorParam implements Serializable {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = -7793154252684580872L;
     /**
      * 证书subject
@@ -94,7 +95,9 @@ public class LicenseCreatorParam implements Serializable {
     private LicenseExtraModel licenseExtraModel;
 
     /**
-     * 返回不包含密钥库口令和私钥口令的诊断信息。
+     * \u8fd4\u56de\u4e0d\u5305\u542b\u5bc6\u94a5\u5e93\u53e3\u4ee4\u548c\u79c1\u94a5\u53e3\u4ee4\u7684\u8bca\u65ad\u4fe1\u606f\u3002
+     *
+     * @return \u7528\u4e8e\u8bca\u65ad\u7684\u8bb8\u53ef\u8bc1\u521b\u5efa\u53c2\u6570\u6587\u672c
      */
     @Override
     public String toString() {

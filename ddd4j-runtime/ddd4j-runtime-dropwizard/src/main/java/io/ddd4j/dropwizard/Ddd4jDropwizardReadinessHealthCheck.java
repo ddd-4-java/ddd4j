@@ -25,8 +25,13 @@ import java.util.Objects;
  */
 public class Ddd4jDropwizardReadinessHealthCheck extends HealthCheck {
 
+    /** \u6c47\u603b\u5f53\u524d\u7ec4\u4ef6\u5c31\u7eea\u72b6\u6001\u7684\u6ce8\u518c\u8868\u3002 */
     private final RuntimeReadinessRegistry readinessRegistry;
 
+    /**
+     * \u4f7f\u7528 ddd4j \u5c31\u7eea\u6ce8\u518c\u8868\u521b\u5efa\u5065\u5eb7\u68c0\u67e5\u3002
+     * @param readinessRegistry \u5c31\u7eea\u6ce8\u518c\u8868
+     */
     public Ddd4jDropwizardReadinessHealthCheck(RuntimeReadinessRegistry readinessRegistry) {
         this.readinessRegistry = Objects.requireNonNull(readinessRegistry,
                 "readinessRegistry must not be null");

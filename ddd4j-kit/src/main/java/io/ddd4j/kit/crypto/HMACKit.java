@@ -30,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @UtilityClass
 public class HMACKit {
 
+    /** \u6309\u76d0\u503c\u67e5\u627e\u548c\u590d\u7528 HMAC \u8fd0\u7b97\u5bf9\u8c61\u3002 */
     private final Map<String, HMac> hMacMap = new ConcurrentHashMap<>();
 
     /**
@@ -44,7 +45,12 @@ public class HMACKit {
     }
 
     /**
-     * HMac-摘要
+     * HMac-\u6458\u8981
+     *
+     * @param algorithm \u6458\u8981\u7b97\u6cd5
+     * @param salt \u76d0\u503c
+     * @param plainTxt \u5f85\u6458\u8981\u7684\u660e\u6587
+     * @return \u5341\u516d\u8fdb\u5236\u6458\u8981
      */
     public static String digest(String algorithm, String salt, String plainTxt) {
         HMac hMac = getHMac(algorithm, salt);

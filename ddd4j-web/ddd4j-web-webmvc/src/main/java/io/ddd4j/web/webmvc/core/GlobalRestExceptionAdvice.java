@@ -46,7 +46,12 @@ import java.util.stream.Collectors;
 public class GlobalRestExceptionAdvice {
 
     /**
-     * 处理参数绑定异常。
+     * \u5904\u7406\u53c2\u6570\u7ed1\u5b9a\u5f02\u5e38\u3002
+     *
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
+     * @param request HTTP \u8bf7\u6c42
+     * @param model \u89c6\u56fe\u6a21\u578b
+     * @param e \u6355\u83b7\u7684\u5f02\u5e38
      */
     @ExceptionHandler({BindException.class})
     public R<String> bindException(HttpServletRequest request, Model model, BindException e) {
@@ -57,7 +62,11 @@ public class GlobalRestExceptionAdvice {
     }
 
     /**
-     * 处理参数校验异常。
+     * \u5904\u7406\u53c2\u6570\u6821\u9a8c\u5f02\u5e38\u3002
+     *
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
+     * @param request HTTP \u8bf7\u6c42
+     * @param e \u6355\u83b7\u7684\u5f02\u5e38
      */
     @ExceptionHandler({ValidateException.class})
     public R<String> validatorException(HttpServletRequest request, ValidateException e) {
@@ -67,7 +76,11 @@ public class GlobalRestExceptionAdvice {
     }
 
     /**
-     * 处理方法参数无效异常。
+     * \u5904\u7406\u65b9\u6cd5\u53c2\u6570\u65e0\u6548\u5f02\u5e38\u3002
+     *
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
+     * @param request HTTP \u8bf7\u6c42
+     * @param e \u6355\u83b7\u7684\u5f02\u5e38
      */
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public R<String> methodArgumentNotValidExceptionHandler(HttpServletRequest request, MethodArgumentNotValidException e) {
@@ -78,7 +91,11 @@ public class GlobalRestExceptionAdvice {
     }
 
     /**
-     * 处理 404 地址未找到异常。
+     * \u5904\u7406 404 \u5730\u5740\u672a\u627e\u5230\u5f02\u5e38\u3002
+     *
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
+     * @param request HTTP \u8bf7\u6c42
+     * @param e \u6355\u83b7\u7684\u5f02\u5e38
      */
     @ExceptionHandler(NoHandlerFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -88,7 +105,11 @@ public class GlobalRestExceptionAdvice {
     }
 
     /**
-     * 处理业务运行时异常。
+     * \u5904\u7406\u4e1a\u52a1\u8fd0\u884c\u65f6\u5f02\u5e38\u3002
+     *
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
+     * @param request HTTP \u8bf7\u6c42
+     * @param e \u6355\u83b7\u7684\u5f02\u5e38
      */
     @ExceptionHandler({BizRuntimeException.class})
     public R<String> serviceException(HttpServletRequest request, BizRuntimeException e) {
@@ -97,7 +118,11 @@ public class GlobalRestExceptionAdvice {
     }
 
     /**
-     * 处理空指针异常。
+     * \u5904\u7406\u7a7a\u6307\u9488\u5f02\u5e38\u3002
+     *
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
+     * @param request HTTP \u8bf7\u6c42
+     * @param e \u6355\u83b7\u7684\u5f02\u5e38
      */
     @ExceptionHandler({NullPointerException.class})
     public R<String> nullPointerException(HttpServletRequest request, NullPointerException e) {
@@ -107,7 +132,11 @@ public class GlobalRestExceptionAdvice {
     }
 
     /**
-     * 处理通用运行时异常。
+     * \u5904\u7406\u901a\u7528\u8fd0\u884c\u65f6\u5f02\u5e38\u3002
+     *
+     * @return \u6807\u51c6\u9519\u8bef\u54cd\u5e94
+     * @param request HTTP \u8bf7\u6c42
+     * @param e \u6355\u83b7\u7684\u5f02\u5e38
      */
     @ExceptionHandler({RuntimeException.class})
     public R<String> runTimeException(HttpServletRequest request, RuntimeException e) {

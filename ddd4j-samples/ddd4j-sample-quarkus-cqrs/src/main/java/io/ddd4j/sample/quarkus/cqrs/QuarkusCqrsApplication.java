@@ -23,9 +23,7 @@ import io.quarkus.runtime.annotations.QuarkusMain;
 @QuarkusMain
 public class QuarkusCqrsApplication {
 
-    /**
-     * @param args 启动参数
-     */
+    /** @param args \u542f\u52a8\u53c2\u6570 */
     public static void main(String[] args) {
         Quarkus.run(args);
     }

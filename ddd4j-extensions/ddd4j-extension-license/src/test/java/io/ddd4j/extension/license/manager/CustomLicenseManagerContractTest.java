@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /** 许可证机器绑定在三条 JDK 线上的共同错误契约。 */
 class CustomLicenseManagerContractTest {
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>error.getMessage()</code> \u7b49\u4e8e <code>"SN \u6821\u9a8c\u5931\u8d25: \u5f53\u524d\u673a\u5668\u5e8f\u5217\u53f7\u4e0d\u5728\u6388\u6743\u8303\u56f4\u5185"</code>\u3002 */
     @Test
     void missingMachineSerialNumberReportsLicenseMismatch() {
         LicenseMachineInfoProvider provider = new LicenseMachineInfoProvider() {

@@ -35,7 +35,9 @@ import com.alibaba.excel.write.handler.context.SheetWriteHandlerContext;
  */
 public class FreezePaneStyleStrategy implements SheetWriteHandler {
 
+    /** \u51bb\u7ed3\u7a97\u683c\u6240\u4fdd\u7559\u7684\u5de6\u4fa7\u5217\u6570\u3002 */
     private final int colSplit;
+    /** \u51bb\u7ed3\u7a97\u683c\u6240\u4fdd\u7559\u7684\u9876\u90e8\u884c\u6570\u3002 */
     private final int rowSplit;
 
     /**

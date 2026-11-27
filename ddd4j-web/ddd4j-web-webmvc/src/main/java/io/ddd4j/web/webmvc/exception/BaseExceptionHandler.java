@@ -33,12 +33,17 @@ import java.util.Objects;
 @Slf4j
 public abstract class BaseExceptionHandler {
 
+    /** \u5931\u8d25\u72b6\u6001\u503c\u3002 */
     public static final String STATUS_FAIL = "fail";
+    /** \u9519\u8bef\u72b6\u6001\u503c\u3002 */
     public static final String STATUS_ERROR = "error";
 
+    /** \u5f02\u6b65\u8bf7\u6c42\u6807\u8bc6\u503c\u3002 */
     protected static final String XML_HTTP_REQUEST = "XMLHttpRequest";
+    /** \u5f02\u6b65\u8bf7\u6c42\u6807\u8bc6\u5934\u540d\u79f0\u3002 */
     protected static final String X_REQUESTED_WITH = "X-Requested-With";
 
+    /** \u67e5\u627e\u5f53\u524d Servlet \u8bf7\u6c42\u53ca\u5176\u4e0a\u4e0b\u6587\u7684\u8bf7\u6c42\u6301\u6709\u5668\u3002 */
     private static final ThreadLocal<HttpServletRequest> REQUEST_HOLDER = new TransmittableThreadLocal<>();
 
     /**
@@ -49,14 +54,18 @@ public abstract class BaseExceptionHandler {
     }
 
     /**
-     * 获取当前请求
+     * \u83b7\u53d6\u5f53\u524d\u8bf7\u6c42
+     *
+     * @return \u5f53\u524d HTTP \u8bf7\u6c42
      */
     protected static HttpServletRequest getCurrentRequest() {
         return REQUEST_HOLDER.get();
     }
 
     /**
-     * 设置当前请求（由框架适配层调用）
+     * \u8bbe\u7f6e\u5f53\u524d\u8bf7\u6c42\uff08\u7531\u6846\u67b6\u9002\u914d\u5c42\u8c03\u7528\uff09
+     *
+     * @param request HTTP \u8bf7\u6c42
      */
     public static void setCurrentRequest(HttpServletRequest request) {
         REQUEST_HOLDER.set(request);
@@ -82,6 +91,10 @@ public abstract class BaseExceptionHandler {
         return XML_HTTP_REQUEST.equalsIgnoreCase(request.getHeader(X_REQUESTED_WITH));
     }
 
+    /**
+     * \u8bb0\u5f55\u8bf7\u6c42\u5f02\u5e38\u3002
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     */
     protected void logException(Exception ex) {
         HttpServletRequest request = getCurrentRequest();
         if (Objects.nonNull(request)) {
@@ -90,6 +103,11 @@ public abstract class BaseExceptionHandler {
         log.error(ex.getMessage(), ex);
     }
 
+    /**
+     * \u8bb0\u5f55\u8bf7\u6c42\u5f02\u5e38\u3002
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
+     * @param detailMap \u5f02\u5e38\u8be6\u60c5
+     */
     protected void logException(Exception ex, Map<String, Object> detailMap) {
         HttpServletRequest request = getCurrentRequest();
         if (Objects.nonNull(request)) {

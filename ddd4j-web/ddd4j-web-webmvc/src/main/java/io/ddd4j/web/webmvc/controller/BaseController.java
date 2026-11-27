@@ -84,13 +84,21 @@ public class BaseController implements ApplicationEventPublisherAware, Applicati
     @Getter
     private ApplicationContext context;
 
+    /**
+     * \u521b\u5efa BaseController \u5b9e\u4f8b\u3002
+     * @param messageSource \u6d88\u606f\u6e90
+     * @param beanMapper Bean \u6620\u5c04\u5668
+     */
     public BaseController(NestedMessageSource messageSource, Mapper beanMapper) {
         this.messageSource = messageSource;
         this.beanMapper = beanMapper;
     }
 
     /**
-     * 统一处理异常，并抛出异常事件方便进行统一的日志实现
+     * \u7edf\u4e00\u5904\u7406\u5f02\u5e38\uff0c\u5e76\u629b\u51fa\u5f02\u5e38\u4e8b\u4ef6\u65b9\u4fbf\u8fdb\u884c\u7edf\u4e00\u7684\u65e5\u5fd7\u5b9e\u73b0
+     *
+     * @param source \u6e90\u5bf9\u8c61
+     * @param ex \u6355\u83b7\u7684\u5f02\u5e38
      */
     protected void logException(Object source, Exception ex) {
         getEventPublisher().publishEvent(new AppExceptionEvent(source, ex));
@@ -107,14 +115,35 @@ public class BaseController implements ApplicationEventPublisherAware, Applicati
         return getMessageSource().getMessage(key, args, LocaleContextHolder.getLocale());
     }
 
+    /**
+     * \u521b\u5efa\u6210\u529f\u54cd\u5e94\u3002
+     * @param <T> \u8fd4\u56de\u6216\u8bf7\u6c42\u7684\u7c7b\u578b
+     * @param key \u6d88\u606f\u952e
+     * @param args \u6d88\u606f\u53c2\u6570
+     * @return \u6210\u529f\u54cd\u5e94
+     */
     protected <T> R<T> success(String key, Object... args) {
         return R.ok(getMessage(key, args), null);
     }
 
+    /**
+     * \u521b\u5efa\u5931\u8d25\u54cd\u5e94\u3002
+     * @param <T> \u8fd4\u56de\u6216\u8bf7\u6c42\u7684\u7c7b\u578b
+     * @param key \u6d88\u606f\u952e
+     * @param args \u6d88\u606f\u53c2\u6570
+     * @return \u5931\u8d25\u54cd\u5e94
+     */
     protected <T> R<T> fail(String key, Object... args) {
         return R.fail(getMessage(key, args));
     }
 
+    /**
+     * \u521b\u5efa\u9519\u8bef\u54cd\u5e94\u3002
+     * @param <T> \u8fd4\u56de\u6216\u8bf7\u6c42\u7684\u7c7b\u578b
+     * @param key \u6d88\u606f\u952e
+     * @param args \u6d88\u606f\u53c2\u6570
+     * @return \u9519\u8bef\u54cd\u5e94
+     */
     protected <T> R<T> error(String key, Object... args) {
         return R.of(ApiCode.SERVER_ERROR.getCode(), getMessage(key, args));
     }

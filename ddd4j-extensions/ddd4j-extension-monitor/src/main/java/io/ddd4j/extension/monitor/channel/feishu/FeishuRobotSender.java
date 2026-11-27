@@ -33,18 +33,23 @@ import java.util.Map;
  */
 public class FeishuRobotSender implements Sender {
 
+    /** \u5c06\u6d88\u606f\u8bf7\u6c42\u53d1\u9001\u5230\u98de\u4e66\u81ea\u5b9a\u4e49\u673a\u5668\u4eba\u7684 HTTP \u5ba2\u6237\u7aef\u3002 */
     private final FeishuClient client;
 
     /**
-     * @param webhookUrl 飞书机器人 webhook 完整地址（含 hook token）
-     * @param secret     加签密钥（无则置 null 或空字符串）
+     * 初始化 <code>FeishuRobotSender</code> 使用的 <code>client</code>。
+     *
+     * @param webhookUrl \u98de\u4e66\u673a\u5668\u4eba webhook \u5b8c\u6574\u5730\u5740\uff08\u542b hook token\uff09
+     * @param secret \u52a0\u7b7e\u5bc6\u94a5\uff08\u65e0\u5219\u7f6e null \u6216\u7a7a\u5b57\u7b26\u4e32\uff09
      */
     public FeishuRobotSender(String webhookUrl, String secret) {
         this.client = new FeishuClient(webhookUrl, secret);
     }
 
     /**
-     * 暴露底层 HTTP 客户端，便于高级场景直接复用。
+     * \u66b4\u9732\u5e95\u5c42 HTTP \u5ba2\u6237\u7aef\uff0c\u4fbf\u4e8e\u9ad8\u7ea7\u573a\u666f\u76f4\u63a5\u590d\u7528\u3002
+     *
+     * @return \u98de\u4e66 HTTP \u5ba2\u6237\u7aef
      */
     public FeishuClient getClient() {
         return client;
@@ -83,6 +88,7 @@ public class FeishuRobotSender implements Sender {
     @Data
     @NoArgsConstructor
     static class PostPayload {
+        /** \u98de\u4e66\u5bcc\u6587\u672c\u6d88\u606f\u7684\u6b63\u6587\u7ed3\u6784\u3002 */
         private Map<String, Object> post;
     }
 }

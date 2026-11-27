@@ -35,6 +35,7 @@ public class DefaultRowHeightStyleStrategy extends AbstractRowHeightStyleStrateg
      */
     public static final short DEFAULT_HEADER_ROW_HEIGHT = 600;
 
+    /** \u9996\u884c\u8868\u5934\u4f7f\u7528\u7684\u9ad8\u5ea6\u3002 */
     private final short headerRowHeight;
 
     /**

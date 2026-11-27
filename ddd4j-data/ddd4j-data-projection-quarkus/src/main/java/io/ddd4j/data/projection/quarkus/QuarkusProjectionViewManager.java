@@ -46,16 +46,27 @@ import java.util.concurrent.ConcurrentHashMap;
 @ApplicationScoped
 public class QuarkusProjectionViewManager implements ViewManager {
 
+    /** \u8d1f\u8d23\u5b89\u6392\u6295\u5f71\u89e6\u53d1\u548c\u53d6\u6d88\u7684\u8c03\u5ea6\u5668\u3002 */
     private final ViewScheduler scheduler;
 
+    /** \u5b9e\u9645\u8bfb\u53d6\u5e76\u5e94\u7528\u6295\u5f71\u4e8b\u4ef6\u7684\u6267\u884c\u5668\u3002 */
     private final ProjectionRunner<?> runner;
 
+    /** \u7531\u5f53\u524d\u8fd0\u884c\u73af\u5883\u7ba1\u7406\u548c\u8c03\u5ea6\u7684\u6295\u5f71\u89c6\u56fe\u3002 */
     private final Instance<ProjectionView<?>> views;
 
+    /** 以视图名称索引的当前调度任务句柄。 */
     private final Map<String, ViewScheduler.ViewScheduleHandle> handles = new ConcurrentHashMap<>();
 
+    /** 视图管理器是否已启动。 */
     private volatile boolean running = false;
 
+    /**
+     * \u4ece\u65e7 CDI \u6ce8\u5165\u70b9\u88c5\u914d\uff1b\u89c6\u56fe\u4ecd\u4e8e\u9996\u6b21\u4f7f\u7528\u65f6\u53d1\u73b0\u3002
+     * @param scheduler \u539f\u751f\u89c6\u56fe\u8c03\u5ea6\u5668
+     * @param runner \u5171\u4eab\u8fd0\u884c\u5668
+     * @param views \u89c6\u56fe\u53d1\u73b0\u5165\u53e3
+     */
     @Inject
     public QuarkusProjectionViewManager(ViewScheduler scheduler,
                                         ProjectionRunner<?> runner,
@@ -76,14 +87,29 @@ public class QuarkusProjectionViewManager implements ViewManager {
         this.views = null;
     }
 
+    /**
+     * 收到 Quarkus 启动回调后登记投影视图调度。
+     *
+     * @param event 传入此操作的 <code>StartupEvent</code> 类型 <code>event</code>
+     */
     void onStart(@Observes StartupEvent event) {
         start();
     }
 
+    /**
+     * 收到 Quarkus 关闭回调后取消投影视图调度。
+     *
+     * @param event 传入此操作的 <code>Shutdown</code> 类型 <code>event</code>
+     */
     void onStop(@Observes Shutdown event) {
         stop();
     }
 
+    /**
+     * 启动当前组件并准备其运行资源。
+     *
+     * <p>Quarkus 实现调用 <code>view.getName()</code>。</p>
+     */
     @Override
     public void start() {
         if (!running && scheduler != null && views != null) {
@@ -96,6 +122,11 @@ public class QuarkusProjectionViewManager implements ViewManager {
         }
     }
 
+    /**
+     * 停止当前组件并清理已登记的运行资源。
+     *
+     * <p>Quarkus 实现调用 <code>handles.values()</code>。</p>
+     */
     @Override
     public void stop() {
         if (running) {
@@ -105,11 +136,21 @@ public class QuarkusProjectionViewManager implements ViewManager {
         }
     }
 
+    /**
+     * 检查当前组件是否仍处于运行状态。
+     *
+     * @return 实际返回<code>running</code>，作为本次判断结果
+     */
     @Override
     public boolean isRunning() {
         return running;
     }
 
+    /**
+     * 请求立即执行指定投影视图的一轮更新。
+     *
+     * <p>Quarkus 实现调用 <code>((ProjectionRunner&lt;Object&gt;)runner).runOnce((ProjectionView&lt;Object&gt;)view)</code>。</p>
+     */
     @Override
     @SuppressWarnings("unchecked")
     public void triggerOnce() {
@@ -120,6 +161,11 @@ public class QuarkusProjectionViewManager implements ViewManager {
         }
     }
 
+    /**
+     * 将本次调度触发的视图交给投影运行器执行。
+     *
+     * @param view 本次要执行投影更新的视图
+     */
     @SuppressWarnings("unchecked")
     private void runView(ProjectionView<?> view) {
         ((ProjectionRunner<Object>) runner).runOnce((ProjectionView<Object>) view);

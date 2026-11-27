@@ -80,9 +80,10 @@ public abstract class SpringDomainEvent<T> extends ApplicationEvent {
     }
 
     /**
-     * 获取事件源
+     * \u83b7\u53d6\u4e8b\u4ef6\u6e90
+     * @return \u4e8b\u4ef6\u5185\u5bb9
      *
-     * @return 事件内容
+     * @param <S> \u4e8b\u4ef6\u5185\u5bb9\u7c7b\u578b
      */
     @Deprecated
     @SuppressWarnings("unchecked")
@@ -100,13 +101,21 @@ public abstract class SpringDomainEvent<T> extends ApplicationEvent {
         return (T) super.getSource();
     }
 
+    /**
+     * \u83b7\u53d6\u4e8b\u4ef6\u5904\u7406\u7ed3\u679c\u3002
+     * @param <R> \u7ed3\u679c\u7c7b\u578b
+     * @return \u5df2\u8bb0\u5f55\u7684\u5904\u7406\u7ed3\u679c
+     */
     @SuppressWarnings("unchecked")
     public <R> R result() {
         return (R) this.result;
     }
 
     /**
-     * 立即发布事件
+     * \u7acb\u5373\u53d1\u5e03\u4e8b\u4ef6
+     *
+     * @param <R> \u7ed3\u679c\u7c7b\u578b
+     * @return \u53d1\u5e03\u540e\u7684\u5904\u7406\u7ed3\u679c
      */
     @SuppressWarnings("unchecked")
     public <R> R publish() {

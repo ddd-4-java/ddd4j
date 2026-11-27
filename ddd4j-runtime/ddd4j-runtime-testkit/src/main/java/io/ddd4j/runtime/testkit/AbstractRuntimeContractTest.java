@@ -37,18 +37,21 @@ public abstract class AbstractRuntimeContractTest {
      */
     protected abstract RuntimeContract createRuntime();
 
+    /** \u6bcf\u4e2a\u5951\u7ea6\u6d4b\u8bd5\u5f00\u59cb\u524d\u6e05\u7a7a\u7ebf\u7a0b\u4e0a\u4e0b\u6587\u548c\u5168\u5c40\u670d\u52a1\u6ce8\u518c\u3002 */
     @BeforeEach
     void cleanContexts() {
         ThreadContext.clear();
         BaseContext.clear();
     }
 
+    /** \u5728\u5951\u7ea6\u6d4b\u8bd5\u7ed3\u675f\u540e\u6e05\u7a7a\u7ebf\u7a0b\u4e0a\u4e0b\u6587\u548c\u5168\u5c40\u670d\u52a1\u6ce8\u518c\u3002 */
     @AfterEach
     void clearContexts() {
         ThreadContext.clear();
         BaseContext.clear();
     }
 
+    /** \u9a8c\u8bc1\u8fd0\u884c\u65f6\u91cd\u590d\u542f\u52a8\u65f6\u4fdd\u6301\u6b63\u5e38\u5c31\u7eea\uff0c\u5173\u95ed\u65f6\u91ca\u653e\u767b\u8bb0\u7684\u670d\u52a1\u3002 */
     @Test
     void shouldRegisterServicesAndCleanThemOnClose() {
         RuntimeContract runtime = createRuntime();
@@ -69,6 +72,12 @@ public abstract class AbstractRuntimeContractTest {
         }
     }
 
+    /**
+     * \u7ed1\u5b9a\u540c\u7c7b\u578b\u7684\u8bf7\u6c42\u7ea7\u4ee3\u7406\uff0c\u5e76\u68c0\u67e5\u8bf7\u6c42\u8bfb\u53d6\u65f6\u4f18\u5148\u89e3\u6790\u5b83\u3002
+     * @param <T> \u670d\u52a1\u63a5\u53e3\u7c7b\u578b
+     * @param key \u670d\u52a1\u6ce8\u518c\u952e
+     * @param type \u7528\u4e8e\u6784\u9020\u8bf7\u6c42\u7ea7\u4ee3\u7406\u7684\u670d\u52a1\u63a5\u53e3
+     */
     private <T> void assertRequestOverride(String key, Class<T> type) {
         T requestScoped = type.cast(Proxy.newProxyInstance(type.getClassLoader(),
                 new Class<?>[]{type}, (proxy, method, args) -> null));

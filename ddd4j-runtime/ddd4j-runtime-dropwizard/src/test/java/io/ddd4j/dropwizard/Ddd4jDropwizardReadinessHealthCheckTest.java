@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class Ddd4jDropwizardReadinessHealthCheckTest {
 
+    /** \u9a8c\u8bc1<code>ready.isHealthy()</code>\u4e3a\u771f\uff0c<code>unavailable.isHealthy()</code>\u4e3a\u5047\u3002 */
     @Test
     void shouldMapReadyAndUnavailableReportsWithoutExposingFailureDetails() {
         RuntimeReadinessRegistry registry = new RuntimeReadinessRegistry()

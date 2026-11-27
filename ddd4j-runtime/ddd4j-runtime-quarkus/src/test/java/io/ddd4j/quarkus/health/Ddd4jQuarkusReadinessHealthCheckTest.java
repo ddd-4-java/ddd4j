@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class Ddd4jQuarkusReadinessHealthCheckTest {
 
+    /** \u9a8c\u8bc1<code>ready.getStatus()</code> \u7b49\u4e8e <code>HealthCheckResponse.Status.UP</code>\uff0c<code>ready.getData().orElseThrow().get("checks")</code> \u7b49\u4e8e <code>1L</code>\uff0c<code>unavailable.getData().orElseThrow().get("checks")</code> \u7b49\u4e8e <code>2L</code>\u3002 */
     @Test
     void shouldMapReadyAndUnavailableReportsWithoutExposingFailureDetails() {
         RuntimeReadinessRegistry registry = new RuntimeReadinessRegistry()

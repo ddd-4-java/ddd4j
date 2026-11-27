@@ -62,9 +62,12 @@ public class SaTokenSubject implements Subject {
     public static final String PRINCIPAL_KEY = "principal";
 
     /**
-     * 框架无关枚举映射：{@link AuthLogoutMode} -> sa-token 的 {@code SaLogoutMode}。
-     * <p>sa-token 1.42 并不暴露 {@code ReplacedLoginExitMode}/{@code ReplacedRange} 枚举类，
-     * 这两个字段我们仍写入 {@link AuthSessionConfig}，但具体生效需要在更新版 sa-token 下补全。
+     * \u6846\u67b6\u65e0\u5173\u679a\u4e3e\u6620\u5c04\uff1a{@link AuthLogoutMode} -> sa-token \u7684 {@code SaLogoutMode}\u3002
+     *  <p>sa-token 1.42 \u5e76\u4e0d\u66b4\u9732 {@code ReplacedLoginExitMode}/{@code ReplacedRange} \u679a\u4e3e\u7c7b\uff0c
+     *  \u8fd9\u4e24\u4e2a\u5b57\u6bb5\u6211\u4eec\u4ecd\u5199\u5165 {@link AuthSessionConfig}\uff0c\u4f46\u5177\u4f53\u751f\u6548\u9700\u8981\u5728\u66f4\u65b0\u7248 sa-token \u4e0b\u8865\u5168\u3002
+     *
+     * @param mode DDD4J \u6ce8\u9500\u6a21\u5f0f
+     * @return \u5bf9\u5e94\u7684 Sa-Token \u6ce8\u9500\u6a21\u5f0f
      */
     private static cn.dev33.satoken.stp.parameter.enums.SaLogoutMode toSaLogoutMode(AuthLogoutMode mode) {
         if (Objects.isNull(mode)) {
@@ -82,6 +85,11 @@ public class SaTokenSubject implements Subject {
 
     // ==================== 身份与会话读取 ====================
 
+    /**
+     * \u628a\u660e\u786e\u8bbe\u7f6e\u7684 DDD4J Cookie \u5c5e\u6027\u8f6c\u6362\u4e3a Sa-Token \u539f\u751f\u914d\u7f6e\u3002
+     * @param auth DDD4J \u767b\u5f55\u4f7f\u7528\u7684 Cookie \u914d\u7f6e
+     * @return \u76f4\u63a5\u7528\u4e8e\u539f\u751f\u767b\u5f55\u7684 Cookie \u914d\u7f6e
+     */
     private static SaCookieConfig toSaCookieConfig(AuthCookieConfig auth) {
         SaCookieConfig sa = new SaCookieConfig();
         if (Objects.nonNull(auth.getDomain())) {
@@ -115,6 +123,14 @@ public class SaTokenSubject implements Subject {
         return SaManager.getStpLogic(realm, true);
     }
 
+    /**
+     * 读取当前会话的认证主体。
+     *
+     * <p>Sa-Token 实现调用 <code>StpUtil.isLogin()</code>。</p>
+     *
+     * @param <T> AuthPrincipal 子类型
+     * @return 当前会话绑定的主体
+     */
     @Override
     public <T extends AuthPrincipal> T getPrincipal() {
         if (!StpUtil.isLogin()) {
@@ -129,6 +145,15 @@ public class SaTokenSubject implements Subject {
 
     // ==================== 会话生命周期（委托 StpUtil）====================
 
+    /**
+     * 查询指定登录标识关联的认证主体。
+     *
+     * <p>Sa-Token 实现调用 <code>StpUtil.getSessionByLoginId(loginId, false)</code>。</p>
+     *
+     * @param <T> AuthPrincipal 子类型
+     * @param loginId 登录账号 ID
+     * @return 给定登录标识关联的主体
+     */
     @Override
     public <T extends AuthPrincipal> T getPrincipalByLoginId(Object loginId) {
         SaSession session = StpUtil.getSessionByLoginId(loginId, false);
@@ -138,11 +163,28 @@ public class SaTokenSubject implements Subject {
         return (T) session.get(PRINCIPAL_KEY);
     }
 
+    /**
+     * 查询指定令牌关联的认证主体。
+     *
+     * <p>Sa-Token 实现调用 <code>verify(tokenValue)</code>。</p>
+     *
+     * @param <T> AuthPrincipal 子类型
+     * @param tokenValue 会话凭证（Token / SessionId）
+     * @return 给定令牌关联的主体
+     */
     @Override
     public <T extends AuthPrincipal> T getPrincipalByToken(String tokenValue) {
         return verify(tokenValue);
     }
 
+    /**
+     * 以传入的凭据启动认证会话。
+     *
+     * <p>Sa-Token 实现调用 <code>stpLogic(request.getRealm())</code>。</p>
+     *
+     * @param request 登录请求（loginId + 密码 + 扩展信息 + 有效期）
+     * @return 实际返回<code>token</code>
+     */
     @Override
     public String login(AuthRequest request) {
         StpLogic logic = stpLogic(request.getRealm());
@@ -204,27 +246,62 @@ public class SaTokenSubject implements Subject {
         return token;
     }
 
+    /**
+     * 结束由当前调用指定的认证会话。
+     *
+     * <p>Sa-Token 实现调用 <code>StpUtil.stpLogic.logout()</code>。</p>
+     */
     @Override
     public void logout() {
         StpUtil.stpLogic.logout();
     }
 
+    /**
+     * 结束由当前调用指定的认证会话。
+     *
+     * <p>Sa-Token 实现调用 <code>StpUtil.stpLogic.logout(loginId)</code>。</p>
+     *
+     * @param loginId 账号 ID
+     */
     @Override
     public void logout(Object loginId) {
         StpUtil.stpLogic.logout(loginId);
     }
 
+    /**
+     * 强制结束指定身份关联的登录会话。
+     *
+     * <p>Sa-Token 实现调用 <code>StpUtil.stpLogic.kickout(loginId)</code>。</p>
+     *
+     * @param loginId 账号 ID
+     */
     @Override
     public void kickout(Object loginId) {
         StpUtil.stpLogic.kickout(loginId);
     }
 
+    /**
+     * 刷新当前实现所持有的数据或状态。
+     *
+     * <p>Sa-Token 实现调用 <code>StpUtil.stpLogic.renewTimeout(StpUtil.stpLogic.getConfigOrGlobal().getTimeout())</code>。</p>
+     *
+     * @return 实际返回<code>StpUtil.stpLogic.getTokenValue()</code>
+     */
     @Override
     public String refresh() {
         StpUtil.stpLogic.renewTimeout(StpUtil.stpLogic.getConfigOrGlobal().getTimeout());
         return StpUtil.stpLogic.getTokenValue();
     }
 
+    /**
+     * 校验当前调用传入的数据或凭据。
+     *
+     * <p>Sa-Token 实现调用 <code>resolveVerifiedLoginId(token)</code>。</p>
+     *
+     * @param <T> AuthPrincipal 子类型
+     * @param token 会话凭证
+     * @return 根据执行路径返回<code>null</code>、<code>getPrincipalByLoginId(loginId)</code>
+     */
     @Override
     public <T extends AuthPrincipal> T verify(String token) {
         try {
@@ -278,6 +355,12 @@ public class SaTokenSubject implements Subject {
         return logic.getLoginIdByToken(token);
     }
 
+    /**
+     * \u7528\u5f53\u524d\u767b\u5f55\u903b\u8f91\u68c0\u67e5 JWT \u540e\u8bfb\u53d6\u767b\u5f55\u6807\u8bc6\u3002
+     * @param token \u5f85\u68c0\u67e5\u6216\u8bfb\u53d6\u4e0a\u4e0b\u6587\u7684\u8bbf\u95ee\u4ee4\u724c
+     * @param logic \u5bf9\u5e94\u8d26\u53f7\u57df\u7684\u539f\u751f\u767b\u5f55\u903b\u8f91
+     * @return \u6709\u6548\u4ee4\u724c\u4e2d\u7684\u767b\u5f55\u6807\u8bc6\uff0c\u65e0\u6548\u65f6\u4e3a\u7a7a
+     */
     private Object jwtLoginId(String token, StpLogicJwtForSimple logic) {
         try {
             if (logic instanceof Ddd4jStpLogicJwtForSimple) {
@@ -296,6 +379,14 @@ public class SaTokenSubject implements Subject {
 
     // ==================== 权限与角色（委托 SubjectDataProvider 数据源 SPI）====================
 
+    /**
+     * 检查身份是否拥有指定权限。
+     *
+     * <p>Sa-Token 实现调用 <code>getPrincipal()</code>。</p>
+     *
+     * @param permission 权限标识（如 {@code "order:create"}）
+     * @return 请求的权限被授予时为真
+     */
     @Override
     public boolean isPermitted(String permission) {
         AuthPrincipal principal = getPrincipal();
@@ -306,6 +397,15 @@ public class SaTokenSubject implements Subject {
         return SubjectKit.getStrategy().hasElement.apply(perms, permission);
     }
 
+    /**
+     * 检查身份是否拥有指定权限。
+     *
+     * <p>Sa-Token 实现调用 <code>getPrincipalByLoginId(loginId)</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @param permission 权限标识
+     * @return 请求的权限被授予时为真
+     */
     @Override
     public boolean isPermitted(Object loginId, String permission) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
@@ -316,6 +416,14 @@ public class SaTokenSubject implements Subject {
         return SubjectKit.getStrategy().hasElement.apply(perms, permission);
     }
 
+    /**
+     * 检查身份是否拥有指定权限。
+     *
+     * <p>Sa-Token 实现调用 <code>getPrincipal()</code>。</p>
+     *
+     * @param permissions 权限标识列表
+     * @return 请求的权限被授予时为真
+     */
     @Override
     public boolean[] isPermitted(String... permissions) {
         AuthPrincipal principal = getPrincipal();
@@ -330,6 +438,15 @@ public class SaTokenSubject implements Subject {
         return result;
     }
 
+    /**
+     * 检查身份是否拥有指定权限。
+     *
+     * <p>Sa-Token 实现调用 <code>getPrincipalByLoginId(loginId)</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @param permissions 权限标识列表
+     * @return 请求的权限被授予时为真
+     */
     @Override
     public boolean[] isPermitted(Object loginId, String... permissions) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
@@ -344,6 +461,14 @@ public class SaTokenSubject implements Subject {
         return result;
     }
 
+    /**
+     * 检查身份是否具有给定权限中的任意一项。
+     *
+     * <p>Sa-Token 实现调用 <code>getPrincipal()</code>。</p>
+     *
+     * @param permissions 权限标识列表
+     * @return 至少有一项请求权限被授予时为真
+     */
     @Override
     public boolean isPermittedAny(String... permissions) {
         AuthPrincipal principal = getPrincipal();
@@ -359,6 +484,15 @@ public class SaTokenSubject implements Subject {
         return false;
     }
 
+    /**
+     * 检查身份是否具有给定权限中的任意一项。
+     *
+     * <p>Sa-Token 实现调用 <code>getPrincipalByLoginId(loginId)</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @param permissions 权限标识列表
+     * @return 至少有一项请求权限被授予时为真
+     */
     @Override
     public boolean isPermittedAny(Object loginId, String... permissions) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
@@ -374,6 +508,14 @@ public class SaTokenSubject implements Subject {
         return false;
     }
 
+    /**
+     * 检查身份是否具有全部给定权限。
+     *
+     * <p>Sa-Token 实现调用 <code>getPrincipal()</code>。</p>
+     *
+     * @param permissions 权限标识列表
+     * @return 所有请求权限都被授予时为真
+     */
     @Override
     public boolean isPermittedAll(String... permissions) {
         AuthPrincipal principal = getPrincipal();
@@ -389,6 +531,15 @@ public class SaTokenSubject implements Subject {
         return true;
     }
 
+    /**
+     * 检查身份是否具有全部给定权限。
+     *
+     * <p>Sa-Token 实现调用 <code>getPrincipalByLoginId(loginId)</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @param permissions 权限标识列表
+     * @return 所有请求权限都被授予时为真
+     */
     @Override
     public boolean isPermittedAll(Object loginId, String... permissions) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
@@ -404,6 +555,14 @@ public class SaTokenSubject implements Subject {
         return true;
     }
 
+    /**
+     * 检查身份是否具有指定角色。
+     *
+     * <p>Sa-Token 实现调用 <code>getPrincipal()</code>。</p>
+     *
+     * @param roleIdentifier 角色标识（角色 ID 或角色名）
+     * @return 具有指定角色时为真
+     */
     @Override
     public boolean hasRole(String roleIdentifier) {
         AuthPrincipal principal = getPrincipal();
@@ -414,6 +573,15 @@ public class SaTokenSubject implements Subject {
         return SubjectKit.getStrategy().hasElement.apply(roles, roleIdentifier);
     }
 
+    /**
+     * 检查身份是否具有指定角色。
+     *
+     * <p>Sa-Token 实现调用 <code>getPrincipalByLoginId(loginId)</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @param roleIdentifier 角色标识
+     * @return 具有指定角色时为真
+     */
     @Override
     public boolean hasRole(Object loginId, String roleIdentifier) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
@@ -424,6 +592,14 @@ public class SaTokenSubject implements Subject {
         return SubjectKit.getStrategy().hasElement.apply(roles, roleIdentifier);
     }
 
+    /**
+     * 按输入顺序逐项判断身份的角色归属。
+     *
+     * <p>Sa-Token 实现调用 <code>getPrincipal()</code>。</p>
+     *
+     * @param roleIdentifiers 角色标识列表
+     * @return 实际返回<code>result</code>
+     */
     @Override
     public boolean[] hasRoles(String... roleIdentifiers) {
         AuthPrincipal principal = getPrincipal();
@@ -438,6 +614,15 @@ public class SaTokenSubject implements Subject {
         return result;
     }
 
+    /**
+     * 按输入顺序逐项判断身份的角色归属。
+     *
+     * <p>Sa-Token 实现调用 <code>getPrincipalByLoginId(loginId)</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @param roleIdentifiers 角色标识列表
+     * @return 实际返回<code>result</code>
+     */
     @Override
     public boolean[] hasRoles(Object loginId, String... roleIdentifiers) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
@@ -452,6 +637,14 @@ public class SaTokenSubject implements Subject {
         return result;
     }
 
+    /**
+     * 检查身份是否具有给定角色中的任意一个。
+     *
+     * <p>Sa-Token 实现调用 <code>getPrincipal()</code>。</p>
+     *
+     * @param roleIdentifiers 角色标识列表
+     * @return 至少具有一个指定角色时为真
+     */
     @Override
     public boolean hasAnyRole(String... roleIdentifiers) {
         AuthPrincipal principal = getPrincipal();
@@ -467,6 +660,15 @@ public class SaTokenSubject implements Subject {
         return false;
     }
 
+    /**
+     * 检查身份是否具有给定角色中的任意一个。
+     *
+     * <p>Sa-Token 实现调用 <code>getPrincipalByLoginId(loginId)</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @param roleIdentifiers 角色标识列表
+     * @return 至少具有一个指定角色时为真
+     */
     @Override
     public boolean hasAnyRole(Object loginId, String... roleIdentifiers) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
@@ -482,6 +684,14 @@ public class SaTokenSubject implements Subject {
         return false;
     }
 
+    /**
+     * 检查身份是否具有全部给定角色。
+     *
+     * <p>Sa-Token 实现调用 <code>getPrincipal()</code>。</p>
+     *
+     * @param roleIdentifiers 角色标识列表
+     * @return 具有全部指定角色时为真
+     */
     @Override
     public boolean hasAllRole(String... roleIdentifiers) {
         AuthPrincipal principal = getPrincipal();
@@ -497,6 +707,15 @@ public class SaTokenSubject implements Subject {
         return true;
     }
 
+    /**
+     * 检查身份是否具有全部给定角色。
+     *
+     * <p>Sa-Token 实现调用 <code>getPrincipalByLoginId(loginId)</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @param roleIdentifiers 角色标识列表
+     * @return 具有全部指定角色时为真
+     */
     @Override
     public boolean hasAllRole(Object loginId, String... roleIdentifiers) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
@@ -514,54 +733,128 @@ public class SaTokenSubject implements Subject {
 
     // ==================== 状态判断 ====================
 
+    /**
+     * 检查当前会话是否已经认证。
+     *
+     * <p>Sa-Token 实现调用 <code>StpUtil.isLogin()</code>。</p>
+     *
+     * @return 当前会话通过身份认证时为真
+     */
     @Override
     public boolean isAuthenticated() {
         return StpUtil.isLogin();
     }
 
+    /**
+     * 检查当前会话是否已经认证。
+     *
+     * <p>Sa-Token 实现调用 <code>StpUtil.isLogin(loginId)</code>。</p>
+     *
+     * @param loginId 用户账号 ID
+     * @return 当前会话通过身份认证时为真
+     */
     @Override
     public boolean isAuthenticated(Object loginId) {
         return StpUtil.isLogin(loginId);
     }
 
+    /**
+     * 判断当前身份是否由记住登录状态恢复。
+     *
+     * @return 此实现返回<code>false</code>
+     */
     @Override
     public boolean isRemembered() {
         return false;
     }
 
+    /**
+     * 检查当前认证实现是否将给定设备识别为受信设备。
+     *
+     * <p>Sa-Token 实现调用 <code>StpUtil.isTrustDeviceId(StpKit.getUserIdAsLong(), deviceId)</code>。</p>
+     *
+     * @param deviceId 设备标识
+     * @return 实际返回<code>StpUtil.isTrustDeviceId(StpKit.getUserIdAsLong(), deviceId)</code>
+     */
     @Override
     public boolean isTrustDeviceId(String deviceId) {
         return StpUtil.isTrustDeviceId(StpKit.getUserIdAsLong(), deviceId);
     }
 
+    /**
+     * 检查当前认证实现是否将给定设备识别为受信设备。
+     *
+     * <p>Sa-Token 实现调用 <code>StpUtil.isTrustDeviceId(userId, deviceId)</code>。</p>
+     *
+     * @param userId 用户 ID
+     * @param deviceId 设备标识
+     * @return 实际返回<code>StpUtil.isTrustDeviceId(userId, deviceId)</code>
+     */
     @Override
     public boolean isTrustDeviceId(Object userId, String deviceId) {
         return StpUtil.isTrustDeviceId(userId, deviceId);
     }
 
+    /**
+     * 返回当前会话关联的登录标识。
+     *
+     * <p>Sa-Token 实现调用 <code>StpUtil.getLoginId()</code>。</p>
+     *
+     * @return 实际返回<code>StpUtil.getLoginId()</code>
+     */
     @Override
     public Object getLoginId() {
         return StpUtil.getLoginId();
     }
 
+    /**
+     * 读取认证主体的用户标识。
+     *
+     * <p>Sa-Token 实现调用 <code>getPrincipal()</code>。</p>
+     *
+     * @return 实际返回<code>Objects.nonNull(principal) ? principal.getUserId() : null</code>
+     */
     @Override
     public Object getUserId() {
         AuthPrincipal principal = getPrincipal();
         return Objects.nonNull(principal) ? principal.getUserId() : null;
     }
 
+    /**
+     * 读取认证主体的组织标识。
+     *
+     * <p>Sa-Token 实现调用 <code>getPrincipal()</code>。</p>
+     *
+     * @return 实际返回<code>Objects.nonNull(principal) ? principal.getOrgId() : null</code>
+     */
     @Override
     public Object getOrgId() {
         AuthPrincipal principal = getPrincipal();
         return Objects.nonNull(principal) ? principal.getOrgId() : null;
     }
 
+    /**
+     * 读取认证主体的角色标识。
+     *
+     * <p>Sa-Token 实现调用 <code>getPrincipal()</code>。</p>
+     *
+     * @return 实际返回<code>Objects.nonNull(principal) ? principal.getRoleId() : null</code>
+     */
     @Override
     public Object getRoleId() {
         AuthPrincipal principal = getPrincipal();
         return Objects.nonNull(principal) ? principal.getRoleId() : null;
     }
 
+    /**
+     * 从指定 Token 的会话中获取扩展属性。
+     *
+     * <p>Sa-Token 实现调用 <code>StpUtil.getExtra(tokenValue, key)</code>。</p>
+     *
+     * @param tokenValue 会话凭证
+     * @param key 扩展属性键
+     * @return 实际返回<code>StpUtil.getExtra(tokenValue, key)</code>
+     */
     @Override
     public Object getExtra(String tokenValue, String key) {
         return StpUtil.getExtra(tokenValue, key);
@@ -569,16 +862,39 @@ public class SaTokenSubject implements Subject {
 
     // ==================== 封禁（委托 Sa-Token）====================
 
+    /**
+     * 封禁账号，被封禁的账号在封禁期内无法登录。
+     *
+     * <p>Sa-Token 实现调用 <code>StpUtil.stpLogic.disable(loginId, timeout)</code>。</p>
+     *
+     * @param loginId 账号 ID
+     * @param timeout 封禁时长（秒），{@code -1} 代表永久封禁
+     */
     @Override
     public void disable(Object loginId, long timeout) {
         StpUtil.stpLogic.disable(loginId, timeout);
     }
 
+    /**
+     * 判断当前限制是否禁止指定身份执行相应操作。
+     *
+     * <p>Sa-Token 实现调用 <code>StpUtil.stpLogic.isDisable(loginId)</code>。</p>
+     *
+     * @param loginId 账号 ID
+     * @return 实际返回<code>StpUtil.stpLogic.isDisable(loginId)</code>
+     */
     @Override
     public boolean isDisabled(Object loginId) {
         return StpUtil.stpLogic.isDisable(loginId);
     }
 
+    /**
+     * 解除指定身份的禁用限制。
+     *
+     * <p>Sa-Token 实现调用 <code>StpUtil.stpLogic.untieDisable(loginId)</code>。</p>
+     *
+     * @param loginId 账号 ID
+     */
     @Override
     public void untieDisable(Object loginId) {
         StpUtil.stpLogic.untieDisable(loginId);

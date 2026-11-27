@@ -30,6 +30,7 @@ import static org.mockito.Mockito.when;
  */
 class OnsAcknowledgmentContractTest {
 
+    /** \u9a8c\u8bc1<code>acknowledgment.action()</code> \u7b49\u4e8e <code>com.aliyun.openservices.ons.api.Action.ReconsumeLater</code>\uff0c<code>acknowledgment.isAcknowledged()</code>\u4e3a\u771f\u3002 */
     @Test
     void shouldMapNackToProtocolRetryAction() {
         Message message = mock(Message.class);

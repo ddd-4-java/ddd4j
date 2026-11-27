@@ -24,17 +24,37 @@ import java.util.Objects;
  */
 public class DefaultProjectionService implements ProjectionService {
 
+    /** \u8bfb\u53d6\u5e76\u4fdd\u5b58\u6295\u5f71\u6d88\u8d39\u4f4d\u7f6e\u7684\u4ed3\u50a8\u3002 */
     private final ProjectionPositionRepository repository;
 
+    /**
+     * \u4f7f\u7528\u6295\u5f71\u4f4d\u7f6e\u4ed3\u50a8\u521b\u5efa\u670d\u52a1\u3002
+     * @param repository \u6295\u5f71\u4f4d\u7f6e\u4ed3\u50a8
+     */
     public DefaultProjectionService(ProjectionPositionRepository repository) {
         this.repository = Objects.requireNonNull(repository, "repository must not be null");
     }
 
+    /**
+     * 重置指定投影所用的事件读取位置。
+     *
+     * <p>此实现调用 <code>repository.resetToZero(streamId)</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     */
     @Override
     public void resetProjectionPosition(String streamId) {
         repository.resetToZero(streamId);
     }
 
+    /**
+     * 查询指定投影所用的事件读取位置。
+     *
+     * <p>此实现调用 <code>repository.findByStreamId(streamId)</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     * @return 下一个待处理事件号，不存在时返回 0
+     */
     @Override
     public long readProjectionPosition(String streamId) {
         return repository.findByStreamId(streamId)
@@ -42,6 +62,15 @@ public class DefaultProjectionService implements ProjectionService {
                 .orElse(0L);
     }
 
+    /**
+     * 将投影已处理的位置更新为给定检查点。
+     *
+     * <p>此实现调用 <code>repository.findByStreamId(streamId)</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     * @param nextEventNumber 下一个待处理事件号
+     * @return 实际返回<code>repository.save(current.withNextEventNumber(nextEventNumber))</code>
+     */
     @Override
     public ProjectionPosition updateProjectionPosition(String streamId, long nextEventNumber) {
         ProjectionPosition current = repository.findByStreamId(streamId)

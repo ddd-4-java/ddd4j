@@ -30,5 +30,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface OrderBy {
+    /**
+     * \u9ed8\u8ba4\u6392\u5e8f\u5b57\u6bb5\u3002
+     * @return \u9ed8\u8ba4\u6392\u5e8f\u5b57\u6bb5
+     */
     String[] value() default "";
 }

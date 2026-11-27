@@ -50,26 +50,51 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class EventStoreAppendCapacityBaselineIT {
 
+    /** \u6d4b\u8bd5\u4e8b\u4ef6\u6d41\u4e2d\u4f7f\u7528\u7684\u805a\u5408\u7c7b\u578b\u540d\u79f0\u3002 */
     private static final String AGGREGATE_TYPE = "BaselineOrder";
+    /** \u6b63\u5f0f\u6536\u96c6\u6027\u80fd\u6d4b\u91cf\u6837\u672c\u524d\u6267\u884c\u7684\u9884\u70ed\u6b21\u6570\u3002 */
     private static final int WARMUP_OPS = 500;
+    /** \u5bb9\u91cf\u57fa\u7ebf\u7edf\u8ba1\u4e2d\u9700\u8981\u4fdd\u7559\u7684\u6837\u672c\u6570\u91cf\u3002 */
     private static final int SAMPLES = 2_000;
+    /** \u7528\u4f8b\u5411\u8bfb\u53d6\u6216\u5199\u5165\u5165\u53e3\u63d0\u4ea4\u7684\u6279\u6b21\u5927\u5c0f\u3002 */
     private static final int BATCH_SIZE = 10;
 
+    /**
+     * \u521b\u5efa <code>new BaselineOrderId</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+     * @param value \u5f53\u524d\u7528\u4f8b\u4f20\u5165\u7684\u503c
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new BaselineOrderId(value)</code>
+     */
     private static BaselineOrderId id(String value) {
         return new BaselineOrderId(value);
     }
 
     // ========================= 测量路径 =========================
 
+    /**
+     * \u901a\u8fc7 <code>sorted[Math.max(0, Math.min(sorted.length - 1, index))]</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+     * @param sorted \u4f20\u7ed9 <code>Math.ceil()</code> \u7684 <code>long[]</code> \u8f93\u5165
+     * @param p \u4f20\u7ed9 <code>Math.ceil()</code> \u7684 <code>double</code> \u8f93\u5165
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>sorted[Math.max(0, Math.min(sorted.length - 1, index))]</code>
+     */
     private static long percentile(long[] sorted, double p) {
         int index = (int) Math.ceil(p / 100.0 * sorted.length) - 1;
         return sorted[Math.max(0, Math.min(sorted.length - 1, index))];
     }
 
+    /**
+     * \u4ee5\u57fa\u7ebf\u5e73\u5747\u8017\u65f6\u4e3a\u5206\u6bcd\u8ba1\u7b97\u542f\u7528\u80fd\u529b\u540e\u7684\u76f8\u5bf9\u5f00\u9500\u3002
+     * @param baselineMean \u672a\u5f00\u542f\u80fd\u529b\u65f6\u6d4b\u5f97\u7684\u5e73\u5747\u8017\u65f6
+     * @param enabledMean \u5f00\u542f\u80fd\u529b\u65f6\u6d4b\u5f97\u7684\u5e73\u5747\u8017\u65f6
+     * @return \u4e0e\u57fa\u7ebf\u6bd4\u8f83\u7684\u8017\u65f6\u589e\u5e45\u767e\u5206\u6bd4\uff0c\u57fa\u7ebf\u975e\u6b63\u503c\u65f6\u4e3a\u96f6
+     */
     private static double percentOverhead(double baselineMean, double enabledMean) {
         return baselineMean <= 0 ? 0 : (enabledMean - baselineMean) / baselineMean * 100.0;
     }
 
+    /**
+     * \u9a8c\u8bc1<code>metric.samples.length == SAMPLES</code>\u4e3a\u771f\u3002
+     * @throws IOException \u8bfb\u53d6\u6216\u5199\u5165\u6d4b\u8bd5\u6570\u636e\u65f6\u53d1\u751f I/O \u9519\u8bef
+     */
     @Test
     void appendCapacityBaselineShouldBeMeasuredAndRecorded() throws IOException {
         String branch = System.getProperty("ddd4j.baseline.branch");
@@ -99,8 +124,10 @@ class EventStoreAppendCapacityBaselineIT {
     }
 
     /**
-     * 单事件追加：先建流（不计入测量），再测量向<b>已存在流</b>追加 1 个事件的耗时
-     * （与仓储路径的存量流更新同一测量基准，保证对比公平）。
+     * \u5355\u4e8b\u4ef6\u8ffd\u52a0\uff1a\u5148\u5efa\u6d41\uff08\u4e0d\u8ba1\u5165\u6d4b\u91cf\uff09\uff0c\u518d\u6d4b\u91cf\u5411<b>\u5df2\u5b58\u5728\u6d41</b>\u8ffd\u52a0 1 \u4e2a\u4e8b\u4ef6\u7684\u8017\u65f6
+     *  \uff08\u4e0e\u4ed3\u50a8\u8def\u5f84\u7684\u5b58\u91cf\u6d41\u66f4\u65b0\u540c\u4e00\u6d4b\u91cf\u57fa\u51c6\uff0c\u4fdd\u8bc1\u5bf9\u6bd4\u516c\u5e73\uff09\u3002
+     *
+     * @return \u5355\u6b21\u4e8b\u4ef6\u8ffd\u52a0\u65f6\u5ef6\u7684\u7edf\u8ba1\u7ed3\u679c
      */
     private Metric appendSingle() {
         for (int i = 0; i < WARMUP_OPS; i++) {
@@ -127,7 +154,9 @@ class EventStoreAppendCapacityBaselineIT {
     }
 
     /**
-     * 批量追加：每次调用追加 10 个事件，指标为单事件摊销耗时。
+     * \u6279\u91cf\u8ffd\u52a0\uff1a\u6bcf\u6b21\u8c03\u7528\u8ffd\u52a0 10 \u4e2a\u4e8b\u4ef6\uff0c\u6307\u6807\u4e3a\u5355\u4e8b\u4ef6\u644a\u9500\u8017\u65f6\u3002
+     *
+     * @return \u6279\u91cf\u8ffd\u52a0\u7684\u5355\u4e8b\u4ef6\u644a\u9500\u65f6\u5ef6\u7edf\u8ba1
      */
     private Metric appendBatch() {
         for (int i = 0; i < WARMUP_OPS / 10; i++) {
@@ -145,7 +174,9 @@ class EventStoreAppendCapacityBaselineIT {
     }
 
     /**
-     * 能力启用路径：经 DefaultEventSourcingRepository#update 追加（含版本跟踪与未提交事件解耦）。
+     * \u80fd\u529b\u542f\u7528\u8def\u5f84\uff1a\u7ecf DefaultEventSourcingRepository#update \u8ffd\u52a0\uff08\u542b\u7248\u672c\u8ddf\u8e2a\u4e0e\u672a\u63d0\u4ea4\u4e8b\u4ef6\u89e3\u8026\uff09\u3002
+     *
+     * @return \u7ecf\u8fc7\u4ed3\u50a8\u8ffd\u52a0\u7684\u65f6\u5ef6\u7edf\u8ba1
      */
     private Metric repositoryAppend() {
         DefaultEventSourcingRepository<BaselineOrder, String> repository = new DefaultEventSourcingRepository<>(
@@ -169,6 +200,12 @@ class EventStoreAppendCapacityBaselineIT {
         return new Metric("repository.append.enabled-path", "ns/op", samples);
     }
 
+    /**
+     * \u901a\u8fc7 <code>repository.read()</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+     * @param repository \u5f53\u524d\u6d4b\u8bd5\u8bbf\u95ee\u7684\u4ed3\u50a8\u5b9e\u4f8b
+     * @param id \u5f53\u524d\u8981\u67e5\u627e\u7684\u6d4b\u8bd5\u8bb0\u5f55\u6807\u8bc6
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>repository.read(id)</code>
+     */
     private BaselineOrder loadedOrder(DefaultEventSourcingRepository<BaselineOrder, String> repository, String id) {
         BaselineOrder order = new BaselineOrder(id);
         order.create();
@@ -178,6 +215,11 @@ class EventStoreAppendCapacityBaselineIT {
 
     // ========================= 统计与渲染 =========================
 
+    /**
+     * \u8bfb\u53d6 <code>events</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
+     * @param aggregateId \u7528\u4e8e\u5b9a\u4f4d\u88ab\u6d4b\u805a\u5408\u7684\u6807\u8bc6
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>events</code>
+     */
     private List<DomainEvent<?>> batchEvents(AggregateRootId aggregateId) {
         List<DomainEvent<?>> events = new ArrayList<>(BATCH_SIZE);
         for (int i = 0; i < BATCH_SIZE; i++) {
@@ -186,12 +228,18 @@ class EventStoreAppendCapacityBaselineIT {
         return events;
     }
 
+    /**
+     * \u521b\u5efa <code>new InMemoryEventStore</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new InMemoryEventStore()</code>
+     */
     private InMemoryEventStore store() {
         return new InMemoryEventStore();
     }
 
     /**
-     * 输出到当前模块的构建产物目录，避免测量环境与噪声覆盖共享产品文档。
+     * \u8f93\u51fa\u5230\u5f53\u524d\u6a21\u5757\u7684\u6784\u5efa\u4ea7\u7269\u76ee\u5f55\uff0c\u907f\u514d\u6d4b\u91cf\u73af\u5883\u4e0e\u566a\u58f0\u8986\u76d6\u5171\u4eab\u4ea7\u54c1\u6587\u6863\u3002
+     *
+     * @return \u5f53\u524d\u6a21\u5757 target \u4e0b\u7684\u57fa\u7ebf\u62a5\u544a\u6587\u4ef6\u8def\u5f84
      */
     private Path resolveOutputPath() {
         Path moduleDir = Paths.get(System.getProperty("user.dir")).toAbsolutePath();
@@ -200,7 +248,11 @@ class EventStoreAppendCapacityBaselineIT {
     }
 
     /**
-     * 渲染 JSON 基线（指标、样本数、均值/中位数/P95/P99、环境说明、启用前对比）。
+     * \u6e32\u67d3 JSON \u57fa\u7ebf\uff08\u6307\u6807\u3001\u6837\u672c\u6570\u3001\u5747\u503c/\u4e2d\u4f4d\u6570/P95/P99\u3001\u73af\u5883\u8bf4\u660e\u3001\u542f\u7528\u524d\u5bf9\u6bd4\uff09\u3002
+     *
+     * @param metrics \u8981\u5199\u5165\u57fa\u7ebf\u62a5\u544a\u7684\u6d4b\u91cf\u7ed3\u679c
+     * @param branch \u5199\u5165\u57fa\u7ebf\u62a5\u544a\u7684\u5206\u652f\u6807\u8bc6
+     * @return \u5e26\u73af\u5883\u548c\u6d4b\u91cf\u7edf\u8ba1\u7684 JSON \u57fa\u7ebf\u6587\u672c
      */
     private String renderJson(List<Metric> metrics, String branch) {
         Metric single = metrics.get(0);
@@ -247,16 +299,29 @@ class EventStoreAppendCapacityBaselineIT {
      */
     private static final class Metric {
 
+        /** \u5f53\u524d\u6d4b\u8bd5\u6a21\u578b\u7528\u4e8e\u5c55\u793a\u548c\u65ad\u8a00\u7684\u540d\u79f0\u3002 */
         private final String name;
+        /** \u5b9a\u65f6\u8c03\u5ea6\u3001\u91cd\u8bd5\u6216\u6d4b\u8bd5\u7b49\u5f85\u4f7f\u7528\u7684\u65f6\u95f4\u5355\u4f4d\u3002 */
         private final String unit;
+        /** \u4f9b\u53c2\u6570\u5316\u6bd4\u8f83\u53ca\u56de\u5f52\u9a8c\u8bc1\u7684\u8f93\u5165\u6837\u672c\u96c6\u5408\u3002 */
         private final long[] samples;
 
+        /**
+         * \u8bbe\u7f6e <code>name</code>\u3001<code>unit</code>\u3001<code>samples</code>\uff0c\u7528\u4e8e\u6784\u9020 <code>Metric</code> \u6d4b\u8bd5\u5b9e\u4f8b\u3002
+         * @param name \u5f53\u524d\u6d4b\u8bd5\u6307\u5b9a\u7684\u5bf9\u8c61\u6216\u5c5e\u6027\u540d\u79f0
+         * @param unit \u65f6\u957f\u53c2\u6570\u6240\u4f7f\u7528\u7684\u65f6\u95f4\u5355\u4f4d
+         * @param samples \u7528\u4e8e\u521d\u59cb\u5316 <code>Metric</code> \u7684 <code>long[]</code> \u503c
+         */
         private Metric(String name, String unit, long[] samples) {
             this.name = Objects.requireNonNull(name, "name must not be null");
             this.unit = Objects.requireNonNull(unit, "unit must not be null");
             this.samples = Objects.requireNonNull(samples, "samples must not be null");
         }
 
+        /**
+         * \u901a\u8fc7 <code>(double)total / samples.length</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>(double)total / samples.length</code>
+         */
         private double mean() {
             long total = 0;
             for (long sample : samples) {
@@ -265,6 +330,11 @@ class EventStoreAppendCapacityBaselineIT {
             return (double) total / samples.length;
         }
 
+        /**
+         * \u901a\u8fc7 <code>json.toString()</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+         * @param comma \u4f20\u7ed9 <code>json.append()</code> \u7684 <code>boolean</code> \u8f93\u5165
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>json.toString()</code>
+         */
         private String toJson(boolean comma) {
             long[] sorted = samples.clone();
             Arrays.sort(sorted);
@@ -291,33 +361,67 @@ class EventStoreAppendCapacityBaselineIT {
      */
     static final class BaselineOrderId implements AggregateRootId, Serializable {
 
+        /** \u6d4b\u8bd5\u805a\u5408\u6ce8\u518c\u548c\u53cd\u5e8f\u5217\u5316\u6240\u7528\u7684\u5b9e\u4f53\u7c7b\u578b\u6807\u8bc6\u3002 */
         private static final EntityType TYPE = new StringEntityType(AGGREGATE_TYPE);
+        /** \u7ec4\u6210\u6d4b\u8bd5\u6807\u8bc6\u7684\u539f\u59cb\u503c\u3002 */
         private final String value;
 
+        /**
+         * \u8bbe\u7f6e <code>value</code>\uff0c\u7528\u4e8e\u6784\u9020 <code>BaselineOrderId</code> \u6d4b\u8bd5\u5b9e\u4f8b\u3002
+         * @param value \u7ec4\u6210\u6d4b\u8bd5\u6807\u8bc6\u7684\u539f\u59cb\u503c
+         */
         BaselineOrderId(String value) {
             this.value = value;
         }
 
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 实际返回<code>TYPE</code>，供调用方取得当前值
+         */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 实际返回<code>value</code>，供调用方取得当前值
+         */
         @Override
         public String asString() {
             return value;
         }
 
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * <p>测试夹具会调用 <code>TYPE.asString()</code>。</p>
+         *
+         * @return 实际返回<code>TYPE.asString() + ":" + value</code>
+         */
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
         }
 
+        /**
+         * 比较两个对象的值是否相等。
+         *
+         * @param o 用来比较的另一个对象，允许为空
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object o) {
             return this == o || (o instanceof BaselineOrderId && value.equals(((BaselineOrderId) o).value));
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             return value.hashCode();
@@ -329,10 +433,15 @@ class EventStoreAppendCapacityBaselineIT {
      */
     public static final class BaselineEvent extends DomainEvent<BaselineOrderId> {
 
+        /** \u4f7f\u7528 <code>super()</code> \u521d\u59cb\u5316 <code>BaselineEvent</code> \u6d4b\u8bd5\u5939\u5177\u3002 */
         public BaselineEvent() {
             super();
         }
 
+        /**
+         * \u4f7f\u7528 <code>super()</code> \u521d\u59cb\u5316 <code>BaselineEvent</code> \u6d4b\u8bd5\u5939\u5177\u3002
+         * @param id \u5f53\u524d\u8981\u67e5\u627e\u7684\u6d4b\u8bd5\u8bb0\u5f55\u6807\u8bc6
+         */
         BaselineEvent(AggregateRootId id) {
             super(new EntityIdPath(id));
         }
@@ -343,28 +452,44 @@ class EventStoreAppendCapacityBaselineIT {
      */
     static final class BaselineOrder extends AggregateRoot<String> {
 
+        /** \u6807\u8bc6\u5f53\u524d\u6d4b\u8bd5\u5bf9\u8c61\u7684\u4e3b\u952e\u6216\u4e8b\u4ef6\u6807\u8bc6\u3002 */
         private String id;
 
+        /** \u521b\u5efa\u5b57\u6bb5\u4f7f\u7528\u9ed8\u8ba4\u521d\u59cb\u503c\u7684 <code>BaselineOrder</code> \u6d4b\u8bd5\u5bf9\u8c61\u3002 */
         public BaselineOrder() {
         }
 
+        /**
+         * \u8bbe\u7f6e <code>id</code>\uff0c\u7528\u4e8e\u6784\u9020 <code>BaselineOrder</code> \u6d4b\u8bd5\u5b9e\u4f8b\u3002
+         * @param id \u6807\u8bc6\u5f53\u524d\u6d4b\u8bd5\u5bf9\u8c61\u7684\u4e3b\u952e\u6216\u4e8b\u4ef6\u6807\u8bc6
+         */
         BaselineOrder(String id) {
             this.id = id;
         }
 
+        /**
+         * \u8bfb\u53d6<code>id</code> \u5b57\u6bb5\u3002
+         * @return <code>id</code> \u5b57\u6bb5
+         */
         @Override
         public String id() {
             return id;
         }
 
+        /** \u8c03\u7528 <code>apply()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002 */
         void create() {
             apply(new BaselineEvent(new BaselineOrderId(id)));
         }
 
+        /** \u8c03\u7528 <code>apply()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002 */
         void change() {
             apply(new BaselineEvent(new BaselineOrderId(id)));
         }
 
+        /**
+         * \u6839\u636e\u672c\u6b21\u8c03\u7528\u66f4\u65b0 <code>this.id = event.getEntityId().asString()</code>\uff0c\u7528\u4e8e\u540e\u7eed\u6d4b\u8bd5\u6b65\u9aa4\u3002
+         * @param event \u4ea4\u7ed9\u88ab\u6d4b\u5165\u53e3\u5904\u7406\u7684\u6d4b\u8bd5\u9886\u57df\u4e8b\u4ef6
+         */
         private void onBaselineEvent(BaselineEvent event) {
             this.id = event.getEntityId().asString();
         }

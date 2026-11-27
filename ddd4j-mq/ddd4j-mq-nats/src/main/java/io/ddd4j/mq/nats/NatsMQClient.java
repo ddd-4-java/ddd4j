@@ -49,9 +49,13 @@ import java.util.function.Consumer;
 @Slf4j(topic = "### DDD4J-MQ : NatsMQClient ###")
 public class NatsMQClient implements MQClient {
 
+    /** \u5f53\u524d\u6d88\u606f\u4ee3\u7406\u5ba2\u6237\u7aef\u4f7f\u7528\u7684\u8fde\u63a5\u548c\u8ba2\u9605\u914d\u7f6e\u3002 */
     private final NatsProperties properties;
+    /** \u7528\u4e8e\u5ef6\u8fdf\u521b\u5efa\u5e76\u590d\u7528\u4ee3\u7406\u8fde\u63a5\u7684\u5f15\u7528\u3002 */
     private final AtomicReference<Connection> connectionRef = new AtomicReference<>();
+    /** \u534f\u8c03\u6d88\u606f\u5ba2\u6237\u7aef\u542f\u52a8\u3001\u521d\u59cb\u5316\u548c\u5173\u95ed\u7684\u751f\u547d\u5468\u671f\u3002 */
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    /** \u7ec4\u4ef6\u7684\u542f\u52a8\u72b6\u6001\u548c\u542f\u52a8\u5931\u8d25\u8bca\u65ad\u4fe1\u606f\u3002 */
     private final MQStartupStatus startupStatus = new MQStartupStatus("nats");
 
     /**
@@ -75,6 +79,10 @@ public class NatsMQClient implements MQClient {
         this.properties = Objects.requireNonNull(properties, "properties");
     }
 
+    /**
+     * \u7b49\u5f85 NATS \u8fde\u63a5\u4e2d\u7684\u5f85\u5904\u7406\u64cd\u4f5c\u6392\u7a7a\uff0c\u5e76\u5904\u7406\u539f\u751f\u5ba2\u6237\u7aef\u629b\u51fa\u7684\u5f02\u5e38\u3002
+     * @param connection \u5f85\u91ca\u653e\u6216\u7b49\u5f85\u5b8c\u6210\u7684\u539f\u751f\u8fde\u63a5
+     */
     private static void drainConnection(Connection connection) {
         try {
             connection.drain(Duration.ofSeconds(5)).get();
@@ -83,6 +91,10 @@ public class NatsMQClient implements MQClient {
         }
     }
 
+    /**
+     * \u5173\u95ed\u539f\u751f\u4ee3\u7406\u8fde\u63a5\uff0c\u5e76\u5904\u7406\u539f\u751f\u5ba2\u6237\u7aef\u629b\u51fa\u7684\u5f02\u5e38\u3002
+     * @param connection \u5f85\u91ca\u653e\u6216\u7b49\u5f85\u5b8c\u6210\u7684\u539f\u751f\u8fde\u63a5
+     */
     private static void closeConnection(Connection connection) {
         try {
             connection.close();
@@ -92,6 +104,11 @@ public class NatsMQClient implements MQClient {
         }
     }
 
+    /**
+     * \u4ece DDD4J \u4e8b\u4ef6\u7ec4\u88c5 NATS \u4f20\u8f93\u4fa7\u6d88\u606f\u5934\u3002
+     * @param event \u5f53\u524d\u53d1\u5e03\u6216\u5f85\u8865\u9f50\u5143\u6570\u636e\u7684 DDD4J \u6d88\u606f\u4e8b\u4ef6
+     * @return \u53d1\u9001\u7ed9 NATS \u7684\u5934\u5b57\u6bb5\u96c6\u5408
+     */
     static Headers messageHeaders(MQEvent event) {
         Headers headers = new Headers();
         for (Map.Entry<String, String> header : event.headerMap().entrySet()) {
@@ -103,6 +120,11 @@ public class NatsMQClient implements MQClient {
         return headers;
     }
 
+    /**
+     * \u4f18\u5148\u4ece\u539f\u751f\u6d88\u606f\u7684\u6807\u51c6\u5934\u8bfb\u53d6\u6d88\u606f\u6807\u8bc6\uff0c\u7f3a\u5c11\u65f6\u56de\u9000\u5230\u517c\u5bb9\u5934\u3002
+     * @param headers \u6d88\u606f\u968f\u534f\u8bae\u9644\u5e26\u7684\u5934\u5b57\u6bb5
+     * @return \u7528\u4e8e\u540e\u7eed\u6d88\u8d39\u786e\u8ba4\u7684\u4e1a\u52a1\u6d88\u606f\u6807\u8bc6\uff0c\u5934\u5747\u7f3a\u5931\u65f6\u4e3a\u7a7a
+     */
     static String messageId(Headers headers) {
         if (Objects.isNull(headers)) {
             return null;
@@ -115,12 +137,22 @@ public class NatsMQClient implements MQClient {
 
     // ========================= 生产者 =========================
 
+    /**
+     * \u5728\u6210\u529f\u53d6\u5230\u539f\u751f\u4e1a\u52a1\u6807\u8bc6\u65f6\u5c06\u5176\u6062\u590d\u5230\u4e8b\u4ef6\u3002
+     * @param event \u5f53\u524d\u53d1\u5e03\u6216\u5f85\u8865\u9f50\u5143\u6570\u636e\u7684 DDD4J \u6d88\u606f\u4e8b\u4ef6
+     * @param messageId \u4ece\u539f\u751f\u4ee3\u7406\u6d88\u606f\u89e3\u6790\u51fa\u7684\u6807\u8bc6
+     */
     private static void restoreMessageId(MQEvent event, String messageId) {
         if (StrKit.isNotEmpty(messageId)) {
             event.setMsgId(messageId);
         }
     }
 
+    /**
+     * \u5c06\u539f\u751f\u6d88\u606f\u7684\u5173\u8054\u6807\u8bc6\u548c\u56e0\u679c\u6807\u8bc6\u6062\u590d\u5230\u9886\u57df\u6d88\u606f\u3002
+     * @param event \u5f53\u524d\u53d1\u5e03\u6216\u5f85\u8865\u9f50\u5143\u6570\u636e\u7684 DDD4J \u6d88\u606f\u4e8b\u4ef6
+     * @param headers \u6d88\u606f\u968f\u534f\u8bae\u9644\u5e26\u7684\u5934\u5b57\u6bb5
+     */
     private static void restoreCausality(MQEvent event, Headers headers) {
         if (Objects.isNull(headers)) {
             return;
@@ -137,11 +169,21 @@ public class NatsMQClient implements MQClient {
 
     // ========================= 消费者 =========================
 
+    /**
+     * 返回此消息适配器在 DDD4J 中登记的实现名。
+     *
+     * @return 实际返回<code>"nats"</code>，供调用方取得当前值
+     */
     @Override
     public String impl() {
         return "nats";
     }
 
+    /**
+     * 返回管理连接、生产者和消费者资源的生命周期对象。
+     *
+     * @return 当前消息适配器用于登记和关闭资源的生命周期对象
+     */
     @Override
     public MQClientLifecycle lifecycle() {
         return lifecycle;
@@ -149,19 +191,34 @@ public class NatsMQClient implements MQClient {
 
     // ========================= 连接管理 =========================
 
+    /**
+     * 返回消息客户端当前记录的启动状态。
+     *
+     * @return 当前消息适配器记录的启动状态
+     */
     @Override
     public MQStartupStatus startupStatus() {
         return startupStatus;
     }
 
     /**
-     * NATS 无原生 broker-side tag selector，仅 subject 通配 → 强制应用层 {@link TagMatcher} 过滤。
+     * NATS \u65e0\u539f\u751f broker-side tag selector\uff0c\u4ec5 subject \u901a\u914d \u2192 \u5f3a\u5236\u5e94\u7528\u5c42 {@link TagMatcher} \u8fc7\u6ee4\u3002
+     *
+     * @return \u5f53\u524d\u4ee3\u7406\u662f\u5426\u652f\u6301\u6309\u6807\u7b7e\u8fc7\u6ee4
      */
     @Override
     public boolean supportsBrokerTagFilter() {
         return false;
     }
 
+    /**
+     * 准备消息生产者并返回可发布事件的入口。
+     *
+     * <p>此实现调用 <code>connection()</code>。</p>
+     *
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 接收待发布事件的函数
+     */
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         Connection conn = connection();
@@ -189,6 +246,16 @@ public class NatsMQClient implements MQClient {
         };
     }
 
+    /**
+     * 为监听器建立消息消费所需的订阅和客户端资源。
+     *
+     * <p>此实现调用 <code>connection()</code>。</p>
+     *
+     * @param listener 监听器定义
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 此实现返回<code>true</code>
+     * @throws Exception 当前框架、存储或底层客户端无法完成此操作时
+     */
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         Connection conn = connection();
@@ -224,6 +291,11 @@ public class NatsMQClient implements MQClient {
         return true;
     }
 
+    /**
+     * \u89e3\u7801 NATS \u6d88\u606f\u3001\u6062\u590d\u6d88\u606f\u5143\u6570\u636e\u5e76\u8f6c\u4ea4\u5f53\u524d\u76d1\u542c\u5668\u3002
+     * @param natsMessage \u7531 NATS \u539f\u751f\u8ba2\u9605\u56de\u8c03\u4ea4\u4ed8\u7684\u6d88\u606f
+     * @param listener \u5f53\u524d\u4ee3\u7406\u8ba2\u9605\u5bf9\u5e94\u7684 DDD4J \u6d88\u606f\u76d1\u542c\u5668
+     */
     private void onMessage(Message natsMessage, MQListener listener) {
         try {
             String payload = new String(natsMessage.getData(), StandardCharsets.UTF_8);
@@ -266,6 +338,10 @@ public class NatsMQClient implements MQClient {
         }
     }
 
+    /**
+     * \u53d6\u5f97\u5f53\u524d\u9002\u914d\u5668\u4f7f\u7528\u7684\u539f\u751f\u8fde\u63a5\u6216\u5ba2\u6237\u7aef\uff0c\u7f3a\u5c11\u5b9e\u4f8b\u65f6\u5efa\u7acb\u8fde\u63a5\u3002
+     * @return \u4f9b\u53d1\u5e03\u6216\u6d88\u8d39\u64cd\u4f5c\u4f7f\u7528\u7684\u539f\u751f\u8fde\u63a5\u6216\u5ba2\u6237\u7aef
+     */
     private synchronized Connection connection() {
         Connection c = connectionRef.get();
         if (Objects.isNull(c)) {
@@ -278,6 +354,7 @@ public class NatsMQClient implements MQClient {
         return c;
     }
 
+    /** \u91ca\u653e\u6d88\u606f\u5ba2\u6237\u7aef\u62e5\u6709\u7684\u8fd0\u884c\u8d44\u6e90\uff0c\u5e76\u5728\u9000\u51fa\u65f6\u767b\u8bb0\u7ec4\u4ef6\u5df2\u505c\u6b62\u3002 */
     @Override
     public void close() {
         try {

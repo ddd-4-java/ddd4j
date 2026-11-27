@@ -17,12 +17,15 @@ import java.util.Map;
 @ApplicationScoped
 @Produces(MediaType.APPLICATION_JSON)
 public class AuthenticationResource {
+    /** \u5904\u7406\u5f53\u524d\u793a\u4f8b\u5e94\u7528\u767b\u5f55\u72b6\u6001\u7684\u539f\u751f\u8ba4\u8bc1\u7ec4\u4ef6\u3002 */
     @Inject
     NativeAuth auth;
 
     /**
-     * @param login 演示账号凭证
-     * @return 原生会话令牌
+     * 执行 <code>login</code>，调用 <code>R.ok</code>、<code>Map.of</code>、<code>auth.login</code>。
+     *
+     * @param login \u6f14\u793a\u8d26\u53f7\u51ed\u8bc1
+     * @return \u539f\u751f\u4f1a\u8bdd\u4ee4\u724c
      */
     @POST
     @Path("/login")
@@ -32,7 +35,9 @@ public class AuthenticationResource {
     }
 
     /**
-     * @return 已认证主体
+     * 执行 <code>me</code>，调用 <code>R.ok</code>、<code>SubjectKit.getSubject</code>。
+     *
+     * @return \u5df2\u8ba4\u8bc1\u4e3b\u4f53
      */
     @GET
     @Path("/me")
@@ -41,8 +46,10 @@ public class AuthenticationResource {
     }
 
     /**
-     * @param permission 所需权限
-     * @return 授权资源
+     * 执行 <code>resource</code>，调用 <code>SubjectKit.getSubject</code>、<code>R.ok</code>。
+     *
+     * @param permission \u6240\u9700\u6743\u9650
+     * @return \u6388\u6743\u8d44\u6e90
      */
     @GET
     @Path("/resource")
@@ -54,7 +61,9 @@ public class AuthenticationResource {
     }
 
     /**
-     * @return 退出确认
+     * 执行 <code>logout</code>，调用 <code>SubjectKit.getSubject</code>、<code>R.ok</code>。
+     *
+     * @return \u9000\u51fa\u786e\u8ba4
      */
     @POST
     @Path("/logout")
@@ -68,7 +77,9 @@ public class AuthenticationResource {
      */
     @Data
     public static class Login {
+        /** \u5f53\u524d\u8eab\u4efd\u51ed\u636e\u4f7f\u7528\u7684\u7528\u6237\u540d\u3002 */
         private String username;
+        /** \u5f53\u524d\u767b\u5f55\u6216\u8d26\u53f7\u521b\u5efa\u8bf7\u6c42\u63d0\u4f9b\u7684\u53e3\u4ee4\u3002 */
         private String password;
     }
 }

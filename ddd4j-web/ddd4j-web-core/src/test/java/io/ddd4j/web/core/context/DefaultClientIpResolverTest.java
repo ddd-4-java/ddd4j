@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  */
 class DefaultClientIpResolverTest {
 
+    /** \u9a8c\u8bc1<code>resolver.resolve("1.2.3.4", "5.6.7.8", null)</code>\u4e3a\u7a7a\uff0c<code>resolver.resolve(null, null, " ")</code>\u4e3a\u7a7a\u3002 */
     @Test
     void resolvesRemoteAddressWhenNotTrustingForwardedHeaders() {
         DefaultClientIpResolver resolver = new DefaultClientIpResolver(false);
@@ -34,6 +35,7 @@ class DefaultClientIpResolverTest {
         assertNull(resolver.resolve(null, null, "  "));
     }
 
+    /** \u9a8c\u8bc1<code>resolver.resolve(null, null, "10.0.0.1")</code> \u7b49\u4e8e <code>"10.0.0.1"</code>\u3002 */
     @Test
     void prefersForwardedAddressWhenTrustingHeaders() {
         DefaultClientIpResolver resolver = new DefaultClientIpResolver(true);
@@ -42,6 +44,7 @@ class DefaultClientIpResolverTest {
         assertEquals("10.0.0.1", resolver.resolve(null, null, "10.0.0.1"));
     }
 
+    /** \u9a8c\u8bc1<code>resolver.resolve(" 1.2.3.4 ", null, null)</code> \u7b49\u4e8e <code>"1.2.3.4"</code>\u3002 */
     @Test
     void trimsForwardedAddresses() {
         DefaultClientIpResolver resolver = new DefaultClientIpResolver(true);

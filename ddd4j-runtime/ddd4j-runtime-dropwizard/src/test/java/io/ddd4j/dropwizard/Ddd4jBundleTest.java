@@ -41,15 +41,19 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class Ddd4jBundleTest {
 
+    /** \u7528\u4e8e\u9694\u79bb <code>Environment</code> \u8c03\u7528\u5e76\u8bb0\u5f55\u4ea4\u4e92\u7684\u6d4b\u8bd5\u66ff\u8eab\u3002 */
     @Mock
     private Environment environment;
 
+    /** \u7528\u4e8e\u9694\u79bb <code>HealthCheckRegistry</code> \u8c03\u7528\u5e76\u8bb0\u5f55\u4ea4\u4e92\u7684\u6d4b\u8bd5\u66ff\u8eab\u3002 */
     @Mock
     private HealthCheckRegistry healthChecks;
 
+    /** \u7528\u4e8e\u9694\u79bb <code>LifecycleEnvironment</code> \u8c03\u7528\u5e76\u8bb0\u5f55\u4ea4\u4e92\u7684\u6d4b\u8bd5\u66ff\u8eab\u3002 */
     @Mock
     private LifecycleEnvironment lifecycle;
 
+    /** \u9a8c\u8bc1<code>bundle</code>\u975e\u7a7a\uff0c<code>bundle.initialize(null)</code> \u629b\u51fa <code>NullPointerException.class</code>\u3002 */
     @Test
     void defaultConstructorBuildsBundle() {
         Ddd4jBundle<TestConfiguration> bundle = new Ddd4jBundle<>();
@@ -57,6 +61,7 @@ class Ddd4jBundleTest {
         assertThrows(NullPointerException.class, () -> bundle.initialize(null));
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>NullPointerException.class</code>\u3002 */
     @Test
     void constructorRejectsNullArguments() {
         assertThrows(NullPointerException.class, () -> new Ddd4jBundle<>(null,
@@ -67,6 +72,7 @@ class Ddd4jBundleTest {
                 Collections.emptyList(), null, null));
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>environment.healthChecks()</code>\u3001<code>environment.lifecycle()</code>\u3001<code>bundle.run()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void runRegistersHealthCheckAndRuntime() {
         when(environment.healthChecks()).thenReturn(healthChecks);
@@ -79,6 +85,7 @@ class Ddd4jBundleTest {
         verify(lifecycle).manage(any(Managed.class));
     }
 
+    /** \u9a8c\u8bc1<code>bundle.run(null, environment)</code> \u629b\u51fa <code>NullPointerException.class</code>\uff0c<code>bundle.run(new TestConfiguration(), null)</code> \u629b\u51fa <code>NullPointerException.class</code>\u3002 */
     @Test
     void runRejectsNullConfigurationAndEnvironment() {
         Ddd4jBundle<TestConfiguration> bundle = new Ddd4jBundle<>();

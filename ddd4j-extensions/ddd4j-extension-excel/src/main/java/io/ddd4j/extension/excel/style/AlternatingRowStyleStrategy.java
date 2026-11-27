@@ -38,6 +38,7 @@ import java.util.Objects;
  */
 public class AlternatingRowStyleStrategy implements CellWriteHandler {
 
+    /** \u7f13\u5b58\u5e76\u590d\u7528\u7684\u4ea4\u66ff\u5e95\u8272\u5355\u5143\u683c\u6837\u5f0f\u3002 */
     private final WriteCellStyle zebraStyle;
 
     /**

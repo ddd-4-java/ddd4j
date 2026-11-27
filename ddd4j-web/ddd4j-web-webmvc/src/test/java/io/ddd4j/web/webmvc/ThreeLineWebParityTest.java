@@ -49,6 +49,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * 同输入验证跨版本 Web 注册与出站 header；不启动外部服务。
  */
 class ThreeLineWebParityTest {
+    /**
+     * \u8c03\u7528 <code>MappedInterceptor.class.getMethod()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @param interceptor \u4f20\u7ed9 <code>MappedInterceptor.class.getMethod()</code> \u7684 <code>MappedInterceptor</code> \u8f93\u5165
+     * @return \u6839\u636e\u6d4b\u8bd5\u6761\u4ef6\u8fd4\u56de\u7684\u53ef\u80fd\u503c\uff0c\u5305\u62ec <code>(String[])MappedInterceptor.class.getMethod("getIncludePathPatterns").invoke(interceptor)</code>\u3001<code>(String[])MappedInterceptor.class.getMethod("getPathPatterns").invoke(interceptor)</code>
+     * @throws Exception \u53cd\u5c04\u8bbf\u95ee\u88ab\u6d4b\u6210\u5458\u65f6\u5931\u8d25
+     */
     private static String[] includedPatterns(MappedInterceptor interceptor) throws Exception {
         // Spring 7 移除了旧 getter，测试观察同一注册结果。
         try {
@@ -58,12 +64,17 @@ class ThreeLineWebParityTest {
         }
     }
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>ThreadContext.clear()</code>\u3001<code>RequestContextHolder.resetRequestAttributes()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterEach
     void clearContext() {
         ThreadContext.clear();
         RequestContextHolder.resetRequestAttributes();
     }
 
+    /**
+     * \u9a8c\u8bc1<code>registry.entries().size()</code> \u7b49\u4e8e <code>2</code>\uff0c<code>mapped.getInterceptor()</code> \u4e0e\u2026\u4e3a\u540c\u4e00\u5b9e\u4f8b <code>interceptor</code>\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void nonEmptyInterceptorsAreRegisteredWithTheirPaths() throws Exception {
         BaseWebInterceptor interceptor = new BaseWebInterceptor() {
@@ -121,6 +132,7 @@ class ThreeLineWebParityTest {
         assertFalse(mapped.matches(excluded));
     }
 
+    /** \u9a8c\u8bc1<code>registry.entries().isEmpty()</code>\u4e3a\u771f\u3002 */
     @Test
     void emptyAndNullInterceptorListsAreSafe() {
         RecordingRegistry registry = new RecordingRegistry();
@@ -129,6 +141,10 @@ class ThreeLineWebParityTest {
         assertTrue(registry.entries().isEmpty());
     }
 
+    /**
+     * \u9a8c\u8bc1<code>template.headers().get(name)</code>\u975e\u7a7a\u3002
+     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     */
     @Test
     void systemIdDefaultsForNullAndEmptyButPreservesAValue() throws Exception {
         for (String value : new String[]{null, "", "tenant-system"}) {
@@ -148,6 +164,10 @@ class ThreeLineWebParityTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>response.getCode()</code> \u7b49\u4e8e <code>400</code>\uff0c<code>response.getMsg()</code> \u7b49\u4e8e <code>enabled ? "localized header message" : "\u7f3a\u5c11\u8bf7\u6c42\u5934: [X-Parity]."</code>\u3002
+     * @throws Exception \u53cd\u5c04\u8bbf\u95ee\u88ab\u6d4b\u6210\u5458\u65f6\u5931\u8d25
+     */
     @Test
     void missingHeaderResponsePreservesStatusAndMessageWithOrWithoutI18n() throws Exception {
         GlobalExceptionHandler handler = new GlobalExceptionHandler() {
@@ -183,6 +203,10 @@ class ThreeLineWebParityTest {
         }
     }
 
+    /**
+     * \u4f5c\u4e3a\u7a7a\u5b9e\u73b0\u7684\u6d4b\u8bd5\u66ff\u8eab\uff0c\u8c03\u7528\u65f6\u4fdd\u6301\u5f53\u524d\u5939\u5177\u72b6\u6001\u3002
+     * @param value \u5f53\u524d\u7528\u4f8b\u4f20\u5165\u7684\u503c
+     */
     private void headerEndpoint(String value) {
     }
 
@@ -192,6 +216,7 @@ class ThreeLineWebParityTest {
      * @since 3.0.x
      */
     interface HeaderClient {
+        /** \u5411\u5408\u540c\u6d4b\u8bd5\u670d\u52a1\u6839\u8def\u5f84\u53d1\u51fa\u4e0d\u81ea\u52a8\u900f\u4f20\u8bf7\u6c42\u5934\u548c\u79df\u6237\u6807\u8bc6\u7684 Feign GET \u8bf7\u6c42\u3002 */
         @RequestLine("GET /")
         @FeignHeader(autoFillTenantId = false, useWebRequestHeader = false)
         void request();
@@ -203,6 +228,10 @@ class ThreeLineWebParityTest {
      * @since 3.0.x
      */
     private static class RecordingRegistry extends InterceptorRegistry {
+        /**
+         * \u901a\u8fc7 <code>getInterceptors()</code> \u53d6\u5f97\u5f53\u524d\u6d4b\u8bd5\u9700\u8981\u7684\u7ed3\u679c\u3002
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>getInterceptors()</code>
+         */
         List<Object> entries() {
             return getInterceptors();
         }

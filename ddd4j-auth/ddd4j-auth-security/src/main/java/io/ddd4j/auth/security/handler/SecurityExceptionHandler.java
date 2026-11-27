@@ -53,7 +53,10 @@ import java.util.Objects;
 public class SecurityExceptionHandler {
 
     /**
-     * 401：未认证（凭证错误 / 账号过期）
+     * 401\uff1a\u672a\u8ba4\u8bc1\uff08\u51ed\u8bc1\u9519\u8bef / \u8d26\u53f7\u8fc7\u671f\uff09
+     *
+     * @param ex \u8ba4\u8bc1\u5f02\u5e38
+     * @return \u672a\u8ba4\u8bc1\u54cd\u5e94
      */
     @ExceptionHandler({BadCredentialsException.class, AuthenticationException.class,
             AccountExpiredException.class})
@@ -63,7 +66,10 @@ public class SecurityExceptionHandler {
     }
 
     /**
-     * 403：账号锁定 / 禁用
+     * 403\uff1a\u8d26\u53f7\u9501\u5b9a / \u7981\u7528
+     *
+     * @param ex \u8d26\u53f7\u72b6\u6001\u5f02\u5e38
+     * @return \u7981\u6b62\u8bbf\u95ee\u54cd\u5e94
      */
     @ExceptionHandler({LockedException.class, DisabledException.class})
     public ResponseEntity<R<String>> lockedException(Exception ex) {
@@ -72,7 +78,10 @@ public class SecurityExceptionHandler {
     }
 
     /**
-     * 403：无权限访问
+     * 403\uff1a\u65e0\u6743\u9650\u8bbf\u95ee
+     *
+     * @param ex \u6388\u6743\u5f02\u5e38
+     * @return \u672a\u8ba4\u8bc1\u6216\u7981\u6b62\u8bbf\u95ee\u54cd\u5e94
      */
     @ExceptionHandler({AccessDeniedException.class})
     public ResponseEntity<R<String>> accessDeniedException(AccessDeniedException ex) {

@@ -33,8 +33,11 @@ import java.util.Objects;
  */
 public final class ReadinessResult {
 
+    /** \u5f53\u524d\u5c31\u7eea\u68c0\u67e5\u7684\u540d\u79f0\u3002 */
     private final String name;
+    /** \u5f53\u524d\u88ab\u68c0\u67e5\u7ec4\u4ef6\u662f\u5426\u5c31\u7eea\u3002 */
     private final boolean ready;
+    /** \u89e3\u91ca\u68c0\u67e5\u7ed3\u679c\u7684\u9644\u52a0\u8bca\u65ad\u4fe1\u606f\u3002 */
     private final Map<String, String> details;
 
     /**
@@ -143,6 +146,12 @@ public final class ReadinessResult {
         return details;
     }
 
+    /**
+     * 根据<code>name</code>、<code>details</code>、<code>ready</code>比较对象的值是否相等。
+     *
+     * @param obj 用来比较或转换的输入对象
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -157,6 +166,11 @@ public final class ReadinessResult {
                 && Objects.equals(details, that.details);
     }
 
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         int result = 0;
@@ -166,6 +180,11 @@ public final class ReadinessResult {
         return result;
     }
 
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>name</code>、<code>ready</code>、<code>details</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "ReadinessResult[name=" + name + ", ready=" + ready + ", details=" + details + ']';

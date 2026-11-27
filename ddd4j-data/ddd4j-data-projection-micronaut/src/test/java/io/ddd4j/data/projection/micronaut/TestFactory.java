@@ -33,6 +33,11 @@ import java.util.Collections;
 @Factory
 class TestFactory {
 
+    /**
+     * 读取<code>null</code> 的当前值。
+     *
+     * @return 返回表达式 <code>null</code>
+     */
     @Singleton
     ProjectionService projectionService() {
         return new ProjectionService() {
@@ -52,6 +57,11 @@ class TestFactory {
         };
     }
 
+    /**
+     * 执行 <code>chunk Reader</code>，调用 <code>EventChunk.empty</code>。
+     *
+     * @return 当前操作得到的 <code>EventChunkReader&lt;Object&gt;</code> 结果
+     */
     @Singleton
     @SuppressWarnings("unchecked")
     EventChunkReader<Object> chunkReader() {
@@ -59,42 +69,83 @@ class TestFactory {
                 EventChunk.empty(fromEventNumber);
     }
 
+    /**
+     * 按 <code>projection Runner</code> 的契约计算并返回结果。
+     *
+     * @param service 传入此操作的 <code>ProjectionService</code> 类型 <code>service</code>
+     * @param reader 传入此操作的 <code>EventChunkReader&lt;Object&gt;</code> 类型 <code>reader</code>
+     * @return 当前操作得到的 <code>ProjectionRunner&lt;Object&gt;</code> 结果
+     */
     @Singleton
     @SuppressWarnings("unchecked")
     ProjectionRunner<Object> projectionRunner(ProjectionService service, EventChunkReader<Object> reader) {
         return new ProjectionRunner<>(service, reader);
     }
 
+    /**
+     * 按 <code>test View</code> 的契约计算并返回结果。
+     *
+     * @return 当前操作得到的 <code>ProjectionView&lt;Object&gt;</code> 结果
+     */
     @Singleton
     ProjectionView<Object> testView() {
         return new ProjectionViewStub("test-view", "0/5 * * * * *");
     }
 
+    /** 为测试场景提供 <code>ProjectionView</code> 的实现。 */
     private static class ProjectionViewStub implements ProjectionView<Object> {
 
+        /** 保存 <code>name</code> 对应的 <code>String</code> 数据。 */
         private final String name;
+        /** 控制投影任务执行时点的 Cron 表达式。 */
         private final String cron;
 
+        /**
+         * 初始化 <code>ProjectionViewStub</code> 使用的 <code>name</code>、<code>cron</code>。
+         *
+         * @param name 传入此操作的 <code>String</code> 类型 <code>name</code>
+         * @param cron 控制任务触发时刻的 Cron 表达式
+         */
         ProjectionViewStub(String name, String cron) {
             this.name = name;
             this.cron = cron;
         }
 
+        /**
+         * 读取<code>name</code> 的当前值。
+         *
+         * @return 返回表达式 <code>name</code>
+         */
         @Override
         public String getName() {
             return name;
         }
 
+        /**
+         * 读取控制投影任务执行时点的 Cron 表达式。
+         *
+         * @return 返回表达式 <code>cron</code>
+         */
         @Override
         public String getCron() {
             return cron;
         }
 
+        /**
+         * 执行 <code>get Event Types</code>，调用 <code>Collections.singleton</code>。
+         *
+         * @return 返回表达式 <code>Collections.singleton("TestEvent")</code>
+         */
         @Override
         public Collection<String> getEventTypes() {
             return Collections.singleton("TestEvent");
         }
 
+        /**
+         * 提供测试夹具的空操作。
+         *
+         * @param events 传入此操作的 <code>Collection&lt;Object&gt;</code> 类型 <code>events</code>
+         */
         @Override
         public void handleEvents(Collection<Object> events) {
         }

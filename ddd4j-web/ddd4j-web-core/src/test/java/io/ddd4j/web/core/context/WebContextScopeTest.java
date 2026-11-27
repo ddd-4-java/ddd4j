@@ -34,16 +34,22 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class WebContextScopeTest {
 
+    /**
+     * \u521b\u5efa <code>new WebRequestContext</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new WebRequestContext("r-1", "t-1", "tenant-a", "Bearer token", Locale.CHINA, "127.0.0.1", "GET", "/api")</code>
+     */
     private static WebRequestContext request() {
         return new WebRequestContext("r-1", "t-1", "tenant-a", "Bearer token",
                 Locale.CHINA, "127.0.0.1", "GET", "/api");
     }
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>MDC.clear()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterEach
     void tearDown() {
         MDC.clear();
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>WebContextScope.open()</code>\u3001<code>request()</code>\u3001<code>scope.close()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void openAndCloseIsIdempotent() {
         WebContextScope scope = WebContextScope.open(request());
@@ -51,11 +57,13 @@ class WebContextScopeTest {
         assertDoesNotThrow(scope::close);
     }
 
+    /** \u9a8c\u8bc1<code>WebContextScope.open(null)</code> \u629b\u51fa <code>NullPointerException.class</code>\u3002 */
     @Test
     void openRejectsNullContext() {
         assertThrows(NullPointerException.class, () -> WebContextScope.open(null));
     }
 
+    /** \u9a8c\u8bc1<code>MDC.get("existing")</code> \u7b49\u4e8e <code>"before"</code>\u3002 */
     @Test
     void closeRestoresPreviousMdcContext() {
         MDC.put("existing", "before");
@@ -65,6 +73,7 @@ class WebContextScopeTest {
         assertEquals("before", MDC.get("existing"));
     }
 
+    /** \u9a8c\u8bc1<code>MDC.get(ContextConstants.TENANT_ID)</code>\u4e3a\u7a7a\uff0c<code>MDC.get(ContextConstants.TENANT_ID)</code> \u7b49\u4e8e <code>"stale"</code>\u3002 */
     @Test
     void openWithBlankValuesRemovesMdcKeys() {
         WebRequestContext blank = new WebRequestContext("r-1", null, null, null,

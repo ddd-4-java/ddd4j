@@ -45,9 +45,15 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class WeComClientTest {
 
+    /** \u5f53\u524d\u6d4b\u8bd5\u542f\u52a8\u5e76\u8d1f\u8d23\u91ca\u653e\u7684\u672c\u5730\u670d\u52a1\u3002 */
     private HttpServer server;
+    /** \u5f53\u524d\u6d4b\u8bd5\u670d\u52a1\u7ed1\u5b9a\u7684\u672c\u5730\u7aef\u53e3\u3002 */
     private int port;
 
+    /**
+     * \u6d4b\u8bd5\u524d\u4f9d\u6b21\u542f\u52a8<code>server</code>\u3002
+     * @throws IOException \u8bfb\u53d6\u6216\u5199\u5165\u6d4b\u8bd5\u6570\u636e\u65f6\u53d1\u751f I/O \u9519\u8bef
+     */
     @BeforeEach
     void startServer() throws IOException {
         server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
@@ -56,6 +62,7 @@ class WeComClientTest {
         server.start();
     }
 
+    /** \u6d4b\u8bd5\u540e\u4f9d\u6b21\u505c\u6b62<code>server</code>\u3002 */
     @AfterEach
     void stopServer() {
         if (Objects.nonNull(server)) {
@@ -63,6 +70,10 @@ class WeComClientTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>method</code> \u7b49\u4e8e <code>"POST"</code>\uff0c<code>query</code> \u7b49\u4e8e <code>"key=wehook_key_test"</code>\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void sendMarkdownShouldPostValidJsonPayload() throws Exception {
         // 客户端指向 mock server，key 自定
@@ -88,8 +99,11 @@ class WeComClientTest {
      * 简易 recorder，记录最近一次请求的 method / query / body。
      */
     static class Recorder implements HttpHandler {
+        /** \u6d4b\u8bd5\u670d\u52a1\u5668\u6700\u8fd1\u6536\u5230\u7684 HTTP \u65b9\u6cd5\u3002 */
         static volatile String lastMethod;
+        /** \u6d4b\u8bd5\u670d\u52a1\u5668\u6700\u8fd1\u6536\u5230\u7684\u8bf7\u6c42\u67e5\u8be2\u5b57\u7b26\u4e32\u3002 */
         static volatile String lastQuery;
+        /** \u6d4b\u8bd5\u670d\u52a1\u5668\u6700\u8fd1\u6536\u5230\u7684 HTTP \u8bf7\u6c42\u6b63\u6587\u3002 */
         static volatile String lastBody;
 
         /**

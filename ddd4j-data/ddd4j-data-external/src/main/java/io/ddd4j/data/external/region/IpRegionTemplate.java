@@ -19,6 +19,7 @@ package io.ddd4j.data.external.region;
  */
 public interface IpRegionTemplate {
 
+    /** \u672a\u5339\u914d\u5730\u533a\u65f6\u4f7f\u7528\u7684\u7a7a\u67e5\u8be2\u5b9e\u73b0\u3002 */
     IpRegionTemplate NONE = new IpRegionTemplate() {
 
         /**

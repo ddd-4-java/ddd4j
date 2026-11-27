@@ -34,6 +34,13 @@ import java.util.Objects;
 @UtilityClass
 public class ReflectKit extends ReflectUtil {
 
+    /**
+     * \u83b7\u53d6\u7236\u7c7b\u6307\u5b9a\u4f4d\u7f6e\u7684\u6cdb\u578b\u7c7b\u578b\u3002
+     * @param clazz \u5f85\u68c0\u67e5\u7684\u7c7b
+     * @param index \u6cdb\u578b\u53c2\u6570\u4f4d\u7f6e
+     * @param <T> \u6cdb\u578b\u7c7b\u578b
+     * @return \u5bf9\u5e94\u6cdb\u578b\u7c7b\u578b
+     */
     public <T> Class<T> getSuperClassGenericType(final Class<?> clazz, final int index) {
         Type genType = clazz.getGenericSuperclass();
         if (!(genType instanceof ParameterizedType)) {

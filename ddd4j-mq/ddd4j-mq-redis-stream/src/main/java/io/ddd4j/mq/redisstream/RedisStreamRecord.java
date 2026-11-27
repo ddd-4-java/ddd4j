@@ -32,9 +32,13 @@ import java.util.Objects;
  */
 public final class RedisStreamRecord {
 
+    /** \u5f53\u524d\u6d88\u606f\u6240\u5c5e\u7684 Redis Stream \u952e\u3002 */
     private final String stream;
+    /** \u5f53\u524d Redis Stream \u6761\u76ee\u7684\u552f\u4e00\u8bb0\u5f55\u6807\u8bc6\u3002 */
     private final String id;
+    /** \u4ece Redis Stream \u6761\u76ee\u8bfb\u53d6\u7684\u5b57\u6bb5\u53ca\u6d88\u606f\u5143\u6570\u636e\u3002 */
     private final Map<String, String> fields;
+    /** Redis \u5ba2\u6237\u7aef\u4f7f\u7528\u7684\u539f\u751f Stream \u6d88\u606f\u5bf9\u8c61\u3002 */
     private final Object nativeMessage;
 
     /**
@@ -93,6 +97,12 @@ public final class RedisStreamRecord {
         return nativeMessage;
     }
 
+    /**
+     * 根据<code>stream</code>、<code>id</code>、<code>fields</code>、<code>nativeMessage</code>比较对象的值是否相等。
+     *
+     * @param o 用来比较的另一个对象，允许为空
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -108,6 +118,11 @@ public final class RedisStreamRecord {
                 && Objects.equals(nativeMessage, that.nativeMessage);
     }
 
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         int result = Objects.hashCode(stream);
@@ -116,6 +131,11 @@ public final class RedisStreamRecord {
         return 31 * result + Objects.hashCode(nativeMessage);
     }
 
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>stream</code>、<code>id</code>、<code>fields</code>、<code>nativeMessage</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "RedisStreamRecord[stream=" + stream + ", id=" + id + ", fields=" + fields

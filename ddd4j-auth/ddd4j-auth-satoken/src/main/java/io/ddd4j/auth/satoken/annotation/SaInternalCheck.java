@@ -30,6 +30,8 @@ public @interface SaInternalCheck {
 
     /**
      * Required API Key scopes.
+     *
+     * @return required scopes
      */
     String[] scope() default "internal";
 }

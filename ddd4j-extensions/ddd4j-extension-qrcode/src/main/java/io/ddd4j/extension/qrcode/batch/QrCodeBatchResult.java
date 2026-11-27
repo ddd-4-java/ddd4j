@@ -26,8 +26,13 @@ import java.util.List;
 @Getter
 public final class QrCodeBatchResult {
 
+    /** \u6309\u6279\u91cf\u6267\u884c\u7ed3\u679c\u4fdd\u7559\u7684\u9010\u9879\u751f\u6210\u7ed3\u679c\u3002 */
     private final List<QrCodeBatchItemResult> items;
 
+    /**
+     * \u6309\u8f93\u5165\u987a\u5e8f\u4fdd\u5b58\u6279\u91cf\u9879\u76ee\u7ed3\u679c\u3002
+     * @param items \u6279\u91cf\u9879\u76ee\u7ed3\u679c
+     */
     public QrCodeBatchResult(List<QrCodeBatchItemResult> items) {
         this.items = Collections.unmodifiableList(new ArrayList<QrCodeBatchItemResult>(items));
     }

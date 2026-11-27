@@ -32,8 +32,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/** \u901a\u8fc7 <code>requests.put()</code>\u3001<code>first.hashCode()</code>\u3001<code>equivalent.hashCode()</code> \u9a8c\u8bc1 <code>WebValueSemantics</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
 class WebValueSemanticsTest {
 
+    /** \u9a8c\u8bc1<code>equivalent</code> \u7b49\u4e8e <code>first</code>\uff0c<code>equivalent.hashCode()</code> \u7b49\u4e8e <code>first.hashCode()</code>\uff0c<code>first.toString().startsWith("WebRequestData[")</code>\u4e3a\u771f\u3002 */
     @Test
     void equivalentRequestDataCanFindTheSameRequestEntry() {
         WebRequestData first = new WebRequestData("request-1", "trace-1", "tenant-1", "Bearer token",
@@ -53,6 +55,7 @@ class WebValueSemanticsTest {
         assertTrue(first.toString().startsWith("WebRequestData["));
     }
 
+    /** \u9a8c\u8bc1<code>equivalent</code> \u7b49\u4e8e <code>first</code>\uff0c<code>equivalent.hashCode()</code> \u7b49\u4e8e <code>first.hashCode()</code>\uff0c<code>first.toString().startsWith("WebRequestContext[")</code>\u4e3a\u771f\u3002 */
     @Test
     void normalizedRequestContextHasStableValueIdentity() {
         WebRequestContext first = new WebRequestContext("request-1", null, "tenant-1", "Bearer token",
@@ -69,6 +72,7 @@ class WebValueSemanticsTest {
         assertTrue(first.toString().startsWith("WebRequestContext["));
     }
 
+    /** \u9a8c\u8bc1<code>equivalent</code> \u7b49\u4e8e <code>first</code>\uff0c<code>equivalent.hashCode()</code> \u7b49\u4e8e <code>first.hashCode()</code>\uff0c<code>first.toString().startsWith("WebRequestFailure[")</code>\u4e3a\u771f\u3002 */
     @Test
     void requestFailuresRetainTheOriginalCauseAsPartOfIdentity() {
         IllegalStateException cause = new IllegalStateException("downstream failed");
@@ -84,6 +88,7 @@ class WebValueSemanticsTest {
         assertTrue(first.toString().startsWith("WebRequestFailure["));
     }
 
+    /** \u9a8c\u8bc1<code>equivalent</code> \u7b49\u4e8e <code>first</code>\uff0c<code>equivalent.hashCode()</code> \u7b49\u4e8e <code>first.hashCode()</code>\uff0c<code>first.toString().contains("VALIDATION")</code>\u4e3a\u771f\u3002 */
     @Test
     void errorValueDistinguishesHttpStatus() {
         WebError first = new WebError(422, "VALIDATION", "bad order", "detail");
@@ -96,6 +101,7 @@ class WebValueSemanticsTest {
         assertTrue(first.toString().contains("VALIDATION"));
     }
 
+    /** \u9a8c\u8bc1<code>equivalent</code> \u7b49\u4e8e <code>first</code>\uff0c<code>equivalent.hashCode()</code> \u7b49\u4e8e <code>first.hashCode()</code>\uff0c<code>first.toString().startsWith("IdempotencyLease[")</code>\u4e3a\u771f\u3002 */
     @Test
     void leaseOwnerIsPartOfIdempotencyIdentity() {
         IdempotencyLease first = new IdempotencyLease("payment-1", "owner-1", Duration.ofMinutes(1));
@@ -112,6 +118,7 @@ class WebValueSemanticsTest {
         assertTrue(first.toString().startsWith("IdempotencyLease["));
     }
 
+    /** \u9a8c\u8bc1<code>equivalent</code> \u7b49\u4e8e <code>ready</code>\uff0c<code>equivalent.hashCode()</code> \u7b49\u4e8e <code>ready.hashCode()</code>\uff0c<code>ready.toString().contains("ready=true")</code>\u4e3a\u771f\u3002 */
     @Test
     void readinessValueDistinguishesHealthyAndUnhealthyResponses() {
         ReadinessResponse ready = new ReadinessResponse(true);

@@ -40,6 +40,7 @@ import static org.mockito.Mockito.*;
  */
 class OnsMessageHeaderTest {
 
+    /** \u9a8c\u8bc1<code>OnsMQClient.messageId(stableMessage)</code> \u7b49\u4e8e <code>"stable-id"</code>\uff0c<code>OnsMQClient.messageId(legacyMessage)</code> \u7b49\u4e8e <code>"legacy-id"</code>\u3002 */
     @Test
     void shouldPreferStableHeaderAndReadLegacyHeader() {
         Message stableMessage = new Message();
@@ -52,6 +53,7 @@ class OnsMessageHeaderTest {
         assertEquals("legacy-id", OnsMQClient.messageId(legacyMessage));
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>mock()</code>\u3001<code>client.initProducer()</code>\u3001<code>client.close()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void shouldNotShutdownInjectedProducer() {
         Producer producer = mock(Producer.class);
@@ -62,6 +64,7 @@ class OnsMessageHeaderTest {
         verify(producer, never()).shutdown();
     }
 
+    /** \u9a8c\u8bc1<code>sent.getValue().getUserProperties(MQDeliveryHeaders.MESSAGE_ID)</code> \u7b49\u4e8e <code>"stable-id"</code>\uff0c<code>sent.getValue().getUserProperties(MQDeliveryHeaders.CORRELATION_ID)</code> \u7b49\u4e8e <code>"correlation-id"</code>\uff0c<code>second.getUserProperties(MQDeliveryHeaders.CAUSATION_ID)</code>\u4e3a\u7a7a\u3002 */
     @Test
     void shouldPublishFrozenCausalityAsNativeOnsProperties() {
         Producer producer = mock(Producer.class);
@@ -94,6 +97,7 @@ class OnsMessageHeaderTest {
         }
     }
 
+    /** \u9a8c\u8bc1<code>acknowledgment.messageId()</code> \u7b49\u4e8e <code>"stable-id"</code>\uff0c<code>acknowledgment.correlationId()</code> \u7b49\u4e8e <code>"correlation-id"</code>\u3002 */
     @Test
     void acknowledgmentShouldPreferStableIdAndCorrelationHeader() {
         Message nativeMessage = new Message();
@@ -108,6 +112,7 @@ class OnsMessageHeaderTest {
         assertEquals("correlation-id", acknowledgment.correlationId());
     }
 
+    /** \u9a8c\u8bc1<code>payload.getMsgId()</code> \u7b49\u4e8e <code>"native-id"</code>\uff0c<code>payload.getCorrelationId()</code> \u7b49\u4e8e <code>"native-correlation"</code>\uff0c<code>legacyPayload.getCorrelationId()</code> \u7b49\u4e8e <code>"payload-correlation"</code>\u3002 */
     @Test
     void nativePropertiesShouldOverridePayloadMirrorBeforeDispatch() {
         Message nativeMessage = new Message();
@@ -134,6 +139,10 @@ class OnsMessageHeaderTest {
         assertEquals("payload-correlation", legacyPayload.getCorrelationId());
     }
 
+    /**
+     * \u6784\u9020 <code>MQEventSerialization</code> \u4f5c\u4e3a\u5f53\u524d\u6d4b\u8bd5\u7684\u8f93\u5165\u6216\u7ed3\u679c\u3002
+     * @return \u63d0\u4f9b\u7ed9\u540e\u7eed\u5951\u7ea6\u65ad\u8a00\u7684 <code>MQEventSerialization</code> \u7ed3\u679c
+     */
     private static MQEventSerialization serialization() {
         return new MQEventSerialization() {
             @Override

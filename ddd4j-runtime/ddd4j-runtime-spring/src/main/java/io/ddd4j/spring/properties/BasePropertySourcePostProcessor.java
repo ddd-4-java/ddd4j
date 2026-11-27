@@ -30,7 +30,7 @@ import java.util.Objects;
  */
 public class BasePropertySourcePostProcessor implements BeanFactoryPostProcessor, Ordered {
 
-    /** @param beanFactory 待处理的 Bean 工厂 */
+    /** @param beanFactory \u5f85\u5904\u7406\u7684 Bean \u5de5\u5382 */
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
         if (beanFactory instanceof ConfigurableEnvironment) {
@@ -54,7 +54,7 @@ public class BasePropertySourcePostProcessor implements BeanFactoryPostProcessor
         }
     }
 
-    /** @return 最低优先级 */
+    /** @return \u6700\u4f4e\u4f18\u5148\u7ea7 */
     @Override
     public int getOrder() {
         return LOWEST_PRECEDENCE;

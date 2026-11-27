@@ -14,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class SubjectRegistrarTest {
 
+    /** \u9a8c\u8bc1<code>result</code> \u6307\u5411\u540c\u4e00\u5b9e\u4f8b <code>provider</code>\uff0c<code>SubjectKit.subjectProvider</code> \u6307\u5411\u540c\u4e00\u5b9e\u4f8b <code>provider</code>\u3002 */
     @Test
     void shouldRegisterSubjectProviderAfterInitialization() {
         SubjectProvider provider = new SubjectProvider() {

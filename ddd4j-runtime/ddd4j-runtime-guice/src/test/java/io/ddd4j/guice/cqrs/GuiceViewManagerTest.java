@@ -34,15 +34,19 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/** \u9a8c\u8bc1 <code>GuiceViewManager</code> \u5728<code>schedule</code>\u3001<code>scheduleAtFixedRate</code>\u3001<code>getProjectionStatus</code>\u7b49\u64cd\u4f5c\u4e2d\u7684\u884c\u4e3a\u5951\u7ea6\u3002 */
 class GuiceViewManagerTest {
 
+    /** \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u5e76\u8d1f\u8d23\u91ca\u653e\u7684\u89c6\u56fe\u6216\u8ba4\u8bc1\u7ba1\u7406\u5668\u3002 */
     private final GuiceViewManager manager = new GuiceViewManager();
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>manager.stop()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterEach
     void tearDown() {
         manager.stop();
     }
 
+    /** \u9a8c\u8bc1<code>manager.isRunning()</code>\u4e3a\u5047\uff0c<code>manager.isRunning()</code>\u4e3a\u771f\u3002 */
     @Test
     void startAndStopLifecycle() {
         assertFalse(manager.isRunning());
@@ -57,12 +61,18 @@ class GuiceViewManagerTest {
         manager.close();
     }
 
+    /** \u9a8c\u8bc1<code>manager.isRunning()</code>\u4e3a\u5047\u3002 */
     @Test
     void triggerOnceIsSafe() {
         manager.triggerOnce();
         assertFalse(manager.isRunning());
     }
 
+    /**
+     * 验证<code>manager.isRunning()</code>为真，<code>handle</code>非空，<code>runs.get() &gt;= 1</code>为真。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void scheduleRunsTaskAndHandleCancels() throws Exception {
         AtomicInteger runs = new AtomicInteger();
@@ -77,6 +87,11 @@ class GuiceViewManagerTest {
         assertFalse(handle.isActive());
     }
 
+    /**
+     * 验证<code>manager.isRunning()</code>为真，<code>handle</code>非空，<code>runs.get() &gt;= 1</code>为真。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void scheduleWithStarSlashNSucceeds() throws Exception {
         AtomicInteger runs = new AtomicInteger();
@@ -88,6 +103,7 @@ class GuiceViewManagerTest {
         handle.cancel();
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
     @Test
     void scheduleWithEmptyCronThrowsException() {
         assertThrows(IllegalArgumentException.class, () -> {
@@ -96,6 +112,7 @@ class GuiceViewManagerTest {
         });
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
     @Test
     void scheduleWithInvalidCronThrowsException() {
         assertThrows(IllegalArgumentException.class, () -> {
@@ -104,6 +121,7 @@ class GuiceViewManagerTest {
         });
     }
 
+    /** \u9a8c\u8bc1<code>handle</code>\u975e\u7a7a\u3002 */
     @Test
     void scheduleWithPlainCronDefaultsToMinute() {
         AtomicInteger runs = new AtomicInteger();
@@ -112,6 +130,7 @@ class GuiceViewManagerTest {
         handle.cancel();
     }
 
+    /** \u9a8c\u8bc1<code>handle</code>\u975e\u7a7a\u3002 */
     @Test
     void scheduleWithMinuteIntervalSucceeds() {
         AtomicInteger runs = new AtomicInteger();
@@ -120,6 +139,7 @@ class GuiceViewManagerTest {
         handle.cancel();
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
     @Test
     void scheduleWithUnsupportedCronFormatThrowsException() {
         assertThrows(IllegalArgumentException.class, () -> {
@@ -128,6 +148,11 @@ class GuiceViewManagerTest {
         });
     }
 
+    /**
+     * 验证<code>manager.isRunning()</code>为真，<code>handle</code>非空，<code>runs.get() &gt;= 1</code>为真。
+     *
+     * @throws Exception 等待并发操作时失败
+     */
     @Test
     void scheduleAtFixedRateRunsTask() throws Exception {
         AtomicInteger runs = new AtomicInteger();
@@ -142,6 +167,7 @@ class GuiceViewManagerTest {
         assertFalse(handle.isActive());
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
     @Test
     void scheduleAtFixedRateWithInvalidIntervalThrowsException() {
         assertThrows(IllegalArgumentException.class, () -> {
@@ -156,6 +182,7 @@ class GuiceViewManagerTest {
 
     // --- getProjectionStatus tests ---
 
+    /** \u9a8c\u8bc1<code>status.streamId()</code> \u7b49\u4e8e <code>"orders"</code>\uff0c<code>status.nextEventNumber()</code> \u7b49\u4e8e <code>0L</code>\uff0c<code>status.lastError()</code>\u4e3a\u7a7a\u3002 */
     @Test
     void getProjectionStatus_withoutRepository_returnsBaseline() {
         manager.start();
@@ -169,6 +196,7 @@ class GuiceViewManagerTest {
         assertNull(status.lastError());
     }
 
+    /** \u9a8c\u8bc1<code>status.streamId()</code> \u7b49\u4e8e <code>"orders"</code>\uff0c<code>status.nextEventNumber()</code> \u7b49\u4e8e <code>42L</code>\uff0c<code>status.lastError()</code>\u4e3a\u7a7a\u3002 */
     @Test
     void getProjectionStatus_withRepositoryAndPosition_returnsRealPosition() {
         GuiceInMemoryProjectionPositionRepository repo = new GuiceInMemoryProjectionPositionRepository();
@@ -189,6 +217,7 @@ class GuiceViewManagerTest {
         mgr.stop();
     }
 
+    /** \u9a8c\u8bc1<code>status.streamId()</code> \u7b49\u4e8e <code>"orders"</code>\uff0c<code>status.nextEventNumber()</code> \u7b49\u4e8e <code>42L</code>\uff0c<code>status.lastError()</code> \u7b49\u4e8e <code>"last failure"</code>\u3002 */
     @Test
     void getProjectionStatus_withMetrics_returnsLastRunInfo() {
         GuiceInMemoryProjectionPositionRepository repo = new GuiceInMemoryProjectionPositionRepository();
@@ -211,6 +240,7 @@ class GuiceViewManagerTest {
         assertEquals("last failure", status.lastError());
     }
 
+    /** \u9a8c\u8bc1<code>status.streamId()</code> \u7b49\u4e8e <code>"unknown"</code>\uff0c<code>status.nextEventNumber()</code> \u7b49\u4e8e <code>0L</code>\uff0c<code>status.running()</code>\u4e3a\u771f\u3002 */
     @Test
     void getProjectionStatus_withRepositoryButNoPosition_returnsZeroPosition() {
         GuiceInMemoryProjectionPositionRepository repo = new GuiceInMemoryProjectionPositionRepository();
@@ -227,6 +257,7 @@ class GuiceViewManagerTest {
         mgr.stop();
     }
 
+    /** \u9a8c\u8bc1<code>status.running()</code>\u4e3a\u5047\u3002 */
     @Test
     void getProjectionStatus_whenStopped_runningIsFalse() {
         ProjectionStatus status = manager.getProjectionStatus("orders");

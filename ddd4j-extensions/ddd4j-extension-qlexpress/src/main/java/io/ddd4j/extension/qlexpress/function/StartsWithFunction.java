@@ -34,10 +34,12 @@ public final class StartsWithFunction implements NamedQLFunction {
     }
 
     /**
-     * call() 方法。
-     * @param qContext qContext 参数。
-     * @param parameters parameters 参数。
-     * @return 结果对象。
+     * call() \u65b9\u6cd5\u3002
+     * @param qContext qContext \u53c2\u6570\u3002
+     * @param parameters parameters \u53c2\u6570\u3002
+     * @return \u7ed3\u679c\u5bf9\u8c61\u3002
+     *
+     * @throws IllegalArgumentException \u4f20\u5165\u7684\u5b9e\u53c2\u5c11\u4e8e\u4e24\u4e2a
      */
     @Override
     public Object call(QContext qContext, Parameters parameters) {

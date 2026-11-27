@@ -28,7 +28,9 @@ import java.util.Optional;
 public interface PermissionRepository extends Repository<Permission, String> {
 
     /**
-     * 查询全部权限。
+     * \u67e5\u8be2\u5168\u90e8\u6743\u9650\u3002
+     *
+     * @return \u4ed3\u50a8\u4e2d\u5df2\u6709\u7684\u6743\u9650\u96c6\u5408
      */
     List<Permission> findAll();
 

@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class ReplayCausalityPreservedMustTest {
 
+    /** \u9a8c\u8bc1<code>replayDerived.getCorrelationId().asString()</code> \u7b49\u4e8e <code>second.getCorrelationId().asString()</code>\uff0c<code>replayDerived.getCausationId().asString()</code> \u7b49\u4e8e <code>replayedSource.getEventId().asString()</code>\uff0c<code>replayedStored.causationId().asString()</code> \u7b49\u4e8e <code>second.getCausationId().asString()</code>\u3002 */
     @Test
     void derivedEventMustPreserveOriginalCorrelationAndPointToReplaySource() {
         InMemoryEventStore store = new InMemoryEventStore();
@@ -65,6 +66,7 @@ class ReplayCausalityPreservedMustTest {
                 "事件存储持久化的因果快照必须保留 causationId");
     }
 
+    /** \u9a8c\u8bc1<code>derived.getCorrelationId().asString()</code> \u7b49\u4e8e <code>source.getEventId().asString()</code>\uff0c<code>derived.getCausationId().asString()</code> \u7b49\u4e8e <code>source.getEventId().asString()</code>\u3002 */
     @Test
     void derivedEventWithoutCausalSourceMustFallBackToSourceEventId() {
         InMemoryEventStore store = new InMemoryEventStore();
@@ -90,22 +92,42 @@ class ReplayCausalityPreservedMustTest {
      */
     private static final class TestAggregateRootId implements AggregateRootId {
 
+        /** \u7ec4\u6210\u6d4b\u8bd5\u6807\u8bc6\u7684\u539f\u59cb\u503c\u3002 */
         private final String value;
 
+        /**
+         * \u8bbe\u7f6e <code>value</code>\uff0c\u7528\u4e8e\u6784\u9020 <code>TestAggregateRootId</code> \u6d4b\u8bd5\u5b9e\u4f8b\u3002
+         * @param value \u7ec4\u6210\u6d4b\u8bd5\u6807\u8bc6\u7684\u539f\u59cb\u503c
+         */
         private TestAggregateRootId(String value) {
             this.value = Objects.requireNonNull(value, "value must not be null");
         }
 
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 此操作产生的<code>EntityType</code>结果
+         */
         @Override
         public EntityType getType() {
             return new StringEntityType("Order");
         }
 
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 实际返回<code>value</code>，供调用方取得当前值
+         */
         @Override
         public String asString() {
             return value;
         }
 
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * @return 实际返回<code>"Order:" + value</code>，供调用方取得当前值
+         */
         @Override
         public String asTypedString() {
             return "Order:" + value;
@@ -117,6 +139,10 @@ class ReplayCausalityPreservedMustTest {
      */
     private static final class RootEvent extends DomainEvent<TestAggregateRootId> {
 
+        /**
+         * \u4f7f\u7528 <code>super()</code> \u521d\u59cb\u5316 <code>RootEvent</code> \u6d4b\u8bd5\u5939\u5177\u3002
+         * @param aggregateId \u7528\u4e8e\u5b9a\u4f4d\u88ab\u6d4b\u805a\u5408\u7684\u6807\u8bc6
+         */
         private RootEvent(TestAggregateRootId aggregateId) {
             super(new EntityIdPath(aggregateId));
         }
@@ -127,6 +153,11 @@ class ReplayCausalityPreservedMustTest {
      */
     private static final class DerivedEvent extends DomainEvent<TestAggregateRootId> {
 
+        /**
+         * \u4f7f\u7528 <code>super()</code> \u521d\u59cb\u5316 <code>DerivedEvent</code> \u6d4b\u8bd5\u5939\u5177\u3002
+         * @param aggregateId \u7528\u4e8e\u5b9a\u4f4d\u88ab\u6d4b\u805a\u5408\u7684\u6807\u8bc6
+         * @param respondTo \u7528\u4e8e\u521d\u59cb\u5316 <code>DerivedEvent</code> \u7684 <code>DomainEvent&lt;?&gt;</code> \u503c
+         */
         private DerivedEvent(TestAggregateRootId aggregateId, DomainEvent<?> respondTo) {
             super(new EntityIdPath(new StringEntityId(aggregateId.asString())), respondTo);
         }

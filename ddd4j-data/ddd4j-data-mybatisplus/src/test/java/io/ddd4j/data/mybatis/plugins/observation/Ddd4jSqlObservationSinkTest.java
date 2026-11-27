@@ -23,13 +23,16 @@ import java.util.ServiceLoader;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/** \u901a\u8fc7 <code>ServiceLoader.load()</code>\u3001<code>sink.accept()</code>\u3001<code>Class.forName()</code> \u9a8c\u8bc1 <code>Ddd4jSqlObservationSink</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
 class Ddd4jSqlObservationSinkTest {
 
+    /** \u6d4b\u8bd5\u540e\u4f9d\u6b21\u6e05\u9664<code>ThreadContext</code>\u3002 */
     @AfterEach
     void cleanup() {
         ThreadContext.clear();
     }
 
+    /** \u9a8c\u8bc1<code>ThreadContext.&lt;Object&gt;get(ContextConstants.PREPARING_SQL)</code> \u7b49\u4e8e <code>"SELECT * FROM orders"</code>\uff0c<code>ThreadContext.&lt;Object&gt;get(ContextConstants.LAST_SQL_SPENDS)</code> \u7b49\u4e8e <code>3L</code>\u3002 */
     @Test
     void shouldStoreNormalizedSqlAndElapsedTime() {
         SqlObservation observation = new SqlObservation(
@@ -43,6 +46,7 @@ class Ddd4jSqlObservationSinkTest {
                 .isEqualTo(3L);
     }
 
+    /** \u9a8c\u8bc1<code>discovered</code>\u4e3a\u771f\u3002 */
     @Test
     void shouldBeDiscoverableThroughServiceLoader() {
         boolean discovered = false;
@@ -56,6 +60,7 @@ class Ddd4jSqlObservationSinkTest {
         assertThat(discovered).isTrue();
     }
 
+    /** \u9a8c\u8bc1<code>ThreadContext.&lt;Object&gt;get(ContextConstants.PREPARING_SQL)</code> \u7b49\u4e8e <code>"SELECT * FROM orders"</code>\uff0c<code>ThreadContext.&lt;Object&gt;get(ContextConstants.LAST_SQL_SPENDS)</code> \u7b49\u4e8e <code>3L</code>\u3002 */
     @Test
     void shouldForwardObservationDiscoveredThroughUpstreamServiceLoader() {
         com.baomidou.mybatisplus.enhance.observation.SqlObservationSink sink = ServiceLoader
@@ -74,6 +79,10 @@ class Ddd4jSqlObservationSinkTest {
         assertThat(ThreadContext.<Object>get(ContextConstants.LAST_SQL_SPENDS)).isEqualTo(3L);
     }
 
+    /**
+     * \u9a8c\u8bc1<code>sinkType.isInstance(new Ddd4jSqlObservationSink())</code>\u4e3a\u771f\u3002
+     * @throws Exception \u53cd\u5c04\u8bbf\u95ee\u88ab\u6d4b\u6210\u5458\u65f6\u5931\u8d25
+     */
     @Test
     void upstreamObservationMustReachDdd4jContext() throws Exception {
         Class<?> sinkType = Class.forName("com.baomidou.mybatisplus.enhance.observation.SqlObservationSink");

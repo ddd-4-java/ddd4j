@@ -26,6 +26,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class InMemoryQrCodeTemplateRegistry implements QrCodeTemplateRegistry {
 
+    /** \u6309\u6a21\u677f\u6807\u8bc6\u7d22\u5f15\u5df2\u6ce8\u518c\u7684\u4e8c\u7ef4\u7801\u6a21\u677f\u3002 */
     private final ConcurrentMap<String, QrCodeTemplateDefinition> templates =
             new ConcurrentHashMap<String, QrCodeTemplateDefinition>();
 
@@ -39,6 +40,14 @@ public class InMemoryQrCodeTemplateRegistry implements QrCodeTemplateRegistry {
         templates.put(definition.getId(), definition);
     }
 
+    /**
+     * 查找与给定条件对应的条目。
+     *
+     * <p>此实现调用 <code>StringUtils.isBlank(id)</code>。</p>
+     *
+     * @param id 模板 ID
+     * @return 根据执行路径返回<code>Optional.empty()</code>、<code>Optional.ofNullable(templates.get(id))</code>
+     */
     @Override
     public Optional<QrCodeTemplateDefinition> find(String id) {
         if (StringUtils.isBlank(id)) {

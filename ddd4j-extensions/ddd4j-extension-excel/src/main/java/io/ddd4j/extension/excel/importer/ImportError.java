@@ -57,6 +57,14 @@ public final class ImportError {
      */
     private final String errorType;
 
+    /**
+     * \u7528\u7ed9\u5b9a\u503c\u521d\u59cb\u5316 <code>ImportError</code> \u5b9e\u4f8b\u3002
+     * @param rowIndex \u51fa\u9519\u884c\u53f7\uff08\u4ece 0 \u5f00\u59cb\uff0c\u542b\u8868\u5934\u884c\uff09
+     * @param columnIndex \u51fa\u9519\u5217\u53f7\uff08-1 \u8868\u793a\u975e\u5355\u5143\u683c\u7ea7\u9519\u8bef\uff09
+     * @param cellData \u539f\u59cb\u5355\u5143\u683c\u5185\u5bb9\uff08\u53ef\u80fd\u4e3a null\uff09
+     * @param message <code>message</code> \u5b57\u6bb5
+     * @param errorType \u9519\u8bef\u7c7b\u578b\u540d\u79f0\uff08\u77ed\u7c7b\u540d\uff09
+     */
     private ImportError(long rowIndex, int columnIndex, String cellData, String message, String errorType) {
         this.rowIndex = rowIndex;
         this.columnIndex = columnIndex;

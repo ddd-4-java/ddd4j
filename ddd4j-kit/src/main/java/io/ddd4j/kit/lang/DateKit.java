@@ -32,6 +32,12 @@ import java.util.List;
 @UtilityClass
 public class DateKit extends DateUtil {
 
+    /**
+     * \u5217\u51fa\u4e24\u4e2a\u65f6\u95f4\u70b9\u4e4b\u95f4\u7684\u6708\u4efd\uff08\u5305\u542b\u9996\u5c3e\u6708\u4efd\uff09\u3002
+     * @param startDateTime \u8d77\u59cb\u65f6\u95f4\uff08\u542b\u6240\u5728\u6708\u4efd\uff09
+     * @param endDateTime \u7ed3\u675f\u65f6\u95f4\uff08\u542b\u6240\u5728\u6708\u4efd\uff09
+     * @return \u6309\u6708\u9012\u589e\u7684\u5e74\u6708\u5217\u8868
+     */
     public static List<String> getMonthsBetween(LocalDateTime startDateTime, LocalDateTime endDateTime) {
         List<String> months = new ArrayList<>();
         YearMonth startYearMonth = YearMonth.from(startDateTime);
@@ -46,7 +52,10 @@ public class DateKit extends DateUtil {
     // ============ 从 ddd4j-core/util/DateUtils 合并（基于 java.util.Date）============
 
     /**
-     * 获取前一个分钟值以 0 或者 5 结尾的时间点（单位：毫秒）
+     * \u83b7\u53d6\u524d\u4e00\u4e2a\u5206\u949f\u503c\u4ee5 0 \u6216\u8005 5 \u7ed3\u5c3e\u7684\u65f6\u95f4\u70b9\uff08\u5355\u4f4d\uff1a\u6beb\u79d2\uff09
+     *
+     * @param baseTime \u53c2\u8003\u65f6\u95f4
+     * @return \u5bf9\u9f50\u540e\u7684\u65f6\u95f4\u6233\uff0c\u5355\u4f4d\u6beb\u79d2
      */
     public static long getPreviousMillisEndWithMinute0or5(Date baseTime) {
         Calendar calendar = Calendar.getInstance();
@@ -68,7 +77,10 @@ public class DateKit extends DateUtil {
     }
 
     /**
-     * 获取下一个分钟值以 0 或者 5 结尾的时间点（单位：毫秒）
+     * \u83b7\u53d6\u4e0b\u4e00\u4e2a\u5206\u949f\u503c\u4ee5 0 \u6216\u8005 5 \u7ed3\u5c3e\u7684\u65f6\u95f4\u70b9\uff08\u5355\u4f4d\uff1a\u6beb\u79d2\uff09
+     *
+     * @param baseTime \u53c2\u8003\u65f6\u95f4
+     * @return \u5bf9\u9f50\u540e\u7684\u65f6\u95f4\u6233\uff0c\u5355\u4f4d\u6beb\u79d2
      */
     public static long getNextMillisEndWithMinute0or5(Date baseTime) {
         Calendar calendar = Calendar.getInstance();
@@ -90,7 +102,10 @@ public class DateKit extends DateUtil {
     }
 
     /**
-     * 获取前一个分钟值以 0 结尾的时间点（单位：毫秒）
+     * \u83b7\u53d6\u524d\u4e00\u4e2a\u5206\u949f\u503c\u4ee5 0 \u7ed3\u5c3e\u7684\u65f6\u95f4\u70b9\uff08\u5355\u4f4d\uff1a\u6beb\u79d2\uff09
+     *
+     * @param baseTime \u53c2\u8003\u65f6\u95f4
+     * @return \u5bf9\u9f50\u540e\u7684\u65f6\u95f4\u6233\uff0c\u5355\u4f4d\u6beb\u79d2
      */
     public static long getPreviousMillisEndWithMinute0(Date baseTime) {
         Calendar calendar = Calendar.getInstance();
@@ -112,7 +127,10 @@ public class DateKit extends DateUtil {
     }
 
     /**
-     * 获取下一个分钟值以 0 结尾的时间点（单位：毫秒）
+     * \u83b7\u53d6\u4e0b\u4e00\u4e2a\u5206\u949f\u503c\u4ee5 0 \u7ed3\u5c3e\u7684\u65f6\u95f4\u70b9\uff08\u5355\u4f4d\uff1a\u6beb\u79d2\uff09
+     *
+     * @param baseTime \u53c2\u8003\u65f6\u95f4
+     * @return \u5bf9\u9f50\u540e\u7684\u65f6\u95f4\u6233\uff0c\u5355\u4f4d\u6beb\u79d2
      */
     public static long getNextMillisEndWithMinute0(Date baseTime) {
         Calendar calendar = Calendar.getInstance();
@@ -134,7 +152,11 @@ public class DateKit extends DateUtil {
     }
 
     /**
-     * 计算两个时间差（Date 重载）："X天Y小时Z分钟"
+     * \u8ba1\u7b97\u4e24\u4e2a\u65f6\u95f4\u5dee\uff08Date \u91cd\u8f7d\uff09\uff1a"X\u5929Y\u5c0f\u65f6Z\u5206\u949f"
+     *
+     * @param startDate \u8d77\u59cb\u65f6\u95f4
+     * @param endDate \u7ed3\u675f\u65f6\u95f4
+     * @return \u4e2d\u6587\u5929\u3001\u5c0f\u65f6\u3001\u5206\u949f\u5dee\u503c
      */
     public static String getDatePoor(Date startDate, Date endDate) {
         long nd = 1000L * 24 * 60 * 60;
@@ -148,7 +170,11 @@ public class DateKit extends DateUtil {
     }
 
     /**
-     * 计算两个时间差（LocalDate 重载）："X天Y小时Z分钟W秒"
+     * \u8ba1\u7b97\u4e24\u4e2a\u65f6\u95f4\u5dee\uff08LocalDate \u91cd\u8f7d\uff09\uff1a"X\u5929Y\u5c0f\u65f6Z\u5206\u949fW\u79d2"
+     *
+     * @param startDateTime \u8d77\u59cb\u65f6\u95f4
+     * @param endDateTime \u7ed3\u675f\u65f6\u95f4
+     * @return \u4e2d\u6587\u5929\u3001\u5c0f\u65f6\u3001\u5206\u949f\u3001\u79d2\u5dee\u503c
      */
     public static String getDatePoor(LocalDate startDateTime, LocalDate endDateTime) {
         Duration duration = Duration.between(startDateTime, endDateTime);
@@ -159,7 +185,11 @@ public class DateKit extends DateUtil {
     }
 
     /**
-     * 计算两个时间差（LocalDateTime 重载）："X天Y小时Z分钟W秒"
+     * \u8ba1\u7b97\u4e24\u4e2a\u65f6\u95f4\u5dee\uff08LocalDateTime \u91cd\u8f7d\uff09\uff1a"X\u5929Y\u5c0f\u65f6Z\u5206\u949fW\u79d2"
+     *
+     * @param startDateTime \u8d77\u59cb\u65f6\u95f4
+     * @param endDateTime \u7ed3\u675f\u65f6\u95f4
+     * @return \u4e2d\u6587\u5929\u3001\u5c0f\u65f6\u3001\u5206\u949f\u3001\u79d2\u5dee\u503c
      */
     public static String getDatePoor(LocalDateTime startDateTime, LocalDateTime endDateTime) {
         Duration duration = Duration.between(startDateTime, endDateTime);
@@ -170,7 +200,10 @@ public class DateKit extends DateUtil {
     }
 
     /**
-     * LocalDateTime → Date
+     * LocalDateTime \u2192 Date
+     *
+     * @param temporalAccessor \u5f85\u8f6c\u6362\u7684\u672c\u5730\u65e5\u671f\u6216\u65e5\u671f\u65f6\u95f4
+     * @return \u6309\u7cfb\u7edf\u9ed8\u8ba4\u65f6\u533a\u8f6c\u6362\u7684 Date
      */
     public static Date toDate(LocalDateTime temporalAccessor) {
         ZonedDateTime zdt = temporalAccessor.atZone(ZoneId.systemDefault());
@@ -178,7 +211,10 @@ public class DateKit extends DateUtil {
     }
 
     /**
-     * LocalDate → Date
+     * LocalDate \u2192 Date
+     *
+     * @param temporalAccessor \u5f85\u8f6c\u6362\u7684\u672c\u5730\u65e5\u671f\u6216\u65e5\u671f\u65f6\u95f4
+     * @return \u6309\u7cfb\u7edf\u9ed8\u8ba4\u65f6\u533a\u8f6c\u6362\u7684 Date
      */
     public static Date toDate(LocalDate temporalAccessor) {
         LocalDateTime localDateTime = LocalDateTime.of(temporalAccessor, LocalTime.of(0, 0, 0));
@@ -187,7 +223,10 @@ public class DateKit extends DateUtil {
     }
 
     /**
-     * 毫秒 → LocalDateTime
+     * \u6beb\u79d2 \u2192 LocalDateTime
+     *
+     * @param time \u6beb\u79d2\u65f6\u95f4\u6233
+     * @return \u7cfb\u7edf\u9ed8\u8ba4\u65f6\u533a\u4e2d\u7684\u672c\u5730\u65e5\u671f\u65f6\u95f4
      */
     public static LocalDateTime millsToLocalDateTime(long time) {
         return LocalDateTime.ofInstant(new Date(time).toInstant(), ZoneId.systemDefault());

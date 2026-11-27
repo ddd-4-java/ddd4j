@@ -67,6 +67,10 @@ import static org.mockito.Mockito.times;
  */
 class Ddd4jMicronautOtelScopeTest {
 
+    /**
+     * \u8bfb\u53d6 <code>request</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>request</code>
+     */
     private static HttpRequest<?> request() {
         HttpRequest<?> request = mock(HttpRequest.class);
         io.micronaut.http.HttpHeaders headers = mock(io.micronaut.http.HttpHeaders.class);
@@ -78,6 +82,10 @@ class Ddd4jMicronautOtelScopeTest {
         return request;
     }
 
+    /**
+     * \u8c03\u7528 <code>GlobalOpenTelemetry.resetForTest()</code>\u3001<code>Ddd4jOtel.class.getDeclaredField()</code>\u3001<code>field.setAccessible()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @throws Exception \u53cd\u5c04\u8bbf\u95ee\u88ab\u6d4b\u6210\u5458\u65f6\u5931\u8d25
+     */
     private static void resetOpenTelemetry() throws Exception {
         GlobalOpenTelemetry.resetForTest();
         for (String fieldName : new String[]{"TRACER_CACHE", "METER_CACHE"}) {
@@ -90,6 +98,10 @@ class Ddd4jMicronautOtelScopeTest {
         available.setBoolean(null, false);
     }
 
+    /**
+     * \u9a8c\u8bc1<code>filter.filter(request(), continuation, propagatedContext)</code> \u629b\u51fa <code>io.ddd4j.web.core.error.WebStatusException.class</code>\uff0c<code>exporter.getFinishedSpanItems().size()</code> \u7b49\u4e8e <code>1</code>\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void authenticationFailureEndsServerSpan() throws Exception {
         resetOpenTelemetry();
@@ -117,6 +129,11 @@ class Ddd4jMicronautOtelScopeTest {
         }
     }
 
+    /**
+     * 验证<code>filter.filter(request(), continuation, propagatedContext)</code> 抛出 <code>IllegalStateException.class</code>，<code>Span.current().getSpanContext().isValid()</code>为假。
+     *
+     * @throws Exception 完成 <code>synchronous Downstream Failure Must End Span</code> 操作失败
+     */
     @Test
     void synchronousDownstreamFailureMustEndSpan() throws Exception {
         resetOpenTelemetry();
@@ -145,6 +162,10 @@ class Ddd4jMicronautOtelScopeTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>observed[0]</code>\u4e3a\u771f\uff0c<code>observed[2]</code>\u4e3a\u5047\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void filterMustCloseOtelScopeOnCallingThread() throws Exception {
         resetOpenTelemetry();

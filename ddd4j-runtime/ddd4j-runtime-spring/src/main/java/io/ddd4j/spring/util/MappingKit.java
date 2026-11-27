@@ -48,6 +48,12 @@ public final class MappingKit {
         BEAN_MAPPINGS.put(source, target);
     }
 
+    /**
+     * \u67e5\u8be2\u6e90\u7c7b\u578b\u5bf9\u5e94\u7684\u76ee\u6807\u7c7b\u578b\u3002
+     * @param source \u6e90\u7c7b\u578b
+     * @param <T> \u76ee\u6807\u7c7b\u578b
+     * @return \u5df2\u6ce8\u518c\u7684\u76ee\u6807\u7c7b\u578b
+     */
     public <T> Class<T> get(Class source) {
         return (Class<T>) BEAN_MAPPINGS.get(source);
     }
@@ -67,6 +73,13 @@ public final class MappingKit {
         return BeanKit.copy(source, targetClass);
     }
 
+    /**
+     * \u6309\u5df2\u6ce8\u518c\u7684\u7c7b\u578b\u6620\u5c04\u9010\u9879\u8f6c\u6362\u5217\u8868\u3002
+     * @param source \u6e90\u5bf9\u8c61\u5217\u8868
+     * @param <T> \u76ee\u6807\u7c7b\u578b
+     * @param <S> \u6e90\u7c7b\u578b
+     * @return \u8f6c\u6362\u540e\u7684\u76ee\u6807\u5bf9\u8c61\u5217\u8868
+     */
     public <T, S> List<T> convert(List<S> source) {
         if (CollUtil.isEmpty(source)) {
             return new ArrayList<>();

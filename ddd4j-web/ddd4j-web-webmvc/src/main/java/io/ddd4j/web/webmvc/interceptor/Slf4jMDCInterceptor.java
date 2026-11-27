@@ -35,11 +35,13 @@ import java.util.UUID;
 public class Slf4jMDCInterceptor implements HandlerInterceptor {
 
     /**
-     * preHandle() 方法。
-     * @param request 请求对象。
-     * @param response 响应对象。
-     * @param handler 处理器。
-     * @return 判断结果。
+     * preHandle() \u65b9\u6cd5\u3002
+     * @param request \u8bf7\u6c42\u5bf9\u8c61\u3002
+     * @param response \u54cd\u5e94\u5bf9\u8c61\u3002
+     * @param handler \u5904\u7406\u5668\u3002
+     * @return \u5224\u65ad\u7ed3\u679c\u3002
+     *
+     * @throws Exception \u5f53\u524d\u6846\u67b6\u8bf7\u6c42\u5904\u7406\u3001\u6d88\u606f\u8bfb\u5199\u6216\u53c2\u6570\u8f6c\u6362\u5931\u8d25
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)

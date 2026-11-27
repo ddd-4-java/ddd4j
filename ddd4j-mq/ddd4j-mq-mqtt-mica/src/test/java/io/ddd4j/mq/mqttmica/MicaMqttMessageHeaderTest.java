@@ -30,11 +30,12 @@ import static org.mockito.Mockito.*;
 /**
  * MicaMqtt 用户属性读取测试。
  *
- * <p>mica-mqtt 2.6.6 的编码器要求 USER_PROPERTY 使用 {@link UserProperties} 集合，
+ * <p>mica-mqtt 2.6.6 的编码器要求 USER_PROPERTY 使用 {@code UserProperties} 集合，
  * 不能使用便捷方法创建的单个 UserProperty。本测试覆盖稳定键优先与旧键回退。
  */
 class MicaMqttMessageHeaderTest {
 
+    /** \u9a8c\u8bc1<code>MicaMqttMQClient.messageId(stableMessage)</code> \u7b49\u4e8e <code>"stable-id"</code>\uff0c<code>MicaMqttMQClient.messageId(legacyMessage)</code> \u7b49\u4e8e <code>"legacy-id"</code>\u3002 */
     @Test
     void shouldPreferStableUserPropertyAndReadLegacyProperty() {
         MqttPublishMessage stableMessage = MqttPublishMessage.builder()
@@ -63,6 +64,7 @@ class MicaMqttMessageHeaderTest {
         assertEquals("legacy-id", MicaMqttMQClient.messageId(legacyMessage));
     }
 
+    /** \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>mock()</code>\u3001<code>adapter.close()</code>\u3001<code>never()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002 */
     @Test
     void shouldNotStopInjectedClient() {
         MqttClient client = mock(MqttClient.class);

@@ -40,6 +40,13 @@ class SampleCommandHandler implements CommandExecutor<SampleCommand> {
      */
     static final String HANDLED = "handled-by-quarkus-handler";
 
+    /**
+     * 声明当前处理器可以接收的命令类型。
+     *
+     * <p>测试夹具会调用 <code>java.util.Collections.singleton(SampleCommand.class)</code>。</p>
+     *
+     * @return 实际返回<code>java.util.Collections.singleton(SampleCommand.class)</code>
+     */
     @Override
     public Set<Class<? extends Command>> supportedCommands() {
         return java.util.Collections.singleton(SampleCommand.class);

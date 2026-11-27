@@ -52,18 +52,22 @@ import java.lang.annotation.Target;
 public @interface DomainField {
 
     /**
-     * PO 数据库列名（直接声明，绕过字段名匹配）。
+     * PO \u6570\u636e\u5e93\u5217\u540d\uff08\u76f4\u63a5\u58f0\u660e\uff0c\u7ed5\u8fc7\u5b57\u6bb5\u540d\u5339\u914d\uff09\u3002
      *
-     * <p>与 {@link #poField()} 二选一，优先使用本字段。
+     *  <p>\u4e0e {@link #poField()} \u4e8c\u9009\u4e00\uff0c\u4f18\u5148\u4f7f\u7528\u672c\u5b57\u6bb5\u3002
+     *
+     * @return PO \u6570\u636e\u5e93\u5217\u540d
      */
     String column() default "";
 
     /**
-     * 对应的 PO 字段名（声明后通过 MP {@code TableInfoHelper} 反射 PO 字段查找列名）。
+     * \u5bf9\u5e94\u7684 PO \u5b57\u6bb5\u540d\uff08\u58f0\u660e\u540e\u901a\u8fc7 MP {@code TableInfoHelper} \u53cd\u5c04 PO \u5b57\u6bb5\u67e5\u627e\u5217\u540d\uff09\u3002
      *
-     * <p>用于 Domain 字段名与 PO 字段名不一致，但 PO 字段已有 {@code @TableField} 标注的场景。
-     * 例如 Domain 字段 {@code phoneNumber} 对应 PO 字段 {@code phoneNum}，PO 字段标注了
-     * {@code @TableField("phone_number")}，充血查询翻译会自动通过 poField 查找列名。
+     *  <p>\u7528\u4e8e Domain \u5b57\u6bb5\u540d\u4e0e PO \u5b57\u6bb5\u540d\u4e0d\u4e00\u81f4\uff0c\u4f46 PO \u5b57\u6bb5\u5df2\u6709 {@code @TableField} \u6807\u6ce8\u7684\u573a\u666f\u3002
+     *  \u4f8b\u5982 Domain \u5b57\u6bb5 {@code phoneNumber} \u5bf9\u5e94 PO \u5b57\u6bb5 {@code phoneNum}\uff0cPO \u5b57\u6bb5\u6807\u6ce8\u4e86
+     *  {@code @TableField("phone_number")}\uff0c\u5145\u8840\u67e5\u8be2\u7ffb\u8bd1\u4f1a\u81ea\u52a8\u901a\u8fc7 poField \u67e5\u627e\u5217\u540d\u3002
+     *
+     * @return \u5bf9\u5e94\u7684 PO \u5b57\u6bb5\u540d
      */
     String poField() default "";
 }

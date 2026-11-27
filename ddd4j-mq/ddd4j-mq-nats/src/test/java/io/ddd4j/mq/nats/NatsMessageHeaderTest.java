@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class NatsMessageHeaderTest {
 
+    /** \u9a8c\u8bc1<code>headers.getFirst(MessageHeaders.HEADER_MESSAGE_ID)</code> \u7b49\u4e8e <code>"stable-id"</code>\uff0c<code>headers.getFirst(MQDeliveryHeaders.CORRELATION_ID)</code> \u7b49\u4e8e <code>"correlation-1"</code>\uff0c<code>NatsMQClient.messageId(legacyHeaders)</code> \u7b49\u4e8e <code>"legacy-id"</code>\u3002 */
     @Test
     void shouldWriteStableHeaderAndPreferItWhenReading() {
         MQEvent event = new MQEvent();

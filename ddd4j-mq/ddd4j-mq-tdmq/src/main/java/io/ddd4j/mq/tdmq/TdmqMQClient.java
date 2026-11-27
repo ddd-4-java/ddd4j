@@ -57,15 +57,24 @@ import java.util.function.Consumer;
 @Slf4j(topic = "### DDD4J-MQ : TdmqMQClient ###")
 public class TdmqMQClient implements MQClient {
 
+    /** \u5f53\u524d\u6d88\u606f\u4ee3\u7406\u5ba2\u6237\u7aef\u4f7f\u7528\u7684\u8fde\u63a5\u548c\u8ba2\u9605\u914d\u7f6e\u3002 */
     private final TdmqProperties properties;
+    /** \u5f53\u524d TDMQ \u5ba2\u6237\u7aef\u7ef4\u62a4\u7684\u6d88\u8d39\u8ba2\u9605\u3002 */
     private final List<Subscription> subscriptions = new CopyOnWriteArrayList<>();
+    /** \u6309\u6d88\u606f\u4e3b\u9898\u8bb0\u5f55\u5f53\u524d\u8ba2\u9605\u53ca\u5176\u76d1\u542c\u5668\u3002 */
     private final java.util.Map<String, java.util.List<Consumer<DeliveredMessage>>> topicSubscribers =
             new java.util.concurrent.ConcurrentHashMap<>();
+    /** \u534f\u8c03\u6d88\u606f\u5ba2\u6237\u7aef\u542f\u52a8\u3001\u521d\u59cb\u5316\u548c\u5173\u95ed\u7684\u751f\u547d\u5468\u671f\u3002 */
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    /** \u7ec4\u4ef6\u7684\u542f\u52a8\u72b6\u6001\u548c\u542f\u52a8\u5931\u8d25\u8bca\u65ad\u4fe1\u606f\u3002 */
     private final MQStartupStatus startupStatus = new MQStartupStatus("tdmq");
+    /** \u7528\u4e8e\u539f\u751f\u8fde\u63a5\u6a21\u5f0f\u7684 Pulsar \u5ba2\u6237\u7aef\u9002\u914d\u5668\u3002 */
     private final PulsarMQClient nativePulsar;
+    /** \u6d4b\u8bd5\u6216\u81ea\u5b9a\u4e49\u4ee3\u7406\u7684\u6d88\u606f\u53d1\u5e03\u5165\u53e3\u3002 */
     private BrokerPublisher brokerPublisher;
+    /** \u6d4b\u8bd5\u6216\u81ea\u5b9a\u4e49\u4ee3\u7406\u7684\u6d88\u606f\u8ba2\u9605\u5165\u53e3\u3002 */
     private BrokerSubscriber brokerSubscriber;
+    /** \u5f53\u524d\u5b9e\u4f8b\u662f\u5426\u5df2\u5173\u95ed\u3002 */
     private volatile boolean closed;
 
     /**
@@ -98,6 +107,11 @@ public class TdmqMQClient implements MQClient {
         this.nativePulsar = null;
     }
 
+    /**
+     * \u5c06 TDMQ \u914d\u7f6e\u6620\u5c04\u6210\u539f\u751f Pulsar \u9002\u914d\u5668\u5c5e\u6027\u3002
+     * @param source \u7528\u6765\u751f\u6210 Pulsar \u914d\u7f6e\u7684 TDMQ \u8fde\u63a5\u5c5e\u6027
+     * @return \u4f9b Pulsar \u76f4\u63a5\u8fde\u63a5\u7684\u914d\u7f6e
+     */
     private static PulsarProperties pulsarProperties(TdmqProperties source) {
         PulsarProperties target = new PulsarProperties();
         target.setEnabled(source.isEnabled());
@@ -116,6 +130,10 @@ public class TdmqMQClient implements MQClient {
         return target;
     }
 
+    /**
+     * \u68c0\u67e5\u53d1\u5e03\u548c\u8ba2\u9605\u662f\u5426\u90fd\u7531\u539f\u751f Pulsar \u9002\u914d\u5668\u8d1f\u8d23\u3002
+     * @return \u4ec5\u4f7f\u7528\u539f\u751f\u9002\u914d\u5668\u65f6\u8fd4\u56de true
+     */
     private boolean nativeMode() {
         return Objects.nonNull(nativePulsar) && Objects.isNull(brokerPublisher)
                 && Objects.isNull(brokerSubscriber);
@@ -139,16 +157,35 @@ public class TdmqMQClient implements MQClient {
         this.brokerSubscriber = subscriber;
     }
 
+    /**
+     * 返回此消息适配器在 DDD4J 中登记的实现名。
+     *
+     * @return 实际返回<code>"tdmq"</code>，供调用方取得当前值
+     */
     @Override
     public String impl() {
         return "tdmq";
     }
 
+    /**
+     * 返回管理连接、生产者和消费者资源的生命周期对象。
+     *
+     * <p>此实现调用 <code>nativeMode()</code>。</p>
+     *
+     * @return 当前消息适配器用于登记和关闭资源的生命周期对象
+     */
     @Override
     public MQClientLifecycle lifecycle() {
         return nativeMode() ? nativePulsar.lifecycle() : lifecycle;
     }
 
+    /**
+     * 返回消息客户端当前记录的启动状态。
+     *
+     * <p>此实现调用 <code>nativeMode()</code>。</p>
+     *
+     * @return 当前消息适配器记录的启动状态
+     */
     @Override
     public MQStartupStatus startupStatus() {
         return nativeMode() ? nativePulsar.startupStatus() : startupStatus;
@@ -156,6 +193,14 @@ public class TdmqMQClient implements MQClient {
 
     // ========================= 生产者 =========================
 
+    /**
+     * 准备消息生产者并返回可发布事件的入口。
+     *
+     * <p>满足 <code>closed</code> 时抛出 <code>IllegalStateException</code>。 此实现调用 <code>nativeMode()</code>。</p>
+     *
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 接收待发布事件的函数
+     */
     @Override
     public synchronized Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         if (closed) {
@@ -195,6 +240,15 @@ public class TdmqMQClient implements MQClient {
 
     // ========================= 消费者 =========================
 
+    /**
+     * 为监听器建立消息消费所需的订阅和客户端资源。
+     *
+     * <p>满足 <code>closed</code> 时抛出 <code>IllegalStateException</code>。 此实现调用 <code>properties.isAutoStartConsumers()</code>。</p>
+     *
+     * @param listener 监听器定义
+     * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
+     * @return 消费者完成注册时为真
+     */
     @Override
     public synchronized boolean initConsumer(MQListener listener, MQProperties mqProperties) {
         if (closed) {
@@ -282,6 +336,11 @@ public class TdmqMQClient implements MQClient {
         return true;
     }
 
+    /**
+     * 启动当前组件并准备其运行资源。
+     *
+     * <p>此实现调用 <code>nativeMode()</code>。</p>
+     */
     @Override
     public void start() {
         if (nativeMode()) {
@@ -291,6 +350,7 @@ public class TdmqMQClient implements MQClient {
 
     // ========================= 关闭 =========================
 
+    /** \u91ca\u653e\u6d88\u606f\u5ba2\u6237\u7aef\u62e5\u6709\u7684\u8fd0\u884c\u8d44\u6e90\uff0c\u5e76\u5728\u9000\u51fa\u65f6\u767b\u8bb0\u7ec4\u4ef6\u5df2\u505c\u6b62\u3002 */
     @Override
     public synchronized void close() {
         if (closed) {
@@ -317,16 +377,22 @@ public class TdmqMQClient implements MQClient {
      */
     public final static class DeliveredMessage {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u6d88\u606f\u6807\u8bc6\u3002 */
         private final String messageId;
 
+        /** \u7528\u4e8e\u5173\u8054\u540c\u4e00\u6b21\u64cd\u4f5c\u4ea7\u751f\u7684\u4e8b\u4ef6\u6216\u6d88\u606f\u7684\u6807\u8bc6\u3002 */
         private final String correlationId;
 
+        /** \u6d88\u606f\u8f6c\u79fb\u6216\u53d1\u9001\u65f6\u4f7f\u7528\u7684\u5e8f\u5217\u5316\u8d1f\u8f7d\u3002 */
         private final byte[] payload;
 
+        /** \u5728\u539f\u751f\u4ee3\u7406\u6d88\u606f\u548c DDD4J \u4e4b\u95f4\u900f\u4f20\u7684\u5934\u5b57\u6bb5\u3002 */
         private final Map<String, String> headers;
 
+        /** \u539f\u751f\u4ee3\u7406\u66b4\u9732\u7684\u6295\u9012\u786e\u8ba4\u56de\u8c03\u3002 */
         private final java.util.function.Consumer<Boolean> ackCallback;
 
         /**
@@ -365,36 +431,44 @@ public class TdmqMQClient implements MQClient {
             this.ackCallback = ackCallback;
         }
 
-        /** @return 消息标识 */
+        /** @return \u6d88\u606f\u6807\u8bc6 */
         @JsonProperty("messageId")
         public String messageId() {
             return messageId;
         }
 
-        /** @return 关联标识 */
+        /** @return \u5173\u8054\u6807\u8bc6 */
         @JsonProperty("correlationId")
         public String correlationId() {
             return correlationId;
         }
 
-        /** @return 消息内容 */
+        /** @return \u6d88\u606f\u5185\u5bb9 */
         @JsonProperty("payload")
         public byte[] payload() {
             return payload;
         }
 
-        /** @return 不可变 broker 消息头 */
+        /** @return \u4e0d\u53ef\u53d8 broker \u6d88\u606f\u5934 */
         @JsonProperty("headers")
         public Map<String, String> headers() {
             return headers;
         }
 
-        /** @return 确认结果回调 */
+        /** @return \u786e\u8ba4\u7ed3\u679c\u56de\u8c03 */
         @JsonProperty("ackCallback")
         public java.util.function.Consumer<Boolean> ackCallback() {
             return ackCallback;
         }
 
+        /**
+         * 根据<code>messageId</code>、<code>correlationId</code>、<code>payload</code>、<code>headers</code>、<code>ackCallback</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -407,6 +481,11 @@ public class TdmqMQClient implements MQClient {
             return Objects.equals(this.messageId, other.messageId) && Objects.equals(this.correlationId, other.correlationId) && Objects.equals(this.payload, other.payload) && Objects.equals(this.headers, other.headers) && Objects.equals(this.ackCallback, other.ackCallback);
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 0;
@@ -418,6 +497,11 @@ public class TdmqMQClient implements MQClient {
             return result;
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>messageId</code>、<code>correlationId</code>、<code>payload</code>、<code>headers</code>、<code>ackCallback</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "DeliveredMessage[messageId=" + messageId + ", correlationId=" + correlationId + ", payload=" + payload + ", headers=" + headers + ", ackCallback=" + ackCallback + "]";
@@ -541,6 +625,7 @@ public class TdmqMQClient implements MQClient {
     @FunctionalInterface
     public interface Subscription extends AutoCloseable {
 
+        /** 结束当前组件持有的资源。 */
         @Override
         void close();
     }
@@ -550,17 +635,45 @@ public class TdmqMQClient implements MQClient {
      */
     static final class InMemoryBrokerPublisher implements BrokerPublisher {
 
+        /** \u6309\u6d88\u606f\u4e3b\u9898\u8bb0\u5f55\u5f53\u524d\u8ba2\u9605\u53ca\u5176\u76d1\u542c\u5668\u3002 */
         private final java.util.Map<String, java.util.List<Consumer<DeliveredMessage>>> topicSubscribers;
 
+        /**
+         * \u7528\u5171\u4eab\u8ba2\u9605\u8868\u521b\u5efa\u5185\u5b58\u53d1\u5e03\u7aef\u3002
+         * @param topicSubscribers \u6309\u4ee3\u7406\u4e3b\u9898\u4fdd\u5b58\u7684\u5185\u5b58\u8ba2\u9605\u56de\u8c03\u6620\u5c04
+         */
         InMemoryBrokerPublisher(java.util.Map<String, java.util.List<Consumer<DeliveredMessage>>> topicSubscribers) {
             this.topicSubscribers = topicSubscribers;
         }
 
+        /**
+         * 将传入的事件交给当前发布通道。
+         *
+         * <p>此实现调用 <code>publish(topic, tag, tenantId, key, payload, Collections.emptyMap())</code>。</p>
+         *
+         * @param topic 物理 topic（含 namespace 前缀）
+         * @param tag tag，可为 null
+         * @param tenantId 租户 ID
+         * @param key 业务 Key
+         * @param payload 序列化字节流
+         */
         @Override
         public void publish(String topic, String tag, String tenantId, String key, byte[] payload) {
             publish(topic, tag, tenantId, key, payload, Collections.emptyMap());
         }
 
+        /**
+         * 将传入的事件交给当前发布通道。
+         *
+         * <p>此实现调用 <code>topicSubscribers.get(topic)</code>。</p>
+         *
+         * @param topic 物理 topic
+         * @param tag tag
+         * @param tenantId 租户 ID
+         * @param key 业务 Key
+         * @param payload 序列化内容
+         * @param headers broker 消息头
+         */
         @Override
         public void publish(String topic, String tag, String tenantId, String key,
                             byte[] payload, Map<String, String> headers) {
@@ -586,12 +699,26 @@ public class TdmqMQClient implements MQClient {
      */
     static final class InMemoryBrokerSubscriber implements BrokerSubscriber {
 
+        /** \u6309\u6d88\u606f\u4e3b\u9898\u8bb0\u5f55\u5f53\u524d\u8ba2\u9605\u53ca\u5176\u76d1\u542c\u5668\u3002 */
         private final java.util.Map<String, java.util.List<Consumer<DeliveredMessage>>> topicSubscribers;
 
+        /**
+         * \u7528\u5171\u4eab\u8ba2\u9605\u8868\u521b\u5efa\u5185\u5b58\u8ba2\u9605\u7aef\u3002
+         * @param topicSubscribers \u6309\u4ee3\u7406\u4e3b\u9898\u4fdd\u5b58\u7684\u5185\u5b58\u8ba2\u9605\u56de\u8c03\u6620\u5c04
+         */
         InMemoryBrokerSubscriber(java.util.Map<String, java.util.List<Consumer<DeliveredMessage>>> topicSubscribers) {
             this.topicSubscribers = topicSubscribers;
         }
 
+        /**
+         * 按给定条件注册消费监听。
+         *
+         * @param topic 物理 topic
+         * @param tagExpression tag 表达式
+         * @param group 订阅组
+         * @param handler 容器已匹配的请求处理器
+         * @return 订阅句柄
+         */
         @Override
         public Subscription subscribe(String topic, String tagExpression, String group,
                                       MessageHandler handler) {
@@ -600,6 +727,17 @@ public class TdmqMQClient implements MQClient {
                             handler.onMessage(messageId, correlationId, payload, ackCallback));
         }
 
+        /**
+         * 按给定条件注册消费监听。
+         *
+         * <p>此实现调用 <code>entries.add(consumer)</code>。</p>
+         *
+         * @param topic 物理 topic
+         * @param tagExpression tag 表达式
+         * @param group 消费组
+         * @param handler 容器已匹配的请求处理器
+         * @return 订阅句柄
+         */
         @Override
         public Subscription subscribe(String topic, String tagExpression, String group,
                                       HeaderMessageHandler handler) {

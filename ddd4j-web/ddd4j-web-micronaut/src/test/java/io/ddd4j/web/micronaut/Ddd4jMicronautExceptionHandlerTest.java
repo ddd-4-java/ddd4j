@@ -30,18 +30,21 @@ import static org.assertj.core.api.Assertions.assertThatNullPointerException;
  */
 class Ddd4jMicronautExceptionHandlerTest {
 
+    /** \u9a8c\u8bc1<code>new Ddd4jMicronautExceptionHandler((WebExceptionTranslator) null)</code> \u629b\u51fa <code>NullPointerException</code>\u3002 */
     @Test
     void constructorRejectsNullTranslator() {
         assertThatNullPointerException()
                 .isThrownBy(() -> new Ddd4jMicronautExceptionHandler((WebExceptionTranslator) null));
     }
 
+    /** \u9a8c\u8bc1<code>handler</code>\u975e\u7a7a\u3002 */
     @Test
     void defaultConstructorCreatesDefaultTranslator() {
         Ddd4jMicronautExceptionHandler handler = new Ddd4jMicronautExceptionHandler();
         assertThat(handler).isNotNull();
     }
 
+    /** \u9a8c\u8bc1<code>response.getStatus().getCode()</code> \u7b49\u4e8e <code>400</code>\uff0c<code>response.body()</code>\u975e\u7a7a\u3002 */
     @Test
     void handleTranslatesClientErrorToResponse() {
         Ddd4jMicronautExceptionHandler handler =
@@ -55,6 +58,7 @@ class Ddd4jMicronautExceptionHandlerTest {
         assertThat(response.body()).isNotNull();
     }
 
+    /** \u9a8c\u8bc1<code>response.getStatus().getCode()</code> \u5927\u4e8e\u6216\u7b49\u4e8e <code>500</code>\u3002 */
     @Test
     void handleTranslatesServerErrorToResponse() {
         Ddd4jMicronautExceptionHandler handler =
@@ -67,6 +71,7 @@ class Ddd4jMicronautExceptionHandlerTest {
         assertThat(response.getStatus().getCode()).isGreaterThanOrEqualTo(500);
     }
 
+    /** \u9a8c\u8bc1<code>response.getStatus().getCode()</code> \u7b49\u4e8e <code>409</code>\u3002 */
     @Test
     void handleTranslatesConflictForIllegalState() {
         Ddd4jMicronautExceptionHandler handler =
@@ -79,6 +84,7 @@ class Ddd4jMicronautExceptionHandlerTest {
         assertThat(response.getStatus().getCode()).isEqualTo(409);
     }
 
+    /** \u9a8c\u8bc1<code>response.getStatus().getCode()</code> \u7b49\u4e8e <code>403</code>\u3002 */
     @Test
     void handleTranslatesUnauthorized() {
         Ddd4jMicronautExceptionHandler handler =

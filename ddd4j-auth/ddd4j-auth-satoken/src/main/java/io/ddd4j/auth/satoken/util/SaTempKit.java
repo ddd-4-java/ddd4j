@@ -31,18 +31,17 @@ import java.util.Objects;
  */
 public class SaTempKit {
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>SaTempKit</code> \u5b9e\u4f8b\u3002 */
     private SaTempKit() {
     }
 
     // -------- 创建
 
     /**
-     * 为指定 value 创建一个临时 Token
-     *
-     * @param value   指定值
-     * @param timeout 有效期，单位：秒，-1 代表永久有效
-     * @return 生成的token
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * \u4e3a\u6307\u5b9a value \u521b\u5efa\u4e00\u4e2a\u4e34\u65f6 Token
+     * @param value \u6307\u5b9a\u503c
+     * @param timeout \u6709\u6548\u671f\uff0c\u5355\u4f4d\uff1a\u79d2\uff0c-1 \u4ee3\u8868\u6c38\u4e45\u6709\u6548
+     * @return \u751f\u6210\u7684token
      */
     public static String createToken(SaTempToken value, long timeout) {
         return SaTempUtil.createToken(value, timeout);

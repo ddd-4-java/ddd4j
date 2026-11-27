@@ -6,7 +6,9 @@ import lombok.Value;
 /** 框架适配层传输的 HTTP 状态码与 JSON。 */
 @Value
 public class Reply {
+    /** HTTP \u54cd\u5e94\u72b6\u6001\u7801\u3002 */
     private int status;
+    /** \u5f85\u8fd4\u56de\u7684 JSON \u54cd\u5e94\u6b63\u6587\u3002 */
     private JsonNode payload;
 
     /**

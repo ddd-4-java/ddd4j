@@ -52,9 +52,13 @@ public class KafkaMQProperties extends MQProperties {
      * Kafka broker bootstrap servers（独立于父类 server 以遵循 Kafka 命名约定）。
      */
     private String bootstrapServers = "localhost:9092";
+    /** \u8fde\u63a5 Kafka \u5ba2\u6237\u7aef\u65f6\u4f7f\u7528\u7684\u6807\u8bc6\u3002 */
     private String clientId = "ddd4j-mq-kafka";
+    /** \u62fc\u63a5\u903b\u8f91\u6d88\u8d39\u8005\u7ec4 ID \u65f6\u4f7f\u7528\u7684\u540d\u79f0\u524d\u7f00\u3002 */
     private String groupIdPrefix = "ddd4j";
+    /** \u6bcf\u6b21 Kafka \u8f6e\u8be2\u6d88\u606f\u6240\u7528\u7684\u8d85\u65f6\u3002 */
     private Duration pollTimeout = Duration.ofSeconds(1);
+    /** \u662f\u5426\u5728\u521d\u59cb\u5316\u540e\u81ea\u52a8\u542f\u52a8 Kafka \u6d88\u8d39\u5faa\u73af\u3002 */
     private boolean autoStartConsumers = true;
 
     /**
@@ -79,7 +83,9 @@ public class KafkaMQProperties extends MQProperties {
     private long publishAckTimeoutMillis = 30_000L;
 
     /**
-     * Producer 配置（对齐 ProducerConfig 常量名）
+     * Producer \u914d\u7f6e\uff08\u5bf9\u9f50 ProducerConfig \u5e38\u91cf\u540d\uff09
+     *
+     * @return Kafka producer \u914d\u7f6e
      */
     public Properties producerProperties() {
         Properties properties = new Properties();
@@ -95,7 +101,9 @@ public class KafkaMQProperties extends MQProperties {
     }
 
     /**
-     * AdminClient 配置
+     * AdminClient \u914d\u7f6e
+     *
+     * @return Kafka \u7ba1\u7406\u5ba2\u6237\u7aef\u914d\u7f6e
      */
     public Properties adminProperties() {
         Properties properties = new Properties();
@@ -105,7 +113,10 @@ public class KafkaMQProperties extends MQProperties {
     }
 
     /**
-     * Consumer 配置
+     * Consumer \u914d\u7f6e
+     *
+     * @param groupId \u6d88\u8d39\u8005\u7ec4\u6807\u8bc6
+     * @return Kafka consumer \u914d\u7f6e
      */
     public Properties consumerProperties(String groupId) {
         Properties properties = new Properties();

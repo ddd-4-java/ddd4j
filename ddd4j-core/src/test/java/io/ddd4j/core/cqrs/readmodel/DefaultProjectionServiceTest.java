@@ -51,6 +51,7 @@ class DefaultProjectionServiceTest {
     @DisplayName("构造器")
     class Constructor {
 
+        /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>NullPointerException.class</code>\u3002 */
         @Test
         void 构造器_repository为null_应抛NullPointerException() {
             assertThatThrownBy(() -> new DefaultProjectionService(null))
@@ -66,6 +67,7 @@ class DefaultProjectionServiceTest {
     @DisplayName("readProjectionPosition")
     class ReadProjectionPosition {
 
+        /** \u9a8c\u8bc1<code>service.readProjectionPosition("person-list")</code>\u4e3a\u96f6\u3002 */
         @Test
         void readProjectionPosition_位置不存在_应返回零() {
             DefaultProjectionService service = new DefaultProjectionService(new InMemoryProjectionPositionRepository());
@@ -73,6 +75,7 @@ class DefaultProjectionServiceTest {
             assertThat(service.readProjectionPosition("person-list")).isZero();
         }
 
+        /** \u9a8c\u8bc1<code>service.readProjectionPosition("person-list")</code> \u7b49\u4e8e <code>7L</code>\u3002 */
         @Test
         void readProjectionPosition_位置存在_应返回已保存的事件号() {
             InMemoryProjectionPositionRepository repo = new InMemoryProjectionPositionRepository();
@@ -82,6 +85,10 @@ class DefaultProjectionServiceTest {
             assertThat(service.readProjectionPosition("person-list")).isEqualTo(7L);
         }
 
+        /**
+         * \u9a8c\u8bc1<code>position</code>\u4e3a\u96f6\u3002
+         * @param repo \u4f20\u7ed9 <code>when()</code> \u7684 <code>ProjectionPositionRepository</code> \u8f93\u5165
+         */
         @Test
         void readProjectionPosition_应委托仓储findByStreamId(@Mock ProjectionPositionRepository repo) {
             when(repo.findByStreamId("person-list")).thenReturn(Optional.empty());
@@ -101,6 +108,7 @@ class DefaultProjectionServiceTest {
     @DisplayName("updateProjectionPosition")
     class UpdateProjectionPosition {
 
+        /** \u9a8c\u8bc1<code>saved.getStreamId()</code> \u7b49\u4e8e <code>"person-list"</code>\uff0c<code>saved.getNextEventNumber()</code> \u7b49\u4e8e <code>12L</code>\uff0c<code>service.readProjectionPosition("person-list")</code> \u7b49\u4e8e <code>12L</code>\u3002 */
         @Test
         void updateProjectionPosition_位置不存在_应创建新位置并保存() {
             InMemoryProjectionPositionRepository repo = new InMemoryProjectionPositionRepository();
@@ -113,6 +121,7 @@ class DefaultProjectionServiceTest {
             assertThat(service.readProjectionPosition("person-list")).isEqualTo(12L);
         }
 
+        /** \u9a8c\u8bc1<code>saved.getNextEventNumber()</code> \u7b49\u4e8e <code>9L</code>\uff0c<code>service.readProjectionPosition("person-list")</code> \u7b49\u4e8e <code>9L</code>\u3002 */
         @Test
         void updateProjectionPosition_位置已存在_应基于现有位置推进() {
             InMemoryProjectionPositionRepository repo = new InMemoryProjectionPositionRepository();
@@ -125,6 +134,11 @@ class DefaultProjectionServiceTest {
             assertThat(service.readProjectionPosition("person-list")).isEqualTo(9L);
         }
 
+        /**
+         * \u9a8c\u8bc1<code>saved</code> \u6307\u5411\u540c\u4e00\u5b9e\u4f8b <code>advanced</code>\u3002
+         * @param repo \u4f20\u7ed9 <code>when()</code> \u7684 <code>ProjectionPositionRepository</code> \u8f93\u5165
+         * @param current \u4f20\u7ed9 <code>when()</code> \u7684 <code>ProjectionPosition</code> \u8f93\u5165
+         */
         @Test
         void updateProjectionPosition_位置已存在_应调用withNextEventNumber基于现有实例(@Mock ProjectionPositionRepository repo,
                                                                                        @Mock ProjectionPosition current) {
@@ -141,6 +155,7 @@ class DefaultProjectionServiceTest {
             verify(repo, times(1)).save(advanced);
         }
 
+        /** \u9a8c\u8bc1<code>service.updateProjectionPosition("person-list", -1)</code> \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
         @Test
         void updateProjectionPosition_nextEventNumber为负_应抛IllegalArgumentException() {
             DefaultProjectionService service = new DefaultProjectionService(new InMemoryProjectionPositionRepository());
@@ -150,6 +165,11 @@ class DefaultProjectionServiceTest {
                     .hasMessageContaining("nextEventNumber must not be negative");
         }
 
+        /**
+         * \u9a8c\u8bc1<code>saved.getNextEventNumber()</code>\u4e3a\u96f6\u3002
+         * @param repo \u4f20\u7ed9 <code>when()</code> \u7684 <code>ProjectionPositionRepository</code> \u8f93\u5165
+         * @param current \u4f20\u7ed9 <code>when()</code> \u7684 <code>ProjectionPosition</code> \u8f93\u5165
+         */
         @Test
         void updateProjectionPosition_nextEventNumber为零_应允许(@Mock ProjectionPositionRepository repo,
                                                                  @Mock ProjectionPosition current) {
@@ -173,6 +193,10 @@ class DefaultProjectionServiceTest {
     @DisplayName("resetProjectionPosition")
     class ResetProjectionPosition {
 
+        /**
+         * \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>service.resetProjectionPosition()</code>\u3001<code>times()</code>\u3001<code>eq()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002
+         * @param repo \u4f20\u7ed9 <code>verify()</code> \u7684 <code>ProjectionPositionRepository</code> \u8f93\u5165
+         */
         @Test
         void resetProjectionPosition_应委托仓储resetToZero(@Mock ProjectionPositionRepository repo) {
             DefaultProjectionService service = new DefaultProjectionService(repo);
@@ -183,6 +207,7 @@ class DefaultProjectionServiceTest {
             verify(repo, never()).save(any());
         }
 
+        /** \u9a8c\u8bc1<code>service.readProjectionPosition("person-list")</code>\u4e3a\u96f6\u3002 */
         @Test
         void resetProjectionPosition_应使后续读取返回零() {
             InMemoryProjectionPositionRepository repo = new InMemoryProjectionPositionRepository();
@@ -194,6 +219,10 @@ class DefaultProjectionServiceTest {
             assertThat(service.readProjectionPosition("person-list")).isZero();
         }
 
+        /**
+         * \u5728\u6d4b\u8bd5\u6846\u67b6\u4e2d\u6267\u884c <code>service.resetProjectionPosition()</code>\u3001<code>verifyNoInteractionsBeyondReset()</code>\uff0c\u9a8c\u8bc1\u8be5\u573a\u666f\u3002
+         * @param repo \u4f20\u7ed9 <code>verify()</code> \u7684 <code>ProjectionPositionRepository</code> \u8f93\u5165
+         */
         @Test
         void resetProjectionPosition_对不存在的streamId_应仅调用resetToZero不触发save(@Mock ProjectionPositionRepository repo) {
             DefaultProjectionService service = new DefaultProjectionService(repo);
@@ -204,6 +233,10 @@ class DefaultProjectionServiceTest {
             verifyNoInteractionsBeyondReset(repo);
         }
 
+        /**
+         * \u8c03\u7528 <code>never()</code>\u3001<code>any()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+         * @param repo \u4f20\u7ed9 <code>verify()</code> \u7684 <code>ProjectionPositionRepository</code> \u8f93\u5165
+         */
         private void verifyNoInteractionsBeyondReset(ProjectionPositionRepository repo) {
             // resetToZero 是唯一应被调用的方法
             verify(repo, never()).save(any());

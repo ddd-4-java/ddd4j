@@ -34,6 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @UtilityClass
 public class SM4Kit {
 
+    /** \u590d\u7528\u7531\u6307\u5b9a\u5bc6\u94a5\u53ca\u521d\u59cb\u5316\u5411\u91cf\u521b\u5efa\u7684 SM4 \u8fd0\u7b97\u5bf9\u8c61\u3002 */
     private final Map<String, SM4> sm4Map = new ConcurrentHashMap<>();
 
     /**
@@ -49,7 +50,12 @@ public class SM4Kit {
     }
 
     /**
-     * SM4-cbc加密
+     * SM4-cbc\u52a0\u5bc6
+     *
+     * @param key \u5bc6\u94a5
+     * @param iv \u521d\u59cb\u5316\u5411\u91cf
+     * @param plainTxt \u660e\u6587
+     * @return Base64 \u7f16\u7801\u7684\u5bc6\u6587
      */
     public static String encrypt(String key, String iv, String plainTxt) {
         SymmetricCrypto sm4 = getSm4(key, iv);
@@ -58,7 +64,12 @@ public class SM4Kit {
     }
 
     /**
-     * SM4-cbc解密
+     * SM4-cbc\u89e3\u5bc6
+     *
+     * @param key \u5bc6\u94a5
+     * @param iv \u521d\u59cb\u5316\u5411\u91cf
+     * @param cipherTxt Base64 \u7f16\u7801\u7684\u5bc6\u6587
+     * @return \u89e3\u5bc6\u540e\u7684\u660e\u6587
      */
     public static String decrypt(String key, String iv, String cipherTxt) {
         SymmetricCrypto sm4 = getSm4(key, iv);

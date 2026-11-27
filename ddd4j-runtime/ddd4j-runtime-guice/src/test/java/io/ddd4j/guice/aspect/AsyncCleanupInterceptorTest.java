@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class AsyncCleanupInterceptorTest {
 
+    /** \u9a8c\u8bc1<code>ThreadContext.get("async-key")</code>\u4e3a\u7a7a\u3002 */
     @Test
     void invokeClearsThreadContextAfterProceed() {
         Injector injector = Guice.createInjector(new AbstractModule() {
@@ -52,6 +53,7 @@ class AsyncCleanupInterceptorTest {
         assertNull(ThreadContext.get("async-key"));
     }
 
+    /** \u9a8c\u8bc1<code>injector.getInstance(BoomWorker.class).boom()</code> \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>ThreadContext.get("async-key")</code>\u4e3a\u7a7a\u3002 */
     @Test
     void invokeClearsThreadContextEvenWhenProceedThrows() {
         Injector injector = Guice.createInjector(new AbstractModule() {

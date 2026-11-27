@@ -61,7 +61,9 @@ public class GeoBaiduTemplate {
      * 百度地图AK密钥
      */
     private final String ak;
+    /** \u5c06\u5730\u7406\u7f16\u7801\u8f93\u5165\u548c\u767e\u5ea6\u5bc6\u94a5\u586b\u5165\u8bf7\u6c42\u7684\u5730\u5740\u6a21\u677f\u3002 */
     private final String geocoderUrlTemplate;
+    /** \u7528\u4e8e\u62fc\u63a5\u767e\u5ea6 IP \u5b9a\u4f4d\u8bf7\u6c42\u7684\u5730\u5740\u6a21\u677f\u3002 */
     private final String ipUrlTemplate;
 
     /**
@@ -74,10 +76,23 @@ public class GeoBaiduTemplate {
         this(httpClient, ak, geocoder, geocoder2);
     }
 
+    /**
+     * \u914d\u7f6e\u767e\u5ea6\u5730\u7406\u7f16\u7801\u53ca IP \u5b9a\u4f4d\u4e24\u4e2a\u63a5\u53e3\u3002
+     * @param ak \u767e\u5ea6\u5730\u56fe\u63a5\u53e3\u5bc6\u94a5
+     * @param geocoderUrlTemplate \u5730\u7406\u7f16\u7801\u63a5\u53e3\u5730\u5740\u6a21\u677f
+     * @param ipUrlTemplate IP \u5b9a\u4f4d\u63a5\u53e3\u5730\u5740\u6a21\u677f
+     */
     GeoBaiduTemplate(String ak, String geocoderUrlTemplate, String ipUrlTemplate) {
         this(HttpClient.newHttpClient(), ak, geocoderUrlTemplate, ipUrlTemplate);
     }
 
+    /**
+     * \u7528\u7ed9\u5b9a\u503c\u521d\u59cb\u5316 <code>GeoBaiduTemplate</code> \u5b9e\u4f8b\u3002
+     * @param httpClient HTTP \u5ba2\u6237\u7aef
+     * @param ak \u767e\u5ea6\u5730\u56feAK\u5bc6\u94a5
+     * @param geocoderUrlTemplate <code>geocoderUrlTemplate</code> \u5b57\u6bb5
+     * @param ipUrlTemplate <code>ipUrlTemplate</code> \u5b57\u6bb5
+     */
     private GeoBaiduTemplate(HttpClient httpClient, String ak,
                              String geocoderUrlTemplate, String ipUrlTemplate) {
         super();
@@ -87,6 +102,10 @@ public class GeoBaiduTemplate {
         this.ipUrlTemplate = Objects.requireNonNull(ipUrlTemplate, "ipUrlTemplate");
     }
 
+    /**
+     * \u4f7f\u7528\u9ed8\u8ba4 HTTP \u5ba2\u6237\u7aef\u521b\u5efa\u767e\u5ea6\u5730\u7406\u4f4d\u7f6e\u67e5\u8be2\u5668\u3002
+     * @param ak \u767e\u5ea6\u5730\u56fe\u8bbf\u95ee\u5bc6\u94a5
+     */
     public GeoBaiduTemplate(String ak) {
         this(HttpClient.newHttpClient(), ak);
     }
@@ -112,9 +131,9 @@ public class GeoBaiduTemplate {
     /**
      * 调用百度API
      *
-     * @param addr
-     * @return
-     * @throws IOException
+     * @param addr 待查询的地址
+     * @return 经纬度键值对
+     * @throws IOException 百度地图请求失败时抛出
      */
     public Map<String, BigDecimal> getLatAndLngByAddress(String addr) throws IOException {
 
@@ -132,9 +151,9 @@ public class GeoBaiduTemplate {
     /**
      * 调用百度API
      *
-     * @param addr
-     * @return
-     * @throws IOException
+     * @param addr 待查询的地址
+     * @return 百度地图返回的位置数据；无结果时为空
+     * @throws IOException 百度地图请求失败时抛出
      */
     public Optional<JSONObject> getLocationByAddress(String addr) throws IOException {
         String address = java.net.URLEncoder.encode(addr, StandardCharsets.UTF_8);
@@ -194,8 +213,8 @@ public class GeoBaiduTemplate {
      * status: 0    #结果状态返回码
      * }
      *
-     * @param ip
-     * @return
+     * @param ip 待查询的 IP 地址
+     * @return 百度地图返回的位置数据；无结果时为空
      */
     public Optional<JSONObject> getLocationByIp(String ip) {
         if (Objects.isNull(ip)) {

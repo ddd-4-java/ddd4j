@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 /** 三线共同的导入错误值契约。 */
 class ImportErrorContractTest {
 
+    /** \u9a8c\u8bc1<code>error.getRowIndex()</code> \u7b49\u4e8e <code>2</code>\uff0c<code>error.getColumnIndex()</code> \u7b49\u4e8e <code>3</code>\uff0c<code>error.toString()</code> \u7b49\u4e8e <code>"ImportError{row=2, col=3, type=ExcelDataConvertException, msg=cannot convert}"</code>\u3002 */
     @Test
     void cellConversionErrorPreservesLocationValueAndMessage() {
         ReadCellData<String> cell = new ReadCellData<>("raw");
@@ -41,6 +42,7 @@ class ImportErrorContractTest {
                 error.toString());
     }
 
+    /** \u9a8c\u8bc1<code>error.getRowIndex()</code> \u7b49\u4e8e <code>7</code>\uff0c<code>error.getColumnIndex()</code> \u7b49\u4e8e <code>-1</code>\uff0c<code>error.getErrorType()</code> \u7b49\u4e8e <code>"NullPointerException"</code>\u3002 */
     @Test
     void ordinaryExceptionUsesProvidedRowAndTypeAsMissingMessage() {
         ImportError error = ImportError.of(7, new NullPointerException());
@@ -52,6 +54,7 @@ class ImportErrorContractTest {
         assertEquals("NullPointerException", error.getErrorType());
     }
 
+    /** \u9a8c\u8bc1<code>error.getRowIndex()</code> \u7b49\u4e8e <code>5</code>\uff0c<code>error.getColumnIndex()</code> \u7b49\u4e8e <code>-1</code>\uff0c<code>error.getErrorType()</code> \u7b49\u4e8e <code>"ValidationFailed"</code>\u3002 */
     @Test
     void validationErrorKeepsBusinessMessage() {
         ImportError error = ImportError.ofValidation(5, "invalid email");

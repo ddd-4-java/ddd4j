@@ -80,7 +80,9 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
      */
     private static final String TIME_PATTERN = "HH:mm:ss";
 
+    /** \u7ea6\u5b9a\u9759\u6001 Web \u8d44\u6e90\u7684 classpath \u4f4d\u7f6e\u3002 */
     private final String META_INF_RESOURCES = "classpath:/META-INF/resources/";
+    /** WebJars \u9759\u6001\u8d44\u6e90\u7684 classpath \u4f4d\u7f6e\u3002 */
     private final String META_INF_WEBJAR_RESOURCES = META_INF_RESOURCES + "webjars/";
 
     /**
@@ -112,6 +114,10 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
         this.ddd4jWebMvcInterceptor = ddd4jWebMvcInterceptor;
     }
 
+    /**
+     * \u4e3a Spring MVC \u914d\u7f6e\u9ed8\u8ba4 Servlet \u7684\u8bf7\u6c42\u5904\u7406\u65b9\u5f0f\u3002
+     * @param configurer \u63a7\u5236\u9ed8\u8ba4 Servlet \u5904\u7406\u65b9\u5f0f\u7684 Spring \u914d\u7f6e\u5bf9\u8c61
+     */
     @Override
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
         configurer.enable();
@@ -188,6 +194,10 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
         converters.add(new AllEncompassingFormHttpMessageConverter());
     }
 
+    /**
+     * \u4fdd\u7559\u6d88\u606f\u8f6c\u6362\u5668\u81ea\u5b9a\u4e49\u6269\u5c55\u5165\u53e3\u3002
+     * @param converters MVC \u5f53\u524d\u6ce8\u518c\u7684 HTTP \u6d88\u606f\u8f6c\u6362\u5668\u96c6\u5408
+     */
     @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
 
@@ -208,8 +218,10 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
     }
 
     /**
-     * 配置静态资源映射。
-     * <p>支持本地文件资源映射、静态目录资源及 WebJars 资源。</p>
+     * \u914d\u7f6e\u9759\u6001\u8d44\u6e90\u6620\u5c04\u3002
+     *  <p>\u652f\u6301\u672c\u5730\u6587\u4ef6\u8d44\u6e90\u6620\u5c04\u3001\u9759\u6001\u76ee\u5f55\u8d44\u6e90\u53ca WebJars \u8d44\u6e90\u3002</p>
+     *
+     * @param registry MVC \u9759\u6001\u8d44\u6e90\u8def\u7531\u6ce8\u518c\u5668
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

@@ -32,16 +32,19 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class CacheSpanTest {
 
+    /** \u6d4b\u8bd5\u6267\u884c\u524d\u6267\u884c <code>OpenTelemetrySdkSetter.set()</code>\u3001<code>OpenTelemetry.noop()</code> \u5b8c\u6210\u8d44\u6e90\u51c6\u5907\u3002 */
     @BeforeEach
     void setUp() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
     }
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>OpenTelemetrySdkSetter.set()</code>\u3001<code>OpenTelemetry.noop()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterEach
     void tearDown() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
     }
 
+    /** \u9a8c\u8bc1<code>result</code> \u7b49\u4e8e <code>"value-123"</code>\uff0c<code>executed</code>\u4e3a\u771f\u3002 */
     @Test
     void instrument_readOperation_shouldExecuteSupplier() {
         AtomicBoolean executed = new AtomicBoolean(false);
@@ -56,6 +59,7 @@ class CacheSpanTest {
         assertThat(executed).isTrue();
     }
 
+    /** \u9a8c\u8bc1<code>result</code>\u4e3a\u7a7a\u3002 */
     @Test
     void instrument_cacheMiss_shouldStillExecuteSupplier() {
         String result = CacheSpan.instrument("userCache", "redis",
@@ -65,6 +69,7 @@ class CacheSpanTest {
         assertThat(result).isNull();
     }
 
+    /** \u9a8c\u8bc1<code>executed</code>\u4e3a\u771f\u3002 */
     @Test
     void instrument_writeOperation_shouldExecuteRunnable() {
         AtomicBoolean executed = new AtomicBoolean(false);
@@ -75,6 +80,7 @@ class CacheSpanTest {
         assertThat(executed).isTrue();
     }
 
+    /** \u9a8c\u8bc1<code>executed</code>\u4e3a\u771f\u3002 */
     @Test
     void instrument_evictOperation_shouldExecuteRunnable() {
         AtomicBoolean executed = new AtomicBoolean(false);
@@ -85,6 +91,7 @@ class CacheSpanTest {
         assertThat(executed).isTrue();
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalStateException.class</code>\u3002 */
     @Test
     void instrument_throwingException_shouldPropagateException() {
         assertThatThrownBy(() -> CacheSpan.instrument("userCache", "redis", () -> {
@@ -94,6 +101,7 @@ class CacheSpanTest {
                 .hasMessage("cache failure");
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>RuntimeException.class</code>\u3002 */
     @Test
     void instrument_writeOperation_throwingException_shouldPropagate() {
         assertThatThrownBy(() -> CacheSpan.instrument("userCache", "redis", "put", () -> {
@@ -103,6 +111,7 @@ class CacheSpanTest {
                 .hasMessage("write failed");
     }
 
+    /** \u9a8c\u8bc1<code>result</code> \u7b49\u4e8e <code>"value"</code>\uff0c<code>executed</code>\u4e3a\u771f\u3002 */
     @Test
     void instrument_whenOtelNotAvailable_shouldExecuteWithoutSpan() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -119,6 +128,7 @@ class CacheSpanTest {
         assertThat(executed).isTrue();
     }
 
+    /** \u9a8c\u8bc1<code>result</code> \u7b49\u4e8e <code>"value"</code>\u3002 */
     @Test
     void instrument_withOtelAvailable_shouldNotThrow() {
         // 提供一个 OpenTelemetry 实例（noop SDK + 真实 Tracer）

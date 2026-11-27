@@ -38,10 +38,12 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class TraceContextBridgeMustTest {
 
+    /** \u8c03\u7528 <code>System.setProperty()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002 */
     private static void enableTracing() {
         System.setProperty(TraceContextBridge.TRACING_ENABLED_PROPERTY, "true");
     }
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>System.clearProperty()</code>\u3001<code>ThreadContext.clear()</code>\u3001<code>MDC.clear()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterEach
     void tearDown() {
         System.clearProperty(TraceContextBridge.TRACING_ENABLED_PROPERTY);
@@ -51,6 +53,7 @@ class TraceContextBridgeMustTest {
 
     // ========================= Scenario: 默认关闭零影响 =========================
 
+    /** \u9a8c\u8bc1<code>TraceContextBridge.enabled()</code>\u4e3a\u5047\uff0c<code>TraceContextBridge.currentTraceId()</code>\u4e3a\u7a7a\uff0c<code>TraceContextBridge.correlationSnapshot().isEmpty()</code>\u4e3a\u771f\u3002 */
     @Test
     void bridgeMustBeDisabledByDefaultAndWriteNothing() {
         assertFalse(TraceContextBridge.enabled(), "追踪桥接默认必须关闭");
@@ -68,6 +71,10 @@ class TraceContextBridgeMustTest {
 
     // ========================= Scenario: 异步线程池透传 =========================
 
+    /**
+     * \u9a8c\u8bc1<code>TraceContextBridge.currentTraceId()</code> \u7b49\u4e8e <code>"trace-parent-001"</code>\uff0c<code>MDC.get(TraceContextBridge.TRACE_ID_MDC_KEY)</code> \u7b49\u4e8e <code>"trace-parent-001"</code>\uff0c<code>MDC.get(TraceContextBridge.TRACE_ID_MDC_KEY)</code>\u4e3a\u7a7a\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void traceIdMustPropagateAcrossTtlThreadPoolWhenEnabled() throws Exception {
         enableTracing();
@@ -96,6 +103,7 @@ class TraceContextBridgeMustTest {
 
     // ========================= Scenario: 无追踪头时新建 =========================
 
+    /** \u9a8c\u8bc1<code>traceId</code>\u975e\u7a7a\uff0c<code>traceId.trim().isEmpty()</code>\u4e3a\u5047\uff0c<code>MDC.get(TraceContextBridge.TRACE_ID_MDC_KEY)</code> \u7b49\u4e8e <code>traceId</code>\u3002 */
     @Test
     void bridgeMustGenerateTraceIdWhenInboundBlank() {
         enableTracing();
@@ -111,6 +119,7 @@ class TraceContextBridgeMustTest {
 
     // ========================= Scenario: 因果链与 trace 并列 =========================
 
+    /** \u9a8c\u8bc1<code>snapshot.get(TraceContextBridge.TRACE_ID_CONTEXT_KEY)</code> \u7b49\u4e8e <code>"trace-side-by-side"</code>\uff0c<code>snapshot.get(TraceContextBridge.CORRELATION_ID_CONTEXT_KEY)</code> \u7b49\u4e8e <code>"correlation-abc"</code>\uff0c<code>TraceContextBridge.currentTraceId()</code> \u7b49\u4e8e <code>"trace-side-by-side"</code>\u3002 */
     @Test
     void snapshotMustExposeTraceIdSideBySideWithCausalityChain() {
         enableTracing();

@@ -22,16 +22,20 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+/** \u9a8c\u8bc1 <code>Ddd4jTenantRequestContextContract</code> \u5728 <code>sharesTenantAndRestoresNestedScopes</code>\u3001<code>removesTemporaryTenant</code> \u7b49\u573a\u666f\u4e2d\u7684\u884c\u4e3a\u3002 */
 class Ddd4jTenantRequestContextContractTest {
 
+    /** \u7528\u4e8e\u68c0\u67e5\u5f53\u524d\u8bf7\u6c42\u4e0a\u4e0b\u6587\u662f\u5426\u4fdd\u7559\u6216\u5df2\u6e05\u9664\u7684\u6807\u8bb0\u3002 */
     private static final String REQUEST_MARKER = Ddd4jTenantRequestContextContractTest.class.getName();
 
+    /** \u6d4b\u8bd5\u540e\u4f9d\u6b21\u79fb\u9664<code>ThreadContext</code>\u3002 */
     @AfterEach
     void restoreRequestContext() {
         ThreadContext.remove(ContextConstants.TENANT_ID);
         ThreadContext.remove(REQUEST_MARKER);
     }
 
+    /** \u9a8c\u8bc1<code>first.getCurrentTenantId()</code> \u7b49\u4e8e <code>"request-tenant"</code>\uff0c<code>second.getCurrentTenantId()</code> \u7b49\u4e8e <code>"request-tenant"</code>\uff0c<code>first.getCurrentTenantId()</code> \u7b49\u4e8e <code>"outer-tenant"</code>\u3002 */
     @Test
     void sharesTenantAndRestoresNestedScopesWithoutClearingRequestData() {
         Ddd4jTenantContext first = new Ddd4jTenantContext();
@@ -57,6 +61,7 @@ class Ddd4jTenantRequestContextContractTest {
         assertEquals("existing-request", ThreadContext.get(REQUEST_MARKER));
     }
 
+    /** \u9a8c\u8bc1<code>ThreadContext.get(ContextConstants.TENANT_ID)</code> \u7b49\u4e8e <code>"temporary-tenant"</code>\uff0c<code>ThreadContext.get(ContextConstants.TENANT_ID)</code>\u4e3a\u7a7a\u3002 */
     @Test
     void removesTemporaryTenantWhenRequestStartedWithoutOne() {
         Ddd4jTenantContext context = new Ddd4jTenantContext();

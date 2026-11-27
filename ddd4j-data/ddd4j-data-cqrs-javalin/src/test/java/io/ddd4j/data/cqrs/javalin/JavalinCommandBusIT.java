@@ -67,11 +67,13 @@ class JavalinCommandBusIT {
      */
     private Javalin app;
 
+    /** \u6d4b\u8bd5\u6267\u884c\u524d\u6267\u884c <code>Javalin.create()</code> \u5b8c\u6210\u8d44\u6e90\u51c6\u5907\u3002 */
     @BeforeEach
     void startJavalin() {
         app = Javalin.create(cfg -> cfg.startup.showJavalinBanner = false).start(0);
     }
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>app.stop()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterEach
     void stopJavalin() {
         if (app != null) {
@@ -106,6 +108,7 @@ class JavalinCommandBusIT {
         return executors;
     }
 
+    /** \u9a8c\u8bc1<code>result.isSuccess()</code>\u4e3a\u771f\uff0c<code>result.data()</code> \u5305\u542b <code>SampleCommandHandler.HANDLED</code>\u3002 */
     @Test
     void execute_已注册命令_应路由到真实Handler并返回成功() {
         JavalinCommandBus bus = assemble();
@@ -116,6 +119,7 @@ class JavalinCommandBusIT {
         assertThat(result.data()).contains(SampleCommandHandler.HANDLED);
     }
 
+    /** \u9a8c\u8bc1<code>exception</code>\u975e\u7a7a\uff0c<code>exception.getMessage()</code> \u5305\u542b <code>SampleCommand.class.getName()</code>\u3002 */
     @Test
     void 装配期冲突_整批拒绝应自工厂传播() {
         // 供入「多类型占位执行器（SampleCommand + CompanionCommand）+ 真实
@@ -133,6 +137,7 @@ class JavalinCommandBusIT {
         assertThat(exception.getMessage()).contains(SampleCommand.class.getName());
     }
 
+    /** \u9a8c\u8bc1<code>exception</code>\u975e\u7a7a\uff0c<code>exception.getMessage()</code> \u5305\u542b <code>UnknownCommand.class.getName()</code>\u3002 */
     @Test
     void execute_未注册命令_应抛ISE与ddd4j_core一致() {
         JavalinCommandBus bus = assemble();
@@ -164,6 +169,13 @@ class JavalinCommandBusIT {
      */
     static class OverlappingMultiTypeHandler implements CommandExecutor<Command> {
 
+        /**
+         * 声明当前处理器可以接收的命令类型。
+         *
+         * <p>测试夹具会调用 <code>Arrays.asList(SampleCommand.class, CompanionCommand.class)</code>。</p>
+         *
+         * @return 支持的命令类型集合
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(SampleCommand.class, CompanionCommand.class)));

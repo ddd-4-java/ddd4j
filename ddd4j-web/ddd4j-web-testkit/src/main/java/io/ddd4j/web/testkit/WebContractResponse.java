@@ -28,12 +28,16 @@ import java.util.Optional;
  */
 public final class WebContractResponse {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 0L;
 
+    /** \u8981\u5199\u5165 HTTP \u54cd\u5e94\u7684\u72b6\u6001\u7801\u3002 */
     private final int status;
 
+    /** HTTP \u5408\u540c\u8bb0\u5f55\u7684\u54cd\u5e94\u5934\u6620\u5c04\u3002 */
     private final Map<String, List<String>> headers;
 
+    /** HTTP \u5408\u540c\u8bb0\u5f55\u7684\u54cd\u5e94\u6b63\u6587\u3002 */
     private final String body;
 
     /**
@@ -47,17 +51,17 @@ public final class WebContractResponse {
         return headers.entrySet().stream().filter(entry -> entry.getKey().equalsIgnoreCase(name)).map(Map.Entry::getValue).filter(values -> Objects.nonNull(values) && !values.isEmpty()).map(values -> values.get(0)).findFirst();
     }
 
-    /** @return 响应体 */
+    /** @return \u54cd\u5e94\u4f53 */
     public String getBody() {
         return body;
     }
 
-    /** @return 响应头 */
+    /** @return \u54cd\u5e94\u5934 */
     public Map<String, List<String>> getHeaders() {
         return headers;
     }
 
-    /** @return HTTP 状态码 */
+    /** @return HTTP \u72b6\u6001\u7801 */
     public int getStatus() {
         return status;
     }
@@ -76,24 +80,32 @@ public final class WebContractResponse {
         this.body = body;
     }
 
-    /** @return HTTP 状态码 */
+    /** @return HTTP \u72b6\u6001\u7801 */
     @JsonProperty("status")
     public int status() {
         return status;
     }
 
-    /** @return 响应头 */
+    /** @return \u54cd\u5e94\u5934 */
     @JsonProperty("headers")
     public Map<String, List<String>> headers() {
         return headers;
     }
 
-    /** @return 响应体 */
+    /** @return \u54cd\u5e94\u4f53 */
     @JsonProperty("body")
     public String body() {
         return body;
     }
 
+    /**
+     * 根据<code>headers</code>、<code>body</code>、<code>status</code>比较对象的值是否相等。
+     *
+     * <p>只比较运行时类型相同的对象。</p>
+     *
+     * @param obj 用来比较或转换的输入对象
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -106,6 +118,11 @@ public final class WebContractResponse {
         return this.status == other.status && Objects.equals(this.headers, other.headers) && Objects.equals(this.body, other.body);
     }
 
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         int result = 0;
@@ -115,6 +132,11 @@ public final class WebContractResponse {
         return result;
     }
 
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>status</code>、<code>headers</code>、<code>body</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "WebContractResponse[status=" + status + ", headers=" + headers + ", body=" + body + "]";

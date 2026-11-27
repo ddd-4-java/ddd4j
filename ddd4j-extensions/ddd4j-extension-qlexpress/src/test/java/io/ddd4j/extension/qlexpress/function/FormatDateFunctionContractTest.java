@@ -27,10 +27,13 @@ import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/** \u901a\u8fc7 <code>engine.execute()</code>\u3001<code>Collections.singletonMap()</code>\u3001<code>Date.from()</code> \u9a8c\u8bc1 <code>FormatDateFunctionContract</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
 class FormatDateFunctionContractTest {
 
+    /** \u5f53\u524d\u7528\u4f8b\u8c03\u7528\u7684\u8868\u8fbe\u5f0f\u6216\u4e1a\u52a1\u6267\u884c\u5f15\u64ce\u3002 */
     private final QLExpressEngine engine = QLExpress.create();
 
+    /** \u9a8c\u8bc1<code>result</code> \u7b49\u4e8e <code>"2026-10-18 09:30"</code>\u3002 */
     @Test
     void formatsJavaTimeValue() {
         LocalDateTime value = LocalDateTime.of(2026, 10, 18, 9, 30);
@@ -40,6 +43,7 @@ class FormatDateFunctionContractTest {
         assertEquals("2026-10-18 09:30", result);
     }
 
+    /** \u9a8c\u8bc1<code>result</code> \u7b49\u4e8e <code>expected</code>\u3002 */
     @Test
     void formatsLegacyDateUsingSystemZone() {
         Date value = Date.from(Instant.parse("2026-10-18T01:30:00Z"));

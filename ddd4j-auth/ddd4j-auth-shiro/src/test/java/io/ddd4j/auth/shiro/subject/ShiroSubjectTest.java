@@ -33,22 +33,40 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/** \u9a8c\u8bc1 <code>ShiroSubject</code> \u5728<code>defaults</code>\u3001<code>login</code>\u3001<code>works</code>\u7b49\u64cd\u4f5c\u4e2d\u7684\u884c\u4e3a\u5951\u7ea6\u3002 */
 class ShiroSubjectTest {
 
+    /**
+     * \u521b\u5efa <code>new ShiroSubject</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new ShiroSubject()</code>
+     */
     private ShiroSubject shiroSubject() {
         return new ShiroSubject();
     }
 
+    /**
+     * \u521b\u5efa <code>new AuthPrincipal</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+     * @param loginId \u6d4b\u8bd5\u4f1a\u8bdd\u4f7f\u7528\u7684\u8d26\u53f7\u6807\u8bc6
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new AuthPrincipal().setLoginId(loginId).setUserId("user-" + loginId).setOrgId("org-1").setRoleId("role-1")</code>
+     */
     private AuthPrincipal principal(String loginId) {
         return new AuthPrincipal().setLoginId(loginId).setUserId("user-" + loginId)
                 .setOrgId("org-1").setRoleId("role-1");
     }
 
+    /**
+     * \u521b\u5efa <code>new AuthRequest</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+     * @param loginId \u6d4b\u8bd5\u4f1a\u8bdd\u4f7f\u7528\u7684\u8d26\u53f7\u6807\u8bc6
+     * @param credential \u4f20\u7ed9 <code>new AuthRequest</code> \u7684 <code>String</code> \u8f93\u5165
+     * @param principal \u4f20\u7ed9 <code>new AuthRequest</code> \u7684 <code>AuthPrincipal</code> \u8f93\u5165
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new AuthRequest(loginId).setPrincipal(principal).extra("credential", credential)</code>
+     */
     private AuthRequest request(String loginId, String credential, AuthPrincipal principal) {
         return new AuthRequest(loginId).setPrincipal(principal)
                 .extra("credential", credential);
     }
 
+    /** \u6d4b\u8bd5\u6267\u884c\u524d\u6267\u884c <code>org.apache.shiro.util.ThreadContext.remove()</code>\u3001<code>manager.setRealm()</code>\u3001<code>SecurityUtils.setSecurityManager()</code> \u5b8c\u6210\u8d44\u6e90\u51c6\u5907\u3002 */
     @BeforeEach
     void setUp() {
         org.apache.shiro.util.ThreadContext.remove();
@@ -57,12 +75,14 @@ class ShiroSubjectTest {
         SecurityUtils.setSecurityManager(manager);
     }
 
+    /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>SecurityUtils.setSecurityManager()</code>\u3001<code>org.apache.shiro.util.ThreadContext.remove()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */
     @AfterEach
     void tearDown() {
         SecurityUtils.setSecurityManager(null);
         org.apache.shiro.util.ThreadContext.remove();
     }
 
+    /** \u9a8c\u8bc1<code>subject.getPrincipal()</code>\u4e3a\u7a7a\uff0c<code>subject.getPrincipalByLoginId("anyone")</code>\u4e3a\u7a7a\uff0c<code>subject.isDisabled("anyone")</code>\u4e3a\u5047\u3002 */
     @Test
     void defaultsWhenNotLoggedIn() {
         ShiroSubject subject = shiroSubject();
@@ -109,6 +129,7 @@ class ShiroSubjectTest {
         subject.untieDisable("anyone");
     }
 
+    /** \u9a8c\u8bc1<code>sessionId</code>\u975e\u7a7a\uff0c<code>subject.isAuthenticated()</code>\u4e3a\u771f\uff0c<code>subject.isAuthenticated("other")</code>\u4e3a\u5047\u3002 */
     @Test
     void loginStoresPrincipalAndSessionConfig() {
         ShiroSubject subject = shiroSubject();
@@ -131,6 +152,7 @@ class ShiroSubjectTest {
         assertFalse(subject.isAuthenticated("other"));
     }
 
+    /** \u9a8c\u8bc1<code>sessionId</code>\u975e\u7a7a\uff0c<code>subject.isAuthenticated()</code>\u4e3a\u771f\uff0c<code>subject.getPrincipal()</code>\u4e3a\u7a7a\u3002 */
     @Test
     void loginWithEmptyPrincipalKeepsShiroFallback() {
         ShiroSubject subject = shiroSubject();
@@ -143,6 +165,7 @@ class ShiroSubjectTest {
         assertNull(subject.getPrincipal());
     }
 
+    /** \u9a8c\u8bc1<code>sessionId</code>\u975e\u7a7a\uff0c<code>session.getTimeout()</code> \u7b49\u4e8e <code>60_000L</code>\u3002 */
     @Test
     void loginAppliesSessionTimeout() {
         io.ddd4j.core.auth.session.AuthSessionConfig sessionConfig =
@@ -158,6 +181,7 @@ class ShiroSubjectTest {
         assertEquals(60_000L, session.getTimeout());
     }
 
+    /** \u9a8c\u8bc1<code>subject.login(null)</code> \u629b\u51fa <code>NullPointerException.class</code>\uff0c<code>subject.login(noLoginId)</code> \u629b\u51fa <code>NullPointerException.class</code>\u3002 */
     @Test
     void loginRejectsNullArguments() {
         ShiroSubject subject = shiroSubject();
@@ -167,6 +191,7 @@ class ShiroSubjectTest {
         assertThrows(NullPointerException.class, () -> subject.login(noLoginId));
     }
 
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>UnknownAccountException.class</code>\uff0c\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>BadCredentialsException.class</code>\uff0c\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>NotLoggedInException.class</code>\u3002 */
     @Test
     void loginMapsShiroAuthenticationFailures() {
         ShiroSubject subject = shiroSubject();
@@ -185,6 +210,7 @@ class ShiroSubjectTest {
                 () -> subject.login(request("runtime", "pw", principal("runtime"))));
     }
 
+    /** \u9a8c\u8bc1<code>subject.isAuthenticated()</code>\u4e3a\u771f\uff0c<code>subject.isAuthenticated()</code>\u4e3a\u5047\u3002 */
     @Test
     void logoutAndKickoutCurrentUser() {
         ShiroSubject subject = shiroSubject();
@@ -203,6 +229,7 @@ class ShiroSubjectTest {
         assertTrue(subject.isAuthenticated());
     }
 
+    /** \u9a8c\u8bc1<code>refreshed</code> \u7b49\u4e8e <code>sessionId</code>\u3002 */
     @Test
     void refreshTouchesSession() {
         ShiroSubject subject = shiroSubject();
@@ -213,6 +240,7 @@ class ShiroSubjectTest {
         assertEquals(sessionId, refreshed);
     }
 
+    /** \u9a8c\u8bc1<code>subject.getExtra("ignored-token", "channel")</code> \u7b49\u4e8e <code>"web"</code>\uff0c<code>subject.getExtra("ignored-token", "missing")</code>\u4e3a\u7a7a\u3002 */
     @Test
     void getExtraReadsSessionAttributes() {
         ShiroSubject subject = shiroSubject();
@@ -223,6 +251,7 @@ class ShiroSubjectTest {
         assertNull(subject.getExtra("ignored-token", "missing"));
     }
 
+    /** \u9a8c\u8bc1<code>subject.isPermitted("order:read")</code>\u4e3a\u771f\uff0c<code>subject.isPermitted("order:delete")</code>\u4e3a\u5047\uff0c<code>subject.hasAllRole("user-1", new String[]{"admin"})</code>\u4e3a\u771f\u3002 */
     @Test
     void permissionsAndRolesDelegateToAuthorizer() {
         ShiroSubject subject = shiroSubject();
@@ -257,6 +286,7 @@ class ShiroSubjectTest {
         assertTrue(subject.hasAllRole("user-1", new String[]{"admin"}));
     }
 
+    /** \u9a8c\u8bc1<code>subject.isPermitted().length</code> \u7b49\u4e8e <code>0</code>\uff0c<code>subject.hasRoles().length</code> \u7b49\u4e8e <code>0</code>\uff0c<code>subject.hasAllRole()</code>\u4e3a\u5047\u3002 */
     @Test
     void permissionDefaultsForEmptyArrays() {
         ShiroSubject subject = shiroSubject();
@@ -270,6 +300,7 @@ class ShiroSubjectTest {
         assertFalse(subject.hasAllRole());
     }
 
+    /** \u9a8c\u8bc1<code>subject.getPrincipal()</code>\u4e3a\u7a7a\uff0c<code>subject.isPermitted("anything")</code>\u4e3a\u5047\uff0c<code>subject.refresh()</code>\u4e3a\u7a7a\u3002 */
     @Test
     void worksWithoutSecurityManager() {
         SecurityUtils.setSecurityManager(null);
@@ -295,6 +326,11 @@ class ShiroSubjectTest {
      */
     private static final class TestRealm extends AuthorizingRealm {
 
+        /**
+         * \u521b\u5efa <code>new SimpleAuthenticationInfo</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u8def\u5f84\u8c03\u7528\u3002
+         * @param token \u4ece\u6d4b\u8bd5\u767b\u5f55\u83b7\u5f97\u7684\u4f1a\u8bdd\u51ed\u636e
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>new SimpleAuthenticationInfo(username, "pw", getName())</code>
+         */
         @Override
         protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) {
             String username = (String) token.getPrincipal();
@@ -316,6 +352,11 @@ class ShiroSubjectTest {
             return new SimpleAuthenticationInfo(username, "pw", getName());
         }
 
+        /**
+         * \u8bfb\u53d6 <code>info</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
+         * @param principals \u672c\u6b21\u8c03\u7528\u4f7f\u7528\u7684 <code>PrincipalCollection</code> \u53c2\u6570 <code>principals</code>
+         * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>info</code>
+         */
         @Override
         protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
             SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();

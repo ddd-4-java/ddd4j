@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class MicaMqttAcknowledgmentContractTest {
 
+    /** \u9a8c\u8bc1<code>acknowledgment.nack(true)</code> \u629b\u51fa <code>UnsupportedOperationException.class</code>\uff0c<code>acknowledgment.reject(true)</code> \u629b\u51fa <code>UnsupportedOperationException.class</code>\uff0c<code>acknowledgment.isAcknowledged()</code>\u4e3a\u5047\u3002 */
     @Test
     void requeueRequestsFailWithoutClaimingAcknowledgment() {
         MicaMqttAcknowledgment acknowledgment = new MicaMqttAcknowledgment(11L, "orders/paid", null);
@@ -38,6 +39,7 @@ class MicaMqttAcknowledgmentContractTest {
         assertFalse(acknowledgment.isAcknowledged());
     }
 
+    /** \u9a8c\u8bc1<code>acknowledgment.isAcknowledged()</code>\u4e3a\u771f\u3002 */
     @Test
     void nackWithoutRequeueMarksMessageHandled() {
         MicaMqttAcknowledgment acknowledgment = new MicaMqttAcknowledgment(12L, "orders/paid", null);

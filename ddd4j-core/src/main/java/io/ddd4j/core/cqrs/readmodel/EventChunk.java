@@ -31,8 +31,10 @@ import java.util.Objects;
 @Getter
 public class EventChunk<E> {
 
+    /** \u6309\u6e90\u4e8b\u4ef6\u987a\u5e8f\u4fdd\u5b58\u7684\u4e8b\u4ef6\u6279\u6b21\u5185\u5bb9\u3002 */
     private final List<E> events;
 
+    /** \u6295\u5f71\u6062\u590d\u65f6\u5e94\u8bfb\u53d6\u7684\u4e0b\u4e00\u6761\u6e90\u4e8b\u4ef6\u5e8f\u53f7\u3002 */
     private final long nextEventNumber;
 
     /**

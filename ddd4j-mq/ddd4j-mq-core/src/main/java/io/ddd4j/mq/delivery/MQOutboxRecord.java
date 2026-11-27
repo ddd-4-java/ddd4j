@@ -32,16 +32,27 @@ import java.util.Objects;
  */
 public final class MQOutboxRecord {
 
+    /** \u6d88\u606f\u6807\u8bc6\u3002 */
     private final String messageId;
+    /** \u8bb0\u5f55\u53d1\u5e03\u65f6\u4f7f\u7528\u7684\u76ee\u6807\u4e3b\u9898\u6216\u5730\u5740\u3002 */
     private final String destination;
+    /** \u4e8b\u4ef6\u5199\u5165 Outbox \u65f6\u5e8f\u5217\u5316\u7684\u6d88\u606f\u8d1f\u8f7d\u3002 */
     private final String payload;
+    /** \u6295\u9012\u8bb0\u5f55\u643a\u5e26\u7684\u6d88\u606f\u5143\u6570\u636e\u3002 */
     private final Map<String, String> headers;
+    /** \u5f53\u524d Outbox \u8bb0\u5f55\u7684\u6295\u9012\u72b6\u6001\u3002 */
     private final MQOutboxStatus status;
+    /** \u8bb0\u5f55\u4e0b\u6b21\u53ef\u88ab\u8ba4\u9886\u6295\u9012\u7684\u65f6\u95f4\u3002 */
     private final Instant availableAt;
+    /** \u5f53\u524d\u5bf9\u8be5\u8bb0\u5f55\u6301\u6709\u6295\u9012\u79df\u7ea6\u7684\u6d3e\u53d1\u5668\u6807\u8bc6\u3002 */
     private final String leaseOwner;
+    /** \u5f53\u524d\u72ec\u5360\u6295\u9012\u79df\u7ea6\u7684\u5931\u6548\u65f6\u95f4\u3002 */
     private final Instant leaseUntil;
+    /** \u5f53\u524d Outbox \u8bb0\u5f55\u7d2f\u8ba1\u5c1d\u8bd5\u7684\u53d1\u9001\u6b21\u6570\u3002 */
     private final int attempts;
+    /** \u4e0a\u6b21\u6295\u9012\u5931\u8d25\u7684\u8bca\u65ad\u8bf4\u660e\u3002 */
     private final String lastError;
+    /** \u6b64\u8bb0\u5f55\u6210\u529f\u6807\u8bb0\u4e3a\u53d1\u5e03\u5b8c\u6210\u7684\u65f6\u95f4\u3002 */
     private final Instant publishedAt;
 
     /**
@@ -121,61 +132,67 @@ public final class MQOutboxRecord {
                 availableAt, null, null, 0, null, null);
     }
 
-    /** @return 稳定消息标识 */
+    /** @return \u7a33\u5b9a\u6d88\u606f\u6807\u8bc6 */
     public String messageId() {
         return messageId;
     }
 
-    /** @return Broker 目的地 */
+    /** @return Broker \u76ee\u7684\u5730 */
     public String destination() {
         return destination;
     }
 
-    /** @return 已序列化事件负载 */
+    /** @return \u5df2\u5e8f\u5217\u5316\u4e8b\u4ef6\u8d1f\u8f7d */
     public String payload() {
         return payload;
     }
 
-    /** @return 不可修改的消息头快照 */
+    /** @return \u4e0d\u53ef\u4fee\u6539\u7684\u6d88\u606f\u5934\u5feb\u7167 */
     public Map<String, String> headers() {
         return headers;
     }
 
-    /** @return 当前投递状态 */
+    /** @return \u5f53\u524d\u6295\u9012\u72b6\u6001 */
     public MQOutboxStatus status() {
         return status;
     }
 
-    /** @return 下一次可投递时间 */
+    /** @return \u4e0b\u4e00\u6b21\u53ef\u6295\u9012\u65f6\u95f4 */
     public Instant availableAt() {
         return availableAt;
     }
 
-    /** @return 当前租约持有者 */
+    /** @return \u5f53\u524d\u79df\u7ea6\u6301\u6709\u8005 */
     public String leaseOwner() {
         return leaseOwner;
     }
 
-    /** @return 当前租约截止时间 */
+    /** @return \u5f53\u524d\u79df\u7ea6\u622a\u6b62\u65f6\u95f4 */
     public Instant leaseUntil() {
         return leaseUntil;
     }
 
-    /** @return 已尝试投递次数 */
+    /** @return \u5df2\u5c1d\u8bd5\u6295\u9012\u6b21\u6570 */
     public int attempts() {
         return attempts;
     }
 
-    /** @return 最近一次投递错误 */
+    /** @return \u6700\u8fd1\u4e00\u6b21\u6295\u9012\u9519\u8bef */
     public String lastError() {
         return lastError;
     }
 
-    /** @return 确认发布的时间 */
+    /** @return \u786e\u8ba4\u53d1\u5e03\u7684\u65f6\u95f4 */
     public Instant publishedAt() {
         return publishedAt;
     }
 
+    /**
+     * 根据<code>leaseOwner</code>、<code>leaseUntil</code>、<code>lastError</code>、<code>publishedAt</code>、<code>attempts</code>、<code>status</code>比较对象的值是否相等。
+     *
+     * @param o 用来比较的另一个对象，允许为空
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -198,6 +215,11 @@ public final class MQOutboxRecord {
                 && Objects.equals(publishedAt, that.publishedAt);
     }
 
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         int result = messageId.hashCode();
@@ -214,6 +236,11 @@ public final class MQOutboxRecord {
         return result;
     }
 
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>messageId</code>、<code>destination</code>、<code>payload</code>、<code>headers</code>、<code>status</code>、<code>availableAt</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "MQOutboxRecord[messageId=" + messageId + ", destination=" + destination
@@ -223,57 +250,57 @@ public final class MQOutboxRecord {
                 + ", lastError=" + lastError + ", publishedAt=" + publishedAt + ']';
     }
 
-    /** @return 稳定消息标识 */
+    /** @return \u7a33\u5b9a\u6d88\u606f\u6807\u8bc6 */
     public String getMessageId() {
         return messageId;
     }
 
-    /** @return Broker 目的地 */
+    /** @return Broker \u76ee\u7684\u5730 */
     public String getDestination() {
         return destination;
     }
 
-    /** @return 已序列化事件负载 */
+    /** @return \u5df2\u5e8f\u5217\u5316\u4e8b\u4ef6\u8d1f\u8f7d */
     public String getPayload() {
         return payload;
     }
 
-    /** @return 不可修改的消息头快照 */
+    /** @return \u4e0d\u53ef\u4fee\u6539\u7684\u6d88\u606f\u5934\u5feb\u7167 */
     public Map<String, String> getHeaders() {
         return headers;
     }
 
-    /** @return 当前投递状态 */
+    /** @return \u5f53\u524d\u6295\u9012\u72b6\u6001 */
     public MQOutboxStatus getStatus() {
         return status;
     }
 
-    /** @return 下一次可投递时间 */
+    /** @return \u4e0b\u4e00\u6b21\u53ef\u6295\u9012\u65f6\u95f4 */
     public Instant getAvailableAt() {
         return availableAt;
     }
 
-    /** @return 当前租约持有者 */
+    /** @return \u5f53\u524d\u79df\u7ea6\u6301\u6709\u8005 */
     public String getLeaseOwner() {
         return leaseOwner;
     }
 
-    /** @return 当前租约截止时间 */
+    /** @return \u5f53\u524d\u79df\u7ea6\u622a\u6b62\u65f6\u95f4 */
     public Instant getLeaseUntil() {
         return leaseUntil;
     }
 
-    /** @return 已尝试投递次数 */
+    /** @return \u5df2\u5c1d\u8bd5\u6295\u9012\u6b21\u6570 */
     public int getAttempts() {
         return attempts;
     }
 
-    /** @return 最近一次投递错误 */
+    /** @return \u6700\u8fd1\u4e00\u6b21\u6295\u9012\u9519\u8bef */
     public String getLastError() {
         return lastError;
     }
 
-    /** @return 确认发布的时间 */
+    /** @return \u786e\u8ba4\u53d1\u5e03\u7684\u65f6\u95f4 */
     public Instant getPublishedAt() {
         return publishedAt;
     }

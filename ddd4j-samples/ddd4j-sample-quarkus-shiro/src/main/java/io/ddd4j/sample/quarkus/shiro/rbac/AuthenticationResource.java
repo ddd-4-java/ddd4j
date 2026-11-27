@@ -52,6 +52,7 @@ import java.util.*;
 @Produces(MediaType.APPLICATION_JSON)
 public class AuthenticationResource {
 
+    /** \u6267\u884c\u57fa\u4e8e\u89d2\u8272\u7684\u6388\u6743\u4e0e\u5206\u914d\u64cd\u4f5c\u7684\u5e94\u7528\u670d\u52a1\u3002 */
     @Inject
     RbacService rbacService;
 
@@ -198,10 +199,13 @@ public class AuthenticationResource {
      */
     public final static class LoginRequest {
 
+        /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
         private static final long serialVersionUID = 0L;
 
+        /** \u5f53\u524d\u8eab\u4efd\u51ed\u636e\u4f7f\u7528\u7684\u7528\u6237\u540d\u3002 */
         private final String username;
 
+        /** \u5f53\u524d\u767b\u5f55\u6216\u8d26\u53f7\u521b\u5efa\u8bf7\u6c42\u63d0\u4f9b\u7684\u53e3\u4ee4\u3002 */
         private final String password;
 
         /**
@@ -236,6 +240,14 @@ public class AuthenticationResource {
             return password;
         }
 
+        /**
+         * 根据<code>username</code>、<code>password</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -248,6 +260,11 @@ public class AuthenticationResource {
             return Objects.equals(this.username, other.username) && Objects.equals(this.password, other.password);
         }
 
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
         @Override
         public int hashCode() {
             int result = 0;
@@ -256,6 +273,11 @@ public class AuthenticationResource {
             return result;
         }
 
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>username</code>、<code>password</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
         @Override
         public String toString() {
             return "LoginRequest[username=" + username + ", password=" + password + "]";

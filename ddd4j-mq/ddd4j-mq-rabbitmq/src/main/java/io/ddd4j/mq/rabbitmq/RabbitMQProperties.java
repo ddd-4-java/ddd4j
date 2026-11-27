@@ -69,7 +69,9 @@ public class RabbitMQProperties extends MQProperties {
     private int producerChannelPoolSize = 32;
 
     /**
-     * 基于本配置（含父类 username/password）创建原生 {@link ConnectionFactory}。
+     * \u57fa\u4e8e\u672c\u914d\u7f6e\uff08\u542b\u7236\u7c7b username/password\uff09\u521b\u5efa\u539f\u751f {@link ConnectionFactory}\u3002
+     *
+     * @return \u914d\u7f6e\u5b8c\u6210\u7684 RabbitMQ \u8fde\u63a5\u5de5\u5382
      */
     public ConnectionFactory connectionFactory() {
         ConnectionFactory factory = new ConnectionFactory();

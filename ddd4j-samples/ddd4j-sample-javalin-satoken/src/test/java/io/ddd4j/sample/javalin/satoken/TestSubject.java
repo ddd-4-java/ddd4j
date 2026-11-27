@@ -28,6 +28,13 @@ import java.util.Objects;
  */
 public class TestSubject extends SaTokenSubject {
 
+    /**
+     * 读取认证主体的用户标识。
+     *
+     * <p>测试夹具会调用 <code>getPrincipal()</code>、<code>principal.getUserId()</code>。</p>
+     *
+     * @return 实际返回<code>Objects.nonNull(principal) ? principal.getUserId() : null</code>
+     */
     @Override
     public Object getUserId() {
         // 回退到 Subject 接口默认实现：从 principal.getUserId() 取值

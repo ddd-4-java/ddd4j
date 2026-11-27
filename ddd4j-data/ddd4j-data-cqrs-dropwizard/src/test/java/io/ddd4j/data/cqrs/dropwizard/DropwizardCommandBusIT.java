@@ -81,12 +81,18 @@ class DropwizardCommandBusIT {
      */
     private static DropwizardTestSupport<Configuration> support;
 
+    /**
+     * 初始化测试资源，调用 <code>support.before</code>。
+     *
+     * @throws Exception 完成 <code>start Dropwizard</code> 操作失败
+     */
     @BeforeAll
     static void startDropwizard() throws Exception {
         support = new DropwizardTestSupport<>(TestApplication.class, randomPortConfiguration());
         support.before();
     }
 
+    /** 释放测试资源，调用 <code>support.after</code>。 */
     @AfterAll
     static void stopDropwizard() {
         if (support != null) {
@@ -140,6 +146,7 @@ class DropwizardCommandBusIT {
         return configuration;
     }
 
+    /** 验证<code>result.isSuccess()</code>为真，<code>result.data()</code> 包含 <code>SampleCommandHandler.HANDLED</code>，<code>support.getLocalPort()</code>为正。 */
     @Test
     void execute_已注册命令_应路由到真实Handler并返回成功() {
         // run 装配轨：TestApplication.run 内经 create(this, discover()) 组装的生产
@@ -157,6 +164,7 @@ class DropwizardCommandBusIT {
         assertThat(support.getLocalPort()).isPositive();
     }
 
+    /** 验证<code>exception</code>非空，<code>exception.getMessage()</code> 包含 <code>SampleCommand.class.getName()</code>。 */
     @Test
     void 装配期冲突_整批拒绝应自工厂传播() {
         // 供入「多类型占位执行器（SampleCommand + CompanionCommand）+ 真实
@@ -175,6 +183,7 @@ class DropwizardCommandBusIT {
         assertThat(exception.getMessage()).contains(SampleCommand.class.getName());
     }
 
+    /** 验证<code>exception</code>非空，<code>exception.getMessage()</code> 包含 <code>UnknownCommand.class.getName()</code>。 */
     @Test
     void execute_未注册命令_应抛ISE与ddd4j_core一致() {
         DropwizardCommandBus bus = assemble();
@@ -186,9 +195,11 @@ class DropwizardCommandBusIT {
         assertThat(exception.getMessage()).contains(UnknownCommand.class.getName());
     }
 
+    /** 与被测主命令一同注册以触发装配冲突的测试命令。 */
     static class CompanionCommand implements Command {
     }
 
+    /** 从命令总线发出但没有已登记处理器的测试命令。 */
     static class UnknownCommand implements Command {
     }
 
@@ -200,11 +211,22 @@ class DropwizardCommandBusIT {
      */
     static class OverlappingMultiTypeHandler implements CommandExecutor<Command> {
 
+        /**
+         * 执行 <code>supported Commands</code>，调用 <code>Collections.unmodifiableSet</code>、<code>Arrays.asList</code>。
+         *
+         * @return 当前操作得到的 <code>Set&lt;Class&lt;? extends Command&gt;&gt;</code> 结果
+         */
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(SampleCommand.class, CompanionCommand.class)));
         }
 
+        /**
+         * 执行 <code>execute</code>，调用 <code>Result.ok</code>。
+         *
+         * @param command 传入此操作的 <code>Command</code> 类型 <code>command</code>
+         * @return 返回表达式 <code>Result.ok()</code>
+         */
         @Override
         public Result execute(Command command) {
             return Result.ok();
@@ -220,13 +242,25 @@ class DropwizardCommandBusIT {
      */
     public static class TestApplication extends Application<Configuration> {
 
+        /** 保存 <code>bus From Run</code> 对应的 <code>DropwizardCommandBus</code> 数据。 */
         private volatile DropwizardCommandBus busFromRun;
 
+        /**
+         * 执行 <code>run</code>，调用 <code>DropwizardCommandBus.create</code>。
+         *
+         * @param configuration 传入此操作的 <code>Configuration</code> 类型 <code>configuration</code>
+         * @param environment 传入此操作的 <code>Environment</code> 类型 <code>environment</code>
+         */
         @Override
         public void run(Configuration configuration, Environment environment) {
             this.busFromRun = DropwizardCommandBus.create(this, discover());
         }
 
+        /**
+         * 读取<code>busFromRun</code> 的当前值。
+         *
+         * @return 返回表达式 <code>busFromRun</code>
+         */
         DropwizardCommandBus busFromRun() {
             return busFromRun;
         }

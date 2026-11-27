@@ -22,6 +22,10 @@ import java.lang.annotation.Documented;
 
 import java.lang.annotation.*;
 
+/**
+ * \u65b9\u6cd5\u53c2\u6570\u6ce8\u89e3\uff1a\u5c06\u5f53\u524d\u8bf7\u6c42\u7684\u4e0a\u4e0b\u6587\u5bf9\u8c61\u6ce8\u5165\u5230\u63a7\u5236\u5668\u65b9\u6cd5\u53c2\u6570\u3002
+ * @since 2.0.x
+ */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

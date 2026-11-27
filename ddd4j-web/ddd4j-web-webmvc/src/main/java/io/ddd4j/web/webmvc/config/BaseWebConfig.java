@@ -69,7 +69,9 @@ public class BaseWebConfig implements WebMvcConfigurer {
     final List<BaseWebSocketServer> baseWebSocketServers;
 
     /**
-     * 注册格式化器（日期、日期时间、时间）。
+     * \u6ce8\u518c\u683c\u5f0f\u5316\u5668\uff08\u65e5\u671f\u3001\u65e5\u671f\u65f6\u95f4\u3001\u65f6\u95f4\uff09\u3002
+     *
+     * @param registry MVC \u683c\u5f0f\u5316\u5668\u6ce8\u518c\u5668
      */
     public void addFormatters(FormatterRegistry registry) {
         registry.addFormatter(new DateFormatter("yyyy-MM-dd HH:mm:ss"));
@@ -78,7 +80,9 @@ public class BaseWebConfig implements WebMvcConfigurer {
     }
 
     /**
-     * MVC ObjectMapper（自定义日期时间格式）。
+     * MVC ObjectMapper\uff08\u81ea\u5b9a\u4e49\u65e5\u671f\u65f6\u95f4\u683c\u5f0f\uff09\u3002
+     *
+     * @return \u914d\u7f6e\u6216\u5904\u7406\u540e\u7684\u7ec4\u4ef6
      */
     @Bean
     public ObjectMapper mvcObjectMapper() {
@@ -87,9 +91,11 @@ public class BaseWebConfig implements WebMvcConfigurer {
     }
 
     /**
-     * 自定义 Jackson 2 JSON 消息转换器。
-     * <p>2.0.x 使用 Jackson 2 ObjectMapper；本 Bean 避免将 MVC 转换器实现
-     * 与 Spring 默认转换器的内部配置耦合。</p>
+     * \u81ea\u5b9a\u4e49 Jackson 2 JSON \u6d88\u606f\u8f6c\u6362\u5668\u3002
+     *  <p>2.0.x \u4f7f\u7528 Jackson 2 ObjectMapper\uff1b\u672c Bean \u907f\u514d\u5c06 MVC \u8f6c\u6362\u5668\u5b9e\u73b0
+     *  \u4e0e Spring \u9ed8\u8ba4\u8f6c\u6362\u5668\u7684\u5185\u90e8\u914d\u7f6e\u8026\u5408\u3002</p>
+     *
+     * @return \u914d\u7f6e\u6216\u5904\u7406\u540e\u7684\u7ec4\u4ef6
      */
     @Bean
     public CustomHttpMessageConverter customHttpMessageConverter() {
@@ -100,7 +106,9 @@ public class BaseWebConfig implements WebMvcConfigurer {
     }
 
     /**
-     * 全局 REST 异常通知处理器。
+     * \u5168\u5c40 REST \u5f02\u5e38\u901a\u77e5\u5904\u7406\u5668\u3002
+     *
+     * @return \u914d\u7f6e\u6216\u5904\u7406\u540e\u7684\u7ec4\u4ef6
      */
     @Bean
     public GlobalRestExceptionAdvice globalRestExceptionAdvice() {
@@ -109,7 +117,9 @@ public class BaseWebConfig implements WebMvcConfigurer {
     }
 
     /**
-     * 全局请求体通知处理器。
+     * \u5168\u5c40\u8bf7\u6c42\u4f53\u901a\u77e5\u5904\u7406\u5668\u3002
+     *
+     * @return \u914d\u7f6e\u6216\u5904\u7406\u540e\u7684\u7ec4\u4ef6
      */
     @Bean
     public GlobalRequestAdvice globalRequestAdvice() {
@@ -118,7 +128,9 @@ public class BaseWebConfig implements WebMvcConfigurer {
     }
 
     /**
-     * 全局响应包装通知处理器。
+     * \u5168\u5c40\u54cd\u5e94\u5305\u88c5\u901a\u77e5\u5904\u7406\u5668\u3002
+     *
+     * @return \u914d\u7f6e\u6216\u5904\u7406\u540e\u7684\u7ec4\u4ef6
      */
     @Bean
     public GlobalResponseRAdvice globalResponseRAdvice() {
@@ -127,7 +139,9 @@ public class BaseWebConfig implements WebMvcConfigurer {
     }
 
     /**
-     * 注册拦截器。
+     * \u6ce8\u518c\u62e6\u622a\u5668\u3002
+     *
+     * @param registry MVC \u8bf7\u6c42\u62e6\u622a\u5668\u6ce8\u518c\u5668
      */
     public void addInterceptors(InterceptorRegistry registry) {
         if (Objects.nonNull(baseWebInterceptors) && !baseWebInterceptors.isEmpty()) {

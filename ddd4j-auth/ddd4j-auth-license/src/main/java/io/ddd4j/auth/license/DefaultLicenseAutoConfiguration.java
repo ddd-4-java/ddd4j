@@ -17,6 +17,12 @@ package io.ddd4j.auth.license;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * \u8bb8\u53ef\u8bc1\uff08License\uff09\u9ed8\u8ba4\u81ea\u52a8\u914d\u7f6e\u3002
+ *
+ *  <p>\u6ce8\u518c {@link LicenseVerify} Bean\uff1a\u5bb9\u5668\u542f\u52a8\u65f6\u5b89\u88c5\u8bb8\u53ef\u8bc1\uff0c\u5bb9\u5668\u5173\u95ed\u65f6\u5378\u8f7d\u8bb8\u53ef\u8bc1\u3002
+ * @since 2.0.x
+ */
 @Configuration(proxyBeanMethods = false)
 // @EnableConfigurationProperties({LicenseProperties.class})
 /**

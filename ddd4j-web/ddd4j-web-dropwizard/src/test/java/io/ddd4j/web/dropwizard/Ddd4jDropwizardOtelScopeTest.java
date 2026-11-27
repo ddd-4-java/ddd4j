@@ -53,6 +53,10 @@ import static org.mockito.Mockito.*;
  */
 class Ddd4jDropwizardOtelScopeTest {
 
+    /**
+     * \u8c03\u7528 <code>mock()</code>\u3001<code>request.getMethod()</code>\u3001<code>request.getUriInfo()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @return \u6839\u636e\u6d4b\u8bd5\u6761\u4ef6\u8fd4\u56de\u7684\u53ef\u80fd\u503c\uff0c\u5305\u62ec <code>null</code>\u3001<code>request</code>
+     */
     private static ContainerRequestContext request() {
         ContainerRequestContext request = mock(ContainerRequestContext.class);
         UriInfo uriInfo = mock(UriInfo.class);
@@ -75,6 +79,10 @@ class Ddd4jDropwizardOtelScopeTest {
         return request;
     }
 
+    /**
+     * \u8bfb\u53d6 <code>response</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
+     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>response</code>
+     */
     private static ContainerResponseContext response() {
         ContainerResponseContext response = mock(ContainerResponseContext.class);
         when(response.getStatus()).thenReturn(200);
@@ -82,6 +90,10 @@ class Ddd4jDropwizardOtelScopeTest {
         return response;
     }
 
+    /**
+     * \u8c03\u7528 <code>GlobalOpenTelemetry.resetForTest()</code>\u3001<code>Ddd4jOtel.class.getDeclaredField()</code>\u3001<code>field.setAccessible()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+     * @throws Exception \u53cd\u5c04\u8bbf\u95ee\u88ab\u6d4b\u6210\u5458\u65f6\u5931\u8d25
+     */
     private static void resetOpenTelemetry() throws Exception {
         GlobalOpenTelemetry.resetForTest();
         for (String fieldName : new String[]{"TRACER_CACHE", "METER_CACHE"}) {
@@ -94,6 +106,10 @@ class Ddd4jDropwizardOtelScopeTest {
         available.setBoolean(null, false);
     }
 
+    /**
+     * \u9a8c\u8bc1<code>observed[0]</code>\u4e3a\u771f\uff0c<code>observed[1]</code>\u4e3a\u5047\u3002
+     * @throws Exception \u6d4b\u8bd5\u670d\u52a1\u5668\u8bf7\u6c42\u3001\u4f1a\u8bdd\u64cd\u4f5c\u6216\u54cd\u5e94\u89e3\u6790\u5931\u8d25
+     */
     @Test
     void responseFilterMustCloseRequestOtelScope() throws Exception {
         resetOpenTelemetry();

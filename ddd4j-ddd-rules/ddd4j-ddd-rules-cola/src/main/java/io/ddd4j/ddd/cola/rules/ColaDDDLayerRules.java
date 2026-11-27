@@ -83,7 +83,10 @@ public final class ColaDDDLayerRules {
     }
 
     /**
-     * 规则1：标了 {@code @DomainEntity} 的类必须在 {@code ..domain..} 包（COLA 中通常在 domain.model）。
+     * \u89c4\u52191\uff1a\u6807\u4e86 {@code @DomainEntity} \u7684\u7c7b\u5fc5\u987b\u5728 {@code ..domain..} \u5305\uff08COLA \u4e2d\u901a\u5e38\u5728 domain.model\uff09\u3002
+     *
+     * @param domainEntityAnnotation \u9886\u57df\u5b9e\u4f53\u6ce8\u89e3\u7c7b\u578b
+     * @return \u9886\u57df\u5b9e\u4f53\u6240\u5c5e\u5305\u89c4\u5219
      */
     public static ArchRule domainEntityInDomain(Class<? extends Annotation> domainEntityAnnotation) {
         return classes()
@@ -93,7 +96,10 @@ public final class ColaDDDLayerRules {
     }
 
     /**
-     * 规则2：标了 {@code @DomainService} 的类必须在 {@code ..domain..} 包。
+     * \u89c4\u52192\uff1a\u6807\u4e86 {@code @DomainService} \u7684\u7c7b\u5fc5\u987b\u5728 {@code ..domain..} \u5305\u3002
+     *
+     * @param domainServiceAnnotation \u9886\u57df\u670d\u52a1\u6ce8\u89e3\u7c7b\u578b
+     * @return \u9886\u57df\u670d\u52a1\u6240\u5c5e\u5305\u89c4\u5219
      */
     public static ArchRule domainServiceInDomain(Class<? extends Annotation> domainServiceAnnotation) {
         return classes()
@@ -103,9 +109,12 @@ public final class ColaDDDLayerRules {
     }
 
     /**
-     * 规则3：标了 {@code @ApplicationService} 的类必须在 application.executor / application.query 包。
+     * \u89c4\u52193\uff1a\u6807\u4e86 {@code @ApplicationService} \u7684\u7c7b\u5fc5\u987b\u5728 application.executor / application.query \u5305\u3002
      *
-     * <p>COLA 特有：应用层按 CQS 分为 executor（命令）和 query（查询）。
+     *  <p>COLA \u7279\u6709\uff1a\u5e94\u7528\u5c42\u6309 CQS \u5206\u4e3a executor\uff08\u547d\u4ee4\uff09\u548c query\uff08\u67e5\u8be2\uff09\u3002
+     *
+     * @param applicationServiceAnnotation \u5e94\u7528\u670d\u52a1\u6ce8\u89e3\u7c7b\u578b
+     * @return \u5e94\u7528\u670d\u52a1\u6240\u5c5e\u5305\u89c4\u5219
      */
     public static ArchRule applicationServiceInApp(Class<? extends Annotation> applicationServiceAnnotation) {
         return classes()
@@ -116,9 +125,12 @@ public final class ColaDDDLayerRules {
     }
 
     /**
-     * 规则4：标了 {@code @DomainRepository} 的类必须在 {@code ..adapter.persistence..} 包。
+     * \u89c4\u52194\uff1a\u6807\u4e86 {@code @DomainRepository} \u7684\u7c7b\u5fc5\u987b\u5728 {@code ..adapter.persistence..} \u5305\u3002
      *
-     * <p>COLA 中 Repository 实现放在 adapter 层（Clean 中放在 infrastructure 层）。
+     *  <p>COLA \u4e2d Repository \u5b9e\u73b0\u653e\u5728 adapter \u5c42\uff08Clean \u4e2d\u653e\u5728 infrastructure \u5c42\uff09\u3002
+     *
+     * @param domainRepositoryAnnotation \u4ed3\u50a8\u5b9e\u73b0\u6ce8\u89e3\u7c7b\u578b
+     * @return \u4ed3\u50a8\u5b9e\u73b0\u6240\u5c5e\u5305\u89c4\u5219
      */
     public static ArchRule repositoryImplInAdapter(Class<? extends Annotation> domainRepositoryAnnotation) {
         return classes()
@@ -128,7 +140,10 @@ public final class ColaDDDLayerRules {
     }
 
     /**
-     * 规则8：标了 {@code @DomainGateway} 的接口必须在 {@code ..domain.gateway..} 包。
+     * \u89c4\u52198\uff1a\u6807\u4e86 {@code @DomainGateway} \u7684\u63a5\u53e3\u5fc5\u987b\u5728 {@code ..domain.gateway..} \u5305\u3002
+     *
+     * @param domainGatewayAnnotation \u9886\u57df\u7f51\u5173\u6ce8\u89e3\u7c7b\u578b
+     * @return \u9886\u57df\u7f51\u5173\u6240\u5c5e\u5305\u89c4\u5219
      */
     public static ArchRule domainGatewayInDomain(Class<? extends Annotation> domainGatewayAnnotation) {
         return classes()
@@ -138,7 +153,10 @@ public final class ColaDDDLayerRules {
     }
 
     /**
-     * 规则9：标了 {@code @CommandExecutor} 的类必须在 {@code ..application.executor..} 包。
+     * \u89c4\u52199\uff1a\u6807\u4e86 {@code @CommandExecutor} \u7684\u7c7b\u5fc5\u987b\u5728 {@code ..application.executor..} \u5305\u3002
+     *
+     * @param commandExecutorAnnotation \u547d\u4ee4\u6267\u884c\u5668\u6ce8\u89e3\u7c7b\u578b
+     * @return \u547d\u4ee4\u6267\u884c\u5668\u6240\u5c5e\u5305\u89c4\u5219
      */
     public static ArchRule commandExecutorInApp(Class<? extends Annotation> commandExecutorAnnotation) {
         return classes()
@@ -148,7 +166,10 @@ public final class ColaDDDLayerRules {
     }
 
     /**
-     * 规则10：标了 {@code @QueryService} 的类必须在 {@code ..application.query..} 包。
+     * \u89c4\u521910\uff1a\u6807\u4e86 {@code @QueryService} \u7684\u7c7b\u5fc5\u987b\u5728 {@code ..application.query..} \u5305\u3002
+     *
+     * @param queryServiceAnnotation \u67e5\u8be2\u670d\u52a1\u6ce8\u89e3\u7c7b\u578b
+     * @return \u67e5\u8be2\u670d\u52a1\u6240\u5c5e\u5305\u89c4\u5219
      */
     public static ArchRule queryServiceInApp(Class<? extends Annotation> queryServiceAnnotation) {
         return classes()

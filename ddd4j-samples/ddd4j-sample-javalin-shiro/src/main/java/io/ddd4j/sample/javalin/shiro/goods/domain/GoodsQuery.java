@@ -34,6 +34,7 @@ import java.math.BigDecimal;
 @EqualsAndHashCode(callSuper = true)
 public class GoodsQuery extends Query<Goods> {
 
+    /** Java \u5e8f\u5217\u5316\u7248\u672c\u6807\u8bc6\u3002 */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -85,6 +86,11 @@ public class GoodsQuery extends Query<Goods> {
         return this;
     }
 
+    /**
+     * \u6309\u65b9\u5411\u4e3a\u5546\u54c1\u67e5\u8be2\u8ffd\u52a0\u9886\u57df\u5c5e\u6027\u6392\u5e8f\u6761\u4ef6\u3002
+     * @param desc \u662f\u5426\u6309\u964d\u5e8f\u6392\u5217
+     * @param property \u5546\u54c1\u6392\u5e8f\u6240\u4f7f\u7528\u7684\u9886\u57df\u5c5e\u6027\u5f15\u7528
+     */
     private void applyOrder(boolean desc, SFunction<Goods, ?> property) {
         if (desc) {
             orderByDesc(property);
@@ -93,6 +99,13 @@ public class GoodsQuery extends Query<Goods> {
         orderByAsc(property);
     }
 
+    /**
+     * 返回当前用例依赖的仓储。
+     *
+     * <p>此实现调用 <code>RepositoryRegistry.repository(Goods.class)</code>。</p>
+     *
+     * @return 实际返回<code>RepositoryRegistry.repository(Goods.class)</code>
+     */
     @Override
     public Repository<Goods, Long> repository() {
         return RepositoryRegistry.repository(Goods.class);

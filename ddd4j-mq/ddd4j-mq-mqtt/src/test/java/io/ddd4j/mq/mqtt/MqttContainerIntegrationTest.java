@@ -45,6 +45,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Testcontainers(disabledWithoutDocker = true)
 class MqttContainerIntegrationTest {
 
+    /** \u4e3a\u96c6\u6210\u6d4b\u8bd5\u63d0\u4f9b\u9694\u79bb <code>Generic</code> \u670d\u52a1\u7684\u5bb9\u5668\u3002 */
     @Container
     static final GenericContainer<?> MOSQUITTO = new GenericContainer<>(
             DockerImageName.parse("eclipse-mosquitto:2.0.22"))
@@ -55,6 +56,10 @@ class MqttContainerIntegrationTest {
             .waitingFor(Wait.forListeningPort())
             .withStartupTimeout(Duration.ofMinutes(2));
 
+    /**
+     * \u9a8c\u8bc1<code>client.initConsumer(listener, properties)</code>\u4e3a\u771f\uff0c<code>bean.received.await(10, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>nativeClient.isConnected()</code>\u4e3a\u771f\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void publishesAndConsumesPayloadIdWithoutTakingOwnershipOfInjectedClient() throws Exception {
         String suffix = UUID.randomUUID().toString().replace("-", "");
@@ -118,6 +123,10 @@ class MqttContainerIntegrationTest {
         }
     }
 
+    /**
+     * \u9a8c\u8bc1<code>client.initConsumer(listener, properties)</code>\u4e3a\u771f\uff0c<code>bean.firstAttempt.await(10, TimeUnit.SECONDS)</code>\u4e3a\u771f\uff0c<code>bean.attempts.get()</code> \u7b49\u4e8e <code>2</code>\u3002
+     * @throws Exception \u7b49\u5f85\u5e76\u53d1\u64cd\u4f5c\u65f6\u5931\u8d25
+     */
     @Test
     void failedQosOneHandlerIsRedeliveredAfterPersistentSessionReconnect() throws Exception {
         String suffix = UUID.randomUUID().toString().replace("-", "");
@@ -167,21 +176,36 @@ class MqttContainerIntegrationTest {
         }
     }
 
+    /** \u4fdd\u5b58\u76d1\u542c\u56de\u8c03\u7ed3\u679c\uff0c\u4f9b\u65ad\u8a00\u68c0\u67e5\u4e8b\u4ef6\u4f20\u9012\u884c\u4e3a\u3002 */
     public static final class RecordingListener {
+        /** \u7b49\u5f85\u6570\u636e\u5230\u8fbe\u7684\u540c\u6b65\u95e8\u95e9\u3002 */
         private final CountDownLatch received = new CountDownLatch(1);
+        /** \u6d88\u606f\u6807\u8bc6\u3002 */
         private volatile String messageId;
 
+        /**
+         * \u6839\u636e\u672c\u6b21\u8c03\u7528\u66f4\u65b0 <code>messageId = event.getMsgId()</code>\uff0c\u7528\u4e8e\u540e\u7eed\u6d4b\u8bd5\u6b65\u9aa4\u3002
+         * @param event \u4ea4\u7ed9\u88ab\u6d4b\u5165\u53e3\u5904\u7406\u7684\u6d4b\u8bd5\u9886\u57df\u4e8b\u4ef6
+         */
         public void handle(MQEvent event) {
             messageId = event.getMsgId();
             received.countDown();
         }
     }
 
+    /** \u5c06 <code>firstAttempt</code>\u3001<code>secondAttempt</code>\u3001<code>attempts</code> \u7b49\u72b6\u6001\u4e00\u8d77\u4f20\u5165\u5f53\u524d\u6d4b\u8bd5\uff0c\u4f9b\u8c03\u7528\u6216\u7ed3\u679c\u65ad\u8a00\u4f7f\u7528\u3002 */
     public static final class FailsOnceListener {
+        /** \u534f\u8c03\u6d4b\u8bd5\u7ebf\u7a0b\u5728\u6307\u5b9a\u6267\u884c\u9636\u6bb5\u7b49\u5f85\u6216\u7ee7\u7eed\u7684\u95e8\u95e9\u3002 */
         private final CountDownLatch firstAttempt = new CountDownLatch(1);
+        /** \u534f\u8c03\u6d4b\u8bd5\u7ebf\u7a0b\u5728\u6307\u5b9a\u6267\u884c\u9636\u6bb5\u7b49\u5f85\u6216\u7ee7\u7eed\u7684\u95e8\u95e9\u3002 */
         private final CountDownLatch secondAttempt = new CountDownLatch(1);
+        /** \u8ddf\u8e2a\u6d4b\u8bd5\u64cd\u4f5c\u7684\u8c03\u7528\u6216\u91cd\u8bd5\u6b21\u6570\u3002 */
         private final AtomicInteger attempts = new AtomicInteger();
 
+        /**
+         * \u8c03\u7528 <code>attempts.incrementAndGet()</code>\u3001<code>firstAttempt.countDown()</code>\u3001<code>secondAttempt.countDown()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
+         * @param event \u4ea4\u7ed9\u88ab\u6d4b\u5165\u53e3\u5904\u7406\u7684\u6d4b\u8bd5\u9886\u57df\u4e8b\u4ef6
+         */
         public void handle(MQEvent event) {
             if (attempts.incrementAndGet() == 1) {
                 firstAttempt.countDown();

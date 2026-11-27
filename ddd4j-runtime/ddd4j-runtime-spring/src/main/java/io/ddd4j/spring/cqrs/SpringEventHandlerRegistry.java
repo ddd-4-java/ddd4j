@@ -55,10 +55,15 @@ public class SpringEventHandlerRegistry implements SmartInitializingSingleton {
      */
     private final ConcurrentMap<Class<?>, Method> handlerTable = new ConcurrentHashMap<>();
 
+    /**
+     * \u521b\u5efa Spring \u4e8b\u4ef6\u5904\u7406\u5668\u6ce8\u518c\u8868\u3002
+     * @param applicationContext Spring \u5e94\u7528\u4e0a\u4e0b\u6587
+     */
     public SpringEventHandlerRegistry(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
+    /** \u5728\u5355\u4f8b Bean \u5b8c\u6210\u521d\u59cb\u5316\u540e\u626b\u63cf\u5e76\u6ce8\u518c\u4e8b\u4ef6\u5904\u7406\u5668\u3002 */
     @Override
     public void afterSingletonsInstantiated() {
         Map<String, View> viewBeans = applicationContext.getBeansOfType(View.class);
@@ -70,7 +75,9 @@ public class SpringEventHandlerRegistry implements SmartInitializingSingleton {
     }
 
     /**
-     * 扫描指定类的所有方法，注册 @CreateEvent / @UpdateEvent / @DeleteEvent 处理器。
+     * \u626b\u63cf\u6307\u5b9a\u7c7b\u7684\u6240\u6709\u65b9\u6cd5\uff0c\u6ce8\u518c @CreateEvent / @UpdateEvent / @DeleteEvent \u5904\u7406\u5668\u3002
+     *
+     * @param viewClass \u58f0\u660e\u4e8b\u4ef6\u5904\u7406\u65b9\u6cd5\u7684\u89c6\u56fe\u7c7b
      */
     private void registerHandlers(Class<?> viewClass) {
         for (Method method : viewClass.getDeclaredMethods()) {
@@ -80,6 +87,11 @@ public class SpringEventHandlerRegistry implements SmartInitializingSingleton {
         }
     }
 
+    /**
+     * \u4ec5\u5728\u65b9\u6cd5\u5e26\u5f53\u524d\u6ce8\u89e3\u65f6\u89e3\u6790\u5e76\u767b\u8bb0\u4e8b\u4ef6\u5904\u7406\u8def\u7531\u3002
+     * @param method \u5f85\u68c0\u67e5\u6ce8\u89e3\u5e76\u767b\u8bb0\u7684\u53cd\u5c04\u65b9\u6cd5
+     * @param annotationType \u5f53\u524d\u8981\u8bc6\u522b\u7684\u6ce8\u89e3\u7c7b\u578b
+     */
     private void registerIfAnnotated(Method method, Class<? extends java.lang.annotation.Annotation> annotationType) {
         if (method.isAnnotationPresent(annotationType)) {
             java.lang.annotation.Annotation annotation = method.getAnnotation(annotationType);
@@ -94,7 +106,10 @@ public class SpringEventHandlerRegistry implements SmartInitializingSingleton {
     }
 
     /**
-     * 从注解 {@code value()} 提取事件类型。
+     * \u4ece\u6ce8\u89e3 {@code value()} \u63d0\u53d6\u4e8b\u4ef6\u7c7b\u578b\u3002
+     *
+     * @param annotation \u58f0\u660e\u4e8b\u4ef6\u5904\u7406\u89c4\u5219\u7684\u6ce8\u89e3
+     * @return \u6ce8\u89e3\u58f0\u660e\u7684\u4e8b\u4ef6\u7c7b\u578b
      */
     private Class<?> extractEventType(java.lang.annotation.Annotation annotation) {
         try {
@@ -116,7 +131,9 @@ public class SpringEventHandlerRegistry implements SmartInitializingSingleton {
     }
 
     /**
-     * 获取已注册的全部事件类型。
+     * \u83b7\u53d6\u5df2\u6ce8\u518c\u7684\u5168\u90e8\u4e8b\u4ef6\u7c7b\u578b\u3002
+     *
+     * @return \u4e8b\u4ef6\u5904\u7406\u5668\u6620\u5c04\u7684\u526f\u672c
      */
     public Map<Class<?>, Method> getHandlerTable() {
         return new HashMap<>(handlerTable);

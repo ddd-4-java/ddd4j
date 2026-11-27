@@ -29,16 +29,26 @@ import java.util.Objects;
  */
 public final class MQDeliveryPolicy {
 
+    /** \u9ed8\u8ba4\u6295\u9012\u4efb\u52a1\u79df\u7ea6\u65f6\u957f\u3002 */
     private static final Duration DEFAULT_LEASE_DURATION = Duration.ofSeconds(60);
+    /** \u9996\u6b21\u5931\u8d25\u540e\u7b49\u5f85\u91cd\u8bd5\u7684\u9ed8\u8ba4\u65f6\u957f\u3002 */
     private static final Duration DEFAULT_INITIAL_BACKOFF = Duration.ofSeconds(1);
+    /** \u91cd\u8bd5\u9000\u907f\u65f6\u95f4\u9ed8\u8ba4\u4e0a\u9650\u3002 */
     private static final Duration DEFAULT_MAX_BACKOFF = Duration.ofMinutes(5);
+    /** \u9ed8\u8ba4\u5141\u8bb8\u5c1d\u8bd5\u6295\u9012\u7684\u6700\u5927\u6b21\u6570\u3002 */
     private static final int DEFAULT_MAX_ATTEMPTS = 12;
+    /** \u9ed8\u8ba4\u91cd\u8bd5\u6296\u52a8\u6bd4\u4f8b\u3002 */
     private static final double DEFAULT_JITTER_FACTOR = 0.20D;
 
+    /** \u8ba4\u9886\u6295\u9012\u8bb0\u5f55\u65f6\u6388\u4e88\u7684\u72ec\u5360\u79df\u7ea6\u65f6\u957f\u3002 */
     private final Duration leaseDuration;
+    /** \u6295\u9012\u6700\u591a\u5141\u8bb8\u6267\u884c\u7684\u6b21\u6570\u3002 */
     private final int maxAttempts;
+    /** \u8ba1\u7b97\u91cd\u8bd5\u9000\u907f\u65f6\u4f7f\u7528\u7684\u57fa\u7840\u65f6\u957f\u3002 */
     private final Duration initialBackoff;
+    /** \u5355\u6b21\u91cd\u8bd5\u9000\u907f\u7684\u65f6\u957f\u4e0a\u9650\u3002 */
     private final Duration maxBackoff;
+    /** \u5728\u57fa\u7840\u9000\u907f\u65f6\u95f4\u4e0a\u5e94\u7528\u7684\u6296\u52a8\u7cfb\u6570\u3002 */
     private final double jitterFactor;
 
     /**
@@ -93,31 +103,37 @@ public final class MQDeliveryPolicy {
                 DEFAULT_INITIAL_BACKOFF, DEFAULT_MAX_BACKOFF, DEFAULT_JITTER_FACTOR);
     }
 
-    /** @return 投递租约时长 */
+    /** @return \u6295\u9012\u79df\u7ea6\u65f6\u957f */
     public Duration leaseDuration() {
         return leaseDuration;
     }
 
-    /** @return 最多投递尝试次数 */
+    /** @return \u6700\u591a\u6295\u9012\u5c1d\u8bd5\u6b21\u6570 */
     public int maxAttempts() {
         return maxAttempts;
     }
 
-    /** @return 初始退避时长 */
+    /** @return \u521d\u59cb\u9000\u907f\u65f6\u957f */
     public Duration initialBackoff() {
         return initialBackoff;
     }
 
-    /** @return 最大退避时长 */
+    /** @return \u6700\u5927\u9000\u907f\u65f6\u957f */
     public Duration maxBackoff() {
         return maxBackoff;
     }
 
-    /** @return 退避抖动系数 */
+    /** @return \u9000\u907f\u6296\u52a8\u7cfb\u6570 */
     public double jitterFactor() {
         return jitterFactor;
     }
 
+    /**
+     * 根据<code>jitterFactor</code>、<code>maxAttempts</code>比较对象的值是否相等。
+     *
+     * @param o 用来比较的另一个对象，允许为空
+     * @return 对象满足此实现的相等条件时为真
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -134,6 +150,11 @@ public final class MQDeliveryPolicy {
                 && maxBackoff.equals(that.maxBackoff);
     }
 
+    /**
+     * 计算与对象相等条件一致的哈希值。
+     *
+     * @return 由参与相等比较的状态计算出的哈希值
+     */
     @Override
     public int hashCode() {
         int result = leaseDuration.hashCode();
@@ -144,6 +165,11 @@ public final class MQDeliveryPolicy {
         return result;
     }
 
+    /**
+     * 生成用于调试和日志的对象描述，包含<code>leaseDuration</code>、<code>maxAttempts</code>、<code>initialBackoff</code>、<code>maxBackoff</code>、<code>jitterFactor</code>。
+     *
+     * @return 表示当前对象状态的字符串
+     */
     @Override
     public String toString() {
         return "MQDeliveryPolicy[leaseDuration=" + leaseDuration + ", maxAttempts=" + maxAttempts
@@ -182,6 +208,11 @@ public final class MQDeliveryPolicy {
         return attempts >= maxAttempts;
     }
 
+    /**
+     * \u6309\u53d1\u9001\u6b21\u6570\u8ba1\u7b97\u6307\u6570\u9000\u907f\uff0c\u5e76\u5c06\u7ed3\u679c\u9650\u5236\u5728\u914d\u7f6e\u4e0a\u9650\u5185\u3002
+     * @param attempts \u5f53\u524d\u7d2f\u8ba1\u53d1\u9001\u6b21\u6570
+     * @return \u9000\u907f\u65f6\u95f4\uff0c\u5355\u4f4d\u4e3a\u6beb\u79d2
+     */
     private long exponentialBackoffMillis(int attempts) {
         long maxMillis = maxBackoff.toMillis();
         long initialMillis = initialBackoff.toMillis();
@@ -193,27 +224,27 @@ public final class MQDeliveryPolicy {
         return Math.min(initialMillis * multiplier, maxMillis);
     }
 
-    /** @return 投递租约时长 */
+    /** @return \u6295\u9012\u79df\u7ea6\u65f6\u957f */
     public Duration getLeaseDuration() {
         return leaseDuration;
     }
 
-    /** @return 最多投递尝试次数 */
+    /** @return \u6700\u591a\u6295\u9012\u5c1d\u8bd5\u6b21\u6570 */
     public int getMaxAttempts() {
         return maxAttempts;
     }
 
-    /** @return 初始退避时长 */
+    /** @return \u521d\u59cb\u9000\u907f\u65f6\u957f */
     public Duration getInitialBackoff() {
         return initialBackoff;
     }
 
-    /** @return 最大退避时长 */
+    /** @return \u6700\u5927\u9000\u907f\u65f6\u957f */
     public Duration getMaxBackoff() {
         return maxBackoff;
     }
 
-    /** @return 退避抖动系数 */
+    /** @return \u9000\u907f\u6296\u52a8\u7cfb\u6570 */
     public double getJitterFactor() {
         return jitterFactor;
     }

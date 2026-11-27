@@ -26,32 +26,44 @@ import java.util.Optional;
 public interface Acknowledgment {
 
     /**
-     * 返回当前消息的投递标签。
+     * \u8fd4\u56de\u5f53\u524d\u6d88\u606f\u7684\u6295\u9012\u6807\u7b7e\u3002
+     *
+     * @return \u6295\u9012\u6807\u7b7e
      */
     long deliveryTag();
 
     /**
-     * 返回消息 ID（若 Broker 提供）。
+     * \u8fd4\u56de\u6d88\u606f ID\uff08\u82e5 Broker \u63d0\u4f9b\uff09\u3002
+     *
+     * @return \u6d88\u606f ID\uff0cBroker \u672a\u63d0\u4f9b\u65f6\u53ef\u80fd\u4e3a\u7a7a
      */
     String messageId();
 
     /**
-     * 返回关联 ID（若 Broker 提供）。
+     * \u8fd4\u56de\u5173\u8054 ID\uff08\u82e5 Broker \u63d0\u4f9b\uff09\u3002
+     *
+     * @return \u5173\u8054 ID\uff0cBroker \u672a\u63d0\u4f9b\u65f6\u53ef\u80fd\u4e3a\u7a7a
      */
     String correlationId();
 
     /**
-     * 底层连接/通道是否仍可用。
+     * \u5e95\u5c42\u8fde\u63a5/\u901a\u9053\u662f\u5426\u4ecd\u53ef\u7528\u3002
+     *
+     * @return \u8fde\u63a5\u6216\u901a\u9053\u53ef\u7528\u65f6\u4e3a true
      */
     boolean isOpen();
 
     /**
-     * 当前消息是否已被确认。
+     * \u5f53\u524d\u6d88\u606f\u662f\u5426\u5df2\u88ab\u786e\u8ba4\u3002
+     *
+     * @return \u5df2\u786e\u8ba4\u65f6\u4e3a true
      */
     boolean isAcknowledged();
 
     /**
-     * 当前确认实现对应的 Broker 类型。
+     * \u5f53\u524d\u786e\u8ba4\u5b9e\u73b0\u5bf9\u5e94\u7684 Broker \u7c7b\u578b\u3002
+     *
+     * @return Broker \u7c7b\u578b
      */
     BrokerType brokerType();
 

@@ -44,6 +44,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class InMemoryEventStore implements EventStore {
 
+    /** \u6309\u805a\u5408\u6d41\u952e\u4fdd\u5b58\u5df2\u5199\u5165\u4e8b\u4ef6\u7684\u5185\u5b58\u6620\u5c04\u3002 */
     private final Map<String, List<StoredEvent>> store = new ConcurrentHashMap<>();
 
     /**
@@ -51,6 +52,7 @@ public class InMemoryEventStore implements EventStore {
      */
     private final NavigableMap<Long, StoredEvent> positionIndex = new java.util.concurrent.ConcurrentSkipListMap<>();
 
+    /** 下一个持久化领域事件所使用的全局位置计数器。 */
     private final AtomicLong globalPosition = new AtomicLong(0);
 
     /**
@@ -87,11 +89,31 @@ public class InMemoryEventStore implements EventStore {
         }
     }
 
+    /**
+     * 按聚合查询其事件流并还原已存储的事件。
+     *
+     * <p>此实现调用 <code>store.getOrDefault(streamKey(aggregateType, aggregateId), Collections.emptyList())</code>。</p>
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId 聚合 ID
+     * @return 实际返回<code>store.getOrDefault(streamKey(aggregateType, aggregateId), Collections.emptyList())</code>
+     */
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId) {
         return store.getOrDefault(streamKey(aggregateType, aggregateId), Collections.emptyList());
     }
 
+    /**
+     * 按聚合查询其事件流并还原已存储的事件。
+     *
+     * <p>此实现调用 <code>read(aggregateType, aggregateId)</code>。</p>
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId 聚合 ID
+     * @param fromVersion 起始版本号（含）
+     * @param toVersion 结束版本号（含）
+     * @return 实际返回<code>result</code>
+     */
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId, long fromVersion, long toVersion) {
         List<StoredEvent> events = read(aggregateType, aggregateId);
@@ -104,6 +126,15 @@ public class InMemoryEventStore implements EventStore {
         return result;
     }
 
+    /**
+     * 按全局位置读取用于投影或重放的存储事件。
+     *
+     * <p>此实现调用 <code>positionIndex.tailMap(fromPosition, true)</code>。</p>
+     *
+     * @param fromPosition 起始 position（含）
+     * @param limit 最大读取数量
+     * @return 实际返回<code>result</code>
+     */
     @Override
     public List<StoredEvent> readAll(long fromPosition, int limit) {
         NavigableMap<Long, StoredEvent> tail = positionIndex.tailMap(fromPosition, true);
@@ -119,6 +150,12 @@ public class InMemoryEventStore implements EventStore {
         return result;
     }
 
+    /**
+     * \u62fc\u63a5\u805a\u5408\u7c7b\u578b\u548c\u5e26\u7c7b\u578b\u7684\u805a\u5408\u6807\u8bc6\u7ec4\u6210\u5185\u90e8\u6d41\u952e\u3002
+     * @param aggregateType \u805a\u5408\u7c7b\u578b\u540d\u79f0
+     * @param aggregateId \u805a\u5408\u6839\u6807\u8bc6
+     * @return \u5185\u5b58\u4e8b\u4ef6\u6d41\u952e
+     */
     private String streamKey(String aggregateType, AggregateRootId aggregateId) {
         return aggregateType + "#" + aggregateId.asTypedString();
     }

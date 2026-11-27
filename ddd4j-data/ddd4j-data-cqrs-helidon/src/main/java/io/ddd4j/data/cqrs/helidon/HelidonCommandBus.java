@@ -123,6 +123,12 @@ public class HelidonCommandBus extends DefaultCommandBus {
         return new HelidonCommandBus(HelidonServiceLoader.create(services), registry);
     }
 
+    /**
+     * \u4ece\u8fd0\u884c\u5bb9\u5668\u4e2d\u6536\u96c6\u547d\u4ee4\u6267\u884c\u5668\u5e76\u767b\u8bb0\u5171\u4eab\u547d\u4ee4\u8def\u7531\u3002
+     * @param executors \u5f53\u524d\u6846\u67b6\u5bb9\u5668\u63d0\u4f9b\u7684\u547d\u4ee4\u6267\u884c\u5668
+     * @param registry \u63a5\u6536\u547d\u4ee4\u6267\u884c\u5668\u7684\u5171\u4eab\u6ce8\u518c\u8868
+     * @return \u6784\u9020\u5b8c\u6210\u7684\u5171\u4eab\u547d\u4ee4\u6267\u884c\u7ec4\u4ef6
+     */
     private static Collection<CommandExecutor<?>> collect(
             HelidonServiceLoader<? extends CommandExecutor<?>> executors, CommandRegistry registry) {
         Objects.requireNonNull(executors, "executors must not be null");

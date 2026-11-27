@@ -39,9 +39,15 @@ public final class DefaultLicenseMachineInfoProvider implements LicenseMachineIn
     /** 机器序列号的环境变量名，可据此显式指定机器标识。 */
     public static final String MACHINE_SN_ENV = "DDD4J_LICENSE_MACHINE_SN";
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>DefaultLicenseMachineInfoProvider</code> \u5b9e\u4f8b\u3002 */
     private DefaultLicenseMachineInfoProvider() {
     }
 
+    /**
+     * 获取当前机器的 IP 地址。
+     *
+     * @return 实际返回<code>addresses</code>，供调用方取得当前值
+     */
     @Override
     public Set<String> ipAddresses() {
         Set<String> addresses = new LinkedHashSet<>();
@@ -57,6 +63,11 @@ public final class DefaultLicenseMachineInfoProvider implements LicenseMachineIn
         return addresses;
     }
 
+    /**
+     * 获取当前机器的 MAC 地址。
+     *
+     * @return 实际返回<code>addresses</code>，供调用方取得当前值
+     */
     @Override
     public Set<String> macAddresses() {
         Set<String> addresses = new LinkedHashSet<>();
@@ -93,6 +104,10 @@ public final class DefaultLicenseMachineInfoProvider implements LicenseMachineIn
         return System.getProperty("os.name") + ":" + System.getProperty("user.name");
     }
 
+    /**
+     * \u679a\u4e3e\u53ef\u7528\u7f51\u7edc\u63a5\u53e3\u5e76\u5c06\u5176\u4ea4\u7ed9\u673a\u5668\u4fe1\u606f\u6536\u96c6\u56de\u8c03\u3002
+     * @param consumer \u63a5\u6536\u6bcf\u4e2a\u53ef\u7528\u63a5\u53e3\u7684\u56de\u8c03
+     */
     private void forEachAvailableNetworkInterface(NetworkInterfaceConsumer consumer) {
         try {
             Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
@@ -115,6 +130,11 @@ public final class DefaultLicenseMachineInfoProvider implements LicenseMachineIn
      */
     @FunctionalInterface
     private interface NetworkInterfaceConsumer {
+        /**
+         * \u6d88\u8d39\u4e00\u4e2a\u5df2\u679a\u4e3e\u7684\u7f51\u7edc\u63a5\u53e3\u3002
+         * @param networkInterface \u5f53\u524d\u53ef\u7528\u7f51\u7edc\u63a5\u53e3
+         * @throws Exception \u65e0\u6cd5\u4ece\u5f53\u524d\u63a5\u53e3\u8bfb\u53d6\u6240\u9700\u4fe1\u606f
+         */
         void accept(NetworkInterface networkInterface) throws Exception;
     }
 }

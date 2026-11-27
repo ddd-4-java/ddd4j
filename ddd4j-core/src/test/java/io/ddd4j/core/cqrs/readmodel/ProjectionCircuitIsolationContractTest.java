@@ -24,8 +24,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/** \u901a\u8fc7 <code>Collections.singletonList()</code>\u3001<code>view()</code>\u3001<code>runner.runAllIsolated()</code> \u9a8c\u8bc1 <code>ProjectionCircuitIsolationContract</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
 class ProjectionCircuitIsolationContractTest {
 
+    /** \u9a8c\u8bc1<code>alerts.get()</code> \u7b49\u4e8e <code>1</code>\uff0c<code>completed.get()</code> \u7b49\u4e8e <code>ProjectionRunner.CONSECUTIVE_FAILURE_THRESHOLD</code>\uff0c<code>service.readProjectionPosition("failing")</code> \u7b49\u4e8e <code>0L</code>\u3002 */
     @Test
     void circuitCallbackFailureMustNotStopOtherViews() {
         ProjectionService service = new DefaultProjectionService(new InMemoryProjectionPositionRepository());
@@ -55,6 +57,13 @@ class ProjectionCircuitIsolationContractTest {
         assertEquals(0L, service.readProjectionPosition("failing"));
     }
 
+    /**
+     * \u6784\u9020 <code>ProjectionView&lt;String&gt;</code> \u4f5c\u4e3a\u5f53\u524d\u6d4b\u8bd5\u7684\u8f93\u5165\u6216\u7ed3\u679c\u3002
+     * @param name \u5f53\u524d\u6d4b\u8bd5\u6307\u5b9a\u7684\u5bf9\u8c61\u6216\u5c5e\u6027\u540d\u79f0
+     * @param fail \u7528\u4e8e\u6784\u9020\u672c\u6b21\u8fd4\u56de\u7ed3\u679c\u7684 <code>boolean</code> \u8f93\u5165
+     * @param completed \u7528\u4e8e\u6784\u9020\u672c\u6b21\u8fd4\u56de\u7ed3\u679c\u7684 <code>AtomicInteger</code> \u8f93\u5165
+     * @return \u63d0\u4f9b\u7ed9\u540e\u7eed\u5951\u7ea6\u65ad\u8a00\u7684 <code>ProjectionView&lt;String&gt;</code> \u7ed3\u679c
+     */
     private static ProjectionView<String> view(String name, boolean fail, AtomicInteger completed) {
         return new ProjectionView<String>() {
             @Override

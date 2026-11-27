@@ -18,24 +18,48 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public final class CatalogOrderView
         implements ProjectionView<TradeOrderQuery>, QueryHandler<ProjectedTradeOrderQuery, TradeOrderSnapshot> {
+    /** \u6839\u636e\u79df\u6237\u548c\u8ba2\u5355\u53f7\u52a0\u8f7d\u5df2\u63d0\u4ea4\u8ba2\u5355\u7684\u67e5\u8be2\u51fd\u6570\u3002 */
     private final Function<TradeOrderQuery, TradeOrder> readCommittedOrder;
+    /** \u6309\u79df\u6237\u548c\u8ba2\u5355\u53f7\u5206\u533a\u7684\u8ba2\u5355\u5feb\u7167\u3002 */
     private final Map<String, ConcurrentHashMap<String, TradeOrderSnapshot>> orders = new ConcurrentHashMap<>();
 
+    /**
+     * 返回当前配置、视图或处理器的名称。
+     *
+     * @return 实际返回<code>"catalog-orders"</code>，供调用方取得当前值
+     */
     @Override
     public String getName() {
         return "catalog-orders";
     }
 
+    /**
+     * 返回投影视图配置的调度表达式。
+     *
+     * @return 当前视图使用的 Cron 表达式
+     */
     @Override
     public String getCron() {
         return "";
     }
 
+    /**
+     * 返回投影或处理器关心的事件类型。
+     *
+     * <p>此实现调用 <code>Set.of()</code>。</p>
+     *
+     * @return 实际返回<code>Set.of()</code>
+     */
     @Override
     public Collection<String> getEventTypes() {
         return Set.of();
     }
 
+    /**
+     * 处理本批投影事件。
+     *
+     * @param requests 传给 <code>requests.forEach(this::rebuild)</code>
+     */
     @Override
     public void handleEvents(Collection<TradeOrderQuery> requests) {
         requests.forEach(this::rebuild);
@@ -55,11 +79,24 @@ public final class CatalogOrderView
                 .compute(orderNo, (key, previous) -> TradeOrderSnapshot.from(readCommittedOrder.apply(request)));
     }
 
+    /**
+     * 声明当前查询处理器接受的查询类型。
+     *
+     * @return 本处理器接受的查询类型
+     */
     @Override
     public Class<ProjectedTradeOrderQuery> queryType() {
         return ProjectedTradeOrderQuery.class;
     }
 
+    /**
+     * 处理调用方传入的消息或请求。
+     *
+     * <p>此实现调用 <code>Optional.ofNullable(orders.get(query.getTenantId()))</code>。</p>
+     *
+     * @param query 查询对象
+     * @return 查询结果
+     */
     @Override
     public TradeOrderSnapshot handle(ProjectedTradeOrderQuery query) {
         return Optional.ofNullable(orders.get(query.getTenantId()))

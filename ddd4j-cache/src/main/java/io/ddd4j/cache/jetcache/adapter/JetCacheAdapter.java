@@ -49,6 +49,7 @@ import java.util.function.Function;
 @Slf4j
 public class JetCacheAdapter<K, V> implements Cache<K, V> {
 
+    /** \u88ab\u9002\u914d\u4e3a DDD4J \u7f13\u5b58\u63a5\u53e3\u7684 JetCache \u5b9e\u4f8b\u3002 */
     private final com.alicp.jetcache.Cache<K, V> jetCache;
 
     /**
@@ -70,6 +71,14 @@ public class JetCacheAdapter<K, V> implements Cache<K, V> {
         return jetCache;
     }
 
+    /**
+     * 读取现有缓存值。
+     *
+     * <p>此实现调用 <code>jetCache.GET(key)</code>。</p>
+     *
+     * @param key 缓存键
+     * @return 根据执行路径返回<code>result.getValue()</code>、<code>null</code>
+     */
     @Override
     public V getIfPresent(K key) {
         CacheGetResult<V> result = jetCache.GET(key);
@@ -79,12 +88,29 @@ public class JetCacheAdapter<K, V> implements Cache<K, V> {
         return null;
     }
 
+    /**
+     * 读取调用指定的当前值。
+     *
+     * <p>此实现调用 <code>jetCache.computeIfAbsent(key, mappingFunction)</code>。</p>
+     *
+     * @param key 缓存键
+     * @param mappingFunction 值加载函数
+     * @return 实际返回<code>jetCache.computeIfAbsent(key, mappingFunction)</code>
+     */
     @Override
     public V get(K key, Function<K, V> mappingFunction) {
         // 使用 JetCache 的 computeIfAbsent，内置防穿透保护
         return jetCache.computeIfAbsent(key, mappingFunction);
     }
 
+    /**
+     * 读取调用指定的当前值。
+     *
+     * <p>此实现调用 <code>jetCache.get(key)</code>。</p>
+     *
+     * @param key 缓存键
+     * @return 根据执行路径返回<code>jetCache.get(key)</code>、<code>null</code>
+     */
     @Override
     public V get(K key) {
         // JetCache 的 get 方法在配置了 loader 时自动加载，否则等价于 getIfPresent
@@ -96,6 +122,14 @@ public class JetCacheAdapter<K, V> implements Cache<K, V> {
         }
     }
 
+    /**
+     * 将给定数据写入当前存储。
+     *
+     * <p>此实现调用 <code>jetCache.PUT(key, value)</code>。</p>
+     *
+     * @param key 缓存键
+     * @param value 缓存值
+     */
     @Override
     public void put(K key, V value) {
         CacheResult result = jetCache.PUT(key, value);
@@ -104,6 +138,13 @@ public class JetCacheAdapter<K, V> implements Cache<K, V> {
         }
     }
 
+    /**
+     * 批量设置缓存值。
+     *
+     * <p>此实现调用 <code>jetCache.PUT_ALL(map)</code>。</p>
+     *
+     * @param map 缓存键值对
+     */
     @Override
     public void putAll(Map<K, V> map) {
         CacheResult result = jetCache.PUT_ALL(map);
@@ -112,6 +153,13 @@ public class JetCacheAdapter<K, V> implements Cache<K, V> {
         }
     }
 
+    /**
+     * 使指定键的缓存条目失效。
+     *
+     * <p>此实现调用 <code>jetCache.REMOVE(key)</code>。</p>
+     *
+     * @param key 缓存键
+     */
     @Override
     public void invalidate(K key) {
         CacheResult result = jetCache.REMOVE(key);
@@ -120,12 +168,26 @@ public class JetCacheAdapter<K, V> implements Cache<K, V> {
         }
     }
 
+    /**
+     * 刷新当前实现所持有的数据或状态。
+     *
+     * <p>此实现调用 <code>jetCache.REMOVE(key)</code>。</p>
+     *
+     * @param key 缓存键
+     */
     @Override
     public void refresh(K key) {
         // JetCache 支持配置 RefreshPolicy 时自动刷新；手动刷新通过 remove + 下次 get 触发
         jetCache.REMOVE(key);
     }
 
+    /**
+     * 使当前缓存中的全部条目失效。
+     *
+     * <p>此实现调用 <code>keyList.isEmpty()</code>。</p>
+     *
+     * @param keys 缓存键集合
+     */
     @Override
     public void invalidateAll(Iterable<K> keys) {
         List<K> keyList = new ArrayList<>();
@@ -135,6 +197,7 @@ public class JetCacheAdapter<K, V> implements Cache<K, V> {
         }
     }
 
+    /** \u5c1d\u8bd5\u5173\u95ed JetCache \u5b9e\u4f8b\u3002\u9700\u8981\u79fb\u9664\u540e\u7aef\u6570\u636e\u65f6\uff0c\u5e94\u63d0\u4f9b\u660e\u786e\u7684\u7f13\u5b58\u952e\u3002 */
     @Override
     public void invalidateAll() {
         // JetCache 的 Cache 接口没有全局 clear 方法（因为远程缓存如 Redis 不适合遍历清除）
@@ -147,6 +210,10 @@ public class JetCacheAdapter<K, V> implements Cache<K, V> {
         }
     }
 
+    /**
+     * \u62a5\u544a\u5f53\u524d\u540e\u7aef\u7684\u7f13\u5b58\u6761\u76ee\u6570\u91cf\u662f\u5426\u53ef\u7528\u3002
+     * @return \u56fa\u5b9a\u8fd4\u56de -1\uff0c\u8868\u793a\u6b64\u9002\u914d\u5668\u4e0d\u4f30\u7b97\u6761\u76ee\u6570
+     */
     @Override
     public long estimatedSize() {
         // JetCache 的本地缓存可获取大小，远程缓存无法精确估算
@@ -161,6 +228,11 @@ public class JetCacheAdapter<K, V> implements Cache<K, V> {
         return -1;
     }
 
+    /**
+     * 返回当前缓存实现记录的统计信息。
+     *
+     * @return 此实现返回<code>null</code>
+     */
     @Override
     public CacheStats stats() {
         // JetCache 统计通过 DefaultCacheMonitor 收集，适配器层暂不映射

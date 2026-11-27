@@ -52,6 +52,7 @@ public class BaiduRegionTemplate {
      * HTTP 客户端
      */
     private final HttpClient httpClient;
+    /** \u5f53\u524d\u5730\u533a\u67e5\u8be2\u9002\u914d\u5668\u4f7f\u7528\u7684\u8bf7\u6c42\u5730\u5740\u6a21\u677f\u3002 */
     private final String urlTemplate;
     /**
      * 缓存服务
@@ -68,10 +69,19 @@ public class BaiduRegionTemplate {
         this(ak, httpClient, RegionCache.none());
     }
 
+    /**
+     * \u6784\u9020\u51fd\u6570\uff08\u65e0\u7f13\u5b58\uff09\u3002
+     * @param ak \u767e\u5ea6\u5730\u56feAK\u5bc6\u94a5
+     */
     public BaiduRegionTemplate(String ak) {
         this(ak, HttpClient.newHttpClient(), RegionCache.none());
     }
 
+    /**
+     * \u6784\u9020\u51fd\u6570\uff08\u4f7f\u7528\u9ed8\u8ba4 HTTP \u5ba2\u6237\u7aef\uff09\u3002
+     * @param ak \u767e\u5ea6\u5730\u56feAK\u5bc6\u94a5
+     * @param regionCache \u7f13\u5b58\u670d\u52a1
+     */
     public BaiduRegionTemplate(String ak, RegionCache regionCache) {
         this(ak, HttpClient.newHttpClient(), regionCache);
     }
@@ -87,10 +97,23 @@ public class BaiduRegionTemplate {
         this(ak, httpClient, regionCache, GET_LOCATION_BY_IP_URL);
     }
 
+    /**
+     * \u88c5\u914d\u4f7f\u7528\u767e\u5ea6\u63a5\u53e3\u67e5\u8be2 IP \u5f52\u5c5e\u5730\u533a\u7684\u5b9e\u73b0\u3002
+     * @param ak \u767e\u5ea6\u5b9a\u4f4d\u63a5\u53e3\u5bc6\u94a5
+     * @param regionCache \u8bfb\u53d6\u548c\u7f13\u5b58 IP \u5730\u533a\u67e5\u8be2\u7ed3\u679c\u7684\u7ec4\u4ef6
+     * @param urlTemplate \u53ef\u66ff\u6362\u7684\u5730\u533a\u67e5\u8be2\u5730\u5740\u6a21\u677f
+     */
     BaiduRegionTemplate(String ak, RegionCache regionCache, String urlTemplate) {
         this(ak, HttpClient.newHttpClient(), regionCache, urlTemplate);
     }
 
+    /**
+     * \u88c5\u914d\u4f7f\u7528\u767e\u5ea6\u63a5\u53e3\u67e5\u8be2 IP \u5f52\u5c5e\u5730\u533a\u7684\u5b9e\u73b0\u3002
+     * @param ak \u767e\u5ea6\u5b9a\u4f4d\u63a5\u53e3\u5bc6\u94a5
+     * @param httpClient \u53d1\u8d77\u5730\u533a\u67e5\u8be2\u7684 HTTP \u5ba2\u6237\u7aef
+     * @param regionCache \u8bfb\u53d6\u548c\u7f13\u5b58 IP \u5730\u533a\u67e5\u8be2\u7ed3\u679c\u7684\u7ec4\u4ef6
+     * @param urlTemplate \u53ef\u66ff\u6362\u7684\u5730\u533a\u67e5\u8be2\u5730\u5740\u6a21\u677f
+     */
     private BaiduRegionTemplate(String ak, HttpClient httpClient,
                                 RegionCache regionCache, String urlTemplate) {
         this.ak = ak;
@@ -112,6 +135,10 @@ public class BaiduRegionTemplate {
         log.debug(mapLL2.get().toJSONString());
     }
 
+    /**
+     * \u8ba1\u7b97\u672c\u5730\u65f6\u533a\u5f53\u524d\u65f6\u523b\u5230\u6b21\u65e5\u96f6\u70b9\u7684\u95f4\u9694\u3002
+     * @return \u5230\u6b21\u65e5\u96f6\u70b9\u5269\u4f59\u7684\u79d2\u6570
+     */
     private static long secondsUntilNextDay() {
         LocalDateTime tomorrowStart = LocalDate.now().plusDays(1).atStartOfDay();
         return Duration.between(LocalDateTime.now(), tomorrowStart).getSeconds();

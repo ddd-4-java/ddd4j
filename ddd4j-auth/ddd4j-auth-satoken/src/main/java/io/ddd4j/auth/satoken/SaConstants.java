@@ -49,6 +49,7 @@ public final class SaConstants {
      */
     public static final String PAYLOAD_PARENT_INFO_ID = "p_info_id";
 
+    /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>SaConstants</code> \u5b9e\u4f8b\u3002 */
     private SaConstants() {
     }
 }

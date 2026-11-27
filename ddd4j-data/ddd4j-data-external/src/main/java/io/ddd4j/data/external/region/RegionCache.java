@@ -21,6 +21,7 @@ import java.time.Duration;
  */
 public interface RegionCache {
 
+    /** \u4e0d\u6267\u884c\u7f13\u5b58\u64cd\u4f5c\u7684\u5b9e\u73b0\u3002 */
     RegionCache NONE = new RegionCache() {
 
         /**

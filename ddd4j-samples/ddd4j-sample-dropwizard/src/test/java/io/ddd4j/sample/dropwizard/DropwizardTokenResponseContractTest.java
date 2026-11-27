@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class DropwizardTokenResponseContractTest {
 
+    /** \u9a8c\u8bc1<code>response.getToken()</code> \u7b49\u4e8e <code>"token-1"</code>\uff0c<code>response.token()</code> \u7b49\u4e8e <code>response.getToken()</code>\uff0c<code>response.getToken()</code> \u7b49\u4e8e <code>"token-3"</code>\u3002 */
     @Test
     void tokenResponseKeepsBeanAndComponentAccessors() {
         TokenResponse response = new TokenResponse("token-1");

@@ -41,30 +41,38 @@ import java.time.Instant;
 @IdClass(StoredEventEntityId.class)
 public class StoredEventEntity {
 
+    /** \u7528\u4e8e\u533a\u5206\u805a\u5408\u7c7b\u578b\u7684\u903b\u8f91\u540d\u79f0\u3002 */
     @Id
     @Column(name = EventStoreConstants.COLUMN_AGGREGATE_TYPE, nullable = false, length = 255)
     private String aggregateType;
 
+    /** \u4e8b\u4ef6\u6240\u5c5e\u805a\u5408\u6839\u7684\u6807\u8bc6\u3002 */
     @Id
     @Column(name = EventStoreConstants.COLUMN_AGGREGATE_ID, nullable = false, length = 255)
     private String aggregateId;
 
+    /** \u5f53\u524d\u4e8b\u4ef6\u5728\u6240\u5c5e\u805a\u5408\u6d41\u4e2d\u7684\u7248\u672c\u3002 */
     @Id
     @Column(name = EventStoreConstants.COLUMN_VERSION, nullable = false)
     private long version;
 
+    /** \u5f53\u524d\u4e8b\u4ef6\u5728\u4e8b\u4ef6\u8868\u5168\u5c40\u8bfb\u53d6\u987a\u5e8f\u4e2d\u7684\u4f4d\u7f6e\u3002 */
     @Column(name = EventStoreConstants.COLUMN_POSITION, nullable = false)
     private long position;
 
+    /** \u7528\u4e8e\u6062\u590d\u5b9e\u9645\u8d1f\u8f7d Java \u7c7b\u578b\u7684\u4e8b\u4ef6\u7c7b\u578b\u540d\u3002 */
     @Column(name = EventStoreConstants.COLUMN_EVENT_TYPE, nullable = false, length = 512)
     private String eventType;
 
+    /** \u9886\u57df\u4e8b\u4ef6\u6807\u8bc6\u3002 */
     @Column(name = EventStoreConstants.COLUMN_EVENT_ID, length = 64)
     private String eventId;
 
+    /** \u7528\u4e8e\u5173\u8054\u540c\u4e00\u6b21\u64cd\u4f5c\u4ea7\u751f\u7684\u4e8b\u4ef6\u6216\u6d88\u606f\u7684\u6807\u8bc6\u3002 */
     @Column(name = EventStoreConstants.COLUMN_CORRELATION_ID, length = 64)
     private String correlationId;
 
+    /** \u89e6\u53d1\u8be5\u9886\u57df\u4e8b\u4ef6\u4ea7\u751f\u7684\u4e0a\u6e38\u4e8b\u4ef6\u6807\u8bc6\u3002 */
     @Column(name = EventStoreConstants.COLUMN_CAUSATION_ID, length = 64)
     private String causationId;
 
@@ -74,6 +82,7 @@ public class StoredEventEntity {
     @Column(name = EventStoreConstants.COLUMN_PAYLOAD, nullable = false, columnDefinition = "TEXT")
     private String payload;
 
+    /** \u5f53\u524d\u4e8b\u4ef6\u53d1\u751f\u7684\u65f6\u95f4\u3002 */
     @Column(name = EventStoreConstants.COLUMN_TIMESTAMP, nullable = false)
     private Instant timestamp;
 
