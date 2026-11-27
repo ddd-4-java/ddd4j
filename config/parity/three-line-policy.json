@@ -70,7 +70,11 @@
     },
     {
       "path": ".mvn/maven.config",
-      "sha256ByJdk": {"8": null, "17": null, "21": "b10b39084669192fd6abbe2951ccbc1ba98b6a23913f0f387fc4d6bec1dc206f"},
+      "sha256ByJdk": {
+        "8": null,
+        "17": null,
+        "21": "b10b39084669192fd6abbe2951ccbc1ba98b6a23913f0f387fc4d6bec1dc206f"
+      },
       "evidence": "仅 JDK 21 原生构建配置 Mandrel；文件存在性和内容逐线锁定"
     },
     {
@@ -84,27 +88,47 @@
     },
     {
       "path": ".mvn/wrapper/MavenWrapperDownloader.java",
-      "sha256ByJdk": {"8": "fb659b25bb5e50140f23556c635d703e5206116b2333e12b547223ea5ece63cd", "17": null, "21": null},
+      "sha256ByJdk": {
+        "8": "fb659b25bb5e50140f23556c635d703e5206116b2333e12b547223ea5ece63cd",
+        "17": null,
+        "21": null
+      },
       "evidence": "仅 JDK 8 旧 Maven Wrapper 兼容下载器；文件存在性和内容逐线锁定"
     },
     {
       "path": "config/apache-2.0-header.txt",
-      "sha256ByJdk": {"8": null, "17": null, "21": "19b0737941d33a4dc8a1a7ea5920d08d3943030c2cf29322b99172c51d9111de"},
+      "sha256ByJdk": {
+        "8": null,
+        "17": null,
+        "21": "19b0737941d33a4dc8a1a7ea5920d08d3943030c2cf29322b99172c51d9111de"
+      },
       "evidence": "仅 JDK 21 根 POM 的 Maven 许可证插件引用此 header；文件存在性和内容逐线锁定"
     },
     {
       "path": "ddd4j-data/ddd4j-data-event-store-jpa/src/test/resources/META-INF/persistence.xml",
-      "sha256ByJdk": {"8": null, "17": "2005878c6d1343a705cca4c4cbe054ae034fbfb2828bf7f0dc8d29bb4b187ae5", "21": "2005878c6d1343a705cca4c4cbe054ae034fbfb2828bf7f0dc8d29bb4b187ae5"},
+      "sha256ByJdk": {
+        "8": null,
+        "17": "2005878c6d1343a705cca4c4cbe054ae034fbfb2828bf7f0dc8d29bb4b187ae5",
+        "21": "2005878c6d1343a705cca4c4cbe054ae034fbfb2828bf7f0dc8d29bb4b187ae5"
+      },
       "evidence": "JDK 17/21 的 Jakarta JPA 测试使用 persistence.xml；JDK 8 javax JPA 测试使用程序化 Hibernate 配置，逐线哈希锁定"
     },
     {
       "path": "ddd4j-data/ddd4j-data-event-store-panache/src/main/resources/META-INF/beans.xml",
-      "sha256ByJdk": {"8": "eeda5bb2f3e034daa25fb64f2c7ff46c3055921f5e6bb012e5e575666f28ef6c", "17": null, "21": null},
+      "sha256ByJdk": {
+        "8": "eeda5bb2f3e034daa25fb64f2c7ff46c3055921f5e6bb012e5e575666f28ef6c",
+        "17": null,
+        "21": null
+      },
       "evidence": "仅 JDK 8 Quarkus 1 Java EE CDI 适配器携带 beans.xml；存在性和内容逐线锁定"
     },
     {
       "path": "ddd4j-samples/ddd4j-sample-helidon/src/main/resources/META-INF/beans.xml",
-      "sha256ByJdk": {"8": "1350b6283bc368bcf48131748c8b4e5159cdd9693f466c86da7c298bd2203480", "17": null, "21": null},
+      "sha256ByJdk": {
+        "8": "1350b6283bc368bcf48131748c8b4e5159cdd9693f466c86da7c298bd2203480",
+        "17": null,
+        "21": null
+      },
       "evidence": "仅 JDK 8 Helidon Java EE 示例携带 beans.xml；存在性和内容逐线锁定"
     }
   ],
@@ -214,9 +238,9 @@
       "sha256": "b032d558e680ce18497786fc15d683127868244c2ef1e2f9e7e96e6599ef1e70",
       "counterpart": "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreIT.java",
       "counterpartSha256": [
-        "2c134d1b174b5f6f10b71448523939a7ba3aefd6444da74901e9e257d47f118d",
+        "f1aaa78c7718c5f2493fa64d79b3587dc5bb4de1a33822f42e147625c57a47ee",
         "8fefe5a36844b13fa632c7645d1c6c9942021a721abf4dd388374572dd66f565",
-        "c235e87b7f6b1a9ba428f131bd8a4ea9d534a3bdb6ebd5d8b99889eaccb323b6"
+        "742077d4bad15268133a8242e4b44e6fbdc3179a2fd3f66eec43b30b3cbcc908"
       ],
       "reason": "JDK 8 进程级单例 EventStoreDB 容器夹具；三线 EsdbEventStoreIT 均在真实容器执行，低线额外补充用例覆盖并发与因果元数据"
     },
@@ -225,9 +249,9 @@
       "sha256": "e3ecb3e1324e2308eb6d12b2199cd8c17640c45dfafefed7aabb49b538fd895d",
       "counterpart": "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreIT.java",
       "counterpartSha256": [
-        "2c134d1b174b5f6f10b71448523939a7ba3aefd6444da74901e9e257d47f118d",
+        "f1aaa78c7718c5f2493fa64d79b3587dc5bb4de1a33822f42e147625c57a47ee",
         "8fefe5a36844b13fa632c7645d1c6c9942021a721abf4dd388374572dd66f565",
-        "c235e87b7f6b1a9ba428f131bd8a4ea9d534a3bdb6ebd5d8b99889eaccb323b6"
+        "742077d4bad15268133a8242e4b44e6fbdc3179a2fd3f66eec43b30b3cbcc908"
       ],
       "reason": "JDK 8 补充容器契约验证并发冲突与因果元数据；高两线 EsdbEventStoreIT 包含相同断言并在真实容器执行"
     },
@@ -247,7 +271,10 @@
     {
       "path": "ddd4j-data/ddd4j-data-cqrs-quarkus/src/test/java/io/ddd4j/data/cqrs/quarkus/SampleCommandHandler.java",
       "replacements": [
-        {"from": "import javax.enterprise.context.ApplicationScoped;", "to": "import jakarta.enterprise.context.ApplicationScoped;"}
+        {
+          "from": "import javax.enterprise.context.ApplicationScoped;",
+          "to": "import jakarta.enterprise.context.ApplicationScoped;"
+        }
       ],
       "evidence": "ddd4j-data/ddd4j-data-cqrs-quarkus/src/test/java/io/ddd4j/data/cqrs/quarkus/QuarkusCommandBusIT.java",
       "reason": "三线相同的命令处理器夹具用于 ArC 发现与路由集成测试，仅 Quarkus CDI 的 javax/jakarta 命名空间不同。"
@@ -737,21 +764,260 @@
       "evidence": "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/event/MQEventHeaderMapTest.java",
       "reason": "三线验证相同 Broker Header 与 payload 排除契约，JDK 21 仅使用 Jackson 3 导入命名空间"
     },
-    {"path": "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/arch/ProjectionJpaModuleIndependenceTest.java", "replacements": [{"from": "                            \"javax..\",\n", "to": ""}], "targetLines": ["2.0.x", "3.0.x"], "evidence": "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/arch/ProjectionJpaModuleIndependenceTest.java", "reason": "JPA 模块独立性测试仅在 JDK 8 线允许 javax 包名；Jakarta 线不再允许该包名"},
-    {"path": "ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/HelidonServerBootTest.java", "replacements": [{"from": "server.cdiContainer().select(RuntimeReadinessRegistry.class).get()", "to": "jakarta.enterprise.inject.spi.CDI.current().select(RuntimeReadinessRegistry.class).get()"}], "targetLines": ["2.0.x", "3.0.x"], "evidence": "ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/HelidonServerBootTest.java", "reason": "Helidon CDI 容器访问 API 按框架版本适配，启动就绪断言一致"},
-    {"path": "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/cqrs/SpringJpaProjectionPositionTestApp.java", "replacements": [{"from": "import org.springframework.boot.autoconfigure.domain.EntityScan;", "to": "import org.springframework.boot.persistence.autoconfigure.EntityScan;"}], "targetLines": ["3.0.x"], "evidence": "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/cqrs/SpringJpaProjectionPositionTestApp.java", "reason": "Spring Boot 4 EntityScan 包名迁移，JPA 投影测试应用配置语义一致"},
-    {"path": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunInfoValueContractTest.java", "replacements": [{"from": "import com.fasterxml.jackson.databind.ObjectMapper;", "to": "import tools.jackson.databind.json.JsonMapper;"}, {"from": "ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();", "to": "JsonMapper mapper = JsonMapper.builder().findAndAddModules().build();"}], "targetLines": ["3.0.x"], "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunInfoValueContractTest.java", "reason": "投影值对象 JSON 往返断言三线一致，仅 Jackson 3 的 mapper 导入和模块注册 API 不同"},
-    {"path": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionStatusValueContractTest.java", "replacements": [{"from": "import com.fasterxml.jackson.databind.json.JsonMapper;", "to": "import tools.jackson.databind.json.JsonMapper;"}], "targetLines": ["3.0.x"], "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionStatusValueContractTest.java", "reason": "投影状态 JSON 往返测试三线断言及 mapper 模块配置一致，仅 Jackson 3 导入命名空间不同"},
-    {"path": "ddd4j-mq/ddd4j-mq-rabbitmq/src/test/java/io/ddd4j/mq/rabbitmq/RabbitMQContainerIntegrationTest.java", "replacements": [{"from": "import org.testcontainers.rabbitmq.RabbitMQContainer;", "to": "import org.testcontainers.containers.RabbitMQContainer;"}], "targetLines": ["2.0.x"], "evidence": "ddd4j-mq/ddd4j-mq-rabbitmq/src/test/java/io/ddd4j/mq/rabbitmq/RabbitMQContainerIntegrationTest.java", "reason": "2.0.x 使用的 Testcontainers 版本将 RabbitMQContainer 放在 containers 包；三线容器测试逻辑一致"},
-    {"path": "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/TestApp.java", "replacements": [{"from": "import org.springframework.boot.autoconfigure.domain.EntityScan;", "to": "import org.springframework.boot.persistence.autoconfigure.EntityScan;"}], "targetLines": ["3.0.x"], "evidence": "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/ProjectionPositionJpaIT.java", "reason": "三线 JPA 测试应用显式注册同一仓储扫描；Spring Boot 4 仅 EntityScan 导入包名不同"},
-    {"path": "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/MysqlEventStoreContainerSupport.java", "replacements": [{"from": "import org.testcontainers.containers.MySQLContainer;", "to": "import org.testcontainers.mysql.MySQLContainer;"}, {"from": "static final MySQLContainer<?> MYSQL = new MySQLContainer<>(", "to": "static final MySQLContainer MYSQL = new MySQLContainer("}], "targetLines": ["3.0.x"], "evidence": "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/MysqlEventStoreContainerSupport.java", "reason": "Testcontainers 2.x MySQL 模块迁移包名并移除容器泛型；三线共享 MySQL 8 容器夹具行为一致"},
-    {"path": "ddd4j-web/ddd4j-web-webflux/src/test/java/io/ddd4j/web/webflux/ApiVersionWebFilterTest.java", "replacements": [{"from": "import com.fasterxml.jackson.databind.ObjectMapper;", "to": "import tools.jackson.databind.json.JsonMapper;"}, {"from": "new GlobalErrorWebExceptionHandler(new GlobalErrorAttributes(), new ObjectMapper(),", "to": "new GlobalErrorWebExceptionHandler(new GlobalErrorAttributes(), JsonMapper.builder().build(),"}], "targetLines": ["3.0.x"], "evidence": "ddd4j-web/ddd4j-web-webflux/src/test/java/io/ddd4j/web/webflux/ApiVersionWebFilterTest.java", "reason": "WebFlux API 版本测试三线场景相同；Jackson 3 的 mapper 类型及构造 API 适配"},
-    {"path": "ddd4j-samples/ddd4j-sample-quarkus/src/main/java/io/ddd4j/sample/quarkus/goods/web/GoodsResource.java", "replacements": [{"from": "import javax.enterprise.context.ApplicationScoped;", "to": "import jakarta.enterprise.context.ApplicationScoped;"}, {"from": "import javax.inject.Inject;", "to": "import jakarta.inject.Inject;"}, {"from": "import javax.ws.rs.Consumes;", "to": "import jakarta.ws.rs.Consumes;"}, {"from": "import javax.ws.rs.DELETE;", "to": "import jakarta.ws.rs.DELETE;"}, {"from": "import javax.ws.rs.GET;", "to": "import jakarta.ws.rs.GET;"}, {"from": "import javax.ws.rs.POST;", "to": "import jakarta.ws.rs.POST;"}, {"from": "import javax.ws.rs.PUT;", "to": "import jakarta.ws.rs.PUT;"}, {"from": "import javax.ws.rs.Path;", "to": "import jakarta.ws.rs.Path;"}, {"from": "import javax.ws.rs.PathParam;", "to": "import jakarta.ws.rs.PathParam;"}, {"from": "import javax.ws.rs.Produces;", "to": "import jakarta.ws.rs.Produces;"}, {"from": "import javax.ws.rs.QueryParam;", "to": "import jakarta.ws.rs.QueryParam;"}, {"from": "import javax.ws.rs.core.MediaType;", "to": "import jakarta.ws.rs.core.MediaType;"}, {"from": "import javax.ws.rs.core.Response;", "to": "import jakarta.ws.rs.core.Response;"}], "evidence": "ddd4j-samples/ddd4j-sample-quarkus/src/test/java/io/ddd4j/sample/quarkus/goods/GoodsResourceTest.java", "reason": "三线商品 REST 资源保持 ApplicationScoped 与相同 HTTP 契约；Quarkus 1 与高线只在 javax/jakarta 导入命名空间不同"},
-    {"path": "ddd4j-samples/ddd4j-sample-quarkus/src/test/java/io/ddd4j/sample/quarkus/goods/web/GoodsResourceScopeContractTest.java", "replacements": [{"from": "import javax.enterprise.context.ApplicationScoped;", "to": "import jakarta.enterprise.context.ApplicationScoped;"}], "evidence": "ddd4j-samples/ddd4j-sample-quarkus/src/test/java/io/ddd4j/sample/quarkus/goods/web/GoodsResourceScopeContractTest.java", "reason": "三线资源生命周期断言相同；仅 CDI 注解命名空间按 Quarkus 版本适配"},
-    {"path": "ddd4j-samples/ddd4j-sample-quarkus/src/test/java/io/ddd4j/sample/quarkus/ResourceScopeContractTest.java", "replacements": [{"from": "import javax.enterprise.context.ApplicationScoped;", "to": "import jakarta.enterprise.context.ApplicationScoped;"}], "evidence": "ddd4j-samples/ddd4j-sample-quarkus/src/test/java/io/ddd4j/sample/quarkus/ResourceScopeContractTest.java", "reason": "同一组 Quarkus 资源生命周期契约测试仅按平台切换 CDI 注解命名空间"},
-    {"path": "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/test/java/io/ddd4j/sample/quarkus/satoken/ResourceScopeContractTest.java", "replacements": [{"from": "import javax.enterprise.context.ApplicationScoped;", "to": "import jakarta.enterprise.context.ApplicationScoped;"}], "evidence": "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/test/java/io/ddd4j/sample/quarkus/satoken/ResourceScopeContractTest.java", "reason": "同一组 Quarkus 资源生命周期契约测试仅按平台切换 CDI 注解命名空间"},
-    {"path": "ddd4j-data/ddd4j-data-projection-panache/src/test/java/io/ddd4j/data/projection/panache/arch/ProjectionPanacheModuleIndependenceTest.java", "replacements": [{"from": "                            \"javax..\",", "to": "                            \"jakarta..\","}], "evidence": "ddd4j-data/ddd4j-data-projection-panache/src/test/java/io/ddd4j/data/projection/panache/arch/ProjectionPanacheModuleIndependenceTest.java", "reason": "三线执行相同的 Projection Panache 模块依赖边界测试；JDK 8 的 Quarkus 使用 javax，JDK 17/21 使用 jakarta。仅允许该精确包名前缀替换，其他测试逻辑与说明逐字一致。"},
-    {"path": "ddd4j-data/ddd4j-data-projection-quarkus/src/test/java/io/ddd4j/data/projection/quarkus/arch/ProjectionQuarkusModuleIndependenceTest.java", "replacements": [{"from": "                            \"javax..\",", "to": "                            \"jakarta..\","}], "evidence": "ddd4j-data/ddd4j-data-projection-quarkus/src/test/java/io/ddd4j/data/projection/quarkus/arch/ProjectionQuarkusModuleIndependenceTest.java", "reason": "三线执行相同的 Projection Quarkus 模块依赖边界测试；JDK 8 的 Quarkus 使用 javax，JDK 17/21 使用 jakarta。仅允许该精确包名前缀替换，其他测试逻辑与说明逐字一致。"},
+    {
+      "path": "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/arch/ProjectionJpaModuleIndependenceTest.java",
+      "replacements": [
+        {
+          "from": "                            \"javax..\",\n",
+          "to": ""
+        }
+      ],
+      "targetLines": [
+        "2.0.x",
+        "3.0.x"
+      ],
+      "evidence": "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/arch/ProjectionJpaModuleIndependenceTest.java",
+      "reason": "JPA 模块独立性测试仅在 JDK 8 线允许 javax 包名；Jakarta 线不再允许该包名"
+    },
+    {
+      "path": "ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/HelidonServerBootTest.java",
+      "replacements": [
+        {
+          "from": "server.cdiContainer().select(RuntimeReadinessRegistry.class).get()",
+          "to": "jakarta.enterprise.inject.spi.CDI.current().select(RuntimeReadinessRegistry.class).get()"
+        }
+      ],
+      "targetLines": [
+        "2.0.x",
+        "3.0.x"
+      ],
+      "evidence": "ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/HelidonServerBootTest.java",
+      "reason": "Helidon CDI 容器访问 API 按框架版本适配，启动就绪断言一致"
+    },
+    {
+      "path": "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/cqrs/SpringJpaProjectionPositionTestApp.java",
+      "replacements": [
+        {
+          "from": "import org.springframework.boot.autoconfigure.domain.EntityScan;",
+          "to": "import org.springframework.boot.persistence.autoconfigure.EntityScan;"
+        }
+      ],
+      "targetLines": [
+        "3.0.x"
+      ],
+      "evidence": "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/cqrs/SpringJpaProjectionPositionTestApp.java",
+      "reason": "Spring Boot 4 EntityScan 包名迁移，JPA 投影测试应用配置语义一致"
+    },
+    {
+      "path": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunInfoValueContractTest.java",
+      "replacements": [
+        {
+          "from": "import com.fasterxml.jackson.databind.ObjectMapper;",
+          "to": "import tools.jackson.databind.json.JsonMapper;"
+        },
+        {
+          "from": "ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();",
+          "to": "JsonMapper mapper = JsonMapper.builder().findAndAddModules().build();"
+        }
+      ],
+      "targetLines": [
+        "3.0.x"
+      ],
+      "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunInfoValueContractTest.java",
+      "reason": "投影值对象 JSON 往返断言三线一致，仅 Jackson 3 的 mapper 导入和模块注册 API 不同"
+    },
+    {
+      "path": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionStatusValueContractTest.java",
+      "replacements": [
+        {
+          "from": "import com.fasterxml.jackson.databind.json.JsonMapper;",
+          "to": "import tools.jackson.databind.json.JsonMapper;"
+        }
+      ],
+      "targetLines": [
+        "3.0.x"
+      ],
+      "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionStatusValueContractTest.java",
+      "reason": "投影状态 JSON 往返测试三线断言及 mapper 模块配置一致，仅 Jackson 3 导入命名空间不同"
+    },
+    {
+      "path": "ddd4j-mq/ddd4j-mq-rabbitmq/src/test/java/io/ddd4j/mq/rabbitmq/RabbitMQContainerIntegrationTest.java",
+      "replacements": [
+        {
+          "from": "import org.testcontainers.rabbitmq.RabbitMQContainer;",
+          "to": "import org.testcontainers.containers.RabbitMQContainer;"
+        }
+      ],
+      "targetLines": [
+        "2.0.x"
+      ],
+      "evidence": "ddd4j-mq/ddd4j-mq-rabbitmq/src/test/java/io/ddd4j/mq/rabbitmq/RabbitMQContainerIntegrationTest.java",
+      "reason": "2.0.x 使用的 Testcontainers 版本将 RabbitMQContainer 放在 containers 包；三线容器测试逻辑一致"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/TestApp.java",
+      "replacements": [
+        {
+          "from": "import org.springframework.boot.autoconfigure.domain.EntityScan;",
+          "to": "import org.springframework.boot.persistence.autoconfigure.EntityScan;"
+        }
+      ],
+      "targetLines": [
+        "3.0.x"
+      ],
+      "evidence": "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/ProjectionPositionJpaIT.java",
+      "reason": "三线 JPA 测试应用显式注册同一仓储扫描；Spring Boot 4 仅 EntityScan 导入包名不同"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/MysqlEventStoreContainerSupport.java",
+      "replacements": [
+        {
+          "from": "import org.testcontainers.containers.MySQLContainer;",
+          "to": "import org.testcontainers.mysql.MySQLContainer;"
+        },
+        {
+          "from": "static final MySQLContainer<?> MYSQL = new MySQLContainer<>(",
+          "to": "static final MySQLContainer MYSQL = new MySQLContainer("
+        }
+      ],
+      "targetLines": [
+        "3.0.x"
+      ],
+      "evidence": "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/MysqlEventStoreContainerSupport.java",
+      "reason": "Testcontainers 2.x MySQL 模块迁移包名并移除容器泛型；三线共享 MySQL 8 容器夹具行为一致"
+    },
+    {
+      "path": "ddd4j-web/ddd4j-web-webflux/src/test/java/io/ddd4j/web/webflux/ApiVersionWebFilterTest.java",
+      "replacements": [
+        {
+          "from": "import com.fasterxml.jackson.databind.ObjectMapper;",
+          "to": "import tools.jackson.databind.json.JsonMapper;"
+        },
+        {
+          "from": "new GlobalErrorWebExceptionHandler(new GlobalErrorAttributes(), new ObjectMapper(),",
+          "to": "new GlobalErrorWebExceptionHandler(new GlobalErrorAttributes(), JsonMapper.builder().build(),"
+        }
+      ],
+      "targetLines": [
+        "3.0.x"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-webflux/src/test/java/io/ddd4j/web/webflux/ApiVersionWebFilterTest.java",
+      "reason": "WebFlux API 版本测试三线场景相同；Jackson 3 的 mapper 类型及构造 API 适配"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-quarkus/src/main/java/io/ddd4j/sample/quarkus/goods/web/GoodsResource.java",
+      "replacements": [
+        {
+          "from": "import javax.enterprise.context.ApplicationScoped;",
+          "to": "import jakarta.enterprise.context.ApplicationScoped;"
+        },
+        {
+          "from": "import javax.inject.Inject;",
+          "to": "import jakarta.inject.Inject;"
+        },
+        {
+          "from": "import javax.ws.rs.Consumes;",
+          "to": "import jakarta.ws.rs.Consumes;"
+        },
+        {
+          "from": "import javax.ws.rs.DELETE;",
+          "to": "import jakarta.ws.rs.DELETE;"
+        },
+        {
+          "from": "import javax.ws.rs.GET;",
+          "to": "import jakarta.ws.rs.GET;"
+        },
+        {
+          "from": "import javax.ws.rs.POST;",
+          "to": "import jakarta.ws.rs.POST;"
+        },
+        {
+          "from": "import javax.ws.rs.PUT;",
+          "to": "import jakarta.ws.rs.PUT;"
+        },
+        {
+          "from": "import javax.ws.rs.Path;",
+          "to": "import jakarta.ws.rs.Path;"
+        },
+        {
+          "from": "import javax.ws.rs.PathParam;",
+          "to": "import jakarta.ws.rs.PathParam;"
+        },
+        {
+          "from": "import javax.ws.rs.Produces;",
+          "to": "import jakarta.ws.rs.Produces;"
+        },
+        {
+          "from": "import javax.ws.rs.QueryParam;",
+          "to": "import jakarta.ws.rs.QueryParam;"
+        },
+        {
+          "from": "import javax.ws.rs.core.MediaType;",
+          "to": "import jakarta.ws.rs.core.MediaType;"
+        },
+        {
+          "from": "import javax.ws.rs.core.Response;",
+          "to": "import jakarta.ws.rs.core.Response;"
+        }
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-quarkus/src/test/java/io/ddd4j/sample/quarkus/goods/GoodsResourceTest.java",
+      "reason": "三线商品 REST 资源保持 ApplicationScoped 与相同 HTTP 契约；Quarkus 1 与高线只在 javax/jakarta 导入命名空间不同"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-quarkus/src/test/java/io/ddd4j/sample/quarkus/goods/web/GoodsResourceScopeContractTest.java",
+      "replacements": [
+        {
+          "from": "import javax.enterprise.context.ApplicationScoped;",
+          "to": "import jakarta.enterprise.context.ApplicationScoped;"
+        }
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-quarkus/src/test/java/io/ddd4j/sample/quarkus/goods/web/GoodsResourceScopeContractTest.java",
+      "reason": "三线资源生命周期断言相同；仅 CDI 注解命名空间按 Quarkus 版本适配"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-quarkus/src/test/java/io/ddd4j/sample/quarkus/ResourceScopeContractTest.java",
+      "replacements": [
+        {
+          "from": "import javax.enterprise.context.ApplicationScoped;",
+          "to": "import jakarta.enterprise.context.ApplicationScoped;"
+        }
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-quarkus/src/test/java/io/ddd4j/sample/quarkus/ResourceScopeContractTest.java",
+      "reason": "同一组 Quarkus 资源生命周期契约测试仅按平台切换 CDI 注解命名空间"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/test/java/io/ddd4j/sample/quarkus/satoken/ResourceScopeContractTest.java",
+      "replacements": [
+        {
+          "from": "import javax.enterprise.context.ApplicationScoped;",
+          "to": "import jakarta.enterprise.context.ApplicationScoped;"
+        }
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/test/java/io/ddd4j/sample/quarkus/satoken/ResourceScopeContractTest.java",
+      "reason": "同一组 Quarkus 资源生命周期契约测试仅按平台切换 CDI 注解命名空间"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-projection-panache/src/test/java/io/ddd4j/data/projection/panache/arch/ProjectionPanacheModuleIndependenceTest.java",
+      "replacements": [
+        {
+          "from": "                            \"javax..\",",
+          "to": "                            \"jakarta..\","
+        }
+      ],
+      "evidence": "ddd4j-data/ddd4j-data-projection-panache/src/test/java/io/ddd4j/data/projection/panache/arch/ProjectionPanacheModuleIndependenceTest.java",
+      "reason": "三线执行相同的 Projection Panache 模块依赖边界测试；JDK 8 的 Quarkus 使用 javax，JDK 17/21 使用 jakarta。仅允许该精确包名前缀替换，其他测试逻辑与说明逐字一致。"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-projection-quarkus/src/test/java/io/ddd4j/data/projection/quarkus/arch/ProjectionQuarkusModuleIndependenceTest.java",
+      "replacements": [
+        {
+          "from": "                            \"javax..\",",
+          "to": "                            \"jakarta..\","
+        }
+      ],
+      "evidence": "ddd4j-data/ddd4j-data-projection-quarkus/src/test/java/io/ddd4j/data/projection/quarkus/arch/ProjectionQuarkusModuleIndependenceTest.java",
+      "reason": "三线执行相同的 Projection Quarkus 模块依赖边界测试；JDK 8 的 Quarkus 使用 javax，JDK 17/21 使用 jakarta。仅允许该精确包名前缀替换，其他测试逻辑与说明逐字一致。"
+    },
     {
       "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/rbac/web/Java8MapsContractTest.java",
       "replacements": [
@@ -943,9 +1209,9 @@
       },
       "reason": "Quarkus 命令总线注入参数按本线 CDI API 适配，命令路由由三线集成测试验证",
       "evidence": {
-        "1.0.x": "ddd4j-data/ddd4j-data-cqrs-quarkus/src/test/java/io/ddd4j/data/cqrs/quarkus/QuarkusCommandBusIT.java",
+        "1.0.x": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/command/QuarkusCommandRegistrationIT.java",
         "2.0.x": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/command/QuarkusCommandBusIT.java",
-        "3.0.x": "ddd4j-data/ddd4j-data-cqrs-quarkus/src/test/java/io/ddd4j/data/cqrs/quarkus/QuarkusCommandBusIT.java"
+        "3.0.x": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/command/QuarkusCommandRegistrationIT.java"
       }
     },
     {
@@ -1007,9 +1273,9 @@
       },
       "reason": "Dropwizard 应用基类在各版本中的精确包路径对应；命令总线装配另由三线测试验证",
       "evidence": {
-        "1.0.x": "ddd4j-data/ddd4j-data-cqrs-dropwizard/src/test/java/io/ddd4j/data/cqrs/dropwizard/DropwizardCommandBusIT.java",
+        "1.0.x": "ddd4j-runtime/ddd4j-runtime-dropwizard/src/test/java/io/ddd4j/dropwizard/command/DropwizardCommandBusIT.java",
         "2.0.x": "ddd4j-runtime/ddd4j-runtime-dropwizard/src/test/java/io/ddd4j/dropwizard/command/DropwizardCommandBusTest.java",
-        "3.0.x": "ddd4j-data/ddd4j-data-cqrs-dropwizard/src/test/java/io/ddd4j/data/cqrs/dropwizard/DropwizardCommandBusIT.java"
+        "3.0.x": "ddd4j-runtime/ddd4j-runtime-dropwizard/src/test/java/io/ddd4j/dropwizard/command/DropwizardCommandBusIT.java"
       }
     },
     {
@@ -1506,7 +1772,8 @@
       "evidence": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/goods/domain/GoodsQueryContractTest.java",
       "testSha256": "ec5ca8966c58417f3e3173da84dbc7cedb333dcd0818321fa7f662e60e405027",
       "reason": "三线商品排序白名单、方向和非法字段忽略行为相同；JDK 8 保留传统 switch，JDK 17/21 保留箭头 switch。逐线源码与 2 项共同排序契约测试由 SHA-256 锁定。"
-    },    {
+    },
+    {
       "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/goods/domain/GoodsQuery.java",
       "sourceSha256": [
         "5d3f294ccfea7bd1c23a8d9c7cba2b1fe8646b25dd75b35696cc6957a2f4bb3e",
@@ -1527,7 +1794,8 @@
       "evidence": "ddd4j-samples/ddd4j-sample-quarkus/src/test/java/io/ddd4j/sample/quarkus/goods/domain/GoodsQueryContractTest.java",
       "testSha256": "c15e83e3dfe8face9d5256199c5245ae97eceb8b61e35dd1a0f9fa53a124c8fb",
       "reason": "三线商品排序白名单、方向和非法字段忽略行为相同；JDK 8 保留传统 switch，JDK 17/21 保留箭头 switch。逐线源码与 2 项共同排序契约测试由 SHA-256 锁定。"
-    },    {
+    },
+    {
       "path": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/goods/domain/GoodsQuery.java",
       "sourceSha256": [
         "312b1abc1422fe83bdea816e7068e629647ff8585f72fd155170add5e1645001",
@@ -2372,11 +2640,11 @@
       "additionalEvidence": [
         {
           "path": "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaCausalityBrokerHeaderMustTest.java",
-          "testSha256": "56ef62a90e14a1a9e06d9bced9ed103af6950fc37d50f6e3521bbde630579783"
+          "testSha256": "2cb2838920205a54b6034a88477d8636813a81670bcb044bb33ef934ebcac416"
         },
         {
           "path": "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaAcknowledgmentContractTest.java",
-          "testSha256": "6fd2f3a351a2b50eb18f9e8230e662d5e96e5b429df01467207a64aed2e414b0"
+          "testSha256": "131f015382ec49dffca52dfa7033a562a451270635309b0889cba0027474fd40"
         }
       ],
       "reason": "三线 Kafka 生命周期、生产者归属、Broker 因果头及确认语义由契约测试验证；JDK 8 使用 switch 语句，JDK 17/21 使用 switch 表达式。源码与逐线生命周期及共同测试均以 SHA-256 锁定。"
@@ -2668,11 +2936,11 @@
       "additionalEvidence": [
         {
           "path": "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/MQClientPersistenceContractTest.java",
-          "testSha256": "3e465fc364f1b5094b3f30346b8fea9b6d5782c2364b41ae5c9ecfcc01e26343"
+          "testSha256": "4f99eb64c08efc8e0fe92d5a6c13962d72580eb6fcd5dd9426a04d127d2aec11"
         },
         {
           "path": "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/MQClientTagsSelectorTest.java",
-          "testSha256": "8fe998966294abc6cc9178b52b311376077e68ea40110d7d1e9196ab56badae2"
+          "testSha256": "651fe72acc41aa23d7255c13350714ba428d8806992fdd232bd80898275768e0"
         }
       ],
       "reason": "JDK 8 接口默认方法通过嵌套辅助类复用逻辑，JDK 17/21 使用接口私有方法和新版字符串 API；三线相同初始化、持久化、标签选择契约测试锁定等价行为"
@@ -2745,11 +3013,11 @@
       "additionalEvidence": [
         {
           "path": "ddd4j-kit/src/test/java/io/ddd4j/kit/lang/JsonKitDateTimeContractTest.java",
-          "testSha256": "0ccb6d48852005dfefca41c0a64716083bd7b53c52eb3abd057fc7fc905eb078"
+          "testSha256": "56a77ecd4bc0c862458ca3fafd2c2f36bffe868da36a4cd0afd1e5c37a45d93e"
         },
         {
           "path": "ddd4j-kit/src/test/java/io/ddd4j/kit/lang/JsonKitTypeContractTest.java",
-          "testSha256": "a6b252cd776579c2cd679ea7f1889423af6cc932ae14d2ad8fa57a3dd4a1b5eb"
+          "testSha256": "748fece8c689009d2192fe96cc9247fd05ffebe2a4e04f21979bab6320faf4c6"
         }
       ],
       "reason": "JDK 8/17 使用 Jackson 2，JDK 21 使用 Jackson 3；三线保留各自的 ObjectMapper、JsonNode 和时间序列化 API，共同测试验证 10 项公开日期、类型和转换契约。源码与三组测试逐文件 SHA-256 锁定；编译 API 和整体验收仍由独立门禁验证"
@@ -2855,98 +3123,154 @@
       },
       "reason": "三线 Javalin Shiro RBAC 服务的用户、角色、权限 CRUD 和最终权限计算逻辑及 Javadoc 一致；JDK 8 使用 !Optional.isPresent()，JDK 17/21 使用 Optional.isEmpty()。每线 37 项认证/授权控制器测试通过，源码与测试 SHA-256 锁定。"
     },
-    {"path": "ddd4j-web/ddd4j-web-dropwizard/src/main/java/io/ddd4j/web/dropwizard/Ddd4jDropwizardResponseFilter.java", "sourceSha256": ["49ba4bbe683c1ab41606a90da70be197295c911f27e5a8e8c891e04dbe0d73f0", "a6fa5ea8c6bafb2fb2e7fd275940c5a67b7e9939b6eff52f0d41985bf3614826", "a6fa5ea8c6bafb2fb2e7fd275940c5a67b7e9939b6eff52f0d41985bf3614826"], "evidence": "ddd4j-web/ddd4j-web-dropwizard/src/test/java/io/ddd4j/web/dropwizard/Ddd4jDropwizardWebContractTest.java", "testSha256ByJdk": {"8": "412d959bd3209dbc3cdc98fc6217d128a050410a9717d0ad32a2a43e7a765d4f", "17": "0a24c57f4a2c5749f21c61a9ff1e8dfb3a7f9ee3ee625926a27de15d978fbd90", "21": "0a24c57f4a2c5749f21c61a9ff1e8dfb3a7f9ee3ee625926a27de15d978fbd90"}, "reason": "三线 Dropwizard 响应过滤器均在 finally 关闭追踪作用域、按状态完成会话并回写请求/追踪 ID；JDK 8 使用 javax 与显式类型转换，JDK 17/21 使用 jakarta 与 instanceof 模式匹配。三线 Web 契约测试各 6/6 通过；源码和测试哈希逐线锁定。"},
-    {"path": "ddd4j-web/ddd4j-web-dropwizard/src/main/java/io/ddd4j/web/dropwizard/Ddd4jDropwizardRequestFilter.java", "sourceSha256": ["93ca09c20c686c91b07a8014449d3e7317e7b7f075587458105ecd371a06fb9e", "000239a102c4d33b90ee2daf2901a88a0203d59b88fe3637232be21a04edaf80", "000239a102c4d33b90ee2daf2901a88a0203d59b88fe3637232be21a04edaf80"], "evidence": "ddd4j-web/ddd4j-web-dropwizard/src/test/java/io/ddd4j/web/dropwizard/Ddd4jDropwizardWebContractTest.java", "testSha256ByJdk": {"8": "412d959bd3209dbc3cdc98fc6217d128a050410a9717d0ad32a2a43e7a765d4f", "17": "0a24c57f4a2c5749f21c61a9ff1e8dfb3a7f9ee3ee625926a27de15d978fbd90", "21": "0a24c57f4a2c5749f21c61a9ff1e8dfb3a7f9ee3ee625926a27de15d978fbd90"}, "reason": "请求过滤器按相同顺序创建上下文、执行认证/幂等会话并开启追踪；JDK 8 使用 javax，JDK 17/21 使用 jakarta，所有对外方法及 Javadoc 已对齐。三线同一 Dropwizard Web 契约测试各 6/6 通过；源码与测试哈希逐线锁定。"},
-    {"path": "ddd4j-web/ddd4j-web-dropwizard/src/main/java/io/ddd4j/web/dropwizard/Ddd4jDropwizardExceptionMapper.java", "sourceSha256": ["f227e6d91bcf0d1b3e8ab95fef1d2cbaa1d135d9112c77bdc4238c3445929b1e", "9fa3b6976d3b915b53664aa31ed89e46c4e2f09d54d819d7e509e054fe9b812b", "9fa3b6976d3b915b53664aa31ed89e46c4e2f09d54d819d7e509e054fe9b812b"], "evidence": "ddd4j-web/ddd4j-web-dropwizard/src/test/java/io/ddd4j/web/dropwizard/Ddd4jDropwizardWebContractTest.java", "testSha256ByJdk": {"8": "412d959bd3209dbc3cdc98fc6217d128a050410a9717d0ad32a2a43e7a765d4f", "17": "0a24c57f4a2c5749f21c61a9ff1e8dfb3a7f9ee3ee625926a27de15d978fbd90", "21": "0a24c57f4a2c5749f21c61a9ff1e8dfb3a7f9ee3ee625926a27de15d978fbd90"}, "reason": "异常映射器对相同 HTTP 状态和异常返回同一 WebError；JDK 8 使用 javax 与显式强转，JDK 17/21 使用 jakarta 与模式匹配，Javadoc 已对齐。三线同一 Dropwizard Web 契约测试各 6/6 通过；源码与测试哈希逐线锁定。"},
-    {"path": "ddd4j-web/ddd4j-web-helidon/src/main/java/io/ddd4j/web/helidon/Ddd4jHelidonExceptionMapper.java", "sourceSha256": ["b7d37b577f571ecfc75937ab5b4639dd4a2c175c3d51acfcb13863c1add48c32", "fc718c4511c2f9c769ac6a2181c823a24e2e3322115b8481fcd4bb2a5ceb66e9", "fc718c4511c2f9c769ac6a2181c823a24e2e3322115b8481fcd4bb2a5ceb66e9"], "evidence": "ddd4j-web/ddd4j-web-helidon/src/test/java/io/ddd4j/web/helidon/Ddd4jHelidonWebContractTest.java", "testSha256ByJdk": {"8": "49af8712b57008a9c1941adfb92c54554f548a75b8b2d32e1d9ffa9abe31217e", "17": "670d33504e5fa9db310d476162fc186521d32c9149e6cd991d1b2e4e617dbcf6", "21": "670d33504e5fa9db310d476162fc186521d32c9149e6cd991d1b2e4e617dbcf6"}, "reason": "三线 Helidon 异常映射器使用同一 WebError 翻译与 HTTP 状态映射，JDK 8 用 javax 和显式强转，JDK 17/21 用 jakarta 和模式匹配；构造器文档一致。三线 Helidon Web 契约测试覆盖错误状态并通过，源码及测试哈希逐线锁定。"},
     {
-        "path": "ddd4j-web/ddd4j-web-helidon/src/main/java/io/ddd4j/web/helidon/Ddd4jHelidonWebConfiguration.java",
-        "sourceSha256": [
-            "e369fdeef0508ff4aff93d414bffad97dce09a5d89b0b2af27bfcb5f148a6b9a",
-            "b819da5ce8747ab71bd20bd56af9f237591f9b672f48c2b1485cc17df8f16815",
-            "b819da5ce8747ab71bd20bd56af9f237591f9b672f48c2b1485cc17df8f16815"
-        ],
-        "evidence": "ddd4j-web/ddd4j-web-helidon/src/test/java/io/ddd4j/web/helidon/Ddd4jHelidonWebConfigurationContractTest.java",
-        "testSha256": "19c32328599f60547fc3cf9443b83499cb188440ea8fc35828fb42fc69348368",
-        "reason": "三线 Helidon Web 配置的公开路径去空白行为一致；JDK 8 的 MicroProfile Config 使用 getOptionalValue(String) 并拆分逗号及 Arrays.asList，JDK 17/21 使用 getOptionalValues(String) 与 List.of。配置契约及 Web 回归每线 7 项通过，源码和测试哈希锁定。"
+      "path": "ddd4j-web/ddd4j-web-dropwizard/src/main/java/io/ddd4j/web/dropwizard/Ddd4jDropwizardResponseFilter.java",
+      "sourceSha256": [
+        "49ba4bbe683c1ab41606a90da70be197295c911f27e5a8e8c891e04dbe0d73f0",
+        "a6fa5ea8c6bafb2fb2e7fd275940c5a67b7e9939b6eff52f0d41985bf3614826",
+        "a6fa5ea8c6bafb2fb2e7fd275940c5a67b7e9939b6eff52f0d41985bf3614826"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-dropwizard/src/test/java/io/ddd4j/web/dropwizard/Ddd4jDropwizardWebContractTest.java",
+      "testSha256ByJdk": {
+        "8": "412d959bd3209dbc3cdc98fc6217d128a050410a9717d0ad32a2a43e7a765d4f",
+        "17": "0a24c57f4a2c5749f21c61a9ff1e8dfb3a7f9ee3ee625926a27de15d978fbd90",
+        "21": "0a24c57f4a2c5749f21c61a9ff1e8dfb3a7f9ee3ee625926a27de15d978fbd90"
+      },
+      "reason": "三线 Dropwizard 响应过滤器均在 finally 关闭追踪作用域、按状态完成会话并回写请求/追踪 ID；JDK 8 使用 javax 与显式类型转换，JDK 17/21 使用 jakarta 与 instanceof 模式匹配。三线 Web 契约测试各 6/6 通过；源码和测试哈希逐线锁定。"
     },
     {
-        "path": "ddd4j-web/ddd4j-web-helidon/src/main/java/io/ddd4j/web/helidon/Ddd4jHelidonRequestFilter.java",
-        "sourceSha256": [
-            "4cd243ef6a73a6bf6e94139e3d4793c552ffc4adda198ef6dd6f80f0f5a79d27",
-            "a038aabcc49213c15816f4ccb23f15f92bf204f6eebcbcd89b7dba69f97731cb",
-            "a038aabcc49213c15816f4ccb23f15f92bf204f6eebcbcd89b7dba69f97731cb"
-        ],
-        "evidence": "ddd4j-web/ddd4j-web-helidon/src/test/java/io/ddd4j/web/helidon/Ddd4jHelidonWebContractTest.java",
-        "testSha256ByJdk": {
-            "8": "49af8712b57008a9c1941adfb92c54554f548a75b8b2d32e1d9ffa9abe31217e",
-            "17": "670d33504e5fa9db310d476162fc186521d32c9149e6cd991d1b2e4e617dbcf6",
-            "21": "670d33504e5fa9db310d476162fc186521d32c9149e6cd991d1b2e4e617dbcf6"
-        },
-        "reason": "三线 Helidon 请求过滤器的上下文、鉴权与 OTel 空 span 安全降级行为一致；JDK 8 使用 javax JAX-RS，JDK 17/21 使用 jakarta JAX-RS。三线 Helidon Web 契约各 6 项与 OTel 集成各 5 项通过，源码和证据测试哈希逐线锁定。"
+      "path": "ddd4j-web/ddd4j-web-dropwizard/src/main/java/io/ddd4j/web/dropwizard/Ddd4jDropwizardRequestFilter.java",
+      "sourceSha256": [
+        "93ca09c20c686c91b07a8014449d3e7317e7b7f075587458105ecd371a06fb9e",
+        "000239a102c4d33b90ee2daf2901a88a0203d59b88fe3637232be21a04edaf80",
+        "000239a102c4d33b90ee2daf2901a88a0203d59b88fe3637232be21a04edaf80"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-dropwizard/src/test/java/io/ddd4j/web/dropwizard/Ddd4jDropwizardWebContractTest.java",
+      "testSha256ByJdk": {
+        "8": "412d959bd3209dbc3cdc98fc6217d128a050410a9717d0ad32a2a43e7a765d4f",
+        "17": "0a24c57f4a2c5749f21c61a9ff1e8dfb3a7f9ee3ee625926a27de15d978fbd90",
+        "21": "0a24c57f4a2c5749f21c61a9ff1e8dfb3a7f9ee3ee625926a27de15d978fbd90"
+      },
+      "reason": "请求过滤器按相同顺序创建上下文、执行认证/幂等会话并开启追踪；JDK 8 使用 javax，JDK 17/21 使用 jakarta，所有对外方法及 Javadoc 已对齐。三线同一 Dropwizard Web 契约测试各 6/6 通过；源码与测试哈希逐线锁定。"
     },
     {
-        "path": "ddd4j-web/ddd4j-web-helidon/src/main/java/io/ddd4j/web/helidon/Ddd4jHelidonResponseFilter.java",
-        "sourceSha256": [
-            "e6b5e08999f2e7f1a55e42cb3c7c7a26ff750876b33daf9c4b36d955fc99a2d0",
-            "158b003ef6c03271a7b8f4a85f922333f2aa7945127a4db07e4eb7e2596f8e69",
-            "158b003ef6c03271a7b8f4a85f922333f2aa7945127a4db07e4eb7e2596f8e69"
-        ],
-        "evidence": "ddd4j-web/ddd4j-web-helidon/src/test/java/io/ddd4j/web/helidon/Ddd4jHelidonWebContractTest.java",
-        "testSha256ByJdk": {
-            "8": "49af8712b57008a9c1941adfb92c54554f548a75b8b2d32e1d9ffa9abe31217e",
-            "17": "670d33504e5fa9db310d476162fc186521d32c9149e6cd991d1b2e4e617dbcf6",
-            "21": "670d33504e5fa9db310d476162fc186521d32c9149e6cd991d1b2e4e617dbcf6"
-        },
-        "reason": "三线 Helidon 响应过滤器的请求标识回传与幂等会话提交行为一致；JDK 8 使用 javax JAX-RS 和显式强转，Helidon MP 1 的 Jersey 属性代理不支持 removeProperty；JDK 17/21 使用 jakarta JAX-RS、模式匹配并显式移除属性。三线 Helidon Web 契约各 6 项通过，源码及测试哈希逐线锁定。"
+      "path": "ddd4j-web/ddd4j-web-dropwizard/src/main/java/io/ddd4j/web/dropwizard/Ddd4jDropwizardExceptionMapper.java",
+      "sourceSha256": [
+        "f227e6d91bcf0d1b3e8ab95fef1d2cbaa1d135d9112c77bdc4238c3445929b1e",
+        "9fa3b6976d3b915b53664aa31ed89e46c4e2f09d54d819d7e509e054fe9b812b",
+        "9fa3b6976d3b915b53664aa31ed89e46c4e2f09d54d819d7e509e054fe9b812b"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-dropwizard/src/test/java/io/ddd4j/web/dropwizard/Ddd4jDropwizardWebContractTest.java",
+      "testSha256ByJdk": {
+        "8": "412d959bd3209dbc3cdc98fc6217d128a050410a9717d0ad32a2a43e7a765d4f",
+        "17": "0a24c57f4a2c5749f21c61a9ff1e8dfb3a7f9ee3ee625926a27de15d978fbd90",
+        "21": "0a24c57f4a2c5749f21c61a9ff1e8dfb3a7f9ee3ee625926a27de15d978fbd90"
+      },
+      "reason": "异常映射器对相同 HTTP 状态和异常返回同一 WebError；JDK 8 使用 javax 与显式强转，JDK 17/21 使用 jakarta 与模式匹配，Javadoc 已对齐。三线同一 Dropwizard Web 契约测试各 6/6 通过；源码与测试哈希逐线锁定。"
     },
     {
-        "path": "ddd4j-web/ddd4j-web-micronaut/src/main/java/io/ddd4j/web/micronaut/Ddd4jMicronautContext.java",
-        "sourceSha256": [
-            "02ac17aa2f7201dccf09a999eb52ef5c27f884e75b2e29c089dfe374cf8d5e2f",
-            "b13979c6359a08f35c2b014e55f0c80459d652f3cf2a7dac9aa38d9b49dff06b",
-            "f44708d616de7862375986f18891355c74c2ade9b9ce0f243a66e2bef4a8c0ba"
-        ],
-        "evidence": "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautContextValueContractTest.java",
-        "testSha256": "53065021647075244fd030f433cd3067aa7c51d33c5a09422933c8ee86cbb789",
-        "reason": "三线 Micronaut 请求上下文的值方法、访问器与 Jackson JSON 往返行为一致；JDK 8 的 Micronaut 3 使用 ThreadLocal/ServerRequestContext 与 Reactor 插桩传播，JDK 17/21 的 Micronaut 4 使用 PropagatedContext/ThreadPropagatedContextElement。三线值契约各 3 项、上下文定向测试各 9 项均通过；源码和同一契约测试哈希锁定。"
+      "path": "ddd4j-web/ddd4j-web-helidon/src/main/java/io/ddd4j/web/helidon/Ddd4jHelidonExceptionMapper.java",
+      "sourceSha256": [
+        "b7d37b577f571ecfc75937ab5b4639dd4a2c175c3d51acfcb13863c1add48c32",
+        "fc718c4511c2f9c769ac6a2181c823a24e2e3322115b8481fcd4bb2a5ceb66e9",
+        "fc718c4511c2f9c769ac6a2181c823a24e2e3322115b8481fcd4bb2a5ceb66e9"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-helidon/src/test/java/io/ddd4j/web/helidon/Ddd4jHelidonWebContractTest.java",
+      "testSha256ByJdk": {
+        "8": "49af8712b57008a9c1941adfb92c54554f548a75b8b2d32e1d9ffa9abe31217e",
+        "17": "670d33504e5fa9db310d476162fc186521d32c9149e6cd991d1b2e4e617dbcf6",
+        "21": "670d33504e5fa9db310d476162fc186521d32c9149e6cd991d1b2e4e617dbcf6"
+      },
+      "reason": "三线 Helidon 异常映射器使用同一 WebError 翻译与 HTTP 状态映射，JDK 8 用 javax 和显式强转，JDK 17/21 用 jakarta 和模式匹配；构造器文档一致。三线 Helidon Web 契约测试覆盖错误状态并通过，源码及测试哈希逐线锁定。"
     },
     {
-        "path": "ddd4j-web/ddd4j-web-micronaut/src/main/java/io/ddd4j/web/micronaut/Ddd4jMicronautWebConfiguration.java",
-        "sourceSha256": [
-            "e995bf26c65c07c9b54ee08cb96aefc057ea8ea7b42f102621e54570363c6f7f",
-            "6111a89c3ec0b604c12636dc98c8df1a0fd7ef0a5fd026358a9e570cf673f5c5",
-            "6111a89c3ec0b604c12636dc98c8df1a0fd7ef0a5fd026358a9e570cf673f5c5"
-        ],
-        "evidence": "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautWebConfigurationTest.java",
-        "testSha256ByJdk": {
-            "8": "a03cfcb994dfcc91c5fa864abc21f4c391e9b3999dce3f5e98ffe41d3c506e72",
-            "17": "abdade46cfb9e11cab110641764525412344dbd64360ae9d6ba27616ffc83e8d",
-            "21": "4a91e747f8d237314e87445c3a32b60d6b991daad6eaac0bf1205c4fea2e4f91"
-        },
-        "reason": "三线 Micronaut Web 配置的默认值、setter 拷贝与空值拒绝行为一致；JDK 8 使用 Arrays.asList，JDK 17/21 使用 List.of，setter 文档逐线对齐。三线配置定向测试各 3 项通过，源码及测试哈希锁定。"
+      "path": "ddd4j-web/ddd4j-web-helidon/src/main/java/io/ddd4j/web/helidon/Ddd4jHelidonWebConfiguration.java",
+      "sourceSha256": [
+        "e369fdeef0508ff4aff93d414bffad97dce09a5d89b0b2af27bfcb5f148a6b9a",
+        "b819da5ce8747ab71bd20bd56af9f237591f9b672f48c2b1485cc17df8f16815",
+        "b819da5ce8747ab71bd20bd56af9f237591f9b672f48c2b1485cc17df8f16815"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-helidon/src/test/java/io/ddd4j/web/helidon/Ddd4jHelidonWebConfigurationContractTest.java",
+      "testSha256": "19c32328599f60547fc3cf9443b83499cb188440ea8fc35828fb42fc69348368",
+      "reason": "三线 Helidon Web 配置的公开路径去空白行为一致；JDK 8 的 MicroProfile Config 使用 getOptionalValue(String) 并拆分逗号及 Arrays.asList，JDK 17/21 使用 getOptionalValues(String) 与 List.of。配置契约及 Web 回归每线 7 项通过，源码和测试哈希锁定。"
     },
     {
-        "path": "ddd4j-web/ddd4j-web-webflux/src/main/java/io/ddd4j/web/webflux/DefaultWebFluxConfigurer.java",
-        "sourceSha256": [
-            "77473dd974d70af71c95d962a4c4a8d9261b2cc43a0d5f291c266a00b1fd6289",
-            "ff54af0a64d478ac20eed125e620a3cb939e9bc8f78277e1a77540840fff7cca",
-            "ff54af0a64d478ac20eed125e620a3cb939e9bc8f78277e1a77540840fff7cca"
-        ],
-        "evidence": "ddd4j-web/ddd4j-web-webflux/src/test/java/io/ddd4j/web/webflux/DefaultWebFluxConfigurerContractTest.java",
-        "testSha256": "5874d96aabc4a81618f6d883712bd6772600c4fc1342156ffa895e8ee9c83972",
-        "reason": "三线 /webjars/** 均注册版本无关资源解析器；JDK 8 的 Spring 5 使用 WebJarsResourceResolver，JDK 17/21 的 Spring 6/7 使用 LiteWebJarsResourceResolver 和 webjars-locator-lite。相同定向测试逐线通过，源码及测试哈希锁定。"
+      "path": "ddd4j-web/ddd4j-web-helidon/src/main/java/io/ddd4j/web/helidon/Ddd4jHelidonRequestFilter.java",
+      "sourceSha256": [
+        "4cd243ef6a73a6bf6e94139e3d4793c552ffc4adda198ef6dd6f80f0f5a79d27",
+        "a038aabcc49213c15816f4ccb23f15f92bf204f6eebcbcd89b7dba69f97731cb",
+        "a038aabcc49213c15816f4ccb23f15f92bf204f6eebcbcd89b7dba69f97731cb"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-helidon/src/test/java/io/ddd4j/web/helidon/Ddd4jHelidonWebContractTest.java",
+      "testSha256ByJdk": {
+        "8": "49af8712b57008a9c1941adfb92c54554f548a75b8b2d32e1d9ffa9abe31217e",
+        "17": "670d33504e5fa9db310d476162fc186521d32c9149e6cd991d1b2e4e617dbcf6",
+        "21": "670d33504e5fa9db310d476162fc186521d32c9149e6cd991d1b2e4e617dbcf6"
+      },
+      "reason": "三线 Helidon 请求过滤器的上下文、鉴权与 OTel 空 span 安全降级行为一致；JDK 8 使用 javax JAX-RS，JDK 17/21 使用 jakarta JAX-RS。三线 Helidon Web 契约各 6 项与 OTel 集成各 5 项通过，源码和证据测试哈希逐线锁定。"
     },
     {
-        "path": "ddd4j-web/ddd4j-web-quarkus/src/main/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebFilter.java",
-        "sourceSha256": [
-            "cd8d7a382b9f7a17931bc5a88d187957a1a8f783e56f6c4c6e6761d9a9d5025c",
-            "1c177c86b83d4830f3ddb60cc3def05eb20e70378aa13996ceafd1a354260ab0",
-            "1c177c86b83d4830f3ddb60cc3def05eb20e70378aa13996ceafd1a354260ab0"
-        ],
-        "evidence": "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebFilterRemoteAddressTest.java",
-        "testSha256": "089f5c4e0962ac563be7a0e1a75a9bf5d4d9d7f9b0c11178ee858d000dd352ef",
-        "reason": "三线远端主机名与 IP 地址、请求/响应头、认证错误和 OTel 会话契约已逐线测试；JDK 8 使用 RESTEasy Classic 的 javax ContainerRequestFilter/Vert.x 3 host()，JDK 17/21 使用 RESTEasy Reactive 的 Jakarta 过滤器/Vert.x 4+ hostAddress() 并在未解析地址时回退 host()。三线 Quarkus 定向测试各 10 项通过，源码和共同地址测试哈希锁定。"
+      "path": "ddd4j-web/ddd4j-web-helidon/src/main/java/io/ddd4j/web/helidon/Ddd4jHelidonResponseFilter.java",
+      "sourceSha256": [
+        "e6b5e08999f2e7f1a55e42cb3c7c7a26ff750876b33daf9c4b36d955fc99a2d0",
+        "158b003ef6c03271a7b8f4a85f922333f2aa7945127a4db07e4eb7e2596f8e69",
+        "158b003ef6c03271a7b8f4a85f922333f2aa7945127a4db07e4eb7e2596f8e69"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-helidon/src/test/java/io/ddd4j/web/helidon/Ddd4jHelidonWebContractTest.java",
+      "testSha256ByJdk": {
+        "8": "49af8712b57008a9c1941adfb92c54554f548a75b8b2d32e1d9ffa9abe31217e",
+        "17": "670d33504e5fa9db310d476162fc186521d32c9149e6cd991d1b2e4e617dbcf6",
+        "21": "670d33504e5fa9db310d476162fc186521d32c9149e6cd991d1b2e4e617dbcf6"
+      },
+      "reason": "三线 Helidon 响应过滤器的请求标识回传与幂等会话提交行为一致；JDK 8 使用 javax JAX-RS 和显式强转，Helidon MP 1 的 Jersey 属性代理不支持 removeProperty；JDK 17/21 使用 jakarta JAX-RS、模式匹配并显式移除属性。三线 Helidon Web 契约各 6 项通过，源码及测试哈希逐线锁定。"
+    },
+    {
+      "path": "ddd4j-web/ddd4j-web-micronaut/src/main/java/io/ddd4j/web/micronaut/Ddd4jMicronautContext.java",
+      "sourceSha256": [
+        "02ac17aa2f7201dccf09a999eb52ef5c27f884e75b2e29c089dfe374cf8d5e2f",
+        "b13979c6359a08f35c2b014e55f0c80459d652f3cf2a7dac9aa38d9b49dff06b",
+        "f44708d616de7862375986f18891355c74c2ade9b9ce0f243a66e2bef4a8c0ba"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautContextValueContractTest.java",
+      "testSha256": "53065021647075244fd030f433cd3067aa7c51d33c5a09422933c8ee86cbb789",
+      "reason": "三线 Micronaut 请求上下文的值方法、访问器与 Jackson JSON 往返行为一致；JDK 8 的 Micronaut 3 使用 ThreadLocal/ServerRequestContext 与 Reactor 插桩传播，JDK 17/21 的 Micronaut 4 使用 PropagatedContext/ThreadPropagatedContextElement。三线值契约各 3 项、上下文定向测试各 9 项均通过；源码和同一契约测试哈希锁定。"
+    },
+    {
+      "path": "ddd4j-web/ddd4j-web-micronaut/src/main/java/io/ddd4j/web/micronaut/Ddd4jMicronautWebConfiguration.java",
+      "sourceSha256": [
+        "e995bf26c65c07c9b54ee08cb96aefc057ea8ea7b42f102621e54570363c6f7f",
+        "6111a89c3ec0b604c12636dc98c8df1a0fd7ef0a5fd026358a9e570cf673f5c5",
+        "6111a89c3ec0b604c12636dc98c8df1a0fd7ef0a5fd026358a9e570cf673f5c5"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautWebConfigurationTest.java",
+      "testSha256ByJdk": {
+        "8": "a03cfcb994dfcc91c5fa864abc21f4c391e9b3999dce3f5e98ffe41d3c506e72",
+        "17": "abdade46cfb9e11cab110641764525412344dbd64360ae9d6ba27616ffc83e8d",
+        "21": "4a91e747f8d237314e87445c3a32b60d6b991daad6eaac0bf1205c4fea2e4f91"
+      },
+      "reason": "三线 Micronaut Web 配置的默认值、setter 拷贝与空值拒绝行为一致；JDK 8 使用 Arrays.asList，JDK 17/21 使用 List.of，setter 文档逐线对齐。三线配置定向测试各 3 项通过，源码及测试哈希锁定。"
+    },
+    {
+      "path": "ddd4j-web/ddd4j-web-webflux/src/main/java/io/ddd4j/web/webflux/DefaultWebFluxConfigurer.java",
+      "sourceSha256": [
+        "77473dd974d70af71c95d962a4c4a8d9261b2cc43a0d5f291c266a00b1fd6289",
+        "ff54af0a64d478ac20eed125e620a3cb939e9bc8f78277e1a77540840fff7cca",
+        "ff54af0a64d478ac20eed125e620a3cb939e9bc8f78277e1a77540840fff7cca"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-webflux/src/test/java/io/ddd4j/web/webflux/DefaultWebFluxConfigurerContractTest.java",
+      "testSha256": "5874d96aabc4a81618f6d883712bd6772600c4fc1342156ffa895e8ee9c83972",
+      "reason": "三线 /webjars/** 均注册版本无关资源解析器；JDK 8 的 Spring 5 使用 WebJarsResourceResolver，JDK 17/21 的 Spring 6/7 使用 LiteWebJarsResourceResolver 和 webjars-locator-lite。相同定向测试逐线通过，源码及测试哈希锁定。"
+    },
+    {
+      "path": "ddd4j-web/ddd4j-web-quarkus/src/main/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebFilter.java",
+      "sourceSha256": [
+        "cd8d7a382b9f7a17931bc5a88d187957a1a8f783e56f6c4c6e6761d9a9d5025c",
+        "1c177c86b83d4830f3ddb60cc3def05eb20e70378aa13996ceafd1a354260ab0",
+        "1c177c86b83d4830f3ddb60cc3def05eb20e70378aa13996ceafd1a354260ab0"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebFilterRemoteAddressTest.java",
+      "testSha256": "089f5c4e0962ac563be7a0e1a75a9bf5d4d9d7f9b0c11178ee858d000dd352ef",
+      "reason": "三线远端主机名与 IP 地址、请求/响应头、认证错误和 OTel 会话契约已逐线测试；JDK 8 使用 RESTEasy Classic 的 javax ContainerRequestFilter/Vert.x 3 host()，JDK 17/21 使用 RESTEasy Reactive 的 Jakarta 过滤器/Vert.x 4+ hostAddress() 并在未解析地址时回退 host()。三线 Quarkus 定向测试各 10 项通过，源码和共同地址测试哈希锁定。"
     },
     {
       "path": "ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/main/java/io/ddd4j/sample/dropwizard/cqrs/DropwizardCqrsApplication.java",
@@ -2979,40 +3303,40 @@
       "reason": "三线 Vert.x CQRS 路由的创建、查询与幂等冲突由目标集成测试逐线各 3 项覆盖；JDK 8 使用显式局部类型及 Collections.singletonList，JDK 17/21 使用 var 与 List.of。业务装配及路由逻辑一致，源码和目标测试哈希锁定。"
     },
     {
-        "path": "ddd4j-samples/ddd4j-sample-vertx/src/main/java/io/ddd4j/sample/vertx/VertxOrderRoutes.java",
-        "sourceSha256": [
-            "1cd051bafffcc141ab67dc7ced501dc7660e3f1b51cfc1e8f7ab973e22e5b335",
-            "f967b595f82729a24cabac08f51fda1d2452096d79e0dad71f7b358006682297",
-            "f967b595f82729a24cabac08f51fda1d2452096d79e0dad71f7b358006682297"
-        ],
-        "evidence": "ddd4j-samples/ddd4j-sample-vertx/src/test/java/io/ddd4j/sample/vertx/VertxOrderRoutesTest.java",
-        "testSha256ByJdk": {
-            "8": "b562b75e77ca4666a822772d5faead4e2fc6ff0f1bcff19e0d90215d14708f74",
-            "17": "29cadea385fc15271a97d3488ac4ade8482bd424033e1bed49c4d7347331a4b6",
-            "21": "e71122be0cc3072b5ba816496278fa518eac72fdc6893b0e03c788cc7b9424b8"
-        },
-        "additionalEvidence": [
-            {
-                "path": "ddd4j-samples/ddd4j-sample-vertx/src/test/java/io/ddd4j/sample/vertx/VertxTokenResponseContractTest.java",
-                "testSha256": "d5e2a1d03dca7bf29142d7ffc015a525515973d5e71c7464d882b5aae42e5d3f"
-            }
-        ],
-        "reason": "三线 Vert.x 订单路由的认证、创建与令牌响应值语义由目标路由和令牌测试分别验证；JDK 8 使用 Arrays.asList，JDK 17/21 使用 List.of，令牌 DTO 逻辑一致。源码和两项测试逐线哈希锁定。"
+      "path": "ddd4j-samples/ddd4j-sample-vertx/src/main/java/io/ddd4j/sample/vertx/VertxOrderRoutes.java",
+      "sourceSha256": [
+        "1cd051bafffcc141ab67dc7ced501dc7660e3f1b51cfc1e8f7ab973e22e5b335",
+        "f967b595f82729a24cabac08f51fda1d2452096d79e0dad71f7b358006682297",
+        "f967b595f82729a24cabac08f51fda1d2452096d79e0dad71f7b358006682297"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-vertx/src/test/java/io/ddd4j/sample/vertx/VertxOrderRoutesTest.java",
+      "testSha256ByJdk": {
+        "8": "b562b75e77ca4666a822772d5faead4e2fc6ff0f1bcff19e0d90215d14708f74",
+        "17": "29cadea385fc15271a97d3488ac4ade8482bd424033e1bed49c4d7347331a4b6",
+        "21": "e71122be0cc3072b5ba816496278fa518eac72fdc6893b0e03c788cc7b9424b8"
+      },
+      "additionalEvidence": [
+        {
+          "path": "ddd4j-samples/ddd4j-sample-vertx/src/test/java/io/ddd4j/sample/vertx/VertxTokenResponseContractTest.java",
+          "testSha256": "78d18d4d38f1fff53537afaaa465b727964b28b65880562f3e746690660f0d5b"
+        }
+      ],
+      "reason": "三线 Vert.x 订单路由的认证、创建与令牌响应值语义由目标路由和令牌测试分别验证；JDK 8 使用 Arrays.asList，JDK 17/21 使用 List.of，令牌 DTO 逻辑一致。源码和两项测试逐线哈希锁定。"
     },
     {
-        "path": "ddd4j-data/ddd4j-data-mybatisplus/src/main/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepository.java",
-        "sourceSha256": [
-            "4fb720bf80eabb16b2e3b15dfb03d136f4edf38af30983a0549668d057745efe",
-            "c99ca69393385ff569cecea4e0e12a5ac7c86a915a5c86315597bcac19161189",
-            "c99ca69393385ff569cecea4e0e12a5ac7c86a915a5c86315597bcac19161189"
-        ],
-        "evidence": "ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepositoryCrudTest.java",
-        "testSha256ByJdk": {
-            "8": "2e09451af5b019a32d5537e7e65af5a0a3a2f837be906dede835c9d9269bb638",
-            "17": "a1202a960d015a4b96cb39ce863e249a51f1c38d479d5771155caa6080e8c7de",
-            "21": "3e355e4306cff9935d8f866797265dbb25200ad53cb005207e51732f9e19c40e"
-        },
-        "reason": "三线 MyBatis-Plus 聚合仓储的 CRUD、查询和条件处理由各线 20 项 CRUD 契约及 3 项查询翻译测试通过；JDK 8 使用 switch case/break 与 Collections.singletonList，JDK 17/21 使用 switch 箭头与 List.of。业务方法和公开接口保持一致，源码及 CRUD 契约测试逐线哈希锁定。"
+      "path": "ddd4j-data/ddd4j-data-mybatisplus/src/main/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepository.java",
+      "sourceSha256": [
+        "4fb720bf80eabb16b2e3b15dfb03d136f4edf38af30983a0549668d057745efe",
+        "c99ca69393385ff569cecea4e0e12a5ac7c86a915a5c86315597bcac19161189",
+        "c99ca69393385ff569cecea4e0e12a5ac7c86a915a5c86315597bcac19161189"
+      ],
+      "evidence": "ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepositoryCrudTest.java",
+      "testSha256ByJdk": {
+        "8": "2e09451af5b019a32d5537e7e65af5a0a3a2f837be906dede835c9d9269bb638",
+        "17": "a1202a960d015a4b96cb39ce863e249a51f1c38d479d5771155caa6080e8c7de",
+        "21": "3e355e4306cff9935d8f866797265dbb25200ad53cb005207e51732f9e19c40e"
+      },
+      "reason": "三线 MyBatis-Plus 聚合仓储的 CRUD、查询和条件处理由各线 20 项 CRUD 契约及 3 项查询翻译测试通过；JDK 8 使用 switch case/break 与 Collections.singletonList，JDK 17/21 使用 switch 箭头与 List.of。业务方法和公开接口保持一致，源码及 CRUD 契约测试逐线哈希锁定。"
     },
     {
       "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/goods/application/GoodsApplicationService.java",
@@ -3530,12 +3854,20 @@
   "platformTestNamespaceMappings": [
     {
       "path": "ddd4j-data/ddd4j-data-cqrs-helidon/src/test/java/io/ddd4j/data/cqrs/helidon/arch/CqrsHelidonModuleIndependenceTest.java",
-      "sha256ByJdk": {"8": "30ab5761013b49339b7e749f32141b30ca5b1e62a0d6513529d46857072f93b2", "17": "8868b4917e79e7a94f492b8fdade243b23c9e87be5d8f9e8ba93ce7aee6bc719", "21": "8868b4917e79e7a94f492b8fdade243b23c9e87be5d8f9e8ba93ce7aee6bc719"},
+      "sha256ByJdk": {
+        "8": "30ab5761013b49339b7e749f32141b30ca5b1e62a0d6513529d46857072f93b2",
+        "17": "8868b4917e79e7a94f492b8fdade243b23c9e87be5d8f9e8ba93ce7aee6bc719",
+        "21": "8868b4917e79e7a94f492b8fdade243b23c9e87be5d8f9e8ba93ce7aee6bc719"
+      },
       "evidence": "三线 Helidon CQRS 架构规则仅作 javax/jakarta 命名空间与版本注记替换；规范化后逐字一致"
     },
     {
       "path": "ddd4j-data/ddd4j-data-projection-helidon/src/test/java/io/ddd4j/data/projection/helidon/arch/ProjectionHelidonModuleIndependenceTest.java",
-      "sha256ByJdk": {"8": "fdc5de72801222c18b7b693461afdef81ba2a9fa51b8840289c11184353a9848", "17": "559fa1128c9cdfd13480e69921f6b7aec06ea260ba5bc84fcc69892febc7eeec", "21": "559fa1128c9cdfd13480e69921f6b7aec06ea260ba5bc84fcc69892febc7eeec"},
+      "sha256ByJdk": {
+        "8": "fdc5de72801222c18b7b693461afdef81ba2a9fa51b8840289c11184353a9848",
+        "17": "559fa1128c9cdfd13480e69921f6b7aec06ea260ba5bc84fcc69892febc7eeec",
+        "21": "559fa1128c9cdfd13480e69921f6b7aec06ea260ba5bc84fcc69892febc7eeec"
+      },
       "evidence": "三线 Helidon Projection 架构规则仅作 javax/jakarta 命名空间与版本注记替换；规范化后逐字一致"
     },
     {

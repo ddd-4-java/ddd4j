@@ -15,18 +15,23 @@ import java.util.function.Consumer;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/** \u9a8c\u8bc1 <code>MQClientPersistenceContract</code> \u5728 <code>persist</code> \u7b49\u573a\u666f\u4e2d\u7684\u884c\u4e3a\u3002 */
+/**
+ * 验证 <code>MQClientPersistenceContract</code> 在 <code>persist</code> 等场景中的行为。
+ */
 class MQClientPersistenceContractTest {
 
-    /** \u6d4b\u8bd5\u540e\u4f9d\u6b21\u6e05\u9664<code>BaseContext</code>\u3002 */
+    /**
+     * 测试后依次清除<code>BaseContext</code>。
+     */
     @AfterEach
     void clearContext() {
         BaseContext.clear();
     }
 
     /**
-     * \u9a8c\u8bc1<code>client.consume(listener(invoked), event(), null)</code> \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>invoked.get()</code>\u4e3a\u5047\u3002
-     * @throws Throwable \u8bfb\u53d6\u6d4b\u8bd5\u6570\u636e\u6216\u7b49\u5f85\u6d4b\u8bd5\u7ed3\u679c\u5931\u8d25
+     * 验证<code>client.consume(listener(invoked), event(), null)</code> 抛出 <code>IllegalStateException.class</code>，<code>invoked.get()</code>为假。
+     *
+     * @throws Throwable 读取测试数据或等待测试结果失败
      */
     @Test
     void persistShouldFailBeforeBusinessHandlerWhenStorerIsMissing() throws Throwable {
@@ -41,8 +46,9 @@ class MQClientPersistenceContractTest {
     }
 
     /**
-     * \u9a8c\u8bc1<code>client.consume(listener(invoked), event(), null)</code> \u629b\u51fa <code>IllegalStateException.class</code>\uff0c<code>invoked.get()</code>\u4e3a\u5047\u3002
-     * @throws Throwable \u8bfb\u53d6\u6d4b\u8bd5\u6570\u636e\u6216\u7b49\u5f85\u6d4b\u8bd5\u7ed3\u679c\u5931\u8d25
+     * 验证<code>client.consume(listener(invoked), event(), null)</code> 抛出 <code>IllegalStateException.class</code>，<code>invoked.get()</code>为假。
+     *
+     * @throws Throwable 读取测试数据或等待测试结果失败
      */
     @Test
     void persistShouldFailBeforeBusinessHandlerWhenStoreFails() throws Throwable {
@@ -59,8 +65,9 @@ class MQClientPersistenceContractTest {
     }
 
     /**
-     * \u6784\u9020 <code>MQClient</code> \u4f5c\u4e3a\u5f53\u524d\u6d4b\u8bd5\u7684\u8f93\u5165\u6216\u7ed3\u679c\u3002
-     * @return \u63d0\u4f9b\u7ed9\u540e\u7eed\u5951\u7ea6\u65ad\u8a00\u7684 <code>MQClient</code> \u7ed3\u679c
+     * 构造 <code>MQClient</code> 作为当前测试的输入或结果。
+     *
+     * @return 提供给后续契约断言的 <code>MQClient</code> 结果
      */
     private MQClient client() {
         return new MQClient() {
@@ -82,8 +89,9 @@ class MQClientPersistenceContractTest {
     }
 
     /**
-     * \u8bfb\u53d6 <code>properties</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
-     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>properties</code>
+     * 读取 <code>properties</code> 供当前测试使用。
+     *
+     * @return 当前测试使用的结果，取自 <code>properties</code>
      */
     private MQProperties properties() {
         MQProperties properties = new MQProperties();
@@ -94,8 +102,9 @@ class MQClientPersistenceContractTest {
     }
 
     /**
-     * \u6784\u9020 <code>MQEventSerialization</code> \u4f5c\u4e3a\u5f53\u524d\u6d4b\u8bd5\u7684\u8f93\u5165\u6216\u7ed3\u679c\u3002
-     * @return \u63d0\u4f9b\u7ed9\u540e\u7eed\u5951\u7ea6\u65ad\u8a00\u7684 <code>MQEventSerialization</code> \u7ed3\u679c
+     * 构造 <code>MQEventSerialization</code> 作为当前测试的输入或结果。
+     *
+     * @return 提供给后续契约断言的 <code>MQEventSerialization</code> 结果
      */
     private MQEventSerialization serialization() {
         return new MQEventSerialization() {
@@ -113,10 +122,11 @@ class MQClientPersistenceContractTest {
     }
 
     /**
-     * \u8c03\u7528 <code>Handler.class.getMethod()</code>\u3001<code>MQListener.builder()</code>\u3001<code>Collections.singletonList()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
-     * @param invoked \u672c\u6b21\u8c03\u7528\u4f7f\u7528\u7684 <code>AtomicBoolean</code> \u53c2\u6570 <code>invoked</code>
-     * @return \u63d0\u4f9b\u7ed9\u540e\u7eed\u5951\u7ea6\u65ad\u8a00\u7684 <code>MQListener</code> \u7ed3\u679c
-     * @throws Exception \u5f53\u524d\u7528\u4f8b\u51c6\u5907\u8d44\u6e90\u6216\u8c03\u7528\u6d4b\u8bd5\u5165\u53e3\u5931\u8d25
+     * 调用 <code>Handler.class.getMethod()</code>、<code>MQListener.builder()</code>、<code>Collections.singletonList()</code> 执行当前夹具操作。
+     *
+     * @param invoked 本次调用使用的 <code>AtomicBoolean</code> 参数 <code>invoked</code>
+     * @return 提供给后续契约断言的 <code>MQListener</code> 结果
+     * @throws Exception 当前用例准备资源或调用测试入口失败
      */
     private MQListener listener(AtomicBoolean invoked) throws Exception {
         Handler handler = new Handler(invoked);
@@ -126,8 +136,9 @@ class MQClientPersistenceContractTest {
     }
 
     /**
-     * \u8bfb\u53d6 <code>event</code> \u4f9b\u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u3002
-     * @return \u5f53\u524d\u6d4b\u8bd5\u4f7f\u7528\u7684\u7ed3\u679c\uff0c\u53d6\u81ea <code>event</code>
+     * 读取 <code>event</code> 供当前测试使用。
+     *
+     * @return 当前测试使用的结果，取自 <code>event</code>
      */
     private MQEvent event() {
         MQEvent event = new MQEvent();
@@ -135,22 +146,28 @@ class MQClientPersistenceContractTest {
         return event;
     }
 
-    /** \u5c06 <code>invoked</code> \u7b49\u72b6\u6001\u4e00\u8d77\u4f20\u5165\u5f53\u524d\u6d4b\u8bd5\uff0c\u4f9b\u8c03\u7528\u6216\u7ed3\u679c\u65ad\u8a00\u4f7f\u7528\u3002 */
+    /**
+     * 将 <code>invoked</code> 等状态一起传入当前测试，供调用或结果断言使用。
+     */
     public static final class Handler {
-        /** \u8bb0\u5f55\u53d7\u6d4b\u6267\u884c\u5668\u6216\u76d1\u542c\u5668\u662f\u5426\u88ab\u8c03\u7528\u3002 */
+        /**
+         * 记录受测执行器或监听器是否被调用。
+         */
         private final AtomicBoolean invoked;
 
         /**
-         * \u8bbe\u7f6e <code>invoked</code>\uff0c\u7528\u4e8e\u6784\u9020 <code>Handler</code> \u6d4b\u8bd5\u5b9e\u4f8b\u3002
-         * @param invoked \u7528\u4e8e\u521d\u59cb\u5316 <code>Handler</code> \u7684 <code>AtomicBoolean</code> \u503c
+         * 设置 <code>invoked</code>，用于构造 <code>Handler</code> 测试实例。
+         *
+         * @param invoked 用于初始化 <code>Handler</code> 的 <code>AtomicBoolean</code> 值
          */
         Handler(AtomicBoolean invoked) {
             this.invoked = invoked;
         }
 
         /**
-         * \u8c03\u7528 <code>invoked.set()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
-         * @param event \u4ea4\u7ed9\u88ab\u6d4b\u5165\u53e3\u5904\u7406\u7684\u6d4b\u8bd5\u9886\u57df\u4e8b\u4ef6
+         * 调用 <code>invoked.set()</code> 执行当前夹具操作。
+         *
+         * @param event 交给被测入口处理的测试领域事件
          */
         public void handle(MQEvent event) {
             invoked.set(true);
