@@ -77,6 +77,10 @@ public final class AuthConstants {
      * Token 字段名（响应体 / 通用 token 字段）。
      */
     public static final String FIELD_TOKEN = "token";
+
+    /** 令牌会话中经过校验的租户标识键。 */
+    public static final String FIELD_TENANT_ID = "tenant_id";
+
     /**
      * 设备类型字段名。
      */

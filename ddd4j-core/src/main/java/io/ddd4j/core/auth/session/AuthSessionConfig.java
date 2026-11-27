@@ -14,6 +14,10 @@
  */
 package io.ddd4j.core.auth.session;
 
+import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.ddd4j.core.auth.AuthLogoutMode;
 import io.ddd4j.core.auth.AuthReplacedLoginExitMode;
 import io.ddd4j.core.auth.AuthReplacedRange;
@@ -58,7 +62,9 @@ public class AuthSessionConfig {
     /**
      * Token 有效期（秒），-1 表示永久。
      */
-    private long timeout = -1;
+    @JsonProperty("timeout")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Long timeout;
 
     /**
      * Token 最低活跃频率（秒），null 表示不启用活跃检查。
@@ -113,4 +119,35 @@ public class AuthSessionConfig {
      * 预定 Token 值（null 时由框架生成）。
      */
     private String presetToken;
+    /**
+     * 判断本次登录是否显式覆盖默认有效期。
+     *
+     * @return 是否指定有效期
+     */
+    public boolean hasTimeoutOverride() {
+        return Objects.nonNull(timeout);
+    }
+
+    /**
+     * 指定本次登录的有效期。
+     *
+     * @param timeout 有效期秒数，-1 表示永久
+     * @return 当前配置
+     */
+    public AuthSessionConfig setTimeout(long timeout) {
+        this.timeout = timeout;
+        return this;
+    }
+
+    /**
+     * 返回有效期，兼容以 -1 表示无限期的调用方。
+     *
+     * @return 显式有效期，未指定时为 -1
+     */
+    @JsonIgnore
+    public long getTimeout() {
+        Long configuredTimeout = timeout;
+        return Objects.nonNull(configuredTimeout) ? configuredTimeout : -1L;
+    }
+
 }
