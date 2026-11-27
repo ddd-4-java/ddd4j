@@ -41,6 +41,30 @@ class ScannerTests(unittest.TestCase):
             self.assertEqual(origins['pkg:maven/example/alpha@1'], ['alpha'])
             self.assertEqual(origins['pkg:maven/example/beta@1'], ['beta'])
 
+    def test_scans_standalone_runtime_consumer_and_keeps_its_dependency_origin(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'pom.xml').write_text('<project><packaging>pom</packaging></project>')
+            consumer = root / 'ddd4j-runtime/ddd4j-runtime-testkit/src/test/resources/convergence-consumers/vertx/new'
+            consumer.mkdir(parents=True)
+            (consumer / 'pom.xml').write_text('<project/>')
+            output = root / 'reports'
+            output.mkdir()
+            purl = 'pkg:maven/example/fixture-only@1'
+
+            def execute(command, **kwargs):
+                if '-f' in command:
+                    self.assertEqual(Path(command[command.index('-f') + 1]), (consumer / 'pom.xml').resolve())
+                    target = consumer / 'target/weekly-deps.json'
+                    target.parent.mkdir()
+                    target.write_text(json.dumps({'bomFormat': 'CycloneDX', 'components': [
+                        {'group': 'example', 'name': 'fixture-only', 'version': '1', 'purl': purl}]}))
+
+            with patch.object(scanner.subprocess, 'run', side_effect=execute):
+                scanner.reactor_sbom(root, output)
+            origins = json.loads((output / 'reactor-component-origins.json').read_text())
+            self.assertEqual(origins[purl], [consumer.relative_to(root).as_posix()])
+
     def test_maven4_pom_modules_are_not_treated_as_deployable_jars(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / 'project'

@@ -59,6 +59,12 @@ def reactor_sbom(root, output):
         env['PATH'] = str(Path(env['JAVA_HOME']) / 'bin') + os.pathsep + env.get('PATH', '')
     subprocess.run(command, cwd=root, env=env, check=True)
 
+    # The published-runtime consumers are standalone Maven projects. Include their
+    # resolved dependencies and provenance in the same report as the reactor.
+    consumers = root / 'ddd4j-runtime/ddd4j-runtime-testkit/src/test/resources/convergence-consumers'
+    for pom in sorted(consumers.glob('*/new/pom.xml')):
+        subprocess.run(command + ['-f', str(pom.resolve())], cwd=root, env=env, check=True)
+
     missing = [str(module.relative_to(root)) for module in modules
                if not (module / 'target/weekly-deps.json').is_file()]
     if missing:
