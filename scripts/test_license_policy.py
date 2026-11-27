@@ -23,6 +23,13 @@ class LicensePolicyTest(unittest.TestCase):
         self.assertEqual("EPL-1.0", normalize_license("Eclipse Public License v1.0"))
         self.assertEqual("EPL-2.0", normalize_license("Eclipse Public License 2.0"))
 
+    def test_legacy_apache_requires_review_and_mozilla_version_is_preserved(self):
+        for declaration in ("Apache-1.1", "The Apache Software License, Version 1.1"):
+            self.assertEqual("Apache-1.1", normalize_license(declaration))
+            entry = InventoryEntry("oro:oro:2.0.8", (declaration,), "oro")
+            self.assertTrue(verify_policy([entry], {}))
+        self.assertEqual("MPL-1.1", normalize_license("Mozilla Public License Version 1.1"))
+
     def write(self, name, content):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)

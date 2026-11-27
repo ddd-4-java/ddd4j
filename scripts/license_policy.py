@@ -81,7 +81,7 @@ def normalize_license(value):
         return "EPL-1.0"
     if "epl 2.0" in normalized or "epl-2.0" in normalized or "eclipse public license" in normalized:
         return "EPL-2.0"
-    if "mpl 1.1" in normalized:
+    if "mpl 1.1" in normalized or normalized == "mozilla public license version 1.1":
         return "MPL-1.1"
     if "mpl 2.0" in normalized or "mozilla public license 2" in normalized:
         return "MPL-2.0"
@@ -97,6 +97,8 @@ def normalize_license(value):
         return "Public-Domain"
     if normalized == "mit-0":
         return "MIT-0"
+    if "apache" in normalized and re.search(r"\b1\.1\b", normalized):
+        return "Apache-1.1"
     if "apache" in normalized or normalized in {"al 2.0", "apache 2"}:
         return "Apache-2.0"
     if normalized == "mit" or "mit license" in normalized:
