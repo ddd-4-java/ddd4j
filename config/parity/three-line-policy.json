@@ -5001,14 +5001,14 @@
       "path": "ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/cqrs/GuiceViewManagerTest.java",
       "productionPath": "ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/cqrs/GuiceViewManager.java",
       "sourceSha256": [
-        "c9c7dd97d63f08198ad4a7612a6b8af5ed918978fdd42d322a18f4d2252c4ef6",
-        "4b30e6438129b1481b31677af55ce72aef2cb28b9259fe525f26d755b6e7a390",
-        "4b30e6438129b1481b31677af55ce72aef2cb28b9259fe525f26d755b6e7a390"
+        "70d27f129f0daeafd09215626f91ba137c6e1e984e143c23dd0f18919247cd1f",
+        "5edd54f7ffaa63104a587564476de1558b7828da9242e12676cf2b72774144a6",
+        "70d27f129f0daeafd09215626f91ba137c6e1e984e143c23dd0f18919247cd1f"
       ],
       "productionSha256": [
-        "a7c97136438e826ae765691457d340a5e67648cb79e1f20f714102805cd74a8e",
-        "a7c97136438e826ae765691457d340a5e67648cb79e1f20f714102805cd74a8e",
-        "a7c97136438e826ae765691457d340a5e67648cb79e1f20f714102805cd74a8e"
+        "913e5bd551c70c19abffd20fc8e9a0723f355356e43c2f24c87c20d60932696b",
+        "ee6fb83c3c0d56d0fd20ed516a9a4b554840ef20f1b2534eb2e5b45a799b55de",
+        "9ed12ef002afe42dcb2ce4dbbc557fe3ed3a41fb3bd04f37b6aafa2c58d8604e"
       ],
       "testMethods": [
         "tearDown",
@@ -5188,14 +5188,14 @@
       "path": "ddd4j-core/src/test/java/io/ddd4j/core/health/PlainValueContractTest.java",
       "productionPath": "ddd4j-core/src/main/java/io/ddd4j/core/health/ReadinessResult.java",
       "sourceSha256": [
-        "311f6c792c0e86eae38ddf8fb4a4a6b01966abba2158684050eb596e3715b9c8",
-        "272e84dab026fcf6e1204bed2dfddda2b154915c5e51675b69430825b143a672",
-        "b5c46a76a5f50de147ff4a36c8b06afeb08e661ea8c462502643f84199548202"
+        "ddb7ca634d21d11b28adb3aed5dfc54bc559aa0707ce5c274615ae642569607e",
+        "5d50b1a4fa2e52617328b93dc89190631391b4fd51259179b93d9129918d80fa",
+        "4d7bdf2126a3581ab385f5fe163c195bfb505a374f84976bb4e7c085655ec6f1"
       ],
       "productionSha256": [
-        "08286e878b6d7d6dde3b293170fe7dd81833b3cfef0742d1194e00f0c4bbc4e3",
-        "0b61c7cd6f74df83559b9f46e44eff269760b5bef0376dbfd7676c1b73ec8708",
-        "0b61c7cd6f74df83559b9f46e44eff269760b5bef0376dbfd7676c1b73ec8708"
+        "236a61ed90b2d01ff442a6b0c04369e8db6770c5ada788d23403133141fe61ce",
+        "6db199f7fd5f2b40e6f669dc22bac7e85f6a4840b1d6fa6569716ab6a3034da1",
+        "236a61ed90b2d01ff442a6b0c04369e8db6770c5ada788d23403133141fe61ce"
       ],
       "testMethods": [
         "diagnosticDetailsKeepInputOrder",
@@ -5342,14 +5342,14 @@
       "path": "ddd4j-core/src/test/java/io/ddd4j/core/api/RTest.java",
       "productionPath": "ddd4j-core/src/main/java/io/ddd4j/core/api/R.java",
       "sourceSha256": [
-        "fd90784629ad8891a02c5254254b9fc530baf0fcf61ad3f8097f39bd9c7d5d07",
-        "8971463897406b253c1cd1ee6affdb32647f9cb717b4ea27e6c02f0ebee12422",
-        "160e2aaec550ea07627518dbc1f4c3bb9971938fe24b405e46972fdbb28eae0c"
+        "472375964c82cbc1f6c2150d4014fa2391d477c4d0c6702bdd7048b562aa88d3",
+        "e5da217e89973e7835856a351f509d60a5ab09865035d92e51e516e50dbd4fc3",
+        "818ad12b5c93949f5276dfa4906fcb076e6aee73924962925517bcb32779fcf2"
       ],
       "productionSha256": [
-        "87eb8c6e1cecea04b0fe6e9701707888fca4d1a747c99ad27b8b14bf80fd3c13",
         "1554ca6a55b3de1e307edec584d9a9b55d956cb1f531e8cb777cf753a6ae41ed",
-        "a50a26acdd1d61d7c7d89b26dbf93334861cd44412230ad48ee58301a59c8ed3"
+        "aa1cbab56f78e2425adad3799f85ba383bb0f8c74e9f97f16141ec25f47c8c47",
+        "c20ce9c76548d1a0346e6d0471fe0c004a255b7f481171b43e663a657c172531"
       ],
       "testMethods": [
         "fail_withString_shouldTreatArgumentAsMessage",
@@ -5442,14 +5442,14 @@
       "path": "ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStoreTest.java",
       "productionPath": "ddd4j-data/ddd4j-data-event-store-r2dbc/src/main/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStore.java",
       "sourceSha256": [
-        "0dada77c63b390239b34a655ad9d383ddd0694a9c78d570992829f80627566be",
-        "10102bf0c7945437c0291834ccbac80af6ee6bcb9705663290dd1b34c159cded",
-        "10102bf0c7945437c0291834ccbac80af6ee6bcb9705663290dd1b34c159cded"
+        "8fafee2473b77fc29758523566cd99a30f825f974692467c034e5b4d92b5cc52",
+        "abab9cd1f542d9a6c9a591dd83e619eca7c84ab53ee384e790dc826f84ddb905",
+        "81195e045c1f814481c53e9d293789daa027ca7d87c888e10c5ae1c2c8242c96"
       ],
       "productionSha256": [
-        "965da85d46381a1c0d5fbdd153212f11bbcd30833e81968c6139ae65cad0de9a",
-        "965da85d46381a1c0d5fbdd153212f11bbcd30833e81968c6139ae65cad0de9a",
-        "965da85d46381a1c0d5fbdd153212f11bbcd30833e81968c6139ae65cad0de9a"
+        "4ca25f3994f29f8907678ccd83196c65eb21cb9ac4bffad0be8d8e9a33238bd1",
+        "63e41df69699fa2af65be79f1d77010047d777c5128325fc249e388b7b4f9f52",
+        "4ca25f3994f29f8907678ccd83196c65eb21cb9ac4bffad0be8d8e9a33238bd1"
       ],
       "testMethods": [
         "setUp",
@@ -5737,14 +5737,14 @@
       "path": "ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStorePostgresIT.java",
       "productionPath": "ddd4j-data/ddd4j-data-event-store-r2dbc/src/main/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStore.java",
       "sourceSha256": [
-        "94b83e2b1fd0b7533e146e6a779c91d7d257d041f211c61d5f7af309f75f5cd6",
-        "06e3e8b3ffac68d728fd067a613699996c7c8d164e6559636e74fa78649a9832",
-        "208324df9b5cd881274d7f9e2f1396bf75a0dd64143fababc4643709d6040c0c"
+        "99a4948fd9a8a3dfa696e7f916a4d6d023ce3d41635193641e0db0ae150329cc",
+        "3ba5139538c370ff1a02f5236d8c9d52d02f4c49464b84904851b7f025c6e248",
+        "7ff8b912777b3884242112159a29453a3678fd1161be6fadb4d36aada24d51c4"
       ],
       "productionSha256": [
-        "965da85d46381a1c0d5fbdd153212f11bbcd30833e81968c6139ae65cad0de9a",
-        "965da85d46381a1c0d5fbdd153212f11bbcd30833e81968c6139ae65cad0de9a",
-        "965da85d46381a1c0d5fbdd153212f11bbcd30833e81968c6139ae65cad0de9a"
+        "4ca25f3994f29f8907678ccd83196c65eb21cb9ac4bffad0be8d8e9a33238bd1",
+        "63e41df69699fa2af65be79f1d77010047d777c5128325fc249e388b7b4f9f52",
+        "4ca25f3994f29f8907678ccd83196c65eb21cb9ac4bffad0be8d8e9a33238bd1"
       ],
       "testMethods": [
         "setUp",
