@@ -55,6 +55,8 @@ jobs:
           PY
       - name: Install pinned Easy4J build dependencies
         run: bash scripts/install-mybatis-plus-enhance.sh 2.0.x .
+      - name: Install pinned DDD4J Boot Web adapters
+        run: bash scripts/install-ddd4j-boot-web.sh
       - name: Build all reactor artifacts for fresh dependency resolution
         run: ./mvnw -B -ntp -DskipTests install
       - name: Verify upstream BOM ownership, Spring baseline, resolved trees and JDK bytecode
