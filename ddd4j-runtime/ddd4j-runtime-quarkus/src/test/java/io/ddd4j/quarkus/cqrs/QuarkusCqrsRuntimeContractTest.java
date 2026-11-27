@@ -14,7 +14,6 @@
  */
 package io.ddd4j.quarkus.cqrs;
 
-import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.readmodel.InMemoryProjectionPositionRepository;
@@ -26,7 +25,7 @@ import io.ddd4j.runtime.testkit.AbstractCqrsRuntimeContractTest;
 import io.ddd4j.runtime.testkit.CqrsRuntimeContract;
 
 import java.lang.reflect.Field;
-import java.util.Map;
+import jakarta.enterprise.inject.Instance;
 
 /**
  * Quarkus 运行时 CQRS 契约测试。
@@ -35,7 +34,7 @@ import java.util.Map;
  * <p>
  * 装配方式：
  * <ul>
- *   <li>CommandBus：{@link QuarkusCommandBus}，通过反射注入 executorMap 绕过 CDI 依赖</li>
+ *   <li>CommandBus：{@link QuarkusCommandBus}，通过反射注入 CDI 执行器集合 绕过 CDI 依赖</li>
  *   <li>ViewManager：{@link QuarkusJpaViewManager}，直接实例化（无 CDI 依赖）</li>
  *   <li>ViewScheduler：{@link NoopViewScheduler}（Quarkus 的 Quartz 调度器在纯单测中不可用）</li>
  *   <li>PositionRepository：{@link InMemoryProjectionPositionRepository}（避免 JPA 重量级装配）</li>
@@ -96,7 +95,7 @@ class QuarkusCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
     }
 
     /**
-     * \u901a\u8fc7\u53cd\u5c04\u6ce8\u5165 executorMap\uff0c\u7ed5\u8fc7 CDI Instance \u4f9d\u8d56\u3002
+     * \u901a\u8fc7\u53cd\u5c04\u6ce8\u5165 CDI 执行器集合\uff0c\u7ed5\u8fc7 CDI Instance \u4f9d\u8d56\u3002
      *  \u4e0e {@code QuarkusCommandBusTest} \u4f7f\u7528\u76f8\u540c\u7684\u53cd\u5c04\u6a21\u5f0f\u3002
      *
      * @param commandBus \u5f85\u6ce8\u5165\u6a21\u62df CDI \u6267\u884c\u5668\u7684\u547d\u4ee4\u603b\u7ebf
@@ -105,17 +104,13 @@ class QuarkusCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
     @SuppressWarnings("unchecked")
     private void injectExecutors(QuarkusCommandBus commandBus, CommandExecutor<?>... executors) {
         try {
-            Field mapField = QuarkusCommandBus.class.getDeclaredField("executorMap");
-            mapField.setAccessible(true);
-            Map<Class<? extends Command>, CommandExecutor<?>> executorMap =
-                    (Map<Class<? extends Command>, CommandExecutor<?>>) mapField.get(commandBus);
-            for (CommandExecutor<?> executor : executors) {
-                for (Class<? extends Command> cmdType : executor.supportedCommands()) {
-                    executorMap.put(cmdType, executor);
-                }
-            }
+            Field field = QuarkusCommandBus.class.getDeclaredField("executors");
+            field.setAccessible(true);
+            Instance<CommandExecutor<?>> instance = org.mockito.Mockito.mock(Instance.class);
+            org.mockito.Mockito.when(instance.iterator()).thenAnswer(ignored -> java.util.Arrays.asList(executors).iterator());
+            field.set(commandBus, instance);
         } catch (ReflectiveOperationException ex) {
-            throw new IllegalStateException("Failed to inject executors into QuarkusCommandBus", ex);
+            throw new IllegalStateException(ex);
         }
     }
 

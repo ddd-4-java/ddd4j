@@ -1,6 +1,6 @@
 package io.ddd4j.sample.dropwizard.cqrs;
 
-import io.ddd4j.data.cqrs.dropwizard.DropwizardCommandBus;
+import io.ddd4j.dropwizard.command.DropwizardCommandBus;
 import io.ddd4j.sample.order.adapter.http.CatalogCqrs;
 import io.ddd4j.sample.order.adapter.http.CatalogApi;
 import io.ddd4j.sample.order.adapter.http.CatalogCqrsResource;

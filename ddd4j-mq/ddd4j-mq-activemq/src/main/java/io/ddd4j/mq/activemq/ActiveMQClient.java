@@ -104,7 +104,7 @@ public class ActiveMQClient implements MQClient {
         if (Objects.nonNull(properties.getPassword()) && StrKit.isNotBlank(properties.getPassword())) {
             factory.setPassword(properties.getPassword());
         }
-        factory.setClientID((properties.getClientIdPrefix() != null ? properties.getClientIdPrefix() : "ddd4j-mq-"));
+        factory.setClientID(Objects.requireNonNullElse(properties.getClientIdPrefix(), "ddd4j-mq-"));
         return factory;
     }
 

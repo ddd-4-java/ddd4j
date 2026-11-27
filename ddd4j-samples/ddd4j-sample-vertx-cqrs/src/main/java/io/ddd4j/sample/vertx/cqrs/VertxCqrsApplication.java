@@ -6,7 +6,7 @@ import io.ddd4j.sample.order.adapter.http.CatalogCqrs;
 import io.ddd4j.sample.order.adapter.http.Reply;
 import io.ddd4j.sample.order.start.CatalogRuntime;
 import io.ddd4j.vertx.VertxDomainEventPublisher;
-import io.ddd4j.data.cqrs.vertx.VertxCommandBus;
+import io.ddd4j.vertx.command.VertxCommandBus;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 import io.vertx.ext.web.Router;

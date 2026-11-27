@@ -2,7 +2,7 @@ package io.ddd4j.sample.micronaut.cqrs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ddd4j.core.cqrs.command.CommandBus;
-import io.ddd4j.data.cqrs.micronaut.MicronautCommandBus;
+import io.ddd4j.micronaut.command.MicronautCommandBus;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
