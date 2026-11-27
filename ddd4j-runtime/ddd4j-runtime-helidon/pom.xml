@@ -17,6 +17,12 @@
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
+        <!-- Keep standalone consumers on the JDK 8 versions used by this adapter. -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec-http2</artifactId>
+            <version>4.1.139.Final</version>
+        </dependency>
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-core</artifactId>
