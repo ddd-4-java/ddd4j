@@ -639,7 +639,7 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
         if (Objects.nonNull(request.getPrincipal())) {
             session.setAttribute(SESSION_KEY_PRINCIPAL, request.getPrincipal());
         }
-        if (Objects.nonNull(cfg) && cfg.getTimeout() != -1) {
+        if (cfg.getTimeout() != -1) {
             // 适配 Shiro Session 超时
             session.setTimeout(cfg.getTimeout() * 1000L);
         }
@@ -693,7 +693,7 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
         // ddd4j 标准做法：业务侧提供自定义 SessionDAO/Realm 把 loginId 映射到 Session
         // 此处降级处理：使用 DefaultSecurityManager 的 logout 入口
         SecurityManager sm = SecurityUtils.getSecurityManager();
-        if (sm instanceof DefaultSecurityManager && Objects.nonNull(loginId)) {
+        if (sm instanceof DefaultSecurityManager) {
             // 注意：DefaultSecurityManager 没有直接 killByPrincipal，我们走 sessionId 路径
             // 业务方可通过 Subject.runAs / 自定义 SessionDAO 实现
             // 这里降级为：如果登录用户就是被踢者，登出当前会话
