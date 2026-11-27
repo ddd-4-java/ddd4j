@@ -3299,13 +3299,17 @@
     {
       "path": "ddd4j-web/ddd4j-web-micronaut/src/main/java/io/ddd4j/web/micronaut/Ddd4jMicronautContext.java",
       "sourceSha256": [
-        "02ac17aa2f7201dccf09a999eb52ef5c27f884e75b2e29c089dfe374cf8d5e2f",
-        "b13979c6359a08f35c2b014e55f0c80459d652f3cf2a7dac9aa38d9b49dff06b",
-        "f44708d616de7862375986f18891355c74c2ade9b9ce0f243a66e2bef4a8c0ba"
+        "b374e810537a686f700a0d5be333da350cd7e95495b7b0fe193d4e31d109df5f",
+        "40c7c732b68159149e5b2ed01b3793dba036d32fc7ac92527e1479c2ed67f5ff",
+        "9a74ee9fda02f6396fda9acaf3cdfebd8e87c2a3091cc551abc0399d73879278"
       ],
       "evidence": "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautContextValueContractTest.java",
-      "testSha256": "53065021647075244fd030f433cd3067aa7c51d33c5a09422933c8ee86cbb789",
-      "reason": "三线 Micronaut 请求上下文的值方法、访问器与 Jackson JSON 往返行为一致；JDK 8 的 Micronaut 3 使用 ThreadLocal/ServerRequestContext 与 Reactor 插桩传播，JDK 17/21 的 Micronaut 4 使用 PropagatedContext/ThreadPropagatedContextElement。三线值契约各 3 项、上下文定向测试各 9 项均通过；源码和同一契约测试哈希锁定。"
+      "reason": "三线 Micronaut 请求上下文的值方法、访问器与 Jackson JSON 往返行为一致；JDK 8 的 Micronaut 3 使用 ThreadLocal/ServerRequestContext 与 Reactor 插桩传播，JDK 17/21 的 Micronaut 4 使用 PropagatedContext/ThreadPropagatedContextElement。三线值契约各 3 项、上下文定向测试各 9 项均通过；源码和同一契约测试哈希锁定。",
+      "testSha256ByJdk": {
+        "8": "0fc38b25ecc22f361ded653d417b6568f2fd7107f061d43255ed65d93eda3b80",
+        "17": "38aa0c8ea92ed089adc547a90e2cc803b472588f2fd274c04e0b94d6d20f99a7",
+        "21": "0fc38b25ecc22f361ded653d417b6568f2fd7107f061d43255ed65d93eda3b80"
+      }
     },
     {
       "path": "ddd4j-web/ddd4j-web-micronaut/src/main/java/io/ddd4j/web/micronaut/Ddd4jMicronautWebConfiguration.java",
@@ -4044,14 +4048,14 @@
       "path": "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautContextTest.java",
       "productionPath": "ddd4j-web/ddd4j-web-micronaut/src/main/java/io/ddd4j/web/micronaut/Ddd4jMicronautContext.java",
       "sourceSha256": [
-        "ee2aeeca52788b3210955fd602ef2272bb9387e00dd4514cbdb9c503aaeb38e5",
-        "449115ed1b2a39ff1a2dc847beca2069e728ff75c768f301ec43ab01ad558f90",
-        "6f4d76f3e3e1277984f1975827dda6235f97ac2a3c156bac0cf62664e9872f74"
+        "38a86514c8fc93740dd5f13c31d5194b30905b51731cf7c7d74a360838293654",
+        "3882461674a6d14a8f30456a67a174996aed03676e3a62dc1b39fdb1863d0d02",
+        "ae2cf316bd381ed3ba4c4b7fb2a218efc78ace83f47e4e39864bf49aca6fbb45"
       ],
       "productionSha256": [
-        "02ac17aa2f7201dccf09a999eb52ef5c27f884e75b2e29c089dfe374cf8d5e2f",
-        "b13979c6359a08f35c2b014e55f0c80459d652f3cf2a7dac9aa38d9b49dff06b",
-        "f44708d616de7862375986f18891355c74c2ade9b9ce0f243a66e2bef4a8c0ba"
+        "b374e810537a686f700a0d5be333da350cd7e95495b7b0fe193d4e31d109df5f",
+        "40c7c732b68159149e5b2ed01b3793dba036d32fc7ac92527e1479c2ed67f5ff",
+        "9a74ee9fda02f6396fda9acaf3cdfebd8e87c2a3091cc551abc0399d73879278"
       ],
       "testMethods": [
         "clear",
@@ -4097,14 +4101,14 @@
       "path": "ddd4j-runtime/ddd4j-runtime-dropwizard/src/test/java/io/ddd4j/dropwizard/cqrs/DropwizardCqrsRuntimeContractTest.java",
       "productionPath": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/command/DefaultCommandBus.java",
       "sourceSha256": [
-        "459c08a0ecca9ade2506fe069a1511fb2d0a0ff0d2ab031419079769b624dcf8",
-        "b7d5e19ff43dcb0f55f298e696d94179e28dafc303afbd84cb08b1fe0881dd83",
-        "e031118415822a24d772b530f5e0f7d9b541fbac18b71fe637bd5dc94aa88e70"
+        "f7fb6eb24da3ce5961e02d9714615a420def5f68931607e56a1cd7ef569ef8a5",
+        "71e6aad6900ccd437cf714871cf49f9f45e6e600d501604fb006fead8b8cf8c9",
+        "71e6aad6900ccd437cf714871cf49f9f45e6e600d501604fb006fead8b8cf8c9"
       ],
       "productionSha256": [
-        "bca120047c41357fc253a8f45f2d3506bbf53ebe1b4bad14b6c7b5fef2cc2a41",
-        "e9f4ef78ecb4787d534b00ba13878e6b383f61c591745acb1efe8d43d393bcce",
-        "b2e4ff9750654c491d7049c07ebe0ce7acb93fe681126226c736ad14cf661728"
+        "40f38f52b27740ca181e375b3178990cd106ff3fc88568eaedda9d1eda6d595c",
+        "a40fc1a23dc5a1582df72d1f8a020b9dc58eac23db8ebe3d1f44517b6a499f85",
+        "9e67a4a19e77b04514db82f93703671eb54dec3c936db346901c9b4ee53fee69"
       ],
       "testMethods": [
         "closeContract",
@@ -4119,20 +4123,24 @@
       ],
       "reason": "dropwizard 运行时测试以相同 CQRS 执行器顺序构造 DefaultCommandBus；JDK 8 使用 Arrays.asList，高两线使用 List.of。构造器仅迭代并注册，不修改输入集合；三线各 8 项定点契约测试通过。",
       "contractPath": "ddd4j-runtime/ddd4j-runtime-testkit/src/main/java/io/ddd4j/runtime/testkit/AbstractCqrsRuntimeContractTest.java",
-      "contractSha256": "25cc37a06506caf805b54bf22ff1d219fce14b33e68ddb078d58aa6695af5f84"
+      "contractSha256ByJdk": {
+        "8": "9233f2b5fd561b09b6acd327c1cfa65ceeb8e0d5ea46b45a7dbca2674040ce26",
+        "17": "4ee98785dc71b2632ffd1752cee8f7da23bfdb6931ce22ce94ee6608fc2f7ef3",
+        "21": "cd6dee5176ee0d881f8825499f679e9f70be1c4da006e7a4724cd32698ff56ae"
+      }
     },
     {
       "path": "ddd4j-runtime/ddd4j-runtime-micronaut/src/test/java/io/ddd4j/micronaut/cqrs/MicronautCqrsRuntimeContractTest.java",
       "productionPath": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/command/DefaultCommandBus.java",
       "sourceSha256": [
-        "76809274f12aee44fae7dc043cfa53ef142bc361ed9ce9b3d587edd07675fdaf",
-        "d8ab44a260dc330b62a10fb7dbebb13dd9ad643fab07cadec72fa13b5bd774a8",
-        "27885c15321a9c03fc28d408e807ddc520abbeebb2c5222e24b765cb1af8d290"
+        "86784363b3253dc9cfbbb8873d4e61643f1dabbe8d4185eea933899eb276ace2",
+        "f1146f705607fd229acf18909a7084fc21718c043d4e0ac1df1e15ada1fbb487",
+        "f1146f705607fd229acf18909a7084fc21718c043d4e0ac1df1e15ada1fbb487"
       ],
       "productionSha256": [
-        "bca120047c41357fc253a8f45f2d3506bbf53ebe1b4bad14b6c7b5fef2cc2a41",
-        "e9f4ef78ecb4787d534b00ba13878e6b383f61c591745acb1efe8d43d393bcce",
-        "b2e4ff9750654c491d7049c07ebe0ce7acb93fe681126226c736ad14cf661728"
+        "40f38f52b27740ca181e375b3178990cd106ff3fc88568eaedda9d1eda6d595c",
+        "a40fc1a23dc5a1582df72d1f8a020b9dc58eac23db8ebe3d1f44517b6a499f85",
+        "9e67a4a19e77b04514db82f93703671eb54dec3c936db346901c9b4ee53fee69"
       ],
       "testMethods": [
         "closeContract",
@@ -4147,7 +4155,11 @@
       ],
       "reason": "micronaut 运行时测试以相同 CQRS 执行器顺序构造 DefaultCommandBus；JDK 8 使用 Arrays.asList，高两线使用 List.of。构造器仅迭代并注册，不修改输入集合；三线各 8 项定点契约测试通过。",
       "contractPath": "ddd4j-runtime/ddd4j-runtime-testkit/src/main/java/io/ddd4j/runtime/testkit/AbstractCqrsRuntimeContractTest.java",
-      "contractSha256": "25cc37a06506caf805b54bf22ff1d219fce14b33e68ddb078d58aa6695af5f84"
+      "contractSha256ByJdk": {
+        "8": "9233f2b5fd561b09b6acd327c1cfa65ceeb8e0d5ea46b45a7dbca2674040ce26",
+        "17": "4ee98785dc71b2632ffd1752cee8f7da23bfdb6931ce22ce94ee6608fc2f7ef3",
+        "21": "cd6dee5176ee0d881f8825499f679e9f70be1c4da006e7a4724cd32698ff56ae"
+      }
     },
     {
       "path": "ddd4j-runtime/ddd4j-runtime-vertx/src/test/java/io/ddd4j/vertx/cqrs/VertxCqrsRuntimeContractTest.java",
@@ -4181,14 +4193,14 @@
       "path": "ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/cqrs/HelidonCqrsRuntimeContractTest.java",
       "productionPath": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/command/DefaultCommandBus.java",
       "sourceSha256": [
-        "47a36d86d0d2ce92b538b301f24e9f93b049501991da29f0172d5643b30d3a7a",
-        "2397ef048ad160e2c01cc84a4ae480c11583e4b539da75fe354cfad196ed27c8",
-        "ab9ec12d71ee47c191329f355872dc3ad0fd614c728cc5b22caa1660c1356e5a"
+        "d2c9e6ac4e6944172688d671f2485e5492c34b02ac7c10b8687edd0021fdbfa4",
+        "a05b1a55920c5c56d46d463b2faaad932a66eea73adbe098a653adeecfcdaa67",
+        "a05b1a55920c5c56d46d463b2faaad932a66eea73adbe098a653adeecfcdaa67"
       ],
       "productionSha256": [
-        "bca120047c41357fc253a8f45f2d3506bbf53ebe1b4bad14b6c7b5fef2cc2a41",
-        "e9f4ef78ecb4787d534b00ba13878e6b383f61c591745acb1efe8d43d393bcce",
-        "b2e4ff9750654c491d7049c07ebe0ce7acb93fe681126226c736ad14cf661728"
+        "40f38f52b27740ca181e375b3178990cd106ff3fc88568eaedda9d1eda6d595c",
+        "a40fc1a23dc5a1582df72d1f8a020b9dc58eac23db8ebe3d1f44517b6a499f85",
+        "9e67a4a19e77b04514db82f93703671eb54dec3c936db346901c9b4ee53fee69"
       ],
       "testMethods": [
         "closeContract",
@@ -4203,7 +4215,11 @@
       ],
       "reason": "helidon 运行时测试以相同 CQRS 执行器顺序构造 DefaultCommandBus；JDK 8 使用 Arrays.asList，高两线使用 List.of。构造器仅迭代并注册，不修改输入集合；三线各 8 项定点契约测试通过。",
       "contractPath": "ddd4j-runtime/ddd4j-runtime-testkit/src/main/java/io/ddd4j/runtime/testkit/AbstractCqrsRuntimeContractTest.java",
-      "contractSha256": "25cc37a06506caf805b54bf22ff1d219fce14b33e68ddb078d58aa6695af5f84"
+      "contractSha256ByJdk": {
+        "8": "9233f2b5fd561b09b6acd327c1cfa65ceeb8e0d5ea46b45a7dbca2674040ce26",
+        "17": "4ee98785dc71b2632ffd1752cee8f7da23bfdb6931ce22ce94ee6608fc2f7ef3",
+        "21": "cd6dee5176ee0d881f8825499f679e9f70be1c4da006e7a4724cd32698ff56ae"
+      }
     },
     {
       "path": "ddd4j-core/src/test/java/io/ddd4j/core/api/RTest.java",
@@ -4272,19 +4288,27 @@
       "reason": "视图名称必须唯一，同一事件可分发给多个独立视图，兼容查询保留首个注册结果。"
     },
     {
-      "path": "ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/ProjectionDispatcherTest.java",
-      "productionPath": "ddd4j-data/ddd4j-data-projection/src/main/java/io/ddd4j/data/projection/ProjectionDispatcher.java",
+      "path": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/handler/ProjectionDispatcherTest.java",
+      "productionPath": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/handler/ProjectionDispatcher.java",
       "sourceSha256": [
-        "2c49332728d5cd2f4cf9750fe9f5fc7af06c25ab5625dd0bd548d9b70fbd7641",
-        "6e37fff26597a484355232c2003c331c956198a7382a0589f7d07a9a37838395",
-        "f052c48f0a4e7a986d0ae9954143f87599cf9c814b3d14175be0ebceec189722"
+        "6c9bccaec18bb9afd58f9326290d8d6c98be13622376bd149abd983b6bae1cff",
+        "c84bb881bd55abf5f49b6b3785827f769f6aeea9dc52470feac04e1fffa587ce",
+        "c84bb881bd55abf5f49b6b3785827f769f6aeea9dc52470feac04e1fffa587ce"
       ],
       "productionSha256": [
-        "d45ed23c69236a13a786c5dd6a54e048bb4f4fb6cb9ac7f5284270c632a06f48",
-        "d45ed23c69236a13a786c5dd6a54e048bb4f4fb6cb9ac7f5284270c632a06f48",
-        "d45ed23c69236a13a786c5dd6a54e048bb4f4fb6cb9ac7f5284270c632a06f48"
+        "6d8b39a3e6ab9e7b6bca57ebb4a074d94eea58e959c57e56eb03efd545d19120",
+        "6d8b39a3e6ab9e7b6bca57ebb4a074d94eea58e959c57e56eb03efd545d19120",
+        "6d8b39a3e6ab9e7b6bca57ebb4a074d94eea58e959c57e56eb03efd545d19120"
       ],
       "testMethods": [
+        "invalidDirectHandlerIsRejectedBeforeReadHandleOrCheckpointActivity",
+        "changedRegisteredSubscriptionsFailBeforeReadHandleOrCheckpointAdvance",
+        "changedRegisteredNameFailsBeforeReadingAnotherCheckpoint",
+        "directlyAdaptedViewFreezesIdentityAndSubscriptionAtAdaptation",
+        "sourceAwareRunPreservesGapPositionAndHistory",
+        "failedViewDoesNotLoseOtherSubscribersAndCanResumeAtOwnPosition",
+        "legacyBareEventKeepsCountPositionAndReadOnlyStreamDoesNotDispatch",
+        "adapterPreservesHandlerMetadata",
         "chunkReaderReceivesImmutableEventTypeNames",
         "chunkByEventEmitsOnlyRequestedTypeAndCompletesWhenExhausted",
         "chunkByEventReturnsEmptyFluxForUnregisteredEventType",
@@ -4703,16 +4727,16 @@
       "reason": "三线真实 MySQL 仓储测试各 5 项通过；生产仓储的 JDK 语法差异已由 platformSyntaxMappings 锁定，测试只使用各线 Testcontainers MySQL 模块坐标与导入，测试和生产源码按三线 SHA-256 锁定。"
     },
     {
-      "path": "ddd4j-data/ddd4j-data-cqrs-javalin/src/test/java/io/ddd4j/data/cqrs/javalin/JavalinCommandBusIT.java",
-      "productionPath": "ddd4j-data/ddd4j-data-cqrs-javalin/src/main/java/io/ddd4j/data/cqrs/javalin/JavalinCommandBus.java",
+      "path": "ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/data/cqrs/javalin/JavalinCommandBusIT.java",
+      "productionPath": "ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/data/cqrs/javalin/JavalinCommandBus.java",
       "sourceSha256": [
-        "cf21b2f99cbf1d10f49fb8c6adc00903a7bbf0048397328bb0098a7e4446384f",
-        "37c8fb6cbaf7317a8f1c15cffa1535b4b464e29dd3d4e6cfc7f0bfaa91172c68",
-        "935757488a29e229ab5012cc4e068245aa09c9b9ca0c4f4382eecd76768a531f"
+        "149841998ec2ebf065464d016b849e4c64f3aefd47d2ebb6512c188cd07d413b",
+        "3259f5d7f62bdc103b47984231e0d5034cb84ecdffb5fd990c48fa4ff31cb46c",
+        "0ec181c1a939869b401d0d453f5509194b7f41c37d4a5a9c7aeaf11c48c5c967"
       ],
       "productionSha256": [
         "2ca5b0245e88568e3e757cbf1a3ba5c0e0906b174f5c7875bd1d6db000ac056c",
-        "6b0c334fa09f549ed26648ebceb5ab4d615b40ca652a93b46e41f28509447a75",
+        "f5c969611ec1376a8872fca9e6a15e1b5c61ac3f32efe584231034185b51b3f0",
         "5fbf23b797124450bebc3c92d4380a506c415ec4ef0746adca7cd1b9e1008870"
       ],
       "testMethods": [
@@ -4851,17 +4875,17 @@
       "reason": "三线 Dropwizard 投影调度器集成测试各 3 项通过；JDK 8 的 Dropwizard 2 与高两线的 Dropwizard 4 在 Application/Environment 包和集合工厂语法上适配，生产调度器已由逐线源码与测试指纹锁定。"
     },
     {
-      "path": "ddd4j-data/ddd4j-data-cqrs-dropwizard/src/test/java/io/ddd4j/data/cqrs/dropwizard/DropwizardCommandBusIT.java",
-      "productionPath": "ddd4j-data/ddd4j-data-cqrs-dropwizard/src/main/java/io/ddd4j/data/cqrs/dropwizard/DropwizardCommandBus.java",
+      "path": "ddd4j-runtime/ddd4j-runtime-dropwizard/src/test/java/io/ddd4j/dropwizard/command/DropwizardCommandBusIT.java",
+      "productionPath": "ddd4j-runtime/ddd4j-runtime-dropwizard/src/main/java/io/ddd4j/dropwizard/command/DropwizardCommandBus.java",
       "sourceSha256": [
-        "82b1a78682f5a5dbe716a9702b2ecb11a70aeaecc262892c3a566ee190b0a920",
-        "dfd5cbef0670ba64fe770c8c3b1c12ac25c9f885cc637bb432c5e08735dd8c12",
-        "dfd5cbef0670ba64fe770c8c3b1c12ac25c9f885cc637bb432c5e08735dd8c12"
+        "eed42d9ae51c63df2ed84608782ba6a658a02bb25a4153ff7df77b6809005432",
+        "11064fcf6da51987d0a175ee34c905f1cba97025e93d0d7011fbabde251817b2",
+        "66a3514ed9d73034be2f910221f2e04c3aa693e36462e9e2480ea21257c984e2"
       ],
       "productionSha256": [
-        "59b7860fb0b6620998133f1346fefb4d94cff2ebaf55d3cbdc8819d5736069c1",
-        "b640c01123f9d3ed21a7e3fc6706101b5e33dbe38ca4ff5e2e2501006f75bae8",
-        "60a154995e2c99dce5676defa9b517bf9f02c07a2bf2a73aae2bd4f01eff5fef"
+        "633a7e1367aa51343aca65a8da396f50a18e2b39e8eed9393e60cbcd878df8ce",
+        "dc15aa68b72c2865f240edc0c6df075b0f03970f581b6768220ab45cd7aec1d6",
+        "a3a49a5a5ee60964cd07386e1c5d5244540b92428c041309517cb45882527e69"
       ],
       "testMethods": [
         "execute_已注册命令_应路由到真实Handler并返回成功",
