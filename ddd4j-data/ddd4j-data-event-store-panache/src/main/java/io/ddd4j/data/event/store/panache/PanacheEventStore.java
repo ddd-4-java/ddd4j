@@ -98,6 +98,9 @@ public class PanacheEventStore implements EventStore {
 
         retry.execute("append(" + aggregateType + ":" + aggregateId.asString() + ")", () -> {
             EntityTransaction transaction = entityManager.getTransaction();
+            if (transaction.isActive()) {
+                throw new IllegalStateException("PanacheEventStore append requires an inactive transaction");
+            }
             try {
                 transaction.begin();
                 entityManager.clear();

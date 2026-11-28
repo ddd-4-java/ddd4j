@@ -6,6 +6,7 @@ package io.ddd4j.data.event.store.esdb;
 
 import com.eventstore.dbclient.*;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.constant.EventStoreConstants;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
@@ -24,6 +25,9 @@ import java.util.concurrent.CompletionException;
  * EventStoreDB 的强类型 EventStore adapter。
  */
 public class EsdbEventStore implements EventStore {
+
+    /** 复用已配置的映射器解析每条 ESDB 事件的元数据。 */
+    private static final JsonMapper METADATA_MAPPER = JsonMapper.builder().build();
 
     /** \u8bfb\u5199 EventStoreDB \u4e8b\u4ef6\u6d41\u7684\u539f\u751f\u5ba2\u6237\u7aef\u3002 */
     private final EventStoreDBClient client;
@@ -282,9 +286,9 @@ public class EsdbEventStore implements EventStore {
         RecordedEvent recorded = resolved.getEvent();
         Map<String, Object> metadata;
         try {
-            metadata = new com.fasterxml.jackson.databind.ObjectMapper().readValue(
+            metadata = METADATA_MAPPER.readValue(
                     new String(recorded.getUserMetadata(), StandardCharsets.UTF_8),
-                    new com.fasterxml.jackson.core.type.TypeReference<java.util.Map<String, Object>>() {
+                    new TypeReference<Map<String, Object>>() {
                     });
         } catch (Exception e) {
             throw new IllegalStateException("Invalid ESDB event metadata", e);
