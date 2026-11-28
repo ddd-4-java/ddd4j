@@ -33,9 +33,9 @@
     {
       "path": ".github/workflows/deploy.yml",
       "sha256ByJdk": {
-        "8": "f77ae3916c87dbc02ce8e5ed086cff8316d8d58b8babc9762b26e582d329888c",
-        "17": "389254cc4223a8be844ce3999072c3bfb6022f81da34dcb6af541a50474b2e60",
-        "21": "ee81eae2547bc7c8d66ea08ba34b9658dd3bdb14d6bf0d2d8d00715f967b688f"
+        "8": "7ec5663cd7536987fdc919c71137b5155876190a9b4438df7f57897c1e0be712",
+        "17": "9b9ee20692949e6ed161ada4e834af8550a4c8bb3d3cfdfc56bd1a975af07fae",
+        "21": "94bc7e9ac6c64eca607b662b104fda50432123c229649cc64bda9af990568f2e"
       },
       "evidence": "逐线 JDK、Easy4J 快照及发布基线已核对；文件 SHA-256 锁定，workflow lint 和实际 CI 独立验收"
     },
@@ -1823,9 +1823,9 @@
     {
       "path": "ddd4j-runtime/ddd4j-runtime-vertx/src/main/java/io/ddd4j/vertx/Ddd4jVertxRuntime.java",
       "sourceSha256": [
-        "1982e3723aba15ec1da9a2ce6dc4f9dec8feda1791d784bce0dbcca7b6793520",
-        "f7d256ff9243a8156945651db91bb24f8be5534e142ab5657ae8285bb2fedb54",
-        "f7d256ff9243a8156945651db91bb24f8be5534e142ab5657ae8285bb2fedb54"
+        "825d51656235d8ceaef06c724f17b8faeb20e1a423548038d9b0cc8595dbc829",
+        "cd88900c8b365711dbf3d0ff5bd7ead064243c03f8c01f924db5a7e7f13497d4",
+        "cd88900c8b365711dbf3d0ff5bd7ead064243c03f8c01f924db5a7e7f13497d4"
       ],
       "evidence": "ddd4j-runtime/ddd4j-runtime-vertx/src/test/java/io/ddd4j/vertx/Ddd4jVertxRuntimeTest.java",
       "testSha256": "2bd458a7ee5952611bd66e6b8e43c798106c5af9212cb0a8e00e0d567494de29",
@@ -4173,14 +4173,14 @@
       "path": "ddd4j-runtime/ddd4j-runtime-vertx/src/test/java/io/ddd4j/vertx/cqrs/VertxCqrsRuntimeContractTest.java",
       "productionPath": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/command/DefaultCommandBus.java",
       "sourceSha256": [
-        "b96e0d6ad55fdc2417b0d90cd583a87c8191f88f5b80f0f4455c1c63b6fe1011",
-        "86654564f5cb334ae2ec2a0503d8a948e3482d2b93887e1278d92e27c886c19e",
-        "9200d86dcc24edf29ff4120c45bf0c362525f9a963988bde15346e3806cb4083"
+        "c5d2810c7e825d4bde9bc095d5c3a5d2fbc9020e09079a7e3ee041c23373358d",
+        "c5d2810c7e825d4bde9bc095d5c3a5d2fbc9020e09079a7e3ee041c23373358d",
+        "c5d2810c7e825d4bde9bc095d5c3a5d2fbc9020e09079a7e3ee041c23373358d"
       ],
       "productionSha256": [
-        "bca120047c41357fc253a8f45f2d3506bbf53ebe1b4bad14b6c7b5fef2cc2a41",
-        "e9f4ef78ecb4787d534b00ba13878e6b383f61c591745acb1efe8d43d393bcce",
-        "b2e4ff9750654c491d7049c07ebe0ce7acb93fe681126226c736ad14cf661728"
+        "40f38f52b27740ca181e375b3178990cd106ff3fc88568eaedda9d1eda6d595c",
+        "a40fc1a23dc5a1582df72d1f8a020b9dc58eac23db8ebe3d1f44517b6a499f85",
+        "9e67a4a19e77b04514db82f93703671eb54dec3c936db346901c9b4ee53fee69"
       ],
       "testMethods": [
         "closeContract",
@@ -4195,7 +4195,11 @@
       ],
       "reason": "vertx 运行时测试以相同 CQRS 执行器顺序构造 DefaultCommandBus；JDK 8 使用 Arrays.asList，高两线使用 List.of。构造器仅迭代并注册，不修改输入集合；三线各 8 项定点契约测试通过。",
       "contractPath": "ddd4j-runtime/ddd4j-runtime-testkit/src/main/java/io/ddd4j/runtime/testkit/AbstractCqrsRuntimeContractTest.java",
-      "contractSha256": "25cc37a06506caf805b54bf22ff1d219fce14b33e68ddb078d58aa6695af5f84"
+      "contractSha256ByJdk": {
+        "8": "9233f2b5fd561b09b6acd327c1cfa65ceeb8e0d5ea46b45a7dbca2674040ce26",
+        "17": "4ee98785dc71b2632ffd1752cee8f7da23bfdb6931ce22ce94ee6608fc2f7ef3",
+        "21": "cd6dee5176ee0d881f8825499f679e9f70be1c4da006e7a4724cd32698ff56ae"
+      }
     },
     {
       "path": "ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/cqrs/HelidonCqrsRuntimeContractTest.java",

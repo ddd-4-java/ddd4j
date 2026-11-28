@@ -115,7 +115,7 @@ jobs:
           fi
 
       - name: Install reactor artifacts
-        run: ./mvnw -U -Denforcer.skip=true -B -DskipTests install
+        run: ./mvnw -U -Dmaven.resolver.transport=wagon -Denforcer.skip=true -B -DskipTests install
 
       - name: Deploy to Aliyun
         env:
@@ -126,7 +126,7 @@ jobs:
         run: |
           DRY_RUN_ARG=""
           if [[ "${{ inputs.dry_run }}" == "true" ]]; then
-            DRY_RUN_ARG="-DdryRun=true"
+            DRY_RUN_ARG="-Dmaven.deploy.skip=true"
             echo "::notice::Dry run mode — no artifacts will be deployed"
           fi
           REPO="${{ steps.repo.outputs.repo }}"
@@ -146,7 +146,7 @@ jobs:
           fi
           # 由 Maven Deploy 按标准时间戳 SNAPSHOT 协议维护制品与 metadata。
           # 禁止手工覆盖 metadata；Deploy 3.x 不支持旧版 uniqueVersion 开关。
-          ./mvnw -U -Denforcer.skip=true -B $DRY_RUN_ARG -DskipTests \
+          ./mvnw -U -Dmaven.resolver.transport=wagon -Denforcer.skip=true -B $DRY_RUN_ARG -DskipTests \
             deploy
 
       - name: Generate deploy report
