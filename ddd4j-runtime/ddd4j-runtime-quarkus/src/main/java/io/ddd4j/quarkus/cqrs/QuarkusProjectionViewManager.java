@@ -59,13 +59,25 @@ public class QuarkusProjectionViewManager implements ViewManager {
     @SuppressWarnings({"unchecked", "rawtypes"})
     private synchronized DefaultViewManager<Object> delegate() {
         if (Objects.isNull(delegate)) {
-            List<ProjectionView<?>> snapshot = new ArrayList<>();
-            for (ProjectionView<?> view : views) {
-                snapshot.add(view);
-            }
-            delegate = new DefaultViewManager<>(scheduler, (ProjectionRunner<Object>) runner, (List) snapshot);
+            delegate = assemble(scheduler, (ProjectionRunner<Object>) runner, (Iterable) views);
         }
         return delegate;
+    }
+
+    /**
+     * 发现一次视图并建立核心管理器，在任何调度任务启动前校验视图名称。
+     *
+     * @param scheduler 平台调度器
+     * @param runner 执行视图并更新检查点的运行器
+     * @param views 当前容器的投影视图
+     * @param <E> 事件类型
+     * @return 完成校验、尚未启动的管理器
+     */
+    static <E> DefaultViewManager<E> assemble(ViewScheduler scheduler, ProjectionRunner<E> runner,
+                                               Iterable<? extends ProjectionView<E>> views) {
+        List<ProjectionView<E>> snapshot = new ArrayList<>();
+        views.forEach(snapshot::add);
+        return new DefaultViewManager<>(scheduler, runner, snapshot);
     }
 
     /**

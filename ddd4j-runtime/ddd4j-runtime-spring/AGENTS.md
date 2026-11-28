@@ -8,6 +8,10 @@ Spring Bean 发现、命令事务与投影调度。
 
 修改 `SpringCommandBus` 时，核对公开入口 `afterSingletonsInstantiated`、`execute` 的调用方。
 
+实现入口见 [SpringCommandBus](src/main/java/io/ddd4j/spring/command/SpringCommandBus.java)、[SpringProjectionScheduler](src/main/java/io/ddd4j/spring/projection/SpringProjectionScheduler.java)。
+
+命令总线统一为 `io.ddd4j.spring.command.SpringCommandBus`。显式启用使用 `@Import(SpringCommandConfig.class)`，传入 CommandRegistry 的应用通过同一类型的双参数构造器装配。
+
 ## 回归
 
 - [SpringCommandBusTest](src/test/java/io/ddd4j/spring/command/SpringCommandBusTest.java) 中可从 `shouldRegisterExecutorsOnContextRefresh`、`shouldRouteCommandToCorrectExecutor` 定位断言。

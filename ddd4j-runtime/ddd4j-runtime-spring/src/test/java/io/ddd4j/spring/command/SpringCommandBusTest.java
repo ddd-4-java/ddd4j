@@ -14,9 +14,10 @@
  */
 package io.ddd4j.spring.command;
 
+import io.ddd4j.core.api.R;
+import io.ddd4j.core.cqrs.command.CommandRegistry;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.api.R;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -153,8 +154,8 @@ class SpringCommandBusTest {
      * 验证<code>isolated.getBeansOfType(io.ddd4j.core.cqrs.command.CommandBus.class).size()</code> 等于 <code>1</code>。
      */
     @Test
-    void explicitEntryReusesLegacyOrCustomBusRegardlessOfRegistrationOrder() {
-        for (Class<?> existing : new Class<?>[]{LegacyConfig.class, CustomConfig.class}) {
+    void explicitEntryReusesRegistryOrCustomBusRegardlessOfRegistrationOrder() {
+        for (Class<?> existing : new Class<?>[]{RegistryConfig.class, CustomConfig.class}) {
             for (boolean reverse : new boolean[]{false, true}) {
                 try (AnnotationConfigApplicationContext isolated = new AnnotationConfigApplicationContext()) {
                     isolated.register(reverse ? existing : ExplicitConfig.class,
@@ -173,23 +174,33 @@ class SpringCommandBusTest {
     }
 
     /**
-     * 验证<code>isolated.getBeansOfType(io.ddd4j.core.cqrs.command.CommandBus.class).size()</code> 等于 <code>1</code>，<code>isolated.getBean("springCommandBus").getClass()</code> 等于 <code>type</code>。
+     * 组件扫描与显式导入同时启用时，容器只发布一个标准命令总线。
      */
     @Test
-    void eachHistoricalComponentScanWorksAlongsideExplicitEntry() {
-        for (Class<?> type : new Class<?>[]{SpringCommandBus.class, io.ddd4j.data.cqrs.spring.SpringCommandBus.class}) {
-            try (AnnotationConfigApplicationContext isolated = new AnnotationConfigApplicationContext()) {
-                isolated.registerBean(io.ddd4j.core.cqrs.command.CommandRegistry.class);
-                isolated.registerBean(TestCommandExecutor.class);
-                isolated.register(ExplicitConfig.class);
-                org.springframework.context.annotation.ClassPathBeanDefinitionScanner scanner =
-                        new org.springframework.context.annotation.ClassPathBeanDefinitionScanner(isolated, false);
-                scanner.addIncludeFilter(new org.springframework.core.type.filter.AssignableTypeFilter(type));
-                scanner.scan(type.getPackage().getName());
-                isolated.refresh();
-                assertEquals(1, isolated.getBeansOfType(io.ddd4j.core.cqrs.command.CommandBus.class).size());
-                assertEquals(type, isolated.getBean("springCommandBus").getClass());
-            }
+    void componentScanAndExplicitEntryShareOneBus() {
+        try (AnnotationConfigApplicationContext isolated = new AnnotationConfigApplicationContext()) {
+            isolated.registerBean(TestCommandExecutor.class);
+            isolated.register(ExplicitConfig.class);
+            org.springframework.context.annotation.ClassPathBeanDefinitionScanner scanner =
+                    new org.springframework.context.annotation.ClassPathBeanDefinitionScanner(isolated, false);
+            scanner.addIncludeFilter(new org.springframework.core.type.filter.AssignableTypeFilter(SpringCommandBus.class));
+            scanner.scan(SpringCommandBus.class.getPackage().getName());
+            isolated.refresh();
+            assertEquals(1, isolated.getBeansOfType(io.ddd4j.core.cqrs.command.CommandBus.class).size());
+            assertEquals(SpringCommandBus.class, isolated.getBean("springCommandBus").getClass());
+        }
+    }
+
+    /** 显式注册表中的非 Bean 执行器在容器回调后仍可接收命令。 */
+    @Test
+    void registryOnlyExecutorSurvivesContainerRefresh() {
+        try (AnnotationConfigApplicationContext isolated = new AnnotationConfigApplicationContext()) {
+            CommandRegistry registry = new CommandRegistry();
+            registry.register(new TestCommandExecutor());
+            isolated.registerBean(SpringCommandBus.class, () -> new SpringCommandBus(isolated, registry));
+            isolated.refresh();
+            assertEquals("executed: registry", isolated.getBean(SpringCommandBus.class)
+                    .execute(new TestCommand("registry")).getData());
         }
     }
 
@@ -230,7 +241,7 @@ class SpringCommandBusTest {
      * 向测试容器注册 <code>executor()</code>、<code>springCommandBus()</code> 等测试入口或组件。
      */
     @Configuration(proxyBeanMethods = false)
-    static class LegacyConfig {
+    static class RegistryConfig {
         /**
          * 创建 <code>new TestCommandExecutor</code> 供当前测试路径调用。
          *
@@ -242,15 +253,15 @@ class SpringCommandBusTest {
         }
 
         /**
-         * 创建 <code>new io.ddd4j.data.cqrs.spring.SpringCommandBus</code> 供当前测试路径调用。
+         * 创建 <code>new SpringCommandBus</code> 供当前测试路径调用。
          *
          * @param context 当前框架保存请求或运行时状态的上下文
-         * @return 当前测试使用的结果，取自 <code>new io.ddd4j.data.cqrs.spring.SpringCommandBus(context, new io.ddd4j.core.cqrs.command.CommandRegistry())</code>
+         * @return 当前测试使用的结果，取自 <code>new SpringCommandBus(context, new CommandRegistry())</code>
          */
         @Bean
-        io.ddd4j.data.cqrs.spring.SpringCommandBus springCommandBus(org.springframework.context.ApplicationContext context) {
-            return new io.ddd4j.data.cqrs.spring.SpringCommandBus(context,
-                    new io.ddd4j.core.cqrs.command.CommandRegistry());
+        SpringCommandBus springCommandBus(org.springframework.context.ApplicationContext context) {
+            return new SpringCommandBus(context,
+                    new CommandRegistry());
         }
     }
 
