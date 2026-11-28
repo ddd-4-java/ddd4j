@@ -77,14 +77,17 @@ public class SpringJpaProjectionPositionRepository
     /**
      * 在持久化存储中写入指定事件流的投影检查点。
      *
-     * <p>JPA 实现调用 <code>jpaRepository.save((SpringJpaProjectionPosition)position)</code>。</p>
+     * <p>将接口位置转换为 JPA 实体，同时支持首次推进时创建的默认位置值对象。</p>
      *
      * @param position 投影位置
-     * @return 实际返回<code>jpaRepository.save((SpringJpaProjectionPosition)position)</code>
+     * @return 持久化后的投影位置实体
      */
     @Override
     public ProjectionPosition save(ProjectionPosition position) {
-        return jpaRepository.save((SpringJpaProjectionPosition) position);
+        SpringJpaProjectionPosition entity = position instanceof SpringJpaProjectionPosition
+                ? (SpringJpaProjectionPosition) position
+                : new SpringJpaProjectionPosition(position.getStreamId(), position.getNextEventNumber());
+        return jpaRepository.save(entity);
     }
 
     /**

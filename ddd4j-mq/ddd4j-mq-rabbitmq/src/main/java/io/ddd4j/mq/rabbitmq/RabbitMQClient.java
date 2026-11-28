@@ -308,7 +308,7 @@ public class RabbitMQClient implements MQClient {
      *
      * @param listener     监听器定义
      * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
-     * @return 此实现返回<code>true</code>
+     * @return 原生消费者完成订阅注册时返回 true
      * @throws Exception 当前框架、存储或底层客户端无法完成此操作时
      */
     @Override
@@ -413,19 +413,9 @@ public class RabbitMQClient implements MQClient {
                 }
             }
         };
-        ExecutorService executor = Executors.newSingleThreadExecutor(r -> {
-            Thread t = new Thread(r, "ddd4j-rabbit-" + listener.getMethod().getName());
-            t.setDaemon(true);
-            return t;
-        });
-        lifecycle.register("rabbit-consumer-executor", executor::shutdownNow);
-        executor.submit(() -> {
-            try {
-                channel.basicConsume(queue, mqProperties.isAutoAck(), deliverCallback, consumerTag -> {
-                });
-            } catch (Exception e) {
-                log.error("Consume MQ [{}] basicConsume failed", listener.getRouteExpression(this.defaultConcat()), e);
-            }
+        // 等待订阅注册结果，让失败进入 MQClient 的必选回滚或可选降级流程。
+        // 消息回调仍由 RabbitMQ 客户端分发线程执行。
+        channel.basicConsume(queue, mqProperties.isAutoAck(), deliverCallback, consumerTag -> {
         });
         return true;
     }

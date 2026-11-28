@@ -22,6 +22,9 @@ import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.model.AggregateRoot;
 
 import java.io.Serializable;
+import java.lang.ref.Reference;
+import java.lang.ref.ReferenceQueue;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +42,7 @@ import java.util.function.Function;
  * <h2>语义</h2>
  * <ul>
  *   <li><b>append 追加</b>：{@code add} 以期望版本 0 追加未提交事件；{@code update} 以
- *       本实例跟踪的流版本为期望版本追加——仓储不改写、不删除既有事件</li>
+ *       当前聚合实例的已加载或已追加版本为期望版本追加——仓储不改写、不删除既有事件</li>
  *   <li><b>replay 重放</b>：{@code read} 从事件存储读取事件并按版本升序
  *       {@code loadFromHistory} 重建聚合；{@code read(id, version)} 重放至指定历史版本（闭合区间）</li>
  *   <li><b>乐观并发冲突</b>：期望版本与流实际版本不一致时抛
@@ -47,8 +50,9 @@ import java.util.function.Function;
  * </ul>
  *
  * <h3>版本跟踪边界</h3>
- * <p>版本位在本实例内维护（{@code ConcurrentMap}），跨实例／跨节点的并发推进由
- * {@link EventStore} 乐观锁兜底拒绝——两个并发更新者各自持有过期版本时，后提交者必然冲突。
+ * <p>版本按聚合对象身份分别维护，同 ID 的不同副本不会相互刷新版本；弱引用避免仓储延长聚合生命周期。
+ * {@link EventStore} 负责拒绝过期版本。未经本仓储加载或保存的实例仍按当前流版本追加，
+ * 保留既有调用方式，但该路径无法校验外部快照的加载版本。
  *
  * @param <M>  聚合根类型
  * @param <ID> 聚合根标识类型
@@ -75,9 +79,13 @@ public class DefaultEventSourcingRepository<M extends AggregateRoot<ID>, ID exte
      */
     private final EventStore eventStore;
     /**
-     * 跟踪仓储已经读取或追加的聚合事件版本。
+     * 按对象身份跟踪仓储已经读取或追加的聚合事件版本。
      */
-    private final ConcurrentMap<ID, Long> trackedVersions = new ConcurrentHashMap<>();
+    private final ConcurrentMap<AggregateReference<M>, Long> trackedVersions = new ConcurrentHashMap<>();
+    /**
+     * 已回收聚合的引用，用于移除其版本记录。
+     */
+    private final ReferenceQueue<M> collectedAggregates = new ReferenceQueue<>();
 
     /**
      * 创建事件溯源仓储。
@@ -108,8 +116,9 @@ public class DefaultEventSourcingRepository<M extends AggregateRoot<ID>, ID exte
         if (events.isEmpty()) {
             throw new NoSuchElementException("Aggregate not found: " + aggregateType + "#" + aggregateId);
         }
-        trackedVersions.put(aggregateId, events.get(events.size() - 1).version());
-        return replay(events);
+        M aggregate = replay(events);
+        trackVersion(aggregate, events.get(events.size() - 1).version());
+        return aggregate;
     }
 
     /**
@@ -127,8 +136,9 @@ public class DefaultEventSourcingRepository<M extends AggregateRoot<ID>, ID exte
             throw new NoSuchElementException(
                     "Aggregate not found at version " + version + ": " + aggregateType + "#" + aggregateId);
         }
-        trackedVersions.put(aggregateId, events.get(events.size() - 1).version());
-        return replay(events);
+        M aggregate = replay(events);
+        trackVersion(aggregate, events.get(events.size() - 1).version());
+        return aggregate;
     }
 
     /**
@@ -143,11 +153,11 @@ public class DefaultEventSourcingRepository<M extends AggregateRoot<ID>, ID exte
         List<DomainEvent<?>> pending = new ArrayList<>(aggregate.domainEvents());
         eventStore.append(aggregateType, resolve(aggregateId), pending, 0L);
         aggregate.clearDomainEvents();
-        trackedVersions.put(aggregateId, (long) pending.size());
+        trackVersion(aggregate, pending.size());
     }
 
     /**
-     * 更新聚合：以本实例跟踪的流版本为期望版本追加未提交事件（append-only）。
+     * 更新聚合：以当前聚合实例的已加载或已追加版本追加未提交事件（append-only）。
      *
      * @param aggregate 携带未提交事件的聚合根
      * @throws io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException 期望版本与事件流实际版本不一致（并发更新者已推进流版本）
@@ -156,11 +166,63 @@ public class DefaultEventSourcingRepository<M extends AggregateRoot<ID>, ID exte
     public void update(M aggregate) {
         Objects.requireNonNull(aggregate, "aggregate must not be null");
         ID aggregateId = requireId(aggregate);
-        long expectedVersion = trackedVersions.getOrDefault(aggregateId, currentStreamVersion(aggregateId));
+        discardCollectedAggregates();
+        Long trackedVersion = trackedVersions.get(new AggregateReference<>(aggregate, null));
+        long expectedVersion = Objects.nonNull(trackedVersion) ? trackedVersion : currentStreamVersion(aggregateId);
         List<DomainEvent<?>> pending = new ArrayList<>(aggregate.domainEvents());
         eventStore.append(aggregateType, resolve(aggregateId), pending, expectedVersion);
         aggregate.clearDomainEvents();
-        trackedVersions.put(aggregateId, expectedVersion + pending.size());
+        trackVersion(aggregate, expectedVersion + pending.size());
+    }
+
+    /**
+     * 记录当前聚合实例的持久化版本，其他同 ID 实例保持自己的版本。
+     *
+     * @param aggregate 当前加载或保存的聚合
+     * @param version 已成功读取或追加的版本
+     */
+    private void trackVersion(M aggregate, long version) {
+        discardCollectedAggregates();
+        trackedVersions.put(new AggregateReference<>(aggregate, collectedAggregates), version);
+    }
+
+    /**
+     * 清理不再被业务持有的聚合版本，不影响仍存活的旧快照。
+     */
+    private void discardCollectedAggregates() {
+        Reference<? extends M> reference;
+        while (Objects.nonNull(reference = collectedAggregates.poll())) {
+            trackedVersions.remove(reference);
+        }
+    }
+
+    /**
+     * 聚合版本索引使用的弱引用键；领域 equals/hashCode 不能合并不同加载实例。
+     *
+     * @param <T> 聚合类型
+     */
+    private static final class AggregateReference<T> extends WeakReference<T> {
+        private final int identityHashCode;
+
+        private AggregateReference(T aggregate, ReferenceQueue<T> queue) {
+            super(aggregate, queue);
+            identityHashCode = System.identityHashCode(aggregate);
+        }
+
+        @Override
+        public int hashCode() {
+            return identityHashCode;
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (this == other) {
+                return true;
+            }
+            T aggregate = get();
+            return Objects.nonNull(aggregate) && other instanceof AggregateReference<?>
+                    && aggregate == ((AggregateReference<?>) other).get();
+        }
     }
 
     /**

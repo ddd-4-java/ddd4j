@@ -162,6 +162,83 @@ class DefaultEventSourcingRepositoryMustTest {
     }
 
     /**
+     * 单例仓储加载的同 ID 聚合副本必须分别保留读取版本，冲突不能清除待写事件。
+     */
+    @Test
+    void sameRepositoryMustRejectStaleAggregateWithoutPartialWrites() {
+        repository.add(newOrderWithTwoEvents("order-1"));
+        TestOrder stale = repository.read("order-1");
+        TestOrder current = repository.read("order-1");
+        assertThat(stale).isEqualTo(current).isNotSameAs(current);
+        current.rename("current");
+        repository.update(current);
+
+        stale.rename("stale");
+        stale.archive();
+        assertThatThrownBy(() -> repository.update(stale))
+                .isInstanceOf(AggregateVersionConflictException.class)
+                .satisfies(error -> {
+                    AggregateVersionConflictException conflict = (AggregateVersionConflictException) error;
+                    assertThat(conflict.expectedVersion()).isEqualTo(2L);
+                    assertThat(conflict.actualVersion()).isEqualTo(3L);
+                });
+        assertThat(stale.domainEvents()).hasSize(2);
+        assertThat(repository.read("order-1").status()).isEqualTo("current");
+        assertThat(eventStore.read(AGGREGATE_TYPE, new TestOrderId("order-1")))
+                .extracting(StoredEvent::version).containsExactly(1L, 2L, 3L);
+    }
+
+    /**
+     * 查询历史副本不能降低已经加载的最新聚合版本。
+     */
+    @Test
+    void historicalReadMustNotInvalidateCurrentAggregate() {
+        repository.add(newOrderWithTwoEvents("order-1"));
+        TestOrder current = repository.read("order-1");
+        repository.read("order-1", 1);
+
+        current.archive();
+        repository.update(current);
+
+        assertThat(repository.read("order-1").status()).isEqualTo("archived");
+    }
+
+    /**
+     * 读取最新版本不能把历史副本提升为可写的最新版本。
+     */
+    @Test
+    void latestReadMustNotRefreshHistoricalAggregateVersion() {
+        repository.add(newOrderWithTwoEvents("order-1"));
+        TestOrder historical = repository.read("order-1", 1);
+        repository.read("order-1");
+        historical.archive();
+
+        assertThatThrownBy(() -> repository.update(historical))
+                .isInstanceOf(AggregateVersionConflictException.class);
+        assertThat(historical.domainEvents()).hasSize(1);
+        assertThat(eventStore.read(AGGREGATE_TYPE, new TestOrderId("order-1")))
+                .extracting(StoredEvent::version).containsExactly(1L, 2L);
+    }
+
+    /**
+     * 新建后连续保存同一实例，版本应随每次成功追加推进。
+     */
+    @Test
+    void successfulAppendsMustAdvanceTheSameAggregateVersion() {
+        TestOrder order = newOrderWithTwoEvents("order-1");
+        repository.add(order);
+        order.rename("updated");
+        repository.update(order);
+        order.archive();
+        repository.update(order);
+
+        assertThat(order.hasDomainEvents()).isFalse();
+        assertThat(repository.read("order-1").status()).isEqualTo("archived");
+        assertThat(eventStore.read(AGGREGATE_TYPE, new TestOrderId("order-1")))
+                .extracting(StoredEvent::version).containsExactly(1L, 2L, 3L, 4L);
+    }
+
+    /**
      * 验证<code>failingRepository.add(order)</code> 抛出 <code>IllegalStateException.class</code>，<code>order.domainEvents()</code> 的大小为 <code>1</code>。
      */
     @Test
@@ -310,6 +387,19 @@ class DefaultEventSourcingRepositoryMustTest {
         @Override
         public String id() {
             return id;
+        }
+
+        /**
+         * 按领域标识相等，验证仓储不会把不同加载实例的版本合并。
+         */
+        @Override
+        public boolean equals(Object other) {
+            return this == other || (other instanceof TestOrder && Objects.equals(id, ((TestOrder) other).id));
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(id);
         }
 
         /**
