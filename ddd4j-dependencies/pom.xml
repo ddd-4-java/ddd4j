@@ -6857,6 +6857,11 @@
                 <version>${truelicense.version}</version>
             </dependency>
             <dependency>
+                <groupId>global.namespace.truelicense</groupId>
+                <artifactId>truelicense-v4</artifactId>
+                <version>${truelicense.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>trogdor</artifactId>
                 <version>${kafka.version}</version>
