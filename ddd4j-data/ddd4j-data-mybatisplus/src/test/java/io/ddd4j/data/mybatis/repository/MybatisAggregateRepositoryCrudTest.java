@@ -32,6 +32,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -66,6 +67,25 @@ class MybatisAggregateRepositoryCrudTest {
     }
 
     // =================== findById ===================
+
+    /** 单个聚合交给扩展点后可补充字段，同时禁止替换、添加和删除列表元素。 */
+    @Test
+    void singleModelFillAllowsFieldChangesButRejectsListChanges() {
+        Order order = new Order("1", "DRAFT", null);
+        TestRepository fillingRepository = new TestRepository(mapper) {
+            @Override
+            public void fill(Query<Order> query, List<Order> models) {
+                assertThat(models).containsExactly(order);
+                assertThatThrownBy(() -> models.set(0, order)).isInstanceOf(UnsupportedOperationException.class);
+                assertThatThrownBy(() -> models.add(order)).isInstanceOf(UnsupportedOperationException.class);
+                assertThatThrownBy(() -> models.remove(0)).isInstanceOf(UnsupportedOperationException.class);
+                models.get(0).setStatus("PAID");
+            }
+        };
+
+        fillingRepository.fill(new OrderQuery(), order);
+        assertThat(order.getStatus()).isEqualTo("PAID");
+    }
 
     /** \u9a8c\u8bc1<code>result</code>\u5b58\u5728\u503c\uff0c<code>result.get().id()</code> \u7b49\u4e8e <code>"1"</code>\uff0c<code>result.get().getStatus()</code> \u7b49\u4e8e <code>"PAID"</code>\u3002 */
     @Test
@@ -294,7 +314,7 @@ class MybatisAggregateRepositoryCrudTest {
     // =================== 辅助类 ===================
 
     /** \u4f9b\u6d4b\u8bd5\u9a8c\u8bc1\u6cdb\u578b\u89e3\u6790\u548c\u4ed3\u50a8\u64cd\u4f5c\u7684\u5177\u4f53\u4ed3\u50a8\u5b9e\u73b0\u3002 */
-    static final class TestRepository
+    static class TestRepository
             extends MybatisAggregateRepository<OrderMapper, Order, OrderPO, OrderQuery, String> {
 
         /**

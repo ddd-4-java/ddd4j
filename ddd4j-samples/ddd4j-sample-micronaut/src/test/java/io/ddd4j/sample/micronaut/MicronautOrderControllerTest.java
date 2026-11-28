@@ -75,14 +75,21 @@ class MicronautOrderControllerTest {
             assertThat(goods.statusCode()).withFailMessage(goods.body()).isEqualTo(201);
             HttpResponse<java.lang.String> order = request(http, base, "POST", "/api/orders/T001", token, "{\"shopId\":7,\"items\":[{\"skuCode\":\"S1\",\"quantity\":2}]}\n", tenant);
             assertThat(order.statusCode()).withFailMessage(order.body()).isEqualTo(201);
+            assertThat(objectMapper.readTree(order.body()).path("grossAmountCent").asLong()).isEqualTo(2500);
+            assertThat(request(http, base, "POST", "/api/orders/T001/payment", token,
+                    "{\"paidAmountCent\":2500}", tenant).statusCode()).isEqualTo(400);
             HttpResponse<java.lang.String> paid = request(http, base, "POST", "/api/orders/T001/payment", token,
-                    "{\"paidAmountCent\":2500}", tenant);
+                    "{\"paidAmountCent\":2500}", tenant, "checkout-confirmation");
             assertThat(paid.statusCode()).withFailMessage(paid.body()).isEqualTo(200);
             assertThat(objectMapper.readTree(paid.body()).path("orderState").asText()).isEqualTo("CONFIRMED");
         }
         try (EmbeddedServer server = start("OPTIONAL")) {
             String base = "http://127.0.0.1:" + server.getPort();
             HttpResponse<java.lang.String> found = request(http, base, "GET", "/api/orders/T001", null, null, tenant);
+            HttpResponse<String> direct = request(http, base, "POST", "/api/orders/T002", null,
+                    "{\"shopId\":7,\"items\":[{\"skuCode\":\"S1\",\"quantity\":1}]}", tenant);
+            assertThat(direct.statusCode()).withFailMessage(direct.body()).isEqualTo(201);
+            assertThat(objectMapper.readTree(direct.body()).path("grossAmountCent").asLong()).isEqualTo(1250);
             assertThat(found.statusCode()).withFailMessage(found.body()).isEqualTo(200);
             assertThat(objectMapper.readTree(found.body()).path("paidAmountCent").asLong()).isEqualTo(2500);
             assertThat(request(http, base, "POST", "/api/orders", null, "{}", tenant).statusCode()).isEqualTo(404);
@@ -121,7 +128,28 @@ class MicronautOrderControllerTest {
      */
     private HttpResponse<String> request(HttpClient client, String baseUrl, String method, String path, String token,
                                          String body, String tenant) throws Exception {
-        HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(baseUrl + path)).header("X-Tenant-Id", tenant).header("Idempotency-Key", path.endsWith("/payment") ? "checkout-confirmation" : "");
+        return request(client, baseUrl, method, path, token, body, tenant, null);
+    }
+
+    /**
+     * 发送可选带支付幂等键的请求。
+     * @param client 测试 HTTP 客户端
+     * @param baseUrl 运行中服务的地址
+     * @param method HTTP 方法
+     * @param path 资源路径
+     * @param token 登录令牌，可为空
+     * @param body 请求体，可为空
+     * @param tenant 商品与订单的租户
+     * @param idempotencyKey 支付幂等键，为空时省略请求头
+     * @return 服务返回的原始响应
+     * @throws Exception 请求发送或读取失败
+     */
+    private HttpResponse<String> request(HttpClient client, String baseUrl, String method, String path, String token,
+                                         String body, String tenant, String idempotencyKey) throws Exception {
+        HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(baseUrl + path)).header("X-Tenant-Id", tenant);
+        if (Objects.nonNull(idempotencyKey)) {
+            builder.header("Idempotency-Key", idempotencyKey);
+        }
         if (Objects.nonNull(token)) {
             builder.header("Authorization", "Bearer " + token);
         }

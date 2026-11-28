@@ -181,6 +181,11 @@ class DropwizardCommandBusTest {
 
         assertThat(exception).isNotNull();
         assertThat(exception.getMessage()).contains(SampleCommand.class.getName());
+
+        IllegalStateException constructorFailure = catchThrowableOfType(
+                IllegalStateException.class, () -> new DropwizardCommandBus(executors));
+        assertThat(constructorFailure).isNotNull();
+        assertThat(constructorFailure.getMessage()).isEqualTo(exception.getMessage());
     }
 
     /**

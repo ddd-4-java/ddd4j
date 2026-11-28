@@ -89,12 +89,27 @@ import java.util.Objects;
 public class DropwizardCommandBus extends DefaultCommandBus {
 
     /**
-     * 私有构造（静态工厂收口装配）：仅接受已整批注册完成的执行器快照。
+     * 创建命令总线，并对候选执行器执行与静态工厂一致的冲突检查。
      *
-     * @param executors 已注册执行器快照（来自 {@code registry.executors()}），非空
+     * @param executors 供总线注册的执行器集合，非空
      */
     public DropwizardCommandBus(Collection<? extends CommandExecutor<?>> executors) {
-        super(executors);
+        super(registered(executors));
+    }
+
+    /**
+     * 在创建路由表前按命令类型检查执行器冲突。
+     *
+     * @param executors 应用提供的候选执行器
+     * @return 去重后的已注册执行器
+     */
+    private static Collection<CommandExecutor<?>> registered(Collection<? extends CommandExecutor<?>> executors) {
+        Objects.requireNonNull(executors, "executors must not be null");
+        CommandRegistry registry = new CommandRegistry();
+        for (CommandExecutor<?> executor : executors) {
+            registry.register(executor);
+        }
+        return registry.executors();
     }
 
     /**
@@ -113,11 +128,6 @@ public class DropwizardCommandBus extends DefaultCommandBus {
      */
     public static DropwizardCommandBus create(Application<?> app, Collection<CommandExecutor<?>> executors) {
         Objects.requireNonNull(app, "app must not be null");
-        Objects.requireNonNull(executors, "executors must not be null");
-        CommandRegistry registry = new CommandRegistry();
-        for (CommandExecutor<?> executor : executors) {
-            registry.register(executor);
-        }
-        return new DropwizardCommandBus(registry.executors());
+        return new DropwizardCommandBus(executors);
     }
 }
