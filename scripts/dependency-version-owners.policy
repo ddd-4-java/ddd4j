@@ -233,6 +233,14 @@
       ]
     },
     {
+      "bom": "dev.langchain4j:langchain4j-bom",
+      "property": "langchain4j.version",
+      "priority": 100,
+      "includes": [
+        "dev.langchain4j:*"
+      ]
+    },
+    {
       "bom": "org.glassfish.jersey:jersey-bom",
       "property": "jersey.version",
       "priority": 100,

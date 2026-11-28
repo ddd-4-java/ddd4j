@@ -390,6 +390,7 @@
         <kubernetes-client.version>6.13.3</kubernetes-client.version>
         <kurrentdb-client.version>1.2.0</kurrentdb-client.version>
         <kylin-jdbc.version>5.0.3</kylin-jdbc.version>
+        <langchain4j.version>1.2.1</langchain4j.version>
         <lettuce.version>7.1.0.RELEASE</lettuce.version>
         <libphonenumber-carrier.version>2.33</libphonenumber-carrier.version>
         <libphonenumber-geocoder.version>3.33</libphonenumber-geocoder.version>
@@ -407,7 +408,7 @@
         <mariadb.version>4.0.0</mariadb.version>
         <markdown.version>1.11.1</markdown.version>
         <mchange-commons-java.version>0.6.0</mchange-commons-java.version>
-        <mcp-compat0.version>0.18.5</mcp-compat0.version>
+        <mcp-compat0.version>1.0.0</mcp-compat0.version>
         <mercadopago-sdk-java.version>2.9.2</mercadopago-sdk-java.version>
         <metadata-extractor.version>2.20.0</metadata-extractor.version>
         <metrics-biz.version>2.0.x.20260630-SNAPSHOT</metrics-biz.version>
@@ -1022,6 +1023,13 @@
                 <groupId>io.micronaut</groupId>
                 <artifactId>micronaut-core-bom</artifactId>
                 <version>${micronaut.core.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>dev.langchain4j</groupId>
+                <artifactId>langchain4j-bom</artifactId>
+                <version>${langchain4j.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

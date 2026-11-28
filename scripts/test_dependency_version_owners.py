@@ -10,6 +10,22 @@ from test_dependency_family_alignment import FAMILY, model, owner, tree
 
 
 class VersionOwnershipTest(unittest.TestCase):
+    def test_langchain_filter_adapters_cannot_fall_back_to_vulnerable_platform_versions(self):
+        root = Path(__file__).parents[1]
+        configured = owners.load_policy(root)
+        policy = {'boms': [rule for rule in configured['boms']
+                           if rule['bom'] == 'dev.langchain4j:langchain4j-bom']}
+        safe = [('dev.langchain4j', 'langchain4j-mariadb', '1.2.1-beta8'),
+                ('dev.langchain4j', 'langchain4j-pgvector', '1.2.1-beta8')]
+        references = {'owner-000': model('owner-000', safe)} if policy['boms'] else {}
+        contracts = owners.contracts(root, references, policy)
+        vulnerable = [(group, artifact, '1.0.1-beta6') for group, artifact, _ in safe]
+        result = FAMILY.audit({'ddd4j-dependencies': model('ddd4j-dependencies', vulnerable)},
+                              {}, set(), contracts, policy)
+        rejected = {error.get('coordinate') for error in result['errors']}
+        self.assertTrue({'dev.langchain4j:langchain4j-mariadb',
+                         'dev.langchain4j:langchain4j-pgvector'}.issubset(rejected))
+
     def setUp(self):
         self.directory = tempfile.TemporaryDirectory()
         self.addCleanup(self.directory.cleanup)
