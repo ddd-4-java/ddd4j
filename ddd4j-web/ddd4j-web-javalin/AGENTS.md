@@ -6,6 +6,8 @@ Javalin 处理器、失败事件及请求作用域。
 
 实现入口见 [Ddd4jJavalinWeb](src/main/java/io/ddd4j/web/javalin/Ddd4jJavalinWeb.java)、[BaseHandler](src/main/java/io/ddd4j/web/javalin/BaseHandler.java)。
 
+默认审计 IP 读取 Servlet 连接对端地址。测试应配置与对端不同的 Javalin IP 解析结果，确保自定义解析器不会覆盖审计值。
+
 ## 回归
 
 优先运行 [BaseHandlerFailureEventTest](src/test/java/io/ddd4j/web/javalin/BaseHandlerFailureEventTest.java)、[Ddd4jJavalinOtelScopeTest](src/test/java/io/ddd4j/web/javalin/Ddd4jJavalinOtelScopeTest.java)。

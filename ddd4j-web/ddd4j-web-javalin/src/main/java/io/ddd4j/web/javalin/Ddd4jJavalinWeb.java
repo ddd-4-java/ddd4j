@@ -252,7 +252,7 @@ public final class Ddd4jJavalinWeb {
                 resolveLocale(context),
                 context.header(WebHeaders.FORWARDED_FOR),
                 context.header("X-Real-IP"),
-                context.ip(),
+                context.req.getRemoteAddr(),
                 context.method(),
                 context.path()));
     }

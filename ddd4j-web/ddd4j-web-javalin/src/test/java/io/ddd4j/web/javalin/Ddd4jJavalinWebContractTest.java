@@ -82,11 +82,23 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
         Ddd4jJavalinWeb ddd4jWeb = new Ddd4jJavalinWeb(new WebRequestContextFactory(), requestLifecycle,
                 new DefaultWebExceptionTranslator(),
                 new WebIdempotencyLifecycle(new CacheIdempotencyGuard("javalin-contract")), readinessRegistry);
-        app = Javalin.create(config -> config.showJavalinBanner = false);
+        app = Javalin.create(config -> {
+            config.showJavalinBanner = false;
+            config.contextResolvers(resolvers -> resolvers.ip = ignored -> "192.0.2.41");
+        });
+        app.get("/audit-peer", context -> context.result(ThreadContext.<String>get(WebContextScope.CLIENT_IP)));
         ddd4jWeb.configure(app);
         registerContractRoutes(app);
         app.start(0);
         contractClient = new JavalinContractClient(app.port());
+    }
+
+    /** 实际连接的对端地址应独立于框架自定义的代理 IP。 */
+    @Test
+    void auditUsesServletPeerAddress() {
+        WebContractResponse response = client().request("GET", "/audit-peer", Collections.emptyMap(), null);
+        assertThat(response.status()).isEqualTo(200);
+        assertThat(response.body()).isEqualTo("127.0.0.1");
     }
 
     /** \u6d4b\u8bd5\u7ed3\u675f\u540e\u6267\u884c <code>app.stop()</code>\u3001<code>ThreadContext.clear()</code>\u3001<code>BaseContext.clear()</code>\u3001<code>CacheKit.unregister()</code> \u5b8c\u6210\u8d44\u6e90\u56de\u6536\u6216\u72b6\u6001\u6062\u590d\u3002 */

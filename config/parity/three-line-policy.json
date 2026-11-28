@@ -1738,17 +1738,17 @@
     {
       "path": "ddd4j-web/ddd4j-web-javalin/src/main/java/io/ddd4j/web/javalin/Ddd4jJavalinWeb.java",
       "sourceSha256": [
-        "08e07a970b98aa64a0a2bbee49ca04fff3cfafc27f7cdeb76313ac126e01f91a",
-        "68098d21aee2fda16e467ae77a3438281d9183659213aba69e4531a49232a40f",
-        "68098d21aee2fda16e467ae77a3438281d9183659213aba69e4531a49232a40f"
+        "0766e286d9ef504e8ef0d7b9de4e06fcff23affbfad355659407d65c293a60f7",
+        "d75bcb54078a9140327605e4fc58a46896a05cc1644a2b4d373283ae31d6c196",
+        "977cf53082d9849a492af0b854643cb083e61517e673a5680d7cb720a046dc01"
       ],
       "evidence": "ddd4j-web/ddd4j-web-javalin/src/test/java/io/ddd4j/web/javalin/Ddd4jJavalinWebContractTest.java",
       "testSha256ByJdk": {
-        "8": "4598761f0dae12ca4b1c4f23fc535813f5e6170f3662dbc985e5cc478a4f930a",
-        "17": "d64532b3ac76dde62cb74e81e68258fa4a3f87dd5a71392005c9f1daed90d3a3",
-        "21": "780c77ef44d9774fc12577ee312d104aa8abd14072e6c7bc474b70eab46c8d77"
+        "8": "4efe252f01d496cfbe66b50e734c9e4288455d6c6ea1cdf3e49c10e06d4536fc",
+        "17": "353e07df587ac0122b064ba1493df49a6abb4aa4cdf2ea655e4872891a3dc827",
+        "21": "4965bb25b07413a82ab532bb9f40f0bc6d5a6dcd261c79b358727d84008889f1"
       },
-      "reason": "三线 Javalin 4 与新版本的配置、请求方法和状态码 API 不同；成功响应、错误转换、认证、请求上下文、幂等与 readiness 的七项共同 HTTP 契约分别在 JDK 8/17/21 目标测试通过。逐线源码及契约测试用 SHA-256 锁定；OTel 作用域另有各线一项目标测试通过。"
+      "reason": "按对应 Javalin 版本注册过滤器和路由，三线默认从 Servlet 连接读取对端地址。JDK 8 真实 HTTP 请求验证自定义 Javalin IP 解析器不能覆盖该地址。"
     },
     {
       "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/goods/domain/GoodsQuery.java",
@@ -4480,14 +4480,14 @@
       "path": "ddd4j-web/ddd4j-web-javalin/src/test/java/io/ddd4j/web/javalin/Ddd4jJavalinOtelScopeTest.java",
       "productionPath": "ddd4j-web/ddd4j-web-javalin/src/main/java/io/ddd4j/web/javalin/Ddd4jJavalinWeb.java",
       "sourceSha256": [
-        "6c1bcb5feb4939241a63d6ba0f9dd67f3a97e183fb77db4952c8c1dc44f814b4",
-        "cfaf4145dd3c9fadf7b565bec594eed0d56958643552b44c644313ad5211d825",
-        "99e85a6fd3ece92bc7e4951156b755208ea05cfa00d1f96259c8af454caa23af"
+        "1769908633efe2527417dcbcb37a0c06b715217063ce0eb03c4b8bf1fb80c898",
+        "6a2f6e47d5d161ae0748a3cd73833ebaa1ee85707e65c64e6f1d43492a241de7",
+        "b36efa28374a05fedc69156d9fe430e256177bb61177dbd05f1215a2cb164503"
       ],
       "productionSha256": [
-        "08e07a970b98aa64a0a2bbee49ca04fff3cfafc27f7cdeb76313ac126e01f91a",
-        "68098d21aee2fda16e467ae77a3438281d9183659213aba69e4531a49232a40f",
-        "68098d21aee2fda16e467ae77a3438281d9183659213aba69e4531a49232a40f"
+        "0766e286d9ef504e8ef0d7b9de4e06fcff23affbfad355659407d65c293a60f7",
+        "d75bcb54078a9140327605e4fc58a46896a05cc1644a2b4d373283ae31d6c196",
+        "977cf53082d9849a492af0b854643cb083e61517e673a5680d7cb720a046dc01"
       ],
       "testMethods": [
         "requestCompletionMustCloseOtelScope"
