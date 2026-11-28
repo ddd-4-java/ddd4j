@@ -1,5 +1,10 @@
 package io.ddd4j.core.ddd.model;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
+import io.ddd4j.core.ddd.event.EventHandler;
+import io.ddd4j.core.ddd.event.EntityId;
+import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.event.DomainEvent;
@@ -58,6 +63,55 @@ import java.util.*;
  */
 @SuppressWarnings({"unchecked", "rawtypes"})
 public abstract class AggregateRoot<ID extends Serializable> implements Entity<ID> {
+
+    /**
+     * 事件处理器方法缓存（ClassValue 二级索引）。
+     * 外层 key = 聚合根 Class，内层 key = 事件 Class → 处理器 Method（可能为 null）。
+     * 解析优先级：{@code @EventHandler} 注解方法 > {@code on<EventType>} 命名约定（3.0.x 兼容）。
+     */
+    private static final ClassValue<ClassValue<Method>> EVENT_HANDLER_CACHE = new ClassValue<>() {
+        @Override
+        protected ClassValue<Method> computeValue(Class<?> aggregateClass) {
+            return new ClassValue<>() {
+                @Override
+                protected Method computeValue(Class<?> eventClass) {
+                    return resolveHandler(aggregateClass, eventClass);
+                }
+            };
+        }
+    };
+
+
+    /**
+     * 解析事件处理器：优先 {@code @EventHandler} 注解方法（沿继承链，参数可接收该事件类型），
+     * 回退到 {@code on<EventType>} 命名约定（3.0.x 兼容路径）。
+     *
+     * @param aggregateClass 聚合根类型
+     * @param eventClass     事件类型
+     * @return 处理器方法；两者均未命中时返回 {@code null}
+     */
+    private static Method resolveHandler(Class<?> aggregateClass, Class<?> eventClass) {
+        for (Class<?> current = aggregateClass; current != null && current != Object.class;
+             current = current.getSuperclass()) {
+            for (Method method : current.getDeclaredMethods()) {
+                if (method.isAnnotationPresent(EventHandler.class)) {
+                    Class<?>[] parameterTypes = method.getParameterTypes();
+                    if (parameterTypes.length == 1 && parameterTypes[0].isAssignableFrom(eventClass)) {
+                        method.setAccessible(true);
+                        return method;
+                    }
+                }
+            }
+        }
+        String handlerName = "on" + eventClass.getSimpleName();
+        try {
+            Method method = aggregateClass.getDeclaredMethod(handlerName, eventClass);
+            method.setAccessible(true);
+            return method;
+        } catch (NoSuchMethodException e) {
+            return null;
+        }
+    }
 
     /** \u805a\u5408\u5f53\u524d\u5c1a\u672a\u6e05\u7406\u7684\u9886\u57df\u4e8b\u4ef6\u3002 */
     private transient List<DomainEvent<?>> domainEvents = new ArrayList<>();
@@ -321,6 +375,116 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
             domainEvents = new ArrayList<>();
         }
         return domainEvents;
+    }
+
+    // ========================= 事件溯源 =========================
+
+    /**
+     * 应用领域事件。
+     *
+     * <p>反射派发到事件处理器（{@code @EventHandler} 优先，{@code on<Type>} 回退），
+     * 并返回事件本身。找不到处理器时抛 {@link IllegalStateException}。
+     *
+     * @param event 领域事件
+     * @return 传入的事件（链式调用便利）
+     * @throws IllegalStateException 找不到对应事件类型的处理器，或反射调用失败
+     * @param <E> 领域事件类型
+     */
+    protected <E extends DomainEvent<?>> E apply(E event) {
+        return apply(event, false);
+    }
+
+    /**
+     * \u4e8b\u4ef6\u5e94\u7528\u5185\u90e8\u5b9e\u73b0\u3002
+     *
+     *  <p>\u53cd\u5c04\u6d3e\u53d1\u5230\u4e8b\u4ef6\u5904\u7406\u5668\uff08{@code @EventHandler} \u4f18\u5148\uff0c{@code on<Type>} \u56de\u9000\uff09\uff0c
+     *  \u5e76\u6ce8\u518c\u8fdb\u672a\u63d0\u4ea4\u4e8b\u4ef6\u5217\u8868\uff08\u627e\u4e0d\u5230\u5904\u7406\u5668\u65f6\u629b {@link IllegalStateException}\uff09\u3002
+     *  \u56de\u653e\u6a21\u5f0f\uff08{@code replay = true}\uff09\u4e0b\u8df3\u8fc7\u6807\u6709 {@code ignoreOnReplay = true} \u7684\u5904\u7406\u5668\u3002
+     * @param event \u9886\u57df\u4e8b\u4ef6
+     * @param replay \u662f\u5426\u5904\u4e8e\u5386\u53f2\u56de\u653e\uff08{@code loadFromHistory}\uff09
+     * @return \u4f20\u5165\u7684\u4e8b\u4ef6
+     * @throws IllegalStateException \u627e\u4e0d\u5230\u5bf9\u5e94\u4e8b\u4ef6\u7c7b\u578b\u7684\u5904\u7406\u5668\uff0c\u6216\u53cd\u5c04\u8c03\u7528\u5931\u8d25
+     *
+     * @param <E> \u805a\u5408\u53ef\u5e94\u7528\u7684\u9886\u57df\u4e8b\u4ef6\u7c7b\u578b
+     */
+    private <E extends DomainEvent<?>> E apply(E event, boolean replay) {
+        Objects.requireNonNull(event, "event must not be null");
+        EntityId rootSegment = event.getEntityIdPath().first();
+        if (!AggregateRootId.class.isInstance(rootSegment)) {
+            throw new IllegalStateException("Event path root segment must be an AggregateRootId: "
+                    + rootSegment.asTypedString() + " (path: " + event.getEntityIdPath().asString()
+                    + ", event: " + event.getClass().getName()
+                    + ", aggregate: " + this.getClass().getName() + ")");
+        }
+        AggregateRootId aggregateRootId = (AggregateRootId) rootSegment;
+        ClassValue<Method> handlerCache = EVENT_HANDLER_CACHE.get(this.getClass());
+        Method handler = handlerCache.get(event.getClass());
+        if (Objects.isNull(handler)) {
+            throw new IllegalStateException("No @EventHandler method found for event type: "
+                    + event.getClass().getName() + " rooted at " + aggregateRootId.asTypedString()
+                    + " on aggregate " + this.getClass().getName());
+        }
+        if (replay && handler.isAnnotationPresent(EventHandler.class)
+                && handler.getAnnotation(EventHandler.class).ignoreOnReplay()) {
+            return event;
+        }
+        try {
+            handler.invoke(this, event);
+            if (!replay) {
+                // apply 反射派发后注册进未提交事件列表；回放（loadFromHistory）不入队
+                mutableDomainEvents().add(event);
+            }
+        } catch (InvocationTargetException e) {
+            // handler 自身抛出的业务异常：解包透传，避免包装后丢失原始堆栈
+            Throwable cause = e.getCause();
+            if (cause instanceof RuntimeException re) {
+                throw re;
+            }
+            if (cause instanceof Error err) {
+                throw err;
+            }
+            throw new BizRuntimeException("Failed to apply event " + event.getClass().getSimpleName()
+                    + " on aggregate " + this.getClass().getSimpleName(), cause);
+        } catch (IllegalAccessException e) {
+            // JDK 17+ 模块系统限制：handler 所在包未对反射开放
+            throw new BizRuntimeException(
+                    "Cannot access @EventHandler method '" + handler.getName()
+                            + "' on aggregate " + this.getClass().getName()
+                            + ". On JDK 17+, ensure the handler's declaring package is opened via"
+                            + " 'opens' in module-info.java or '--add-opens' JVM flag.",
+                    e);
+        } catch (Exception e) {
+            // 其他反射异常（如 setAccessible 抛出的 InaccessibleObjectException）
+            throw new BizRuntimeException("Failed to apply event " + event.getClass().getSimpleName()
+                    + " on aggregate " + this.getClass().getSimpleName(), e);
+        }
+        return event;
+    }
+
+    /**
+     * 从历史事件列表重建聚合状态（事件溯源核心方法）。
+     *
+     * <p>按顺序依次调用 {@link #apply(DomainEvent)}，使聚合状态恢复到最新版本。
+     * 典型用法：从 EventStore 读取事件后，调用此方法重建聚合根。
+     *
+     * <pre>{@code
+     * Order order = new Order(); // 空聚合
+     * List<DomainEvent<?>> history = eventStore.read(orderId).stream()
+     *         .map(StoredEvent::event)
+     *         .map(e -> (DomainEvent<?>) e)
+     *         .toList();
+     * order.loadFromHistory(history);
+     * }</pre>
+     *
+     * @param events 历史事件列表（按版本升序）
+     */
+    public void loadFromHistory(List<? extends DomainEvent<?>> events) {
+        if (Objects.isNull(events) || events.isEmpty()) {
+            return;
+        }
+        for (DomainEvent<?> event : events) {
+            apply(event, true);
+        }
     }
 
     // ========================= 仓储查找 =========================

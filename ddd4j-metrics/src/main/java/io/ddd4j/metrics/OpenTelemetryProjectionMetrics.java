@@ -1,0 +1,164 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.ddd4j.metrics;
+
+import io.ddd4j.core.constant.ProjectionConstants;
+import io.ddd4j.core.cqrs.readmodel.ProjectionMetrics;
+import io.ddd4j.kit.text.StrPool;
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.common.AttributeKey;
+import io.opentelemetry.api.common.Attributes;
+import io.opentelemetry.api.metrics.DoubleHistogram;
+import io.opentelemetry.api.metrics.LongCounter;
+import io.opentelemetry.api.metrics.Meter;
+
+import java.util.Objects;
+
+/**
+ * 基于 OpenTelemetry 的投影运行指标适配器。
+ *
+ * <p>将 {@link ProjectionMetrics} 回调桥接到 OTel {@link Meter}，
+ * 记录以下指标：
+ * <ul>
+ *   <li>{@code ddd4j.projection.run.count}（LongCounter）：运行次数，attribute {@code streamId}</li>
+ *   <li>{@code ddd4j.projection.event.count}（LongCounter）：已处理事件总数，attribute {@code streamId}</li>
+ *   <li>{@code ddd4j.projection.run.duration}（DoubleHistogram）：单次运行耗时（毫秒），attribute {@code streamId}</li>
+ *   <li>{@code ddd4j.projection.run.error}（LongCounter）：运行失败次数，attribute {@code streamId}</li>
+ * </ul>
+ *
+ * <p>使用方式：
+ * <pre>{@code
+ * // 直接注入 Meter（推荐，最可测）
+ * Meter meter = OpenTelemetry.noop().getMeter("my-app");
+ * ProjectionMetrics metrics = new OpenTelemetryProjectionMetrics(meter);
+ *
+ * // 或使用便捷构造
+ * ProjectionMetrics metrics = new OpenTelemetryProjectionMetrics(OpenTelemetry.noop(), "my-app");
+ * }</pre>
+ *
+ * <p>仅依赖 {@code io.opentelemetry:opentelemetry-api}（版本由 ddd4j-dependencies BOM 管理），
+ * 不依赖 OpenTelemetry SDK。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
+public class OpenTelemetryProjectionMetrics implements ProjectionMetrics {
+
+    /**
+     * 运行次数指标名称。
+     */
+    static final String METRIC_RUN_COUNT = ProjectionConstants.OTel_METRIC_RUN_COUNT;
+    /**
+     * 事件计数指标名称。
+     */
+    static final String METRIC_EVENT_COUNT = ProjectionConstants.OTel_METRIC_EVENT_COUNT;
+    /**
+     * 运行耗时指标名称（毫秒）。
+     */
+    static final String METRIC_RUN_DURATION = ProjectionConstants.OTel_METRIC_RUN_DURATION;
+    /**
+     * 运行错误指标名称。
+     */
+    static final String METRIC_RUN_ERROR = ProjectionConstants.OTel_METRIC_RUN_ERROR;
+    /**
+     * streamId attribute key。
+     */
+    private static final AttributeKey<String> STREAM_ID = AttributeKey.stringKey(ProjectionConstants.OTel_ATTR_STREAM_ID);
+    /** \u6309\u4e8b\u4ef6\u6d41\u8bb0\u5f55\u6295\u5f71\u6267\u884c\u5f00\u59cb\u7684\u6b21\u6570\u3002 */
+    private final LongCounter runCounter;
+    /** \u6309\u4e8b\u4ef6\u6d41\u7d2f\u8ba1\u5df2\u5904\u7406\u4e8b\u4ef6\u7684\u6570\u91cf\u3002 */
+    private final LongCounter eventCounter;
+    /** \u6309\u4e8b\u4ef6\u6d41\u8bb0\u5f55\u6295\u5f71\u6267\u884c\u8017\u65f6\u7684\u5206\u5e03\u3002 */
+    private final DoubleHistogram durationHistogram;
+    /** \u6309\u4e8b\u4ef6\u6d41\u8bb0\u5f55\u6267\u884c\u5931\u8d25\u7684\u6b21\u6570\u3002 */
+    private final LongCounter errorCounter;
+
+    /**
+     * 构造 OpenTelemetry 投影指标适配器。
+     *
+     * @param meter OTel Meter；不允许 null
+     * @throws NullPointerException meter 为 null 时抛出
+     */
+    public OpenTelemetryProjectionMetrics(Meter meter) {
+        Objects.requireNonNull(meter, "Meter must not be null");
+        this.runCounter = meter.counterBuilder(METRIC_RUN_COUNT)
+                .setDescription("Number of projection runs")
+                .build();
+        this.eventCounter = meter.counterBuilder(METRIC_EVENT_COUNT)
+                .setDescription("Total number of projected events")
+                .build();
+        this.durationHistogram = meter.histogramBuilder(METRIC_RUN_DURATION)
+                .setDescription("Projection run duration in milliseconds")
+                .setUnit(StrPool.MS)
+                .build();
+        this.errorCounter = meter.counterBuilder(METRIC_RUN_ERROR)
+                .setDescription("Number of projection run failures")
+                .build();
+    }
+
+    /**
+     * 便捷构造：从 {@link OpenTelemetry} 实例获取 Meter。
+     *
+     * @param openTelemetry        OTel 实例；不允许 null
+     * @param instrumentationScope 仪表化作用域名称；不允许 null
+     * @throws NullPointerException 任一参数为 null 时抛出
+     */
+    public OpenTelemetryProjectionMetrics(OpenTelemetry openTelemetry, String instrumentationScope) {
+        this(Objects.requireNonNull(openTelemetry, "OpenTelemetry must not be null")
+                .getMeter(Objects.requireNonNull(instrumentationScope, "instrumentationScope must not be null")));
+    }
+
+    /**
+     * 投影运行开始回调。
+     *
+     * <p>此实现调用 <code>runCounter.add(1, Attributes.of(STREAM_ID, streamId))</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     */
+    @Override
+    public void onRunStarted(String streamId) {
+        runCounter.add(1, Attributes.of(STREAM_ID, streamId));
+    }
+
+    /**
+     * 投影运行成功回调。
+     *
+     * <p>此实现调用 <code>Attributes.of(STREAM_ID, streamId)</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     * @param eventCount 本次处理的事件数量
+     * @param durationNanos 本次运行耗时（纳秒）
+     * @param positionAdvance 本次位置推进量（nextEventNumber - previousEventNumber）
+     */
+    @Override
+    public void onRunCompleted(String streamId, int eventCount, long durationNanos, long positionAdvance) {
+        Attributes attrs = Attributes.of(STREAM_ID, streamId);
+        eventCounter.add(eventCount, attrs);
+        durationHistogram.record(durationNanos / 1_000_000.0, attrs);
+    }
+
+    /**
+     * 投影运行失败回调。
+     *
+     * <p>此实现调用 <code>errorCounter.add(1, Attributes.of(STREAM_ID, streamId))</code>。</p>
+     *
+     * @param streamId 投影流 ID
+     * @param error 导致失败的异常
+     */
+    @Override
+    public void onRunFailed(String streamId, Throwable error) {
+        errorCounter.add(1, Attributes.of(STREAM_ID, streamId));
+    }
+}

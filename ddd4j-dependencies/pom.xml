@@ -261,6 +261,7 @@
         <echarts.version>3.0.0.6</echarts.version>
         <ehcache3.version>3.12.0</ehcache3.version>
         <elasticsearch-client.version>9.2.1</elasticsearch-client.version>
+        <eventstore-db-client.version>5.4.5</eventstore-db-client.version>
         <expressly.version>6.0.0</expressly.version>
         <fastdfs.version>1.27.2</fastdfs.version>
         <fastjson2.version>2.0.62</fastjson2.version>
@@ -700,6 +701,7 @@
         <tongweb-license-client.version>4.4.1.3</tongweb-license-client.version>
         <tongweb.version>7.0.E.6_P5</tongweb.version>
         <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
+        <truelicense.version>4.1.4</truelicense.version>
         <twilio.version>10.8.0</twilio.version>
         <unboundid-ldapsdk.version>6.0.11</unboundid-ldapsdk.version>
         <undertow-metrics.version>1.0.0.RELEASE</undertow-metrics.version>
@@ -748,6 +750,16 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>global.namespace.truelicense</groupId>
+                <artifactId>truelicense-v1</artifactId>
+                <version>${truelicense.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.eventstore</groupId>
+                <artifactId>db-client-java</artifactId>
+                <version>${eventstore-db-client.version}</version>
+            </dependency>
             <!-- Source: https://github.com/easy-4-java/agora-java-sdk — easy4j agora-java-sdk -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>

@@ -101,6 +101,7 @@
         <module>ddd4j-extensions</module>
         <module>ddd4j-parent</module>
         <module>ddd4j-samples</module>
+        <module>ddd4j-metrics</module>
     </modules>
 
     <!--开源协议采用Apache 2.0协议-->

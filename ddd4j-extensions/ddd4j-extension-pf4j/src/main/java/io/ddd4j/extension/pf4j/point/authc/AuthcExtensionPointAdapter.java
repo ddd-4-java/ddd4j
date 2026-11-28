@@ -1,0 +1,145 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.ddd4j.extension.pf4j.point.authc;
+
+import org.pf4j.PluginRuntimeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.Enumeration;
+import java.util.Map;
+
+/**
+ * 认证扩展点默认适配器。
+ *
+ * <p>提供 PF4J 插件体系下的认证扩展默认实现。插件可通过实现 {@link AuthcExtensionPoint}
+ * 覆盖这些行为，实现自定义认证逻辑（如自定义 Token 提取、请求预处理等）。
+ *
+ * <p>本适配器的默认行为：
+ * <ul>
+ *   <li>{@link #getToken}：从 Authorization Header 提取 Bearer Token</li>
+ *   <li>{@link #handleHeader}：空实现（插件可覆盖做 Header 预处理）</li>
+ *   <li>{@link #handleRequest}：将请求参数拷贝到 params Map</li>
+ *   <li>{@link #handleResult}：原样返回结果</li>
+ * </ul>
+ *
+ * @author ddd4j
+ * @since 3.4.x
+ */
+public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
+
+    /**
+     * Authorization Header 名称
+     */
+    public static final String AUTHORIZATION_HEADER = "Authorization";
+    /**
+     * Bearer Token 前缀
+     */
+    public static final String BEARER_PREFIX = "Bearer ";
+    /** PF4J \u8ba4\u8bc1\u6269\u5c55\u9002\u914d\u5668\u7684\u65e5\u5fd7\u8bb0\u5f55\u5668\u3002 */
+    private static final Logger log = LoggerFactory.getLogger(AuthcExtensionPointAdapter.class);
+
+    /**
+     * 从请求中获取认证令牌。
+     *
+     * <p>此实现调用 <code>request.getHeader(AUTHORIZATION_HEADER)</code>。</p>
+     *
+     * @param request HTTP 请求
+     * @param params 请求参数
+     * @return 根据执行路径返回<code>null</code>、<code>authHeader.substring(BEARER_PREFIX.length()).trim()</code>、<code>tokenParam.trim()</code>
+     * @throws PluginRuntimeException 当前操作无法正常完成时
+     */
+    @Override
+    public String getToken(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException {
+        if (request == null) {
+            return null;
+        }
+        String authHeader = request.getHeader(AUTHORIZATION_HEADER);
+        if (authHeader != null && authHeader.startsWith(BEARER_PREFIX)) {
+            return authHeader.substring(BEARER_PREFIX.length()).trim();
+        }
+        // 兜底：尝试从 query parameter 提取
+        String tokenParam = request.getParameter("token");
+        if (tokenParam != null && !tokenParam.trim().isEmpty()) {
+            return tokenParam.trim();
+        }
+        return null;
+    }
+
+    /**
+     * 处理认证请求头。
+     *
+     * <p>此实现调用 <code>request.getHeaderNames()</code>。</p>
+     *
+     * @param request HTTP 请求
+     * @param params 请求参数
+     * @throws PluginRuntimeException 当前操作无法正常完成时
+     */
+    @Override
+    public void handleHeader(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException {
+        if (request == null || params == null) {
+            return;
+        }
+        // 默认实现：将所有自定义 Header（X- 前缀）拷贝到 params
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames != null && headerNames.hasMoreElements()) {
+            String name = headerNames.nextElement();
+            if (name != null && name.toLowerCase().startsWith("x-")) {
+                params.putIfAbsent(name, request.getHeader(name));
+            }
+        }
+    }
+
+    /**
+     * 处理认证请求。
+     *
+     * <p>此实现调用 <code>request.getParameterMap()</code>。</p>
+     *
+     * @param request HTTP 请求
+     * @param params 请求参数
+     * @throws PluginRuntimeException 当前操作无法正常完成时
+     */
+    @Override
+    public void handleRequest(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException {
+        if (request == null || params == null) {
+            return;
+        }
+        // 默认实现：将请求参数拷贝到 params
+        Map<String, String[]> paramMap = request.getParameterMap();
+        if (paramMap != null) {
+            for (Map.Entry<String, String[]> entry : paramMap.entrySet()) {
+                String[] values = entry.getValue();
+                if (values != null && values.length > 0) {
+                    params.putIfAbsent(entry.getKey(), values.length == 1 ? values[0] : values);
+                }
+            }
+        }
+    }
+
+    /**
+     * 处理认证结果。
+     *
+     * @param res 处理结果
+     * @return 实际返回<code>res</code>，供调用方取得当前值
+     * @throws PluginRuntimeException 当前操作无法正常完成时
+     */
+    @Override
+    public Object handleResult(Object res) throws PluginRuntimeException {
+        // 默认实现：原样返回结果
+        return res;
+    }
+
+}

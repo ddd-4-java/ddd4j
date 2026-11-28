@@ -28,6 +28,10 @@
         <module>ddd4j-data-cqrs-dropwizard</module>
         <module>ddd4j-data-cqrs-micronaut</module>
         <module>ddd4j-data-cqrs-vertx</module>
+        <module>ddd4j-data-event-store-esdb</module>
+        <module>ddd4j-data-event-store-jpa</module>
+        <module>ddd4j-data-event-store-jdbi</module>
+        <module>ddd4j-data-event-store-r2dbc</module>
     </modules>
 
 </project>

@@ -1,0 +1,82 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.ddd4j.extension.pf4j.util;
+
+import org.springframework.beans.BeanUtils;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+
+//JDK动态代理实现InvocationHandler接口
+/**
+ * 类型说明。
+ * @author ddd4j
+ * @since 3.0.x
+ */
+public class JdkProxy implements InvocationHandler {
+
+    /** \u8f6c\u53d1\u63a5\u53e3\u4ee3\u7406\u65b9\u6cd5\u8c03\u7528\u7684\u76ee\u6807\u5b9e\u4f8b\u3002 */
+    private Object target;//需要代理的目标对象
+
+    /**
+     * \u6784\u9020\u8c03\u7528\u5904\u7406\u5668\u3002
+     * @param target \u9700\u8981\u4ee3\u7406\u7684\u76ee\u6807\u5bf9\u8c61
+     */
+    public JdkProxy(Object target) {
+        this.target = target;
+    }
+
+    //定义获取代理对象方法
+    /**
+     * 获取值。
+     * @param targetObject 对象参数。
+     * @return 结果对象。
+     */
+    public static Object getJDKProxy(Object targetObject) {
+        //JDK动态代理只能针对实现了接口的类进行代理，newProxyInstance 函数所需参数就可看出
+        return Proxy.newProxyInstance(targetObject.getClass().getClassLoader(), targetObject.getClass().getInterfaces(), new JdkProxy(targetObject));
+    }
+
+    // 定义获取代理对象方法
+    /**
+     * 获取值。
+     * @param <T> 类型参数。
+     * @param className 类型字面量。
+     * @return 结果值。
+     */
+    public static <T> T getJDKProxy(Class<T> className) {
+        JdkProxy target = new JdkProxy(BeanUtils.instantiateClass(className));
+        //JDK动态代理只能针对实现了接口的类进行代理，newProxyInstance 函数所需参数就可看出
+        return (T) Proxy.newProxyInstance(className.getClassLoader(), className.getInterfaces(), target);
+    }
+
+    /**
+     * 调用目标逻辑。
+     * @param proxy 代理实例。
+     * @param method 被调用的方法。
+     * @param args 命令行参数。
+     * @return 结果对象。
+     * @throws Throwable 调用过程中出现异常时抛出。
+     */
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        System.out.println("JDK动态代理，监听开始！");
+        Object result = method.invoke(target, args);
+        System.out.println("JDK动态代理，监听结束！");
+        return result;
+    }
+
+}

@@ -1,0 +1,545 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.ddd4j.data.event.store.jdbi;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import io.ddd4j.core.constant.EventStoreConstants;
+import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
+import io.ddd4j.core.cqrs.eventstore.EventStore;
+import io.ddd4j.core.cqrs.eventstore.StoredEvent;
+import io.ddd4j.core.cqrs.eventstore.jackson.EventPayloadSerializer;
+import io.ddd4j.core.ddd.event.*;
+import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.argument.Argument;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+/**
+ * 基于 JDBI 的 {@link EventStore} 实现（CQRS 写侧持久化）。
+ *
+ * <p>SQL-first：全部读写以手写 SQL 经 jdbi3-core 的 Statement/Handle 原语执行
+ * （无注解 SQL Object），适用于 Javalin/Vert.x 等轻量运行时；Spring 系运行时请用
+ * {@code ddd4j-data-event-store-jpa}，Quarkus 请用 {@code ddd4j-data-event-store-panache}，
+ * 响应式请用 {@code ddd4j-data-event-store-r2dbc}。
+ *
+ * <p><b>集成方装配</b></p>
+ * <p>本类为纯类（零容器注解、非容器托管）：Javalin/Vert.x 集成方在应用装配代码中
+ * 手动 {@code new JdbiEventStore(jdbi)} 并自行管理其生命周期——{@code Jdbi}
+ * 实例（可包连接池 DataSource）由集成方提供。
+ *
+ * <p><b>表契约</b></p>
+ * <p>目标表 {@code DDD4J_EVENT_STORE} 与 -jpa/-r2dbc/-esdb 模块同构：
+ * {@code aggregate_id} VARCHAR(255)、{@code aggregate_type} VARCHAR(255)（NOT NULL）、
+ * {@code version} BIGINT、{@code position} BIGINT（UNIQUE）、
+ * {@code event_type} VARCHAR(512)、{@code event_id} VARCHAR(64)、
+ * {@code payload} TEXT（JSON 文本）、{@code timestamp} TIMESTAMP。
+ * 主键 {@code (aggregate_type, aggregate_id, version)}，{@code position} 唯一约束。
+ * 表在首次操作时通过 {@code CREATE TABLE IF NOT EXISTS} 懒创建。
+ *
+ * <p><b>乐观锁与 position 生成</b></p>
+ * <p>append 在事务内以 {@code SELECT COUNT(*)} 读取当前事件数
+ * （即当前版本），与 {@code expectedVersion} 不一致即抛 {@link AggregateVersionConflictException}
+ * 并回滚。全局 position 在事务内逐条以 {@code COALESCE(MAX(position), 0) + 1} 生成，
+ * 与 JPA/R2DBC 侧策略一致。
+ *
+ * <p><b>并发冲突契约：</b>由于 H2 不支持 {@code FOR UPDATE} 行锁（详见 0980d22c
+ * 回退提交），并发的 append 事务可能读到相同的 {@code MAX(position)} 并各自生成
+ * 重复的 position 值。{@code uk_position} 唯一约束作为兜底会抛
+ * {@link java.sql.SQLException}/{@code ConstraintViolationException}，事务被强制回滚。
+ * {@link EventStoreRetry} 对 position 冲突按退避策略重试整个 append 流程；
+ * 若重试后版本号已变化则抛 {@link AggregateVersionConflictException}。
+ * 高并发多实例场景建议改用数据库序列（如 PostgreSQL {@code nextval}）。
+ *
+ * <p><b>payload 序列化</b></p>
+ * <p>事件载荷通过 {@link EventPayloadSerializer} 序列化为 JSON 文本存储，
+ * 读取时通过同一序列化器按 {@code event_type} 反序列化。
+ * 若事件类已被删除或重命名（{@code Class.forName} 失败），
+ * 抛出 {@link IllegalStateException}，不静默返回无类型的载荷。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.0
+ */
+public class JdbiEventStore implements EventStore {
+
+    /**
+     * 首次使用时创建事件表的数据库语句。
+     */
+    private static final String CREATE_TABLE_SQL =
+            "CREATE TABLE IF NOT EXISTS " + EventStoreConstants.TABLE_NAME + " ("
+                    + EventStoreConstants.COLUMN_AGGREGATE_ID + " VARCHAR(255) NOT NULL, "
+                    + EventStoreConstants.COLUMN_AGGREGATE_TYPE + " VARCHAR(255) NOT NULL, "
+                    + EventStoreConstants.COLUMN_VERSION + " BIGINT NOT NULL, "
+                    + EventStoreConstants.COLUMN_POSITION + " BIGINT NOT NULL, "
+                    + EventStoreConstants.COLUMN_EVENT_TYPE + " VARCHAR(512) NOT NULL, "
+                    + EventStoreConstants.COLUMN_EVENT_ID + " VARCHAR(64), "
+                    + EventStoreConstants.COLUMN_CORRELATION_ID + " VARCHAR(64), "
+                    + EventStoreConstants.COLUMN_CAUSATION_ID + " VARCHAR(64), "
+                    + EventStoreConstants.COLUMN_PAYLOAD + " TEXT NOT NULL, "
+                    + EventStoreConstants.COLUMN_TIMESTAMP + " TIMESTAMP NOT NULL, "
+                    + "PRIMARY KEY (" + EventStoreConstants.COLUMN_AGGREGATE_TYPE + ", "
+                    + EventStoreConstants.COLUMN_AGGREGATE_ID + ", "
+                    + EventStoreConstants.COLUMN_VERSION + "), "
+                    + "CONSTRAINT uk_position UNIQUE (" + EventStoreConstants.COLUMN_POSITION + ")"
+                    + ")";
+
+    /**
+     * 查询当前聚合已持久化版本的语句。
+     */
+    private static final String CURRENT_VERSION_SQL =
+            "SELECT COUNT(*) FROM " + EventStoreConstants.TABLE_NAME
+                    + " WHERE " + EventStoreConstants.COLUMN_AGGREGATE_TYPE + " = :aggregateType"
+                    + " AND " + EventStoreConstants.COLUMN_AGGREGATE_ID + " = :aggregateId";
+
+    /**
+     * 会话中读取下一个全局事件位置的语句。
+     */
+    private static final String NEXT_POSITION_SQL =
+            "SELECT COALESCE(MAX(" + EventStoreConstants.COLUMN_POSITION + "), 0) FROM "
+                    + EventStoreConstants.TABLE_NAME;
+
+    /**
+     * 追加一个领域事件持久化行的语句。
+     */
+    private static final String INSERT_SQL =
+            "INSERT INTO " + EventStoreConstants.TABLE_NAME
+                    + " (" + EventStoreConstants.COLUMN_AGGREGATE_ID
+                    + ", " + EventStoreConstants.COLUMN_AGGREGATE_TYPE
+                    + ", " + EventStoreConstants.COLUMN_VERSION
+                    + ", " + EventStoreConstants.COLUMN_POSITION
+                    + ", " + EventStoreConstants.COLUMN_EVENT_TYPE
+                    + ", " + EventStoreConstants.COLUMN_EVENT_ID
+                    + ", " + EventStoreConstants.COLUMN_CORRELATION_ID
+                    + ", " + EventStoreConstants.COLUMN_CAUSATION_ID
+                    + ", " + EventStoreConstants.COLUMN_PAYLOAD
+                    + ", " + EventStoreConstants.COLUMN_TIMESTAMP
+                    + ") VALUES (:aggregateId, :aggregateType, :version, :position, :eventType, :eventId, :correlationId, :causationId, :payload, :timestamp)";
+
+    /**
+     * 按聚合标识及版本范围读取事件流的语句。
+     */
+    private static final String READ_BY_AGGREGATE_SQL =
+            "SELECT * FROM " + EventStoreConstants.TABLE_NAME
+                    + " WHERE " + EventStoreConstants.COLUMN_AGGREGATE_TYPE + " = :aggregateType"
+                    + " AND " + EventStoreConstants.COLUMN_AGGREGATE_ID + " = :aggregateId"
+                    + " ORDER BY " + EventStoreConstants.COLUMN_VERSION + " ASC";
+
+    /**
+     * 按聚合标识及指定版本边界读取事件的 SQL。
+     */
+    private static final String READ_BY_VERSION_RANGE_SQL =
+            "SELECT * FROM " + EventStoreConstants.TABLE_NAME
+                    + " WHERE " + EventStoreConstants.COLUMN_AGGREGATE_TYPE + " = :aggregateType"
+                    + " AND " + EventStoreConstants.COLUMN_AGGREGATE_ID + " = :aggregateId"
+                    + " AND " + EventStoreConstants.COLUMN_VERSION + " BETWEEN :fromVersion AND :toVersion"
+                    + " ORDER BY " + EventStoreConstants.COLUMN_VERSION + " ASC";
+
+    /**
+     * 按全局位置批量读取事件的语句。
+     */
+    private static final String READ_ALL_SQL =
+            "SELECT * FROM " + EventStoreConstants.TABLE_NAME
+                    + " WHERE " + EventStoreConstants.COLUMN_POSITION + " >= :fromPosition"
+                    + " ORDER BY " + EventStoreConstants.COLUMN_POSITION + " ASC"
+                    + " LIMIT :limit";
+
+    /**
+     * 负责获取 JDBC 连接并执行 SQL 操作的访问入口。
+     */
+    private final Jdbi jdbi;
+
+    /**
+     * 在数据库可重试故障后重新执行操作的策略。
+     */
+    private final EventStoreRetry retry;
+    /**
+     * 将领域事件负载写为存储格式并从存储格式恢复的序列化器。
+     */
+    private final EventPayloadSerializer serializer;
+
+    /**
+     * 存储初始化及其共享完成状态。
+     */
+    private final AtomicBoolean initialized = new AtomicBoolean(false);
+
+    /**
+     * 创建 JDBI 事件存储。
+     *
+     * @param jdbi JDBI 实例（集成方装配，可包连接池 DataSource）
+     * @throws NullPointerException jdbi 为 null 时抛出
+     */
+    public JdbiEventStore(Jdbi jdbi) {
+        this(jdbi, new EventStoreRetry(), new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()));
+    }
+
+    /**
+     * 创建 JDBI 事件存储（指定重试策略；主要供测试使用）。
+     *
+     * @param jdbi  JDBI 实例
+     * @param retry 重试策略
+     */
+    public JdbiEventStore(Jdbi jdbi, EventStoreRetry retry) {
+        this(jdbi, retry, new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()));
+    }
+
+    /**
+     * 创建使用指定重试策略和载荷序列化器的事件存储。
+     *
+     * @param jdbi       JDBI 实例
+     * @param retry      重试策略
+     * @param serializer 事件载荷序列化器
+     */
+    public JdbiEventStore(Jdbi jdbi, EventStoreRetry retry, EventPayloadSerializer serializer) {
+        this.jdbi = Objects.requireNonNull(jdbi, "jdbi must not be null");
+        this.retry = Objects.requireNonNull(retry, "retry must not be null");
+        this.serializer = Objects.requireNonNull(serializer, "serializer must not be null");
+    }
+
+    /**
+     * 向指定聚合的事件流追加这一批领域事件。
+     *
+     * <p>\u4e50\u89c2\u9501\uff1a\u4e8b\u52a1\u5185\u5148\u67e5\u8be2\u5f53\u524d\u6d41\u4e8b\u4ef6\u6570\uff08\u5373\u5f53\u524d\u7248\u672c\uff09\uff0c\u4e0e {@code expectedVersion}
+     * \u4e0d\u4e00\u81f4\u5373\u629b {@link IllegalStateException} \u5e76\u56de\u6eda\u3002\u591a\u4e8b\u4ef6\u5728\u540c\u4e00\u4e8b\u52a1\u5185\u539f\u5b50\u63d0\u4ea4\uff0c
+     * \u4e0d\u7559\u534a\u622a\u6d41\u3002
+     *
+     * <p>position \u751f\u6210\uff1a\u4e8b\u52a1\u5185\u9010\u6761\u4ee5 {@code COALESCE(MAX(position), 0) + 1} \u9012\u589e\uff0c
+     * \u4e0e JPA/R2DBC \u4fa7\u7b56\u7565\u4e00\u81f4\u3002\u9996\u6761\u7684 position \u5728\u5faa\u73af\u524d\u9884\u53d6 maxPos\uff0c
+     * \u540e\u7eed\u6bcf\u6761 +1\uff0c\u907f\u514d\u6bcf\u6761\u90fd\u6267\u884c MAX \u67e5\u8be2\u3002
+     *
+     * <p>Jdbi 实现调用 <code>events.isEmpty()</code>。</p>
+     *
+     * @param aggregateType   聚合类型
+     * @param aggregateId     聚合 ID
+     * @param events          要追加的事件（非空列表）
+     * @param expectedVersion 期望的当前版本号（乐观锁，空流为 0）
+     */
+    @Override
+    public void append(String aggregateType, AggregateRootId aggregateId,
+                       List<? extends DomainEvent<?>> events, long expectedVersion) {
+        Objects.requireNonNull(aggregateType, "aggregateType must not be null");
+        Objects.requireNonNull(aggregateId, "aggregateId must not be null");
+        Objects.requireNonNull(events, "events must not be null");
+        if (events.isEmpty()) {
+            return;
+        }
+        ensureInitialized();
+        try {
+            retry.execute("append(" + aggregateType + ":" + aggregateId.asString() + ")", () -> {
+                jdbi.useTransaction(handle -> {
+                    // 版本校验（乐观锁第一道）
+                    long actualVersion = handle.createQuery(CURRENT_VERSION_SQL)
+                            .bind("aggregateType", aggregateType)
+                            .bind("aggregateId", aggregateId.asString())
+                            .mapTo(Long.class)
+                            .one();
+                    if (actualVersion != expectedVersion) {
+                        throw new AggregateVersionConflictException(
+                                aggregateType, aggregateId.asString(), expectedVersion, actualVersion);
+                    }
+
+                    // position 生成在事务内执行，避免并发连接读到相同的 maxPos
+                    long maxPos = handle.createQuery(NEXT_POSITION_SQL)
+                            .mapTo(Long.class)
+                            .one();
+                    long position = maxPos + 1L;
+                    long version = expectedVersion;
+                    for (DomainEvent<?> event : events) {
+                        handle.createUpdate(INSERT_SQL)
+                                .bind("aggregateId", aggregateId.asString())
+                                .bind("aggregateType", aggregateType)
+                                .bind("version", ++version)
+                                .bind("position", position)
+                                .bind("eventType", event.getClass().getName())
+                                .bind("eventId", event.getEventId().asString())
+                                .bind("correlationId", event.getCorrelationId() == null ? null : event.getCorrelationId().asString())
+                                .bind("causationId", event.getCausationId() == null ? null : event.getCausationId().asString())
+                                .bind("payload", serializer.serialize(event))
+                                // 使用 JDBC 4.2 的 LocalDateTime 写入，避免 java.sql.Timestamp 引入进程默认时区。
+                                .bind("timestamp", (Argument) (index, statement, context) -> statement.setObject(
+                                        index, event.getEventTimestamp()
+                                                .withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime()))
+                                .execute();
+                        position++;
+                    }
+                });
+                return null;
+            });
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 按聚合查询其事件流并还原已存储的事件。
+     *
+     * <p>\u6309\u7248\u672c\u5347\u5e8f\u8bfb\u53d6\u6307\u5b9a\u805a\u5408\u7684\u5168\u90e8\u4e8b\u4ef6\u3002
+     * \u4e8b\u4ef6\u8f7d\u8377\u901a\u8fc7 {@link EventPayloadSerializer} \u53cd\u5e8f\u5217\u5316\uff0c\u7c7b\u578b\u65e0\u6cd5\u8fd8\u539f\u65f6\u629b\u51fa {@link IllegalStateException}\u3002
+     *
+     * <p>Jdbi 实现调用 <code>ensureInitialized()</code>。</p>
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId   聚合 ID
+     * @return 按版本升序的持久化事件；无事件时为空列表
+     */
+    @Override
+    public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId) {
+        Objects.requireNonNull(aggregateType, "aggregateType must not be null");
+        Objects.requireNonNull(aggregateId, "aggregateId must not be null");
+        ensureInitialized();
+        return jdbi.withHandle(handle -> handle.createQuery(READ_BY_AGGREGATE_SQL)
+                .bind("aggregateType", aggregateType)
+                .bind("aggregateId", aggregateId.asString())
+                .map((rs, ctx) -> toStoredEvent(rs))
+                .list());
+    }
+
+    /**
+     * 按聚合查询其事件流并还原已存储的事件。
+     *
+     * <p>Jdbi 实现调用 <code>ensureInitialized()</code>。</p>
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId   聚合 ID
+     * @param fromVersion   起始版本号（含）
+     * @param toVersion     结束版本号（含）
+     * @return 版本区间内的持久化事件，按版本升序
+     */
+    @Override
+    public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId,
+                                  long fromVersion, long toVersion) {
+        ensureInitialized();
+        return jdbi.withHandle(handle -> handle.createQuery(READ_BY_VERSION_RANGE_SQL)
+                .bind("aggregateType", aggregateType)
+                .bind("aggregateId", aggregateId.asString())
+                .bind("fromVersion", fromVersion)
+                .bind("toVersion", toVersion)
+                .map((rs, ctx) -> toStoredEvent(rs))
+                .list());
+    }
+
+    /**
+     * 按全局位置读取用于投影或重放的存储事件。
+     *
+     * <p>\u6309\u5168\u5c40 position \u5347\u5e8f\u5206\u9875\u8bfb\u53d6\u4e8b\u4ef6\u3002
+     * {@code limit} \u4e0b\u63a8\u4e3a SQL {@code LIMIT}\uff0c\u4ece SQL \u5c42\u622a\u65ad\u907f\u514d\u7269\u5316\u591a\u4f59\u884c\u3002
+     *
+     * <p>满足 <code>limit &lt;= 0</code> 时抛出 <code>IllegalArgumentException</code>。 Jdbi 实现调用 <code>ensureInitialized()</code>。</p>
+     *
+     * @param fromPosition 起始 position（含）
+     * @param limit        最大读取数量
+     * @return position 升序的持久化事件
+     */
+    @Override
+    public List<StoredEvent> readAll(long fromPosition, int limit) {
+        if (limit <= 0) {
+            throw new IllegalArgumentException("limit must be positive");
+        }
+        ensureInitialized();
+        return jdbi.withHandle(handle -> handle.createQuery(READ_ALL_SQL)
+                .bind("fromPosition", fromPosition)
+                .bind("limit", limit)
+                .map((rs, ctx) -> toStoredEvent(rs))
+                .list());
+    }
+
+    /**
+     * 确保表已创建（懒初始化，仅执行一次）。
+     */
+    private void ensureInitialized() {
+        if (initialized.get()) {
+            return;
+        }
+        synchronized (initialized) {
+            if (!initialized.get()) {
+                jdbi.useHandle(handle -> handle.execute(CREATE_TABLE_SQL));
+                initialized.set(true);
+            }
+        }
+    }
+
+    /**
+     * 将结果集行重建为 {@link StoredEvent}。
+     *
+     * <p>事件类型经 {@code Class.forName} 还原，payload 经 {@link EventPayloadSerializer#deserialize}
+     * 反序列化。若类不存在（被删除/重命名），抛出 {@link IllegalStateException}。
+     *
+     * <p>时间戳处理：H2 JDBC 驱动对 TIMESTAMP 列返回 {@link LocalDateTime}，
+     * 此处统一先取 {@link LocalDateTime} 再转 {@link java.time.Instant}（UTC 偏移），
+     * 与 R2DBC 实现一致。
+     *
+     * @param rs 当前行（列名与表契约一致）
+     * @return 重建的存储事件
+     * @throws SQLException JDBC 列读取失败
+     */
+    private StoredEvent toStoredEvent(ResultSet rs) throws SQLException {
+        String payload = rs.getString(EventStoreConstants.COLUMN_PAYLOAD);
+        String eventType = rs.getString(EventStoreConstants.COLUMN_EVENT_TYPE);
+        DomainEvent<?> event = serializer.deserialize(payload, resolveEventType(eventType));
+        // H2 JDBC 对 TIMESTAMP 列返回 LocalDateTime，转为 Instant（与 R2DBC 实现一致）
+        LocalDateTime timestamp = rs.getObject(EventStoreConstants.COLUMN_TIMESTAMP, LocalDateTime.class);
+        if (Objects.isNull(timestamp)) {
+            throw new IllegalStateException("Missing persisted event timestamp");
+        }
+        return new StoredEvent(
+                EventId.valueOf(rs.getString(EventStoreConstants.COLUMN_EVENT_ID)),
+                rs.getString(EventStoreConstants.COLUMN_AGGREGATE_TYPE),
+                new StringAggregateRootId(rs.getString(EventStoreConstants.COLUMN_AGGREGATE_ID)),
+                rs.getLong(EventStoreConstants.COLUMN_VERSION),
+                rs.getLong(EventStoreConstants.COLUMN_POSITION),
+                timestamp.atZone(ZoneOffset.UTC),
+                event,
+                EventId.valueOf(rs.getString(EventStoreConstants.COLUMN_CORRELATION_ID)),
+                EventId.valueOf(rs.getString(EventStoreConstants.COLUMN_CAUSATION_ID)));
+    }
+
+    /**
+     * 按持久化的全限定类名解析事件负载类型。
+     *
+     * @param eventType 事件的 Java 类型或持久化类型名称
+     * @return 用于反序列化的领域事件类
+     */
+    @SuppressWarnings("unchecked")
+    private Class<? extends DomainEvent<?>> resolveEventType(String eventType) {
+        try {
+            return (Class<? extends DomainEvent<?>>) Class.forName(eventType);
+        } catch (ClassNotFoundException exception) {
+            throw new IllegalStateException("Unknown event type: " + eventType, exception);
+        }
+    }
+
+    /**
+     * 将事件存储中的字符串标识适配为聚合根标识。
+     */
+    private final static class StringAggregateRootId implements AggregateRootId {
+
+        /**
+         * Java 序列化版本标识。
+         */
+        private static final long serialVersionUID = 6652084670470061437L;
+        /**
+         * 反序列化字符串聚合标识时使用的实体类型。
+         */
+        private static final StringEntityType TYPE = new StringEntityType("String");
+        /**
+         * 来自事件记录的原始字符串标识。
+         */
+        private final String value;
+
+        /**
+         * 将持久化记录里的字符串包装成聚合根标识。
+         *
+         * @param value 聚合根标识的原始字符串
+         */
+        @JsonCreator()
+        private StringAggregateRootId(@JsonProperty("value") String value) {
+            this.value = value;
+        }
+
+        /**
+         * 返回当前值或标识公开的类型。
+         *
+         * @return 实际返回<code>TYPE</code>，供调用方取得当前值
+         */
+        @Override
+        public EntityType getType() {
+            return TYPE;
+        }
+
+        /**
+         * 返回聚合或实体标识的业务字符串。
+         *
+         * @return 不含类型标记的业务标识
+         */
+        @Override
+        @JsonValue
+        public String asString() {
+            return value;
+        }
+
+        /**
+         * 返回带类型前缀的标识字符串。
+         *
+         * <p>此实现调用 <code>TYPE.asString()</code>。</p>
+         *
+         * @return 包含类型标记的标识
+         */
+        @Override
+        public String asTypedString() {
+            return TYPE.asString() + ":" + value;
+        }
+
+        /**
+         * 读取<code>value</code> 字段。
+         *
+         * @return <code>value</code> 字段
+         */
+        @JsonProperty("value")
+        public String value() {
+            return value;
+        }
+
+        /**
+         * 根据<code>value</code>比较对象的值是否相等。
+         *
+         * <p>只比较运行时类型相同的对象。</p>
+         *
+         * @param obj 用来比较或转换的输入对象
+         * @return 对象满足此实现的相等条件时为真
+         */
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            StringAggregateRootId other = (StringAggregateRootId) obj;
+            return Objects.equals(this.value, other.value);
+        }
+
+        /**
+         * 计算与对象相等条件一致的哈希值。
+         *
+         * @return 由参与相等比较的状态计算出的哈希值
+         */
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(value);
+            return result;
+        }
+
+        /**
+         * 生成用于调试和日志的对象描述，包含<code>value</code>。
+         *
+         * @return 表示当前对象状态的字符串
+         */
+        @Override
+        public String toString() {
+            return "StringAggregateRootId[value=" + value + "]";
+        }
+    }
+}

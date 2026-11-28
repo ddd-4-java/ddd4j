@@ -1,0 +1,81 @@
+import de.schlichtherle.license.AbstractKeyStoreParam;
+import de.schlichtherle.license.DefaultCipherParam;
+import de.schlichtherle.license.DefaultLicenseParam;
+import de.schlichtherle.license.LicenseContent;
+import de.schlichtherle.license.LicenseManager;
+import de.schlichtherle.license.LicenseParam;
+
+import javax.security.auth.x500.X500Principal;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Objects;
+import java.util.prefs.AbstractPreferences;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
+
+public final class LegacyFixtureGenerator {
+    public static void main(String[] args) throws Exception {
+        String privateStore = args[0];
+        String output = args[1];
+        String storePassword = args[2];
+        String keyPassword = args[3];
+        String alias = args[4];
+        String subject = args[5];
+        Preferences preferences = new MemoryPreferences();
+        LicenseParam param = new DefaultLicenseParam(subject, preferences,
+                new DiskKeyStoreParam(privateStore, alias, storePassword, keyPassword),
+                new DefaultCipherParam(storePassword));
+        LicenseContent content = new LicenseContent();
+        X500Principal principal = new X500Principal("CN=ddd4j-legacy-fixture");
+        SimpleDateFormat dates = new SimpleDateFormat("yyyy-MM-dd");
+        content.setHolder(principal);
+        content.setIssuer(principal);
+        content.setSubject(subject);
+        content.setIssued(dates.parse("2026-01-01"));
+        content.setNotBefore(dates.parse("2026-01-01"));
+        content.setNotAfter(dates.parse("2099-12-31"));
+        content.setConsumerType("user");
+        content.setConsumerAmount(1);
+        content.setInfo("Synthetic TrueLicense 1.33 compatibility fixture");
+        new LicenseManager(param).store(content, new File(output));
+    }
+
+    private static final class DiskKeyStoreParam extends AbstractKeyStoreParam {
+        private final String resource;
+        private final String alias;
+        private final String storePassword;
+        private final String keyPassword;
+
+        private DiskKeyStoreParam(String resource, String alias, String storePassword, String keyPassword) {
+            super(LegacyFixtureGenerator.class, resource);
+            this.resource = resource;
+            this.alias = alias;
+            this.storePassword = storePassword;
+            this.keyPassword = keyPassword;
+        }
+
+        public String getAlias() { return alias; }
+        public String getStorePwd() { return storePassword; }
+        public String getKeyPwd() { return keyPassword; }
+        public InputStream getStream() throws IOException { return new FileInputStream(resource); }
+    }
+
+    private static final class MemoryPreferences extends AbstractPreferences {
+        private byte[] value;
+
+        private MemoryPreferences() { super(null, ""); }
+        protected void putSpi(String key, String text) { value = text.getBytes(); }
+        protected String getSpi(String key) { return Objects.isNull(value) ? null : new String(value); }
+        protected void removeSpi(String key) { value = null; }
+        protected void removeNodeSpi() throws BackingStoreException { value = null; }
+        protected String[] keysSpi() { return Objects.isNull(value) ? new String[0] : new String[]{subjectKey()}; }
+        protected String[] childrenNamesSpi() { return new String[0]; }
+        protected AbstractPreferences childSpi(String name) { return this; }
+        protected void syncSpi() throws BackingStoreException { }
+        protected void flushSpi() throws BackingStoreException { }
+        private String subjectKey() { return "ddd4j-legacy-fixture"; }
+    }
+}

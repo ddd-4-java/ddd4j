@@ -27,6 +27,7 @@
         <module>ddd4j-extension-qlexpress</module>
         <module>ddd4j-extension-monitor</module>
         <module>ddd4j-extension-validation</module>
+        <module>ddd4j-extension-pf4j</module>
     </modules>
 
     <dependencies>

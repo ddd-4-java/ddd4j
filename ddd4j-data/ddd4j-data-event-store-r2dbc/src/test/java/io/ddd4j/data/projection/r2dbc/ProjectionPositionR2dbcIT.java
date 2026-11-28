@@ -1,0 +1,219 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.ddd4j.data.projection.r2dbc;
+
+import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
+import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
+import io.r2dbc.spi.ConnectionFactories;
+import io.r2dbc.spi.ConnectionFactory;
+import io.r2dbc.spi.Statement;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
+import java.util.function.UnaryOperator;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+/**
+ * {@link R2dbcProjectionPositionRepository} 纯 r2dbc-h2＋H2 全量契约集成测试
+ * （Task 7.5，本地必跑轨）。
+ *
+ * <p>零容器：{@code ConnectionFactories.get("r2dbc:h2:mem:///...")} 直连 H2 内存库，
+ * DDL 在 {@code @BeforeAll} 手工执行（表结构与 -jpa/-panache/-jdbi 模块同构——
+ * {@code stream_id} 自然主键＋{@code next_event_number} 计数列，DDL parity；无时间戳
+ * 列，故 5.4 事件存储的 {@code created_at} 行类型实证课题在本表不出现），零 mock
+ * ——完整验证 core SPI 语义↔纯 {@code io.r2dbc.spi} Connection 原语的组装：响应式面
+ * （{@code *Reactive}）与同步桥接面（SPI 实现）双面覆盖——save→自增→读回往返、
+ * resetToZero 回退（含缺行插入零位行）、跨投影流（handler 名）命名空间隔离、
+ * upsert 与删除语义。响应式面断言全部经 {@link StepVerifier} 信号序列。
+ *
+ * <p>「重启读回」模拟：仓储无任何缓存（每方法独立连接直达库），断言前新建仓储
+ * 实例重读——等价于进程重启后新实例的可见性。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 2.0.x
+ */
+@DisplayName("R2dbcProjectionPositionRepository 纯 r2dbc-h2 + H2 全量契约 IT")
+class ProjectionPositionR2dbcIT {
+
+    /**
+     * 投影流 ID＝handler 名（ProjectionHandler#getName 约定）。
+     */
+    private static final String ORDER_SUMMARY = "order-summary";
+
+    /** \u4f5c\u4e3a\u5e93\u5b58\u6295\u5f71\u6d4b\u8bd5\u8f93\u5165\u6216\u6bd4\u8f83\u57fa\u51c6\u7684\u5feb\u7167\u6570\u636e\u3002 */
+    private static final String INVENTORY_SNAPSHOT = "inventory-snapshot";
+
+    /**
+     * 与 -jpa/-panache/-jdbi 模块同构的 DDL（列集 parity：{@code stream_id}
+     * VARCHAR(250) 自然主键＋{@code next_event_number} BIGINT 非空计数）。
+     */
+    private static final String DDL =
+            "create table if not exists ddd4j_projection_position (" +
+                    "  stream_id varchar(250) not null primary key," +
+                    "  next_event_number bigint not null" +
+                    ")";
+
+    /** \u4e3a\u53d7\u6d4b R2DBC \u7ec4\u4ef6\u63d0\u4f9b\u6570\u636e\u5e93\u8fde\u63a5\u7684\u5de5\u5382\u3002 */
+    private static ConnectionFactory connectionFactory;
+
+    /** \u6d4b\u8bd5\u4f7f\u7528\u6216\u8bb0\u5f55\u7684\u591a\u6761\u6295\u5f71\u4f4d\u70b9\u3002 */
+    private R2dbcProjectionPositionRepository positions;
+
+    /** \u6d4b\u8bd5\u524d\u4f9d\u6b21\u521d\u59cb\u5316<code>connectionFactory</code>\u3002 */
+    @BeforeAll
+    static void setUpDatabase() {
+        connectionFactory = ConnectionFactories.get("r2dbc:h2:mem:///projectionit;DB_CLOSE_DELAY=-1");
+        StepVerifier.create(executeUpdate(DDL, statement -> statement)).verifyComplete();
+    }
+
+    /**
+     * 直连执行 DML（建表／清表）：连接以 {@code Mono.usingWhen} 托管，完成信号即成功。
+     *
+     * @param sql    DML 语句（占位符 {@code $n}）
+     * @param binder 占位符绑参
+     * @return 完成信号
+     */
+    private static Mono<Void> executeUpdate(String sql, UnaryOperator<Statement> binder) {
+        return Mono.usingWhen(
+                connectionFactory.create(),
+                connection -> Mono.from(binder.apply(connection.createStatement(sql)).execute())
+                        .flatMap(result -> Mono.from(result.getRowsUpdated()))
+                        .then(),
+                connection -> Mono.from(connection.close()),
+                (connection, ex) -> Mono.from(connection.close()),
+                connection -> Mono.from(connection.close()));
+    }
+
+    /** \u6d4b\u8bd5\u524d\u4f9d\u6b21\u521d\u59cb\u5316<code>positions</code>\u3002 */
+    @BeforeEach
+    void cleanPositions() {
+        StepVerifier.create(executeUpdate("delete from ddd4j_projection_position", statement -> statement))
+                .verifyComplete();
+        // 每用例新建仓储实例：受测代码零状态，亦证明断言不依赖任何实例内缓存
+        positions = new R2dbcProjectionPositionRepository(connectionFactory);
+    }
+
+    /** \u9a8c\u8bc1 saveIncrReadBack \u54cd\u5e94\u5f0f\u5b8c\u6574\u5faa\u73af \u5e94\u8de8\u4ed3\u50a8\u5b9e\u4f8b\u8bfb\u56de\u6700\u7ec8\u4f4d\u7f6e\u3002 */
+    @Test
+    void saveIncrReadBack_响应式完整循环_应跨仓储实例读回最终位置() {
+        // 先落零位行（dispatcher 冷启动路径），断言 save 返回持久化后的不可变位置值
+        StepVerifier.create(positions.saveReactive(DefaultProjectionPosition.zero(ORDER_SUMMARY)))
+                .expectNextMatches(saved -> saved.getStreamId().equals(ORDER_SUMMARY)
+                        && saved.getNextEventNumber() == 0L)
+                .verifyComplete();
+
+        // 逐事件推进到 5（每次一条 MERGE INTO 原子 upsert）
+        StepVerifier.create(positions.findByStreamIdReactive(ORDER_SUMMARY)
+                        .flatMap(optional -> positions.saveReactive(
+                                optional.orElseThrow(() -> new IllegalStateException("mandatory")).withNextEventNumber(1L)))
+                        .then(positions.findByStreamIdReactive(ORDER_SUMMARY)
+                                .flatMap(optional -> positions.saveReactive(
+                                        optional.orElseThrow(() -> new IllegalStateException("mandatory")).withNextEventNumber(2L))))
+                        .then(positions.findByStreamIdReactive(ORDER_SUMMARY)
+                                .flatMap(optional -> positions.saveReactive(
+                                        optional.orElseThrow(() -> new IllegalStateException("mandatory")).withNextEventNumber(3L))))
+                        .then(positions.findByStreamIdReactive(ORDER_SUMMARY)
+                                .flatMap(optional -> positions.saveReactive(
+                                        optional.orElseThrow(() -> new IllegalStateException("mandatory")).withNextEventNumber(4L))))
+                        .then(positions.findByStreamIdReactive(ORDER_SUMMARY)
+                                .flatMap(optional -> positions.saveReactive(
+                                        optional.orElseThrow(() -> new IllegalStateException("mandatory")).withNextEventNumber(5L)))))
+                .expectNextMatches(position -> position.getNextEventNumber() == 5L)
+                .verifyComplete();
+
+        // 重启读回：新建仓储实例从库重读，位置仍为 5（持久性，非实例态内存值）
+        StepVerifier.create(new R2dbcProjectionPositionRepository(connectionFactory)
+                        .findByStreamIdReactive(ORDER_SUMMARY))
+                .expectNextMatches(optional -> optional.isPresent()
+                        && optional.get().getStreamId().equals(ORDER_SUMMARY)
+                        && optional.get().getNextEventNumber() == 5L)
+                .verifyComplete();
+    }
+
+    /** \u9a8c\u8bc1<code>position.getNextEventNumber()</code>\u4e3a\u96f6\u3002 */
+    @Test
+    void resetToZero_响应式推进后重置_应回退到0() {
+        StepVerifier.create(positions.saveReactive(new DefaultProjectionPosition(ORDER_SUMMARY, 5L)))
+                .expectNextCount(1)
+                .verifyComplete();
+        StepVerifier.create(positions.findByStreamIdReactive(ORDER_SUMMARY))
+                .expectNextMatches(optional -> optional.map(ProjectionPosition::getNextEventNumber).filter(v -> v == 5L).isPresent())
+                .verifyComplete();
+
+        StepVerifier.create(positions.resetToZeroReactive(ORDER_SUMMARY)).verifyComplete();
+
+        assertThat(positions.findByStreamId(ORDER_SUMMARY)) // 同步桥接面顺带覆盖
+                .hasValueSatisfying(position -> assertThat(position.getNextEventNumber()).isZero());
+    }
+
+    /** \u9a8c\u8bc1 resetToZero \u6d41\u4e0d\u5b58\u5728 \u5e94\u63d2\u5165\u96f6\u4f4d\u884c\u3002 */
+    @Test
+    void resetToZero_流不存在_应插入零位行() {
+        // 与 core InMemoryProjectionPositionRepository 同款语义：缺行 reset 后可读到 0
+        positions.resetToZero(ORDER_SUMMARY); // 同步桥接面
+
+        StepVerifier.create(positions.findByStreamIdReactive(ORDER_SUMMARY))
+                .expectNextMatches(optional -> optional.isPresent()
+                        && optional.get().getNextEventNumber() == 0L)
+                .verifyComplete();
+    }
+
+    /** \u9a8c\u8bc1<code>position.getNextEventNumber()</code> \u7b49\u4e8e <code>3L</code>\uff0c<code>position.getNextEventNumber()</code>\u4e3a\u96f6\uff0c<code>positions.findAll()</code> \u7684\u5927\u5c0f\u4e3a <code>2</code>\u3002 */
+    @Test
+    void 两个handler命名空间_同步SPI面_分别save后独立推进互不串扰() {
+        positions.save(DefaultProjectionPosition.zero(ORDER_SUMMARY));
+        positions.save(DefaultProjectionPosition.zero(INVENTORY_SNAPSHOT));
+
+        // 仅推进 order-summary：inventory-snapshot 不受影响（stream_id 自然主键隔离）
+        positions.save(new DefaultProjectionPosition(ORDER_SUMMARY, 3L));
+
+        assertThat(positions.findByStreamId(ORDER_SUMMARY))
+                .hasValueSatisfying(position -> assertThat(position.getNextEventNumber()).isEqualTo(3L));
+        assertThat(positions.findByStreamId(INVENTORY_SNAPSHOT))
+                .hasValueSatisfying(position -> assertThat(position.getNextEventNumber()).isZero());
+        assertThat(positions.findAll()).hasSize(2);
+        assertThat(positions.findAll())
+                .extracting(ProjectionPosition::getStreamId)
+                .containsExactlyInAnyOrder(ORDER_SUMMARY, INVENTORY_SNAPSHOT);
+    }
+
+    /** \u9a8c\u8bc1<code>positions.findByStreamId(ORDER_SUMMARY)</code>\u4e3a\u7a7a\uff0c<code>saved.getStreamId()</code> \u7b49\u4e8e <code>ORDER_SUMMARY</code>\uff0c<code>positions.findAll()</code>\u4e3a\u7a7a\u3002 */
+    @Test
+    void save不存在则插入存在则更新_delete后不可见() {
+        // save（缺行）→ MERGE INTO 插入（dispatcher 首次推进路径依赖的 upsert 语义）
+        assertThat(positions.findByStreamId(ORDER_SUMMARY)).isEmpty();
+        ProjectionPosition saved = positions.save(new DefaultProjectionPosition(ORDER_SUMMARY, 7L));
+        assertThat(saved.getStreamId()).isEqualTo(ORDER_SUMMARY);
+        assertThat(saved.getNextEventNumber()).isEqualTo(7L);
+
+        // save（已存在）→ 原位更新位置计数（同键 MERGE 不新增行）
+        positions.save(new DefaultProjectionPosition(ORDER_SUMMARY, 9L));
+        assertThat(positions.findByStreamId(ORDER_SUMMARY))
+                .hasValueSatisfying(position -> assertThat(position.getNextEventNumber()).isEqualTo(9L));
+        assertThat(positions.findAll()).hasSize(1);
+
+        // deleteByStreamId → 行删除、findAll 归空；再删缺行静默成功
+        positions.deleteByStreamId(ORDER_SUMMARY);
+        assertThat(positions.findByStreamId(ORDER_SUMMARY)).isEmpty();
+        assertThat(positions.findAll()).isEmpty();
+        positions.deleteByStreamId(ORDER_SUMMARY);
+        assertThat(positions.findAll()).isEmpty();
+    }
+}
