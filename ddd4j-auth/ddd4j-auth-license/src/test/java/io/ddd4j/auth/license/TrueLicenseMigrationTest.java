@@ -19,6 +19,7 @@ import global.namespace.truelicense.api.LicenseManagementException;
 import global.namespace.truelicense.api.LicenseValidationException;
 import global.namespace.truelicense.api.i18n.Message;
 import global.namespace.truelicense.v1.V1;
+import global.namespace.truelicense.v4.V4License;
 import io.ddd4j.auth.license.creator.LicenseCreator;
 import io.ddd4j.auth.license.creator.LicenseCreatorParam;
 import io.ddd4j.auth.license.manager.CustomLicenseManager;
@@ -38,10 +39,11 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.prefs.Preferences;
 
+import static global.namespace.fun.io.bios.BIOS.preferences;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * TrueLicense 4.x V1 格式迁移的真实密码学回归测试。
+ * TrueLicense V4 签发与历史 V1 消费的真实密钥回归测试。
  */
 class TrueLicenseMigrationTest {
 
@@ -183,8 +185,11 @@ class TrueLicenseMigrationTest {
         vendor.store(content, licenseFile);
 
         CustomLicenseManager consumer = new CustomLicenseManager(SUBJECT, support.publicKeyStoreParam(), preferences);
-        assertEquals(SUBJECT, consumer.install(licenseFile).getSubject());
-        assertEquals(SUBJECT, consumer.verify().getSubject());
+        License installed = consumer.install(licenseFile);
+        assertEquals(SUBJECT, installed.getSubject());
+        assertInstanceOf(V4License.class, installed);
+        assertEquals(SUBJECT, new CustomLicenseManager(SUBJECT, support.publicKeyStoreParam(), preferences)
+                .verify().getSubject());
 
         consumer.uninstall();
         assertThrows(LicenseManagementException.class, consumer::verify);
@@ -524,6 +529,7 @@ class TrueLicenseMigrationTest {
         LicenseTestSupport support = new LicenseTestSupport(temporaryDirectory);
         File licenseFile = temporaryDirectory.resolve("high-level.lic").toFile();
         LicenseCreatorParam param = creatorParam(support, licenseFile);
+        param.setLicenseExtraModel(new LicenseExtraModel());
 
         assertTrue(new LicenseCreator(param).generateLicense());
         LicenseVerify verify = new LicenseVerify(param.getSubject(), LicenseTestSupport.ALIAS,
@@ -606,6 +612,19 @@ class TrueLicenseMigrationTest {
         assertEquals("ddd4j-legacy-fixture", manager.install(licenseFile).getSubject());
         assertEquals("ddd4j-legacy-fixture", manager.verify().getSubject());
         manager.uninstall();
+        // 在旧版使用的偏好键中只保存原始 V1 文件，模拟升级前已经安装的许可证。
+        preferences(preferences, "ddd4j-legacy-fixture").content(Files.readAllBytes(licenseFile.toPath()));
+
+        CustomLicenseManager restarted = new CustomLicenseManager("ddd4j-legacy-fixture", keyStoreParam, preferences);
+        assertEquals("ddd4j-legacy-fixture", restarted.verify().getSubject());
+        restarted.uninstall();
+        assertThrows(LicenseManagementException.class, restarted::verify);
+        assertThrows(LicenseManagementException.class,
+                () -> new CustomLicenseManager("ddd4j-legacy-fixture", keyStoreParam, preferences).verify());
+
+        File tampered = Files.copy(licenseFile.toPath(), temporaryDirectory.resolve("tampered-legacy.lic")).toFile();
+        tamper(tampered);
+        assertInstallationFailsAndLeavesNoLicense(restarted, tampered);
     }
 
     /**

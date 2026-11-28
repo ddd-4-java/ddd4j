@@ -15,6 +15,7 @@
 package io.ddd4j.auth.license.manager;
 
 import global.namespace.fun.io.api.Source;
+import global.namespace.fun.io.api.Store;
 import global.namespace.truelicense.api.*;
 import global.namespace.truelicense.api.auth.AuthenticationChildBuilder;
 import global.namespace.truelicense.api.crypto.EncryptionChildBuilder;
@@ -22,6 +23,7 @@ import global.namespace.truelicense.api.i18n.Message;
 import global.namespace.truelicense.api.passwd.Password;
 import global.namespace.truelicense.api.passwd.PasswordProtection;
 import global.namespace.truelicense.v1.V1;
+import global.namespace.truelicense.v4.V4;
 import io.ddd4j.auth.license.CustomKeyStoreParam;
 import org.springframework.util.StringUtils;
 
@@ -36,14 +38,18 @@ import static global.namespace.fun.io.bios.BIOS.file;
 import static global.namespace.fun.io.bios.BIOS.preferences;
 
 /**
- * 基于 TrueLicense 4.x 组合 API 的 V1 格式许可证管理器。
+ * 签发 TrueLicense V4 许可证，并兼容已签发的 V1 许可证。
  */
 public class CustomLicenseManager {
 
     /**
-     * 用于许可证安装、卸载和在线验证的 TrueLicense 消费端管理器。
+     * 用于安装、验签及卸载 V4 许可证的消费端。
      */
     private final ConsumerLicenseManager consumer;
+    /**
+     * 从同一偏好存储读取、安装和卸载历史 V1 许可证的消费端。
+     */
+    private final ConsumerLicenseManager legacyConsumer;
     /**
      * 是否使用用户级偏好存储保存许可证。
      */
@@ -70,7 +76,9 @@ public class CustomLicenseManager {
         Objects.requireNonNull(preferences, "preferences");
         this.userPreferences = preferences.isUserNode();
         this.vendor = vendor(subject, keyStoreParam);
-        this.consumer = consumer(subject, keyStoreParam, preferences);
+        Store store = preferences(preferences, subject);
+        this.consumer = consumer(V4.builder(), subject, keyStoreParam, store);
+        this.legacyConsumer = consumer(V1.builder(), subject, keyStoreParam, store);
     }
 
     /**
@@ -170,9 +178,9 @@ public class CustomLicenseManager {
     public synchronized License install(File source) throws LicenseManagementException {
         verificationInvalidated = true;
         try {
-            consumer.install(file(Objects.requireNonNull(source, "source")));
-            consumer.verify();
-            License installed = consumer.load();
+            ConsumerLicenseManager installedConsumer = installFrom(file(Objects.requireNonNull(source, "source")));
+            installedConsumer.verify();
+            License installed = installedConsumer.load();
             verificationInvalidated = false;
             return installed;
         } catch (LicenseManagementException exception) {
@@ -194,8 +202,9 @@ public class CustomLicenseManager {
         if (verificationInvalidated) {
             throw invalidatedException();
         }
-        consumer.verify();
-        return consumer.load();
+        ConsumerLicenseManager installedConsumer = installedConsumer();
+        installedConsumer.verify();
+        return installedConsumer.load();
     }
 
     /**
@@ -205,7 +214,49 @@ public class CustomLicenseManager {
      */
     public synchronized void uninstall() throws LicenseManagementException {
         verificationInvalidated = true;
-        consumer.uninstall();
+        installedConsumer().uninstall();
+    }
+
+    /**
+     * 先使用 V4 消费端验签并安装，失败时尝试用历史 V1 消费端读取同一文件。
+     * 两个消费端均在通过签名校验后才写入存储，后续业务校验使用本次安装成功的消费端。
+     *
+     * @param source 可重复读取的许可证文件源
+     * @return 安装成功的消费端
+     * @throws LicenseManagementException 两种格式均无法安装
+     */
+    private ConsumerLicenseManager installFrom(Source source) throws LicenseManagementException {
+        try {
+            consumer.install(source);
+            return consumer;
+        } catch (LicenseManagementException currentFailure) {
+            try {
+                legacyConsumer.install(source);
+                return legacyConsumer;
+            } catch (LicenseManagementException legacyFailure) {
+                throw currentFailure;
+            }
+        }
+    }
+
+    /**
+     * 通过读取并验签已存原件确定消费端，支持没有格式标记的旧偏好存储和进程重启。
+     *
+     * @return 能验签并解码当前许可证的消费端
+     * @throws LicenseManagementException 当前存储没有可验签的许可证
+     */
+    private ConsumerLicenseManager installedConsumer() throws LicenseManagementException {
+        try {
+            consumer.load();
+            return consumer;
+        } catch (LicenseManagementException currentFailure) {
+            try {
+                legacyConsumer.load();
+                return legacyConsumer;
+            } catch (LicenseManagementException legacyFailure) {
+                throw currentFailure;
+            }
+        }
     }
 
     /**
@@ -248,7 +299,7 @@ public class CustomLicenseManager {
      * @return 配置好的许可证签发端管理器
      */
     private VendorLicenseManager vendor(String subject, CustomKeyStoreParam keyStoreParam) {
-        LicenseManagementContext context = V1.builder()
+        LicenseManagementContext context = V4.builder()
                 .subject(subject)
                 .validation(this::validateCreate)
                 .validationComposition(LicenseFunctionComposition.override)
@@ -271,14 +322,15 @@ public class CustomLicenseManager {
     /**
      * 按主题、校验规则及偏好存储创建许可证消费端。
      *
-     * @param subject         许可证主题
-     * @param keyStoreParam   提供验证公钥的密钥库配置
-     * @param preferencesNode 当前许可证状态的持久化位置
+     * @param format        许可证格式上下文构建器
+     * @param subject       许可证主题
+     * @param keyStoreParam 提供验证公钥的密钥库配置
+     * @param store         保存已安装许可证原件的共享存储
      * @return 配置好的许可证消费端管理器
      */
-    private ConsumerLicenseManager consumer(String subject, CustomKeyStoreParam keyStoreParam,
-                                            Preferences preferencesNode) {
-        LicenseManagementContext context = V1.builder()
+    private ConsumerLicenseManager consumer(LicenseManagementContextBuilder format, String subject,
+                                            CustomKeyStoreParam keyStoreParam, Store store) {
+        LicenseManagementContext context = format
                 .subject(subject)
                 .cachePeriodMillis(0L)
                 .validation(this::validateConsumer)
@@ -292,7 +344,7 @@ public class CustomLicenseManager {
         builder = authentication.up();
         EncryptionChildBuilder<? extends ConsumerLicenseManagerBuilder> encryption = builder.encryption()
                 .protection(passwordProtection(keyStoreParam.getStorePwd()));
-        return encryption.up().storeIn(preferences(preferencesNode, subject)).build();
+        return encryption.up().storeIn(store).build();
     }
 
     /**
@@ -330,7 +382,7 @@ public class CustomLicenseManager {
      */
     private void cleanupFailedInstallation(Throwable primary) {
         try {
-            consumer.uninstall();
+            installedConsumer().uninstall();
         } catch (LicenseManagementException | RuntimeException | Error cleanupException) {
             primary.addSuppressed(cleanupException);
         }

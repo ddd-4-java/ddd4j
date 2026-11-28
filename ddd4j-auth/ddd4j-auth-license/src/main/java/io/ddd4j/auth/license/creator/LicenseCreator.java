@@ -25,10 +25,7 @@ import java.util.Objects;
 import java.util.prefs.Preferences;
 
 /**
- * 使用配置的私钥签发 TrueLicense V1 格式的许可证，并写入指定文件。
- *
- * <p>该格式用于兼容现有 TrueLicense 1.x 授权系统。TrueLicense 自 2.x 起已弃用
- * V1 格式，新应用应选择受支持的许可证格式。</p>
+ * 使用配置的私钥签发 TrueLicense V4 格式的许可证，并写入指定文件。
  */
 @Slf4j
 public class LicenseCreator {

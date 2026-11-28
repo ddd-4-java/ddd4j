@@ -19,6 +19,10 @@
             <artifactId>truelicense-v1</artifactId>
         </dependency>
         <dependency>
+            <groupId>global.namespace.truelicense</groupId>
+            <artifactId>truelicense-v4</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>

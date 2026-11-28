@@ -9622,6 +9622,11 @@
                 <artifactId>truelicense-v1</artifactId>
                 <version>${truelicense.version}</version>
             </dependency>
+            <dependency>
+                <groupId>global.namespace.truelicense</groupId>
+                <artifactId>truelicense-v4</artifactId>
+                <version>${truelicense.version}</version>
+            </dependency>
             <!-- t-io（mqtt-server sample 引用；org.tio 坐标已死，Central 仅存 org.t-io） -->
             <dependency>
                 <groupId>org.t-io</groupId>
