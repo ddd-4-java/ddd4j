@@ -140,6 +140,15 @@ public class CustomLicenseManager {
     }
 
     /**
+     * 创建与当前签发端格式一致的空许可证正文。
+     *
+     * @return 由签发端上下文的许可证工厂创建的可填充正文
+     */
+    public License newLicense() {
+        return vendor.context().licenseFactory().license();
+    }
+
+    /**
      * 生成许可证并写入指定文件。
      *
      * @param content 许可证正文
