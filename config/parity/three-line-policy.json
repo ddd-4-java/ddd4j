@@ -42,39 +42,30 @@
     {
       "path": ".github/workflows/release-candidate.yml",
       "sha256ByJdk": {
-        "8": "4968f5b6f9e115c385d56380e80382ce125d3d5c24409ef2a9975cb5f4b4a96c",
-        "17": "f76be138c7942229ac81b94c85c9e44246ab48b1be136a85e49e0f2f1a3a213e",
-        "21": "5d798443144096c9485de9b14f3afea259f6a9c0bd6522380dc34a1e50d69fcd"
+        "8": "3dcec9c2d574ddeda4479fff5187efa39fa079fc02b8379e60b1ace3e7543c5a",
+        "17": "45680db6c7e8989f0050faf2999e65b76b43454202311bb1ca8b67a902251f6b",
+        "21": "49da33f526a6a5120c3336369c92deea8bc0f3a345416b7a9ab019208806c717"
       },
-      "evidence": "逐线 JDK、Easy4J 快照及发布基线已核对；文件 SHA-256 锁定，workflow lint 和实际 CI 独立验收"
+      "evidence": "逐线 JDK、Easy4J 快照及发布基线保持独立。三线均使用固定版本 Trivy 执行原有漏洞门禁，工作流语法和运行结果独立验收。"
     },
     {
       "path": ".github/workflows/verify.yml",
       "sha256ByJdk": {
-        "8": "71b686c01b700cc1ccb66dab1ee8500165dfd4c7d64d36c74be670055d480a39",
-        "17": "6090dab742b4acbc2bc435bf2ad1b706c1a7476515c361da6256d07439cc3fe7",
-        "21": "9a30a3a57afed61bb1cc430295efae4feb18dc6dc39e570e2cdcaae9747e0b64"
+        "8": "9c0ed1c586f1e983cafaea5b60f94a3df8f8bbeabacb146956f3b56a471088e7",
+        "17": "7931aa780643cefca5e2fbd6f48a87541970202edbaecbcc0b01b26d05295a5e",
+        "21": "e2c7d87389686e440ba7923f8eab822f21f03a5fe2b5916a503ae0eeb40403c5"
       },
-      "evidence": "逐线 JDK、Easy4J 快照及发布基线已核对；文件 SHA-256 锁定，workflow lint 和实际 CI 独立验收"
+      "evidence": "逐线 JDK 与 Easy4J 坐标由门禁独立验证。当前工作流保留覆盖率、许可证和 CVE 检查，同时执行各线商品交易与框架契约回归。"
     }
   ],
   "platformBuildConfigFiles": [
     {
-      "path": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/resources/application.properties",
-      "sha256ByJdk": {
-        "8": "9ce205ad906573868628f5c99e842d426fb289a072a2c26b9632994c9047160d",
-        "17": "bac4a443803c5b7660bfca6b70ebbc6f7c79b4c7a22eb52e9da53f40cac946e3",
-        "21": "bac4a443803c5b7660bfca6b70ebbc6f7c79b4c7a22eb52e9da53f40cac946e3"
-      },
-      "evidence": "Quarkus 1.13 默认 fast-jar 保留内存接口，durable-order 与 durable profile 显式构建 PostgreSQL。Quarkus 3 默认构件按既定配置启动持久模式。持久配置显式选择 Panache 位置仓储，并限定 Hibernate 实际使用的两个实体包。"
-    },
-    {
-      "evidence": "Quarkus 1 的旧 JPA 投影实体层次需对 ddd4j-core 执行 Jandex 索引。移除索引配置后 JDK 8 原生 ProjectionRepositoryCdiContractTest 启动失败，保留配置时三线 H2/JTA 投影用例通过；其余数据源配置一致。",
+      "evidence": "三线使用 H2 测试实际 Panache 事件仓储，各线保留自身的 Quarkus 启动、投影位置仓储和数据库方言配置。",
       "path": "ddd4j-data/ddd4j-data-event-store-panache/src/test/resources/application.properties",
       "sha256ByJdk": {
-        "17": "58bffca7d84e0b00691c25494b14caa5e6e0afb776ce4c1bd45bf296cc9b99a6",
-        "21": "58bffca7d84e0b00691c25494b14caa5e6e0afb776ce4c1bd45bf296cc9b99a6",
-        "8": "000f4d2681cabf584929fb6b265325f5f7a2e445081089b33e1ec86dc7bc3ebd"
+        "17": "13ec89657b957b9c2634d34a49a3237a8cdccaeacfc1930dc803acc6b35b99b8",
+        "21": "90101e6cd7f4b417c0ad5e660f06dfc0be63716dbb692d4a9c9bccef90496f1e",
+        "8": "9d5991cbc5a81fc648ca890de5e704897f11123d3b01a08d58c4e14b8810655b"
       }
     },
     {
@@ -99,10 +90,10 @@
       "path": ".mvn/wrapper/maven-wrapper.properties",
       "sha256ByJdk": {
         "8": "488e1b3f2e641779d4636abf9390845f901e64607261bc3c0b0bfe4fe96e6706",
-        "17": "488e1b3f2e641779d4636abf9390845f901e64607261bc3c0b0bfe4fe96e6706",
+        "17": "9e702bcd7e68ba1cace0a3382a7082e6e1e1b321688a7a3fbf4d5ae7eb0af533",
         "21": "bbd28a9f2351926f30f2c8d2d09be7f2cd26fe3d0dc7701a8b482b82a5c1f10c"
       },
-      "evidence": "JDK 8/17 使用 Maven 3.9.16，JDK 21 使用 Maven 4.0.0-rc-6；Wrapper 配置逐字节锁定"
+      "evidence": "JDK 8 与 JDK 17 保留 Maven 3.9.16，JDK 17 另外固定发行包校验和。JDK 21 保留 Maven 4.0.0-rc-6。"
     },
     {
       "path": ".mvn/wrapper/MavenWrapperDownloader.java",
@@ -138,50 +129,41 @@
         "17": "812e2e963ab7109d7629568a8f082780654630920faeaf4ee76f508947cb5d37",
         "21": "812e2e963ab7109d7629568a8f082780654630920faeaf4ee76f508947cb5d37"
       },
-      "evidence": "合并后的 Panache 适配包含 CDI 注解归档描述符，JDK 8 使用 Java EE CDI 2.0，高线使用 Jakarta CDI 4.0。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-helidon/src/main/resources/META-INF/beans.xml",
-      "sha256ByJdk": {
-        "8": "1350b6283bc368bcf48131748c8b4e5159cdd9693f466c86da7c298bd2203480",
-        "17": "e692277fd21a478b902245e94a4e95568ab2053c32ea90b9b527355ff21ac221",
-        "21": "e692277fd21a478b902245e94a4e95568ab2053c32ea90b9b527355ff21ac221"
-      },
-      "evidence": "三线原生 Helidon 样例均实际加载 CDI 资源并通过默认与显式鉴权的订单 HTTP 测试；各线样例 JAR 内 META-INF/beans.xml 与各自源码逐字一致。Java 8 使用 Java EE CDI 2.0，Java 17/21 使用 Jakarta CDI 3.0。"
+      "evidence": "Quarkus 1.13 使用 Java EE CDI 2.0，现代 Quarkus 使用 Jakarta CDI 4.0，三线都采用 annotated bean discovery。"
     }
   ],
   "platformDependencyConfigFiles": [
     {
       "path": "config/license-selections.tsv",
       "sha256ByJdk": {
-        "8": "0820d5b44920ee357eb88446bda238c09928f6bd7bcc91e87b2b821948d14323",
+        "8": "f8746afae0a06bd73f94f456de791ca6cbe25244278f44d2a5974ae3155b4bfa",
         "17": "facdd0b97b4ccae50790a8948a7e644ef4b85761573da614b15dc5e9ecb75293",
-        "21": "297c2d096efb49a96f307c92c5e23009471975421fa18ab7c3f44d8d104c02ac"
+        "21": "41c19fd889ec9aaa6e4909f013b4119a5575f81c2017c894f2841c3a9360b8ef"
       },
       "evidence": "三线 SBOM/license 作业分别扫描各自的依赖版本；选择记录逐线哈希锁定，许可证核验仍须独立通过"
     },
     {
       "path": "config/license-build-tool-exclusions.tsv",
       "sha256ByJdk": {
-        "8": "f0747ad1ce4e3515c9b8a870923223b97cea5ce6509c58e88f8da6883a3e4fd3",
+        "8": "6cf51e1dd2ae293ef928963e7a8e7315d578007caf9da36071027a68ba37f3f6",
         "17": "5b5f113e3947848bef37dd0183e8aae8e533a1168031b340794500e03bfaabaf",
-        "21": "cd087452b98c41d972ee71ad783d179f6182c0b6641f49ab3b6e9a10d16ab97b"
+        "21": "87652a1b38761a272576031a4c0985e1c6e828aae1c4cfbb0bf11a8db5a5559a"
       },
-      "evidence": "构建工具依赖豁免仅针对逐线实际 BOM/SBOM 差异；文件哈希锁定，许可证核验仍须独立通过"
+      "evidence": "构建工具和测试依赖排除文件按 JDK 锁定。JDK 8 的 xml-apis 及 JDK 21 的 jdk-classfile-backport 经各自发布 SBOM 核对均未进入交付物，许可证策略独立校验。"
     },
     {
       "path": "config/dependencies/alignment-policy.json",
       "sha256ByJdk": {
-        "8": "4cbf68191aa37a73b0dee5ad2eadfed00312d375470b757d877a94abe03ad84f",
+        "8": "2002c291f52fcf283f2a9e26a71384f8c7fd2931ebca7e66a45096d396900b26",
         "17": "5c02edc1065b1fa1d6d0e5f6654fd9de44c0baef07d297cc1120b12a35dc5113",
-        "21": "b73247a301500dc73149bebe921471607413e2dbe737dfde473d928135c60b8a"
+        "21": "c78a9c6ed93523681bfa4d27e0dcbc314f720e1314cc02cf7f3b6e57f854b3cd"
       },
       "evidence": "用户确认 Java 8 BOM 保留六个 Derby 10.14.2.0 管理坐标，供应用显式选择。当前 Java 8 策略使用当轮原生有效 POM 运行 T03 strict-artifacts，4563 条记录零错误、零未核验构件。Java 17 和 21 的独立策略继续按本线校验。"
     },
     {
       "path": "config/dependencies/component-matrix.csv",
       "sha256ByJdk": {
-        "8": "28a424bfbe6692ce857e5b1dd8451de3bd4ed09e68dd0dad5cff11e15a22e8cd",
+        "8": "491ee264ef93d5daf2d08589894f176fb4eae21f78db78048b1f666719f8046a",
         "17": "5728a63ec71e217aeaf6a2aca26af175f731475df236782f624421099fcf46bb",
         "21": "6be2eaa4a802acfce88f4a93645974843f5b14301f95ed516f9beaa58c782fd3"
       },
@@ -4818,11 +4800,11 @@
     {
       "path": "scripts/dependencies/tests/test_uniform_contract.py",
       "sha256ByJdk": {
-        "8": "837135838408a8facdae711eec4b913a86d074e2b0c4e1c6b854eb33438ecf45",
+        "8": "54b7f5ca933ac67dda25baf85f129cdbcd8d7d8585d459bb5bf1ff5e0a5348f1",
         "17": "d5e6d75e873627b0b0a483a3d7516647c9302f0a1fdcdf07cd61c6e175c4c14e",
-        "21": "3ac7d962248f989bfbead20215e8bcde749f8e7bc3fc941e5e0e3af9a169f306"
+        "21": "b2ba6e85dfd23242db8ac5630e1ea4ac764143d05c7496d3edf69f563accdef2"
       },
-      "evidence": "逐线锁定依赖政策测试。JDK 21 运行时 Vert.x 由构建模型管理，Quarkus 兼容版本与 Vert.x 版本属性继续显式校验。"
+      "evidence": "逐线锁定实际依赖政策测试。JDK 8 保留兼容分线，JDK 21 由原生 Vert.x 运行时模块管理 Vert.x 5，同时测试 Quarkus 的 Vert.x 4 兼容版本。"
     }
   ],
   "platformTestNamespaceMappings": [
