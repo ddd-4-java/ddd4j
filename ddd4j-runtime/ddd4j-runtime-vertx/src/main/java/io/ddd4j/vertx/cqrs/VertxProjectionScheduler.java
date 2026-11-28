@@ -2,14 +2,16 @@ package io.ddd4j.vertx.cqrs;
 
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.cqrs.readmodel.ProjectionCron;
+import io.ddd4j.core.cqrs.readmodel.ProjectionRunner;
+import io.ddd4j.core.cqrs.readmodel.ProjectionView;
 import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
 import io.vertx.core.Vertx;
-import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -20,7 +22,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * 本实例仅拥有 timer，不拥有 Vertx 或其 worker 池。取消阻止排队/后续执行，不回滚已进入的工作。
  * CRON 保留旧数字六段、本地墙上时间、一百万秒窗口；解析委派 core。
  */
-@Slf4j
 public class VertxProjectionScheduler implements ViewScheduler, AutoCloseable {
     /**
      * 当前框架组件共享的 Vert.x 实例。
@@ -42,6 +43,21 @@ public class VertxProjectionScheduler implements ViewScheduler, AutoCloseable {
      */
     public VertxProjectionScheduler(Vertx vertx) {
         this.vertx = Objects.requireNonNull(vertx, "vertx must not be null");
+    }
+
+    /**
+     * 使用调用方的 Vert.x timer 和 worker 创建调度器。视图与运行器由视图管理器接线。
+     *
+     * @param vertx 拥有定时器及工作线程的实例
+     * @param views 调用方计划注册的视图集合
+     * @param runner 调用方提供的投影运行器
+     * @return 关闭时只取消自有定时器的调度器
+     */
+    public static VertxProjectionScheduler create(Vertx vertx, Collection<ProjectionView<?>> views,
+                                                   ProjectionRunner<?> runner) {
+        Objects.requireNonNull(views, "views must not be null");
+        Objects.requireNonNull(runner, "runner must not be null");
+        return new VertxProjectionScheduler(vertx);
     }
 
     /**
@@ -216,7 +232,9 @@ public class VertxProjectionScheduler implements ViewScheduler, AutoCloseable {
                 return null;
             }).onComplete(result -> {
                 if (result.failed()) {
-                    log.warn("Projection task failed: {}", name, result.cause());
+                    vertx.runOnContext(ignored -> {
+                        throw new IllegalStateException("Projection task failed: " + name, result.cause());
+                    });
                 }
                 scheduleNext();
             });

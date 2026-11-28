@@ -35,7 +35,7 @@
       "sha256ByJdk": {
         "8": "7ec5663cd7536987fdc919c71137b5155876190a9b4438df7f57897c1e0be712",
         "17": "9b9ee20692949e6ed161ada4e834af8550a4c8bb3d3cfdfc56bd1a975af07fae",
-        "21": "fa5d29c9112fc45343bee268393741c782e811a9e7fc7dab1ebd07de0e8fe311"
+        "21": "94bc7e9ac6c64eca607b662b104fda50432123c229649cc64bda9af990568f2e"
       },
       "evidence": "逐线 JDK、Easy4J 快照及发布基线已核对；文件 SHA-256 锁定，workflow lint 和实际 CI 独立验收"
     },
@@ -2560,9 +2560,9 @@
     {
       "path": "ddd4j-runtime/ddd4j-runtime-vertx/src/main/java/io/ddd4j/vertx/Ddd4jVertxRuntime.java",
       "sourceSha256": [
-        "17b8864745ce60dc5e41ab02d8eaafb6c146d5ce1f0904606b0f4b8d552c7e69",
-        "833d7ea5185362a37a5cb86db7238b43b1610e4b0fef92a5542c8c9112dbe6b2",
-        "833d7ea5185362a37a5cb86db7238b43b1610e4b0fef92a5542c8c9112dbe6b2"
+        "825d51656235d8ceaef06c724f17b8faeb20e1a423548038d9b0cc8595dbc829",
+        "cd88900c8b365711dbf3d0ff5bd7ead064243c03f8c01f924db5a7e7f13497d4",
+        "cd88900c8b365711dbf3d0ff5bd7ead064243c03f8c01f924db5a7e7f13497d4"
       ],
       "evidence": "ddd4j-runtime/ddd4j-runtime-vertx/src/test/java/io/ddd4j/vertx/Ddd4jVertxRuntimeTest.java",
       "testSha256": "2bd458a7ee5952611bd66e6b8e43c798106c5af9212cb0a8e00e0d567494de29",
@@ -5278,14 +5278,14 @@
       "path": "ddd4j-runtime/ddd4j-runtime-vertx/src/test/java/io/ddd4j/vertx/cqrs/VertxCqrsRuntimeContractTest.java",
       "productionPath": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/command/DefaultCommandBus.java",
       "sourceSha256": [
-        "bb98e6b0b003bd474443b789e9e48061601d5b20f1f9d06f2ff3105f8810451c",
-        "724a63098bb0bdb0dbe38102e0bac90c656013e29f09dd60c2c3961c7f334c57",
-        "724a63098bb0bdb0dbe38102e0bac90c656013e29f09dd60c2c3961c7f334c57"
+        "c5d2810c7e825d4bde9bc095d5c3a5d2fbc9020e09079a7e3ee041c23373358d",
+        "c5d2810c7e825d4bde9bc095d5c3a5d2fbc9020e09079a7e3ee041c23373358d",
+        "c5d2810c7e825d4bde9bc095d5c3a5d2fbc9020e09079a7e3ee041c23373358d"
       ],
       "productionSha256": [
-        "3ac37c1e79f5f777cf4190b52e1189b6bdc3922689920f2300e518a4f5132c0d",
-        "d1e67ff7b3620bf3bde4dbe953a5575892ce3978ac25cca01e091e416c40d969",
-        "3ac37c1e79f5f777cf4190b52e1189b6bdc3922689920f2300e518a4f5132c0d"
+        "40f38f52b27740ca181e375b3178990cd106ff3fc88568eaedda9d1eda6d595c",
+        "a40fc1a23dc5a1582df72d1f8a020b9dc58eac23db8ebe3d1f44517b6a499f85",
+        "9e67a4a19e77b04514db82f93703671eb54dec3c936db346901c9b4ee53fee69"
       ],
       "testMethods": [
         "closeContract",
@@ -5301,9 +5301,9 @@
       "reason": "三线通过实际 Vert.x CQRS 运行时测试，执行共同命令路由、投影位置与生命周期契约。普通命令总线的源码逻辑一致，继承契约源码及测试方法清单逐线锁定。 保留继承契约，并逐线验证平台原生投影启动失败回退。",
       "contractPath": "ddd4j-runtime/ddd4j-runtime-testkit/src/main/java/io/ddd4j/runtime/testkit/AbstractCqrsRuntimeContractTest.java",
       "contractSha256ByJdk": {
-        "8": "1e7e3d0244ffdc5fdee68522a72e8eef4f2a9c626b77e0d6091663cc80a366fb",
-        "17": "25cc37a06506caf805b54bf22ff1d219fce14b33e68ddb078d58aa6695af5f84",
-        "21": "25cc37a06506caf805b54bf22ff1d219fce14b33e68ddb078d58aa6695af5f84"
+        "8": "9233f2b5fd561b09b6acd327c1cfa65ceeb8e0d5ea46b45a7dbca2674040ce26",
+        "17": "4ee98785dc71b2632ffd1752cee8f7da23bfdb6931ce22ce94ee6608fc2f7ef3",
+        "21": "cd6dee5176ee0d881f8825499f679e9f70be1c4da006e7a4724cd32698ff56ae"
       }
     },
     {

@@ -30,6 +30,29 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * 共享命令/位置契约与实际 Vert.x timer、worker、上下文、生命周期边界。
  */
 class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
+    /** 验证 worker 失败会交给 Vert.x 异常处理器，后续定时任务仍能运行。 */
+    @Test
+    void reportsWorkerFailureAndContinuesScheduling() throws Exception {
+        Vertx vertx = Vertx.vertx();
+        CompletableFuture<Throwable> reported = new CompletableFuture<>();
+        CompletableFuture<Void> retried = new CompletableFuture<>();
+        RuntimeException firstFailure = new IllegalArgumentException("first attempt");
+        AtomicBoolean first = new AtomicBoolean(true);
+        vertx.exceptionHandler(reported::complete);
+        try (VertxProjectionScheduler scheduler = new VertxProjectionScheduler(vertx)) {
+            scheduler.schedule("retry", "* * * * * *", () -> {
+                if (first.getAndSet(false)) {
+                    throw firstFailure;
+                }
+                retried.complete(null);
+            });
+            assertThat(reported.get(8, TimeUnit.SECONDS)).hasCause(firstFailure);
+            retried.get(8, TimeUnit.SECONDS);
+        } finally {
+            await(vertx.close());
+        }
+    }
+
     /**
      * 构造 <code>ProjectionView&lt;&gt;</code> 作为当前测试的输入或结果。
      *
@@ -39,7 +62,7 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
      * @return 提供给后续契约断言的 <code>ProjectionView&lt;Object&gt;</code> 结果
      */
     private static ProjectionView<Object> view(String name, String cron, Runnable handler) {
-        return new ProjectionView<>() {
+        return new ProjectionView<Object>() {
             public String getName() {
                 return name;
             }
@@ -49,7 +72,7 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
             }
 
             public Collection<String> getEventTypes() {
-                return List.of("Order");
+                return Arrays.asList("Order");
             }
 
             public void handleEvents(Collection<Object> events) {
@@ -76,19 +99,21 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
     /**
      * 创建测试中用于操作当前框架的契约适配器。
      *
-     * <p>测试夹具会调用 <code>Vertx.vertx()</code>、<code>VertxCommandBus.create(vertx, List.of(new StubExecutorA(), new StubExecutorB()))</code>。</p>
+     * <p>测试夹具会调用 <code>Vertx.vertx()</code>、<code>VertxCommandBus.create(vertx, Arrays.asList(new StubExecutorA(), new StubExecutorB()))</code>。</p>
      *
      * @return CQRS 运行时契约
      */
     @Override
     protected CqrsRuntimeContract createContract() {
         Vertx vertx = Vertx.vertx();
-        CommandBus bus = VertxCommandBus.create(vertx, List.of(new StubExecutorA(), new StubExecutorB()));
+        CommandBus bus = VertxCommandBus.create(vertx, Arrays.asList(new StubExecutorA(), new StubExecutorB()));
         InMemoryProjectionPositionRepository positions = new InMemoryProjectionPositionRepository();
-        VertxProjectionScheduler scheduler = new VertxProjectionScheduler(vertx);
+        VertxProjectionScheduler scheduler = VertxProjectionScheduler.create(vertx, Collections.emptyList(),
+                new ProjectionRunner<>(new DefaultProjectionService(new TestPositions()),
+                        (stream, from, count, types) -> EventChunk.empty(from)));
         VertxProjectionViewManager manager = new VertxProjectionViewManager(scheduler,
                 new ProjectionRunner<>(new DefaultProjectionService(positions),
-                        (stream, from, count, types) -> EventChunk.empty(from)), List.of());
+                        (stream, from, count, types) -> EventChunk.empty(from)), Collections.emptyList());
         return new CqrsRuntimeContract() {
             public String runtimeName() {
                 return "vertx";
@@ -125,15 +150,15 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
     void basicModeHasNoProjectionAndMissingExplicitDependenciesPublishNothing() {
         Vertx vertx = Vertx.vertx();
         Object before = BaseContext.get(SpiKeys.COMMAND_BUS, CommandBus.class);
-        try (Ddd4jVertxRuntime basic = Ddd4jVertxRuntime.create(vertx, List.of())) {
+        try (Ddd4jVertxRuntime basic = Ddd4jVertxRuntime.create(vertx, Collections.emptyList())) {
             assertThat(basic.projectionManager()).isEmpty();
-            assertThatThrownBy(() -> Ddd4jVertxRuntime.createWithProjection(vertx, List.of(), null,
-                    (stream, from, count, types) -> EventChunk.empty(from), List.of()))
+            assertThatThrownBy(() -> Ddd4jVertxRuntime.createWithProjection(vertx, Collections.emptyList(), null,
+                    (stream, from, count, types) -> EventChunk.empty(from), Collections.emptyList()))
                     .isInstanceOf(NullPointerException.class);
-            assertThatThrownBy(() -> Ddd4jVertxRuntime.createWithProjection(vertx, List.of(), new TestPositions(), null, List.of()))
+            assertThatThrownBy(() -> Ddd4jVertxRuntime.createWithProjection(vertx, Collections.emptyList(), new TestPositions(), null, Collections.emptyList()))
                     .isInstanceOf(NullPointerException.class);
-            assertThatThrownBy(() -> Ddd4jVertxRuntime.createWithProjection(vertx, List.of(),
-                    new InMemoryProjectionPositionRepository(), new NoopEventChunkReader<>(), List.of()))
+            assertThatThrownBy(() -> Ddd4jVertxRuntime.createWithProjection(vertx, Collections.emptyList(),
+                    new InMemoryProjectionPositionRepository(), new NoopEventChunkReader<>(), Collections.emptyList()))
                     .isInstanceOf(IllegalArgumentException.class);
             assertThat(BaseContext.get(SpiKeys.COMMAND_BUS, CommandBus.class)).isEqualTo(before);
         } finally {
@@ -142,7 +167,7 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
     }
 
     /**
-     * 验证<code>runtime.projectionManager().orElseThrow().isRunning()</code>为假，被测调用 抛出 <code>IllegalArgumentException.class</code>，<code>borrowedStillWorks.await(3, TimeUnit.SECONDS)</code>为真。
+     * 验证<code>runtime.projectionManager().orElseThrow(NoSuchElementException::new).isRunning()</code>为假，被测调用 抛出 <code>IllegalArgumentException.class</code>，<code>borrowedStillWorks.await(3, TimeUnit.SECONDS)</code>为真。
      *
      * @throws Exception 等待并发操作时失败
      */
@@ -155,19 +180,19 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
             calls.incrementAndGet();
             return EventChunk.empty(from);
         };
-        Ddd4jVertxRuntime runtime = Ddd4jVertxRuntime.createWithProjection(vertx, List.of(),
-                new TestPositions(), reader, List.of(view("borrowed-factory", "* * * * * *", () -> {
+        Ddd4jVertxRuntime runtime = Ddd4jVertxRuntime.createWithProjection(vertx, Collections.emptyList(),
+                new TestPositions(), reader, Arrays.asList(view("borrowed-factory", "* * * * * *", () -> {
                 })), scheduler);
         try {
-            assertThat(runtime.projectionManager().orElseThrow().isRunning()).isFalse();
-            assertThatThrownBy(() -> Ddd4jVertxRuntime.createWithProjection(vertx, List.of(),
-                    new InMemoryProjectionPositionRepository(), reader, List.of(), scheduler))
+            assertThat(runtime.projectionManager().orElseThrow(NoSuchElementException::new).isRunning()).isFalse();
+            assertThatThrownBy(() -> Ddd4jVertxRuntime.createWithProjection(vertx, Collections.emptyList(),
+                    new InMemoryProjectionPositionRepository(), reader, Collections.emptyList(), scheduler))
                     .isInstanceOf(IllegalArgumentException.class);
-            assertThatThrownBy(() -> Ddd4jVertxRuntime.createWithProjection(vertx, List.of(),
-                    new TestPositions(), new NoopEventChunkReader<>(), List.of(), scheduler))
+            assertThatThrownBy(() -> Ddd4jVertxRuntime.createWithProjection(vertx, Collections.emptyList(),
+                    new TestPositions(), new NoopEventChunkReader<>(), Collections.emptyList(), scheduler))
                     .isInstanceOf(IllegalArgumentException.class);
-            assertThatThrownBy(() -> Ddd4jVertxRuntime.createWithProjection(vertx, List.of(),
-                    new TestPositions(), reader, List.of(), null)).isInstanceOf(NullPointerException.class);
+            assertThatThrownBy(() -> Ddd4jVertxRuntime.createWithProjection(vertx, Collections.emptyList(),
+                    new TestPositions(), reader, Collections.emptyList(), null)).isInstanceOf(NullPointerException.class);
             runtime.start();
             await(runtime.triggerProjections());
             assertThat(calls.get()).isGreaterThanOrEqualTo(1);
@@ -193,7 +218,7 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
     @Test
     void workerPropagatesRestoresAndReportsFailureWithoutBlockingActualEventLoop() throws Exception {
         Vertx vertx = Vertx.vertx(new VertxOptions().setWorkerPoolSize(1));
-        Ddd4jVertxRuntime runtime = Ddd4jVertxRuntime.create(vertx, List.of());
+        Ddd4jVertxRuntime runtime = Ddd4jVertxRuntime.create(vertx, Collections.emptyList());
         CountDownLatch entered = new CountDownLatch(1), release = new CountDownLatch(1);
         CompletableFuture<Void> finished = new CompletableFuture<>();
         try {
@@ -202,7 +227,7 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
                 return null;
             }));
             vertx.runOnContext(ignored -> {
-                try (ThreadContext.Scope scope = ThreadContext.open(Map.of("request", "r11"))) {
+                try (ThreadContext.Scope scope = ThreadContext.open(Collections.singletonMap("request", "r11"))) {
                     runtime.executeBlocking(() -> {
                         assertThat(Context.isOnWorkerThread()).isTrue();
                         assertThat((Object) ThreadContext.get("request")).isEqualTo("r11");
@@ -226,7 +251,7 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
             assertThat(heartbeat.get(2, TimeUnit.SECONDS)).isTrue();
             release.countDown();
             finished.get(5, TimeUnit.SECONDS);
-            assertThat(await(vertx.executeBlocking(ThreadContext::getResources))).containsExactlyEntriesOf(Map.of("worker", "previous"));
+            assertThat(await(vertx.executeBlocking(ThreadContext::getResources))).containsExactlyEntriesOf(Collections.singletonMap("worker", "previous"));
             runtime.close();
             assertThat(await(vertx.executeBlocking(() -> 42))).isEqualTo(42);
         } finally {
@@ -315,7 +340,7 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
     }
 
     /**
-     * 验证被测调用 抛出 <code>IllegalArgumentException.class</code>，<code>runtime.projectionManager().orElseThrow().isRunning()</code>为假，<code>BaseContext.get(SpiKeys.COMMAND_BUS, CommandBus.class)</code> 等于 <code>before</code>。
+     * 验证被测调用 抛出 <code>IllegalArgumentException.class</code>，<code>runtime.projectionManager().orElseThrow(NoSuchElementException::new).isRunning()</code>为假，<code>BaseContext.get(SpiKeys.COMMAND_BUS, CommandBus.class)</code> 等于 <code>before</code>。
      *
      * @throws Exception 等待并发操作时失败
      */
@@ -329,13 +354,13 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
             return EventChunk.empty(from);
         };
         Object before = BaseContext.get(SpiKeys.COMMAND_BUS, CommandBus.class);
-        Ddd4jVertxRuntime runtime = Ddd4jVertxRuntime.createWithProjection(vertx, List.of(), positions, reader,
-                List.of(view("first", "* * * * * *", () -> {
+        Ddd4jVertxRuntime runtime = Ddd4jVertxRuntime.createWithProjection(vertx, Collections.emptyList(), positions, reader,
+                Arrays.asList(view("first", "* * * * * *", () -> {
                 }), view("second", "bad", () -> {
                 })));
         try {
             assertThatThrownBy(runtime::start).isInstanceOf(IllegalArgumentException.class);
-            assertThat(runtime.projectionManager().orElseThrow().isRunning()).isFalse();
+            assertThat(runtime.projectionManager().orElseThrow(NoSuchElementException::new).isRunning()).isFalse();
             CompletableFuture<Void> elapsed = new CompletableFuture<>();
             vertx.setTimer(1200, ignored -> elapsed.complete(null));
             elapsed.get(3, TimeUnit.SECONDS);
@@ -411,7 +436,7 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
                     return EventChunk.empty(from);
                 });
         VertxProjectionViewManager manager = new VertxProjectionViewManager(scheduler, runner,
-                List.of(view("manual", "* * * * * *", () -> {
+                Arrays.asList(view("manual", "* * * * * *", () -> {
                 })));
         try {
             assertThat(manager.isRunning()).isFalse();
@@ -436,7 +461,7 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
     }
 
     /**
-     * 验证<code>positions.findByStreamId("history").orElseThrow().getNextEventNumber()</code> 等于 <code>10</code>，<code>reads</code> 按顺序仅包含 <code>10L</code>、<code>10L</code>、<code>20L</code>，<code>positions.findByStreamId("history").orElseThrow().getNextEventNumber()</code> 等于 <code>20</code>。
+     * 验证<code>positions.findByStreamId("history").orElseThrow(NoSuchElementException::new).getNextEventNumber()</code> 等于 <code>10</code>，<code>reads</code> 按顺序仅包含 <code>10L</code>、<code>10L</code>、<code>20L</code>，<code>positions.findByStreamId("history").orElseThrow(NoSuchElementException::new).getNextEventNumber()</code> 等于 <code>20</code>。
      */
     @Test
     void failureDoesNotAdvanceAndRetryUsesSourceCursor() {
@@ -447,10 +472,10 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         List<Long> reads = new java.util.concurrent.CopyOnWriteArrayList<>();
         EventChunkReader<Object> reader = (stream, from, count, types) -> {
             reads.add(from);
-            return from < 20 ? new EventChunk<>(List.of(11L, 19L), 20) : EventChunk.empty(from);
+            return from < 20 ? new EventChunk<>(Arrays.asList(11L, 19L), 20) : EventChunk.empty(from);
         };
-        Ddd4jVertxRuntime runtime = Ddd4jVertxRuntime.createWithProjection(vertx, List.of(), positions, reader,
-                List.of(view("history", "0 0 0 1 1 *", () -> {
+        Ddd4jVertxRuntime runtime = Ddd4jVertxRuntime.createWithProjection(vertx, Collections.emptyList(), positions, reader,
+                Arrays.asList(view("history", "0 0 0 1 1 *", () -> {
                     if (fail.getAndSet(false)) {
                         throw new IllegalArgumentException("projection-failure");
                     }
@@ -458,11 +483,11 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         try {
             runtime.start();
             assertThatThrownBy(() -> await(runtime.triggerProjections())).hasRootCauseMessage("projection-failure");
-            assertThat(positions.findByStreamId("history").orElseThrow().getNextEventNumber()).isEqualTo(10);
+            assertThat(positions.findByStreamId("history").orElseThrow(NoSuchElementException::new).getNextEventNumber()).isEqualTo(10);
             await(runtime.triggerProjections());
             await(runtime.triggerProjections());
             assertThat(reads).containsExactly(10L, 10L, 20L);
-            assertThat(positions.findByStreamId("history").orElseThrow().getNextEventNumber()).isEqualTo(20);
+            assertThat(positions.findByStreamId("history").orElseThrow(NoSuchElementException::new).getNextEventNumber()).isEqualTo(20);
         } finally {
             runtime.close();
             await(vertx.close());

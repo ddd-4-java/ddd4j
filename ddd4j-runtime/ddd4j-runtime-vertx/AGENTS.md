@@ -6,6 +6,8 @@ Vert.x EventBus 的本地分发、命令和投影生命周期。
 
 实现入口见 [Ddd4jVertxRuntime](src/main/java/io/ddd4j/vertx/Ddd4jVertxRuntime.java)、[VertxDomainEventPublisher](src/main/java/io/ddd4j/vertx/VertxDomainEventPublisher.java)。
 
+保留的 `VertxProjectionScheduler.create(vertx, views, runner)` 工厂使用传入的 Vert.x。timer 触发后由 worker 执行投影，失败交给 Vert.x 异常处理器；关闭调度器会取消后续触发，调用方负责关闭 Vert.x。
+
 ## 回归
 
 优先运行 [VertxDomainEventPublisherTest](src/test/java/io/ddd4j/vertx/VertxDomainEventPublisherTest.java)、[VertxCqrsRuntimeContractTest](src/test/java/io/ddd4j/vertx/cqrs/VertxCqrsRuntimeContractTest.java)。
