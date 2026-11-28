@@ -6649,6 +6649,11 @@
                 <artifactId>truelicense-v1</artifactId>
                 <version>${truelicense.version}</version>
             </dependency>
+            <dependency>
+                <groupId>global.namespace.truelicense</groupId>
+                <artifactId>truelicense-v4</artifactId>
+                <version>${truelicense.version}</version>
+            </dependency>
 
             <!-- https://mvnrepository.com/artifact/eu.bitwalker/UserAgentUtils -->
             <dependency>
