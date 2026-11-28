@@ -5,13 +5,24 @@
 package io.ddd4j.spring.cqrs;
 
 import io.ddd4j.core.constant.ProjectionConstants;
+import io.ddd4j.core.cqrs.readmodel.DefaultProjectionService;
+import io.ddd4j.core.cqrs.readmodel.EventChunk;
+import io.ddd4j.core.cqrs.readmodel.EventChunkReader;
+import io.ddd4j.core.cqrs.readmodel.ProjectionRunner;
+import io.ddd4j.core.cqrs.readmodel.ProjectionView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Arrays;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 /** \u901a\u8fc7 <code>data.saveAndFlush()</code>\u3001<code>positions.resetToZero()</code>\u3001<code>databasePosition()</code> \u9a8c\u8bc1 <code>SpringJpaProjectionPositionDatabase</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
 @SpringBootTest(classes = SpringJpaProjectionPositionTestApp.class, properties = {
@@ -56,6 +67,58 @@ class SpringJpaProjectionPositionDatabaseTest {
         positions.resetToZero("missing");
 
         assertThat(databasePosition("missing")).isZero();
+    }
+
+    /**
+     * 新视图直接运行应创建检查点；重建运行器后从持久化位置继续，不重复处理首批事件。
+     */
+    @Test
+    void freshProjectionMustPersistCheckpointAndResumeAfterRunnerRestart() {
+        List<String> handled = new ArrayList<>();
+        List<Long> readPositions = new ArrayList<>();
+        ProjectionView<String> view = new ProjectionView<String>() {
+            @Override
+            public String getName() {
+                return "orders";
+            }
+
+            @Override
+            public String getCron() {
+                return "0 * * * * *";
+            }
+
+            @Override
+            public Collection<String> getEventTypes() {
+                return Arrays.asList("OrderCreated", "OrderPaid");
+            }
+
+            @Override
+            public void handleEvents(Collection<String> events) {
+                handled.addAll(events);
+            }
+        };
+        EventChunkReader<String> reader = (streamId, position, chunkSize, eventTypes) -> {
+            readPositions.add(position);
+            if (position == 0L) {
+                return new EventChunk<>(Arrays.asList("OrderCreated"), 1L);
+            }
+            if (position == 1L) {
+                return new EventChunk<>(Arrays.asList("OrderPaid"), 2L);
+            }
+            return EventChunk.empty(2L);
+        };
+        ProjectionRunner<String> first = new ProjectionRunner<>(new DefaultProjectionService(positions), reader);
+
+        assertThatCode(() -> first.runOnce(view)).doesNotThrowAnyException();
+        assertThat(databasePosition("orders")).isEqualTo(1L);
+        ProjectionRunner<String> restarted = new ProjectionRunner<>(new DefaultProjectionService(positions), reader);
+        restarted.runOnce(view);
+        restarted.runOnce(view);
+
+        assertThat(handled).containsExactly("OrderCreated", "OrderPaid");
+        assertThat(readPositions).containsExactly(0L, 1L, 2L);
+        assertThat(databasePosition("orders")).isEqualTo(2L);
+        assertThat(data.count()).isEqualTo(1L);
     }
 
     /**

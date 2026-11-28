@@ -382,7 +382,7 @@ public class KafkaMQClient implements MQClient {
             log.error("Consume MQ [{}] failed: {}", listener.getTopic(), payload, exception);
             if (!acknowledgment.isAcknowledged()) {
                 consumer.seek(new TopicPartition(record.topic(), record.partition()), record.offset());
-                // seek 回退 offset 后必须中断当前批次循环，否则同批次后续 record 会被重复消费。
+                // 回退后中断当前分区的批次，避免越过失败记录提交后续 offset。
                 throw new BatchRetryException("seek to " + record.offset() + " for retry", exception);
             }
         }
@@ -473,15 +473,19 @@ public class KafkaMQClient implements MQClient {
             try {
                 while (!closed.get() && !thread.isInterrupted()) {
                     ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
-                    try {
-                        for (ConsumerRecord<String, String> record : records) {
-                            if (closed.get()) {
-                                break;
+                    for (TopicPartition partition : records.partitions()) {
+                        try {
+                            for (ConsumerRecord<String, String> record : records.records(partition)) {
+                                if (closed.get()) {
+                                    break;
+                                }
+                                handleRecord(listener, mqProperties, consumer, record);
                             }
-                            handleRecord(listener, mqProperties, consumer, record);
+                        } catch (BatchRetryException exception) {
+                            // 其他分区的 poll position 已推进，必须继续处理其已拉取的记录。
+                            log.debug("Kafka partition {} batch interrupted for retry: {}",
+                                    partition, exception.getMessage());
                         }
-                    } catch (BatchRetryException exception) {
-                        log.debug("Kafka batch interrupted for retry: {}", exception.getMessage());
                     }
                 }
             } catch (WakeupException exception) {
