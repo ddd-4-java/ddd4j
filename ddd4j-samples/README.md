@@ -159,7 +159,7 @@ python3 ddd4j-samples/scripts/check_catalog_trade.py http://127.0.0.1:8081 --mod
 | 框架 | 命令总线 |
 | --- | --- |
 | Spring | SpringCommandBus |
-| Guice / Javalin | GuiceCommandBus |
+| Guice / Javalin | JavalinCommandBus |
 | Quarkus | QuarkusCommandBus |
 | Micronaut | MicronautCommandBus |
 | Helidon | DefaultCommandBus，由 CDI 装配 |

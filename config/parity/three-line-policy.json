@@ -3526,17 +3526,17 @@
     {
       "path": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/JavalinCqrsApplication.java",
       "sourceSha256": [
-        "4156e3cbdfdf70f6658a67799cb68a0ca86d8960c9f368a28405a967025426cb",
-        "f8858c776a3a0b2d348293d831beb45ff8e534c26eff1e5b3543ee6047de188e",
-        "096d232dad05f49481d29e94f7ace9c746c6bd5fc05311f2b2329069a74e067b"
+        "d462124ef02b21064fcd1df7cd3e84f59392ae7bc2b3ebaa9dca7c0a6ee9635d",
+        "4b704d8f4bf94865ef499e3e5b3b97030d80d078f6689e2d57d09e11403abdc9",
+        "b302d3b5590f92e92f8646faf5510e5e6062355ae290cc29002115442004081a"
       ],
       "evidence": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/JavalinCatalogCqrsHttpTest.java",
       "testSha256ByJdk": {
-        "8": "6af5bfd2d005b0bc4adbb03ae48f7ba8bcc59bdd96f3a1b4574f473b10b79b6b",
-        "17": "1291cb761c6b60f420b2e2942ab9f8b2084415171ee221f6bb8c9e31ee747076",
-        "21": "1291cb761c6b60f420b2e2942ab9f8b2084415171ee221f6bb8c9e31ee747076"
+        "8": "b5d2803bc28c5ea82769a2dd4dc77afe4563a73fac89b50d05fca5e55334fdf9",
+        "17": "fa5c863746da0e45280ee678af5054cc3f4302d7e7882fef8b4baf37909480e9",
+        "21": "66dffb418e55e95d835218490edf94d99f3234ae15c328d895c1866606e30bf8"
       },
-      "reason": "三线 CQRS 启动入口的路由与产品文档一致；Javalin 4/7 的路由注册 API 和 JavalinJackson/JavalinJackson3 配置随平台版本适配。三线 HTTP 订单控制器测试各 35 项通过，源码和逐线测试哈希锁定；正式 main 启动仍由远端 Verify 独立检验。"
+      "reason": "三线商品交易均在 Javalin 路由注册前从执行器创建命令总线；JDK 8 使用 Javalin 4 应用启动接口，高版本使用 Javalin 7。HTTP 回归覆盖商品、支付和四表订单投影。"
     },
     {
       "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/JavalinSaTokenApplication.java",
@@ -3783,9 +3783,9 @@
     {
       "path": "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/cqrs/QuarkusJpaViewManager.java",
       "sourceSha256": [
-        "10c19ca74e4ab36e1c85af7e80ec1fd3e698e07abf99754f8a8b2a475e0ddef6",
-        "9de1f0bdffa3c0b5c74dab28d626e07908e25046404695c3023808e0090d9f1c",
-        "9de1f0bdffa3c0b5c74dab28d626e07908e25046404695c3023808e0090d9f1c"
+        "4b94143d41b370499697b0c9c09d42e13292a8e1cc27ea8b63eb3181aa92c0a9",
+        "ad4e47c46fb2381935d5fe46c3a52cb67d92adaec188d6773345ab3aac8e8441",
+        "ad4e47c46fb2381935d5fe46c3a52cb67d92adaec188d6773345ab3aac8e8441"
       ],
       "evidence": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/QuarkusJpaViewManagerTest.java",
       "testSha256ByJdk": {
@@ -4511,17 +4511,17 @@
       "reason": "三线验证相同的事件元数据 JSON 标量值契约；JDK 8/17 使用 Jackson 2 并注册 JavaTimeModule，JDK 21 使用 Jackson 3 内建时间模块；生产 DomainEvent 已由平台语法映射锁定。"
     },
     {
-      "path": "ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/data/projection/javalin/JavalinProjectionSchedulerIT.java",
-      "productionPath": "ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/data/projection/javalin/JavalinProjectionScheduler.java",
+      "path": "ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/projection/javalin/JavalinProjectionSchedulerIT.java",
+      "productionPath": "ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/projection/javalin/JavalinProjectionScheduler.java",
       "sourceSha256": [
-        "e08211778b91d821daa061781948aebd38e6257a73ad0ac2b7688a7f7c491bb6",
-        "963e9bfe4813aaed8ebbee3f32959acc363dc6a1f84cb3e4593107cb38d3104d",
-        "963e9bfe4813aaed8ebbee3f32959acc363dc6a1f84cb3e4593107cb38d3104d"
+        "49bd39f0461ee3c5c873fe254ba5d119896050cd10c96aed4ef590d6da4f17fd",
+        "35732e8b0c7e125419ad33740a507b1a59de06cb7ba405419e62a34cbced8bc4",
+        "35732e8b0c7e125419ad33740a507b1a59de06cb7ba405419e62a34cbced8bc4"
       ],
       "productionSha256": [
-        "0a19fc99f68dcd9cfddee2b2a0da9197721d3d7105066c6e2c207e1abfcd7796",
-        "0a19fc99f68dcd9cfddee2b2a0da9197721d3d7105066c6e2c207e1abfcd7796",
-        "0a19fc99f68dcd9cfddee2b2a0da9197721d3d7105066c6e2c207e1abfcd7796"
+        "67bcb10d7917733a23ef804507554936d14e46af8a4f366a8c427a270374db3f",
+        "67bcb10d7917733a23ef804507554936d14e46af8a4f366a8c427a270374db3f",
+        "67bcb10d7917733a23ef804507554936d14e46af8a4f366a8c427a270374db3f"
       ],
       "testMethods": [
         "startJavalin",
@@ -4817,21 +4817,22 @@
       "reason": "三条线各执行 15 项真实 MySQL 仓储回归，验证查询及批量写入。测试容器模块随本线依赖版本适配。"
     },
     {
-      "path": "ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/data/cqrs/javalin/JavalinCommandBusIT.java",
-      "productionPath": "ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/data/cqrs/javalin/JavalinCommandBus.java",
+      "path": "ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/command/javalin/JavalinCommandBusIT.java",
+      "productionPath": "ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/command/javalin/JavalinCommandBus.java",
       "sourceSha256": [
-        "149841998ec2ebf065464d016b849e4c64f3aefd47d2ebb6512c188cd07d413b",
-        "3259f5d7f62bdc103b47984231e0d5034cb84ecdffb5fd990c48fa4ff31cb46c",
-        "0ec181c1a939869b401d0d453f5509194b7f41c37d4a5a9c7aeaf11c48c5c967"
+        "99a60850c606839d3ec679ba76abc5b74ad5944673032c03f4a38b4f6b522e50",
+        "0ce83ee66832d5dd35f5f439fbabe3d071e9442c0ed019695c294af4a82a23b6",
+        "8e3eff6127d8620fd3a9760cd55e3ef0e0ea89f5b88721e5d238822ef4620a9b"
       ],
       "productionSha256": [
-        "2ca5b0245e88568e3e757cbf1a3ba5c0e0906b174f5c7875bd1d6db000ac056c",
-        "f5c969611ec1376a8872fca9e6a15e1b5c61ac3f32efe584231034185b51b3f0",
-        "5fbf23b797124450bebc3c92d4380a506c415ec4ef0746adca7cd1b9e1008870"
+        "22bb1bafa851b92aa2d6be397cc3050a0ce1003d2e6c28e9b7e7c179df405104",
+        "8555b24021eb640357243ae1af0853eb6fb378e3b09a4830faf15e8987f07ffb",
+        "dc22c4b7a52bfa6ea257eb93066f808d4da79efe90a4aaebc552b45fb9e3f766"
       ],
       "testMethods": [
         "startJavalin",
         "stopJavalin",
+        "factoryAndInjectorRouteTheSameExecutor",
         "execute_已注册命令_应路由到真实Handler并返回成功",
         "装配期冲突_整批拒绝应自工厂传播",
         "execute_未注册命令_应抛ISE与ddd4j_core一致"
