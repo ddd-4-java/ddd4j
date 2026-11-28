@@ -1856,17 +1856,17 @@
     {
       "path": "ddd4j-data/ddd4j-data-event-store-jpa/src/main/java/io/ddd4j/data/event/store/jpa/JpaEventStore.java",
       "sourceSha256": [
-        "69062e2ba5a65bf79f594fba66c4fafe17b9842e82ff1be301e9832b0d1a96da",
-        "c816dd541496a5f3c65615b74ff0dc4f36c0239e4e1b6cac5fcfa83d24e20857",
-        "41878b9894f3a3e90577f4e57e21ee793e2277dff1d28fd15c4183386c198789"
+        "9348969b5fd3cf56af25efcec9cb9dca7e0457d0a37709e55027346ebd6a99f4",
+        "2a60dee9db2689bd493c48a0c0a807e9fe61904f1863a34e745f88f0cfb305ef",
+        "b373a9f411ffc58f8e0efcb226a608ec230eb752b0add82609840b24c993949e"
       ],
       "evidence": "ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/JpaEventStoreTest.java",
       "testSha256ByJdk": {
-        "8": "3248e8aec1851f8f1b2b1aeb943e0b042ebd2f16c28787c4d40d48f40df3efca",
-        "17": "b3f1b7323261a29347b93417e2cd495dedb22b0815ed4994d8d23ced3f12b6a3",
-        "21": "d8796637be2d29d13d92ef5900614135911fb1a1114efb8f2e31dda25362490a"
+        "8": "8aeb282bacf8f3e460e7dfca6b3a331b8a163c62d5fba21ed86eccddeb257dd2",
+        "17": "0a026d9b5624e7e2da7c7c3ed0232e5af4eb3c8687736d1a4c697863ef44ac9e",
+        "21": "0671bd672e4ce359b9042d8365f72ea192add1da77be32a9b40e389858e3a4ea"
       },
-      "reason": "JPA 事件存储的写入、读取、版本冲突与重建 ID 契约三线一致；JDK 8 的 javax.persistence 与集合语法适配 JDK 17/21 的 Jakarta 和 Stream.toList，三线 H2 模块测试覆盖事件与 JSON 契约"
+      "reason": "三线均用框架与宿主类加载器恢复事件，三个查询入口返回独立只读快照。JDK 8 使用只读集合包装，较高版本使用 Stream.toList()；事务测试覆盖本线 JPA 与 Jackson 依赖。"
     },
     {
       "path": "ddd4j-data/ddd4j-data-external/src/main/java/io/ddd4j/data/external/region/BaiduRegionTemplate.java",
@@ -2703,15 +2703,15 @@
     {
       "path": "ddd4j-mq/ddd4j-mq-kafka/src/main/java/io/ddd4j/mq/kafka/KafkaMQClient.java",
       "sourceSha256": [
-        "441449898aac3176c79c49dae153482f7b884f6434003bc5b5029a880b136011",
-        "f5c4e2e9386276fb185ae283cf096caba32a0ebf38e98e762afcd8e0b23464d7",
-        "f5c4e2e9386276fb185ae283cf096caba32a0ebf38e98e762afcd8e0b23464d7"
+        "fe9288a7c4a31e53892e90c794bbfc4cea9dfcf39a05d626468a58ad60c6b756",
+        "695b5bcfbe8fdf7aad0588b61bd43da4c66836924089e33027715652c2b8a65f",
+        "dd42ee4d69fa467acedb5c50bc975c6d1a714c8aba8be902227bc59a4378092b"
       ],
       "evidence": "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaMQClientLifecycleContractTest.java",
       "testSha256ByJdk": {
-        "8": "a226ff111178b99426c72b9d8821ee87de2d1f23d3ee2f9e43995a1aa9d360bf",
-        "17": "9ce41ac03790e365a70f7192ee0c6e0ea43a0581da42ce643d00de05a29da78e",
-        "21": "9ce41ac03790e365a70f7192ee0c6e0ea43a0581da42ce643d00de05a29da78e"
+        "8": "2c0f8ea9ba4318f83dfce898bfa05e019ed17bc8bb5d780fb1b8168c6db710d1",
+        "17": "855b23e7cc8b6bb47019802220902529407419678790ba15913ad3864efefd7e",
+        "21": "708a0cbe7b232f28b0cd091ff62614415394fd2797ea8ebda736911080ab23d0"
       },
       "additionalEvidence": [
         {
@@ -2723,7 +2723,7 @@
           "testSha256": "131f015382ec49dffca52dfa7033a562a451270635309b0889cba0027474fd40"
         }
       ],
-      "reason": "三线 Kafka 生命周期、生产者归属、Broker 因果头及确认语义由契约测试验证；JDK 8 使用 switch 语句，JDK 17/21 使用 switch 表达式。源码与逐线生命周期及共同测试均以 SHA-256 锁定。"
+      "reason": "三线使用各自 JDK 的 switch 和 Kafka API 实现相同的分区策略、生命周期与偏移量提交。生命周期契约和真实 broker 收发均已执行。"
     },
     {
       "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/goods/web/dto/CreateGoodsRequest.java",
@@ -2960,13 +2960,17 @@
     {
       "path": "ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/projection/jpa/JpaProjectionPositionRepository.java",
       "sourceSha256": [
-        "dacef1bf330ee6b1e5c3a947e0edc5b00947eedcb3b14038917b4f7a1d70334d",
-        "0867704820a6713b1af58957262e249dcc8a99567627c5f99ac5e7f0b3d6d27f",
-        "0867704820a6713b1af58957262e249dcc8a99567627c5f99ac5e7f0b3d6d27f"
+        "af214c36de7f41ad75f05e34cf7d9174b9adcef74ebb403204febe24f9e039e3",
+        "9ff7899ca358a7aabb5894bb3b4e1d275fa58cd1038dcc982fbad2494784f9e1",
+        "8a9ac6130ad38f6ccbc7db0e35bffeb11bdc5e753d9697e8f41b3f38bae5e310"
       ],
       "evidence": "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/projection/jpa/JpaProjectionPositionRepositoryTest.java",
-      "testSha256": "7f4679c4d09f00a97df5edd9a98974039807057a0d7a6ea7d03aa71b84a10838",
-      "reason": "三线共同测试验证 findAll 保持仓储顺序、返回不可修改的值对象快照；JDK 8 使用 Collectors 与不可修改包装，JDK 17/21 使用 Stream.toList，业务语义一致"
+      "reason": "三线均显式声明 Spring Data 检查点适配器；真实容器验证默认扫描不注册适配器、显式 Bean 名和单一提供者。命名空间随本线 JPA 版本。",
+      "testSha256ByJdk": {
+        "8": "fbc69861635c0f175764fccb1d5c2847d83281364ccd1d0914243eec6678512b",
+        "17": "6ea0ff484e9074fd89f2706386392d4a867a9b2526e06a0b84bcee643aa2cfa4",
+        "21": "fbc69861635c0f175764fccb1d5c2847d83281364ccd1d0914243eec6678512b"
+      }
     },
     {
       "path": "ddd4j-cache/src/main/java/io/ddd4j/cache/lettuce/LettuceCache.java",
@@ -4578,14 +4582,14 @@
       "path": "ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/JpaEventStoreIT.java",
       "productionPath": "ddd4j-data/ddd4j-data-event-store-jpa/src/main/java/io/ddd4j/data/event/store/jpa/JpaEventStore.java",
       "sourceSha256": [
-        "8f9b937dbb1b1f1c479913e1a86ec67584fb5025d9e1e6efd8c99981c01a266f",
-        "f95d304d1f7cda3b30192b759799847928d7a794c34a4e6aef85e50568d93738",
-        "c76dc4b3aaea3da44c9dc878b62c52c3dd1083a3a84adbd0af88b44c8623e0bd"
+        "1136a53b8713265e4451d3e8840fcb25de67ef821d844939419a49c87a6b727c",
+        "729b23dba4f6c1533aa5157b52d93ac80460b95f0895095329904a23bee5916f",
+        "875f2b5b2b0b11eae174dd4ae4ef41df7d4e46327a9ea842aad52c4ef603dac8"
       ],
       "productionSha256": [
-        "69062e2ba5a65bf79f594fba66c4fafe17b9842e82ff1be301e9832b0d1a96da",
-        "c816dd541496a5f3c65615b74ff0dc4f36c0239e4e1b6cac5fcfa83d24e20857",
-        "41878b9894f3a3e90577f4e57e21ee793e2277dff1d28fd15c4183386c198789"
+        "9348969b5fd3cf56af25efcec9cb9dca7e0457d0a37709e55027346ebd6a99f4",
+        "2a60dee9db2689bd493c48a0c0a807e9fe61904f1863a34e745f88f0cfb305ef",
+        "b373a9f411ffc58f8e0efcb226a608ec230eb752b0add82609840b24c993949e"
       ],
       "testMethods": [
         "setUp",
@@ -4622,14 +4626,14 @@
       "path": "ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/JpaEventStoreMysqlIT.java",
       "productionPath": "ddd4j-data/ddd4j-data-event-store-jpa/src/main/java/io/ddd4j/data/event/store/jpa/JpaEventStore.java",
       "sourceSha256": [
-        "2b0a75c4d08e94b2b6f201d8a5bdb46a8fa9899668bf28b115298c291f1de94a",
-        "f4e5a21cc16b7b4f7395bde17d569a0d835f1d2b090ea29499c2703836e99225",
-        "f4e5a21cc16b7b4f7395bde17d569a0d835f1d2b090ea29499c2703836e99225"
+        "6df4a298be33d207458a9e8a6e8c8c932b83d065db45f7b1f58d977b6068fe18",
+        "c4f0b410447e8241a4454e72c6c7793e3b28529c3ab3201e6c86b6b7b9a2e2da",
+        "eb8623cbd516aa3c4a765bf77e99185fe128c29acfdd460fcfba46c67d6a224d"
       ],
       "productionSha256": [
-        "69062e2ba5a65bf79f594fba66c4fafe17b9842e82ff1be301e9832b0d1a96da",
-        "c816dd541496a5f3c65615b74ff0dc4f36c0239e4e1b6cac5fcfa83d24e20857",
-        "41878b9894f3a3e90577f4e57e21ee793e2277dff1d28fd15c4183386c198789"
+        "9348969b5fd3cf56af25efcec9cb9dca7e0457d0a37709e55027346ebd6a99f4",
+        "2a60dee9db2689bd493c48a0c0a807e9fe61904f1863a34e745f88f0cfb305ef",
+        "b373a9f411ffc58f8e0efcb226a608ec230eb752b0add82609840b24c993949e"
       ],
       "testMethods": [
         "setUp",
@@ -4644,14 +4648,14 @@
       "path": "ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/JpaEventStorePostgresIT.java",
       "productionPath": "ddd4j-data/ddd4j-data-event-store-jpa/src/main/java/io/ddd4j/data/event/store/jpa/JpaEventStore.java",
       "sourceSha256": [
-        "f121db738879d60cd921270b4ada2ba76d1b3d6361addc5dc73393e063c77187",
-        "f5f72eb5b798f281cac2841897d318e1f955f2e8ed1e096f6b9fe4c555d3c613",
-        "80acc6f9cd0999e1509594b8f14ff1e2ff3f661dde4d0d88761d323cf81dfe0a"
+        "2d69eeed01030ff81a612264ed95ee0040f391b92cfa73ec9f4fc0d0d9f6d92b",
+        "27a3b07eff0ff129342fe9966bdbc56e886798a5f8958838b8abeaae868ace26",
+        "5ca83156fe57ec2bedc993bb5a343115e334830c65e831dcd41551c5160ad119"
       ],
       "productionSha256": [
-        "69062e2ba5a65bf79f594fba66c4fafe17b9842e82ff1be301e9832b0d1a96da",
-        "c816dd541496a5f3c65615b74ff0dc4f36c0239e4e1b6cac5fcfa83d24e20857",
-        "41878b9894f3a3e90577f4e57e21ee793e2277dff1d28fd15c4183386c198789"
+        "9348969b5fd3cf56af25efcec9cb9dca7e0457d0a37709e55027346ebd6a99f4",
+        "2a60dee9db2689bd493c48a0c0a807e9fe61904f1863a34e745f88f0cfb305ef",
+        "b373a9f411ffc58f8e0efcb226a608ec230eb752b0add82609840b24c993949e"
       ],
       "testMethods": [
         "positionLookupMustLeaveCallerTransactionsActive",
@@ -4805,14 +4809,14 @@
       "path": "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaMQClientRoundTripTest.java",
       "productionPath": "ddd4j-mq/ddd4j-mq-kafka/src/main/java/io/ddd4j/mq/kafka/KafkaMQClient.java",
       "sourceSha256": [
-        "ffa0edd284b8cd62f75e637f8225aee8dc03354f5fea5fa4e54cc8a2c7e0f6aa",
-        "e44f598fe29c81c9ee9f0994bd2ec00820f3ff461f8d090e6db4f3e67219627f",
-        "a7cbb50e9d45489c8253ab96504193a851fc99d6bc3abc0ee4f8f1f0f513c11e"
+        "33d8c1449e592b7170858b95c4b52d7c7bb42e16354880964dc5dd8f6d31ca3f",
+        "15593c4f4b0544dd7829a3c720475a2a80e865e64153e5350d3104e02de940e7",
+        "ec156d8267c52c916e50ddb65d1663080c096ac37eacaa29667ccb3e22fc3937"
       ],
       "productionSha256": [
-        "441449898aac3176c79c49dae153482f7b884f6434003bc5b5029a880b136011",
-        "f5c4e2e9386276fb185ae283cf096caba32a0ebf38e98e762afcd8e0b23464d7",
-        "f5c4e2e9386276fb185ae283cf096caba32a0ebf38e98e762afcd8e0b23464d7"
+        "fe9288a7c4a31e53892e90c794bbfc4cea9dfcf39a05d626468a58ad60c6b756",
+        "695b5bcfbe8fdf7aad0588b61bd43da4c66836924089e33027715652c2b8a65f",
+        "dd42ee4d69fa467acedb5c50bc975c6d1a714c8aba8be902227bc59a4378092b"
       ],
       "testMethods": [
         "produceConsumeRoundTrip"
@@ -4823,14 +4827,14 @@
       "path": "ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/JpaManagedParticipationTest.java",
       "productionPath": "ddd4j-data/ddd4j-data-event-store-jpa/src/main/java/io/ddd4j/data/event/store/jpa/JpaEventStore.java",
       "sourceSha256": [
-        "4403357ee05ae459ad1cd04349aa9a91c6f82fc478d75978c94fe9c847aa1b0f",
-        "05066b32a71fb79d7e185a07da1d7f8fae5540586cb8e9202d4dbf5b749695e6",
-        "5028fee9fbeffd04a7a4a5991a1c597b1f54a86def005e60438f89852e09a3e4"
+        "c36e46165a7b28788f7db08c2f44193eb9abb8fd4f33b08f7051e05836a93bae",
+        "c62d00eae58286f693f72b7e1e291f094daf01f025e5503c22468f0f46e26e1f",
+        "a4fcc93b6d4a65fbfbcf48d659942505115c06c764f815dbf30662428285b49f"
       ],
       "productionSha256": [
-        "69062e2ba5a65bf79f594fba66c4fafe17b9842e82ff1be301e9832b0d1a96da",
-        "c816dd541496a5f3c65615b74ff0dc4f36c0239e4e1b6cac5fcfa83d24e20857",
-        "41878b9894f3a3e90577f4e57e21ee793e2277dff1d28fd15c4183386c198789"
+        "9348969b5fd3cf56af25efcec9cb9dca7e0457d0a37709e55027346ebd6a99f4",
+        "2a60dee9db2689bd493c48a0c0a807e9fe61904f1863a34e745f88f0cfb305ef",
+        "b373a9f411ffc58f8e0efcb226a608ec230eb752b0add82609840b24c993949e"
       ],
       "testMethods": [
         "managedFactoryConstructionMustNotRequireAnActiveTransaction",
@@ -4847,14 +4851,14 @@
       "path": "ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/JpaSpringParticipationIT.java",
       "productionPath": "ddd4j-data/ddd4j-data-event-store-jpa/src/main/java/io/ddd4j/data/event/store/jpa/JpaEventStore.java",
       "sourceSha256": [
-        "79fc7ad2a1ddff141152e18ee4407d7422cde7dbf97279029ae31aefcd5c2377",
-        "3a5e1b26d04c0c09e1f00762942954393ef531b85d42c47f6bf7af96773ed84f",
-        "3a5e1b26d04c0c09e1f00762942954393ef531b85d42c47f6bf7af96773ed84f"
+        "4f71fa9c1ce01c17d11dcb8f9e3db182c7f8dc4bfa8dfc314245f2638e83c0cc",
+        "1dd5d1ef730302154a87867b6d43ead9d7ce532d58aa17690615f47d925809e7",
+        "721c5a05bdeb37db67378995d9edd57ae2ff121d87d87dd560b2dafe50473d31"
       ],
       "productionSha256": [
-        "69062e2ba5a65bf79f594fba66c4fafe17b9842e82ff1be301e9832b0d1a96da",
-        "c816dd541496a5f3c65615b74ff0dc4f36c0239e4e1b6cac5fcfa83d24e20857",
-        "41878b9894f3a3e90577f4e57e21ee793e2277dff1d28fd15c4183386c198789"
+        "9348969b5fd3cf56af25efcec9cb9dca7e0457d0a37709e55027346ebd6a99f4",
+        "2a60dee9db2689bd493c48a0c0a807e9fe61904f1863a34e745f88f0cfb305ef",
+        "b373a9f411ffc58f8e0efcb226a608ec230eb752b0add82609840b24c993949e"
       ],
       "testMethods": [
         "managedParticipationShouldCommitAllRowsAndKeepBusinessEntityManaged",
@@ -5328,6 +5332,32 @@
         "shouldRejectDuplicateIdempotencyKey"
       ],
       "reason": "三线 webmvc Web 适配器继承相同 6 项请求/响应、认证、上下文清理与幂等测试；模块目标测试各 6 项通过。JDK/框架 API 及 Jackson 2/3 在各线独立适配，适配器、生产源码与继承契约均由逐线 SHA-256 锁定。"
+    },
+    {
+      "path": "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/projection/jpa/ProjectionPositionJpaIT.java",
+      "productionPath": "ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/projection/jpa/JpaProjectionPositionRepository.java",
+      "sourceSha256": [
+        "ec9ff8a25a19a157a64fe870b098a26e57c12f067b2d9b7edfb4e4cb408055c1",
+        "dd56f966f7828837f92a583ebfa0470dcca58c8d161176e3b52299bf0d34f408",
+        "2ebc0cfc4369da3d6d53ff90fbb4ead4f6816e9e3a1af0efeebfe9fb3346e56d"
+      ],
+      "productionSha256": [
+        "af214c36de7f41ad75f05e34cf7d9174b9adcef74ebb403204febe24f9e039e3",
+        "9ff7899ca358a7aabb5894bb3b4e1d275fa58cd1038dcc982fbad2494784f9e1",
+        "8a9ac6130ad38f6ccbc7db0e35bffeb11bdc5e753d9697e8f41b3f38bae5e310"
+      ],
+      "testMethods": [
+        "defaultComponentScanDoesNotRegisterPositionAdapter",
+        "preservesLegacyBeanNameAndSinglePositionProvider",
+        "cleanPositions",
+        "findAllReturnsAnImmutablePositionSnapshot",
+        "saveIncrReload_完整循环_应跨持久化上下文读回最终位置",
+        "resetToZero_推进后重置_应回退到0",
+        "resetToZero_流不存在_应插入零位行",
+        "两个handler命名空间_分别save后独立递增_互不串扰",
+        "save不存在则插入存在则更新_delete后不可见"
+      ],
+      "reason": "同一组八项 Spring Data JPA/H2 用例验证显式 Bean、默认扫描、实体表映射、不可修改快照、增量、重置与流隔离。JPA 命名空间随 JDK 分支适配。"
     }
   ],
   "platformTestHelperMappings": [

@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -73,6 +74,16 @@ class ProjectionPositionJpaIT {
      */
     @Autowired
     private org.springframework.context.ApplicationContext context;
+
+    /** 使用 Spring 默认扫描过滤器时，应用显式提供的适配器不应成为自动装配候选。 */
+    @Test
+    void defaultComponentScanDoesNotRegisterPositionAdapter() {
+        ClassPathScanningCandidateComponentProvider scanner =
+                new ClassPathScanningCandidateComponentProvider(true);
+        assertThat(scanner.findCandidateComponents(JpaProjectionPositionRepository.class.getPackage().getName()))
+                .extracting(candidate -> candidate.getBeanClassName())
+                .doesNotContain(JpaProjectionPositionRepository.class.getName());
+    }
 
     /**
      * 验证<code>context.getBean("jpaProjectionPositionRepository")</code> 指向同一实例 <code>positions</code>，<code>entityManager.getMetamodel().getEntities()</code> 的大小为 <code>1</code>，<code>ProjectionPositionEntity.class.getAnnotation(jakarta.persistence.Table.class).name()</code> 等于 <code>"ddd4j_projection_position"</code>。

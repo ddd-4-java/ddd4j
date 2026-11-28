@@ -19,7 +19,7 @@ import io.ddd4j.data.projection.jpa.ProjectionPositionEntity;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.persistence.autoconfigure.EntityScan;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
@@ -27,7 +27,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  *
  * <p>刻意不使用 {@code @SpringBootApplication}：本模块不依赖 Boot 运行时，
  * 测试栈以最小装配组合出真实容器——自动配置（DataSource/JPA/事务管理）＋
- * {@code @EntityScan} 扫描 {@link ProjectionPositionEntity}＋组件扫描
+ * {@code @EntityScan} 扫描 {@link ProjectionPositionEntity}，显式注册
  * {@link JpaProjectionPositionRepository}，Spring Data 仓储接口由 JpaRepositories
  * 自动配置从本类所在包向下发现 {@link SpringDataProjectionPositionRepository}
  * （与 {@code ddd4j-data-event-store-jpa} 的 TestApp 同款模式）。
@@ -41,6 +41,15 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableAutoConfiguration
 @EntityScan(basePackageClasses = ProjectionPositionEntity.class)
 @EnableJpaRepositories(basePackages = "io.ddd4j.spring.projection.jpa")
-@ComponentScan(basePackages = "io.ddd4j.spring.projection.jpa")
 class TestApp {
+    /**
+     * 将 Spring Data 仓储适配为投影检查点仓储，并保留既有 Bean 名称。
+     *
+     * @param repository 由 Spring Data 创建的持久化仓储
+     * @return 随应用事务读写检查点的适配器
+     */
+    @Bean
+    JpaProjectionPositionRepository jpaProjectionPositionRepository(SpringDataProjectionPositionRepository repository) {
+        return new JpaProjectionPositionRepository(repository);
+    }
 }

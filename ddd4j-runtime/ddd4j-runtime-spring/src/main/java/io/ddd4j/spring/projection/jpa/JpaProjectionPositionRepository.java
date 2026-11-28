@@ -19,7 +19,6 @@ import io.ddd4j.data.projection.jpa.ProjectionPositionEntity;
 import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -41,7 +40,7 @@ import java.util.Optional;
  * （同一方法名无法共存），故按 {@code ddd4j-data-event-store-jpa} 的
  * 「SpringData 仓储 + Jpa 适配器」两件套拆分（ADR-0005 同款分层）。
  *
- * <p>事务由 {@code @Transactional} 声明式管理（Spring 运行时由 {@code JpaTransactionManager}
+ * <p>应用显式注册此适配器。事务由 {@code @Transactional} 声明式管理（Spring 运行时由 {@code JpaTransactionManager}
  * 装配；集成方已有事务时本层加入即可，无需额外包装门面）。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
@@ -49,7 +48,6 @@ import java.util.Optional;
  * @see ProjectionPositionEntity
  * @since 2.0.x
  */
-@Repository
 public class JpaProjectionPositionRepository implements ProjectionPositionRepository {
 
     /** \u5728 Spring \u4e8b\u52a1\u4e2d\u8bfb\u53d6\u548c\u4fdd\u5b58\u4f4d\u70b9\u7684\u6301\u4e45\u5316\u4ed3\u50a8\u3002 */
