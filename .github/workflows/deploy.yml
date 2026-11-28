@@ -126,7 +126,7 @@ jobs:
         run: |
           DRY_RUN_ARG=""
           if [[ "${{ inputs.dry_run }}" == "true" ]]; then
-            DRY_RUN_ARG="-DdryRun=true"
+            DRY_RUN_ARG="-Dmaven.deploy.skip=true"
             echo "::notice::Dry run mode — no artifacts will be deployed"
           fi
           REPO="${{ steps.repo.outputs.repo }}"

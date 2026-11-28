@@ -6,6 +6,8 @@ Vert.x EventBus 的本地分发、命令和投影生命周期。
 
 实现入口见 [Ddd4jVertxRuntime](src/main/java/io/ddd4j/vertx/Ddd4jVertxRuntime.java)、[VertxDomainEventPublisher](src/main/java/io/ddd4j/vertx/VertxDomainEventPublisher.java)。
 
+保留的 `VertxProjectionScheduler.create(vertx, views, runner)` 工厂使用传入的 Vert.x。timer 触发后由 worker 执行投影，失败交给 Vert.x 异常处理器；关闭调度器会取消后续触发，调用方负责关闭 Vert.x。
+
 ## 回归
 
 优先运行 [VertxDomainEventPublisherTest](src/test/java/io/ddd4j/vertx/VertxDomainEventPublisherTest.java)、[VertxCqrsRuntimeContractTest](src/test/java/io/ddd4j/vertx/cqrs/VertxCqrsRuntimeContractTest.java)。
@@ -27,7 +29,9 @@ Vert.x EventBus 的本地分发、命令和投影生命周期。
 
 修改 `VertxCommandBus` 时，核对公开入口 `create` 的调用方。
 
-### 回归
+#保留的 `VertxProjectionScheduler.create(vertx, views, runner)` 工厂使用传入的 Vert.x。timer 触发后由 worker 执行投影，失败交给 Vert.x 异常处理器；关闭调度器会取消后续触发，调用方负责关闭 Vert.x。
+
+## 回归
 
 - [VertxCommandBusIT](src/test/java/io/ddd4j/vertx/command/VertxCommandBusIT.java) 中可从 `execute_已在Vertx上下文线程同步执行_应路由到真实Handler并返回成功`、`装配期冲突_整批拒绝应自工厂传播` 定位断言。
 
@@ -50,7 +54,9 @@ Vert.x EventBus 的本地分发、命令和投影生命周期。
 
 修改 `VertxProjectionViewManager` 时，核对公开入口 `create`、`start`、`stop`、`isRunning` 的调用方。
 
-### 回归
+#保留的 `VertxProjectionScheduler.create(vertx, views, runner)` 工厂使用传入的 Vert.x。timer 触发后由 worker 执行投影，失败交给 Vert.x 异常处理器；关闭调度器会取消后续触发，调用方负责关闭 Vert.x。
+
+## 回归
 
 - [VertxProjectionSchedulerIT](src/test/java/io/ddd4j/vertx/cqrs/VertxProjectionSchedulerIT.java) 中可从 `scheduler_schedule_应返回activeHandle_cancel后应inactive`、`viewManager_start_stop_应管理生命周期` 定位断言。
 
