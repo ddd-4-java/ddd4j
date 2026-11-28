@@ -1970,26 +1970,30 @@
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/model/metadata/DomainModelHelper.java",
       "sourceSha256": [
-        "0a6be72f0b2c9162d54b9dbf99836fbc108a4591a02c95910f0a7b8cd0e05dec",
-        "a76502f868eccad7a5de8b8d7b4825e9085804db94d86f6c7ef8371769f94134",
-        "a76502f868eccad7a5de8b8d7b4825e9085804db94d86f6c7ef8371769f94134"
+        "d679f7290ced353d328aa718f9b23ae2913c0ebed06159bc679827fd05f39bed",
+        "b47d6813f66c4471f4d53227bd5e4fe9d7e4ae60967a717ea1cb79f55cc9fbca",
+        "d679f7290ced353d328aa718f9b23ae2913c0ebed06159bc679827fd05f39bed"
       ],
       "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/metadata/DomainModelHelperTest.java",
-      "testSha256": "98a0c97c4f64478a579412f4df71bc705e3e3efaa02d34fef54b62864a431362",
-      "reason": "三线私有缓存键仅有花括号和注释差异。共同用例验证按持久化类型隔离、复用和清理后重建，公开及受保护 JVM 签名一致。"
+      "reason": "三线私有缓存键仅有花括号和注释差异。共同用例验证按持久化类型隔离、复用和清理后重建，公开及受保护 JVM 签名一致。",
+      "testSha256ByJdk": {
+        "8": "7506fd3513fa9cbbf79b52b00b410d0d5a38fa2707fe0f507b5fa9d10659253a",
+        "17": "bacaf3ad2ec7d67ba0f331a56289287ecc2ca8935da12bbd2bf6baf3e3774341",
+        "21": "7506fd3513fa9cbbf79b52b00b410d0d5a38fa2707fe0f507b5fa9d10659253a"
+      }
     },
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/repository/RepositoryRegistry.java",
       "sourceSha256": [
-        "8f3175dfd2fb54fbc653c01ea9e4dd772fe9dfbc5a1595cf7c4003eee3abcc2a",
-        "0d33086554507650eb473cbe412438f48673a2ad73527212114efab8419ed689",
-        "0d33086554507650eb473cbe412438f48673a2ad73527212114efab8419ed689"
+        "cdd4b59af65ef59208601f94837f6f6e10fdbf59e0f4f67df6bbb80c2931f833",
+        "7126746558a63d3cb18f92dbe1f1c3894e7dc1a2f3000871d1a3053f64644e5f",
+        "cdd4b59af65ef59208601f94837f6f6e10fdbf59e0f4f67df6bbb80c2931f833"
       ],
       "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/ddd/repository/RepositoryRegistryTest.java",
       "testSha256ByJdk": {
-        "8": "daab7a6cfa145a92928cdcf0bdb7ad6b1f83450ccb08a58be731a4fb8d569803",
-        "17": "c677a585e9a9e957c62866d25c0bc5df9e734f46833d5b0960fdc945d5f66414",
-        "21": "c677a585e9a9e957c62866d25c0bc5df9e734f46833d5b0960fdc945d5f66414"
+        "8": "2750af995dbf478751602ae85832751c6776ee4d5879a1788a3e77c60791f6b3",
+        "17": "7734e1c26de4eb24cad54bdc48a599cda461db82712bd3a0f208d8620eefb4df",
+        "21": "2750af995dbf478751602ae85832751c6776ee4d5879a1788a3e77c60791f6b3"
       },
       "reason": "三线源码仅有 Javadoc 和同一常量错误消息拆行差异。共同用例验证仓储及查询注册、请求作用域覆盖和注销，公开及受保护 JVM 签名一致。"
     },
@@ -2340,45 +2344,45 @@
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunInfo.java",
       "sourceSha256": [
-        "6983983638de7b98d52290286cf6ec39190082392ffc3d0773a717b664558bc1",
-        "5a0598b30935512de34392477b3cc8837cce83073ba5568f4f0e98e79c744db5",
-        "5a0598b30935512de34392477b3cc8837cce83073ba5568f4f0e98e79c744db5"
+        "78feccfe26222ea51843370ae31dcd3338efb49e0e89f3be0553ce8a663978bd",
+        "c48aafcb79a1b66d577a878fe32e8ff79e83fc52787f59b6542b777858a0ce08",
+        "17276a532ebca43cf9384c1eb76ac5224e0db357d42b4a2766962fd627f86b96"
       ],
       "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunInfoValueContractTest.java",
       "testSha256ByJdk": {
-        "8": "51e377ec494b8d51f36151d8be898c7ac73275163f9615572e46595cb0fd356a",
-        "17": "40fe3500bbcf44e427b48b57c958167f41d77c2ec417f1553de7e402068e22b3",
-        "21": "227050a9c06a9cd99b49855d8d9779a0bb0996ddbc9cb84c92e3d1dd0906dd7c"
+        "8": "c2d26219c62d9d5a9e79d9b1593be854b62d13cd7cc16107d4a16692ea0b894d",
+        "17": "97b505b21128ae0579f2001cce52d39116c811faee6041d91979873359bb8615",
+        "21": "1d01ef66eef7f2487af830f7d1451c10ab4c62679a95ea747a44b6390d15bcad"
       },
       "reason": "final 快照保留相同的 JSON 字段及访问器。三线判型、等值比较和哈希写法等价，以时间戳及失败快照 JSON 回读契约为证。"
     },
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionStatus.java",
       "sourceSha256": [
-        "f68b26ba6d5fa4e38c4cf8f36566a63302113939704e031996839d01df7953c7",
-        "1c1ffe4dd6cdb33ec1d13b07845626f3fc8584094fade7bbef8cb2a5593a0cf4",
-        "1c1ffe4dd6cdb33ec1d13b07845626f3fc8584094fade7bbef8cb2a5593a0cf4"
+        "b36147af88bf367235f4ba0b73555752ceadd3ac05f29f147e6c260f14d73f7e",
+        "8078bb9a58833bf3b3ba74d6e59a76e0efc436f5aa58c7e0b8d1476a3c3939a5",
+        "b36147af88bf367235f4ba0b73555752ceadd3ac05f29f147e6c260f14d73f7e"
       ],
       "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionStatusValueContractTest.java",
       "testSha256ByJdk": {
-        "8": "92e981ced5fb09456c7750236e727e9645d38b66a2d93a0d8af48f6097415ebf",
-        "17": "92e981ced5fb09456c7750236e727e9645d38b66a2d93a0d8af48f6097415ebf",
-        "21": "7e5ca72b58f0ccd78a79f6b2d4514049e9e6c4e81ae5a95b44add9d0cd41b8e2"
+        "8": "053eae80deff3dd1a5e0538ac07ce975337d040f22cea43205d8ecac30c83208",
+        "17": "bbab542bea1361aff1f6a3366ad0d48d2b54ea918b2732031f348f115d542e3e",
+        "21": "7fbcbcea70e6e2ad5781ba6cba2d5ed765ceaaa44409e71926b77b39664e7515"
       },
       "reason": "三线保留相同构造校验及 JSON 字段。Java 8 判型和 long 哈希写法等价，既有测试确认 JSON、时间戳、哈希及描述。"
     },
     {
       "path": "ddd4j-data/ddd4j-data-event-store-jpa/src/main/java/io/ddd4j/data/projection/jpa/EntityManagerProjectionPositionRepository.java",
       "sourceSha256": [
-        "be3a665564b22caa94ee45be53ef39b8a29ce520b24d76629ba12c59b91e4f0a",
-        "3fbb47c2e689f49fdd70d405f6483e2d62478c60c1231347eed4dfb6d70a9b6f",
-        "3fbb47c2e689f49fdd70d405f6483e2d62478c60c1231347eed4dfb6d70a9b6f"
+        "d67b34454acf4dbb87e72fa1dcae75d1a5406de63a92a4519129b35bc483fe7e",
+        "85f13e1d134cf4fd9a74dc662e8cf8c2f1f64e86c9d6d8fae27870a5bbb1aa8d",
+        "85f13e1d134cf4fd9a74dc662e8cf8c2f1f64e86c9d6d8fae27870a5bbb1aa8d"
       ],
       "evidence": "ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/projection/jpa/EntityManagerProjectionPositionRepositoryTest.java",
       "testSha256ByJdk": {
-        "8": "d4220fcef83c5c367ae4e1ae46a94d76a836ff18b2db90de948a5bfdfeee82db",
-        "17": "5773db816f4716dee29ad51fba316bb8a9c26cc4189947c95ee3aa1072dcbfec",
-        "21": "5773db816f4716dee29ad51fba316bb8a9c26cc4189947c95ee3aa1072dcbfec"
+        "8": "c7f5ca83cbb50cce78fea878878fbc910103f4c26a2a1e604bc8e661331f4112",
+        "17": "2714839e7b50dde6eb510b4b231e48280240938616199bfb64c578ad0f5ae0a2",
+        "21": "2714839e7b50dde6eb510b4b231e48280240938616199bfb64c578ad0f5ae0a2"
       },
       "reason": "三线使用同一调用方事务和实体存储，返回不可修改且分离的位置快照。验证真实 H2 的提交重开、重置与删除、异常回滚、事务要求，以及增量刷新时保留其他实体。Java 8 仅使用 javax.persistence 和 JDK Collectors 不可修改包装，Java 17/21 使用 Jakarta Persistence 和 Stream.toList。"
     },
@@ -3018,15 +3022,15 @@
     {
       "path": "ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/Ddd4jGuiceRuntime.java",
       "sourceSha256": [
-        "6a9ca2046294fe380d49a31e3bbdb857ed37b2b54bad03977372698553e10d3e",
-        "6d178cabb810018310934e695b359d804e8827a8e869992395f8b20c13b4bdbc",
-        "6d178cabb810018310934e695b359d804e8827a8e869992395f8b20c13b4bdbc"
+        "044027d8bf428a3dc2d55aa9cb0351b6f63ddf322b4672ba72a504304deab1af",
+        "8dff03dbeb4e328f3b0d0ffdc6760178da48799755aa61befc908ee4b294dd76",
+        "764107962c21ae6c018921c002793c5ef001a1e499a6cadeb0691b0ddc851bfa"
       ],
       "evidence": "ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/GuiceRuntimeContractTest.java",
       "testSha256ByJdk": {
-        "8": "273091bba0168cae035e9f6b3d9ecdbcec166bfabc55520663b56e092006a12a",
-        "17": "3ffd5623469e2247f50fea8c23dfd8ed80a41aa61aa328c86fc5cbae92b30e36",
-        "21": "3ffd5623469e2247f50fea8c23dfd8ed80a41aa61aa328c86fc5cbae92b30e36"
+        "8": "82aac1cf8437a89e9ec1f3fd9e4213d05b9a0cc8423e686a380c1dc28ca08be8",
+        "17": "e40b16228adf4b4a6d805e1d6a89508326475baee4588e35155b07cd23b63c18",
+        "21": "82aac1cf8437a89e9ec1f3fd9e4213d05b9a0cc8423e686a380c1dc28ca08be8"
       },
       "reason": "低线以 Collections.emptyList 提供默认空就绪检查集合，高两线使用 List.of。实际 Guice 运行时契约验证就绪、SPI 及启停。"
     },
@@ -3457,19 +3461,23 @@
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunner.java",
       "sourceSha256": [
-        "027b28a1df86f44f43963d140f9aed1ef90ae13fe690e13135a913210ceee988",
-        "a23cc343094b27773f05a06067c368aec012d835bd7fe54822b71e4c7795ef33",
-        "a23cc343094b27773f05a06067c368aec012d835bd7fe54822b71e4c7795ef33"
+        "03ca1c56566e4a156cf5ad2ea4bc5e8c8d87910ce2867934557e6c2baefe1c79",
+        "29602a2295f6a27de72adee4b12695b1665e5c7cbe44ba553ac09573bbc9ec8c",
+        "d2cf4d4b4f325e3a95a49962ebd40c032a64d1aa7d619d382476fe07df9f99cd"
       ],
       "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunnerNullMetricsParityTest.java",
-      "testSha256": "4b897bc758ee31b86abef7ffc2296f9a1b95a36ba835417fa4ad424649fe01a8",
       "reason": "三线熔断告警回调失败后均继续处理后续视图。JDK 8 使用条件表达式回退空指标，高两线使用 Objects.requireNonNullElse。共同测试验证指标回退、告警异常隔离及后续检查点推进。",
       "additionalEvidence": [
         {
           "path": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionCircuitIsolationContractTest.java",
           "testSha256": "437681ef4269aef172f4a96e0b4aa3469b36198e095580c8ef764213238d3814"
         }
-      ]
+      ],
+      "testSha256ByJdk": {
+        "8": "2567e2825ebad85d4314c08ca65e00b2fb8e4064595c4d9224fb364ae000f051",
+        "17": "9c5f98809c9f84f8b56f5d0184400f1b825414f7742203eda99847312e1fefb8",
+        "21": "2567e2825ebad85d4314c08ca65e00b2fb8e4064595c4d9224fb364ae000f051"
+      }
     },
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/EntityIdPath.java",
@@ -3485,13 +3493,17 @@
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/DomainEvent.java",
       "sourceSha256": [
-        "d03768634600909b301afce96765748923c8f5bb35364dc76ab0f528fe4ebb21",
-        "2408ed8f999831ff370fc08d69420de5d20d2b17226fe9c028398102922f2ab6",
-        "2408ed8f999831ff370fc08d69420de5d20d2b17226fe9c028398102922f2ab6"
+        "e799001993546460c11defdb5aac2747a85f0010ff0e30d8d80f6c51f2aa49f6",
+        "9ac945999e0e3020cf645eafb8eef7532916df6123a9d078b0d86a69094d75ca",
+        "9a225ae64c3a6bd2cf1177f87ef7fb8f620caf14817177bb599194d1ae6bf08e"
       ],
       "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/DomainEventContractTest.java",
-      "testSha256": "ce6434630c0a0652323bb4989b8ac1d6f36a26bad9b8ed224ed19a7437a1bad2",
-      "reason": "JDK 8 使用显式 ClassValue 泛型且不支持 @Serial；高两线使用菱形语法和 @Serial。三线共同测试锁定事件类型缓存、事件源、因果链与策略过滤；其余源码正文一致"
+      "reason": "JDK 8 使用显式 ClassValue 泛型且不支持 @Serial；高两线使用菱形语法和 @Serial。三线共同测试锁定事件类型缓存、事件源、因果链与策略过滤；其余源码正文一致",
+      "testSha256ByJdk": {
+        "8": "21860b0dc0a6953aef6332c9a31997f12f011cd0f9f2800a70a2ce6a3932743a",
+        "17": "39d4d5722673afc349c2ec5edff7578aafbcac23d5d7ef986f0477e8348d355a",
+        "21": "21860b0dc0a6953aef6332c9a31997f12f011cd0f9f2800a70a2ce6a3932743a"
+      }
     },
     {
       "path": "ddd4j-auth/ddd4j-auth-shiro/src/main/java/io/ddd4j/auth/shiro/subject/ShiroSubject.java",
@@ -5038,14 +5050,14 @@
       "path": "ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/GuiceOptionalCapabilitiesTest.java",
       "productionPath": "ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/Ddd4jGuiceRuntime.java",
       "sourceSha256": [
-        "7248a333ba23e40c60461f1216e90b42a2578a16e3ee1150e20f26bc6864b7b8",
-        "5f4bce8b7e64a3dd0a7b03dbcb9f3720fcb6f055e74d0897f335004bb97a60e5",
-        "5f4bce8b7e64a3dd0a7b03dbcb9f3720fcb6f055e74d0897f335004bb97a60e5"
+        "2bee43d97d1a1bbce63ea400d9a5cc536b3538ddc6efd03dcfd2b062866f1288",
+        "c8b89ad570d9bdc86b2ecf187e2125648ade74efe686da0badbed8fbf221ef63",
+        "c8b89ad570d9bdc86b2ecf187e2125648ade74efe686da0badbed8fbf221ef63"
       ],
       "productionSha256": [
-        "6a9ca2046294fe380d49a31e3bbdb857ed37b2b54bad03977372698553e10d3e",
-        "6d178cabb810018310934e695b359d804e8827a8e869992395f8b20c13b4bdbc",
-        "6d178cabb810018310934e695b359d804e8827a8e869992395f8b20c13b4bdbc"
+        "044027d8bf428a3dc2d55aa9cb0351b6f63ddf322b4672ba72a504304deab1af",
+        "8dff03dbeb4e328f3b0d0ffdc6760178da48799755aa61befc908ee4b294dd76",
+        "764107962c21ae6c018921c002793c5ef001a1e499a6cadeb0691b0ddc851bfa"
       ],
       "testMethods": [
         "basicStartsInJvmWithoutUnselectedCapabilities",
@@ -5058,14 +5070,14 @@
       "path": "ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/GuiceJavalinIntegrationTest.java",
       "productionPath": "ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/Ddd4jGuiceRuntime.java",
       "sourceSha256": [
-        "cc9d248a6a8951a6e32394bfd4360221d2a1188af8bfcae59d9d14a86533e8fc",
-        "297c42a8155bc1343ea403fc114023f30d27dee502440063b794e231bbdbab78",
-        "297c42a8155bc1343ea403fc114023f30d27dee502440063b794e231bbdbab78"
+        "2bf4aa5061ccda7afb9e46f2ea3f355916f30548f088af8dbf163877e4663fcd",
+        "62de2e8fc3a5e657e3ca3d226bdb384e48bf3d24a9e9767b76020d64caad6d8b",
+        "62de2e8fc3a5e657e3ca3d226bdb384e48bf3d24a9e9767b76020d64caad6d8b"
       ],
       "productionSha256": [
-        "6a9ca2046294fe380d49a31e3bbdb857ed37b2b54bad03977372698553e10d3e",
-        "6d178cabb810018310934e695b359d804e8827a8e869992395f8b20c13b4bdbc",
-        "6d178cabb810018310934e695b359d804e8827a8e869992395f8b20c13b4bdbc"
+        "044027d8bf428a3dc2d55aa9cb0351b6f63ddf322b4672ba72a504304deab1af",
+        "8dff03dbeb4e328f3b0d0ffdc6760178da48799755aa61befc908ee4b294dd76",
+        "764107962c21ae6c018921c002793c5ef001a1e499a6cadeb0691b0ddc851bfa"
       ],
       "testMethods": [
         "httpDispatchAndExecutorOwnedTransactions"
@@ -5076,14 +5088,14 @@
       "path": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunnerFailureContractTest.java",
       "productionPath": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunner.java",
       "sourceSha256": [
-        "051ed3a02f8a891f7088f62c36ea1e42c1f72e7d24813fd078204ff3561852b8",
-        "5903877505fbcd03c17e4cbd2977d1bd445a79d95d9cec6df3ed9c0abf798398",
-        "5903877505fbcd03c17e4cbd2977d1bd445a79d95d9cec6df3ed9c0abf798398"
+        "ae1b0df3d4362fbf34280ab179af825a5cac645cc5f0e20a84b67843ff9b6de3",
+        "a855646cfd707ef8c0e2d4ae94f4d291bb3f83a6bc79d7f6e9bb746ea07d07c7",
+        "93ddaa6493e36fc20db2b02a1cc1b15711d0d6af647eb0f412faf3ce2d5bdaf7"
       ],
       "productionSha256": [
-        "027b28a1df86f44f43963d140f9aed1ef90ae13fe690e13135a913210ceee988",
-        "a23cc343094b27773f05a06067c368aec012d835bd7fe54822b71e4c7795ef33",
-        "a23cc343094b27773f05a06067c368aec012d835bd7fe54822b71e4c7795ef33"
+        "03ca1c56566e4a156cf5ad2ea4bc5e8c8d87910ce2867934557e6c2baefe1c79",
+        "29602a2295f6a27de72adee4b12695b1665e5c7cbe44ba553ac09573bbc9ec8c",
+        "d2cf4d4b4f325e3a95a49962ebd40c032a64d1aa7d619d382476fe07df9f99cd"
       ],
       "testMethods": [
         "positionReadFailureReportsMetricWithoutAdvancing",
@@ -5097,14 +5109,14 @@
       "path": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunInfoValueContractTest.java",
       "productionPath": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunInfo.java",
       "sourceSha256": [
-        "51e377ec494b8d51f36151d8be898c7ac73275163f9615572e46595cb0fd356a",
-        "40fe3500bbcf44e427b48b57c958167f41d77c2ec417f1553de7e402068e22b3",
-        "227050a9c06a9cd99b49855d8d9779a0bb0996ddbc9cb84c92e3d1dd0906dd7c"
+        "c2d26219c62d9d5a9e79d9b1593be854b62d13cd7cc16107d4a16692ea0b894d",
+        "97b505b21128ae0579f2001cce52d39116c811faee6041d91979873359bb8615",
+        "1d01ef66eef7f2487af830f7d1451c10ab4c62679a95ea747a44b6390d15bcad"
       ],
       "productionSha256": [
-        "6983983638de7b98d52290286cf6ec39190082392ffc3d0773a717b664558bc1",
-        "5a0598b30935512de34392477b3cc8837cce83073ba5568f4f0e98e79c744db5",
-        "5a0598b30935512de34392477b3cc8837cce83073ba5568f4f0e98e79c744db5"
+        "78feccfe26222ea51843370ae31dcd3338efb49e0e89f3be0553ce8a663978bd",
+        "c48aafcb79a1b66d577a878fe32e8ff79e83fc52787f59b6542b777858a0ce08",
+        "17276a532ebca43cf9384c1eb76ac5224e0db357d42b4a2766962fd627f86b96"
       ],
       "testMethods": [
         "jsonRoundTripPreservesThreeComponents"
@@ -5115,14 +5127,14 @@
       "path": "ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/projection/jpa/EntityManagerProjectionPositionRepositoryTest.java",
       "productionPath": "ddd4j-data/ddd4j-data-event-store-jpa/src/main/java/io/ddd4j/data/projection/jpa/EntityManagerProjectionPositionRepository.java",
       "sourceSha256": [
-        "d4220fcef83c5c367ae4e1ae46a94d76a836ff18b2db90de948a5bfdfeee82db",
-        "5773db816f4716dee29ad51fba316bb8a9c26cc4189947c95ee3aa1072dcbfec",
-        "5773db816f4716dee29ad51fba316bb8a9c26cc4189947c95ee3aa1072dcbfec"
+        "c7f5ca83cbb50cce78fea878878fbc910103f4c26a2a1e604bc8e661331f4112",
+        "2714839e7b50dde6eb510b4b231e48280240938616199bfb64c578ad0f5ae0a2",
+        "2714839e7b50dde6eb510b4b231e48280240938616199bfb64c578ad0f5ae0a2"
       ],
       "productionSha256": [
-        "be3a665564b22caa94ee45be53ef39b8a29ce520b24d76629ba12c59b91e4f0a",
-        "3fbb47c2e689f49fdd70d405f6483e2d62478c60c1231347eed4dfb6d70a9b6f",
-        "3fbb47c2e689f49fdd70d405f6483e2d62478c60c1231347eed4dfb6d70a9b6f"
+        "d67b34454acf4dbb87e72fa1dcae75d1a5406de63a92a4519129b35bc483fe7e",
+        "85f13e1d134cf4fd9a74dc662e8cf8c2f1f64e86c9d6d8fae27870a5bbb1aa8d",
+        "85f13e1d134cf4fd9a74dc662e8cf8c2f1f64e86c9d6d8fae27870a5bbb1aa8d"
       ],
       "testMethods": [
         "commitsSnapshotsAndResetAcrossFactoryRestart",
@@ -5463,14 +5475,14 @@
       "path": "ddd4j-samples/ddd4j-sample-javalin/src/test/java/io/ddd4j/sample/javalin/goods/web/GoodsControllerTest.java",
       "productionPath": "ddd4j-samples/ddd4j-sample-javalin/src/main/java/io/ddd4j/sample/javalin/goods/web/GoodsController.java",
       "sourceSha256": [
-        "078bededb78991237992e1bbe2217c3090740120eadaa4bf70908fb28cf7292d",
-        "3ce5b1c8e1dfc6687b9967c73b5859ae9182d8302a371725ed54e0c20edfa290",
-        "73b4143dd18e56272c8b90086b1a27fad0753b5a57db4558462e133fa7aea479"
+        "4b575c08c02654e7fba70b204df42c50f470697b10d50d1640afaf1ae7634674",
+        "74572bc2b7dac485fc6e527279440b821f4b84225bdf65f41e5c3ec643a1b3b4",
+        "417de5845f3a7af7f0ddfb2af42551c43d15cefd0467b5ef397847cf0a3db629"
       ],
       "productionSha256": [
-        "839eafa4a90d5fcaafc62160a96bafc4a9071753d32e5e24af0954fa3bdd61f6",
-        "839eafa4a90d5fcaafc62160a96bafc4a9071753d32e5e24af0954fa3bdd61f6",
-        "839eafa4a90d5fcaafc62160a96bafc4a9071753d32e5e24af0954fa3bdd61f6"
+        "53dfb836e65b881489f08ea520646b911b41f91c3eb06e94eb16bba31a1a5b63",
+        "3a06c29c40e86aa49542421ea04b28ead90de0746ba18082821c01ac0480217f",
+        "8d4e8f921c1291c4ef3ed0e8549c0187e4696c318fd6d0d926f5d6c55d34278a"
       ],
       "testMethods": [
         "createGoods_shouldReturn201",
@@ -5537,14 +5549,14 @@
       "path": "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/DomainEventJsonTest.java",
       "productionPath": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/DomainEvent.java",
       "sourceSha256": [
-        "4a25c936c2b7e71e868309afb8e453732aacf7421e406d9dd391b551f76bab15",
-        "4a25c936c2b7e71e868309afb8e453732aacf7421e406d9dd391b551f76bab15",
-        "ace5e9ee7f2dcb6d220e144dd1914006e2f4a9f7499edd2ca7aec4a53613c1eb"
+        "f34e0e1f3dc12323d090a106c0beb9d268d520f6bab5c5e4092a8f4a407b7db5",
+        "dac6a7de0619941f154dad276eb8e5760f81272dc81498f1ae26ee8aa3cadeeb",
+        "af44c1f9c3ddda4ffed56fc8dd362aa37ee54aa1092ffe578b960fdca1dbff7e"
       ],
       "productionSha256": [
-        "d03768634600909b301afce96765748923c8f5bb35364dc76ab0f528fe4ebb21",
-        "2408ed8f999831ff370fc08d69420de5d20d2b17226fe9c028398102922f2ab6",
-        "2408ed8f999831ff370fc08d69420de5d20d2b17226fe9c028398102922f2ab6"
+        "e799001993546460c11defdb5aac2747a85f0010ff0e30d8d80f6c51f2aa49f6",
+        "9ac945999e0e3020cf645eafb8eef7532916df6123a9d078b0d86a69094d75ca",
+        "9a225ae64c3a6bd2cf1177f87ef7fb8f620caf14817177bb599194d1ae6bf08e"
       ],
       "testMethods": [
         "shouldSerializeEventMetadataAsStableScalarValues"
@@ -5826,14 +5838,14 @@
       "path": "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/DomainEventRoundTripTest.java",
       "productionPath": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/DomainEvent.java",
       "sourceSha256": [
-        "0d1c4b59858e325c6eb9d7541d4697089dc1a8e013d203513b858981c8220572",
-        "0d1c4b59858e325c6eb9d7541d4697089dc1a8e013d203513b858981c8220572",
-        "261ef34f49d0b30fcbd8f5e6d1e4ed057ca83a299b015e3922a7be644153fb11"
+        "641fe53cf605db9507b68bc1a5166b1ac1459d5489d92e3b72b7e69a39f578a9",
+        "c2e15f8cedfaf0f106be9c5560574d0f699d46b37774279e2c176bb0009f2006",
+        "c39f3d93baedd0e4da8441158a35555f44cba90dc313a8752fba933d87928304"
       ],
       "productionSha256": [
-        "d03768634600909b301afce96765748923c8f5bb35364dc76ab0f528fe4ebb21",
-        "2408ed8f999831ff370fc08d69420de5d20d2b17226fe9c028398102922f2ab6",
-        "2408ed8f999831ff370fc08d69420de5d20d2b17226fe9c028398102922f2ab6"
+        "e799001993546460c11defdb5aac2747a85f0010ff0e30d8d80f6c51f2aa49f6",
+        "9ac945999e0e3020cf645eafb8eef7532916df6123a9d078b0d86a69094d75ca",
+        "9a225ae64c3a6bd2cf1177f87ef7fb8f620caf14817177bb599194d1ae6bf08e"
       ],
       "testMethods": [
         "roundTripRestoresIdentityMetadataAndPayload",
@@ -6245,14 +6257,14 @@
       "path": "ddd4j-web/ddd4j-web-vertx/src/test/java/io/ddd4j/web/vertx/Ddd4jVertxContextTest.java",
       "productionPath": "ddd4j-web/ddd4j-web-vertx/src/main/java/io/ddd4j/web/vertx/Ddd4jVertxContext.java",
       "sourceSha256": [
-        "41cde316770bf75079bbadd8ab5416f688902b08396372caeb3e7ca15d85247c",
-        "c6f118925039254d9a50859589df8b2394859b4a97e35cb6b6c17f966c2731bd",
-        "8c17ac2a6774e957eef11d970185ebf51a8441763c3ac3bf8a0c92d240db92d8"
+        "2353187eed8c3a6ae55a6e166221b0badb7af169d6ff0207d1bf92004f36be47",
+        "6caee4fba74b73ddae677a2641ed6791c7d08822abd3a7aa79ea3c6808aac062",
+        "8a373771b3d334c283ed6113d7c8032aeec2c4c882acae1acfab9bf07011f1a5"
       ],
       "productionSha256": [
-        "6825e24c31d4b0fa59783e0693e717591b11355ecc69b48ca6b5679f5d75ac0e",
-        "2472bcc42b635401497ce5cdcbe2c63b005d35adaad6ece7df669cb07ab779d4",
-        "6825e24c31d4b0fa59783e0693e717591b11355ecc69b48ca6b5679f5d75ac0e"
+        "de1da8ddaab329b596d453b726de057daf00fdeb79657fb18c7e1f4e5a786cbc",
+        "556ad6932d935098c564c4b039bd6bdc502e45ced20c7ccb6e8698b631b8190c",
+        "de1da8ddaab329b596d453b726de057daf00fdeb79657fb18c7e1f4e5a786cbc"
       ],
       "testMethods": [
         "requestReturnsStoredContext",
