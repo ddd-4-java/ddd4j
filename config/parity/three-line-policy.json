@@ -2320,13 +2320,13 @@
     },
     {
       "path": "ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/cqrs/SpringJpaProjectionPositionRepository.java",
-      "sourceSha256": [
-        "78e89fa0d14b70174d325afb1f7f8f8db808755e1f2f790844e4394ba751e671",
-        "d7d79efbf15c3a2cb8b344583be0586a4a4f5c6f2e75832de62fdb47ad9e7eae",
-        "d7d79efbf15c3a2cb8b344583be0586a4a4f5c6f2e75832de62fdb47ad9e7eae"
-      ],
       "evidence": "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/cqrs/SpringJpaProjectionPositionRepositoryTest.java",
       "reason": "三线共同测试验证 findAll 顺序与不可修改列表，并覆盖 resetToZero；JDK 8 使用不可修改包装和 Collectors，JDK 17/21 使用 Stream.toList，业务语义一致",
+      "sourceSha256": [
+        "5369f827f84f3909a11bf3e8b78ee79a290b50d58bdd544b2666356737cac488",
+        "9caef244ffed3b0ef9ffa14d50ad18d82ea0bddf2c388bbb955020ee77f6250d",
+        "9caef244ffed3b0ef9ffa14d50ad18d82ea0bddf2c388bbb955020ee77f6250d"
+      ],
       "testSha256ByJdk": {
         "8": "a12c03ca536b33332ae8ee7608803383b15000f66b043f748db7bfcea47e2b2b",
         "17": "a1ac36560c41b1d1837b260c0867d1534f41cf6a9acbf7ac33a6cf1b6d669c08",
@@ -2369,9 +2369,9 @@
       "evidence": "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/cqrs/SpringJpaProjectionPositionDatabaseTest.java",
       "reason": "三线相同的 H2 JPA 测试验证偏移量实体持久化与重置；JDK 8 javax.persistence 和高两线 jakarta.persistence 以及 @Serial 标注差异由源码哈希锁定",
       "testSha256ByJdk": {
-        "8": "907faf0eafdae0e9d6301cec1d8b3d97a2d03fc4d773349dbe219a85f95b27bf",
-        "17": "88cfe6a7b5b0f199ef50a26e89ed020084626a85f1ccb063e0138dcd61428733",
-        "21": "907faf0eafdae0e9d6301cec1d8b3d97a2d03fc4d773349dbe219a85f95b27bf"
+        "8": "8855fbdc051aee75a23987641a91b5f56fc202532f63b0099371365fd1338071",
+        "17": "829116823d0dc0ef5e67e379ba6ccf524be78fcf80aebcf9c1b93d475781beed",
+        "21": "696bdbee06ee8d842ee0c8afba02e5a4947589aaa1fb089446ad2ed3a16c9a30"
       }
     },
     {
@@ -2703,9 +2703,9 @@
     {
       "path": "ddd4j-mq/ddd4j-mq-kafka/src/main/java/io/ddd4j/mq/kafka/KafkaMQClient.java",
       "sourceSha256": [
-        "fe9288a7c4a31e53892e90c794bbfc4cea9dfcf39a05d626468a58ad60c6b756",
-        "695b5bcfbe8fdf7aad0588b61bd43da4c66836924089e33027715652c2b8a65f",
-        "dd42ee4d69fa467acedb5c50bc975c6d1a714c8aba8be902227bc59a4378092b"
+        "d35884f5d1eacd7d5888aad49b44f482cfcf9d28cf1b06ad22dcdab83fca42eb",
+        "c66764462311db4a6c2e563c88bef248aba1fe5e244f1d8ca76eeb9feef39b27",
+        "25246a20da21377617711df760f52dab99ea299be8ce4b169ad3ffabbaf7838b"
       ],
       "evidence": "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaMQClientLifecycleContractTest.java",
       "testSha256ByJdk": {
@@ -3869,6 +3869,21 @@
         "17": "d63fd8ba1f03c70f48ecd0c62f4f6c1c61f82489e394ec0052664d128b5de71c",
         "21": "0157f329cc84b88f67bda7486dda6b05fa8a31e4a81e00cdc827a6cdf8a3073b"
       }
+    },
+    {
+      "path": "ddd4j-mq/ddd4j-mq-rabbitmq/src/main/java/io/ddd4j/mq/rabbitmq/RabbitMQClient.java",
+      "sourceSha256": [
+        "502003f7155ba918536cb22dbe341928f5ec0b852d07f6bb72121183096b38cc",
+        "92d645faf0d279dea70e57f8021b3526a2665e5ace26bde45ed17977b8b89b02",
+        "502003f7155ba918536cb22dbe341928f5ec0b852d07f6bb72121183096b38cc"
+      ],
+      "evidence": "ddd4j-mq/ddd4j-mq-rabbitmq/src/test/java/io/ddd4j/mq/rabbitmq/RabbitMQConsumerStartupTest.java",
+      "testSha256ByJdk": {
+        "8": "2689b9d191dc4636ab8edd7b49d2534b03270d518fa36847b0027aa1ac4f8be7",
+        "17": "9d957e6292f097e833304e1340e65c6190ccae110376a8b048be5dc363e3e300",
+        "21": "9d957e6292f097e833304e1340e65c6190ccae110376a8b048be5dc363e3e300"
+      },
+      "reason": "三线同步等待 basicConsume 注册结果，必选失败回滚、可选失败降级；同名回归已通过。仅保留原有 import 与注释差异，Java 8 测试使用 Arrays.asList。"
     }
   ],
   "historicalDocumentSections": [
@@ -4863,14 +4878,14 @@
         "ec156d8267c52c916e50ddb65d1663080c096ac37eacaa29667ccb3e22fc3937"
       ],
       "productionSha256": [
-        "fe9288a7c4a31e53892e90c794bbfc4cea9dfcf39a05d626468a58ad60c6b756",
-        "695b5bcfbe8fdf7aad0588b61bd43da4c66836924089e33027715652c2b8a65f",
-        "dd42ee4d69fa467acedb5c50bc975c6d1a714c8aba8be902227bc59a4378092b"
+        "d35884f5d1eacd7d5888aad49b44f482cfcf9d28cf1b06ad22dcdab83fca42eb",
+        "c66764462311db4a6c2e563c88bef248aba1fe5e244f1d8ca76eeb9feef39b27",
+        "25246a20da21377617711df760f52dab99ea299be8ce4b169ad3ffabbaf7838b"
       ],
       "testMethods": [
         "produceConsumeRoundTrip"
       ],
-      "reason": "三线真实 Kafka broker 的生产、序列化、消费、反序列化及监听器回调测试各 1 项通过且未跳过；Testcontainers Kafka 模块坐标与 JDK 21 容器 tmpfs 是逐线运行环境适配，KafkaMQClient 生产逻辑已由独立映射和生命周期测试锁定。"
+      "reason": "三线真实 Kafka 3.9.1 消息往返各 1 项通过，验证生产者发送、消息载荷、监听器回调、消费者组成员和关闭释放；兼容各线 Testcontainers 并使用 tmpfs 存储测试日志。"
     },
     {
       "path": "ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/JpaManagedParticipationTest.java",
@@ -5409,6 +5424,25 @@
         "save不存在则插入存在则更新_delete后不可见"
       ],
       "reason": "同一组八项 Spring Data JPA/H2 用例验证显式 Bean、默认扫描、实体表映射、不可修改快照、增量、重置与流隔离。JPA 命名空间随 JDK 分支适配。"
+    },
+    {
+      "path": "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaConsumerBatchRetryTest.java",
+      "productionPath": "ddd4j-mq/ddd4j-mq-kafka/src/main/java/io/ddd4j/mq/kafka/KafkaMQClient.java",
+      "sourceSha256": [
+        "ef462542ce980e146915433b340f96bd1913188785f25238741e2e77b3bf1fa3",
+        "68b82c7ad337302c1ff29132f8e1ddf4dcad3053145a4a3188bb39dba4f8862c",
+        "68b82c7ad337302c1ff29132f8e1ddf4dcad3053145a4a3188bb39dba4f8862c"
+      ],
+      "productionSha256": [
+        "d35884f5d1eacd7d5888aad49b44f482cfcf9d28cf1b06ad22dcdab83fca42eb",
+        "c66764462311db4a6c2e563c88bef248aba1fe5e244f1d8ca76eeb9feef39b27",
+        "25246a20da21377617711df760f52dab99ea299be8ce4b169ad3ffabbaf7838b"
+      ],
+      "testMethods": [
+        "clearContext",
+        "shouldProcessEveryPartitionInOrderAfterOneRecordFails"
+      ],
+      "reason": "三线同一失败分区重试回归已通过，断言未失败分区按序消费并提交；Java 8 仅适配集合工厂、Collectors 与 Kafka 3.9 MockConsumer 构造器。"
     }
   ],
   "platformTestHelperMappings": [
