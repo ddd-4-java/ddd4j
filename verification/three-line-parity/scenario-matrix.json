@@ -1641,8 +1641,8 @@
         "1.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/data/cqrs/spring/SpringCommandBusIT.java",
-            "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/data/cqrs/spring/arch/CqrsSpringModuleIndependenceTest.java"
+            "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/command/SpringCommandBusIT.java",
+            "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/command/arch/CqrsSpringModuleIndependenceTest.java"
           ]
         },
         "2.0.x": {
@@ -1655,8 +1655,8 @@
         "3.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/data/cqrs/spring/SpringCommandBusIT.java",
-            "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/data/cqrs/spring/arch/CqrsSpringModuleIndependenceTest.java"
+            "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/command/SpringCommandBusIT.java",
+            "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/command/arch/CqrsSpringModuleIndependenceTest.java"
           ]
         }
       }

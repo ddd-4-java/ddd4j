@@ -1982,9 +1982,9 @@
     {
       "path": "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/cqrs/QuarkusJpaViewManager.java",
       "sourceSha256": [
-        "10c19ca74e4ab36e1c85af7e80ec1fd3e698e07abf99754f8a8b2a475e0ddef6",
-        "9de1f0bdffa3c0b5c74dab28d626e07908e25046404695c3023808e0090d9f1c",
-        "9de1f0bdffa3c0b5c74dab28d626e07908e25046404695c3023808e0090d9f1c"
+        "4b94143d41b370499697b0c9c09d42e13292a8e1cc27ea8b63eb3181aa92c0a9",
+        "ad4e47c46fb2381935d5fe46c3a52cb67d92adaec188d6773345ab3aac8e8441",
+        "ad4e47c46fb2381935d5fe46c3a52cb67d92adaec188d6773345ab3aac8e8441"
       ],
       "evidence": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/QuarkusJpaViewManagerTest.java",
       "testSha256ByJdk": {
@@ -2215,17 +2215,17 @@
     {
       "path": "ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/command/SpringCommandBus.java",
       "sourceSha256": [
-        "2b06a04f495eb89945e1e3bb3e84616943cb2d500fb8128e5c0e59f66356b783",
-        "4ef2d30b736dfa1ecc1485fda8c4436e00920823e9417ba48ad06388907feeb2",
-        "271e6ebecf0164a16acd5d7e5c81c1e43ba4d42c840e92a87fc3a4b98a7a4247"
+        "21bc1587ec682be964def156d8bcf152899c6ba47e4cdc269e6f1fc2723e2506",
+        "f8f09d7d6d215184ddd093b40d0192af1b06b2fca12073a3e0a3a183f77894d9",
+        "ecd9ac847757863818667c5a74155cbd845cfda5acf481c4a2794525c2f97410"
       ],
       "evidence": "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/command/SpringCommandBusTest.java",
       "testSha256ByJdk": {
-        "8": "e2076221c4afd489e4c2df29cca815974cc8596a3297df3a28c6b37604bdddff",
-        "17": "2cc43a86882aeff360510481134c85d68f99dced66608821fc4c2983c8bf7a07",
-        "21": "1cbbfa20ac7000b09ef09d2e5cc668adeae94c3a9f942b537d88713fc20a119d"
+        "8": "9b84e8a803d61651a41ccbce91feb7906afad57ff98ab5768b7732fc6ba6224a",
+        "17": "52875911c67df756290992f383d539e3a2e6e5fdf37a49167dcace100bfe4ccb",
+        "21": "3401c0c25fdc361e4b0588a9fd571347eac091a4c006c473d9004d7495f93008"
       },
-      "reason": "Spring 在完整发现执行器后发布命令路由快照。三线真实容器覆盖重复路由失败的原子性、异常原样传播、已有 Bean 复用和显式装配。"
+      "reason": "各线统一命令路由、显式注册表和事务入口。JDK 8 使用 Java 8 只读集合快照；只在允许 SLF4J 的 2.x 输出已发现的命令类型数。通过组件扫描、注册表和事务回归验证实际分发。"
     },
     {
       "path": "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/command/QuarkusCommandBus.java",
@@ -4183,17 +4183,17 @@
     {
       "path": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/JavalinCqrsApplication.java",
       "sourceSha256": [
-        "de526677225e69c351b0022c1237b40e518760d0a7658a4a16b043a9413d2c1b",
-        "3f7d4fc211b31e53c31c79aa47256ab49b1f12b2f97e420248d0cc43cfd82652",
-        "28aebea8968874baafadc3d010a0638af5edf0dc440dd413705a9fb46a93119d"
+        "d462124ef02b21064fcd1df7cd3e84f59392ae7bc2b3ebaa9dca7c0a6ee9635d",
+        "4b704d8f4bf94865ef499e3e5b3b97030d80d078f6689e2d57d09e11403abdc9",
+        "b302d3b5590f92e92f8646faf5510e5e6062355ae290cc29002115442004081a"
       ],
       "evidence": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/JavalinCatalogCqrsHttpTest.java",
       "testSha256ByJdk": {
-        "8": "6af5bfd2d005b0bc4adbb03ae48f7ba8bcc59bdd96f3a1b4574f473b10b79b6b",
-        "17": "1291cb761c6b60f420b2e2942ab9f8b2084415171ee221f6bb8c9e31ee747076",
-        "21": "1291cb761c6b60f420b2e2942ab9f8b2084415171ee221f6bb8c9e31ee747076"
+        "8": "b5d2803bc28c5ea82769a2dd4dc77afe4563a73fac89b50d05fca5e55334fdf9",
+        "17": "fa5c863746da0e45280ee678af5054cc3f4302d7e7882fef8b4baf37909480e9",
+        "21": "66dffb418e55e95d835218490edf94d99f3234ae15c328d895c1866606e30bf8"
       },
-      "reason": "三线保留原内存入口及显式持久共享订单装配。当前打包运行验证内存暖缓存刷新，逐线 35 项订单控制器、3 项缺失响应和 2 项暖缓存回归通过。Javalin 和 Jackson API 按各线适配。PostgreSQL 流程由独立结果验收。 三线独立 JVM 实测未设置或普通空白继续启动原内存入口，非空无效 URL 及单独不换行空格明确启动失败；三线统一复用 StrKit.hasText。",
+      "reason": "三线商品交易均在 Javalin 路由注册前从执行器创建命令总线；JDK 8 使用 Javalin 4 应用启动接口，高版本使用 Javalin 7。HTTP 回归覆盖商品、支付和四表订单投影。",
       "additionalEvidence": [
         {
           "path": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/JavalinCqrsJdbcUrlContractTest.java",
@@ -4828,9 +4828,9 @@
         "72acf34e7360ff373dfebd1d336ed3d7427ab17026055ee560c20ea04502149a"
       ],
       "productionSha256": [
-        "10c19ca74e4ab36e1c85af7e80ec1fd3e698e07abf99754f8a8b2a475e0ddef6",
-        "9de1f0bdffa3c0b5c74dab28d626e07908e25046404695c3023808e0090d9f1c",
-        "9de1f0bdffa3c0b5c74dab28d626e07908e25046404695c3023808e0090d9f1c"
+        "4b94143d41b370499697b0c9c09d42e13292a8e1cc27ea8b63eb3181aa92c0a9",
+        "ad4e47c46fb2381935d5fe46c3a52cb67d92adaec188d6773345ab3aac8e8441",
+        "ad4e47c46fb2381935d5fe46c3a52cb67d92adaec188d6773345ab3aac8e8441"
       ],
       "testMethods": [
         "originalDisabledExpressionDoesNotSchedule"
@@ -4864,9 +4864,9 @@
         "327e34bcdf2ca1b291b6b08a7de9abb2b6b09da12e9f5696c374cfc1b6296696"
       ],
       "productionSha256": [
-        "10c19ca74e4ab36e1c85af7e80ec1fd3e698e07abf99754f8a8b2a475e0ddef6",
-        "9de1f0bdffa3c0b5c74dab28d626e07908e25046404695c3023808e0090d9f1c",
-        "9de1f0bdffa3c0b5c74dab28d626e07908e25046404695c3023808e0090d9f1c"
+        "4b94143d41b370499697b0c9c09d42e13292a8e1cc27ea8b63eb3181aa92c0a9",
+        "ad4e47c46fb2381935d5fe46c3a52cb67d92adaec188d6773345ab3aac8e8441",
+        "ad4e47c46fb2381935d5fe46c3a52cb67d92adaec188d6773345ab3aac8e8441"
       ],
       "testMethods": [
         "legacySubclassUsesOriginalDefaultAndOnlyOneJob",
@@ -4928,14 +4928,14 @@
       "path": "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/projection/panache/QuarkusDurableProjectionIT.java",
       "productionPath": "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/cqrs/QuarkusJpaViewManager.java",
       "sourceSha256": [
-        "f5e08d2b2f820e907e7e2c0ca11b5e7e6561935ce47e005cc4fc7a1c26ed1ed5",
-        "13932ef27089e1548468a3cea3341d2331faf07d2b92fb0916c8d0ffbbeaa9b5",
-        "13932ef27089e1548468a3cea3341d2331faf07d2b92fb0916c8d0ffbbeaa9b5"
+        "6dcfeb47db0bfa37d210f6d9684797bab1b23df29354e20294b6d18b0975b7e3",
+        "0a3c95306fd8250b7ac1820bcab70d89cba8bd608b49b222eee3750635ad6425",
+        "0a3c95306fd8250b7ac1820bcab70d89cba8bd608b49b222eee3750635ad6425"
       ],
       "productionSha256": [
-        "10c19ca74e4ab36e1c85af7e80ec1fd3e698e07abf99754f8a8b2a475e0ddef6",
-        "9de1f0bdffa3c0b5c74dab28d626e07908e25046404695c3023808e0090d9f1c",
-        "9de1f0bdffa3c0b5c74dab28d626e07908e25046404695c3023808e0090d9f1c"
+        "4b94143d41b370499697b0c9c09d42e13292a8e1cc27ea8b63eb3181aa92c0a9",
+        "ad4e47c46fb2381935d5fe46c3a52cb67d92adaec188d6773345ab3aac8e8441",
+        "ad4e47c46fb2381935d5fe46c3a52cb67d92adaec188d6773345ab3aac8e8441"
       ],
       "testMethods": [
         "historicalPositionFailureRollbackRetryAndSingleScheduler",
@@ -4972,9 +4972,9 @@
         "07f22cb93293b4a6c776a54639b01f5029ec2c8cc59e1a2d970bdc7bec067749"
       ],
       "productionSha256": [
-        "10c19ca74e4ab36e1c85af7e80ec1fd3e698e07abf99754f8a8b2a475e0ddef6",
-        "9de1f0bdffa3c0b5c74dab28d626e07908e25046404695c3023808e0090d9f1c",
-        "9de1f0bdffa3c0b5c74dab28d626e07908e25046404695c3023808e0090d9f1c"
+        "4b94143d41b370499697b0c9c09d42e13292a8e1cc27ea8b63eb3181aa92c0a9",
+        "ad4e47c46fb2381935d5fe46c3a52cb67d92adaec188d6773345ab3aac8e8441",
+        "ad4e47c46fb2381935d5fe46c3a52cb67d92adaec188d6773345ab3aac8e8441"
       ],
       "testMethods": [
         "whenUnsatisfied_shouldReturnBaseline",
@@ -5038,9 +5038,9 @@
         "e711bb0f1c7557fc89e8bf3e9fc382b74ccc6073a6a49f3234d1514dbcd2e18b"
       ],
       "productionSha256": [
-        "071895da1e7e94a00f8c9e88259e89801c5e7bce887242436c1199f47eaf0f32",
-        "071895da1e7e94a00f8c9e88259e89801c5e7bce887242436c1199f47eaf0f32",
-        "071895da1e7e94a00f8c9e88259e89801c5e7bce887242436c1199f47eaf0f32"
+        "4eaafbaa830f61449afa038922c8268ba3c96651d5ea6289415026da5d723dc2",
+        "4eaafbaa830f61449afa038922c8268ba3c96651d5ea6289415026da5d723dc2",
+        "4eaafbaa830f61449afa038922c8268ba3c96651d5ea6289415026da5d723dc2"
       ],
       "testMethods": [
         "basicContextDoesNotActivatePersistenceOrProjection",
@@ -5858,21 +5858,22 @@
       "reason": "三线真实 PostgreSQL 容器各通过事件回读、版本冲突、跨时区时间戳、全局位置约束和 payload TEXT 列 5 项；JDK 8 与高两线的 Testcontainers/Jackson/JDK 集合 API 各自适配，生产 JDBI 适配器已有逐线源码锁定。"
     },
     {
-      "path": "ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/data/cqrs/javalin/JavalinCommandBusIT.java",
-      "productionPath": "ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/data/cqrs/javalin/JavalinCommandBus.java",
+      "path": "ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/command/javalin/JavalinCommandBusIT.java",
+      "productionPath": "ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/command/javalin/JavalinCommandBus.java",
       "sourceSha256": [
-        "149841998ec2ebf065464d016b849e4c64f3aefd47d2ebb6512c188cd07d413b",
-        "3259f5d7f62bdc103b47984231e0d5034cb84ecdffb5fd990c48fa4ff31cb46c",
-        "0ec181c1a939869b401d0d453f5509194b7f41c37d4a5a9c7aeaf11c48c5c967"
+        "99a60850c606839d3ec679ba76abc5b74ad5944673032c03f4a38b4f6b522e50",
+        "0ce83ee66832d5dd35f5f439fbabe3d071e9442c0ed019695c294af4a82a23b6",
+        "8e3eff6127d8620fd3a9760cd55e3ef0e0ea89f5b88721e5d238822ef4620a9b"
       ],
       "productionSha256": [
-        "2ca5b0245e88568e3e757cbf1a3ba5c0e0906b174f5c7875bd1d6db000ac056c",
-        "f5c969611ec1376a8872fca9e6a15e1b5c61ac3f32efe584231034185b51b3f0",
-        "5fbf23b797124450bebc3c92d4380a506c415ec4ef0746adca7cd1b9e1008870"
+        "22bb1bafa851b92aa2d6be397cc3050a0ce1003d2e6c28e9b7e7c179df405104",
+        "8555b24021eb640357243ae1af0853eb6fb378e3b09a4830faf15e8987f07ffb",
+        "dc22c4b7a52bfa6ea257eb93066f808d4da79efe90a4aaebc552b45fb9e3f766"
       ],
       "testMethods": [
         "startJavalin",
         "stopJavalin",
+        "factoryAndInjectorRouteTheSameExecutor",
         "execute_已注册命令_应路由到真实Handler并返回成功",
         "装配期冲突_整批拒绝应自工厂传播",
         "execute_未注册命令_应抛ISE与ddd4j_core一致"
