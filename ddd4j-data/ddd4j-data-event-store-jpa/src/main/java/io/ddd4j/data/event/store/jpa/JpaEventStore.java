@@ -481,11 +481,27 @@ public class JpaEventStore implements EventStore {
      */
     @SuppressWarnings("unchecked")
     private Class<? extends DomainEvent<?>> resolveEventType(String eventType) {
+        ClassLoader definingLoader = JpaEventStore.class.getClassLoader();
+        Class<?> eventClass;
         try {
-            return (Class<? extends DomainEvent<?>>) Class.forName(eventType);
+            eventClass = Class.forName(eventType, false, definingLoader);
         } catch (ClassNotFoundException exception) {
-            throw new IllegalStateException("Unknown event type: " + eventType, exception);
+            // 独立部署的宿主应用可能使用单独的加载器加载领域事件。
+            ClassLoader contextLoader = Thread.currentThread().getContextClassLoader();
+            if (Objects.isNull(contextLoader) || contextLoader == definingLoader) {
+                throw new IllegalStateException("Unknown event type: " + eventType, exception);
+            }
+            try {
+                eventClass = Class.forName(eventType, false, contextLoader);
+            } catch (ClassNotFoundException contextException) {
+                exception.addSuppressed(contextException);
+                throw new IllegalStateException("Unknown event type: " + eventType, exception);
+            }
         }
+        if (!DomainEvent.class.isAssignableFrom(eventClass)) {
+            throw new IllegalStateException("Invalid event type: " + eventType);
+        }
+        return (Class<? extends DomainEvent<?>>) eventClass;
     }
 
     /** \u6807\u8bc6 JPA \u4e8b\u4ef6\u5b58\u50a8\u4f7f\u7528\u72ec\u7acb\u4e8b\u52a1\u3001\u8c03\u7528\u65b9\u4e8b\u52a1\u6216\u6258\u7ba1\u4e8b\u52a1\u7684\u65b9\u5f0f\u3002 */

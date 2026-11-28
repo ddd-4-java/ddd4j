@@ -35,6 +35,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -136,6 +138,49 @@ class JpaEventStoreTest {
         assertEquals("created", ((OrderCreatedEvent) events.get(0).payload()).getFact());
         assertEquals("renamed", ((OrderCreatedEvent) events.get(1).payload()).getFact());
         assertEquals(orderId.asString(), events.get(0).aggregateId().asString());
+    }
+
+    /**
+     * 仓储重开后，通过宿主应用加载器恢复框架加载器无法解析的事件。
+     *
+     * @throws Exception 隔离加载器或事件仓储初始化失败
+     */
+    @Test
+    void reopenedStoreShouldReadHostEventFromContextClassLoader() throws Exception {
+        TestAggregateRootId orderId = new TestAggregateRootId("host-event");
+        eventStore.append(ORDER_TYPE, orderId,
+                Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("created")), 0);
+        entityManager.close();
+        entityManager = entityManagerFactory.createEntityManager();
+
+        String storeClassName = JpaEventStore.class.getName();
+        String eventClassName = OrderCreatedEvent.class.getName();
+        ClassLoader host = JpaEventStoreTest.class.getClassLoader();
+        // 模拟框架加载器看不到宿主应用中的领域事件。
+        ClassLoader frameworkParent = new ClassLoader(host) {
+            @Override
+            protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+                if (name.equals(eventClassName) || name.equals(storeClassName) || name.startsWith(storeClassName + "$")) {
+                    throw new ClassNotFoundException(name);
+                }
+                return super.loadClass(name, resolve);
+            }
+        };
+        URL storeLocation = JpaEventStore.class.getProtectionDomain().getCodeSource().getLocation();
+        Thread thread = Thread.currentThread();
+        ClassLoader previous = thread.getContextClassLoader();
+        try (URLClassLoader framework = new URLClassLoader(new URL[]{storeLocation}, frameworkParent)) {
+            assertThrows(ClassNotFoundException.class, () -> framework.loadClass(eventClassName));
+            thread.setContextClassLoader(host);
+            Class<?> storeClass = framework.loadClass(storeClassName);
+            EventStore reopened = (EventStore) storeClass.getConstructor(EntityManager.class).newInstance(entityManager);
+            List<StoredEvent> events = reopened.read(ORDER_TYPE, orderId);
+            assertEquals(1, events.size());
+            OrderCreatedEvent event = assertInstanceOf(OrderCreatedEvent.class, events.get(0).payload());
+            assertEquals("created", event.getFact());
+        } finally {
+            thread.setContextClassLoader(previous);
+        }
     }
 
     /** \u9a8c\u8bc1<code>second</code> \u7b49\u4e8e <code>first</code>\uff0c<code>second.hashCode()</code> \u7b49\u4e8e <code>first.hashCode()</code>\u3002 */

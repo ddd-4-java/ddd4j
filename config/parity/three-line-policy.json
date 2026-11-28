@@ -1708,15 +1708,15 @@
     {
       "path": "ddd4j-data/ddd4j-data-event-store-jdbi/src/main/java/io/ddd4j/data/event/store/jdbi/JdbiEventStore.java",
       "sourceSha256": [
-        "5c2608a9ab3fa39377ab78fe3ff30ecaf7f36c132dd8f7947efd8ecafc343be9",
-        "b45925d04439d12f2d8d5c64202026ec53b2a3a36af5fa5260c57e9449f13537",
-        "c94dea87d4cf6d41afdc892db649729a5fdcb2ecdec22150252aaec1bb9ed083"
+        "6bb0aa30a03130df64f21e6d306c5ea55bb9aa50f0c149d9bc0ab9268b8d4262",
+        "e21567396d85511ce49f04f270bc30574e8de45348ed406648b6bff246135d26",
+        "77ee959ce30ddbca4071dade9cdd76466ac03dbb3facd4b295c33ca5019adb29"
       ],
       "evidence": "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStoreTest.java",
       "testSha256ByJdk": {
-        "8": "77ceebd590cd9165477759685069e05ac447670c77fede0fac81d4b9eba744b8",
-        "17": "66695f05a9b723365fcf2eaf0fd875eba366070eeaddbb9ec40c4700a49b1721",
-        "21": "ea8889a868726ddc6588aa699775917a62471bfdabed6b19f755c23f724d4c33"
+        "8": "b17a007b071f47e45781755dddb83a09cd0aacf0aed2444177bb6046b1a92469",
+        "17": "1d8865bc147081d9a0f92b14566a3a8b559dfcf04f69d40b4ed8026a03f2d47c",
+        "21": "97085c365e73c079575abed7d40e806eb24d06b919adef764b24f403caa7d474"
       },
       "reason": "三线 JDBI 生产逻辑去掉注释及导入后逐行一致；Jackson 2/3 及 JDK 版本保持各线适配。历史聚合 ID 序列化 UID 6652084670470061437 在三线锁定；H2、MySQL 容器等 JDBI 模块测试分别 44/41/43 项通过。源码与同名测试以 SHA-256 锁定。"
     },
@@ -1904,17 +1904,17 @@
     {
       "path": "ddd4j-data/ddd4j-data-event-store-esdb/src/main/java/io/ddd4j/data/event/store/esdb/EsdbEventStore.java",
       "sourceSha256": [
-        "527c53a9178615c6bd768968867391e22ac972137316f5a37bddbb38255289af",
-        "57887aff451857f105d865b973d8ca20da137ab92947417ec9eb1e90a9eb1e08",
-        "43a68a203d56f208a4ceadd323282a2de7f6c15496e1126bb57d0a9d0dfec909"
+        "e97dd6e1690635a2fb329529bd8d5647b31f8107d15f2439a00645ee4e9811ff",
+        "c26173e178736f21b942567da05b15c16929c6f47f4203f4b8c02563dff57503",
+        "b311fa64d0261552742b026fd9d5de6965bb201f1fd907fced80b439c1dd2daf"
       ],
       "evidence": "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreTest.java",
       "testSha256ByJdk": {
-        "8": "4f6f4fbff6d5cd58d5174182a7187772806c572f53dd91c129a4de72b8c2aeb9",
-        "17": "a2b61971c2b1e27853752e9e99a2f9e132f484dc3045c2555bd60e3ade1e0394",
-        "21": "9beb187a2c90087a6e54525d0e09e96dead7dcb28db0e9afa4707b63b4da5832"
+        "8": "f9bf66f2fd9fbd26ab5a815ec6ff6f6ddd454ff8a425f15932591f020058ffba",
+        "17": "f9975ca05088d1140437efb93ec677435104f03becb79949163b1af6e7222e0f",
+        "21": "65193230c8617caeb7f2b4ecda432a3e3003b8818e8bb9ee4649e4420aa71b16"
       },
-      "reason": "ESDB 三线共享事件写入、读取、版本冲突和重建 ID 契约；JDK 8 集合/类型语法、JDK 17/21 模式匹配及 Jackson 2/3 的元数据解析各随平台适配，三线同九项测试验证行为"
+      "reason": "三线使用各自的 Jackson 映射器读取元数据，以相同的字符串形式输出全局读取重建的聚合标识。九项单测和四项真实 EventStoreDB 集成测试覆盖版本冲突、元数据错误、聚合读取及跨页读取。"
     },
     {
       "path": "ddd4j-data/ddd4j-data-external/src/main/java/io/ddd4j/data/external/geo/GeoBaiduTemplate.java",
@@ -2087,17 +2087,17 @@
     {
       "path": "ddd4j-data/ddd4j-data-event-store-panache/src/main/java/io/ddd4j/data/event/store/panache/PanacheEventStore.java",
       "sourceSha256": [
-        "a6b06fe3413dd2be996057743b210b9777ff79b5bc038cf0682386483406683d",
-        "4df10a62b86a251200a100737a8f21862e1592434e323e50c27990d75a863b5c",
-        "98eaf4557c9e0ee4e5c932f54cf72335c442c52c1ad440224e24b03306bbed16"
+        "65ce136537ec63d24bbd74a567fa5434cd21f9cfa7214560ede4e3e4755909d5",
+        "c6250414957182de4f0a61f000303f4701d7b2ac35545834949693709adeca68",
+        "fd38d3712124a7a08e8e30641b5f1f7f2b7eba5a0cccdbd3c96da60a76df4b61"
       ],
       "evidence": "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/PanacheEventStoreTest.java",
       "testSha256ByJdk": {
-        "8": "609791dcc130097539e324ed1cea38deac735e9775e81611a222b643a92719a3",
-        "17": "a7d3a2ee06e5ea492f3f6f3ee2ba12fa8cf69e3ca6566b578d0485ab848774b8",
-        "21": "a7d3a2ee06e5ea492f3f6f3ee2ba12fa8cf69e3ca6566b578d0485ab848774b8"
+        "8": "aa5372c8b6062bd7fc6d73c7536a5a7868ebe24adddf5c16d726a5caf02db398",
+        "17": "6913cfedcd3dabf95f4c6b07842a5dc7e67988ac0cc6b8e9653713cd4e0bbd97",
+        "21": "29521fdc536b75b4e8258053d1ef4fd1b31fd16b63ee4a2381d962699dc573b5"
       },
-      "reason": "三线各自 H2 测试验证事件读取顺序、强类型元数据、版本冲突以及三种读取结果不可修改；JDK 8 使用 javax.persistence 与不可变收集器，高两线使用 jakarta.persistence 与 Stream.toList，JDK 21 适配 Jackson 3"
+      "reason": "跨线拒绝在调用方已开启的事务中追加，保留调用方已刷新的变更；失败批次自行回滚。各线通过真实 PostgreSQL 读取和本线 Hibernate/Jackson 适配的事务测试。"
     },
     {
       "path": "ddd4j-runtime/ddd4j-runtime-testkit/src/main/java/io/ddd4j/runtime/testkit/RuntimeContractAdapter.java",
@@ -2340,9 +2340,13 @@
         "4ea7631e90af820977519ab95d74565ad1aacfbf29b8166e3d0595887bf2f555",
         "4ea7631e90af820977519ab95d74565ad1aacfbf29b8166e3d0595887bf2f555"
       ],
-      "evidence": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/command/QuarkusCommandBusPlatformContractTest.java",
-      "reason": "三线共同测试锁定 CDI 作用域、请求上下文、注入与代理构造及 core 路由继承；各线真实 ArC IT 均验证命令路由、冲突拒绝和未注册命令，javax/jakarta 与 JDK 8 空集合写法为平台适配",
-      "testSha256": "d35b567aef06ad9faa535682eafc606752c4c63f4daefb1d5f6be2aeb5160cf0"
+      "evidence": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/command/QuarkusCommandBusTest.java",
+      "testSha256ByJdk": {
+        "8": "d2cd72a2ed303b7e98d871a88dcd83c85d2c0b33f8cfc3b57d12350133ce36de",
+        "17": "4efd1a70856efee77ef0cb0bb09aa42f53860b1b1d4fa2187d6794cbe44ebbed",
+        "21": "4efd1a70856efee77ef0cb0bb09aa42f53860b1b1d4fa2187d6794cbe44ebbed"
+      },
+      "reason": "Quarkus CDI 使用本线 javax 或 jakarta，空执行器快照使用本线集合 API。三线验证启动冲突、首次发现和缓存、未知命令及执行异常。"
     },
     {
       "path": "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/cqrs/QuarkusJpaProjectionPosition.java",
@@ -2930,13 +2934,17 @@
     {
       "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/web/AuthenticationController.java",
       "sourceSha256": [
-        "d547452874e623e3aab4c0fbaeb37e4e0bd7fdc6f00e117fd49fac5ab6a83040",
-        "889de37109f316a8aa4ba588fa9f3488505f564b8fe39732df015f44c0c1ab8b",
-        "889de37109f316a8aa4ba588fa9f3488505f564b8fe39732df015f44c0c1ab8b"
+        "c085b5aa68d9bf426da1fe8cd4494bc42e9ae76db08106521bee1383db7a6e0a",
+        "3312c09603c5f03ede95e68a50dbd4c3c079cc9f639d72f17bfe5cff831a9fb0",
+        "0c56a02a89e944688a75b67641dfb079bc46866dd8309f8c3221fd3c44025c88"
       ],
       "evidence": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/rbac/web/AuthenticationRequestContractTest.java",
-      "testSha256": "c437483db9b92696d84e71371ef513715231be6d2d086b7a9d68e048f1d9c362",
-      "reason": "三线登录鉴权路由与四个请求 DTO 源码仅有 JDK 8 的 Java8Maps.of 和高两线的 Map.of 差异；请求 JSON、值契约与 HTTP 路由定向测试通过，公开 API 一致"
+      "reason": "JDK 8 使用 Guava 不可变集合，高两线使用 JDK 集合工厂。三线均执行登录请求 DTO 契约及原生 Javalin 认证 HTTP 测试。",
+      "testSha256ByJdk": {
+        "8": "c9f61a39a8e6112769538f3d8479620e660067d0ca1a76bd36cc3213db9879a6",
+        "17": "e843fddf5f0ed58c1956c991cb0718b85347b9f28f36b1f9b25082b5117c16c4",
+        "21": "c9f61a39a8e6112769538f3d8479620e660067d0ca1a76bd36cc3213db9879a6"
+      }
     },
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/eventstore/jackson/EventPayloadSerializer.java",
@@ -4495,37 +4503,38 @@
       "reason": "三线相同测试验证请求处理期间 OTel Scope 有效、请求完成后关闭；Javalin 4/新版本路由配置 API 不同，生产类另由平台语法映射锁定。"
     },
     {
-      "path": "ddd4j-data/ddd4j-data-cqrs-quarkus/src/test/java/io/ddd4j/data/cqrs/quarkus/QuarkusCommandBusIT.java",
-      "productionPath": "ddd4j-data/ddd4j-data-cqrs-quarkus/src/main/java/io/ddd4j/data/cqrs/quarkus/QuarkusCommandBus.java",
+      "path": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/command/QuarkusCommandBusIT.java",
+      "productionPath": "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/command/QuarkusCommandBus.java",
       "sourceSha256": [
-        "034e9b14254f5c03c1a10fc47180b457c64161d4fc93eaf2d7fdc29fef8e1433",
-        "12f33bc9918776c4ff9fbe0f12c7eb32544751976ea3eaf740a2ce4b654acd7f",
-        "12f33bc9918776c4ff9fbe0f12c7eb32544751976ea3eaf740a2ce4b654acd7f"
+        "914aaf94ba4fe64647a702bf645b5bec96aea5776ed0e80ea6eae4b8c3d0972c",
+        "dd5179a472c184053315f02df922abbd27994356c6eda67899e3f8d8cfd2396f",
+        "dd5179a472c184053315f02df922abbd27994356c6eda67899e3f8d8cfd2396f"
       ],
       "productionSha256": [
-        "f75ad5e855f09a503ece746fb32714eb3f83be8989ca979fc7b046665f7980f5",
-        "dd924903dad17836ee5807f7fd6fb7de11a766ce750eaca16aa605d21091e622",
-        "dd924903dad17836ee5807f7fd6fb7de11a766ce750eaca16aa605d21091e622"
+        "53fd68f32ccbe9da4164c039cc754fb0ef67df659f08ed0fcc2b496e8e16db90",
+        "4ea7631e90af820977519ab95d74565ad1aacfbf29b8166e3d0595887bf2f555",
+        "4ea7631e90af820977519ab95d74565ad1aacfbf29b8166e3d0595887bf2f555"
       ],
       "testMethods": [
-        "execute_已注册命令_应路由到真实Handler并返回成功",
-        "装配期冲突_整批拒绝应传播为Bean创建失败",
-        "execute_未注册命令_应抛ISE与ddd4j_core一致"
+        "runtimeBusIsTheUniqueDefaultCdiCommandBus",
+        "runtimeBusActivatesAndRestoresRequestContext",
+        "routesDiscoveredCommandExecutor",
+        "rejectsUnknownCommand"
       ],
-      "reason": "三线相同的真实 ArC 命令路由、未注册命令和装配冲突测试；JDK 8 的 javax CDI Instance 与高两线 jakarta CDI 接口及集合工厂 API 不同，生产源码已有逐线语法映射锁定。"
+      "reason": "原生 ArC 容器验证唯一默认命令总线、请求上下文激活与恢复、已发现命令路由及未知命令。重复执行器启动拒绝由 QuarkusCommandBusTest 验证。"
     },
     {
       "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/rbac/web/AuthenticationControllerTest.java",
       "productionPath": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/web/AuthenticationController.java",
       "sourceSha256": [
-        "a9d6cdd9b28dfba92a86e4d1eb16cbddbe1c9ad70587ea38e8a00558d388b8f5",
-        "699f69337c9a5a2e61677e266c751641d71ae763a107ae6979ad147d78bad71d",
-        "22404f5a2d9692722e27b91b7ef66177d98b475e03607fe3aa9a498d63768f30"
+        "fdcec2f7580e3a81f4975a28ac6374cebc1f08584f13decf3fcbbfa17d423db1",
+        "8bdac4d5bc1386455a8386e459a14597f80cef3a03daacf4319f726326d1445a",
+        "c0625a74f47bb2471bc30de119b3417485840df5358be682f145bcdb61460a5e"
       ],
       "productionSha256": [
-        "d547452874e623e3aab4c0fbaeb37e4e0bd7fdc6f00e117fd49fac5ab6a83040",
-        "889de37109f316a8aa4ba588fa9f3488505f564b8fe39732df015f44c0c1ab8b",
-        "889de37109f316a8aa4ba588fa9f3488505f564b8fe39732df015f44c0c1ab8b"
+        "c085b5aa68d9bf426da1fe8cd4494bc42e9ae76db08106521bee1383db7a6e0a",
+        "3312c09603c5f03ede95e68a50dbd4c3c079cc9f639d72f17bfe5cff831a9fb0",
+        "0c56a02a89e944688a75b67641dfb079bc46866dd8309f8c3221fd3c44025c88"
       ],
       "testMethods": [
         "startServer",
@@ -4591,22 +4600,23 @@
       "path": "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreIT.java",
       "productionPath": "ddd4j-data/ddd4j-data-event-store-esdb/src/main/java/io/ddd4j/data/event/store/esdb/EsdbEventStore.java",
       "sourceSha256": [
-        "de61d64921ad554a618388c898d8172bd8dd17d3f651a07b77359aa785e51aac",
-        "c9ecb12935984809c56b20cf76d55473ff3307b292f9915039ac22fcfc1c896e",
-        "c9ecb12935984809c56b20cf76d55473ff3307b292f9915039ac22fcfc1c896e"
+        "f1aaa78c7718c5f2493fa64d79b3587dc5bb4de1a33822f42e147625c57a47ee",
+        "8fefe5a36844b13fa632c7645d1c6c9942021a721abf4dd388374572dd66f565",
+        "742077d4bad15268133a8242e4b44e6fbdc3179a2fd3f66eec43b30b3cbcc908"
       ],
       "productionSha256": [
-        "527c53a9178615c6bd768968867391e22ac972137316f5a37bddbb38255289af",
-        "57887aff451857f105d865b973d8ca20da137ab92947417ec9eb1e90a9eb1e08",
-        "43a68a203d56f208a4ceadd323282a2de7f6c15496e1126bb57d0a9d0dfec909"
+        "e97dd6e1690635a2fb329529bd8d5647b31f8107d15f2439a00645ee4e9811ff",
+        "c26173e178736f21b942567da05b15c16929c6f47f4203f4b8c02563dff57503",
+        "b311fa64d0261552742b026fd9d5de6965bb201f1fd907fced80b439c1dd2daf"
       ],
       "testMethods": [
         "setUp",
         "appendReadRangeAndGlobalReadFollowStrongContract",
+        "readsPastTheFirstBatch",
         "staleVersionRejectsWithoutPartialWrites",
         "causalityMetadataRoundTripsThroughEventStoreDb"
       ],
-      "reason": "三线真实 EventStoreDB 容器均通过追加/读取、过期版本拒绝与因果链回读各 3 项；差异为 JDK 集合工厂和 Jackson 事件夹具适配，生产 ESDB 适配器已有逐线源码锁定。"
+      "reason": "三条线均在真实 EventStoreDB 上验证追加与读取、版本冲突、因果标识和跨页读取，各线测试夹具使用对应版本的 Jackson 和集合 API。"
     },
     {
       "path": "ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/JpaEventStoreMysqlIT.java",
@@ -4684,14 +4694,14 @@
       "path": "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/PanacheEventStorePostgresIT.java",
       "productionPath": "ddd4j-data/ddd4j-data-event-store-panache/src/main/java/io/ddd4j/data/event/store/panache/PanacheEventStore.java",
       "sourceSha256": [
-        "ddc9939ab3fac7d6d6ac527e5e26fc8922fc16786ab35c2bde140ec7661ac944",
-        "83edecd82841f904db900dc4563115ac0255b5bda295083d61dad3dab767b930",
-        "b0a7a01ab693e458c1d6a3c98a15b140d9197c1c407e8eade1a1c074548d8431"
+        "be77553dd910002103283cd8f408261cb44f33953022b5d60e4fed5fdc0c44c2",
+        "5a4220048521a03554797e67ab6113bc49c7454ceb6ff4120ffb116b25abff73",
+        "c28441e1853243845f1e1fc568c66026cd5b304fc95d1494feca1020af2935c1"
       ],
       "productionSha256": [
-        "a6b06fe3413dd2be996057743b210b9777ff79b5bc038cf0682386483406683d",
-        "4df10a62b86a251200a100737a8f21862e1592434e323e50c27990d75a863b5c",
-        "98eaf4557c9e0ee4e5c932f54cf72335c442c52c1ad440224e24b03306bbed16"
+        "65ce136537ec63d24bbd74a567fa5434cd21f9cfa7214560ede4e3e4755909d5",
+        "c6250414957182de4f0a61f000303f4701d7b2ac35545834949693709adeca68",
+        "fd38d3712124a7a08e8e30641b5f1f7f2b7eba5a0cccdbd3c96da60a76df4b61"
       ],
       "testMethods": [
         "setUp",
@@ -4704,14 +4714,14 @@
       "path": "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStorePostgresIT.java",
       "productionPath": "ddd4j-data/ddd4j-data-event-store-jdbi/src/main/java/io/ddd4j/data/event/store/jdbi/JdbiEventStore.java",
       "sourceSha256": [
-        "ba127b5a5965429753e4dd5f602627176b0aa2c24aea8e111278229a2e49e27d",
-        "7c8663f5cac457b7c634e6a5447674dfcea53d58e1d0c0f80ab1e8cfd3ed1f0e",
-        "166236432f7c74ae0848a445821ec0c883fa966ed4a3aaa2bdd47b156a5cfa67"
+        "2c8cb866666c0ce9755872bf25ca4a0e9f599bb721ad1e2ad27868acd5aabe5f",
+        "57fb07e4ff321c74ceb4b981929dc9fc396740c4d39de1dec4a0caaaaa6588ba",
+        "a10785534845d6a9674805c0044e2116529919fc1e50a0ac54f6f79b5bd68828"
       ],
       "productionSha256": [
-        "5c2608a9ab3fa39377ab78fe3ff30ecaf7f36c132dd8f7947efd8ecafc343be9",
-        "b45925d04439d12f2d8d5c64202026ec53b2a3a36af5fa5260c57e9449f13537",
-        "c94dea87d4cf6d41afdc892db649729a5fdcb2ecdec22150252aaec1bb9ed083"
+        "6bb0aa30a03130df64f21e6d306c5ea55bb9aa50f0c149d9bc0ab9268b8d4262",
+        "e21567396d85511ce49f04f270bc30574e8de45348ed406648b6bff246135d26",
+        "77ee959ce30ddbca4071dade9cdd76466ac03dbb3facd4b295c33ca5019adb29"
       ],
       "testMethods": [
         "setUp",
@@ -4858,14 +4868,14 @@
       "path": "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/JpaManagedParticipationIT.java",
       "productionPath": "ddd4j-data/ddd4j-data-event-store-panache/src/main/java/io/ddd4j/data/event/store/panache/PanacheEventStore.java",
       "sourceSha256": [
-        "c56945f197c1d70651781d2cd2d7b2a8b14ebe7addd0662ab211ea1ce17d84a8",
-        "871121f15b1b583a972a7293abeeb4e5de95979887142185b0874bd256c1f3d8",
-        "871121f15b1b583a972a7293abeeb4e5de95979887142185b0874bd256c1f3d8"
+        "7ae97aec43e91a01b9cb57758c777884689b08df7793b1c4966387aa602dd1ae",
+        "80e3d116039bf1db39b3fb6027d84b96aa6a4872500bdbbb652e200dfa07c8fe",
+        "b6bf346dfca3fa09e00e85c21ec1e07f4d0f65a7e14e2e711a4d4842e17713ff"
       ],
       "productionSha256": [
-        "a6b06fe3413dd2be996057743b210b9777ff79b5bc038cf0682386483406683d",
-        "4df10a62b86a251200a100737a8f21862e1592434e323e50c27990d75a863b5c",
-        "98eaf4557c9e0ee4e5c932f54cf72335c442c52c1ad440224e24b03306bbed16"
+        "65ce136537ec63d24bbd74a567fa5434cd21f9cfa7214560ede4e3e4755909d5",
+        "c6250414957182de4f0a61f000303f4701d7b2ac35545834949693709adeca68",
+        "fd38d3712124a7a08e8e30641b5f1f7f2b7eba5a0cccdbd3c96da60a76df4b61"
       ],
       "testMethods": [
         "managedParticipationShouldCommitAllRowsAndKeepBusinessEntityManaged",
