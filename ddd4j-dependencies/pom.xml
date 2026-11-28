@@ -759,6 +759,11 @@
                 <version>${truelicense.version}</version>
             </dependency>
             <dependency>
+                <groupId>global.namespace.truelicense</groupId>
+                <artifactId>truelicense-v4</artifactId>
+                <version>${truelicense.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.eventstore</groupId>
                 <artifactId>db-client-java</artifactId>
                 <version>${eventstore-db-client.version}</version>

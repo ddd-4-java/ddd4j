@@ -15,7 +15,6 @@
 package io.ddd4j.auth.license.creator;
 
 import global.namespace.truelicense.api.License;
-import global.namespace.truelicense.v1.V1;
 import io.ddd4j.auth.license.CustomKeyStoreParam;
 import io.ddd4j.auth.license.manager.CustomLicenseManager;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +25,7 @@ import java.util.Objects;
 import java.util.prefs.Preferences;
 
 /**
- * License生成类 -- 用于license生成。
+ * 使用配置的私钥签发 TrueLicense V4 格式的许可证，并写入指定文件。
  */
 @Slf4j
 public class LicenseCreator {
@@ -56,7 +55,7 @@ public class LicenseCreator {
             CustomKeyStoreParam keyStoreParam = initKeyStoreParam();
             CustomLicenseManager licenseManager = new CustomLicenseManager(param.getSubject(), keyStoreParam,
                     Preferences.userNodeForPackage(LicenseCreator.class));
-            licenseManager.store(initLicenseContent(), new File(param.getLicensePath()));
+            licenseManager.store(initLicenseContent(licenseManager.newLicense()), new File(param.getLicensePath()));
             return true;
         } catch (Exception exception) {
             log.error("证书生成失败，subject={}", param.getSubject(), exception);
@@ -79,12 +78,12 @@ public class LicenseCreator {
     }
 
     /**
-     * \u8bbe\u7f6e\u8bc1\u4e66\u751f\u6210\u6b63\u6587\u4fe1\u606f\u3002
+     * 设置证书生成正文信息。
      *
-     * @return \u5f85\u7b7e\u53d1\u7684\u8bb8\u53ef\u8bc1\u5185\u5bb9
+     * @param content 由签发端上下文创建的许可证正文
+     * @return 已填充业务字段的许可证正文
      */
-    private License initLicenseContent() {
-        License content = V1.builder().subject(param.getSubject()).build().licenseFactory().license();
+    private License initLicenseContent(License content) {
         content.setHolder(DEFAULT_HOLDER_AND_ISSUER);
         content.setIssuer(DEFAULT_HOLDER_AND_ISSUER);
         content.setSubject(param.getSubject());
