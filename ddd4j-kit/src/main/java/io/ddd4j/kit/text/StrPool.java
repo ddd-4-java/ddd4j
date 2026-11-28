@@ -199,4 +199,6 @@ public interface StrPool {
     /** \u6362\u884c\u7b26\u7684\u5b57\u8282\u8868\u793a\u3002 */
     byte[] BYTES_NEW_LINE = StrPool.NEWLINE.getBytes();
 
+    /** OpenTelemetry 等指标使用的毫秒单位。 */
+    String MS = "ms";
 }
