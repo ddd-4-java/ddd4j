@@ -6,6 +6,8 @@
 
 实现入口见 [JpaEventStore](src/main/java/io/ddd4j/data/event/store/jpa/JpaEventStore.java)、[JpaStoredEventRepositoryImpl](src/main/java/io/ddd4j/data/event/store/jpa/JpaStoredEventRepositoryImpl.java)。
 
+两个 `read` 重载和 `readAll` 都返回只读快照。调用方需要原地排序、增删元素时，先用 `new ArrayList<>(events)` 创建自己的副本。
+
 ## 回归
 
 优先运行 [JpaManagedParticipationTest](src/test/java/io/ddd4j/data/event/store/jpa/JpaManagedParticipationTest.java)、[JpaEventStoreMysqlIT](src/test/java/io/ddd4j/data/event/store/jpa/JpaEventStoreMysqlIT.java)。

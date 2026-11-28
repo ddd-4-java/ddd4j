@@ -88,6 +88,32 @@ Spring Data JPA 和 Persistence API 的传递依赖。Java 17 和 21 分别使�
 
 ---
 
+### 显式注册 JPA 投影检查点仓储
+
+使用数据库保存投影进度的应用，在自身配置中声明适配器。原先通过组件扫描加载适配器的应用，升级时加入以下配置。已有实体或 Spring Data 仓储扫描配置的应用，将对应包并入已有扫描范围即可。
+
+```java
+import io.ddd4j.data.projection.jpa.ProjectionPositionEntity;
+import io.ddd4j.spring.projection.jpa.JpaProjectionPositionRepository;
+import io.ddd4j.spring.projection.jpa.SpringDataProjectionPositionRepository;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
+@Configuration
+@EntityScan(basePackageClasses = ProjectionPositionEntity.class)
+@EnableJpaRepositories(basePackageClasses = SpringDataProjectionPositionRepository.class)
+class ProjectionPositionConfiguration {
+    @Bean
+    JpaProjectionPositionRepository jpaProjectionPositionRepository(SpringDataProjectionPositionRepository repository) {
+        return new JpaProjectionPositionRepository(repository);
+    }
+}
+```
+
+方法名保留原 Bean 名 `jpaProjectionPositionRepository`，已有按名称注入的调用方可继续使用。
+
 ## 三、SPI 桥接层 — 把纯 Java 契约落地到 Spring
 
 `ddd4j-core` 定义了三组 **框架无关的 SPI 接口**，`ddd4j-runtime-spring` 提供 Spring 实现：
