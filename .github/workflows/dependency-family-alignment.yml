@@ -53,6 +53,13 @@ jobs:
           dependencies.configure_settings(os.environ.get('MAVEN_SETTINGS_XML', ''), settings)
           dependencies.ensure_central_fallback(settings)
           PY
+      - name: Prepare the pinned Maven distribution
+        run: |
+          if ! ./mvnw --version; then
+            export MVNW_REPOURL=https://repo1.maven.org/maven2
+            ./mvnw --version
+            echo "MVNW_REPOURL=$MVNW_REPOURL" >> "$GITHUB_ENV"
+          fi
       - name: Install pinned Easy4J build dependencies
         run: bash scripts/install-mybatis-plus-enhance.sh 2.0.x .
       - name: Install pinned DDD4J Boot Web and authentication adapters
