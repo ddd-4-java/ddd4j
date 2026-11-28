@@ -168,6 +168,25 @@ class JpaEventStoreTest {
         }
     }
 
+    /** 三个查询入口都返回独立的只读快照，后续追加不改变已读结果。 */
+    @Test
+    void allReadEntrypointsReturnUnmodifiableSnapshots() {
+        TestAggregateRootId orderId = new TestAggregateRootId("read-snapshot");
+        eventStore.append(ORDER_TYPE, orderId,
+                Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("first")), 0);
+        List<List<StoredEvent>> snapshots = Arrays.asList(
+                eventStore.read(ORDER_TYPE, orderId),
+                eventStore.read(ORDER_TYPE, orderId, 1L, 2L),
+                eventStore.readAll(0L, 10));
+        eventStore.append(ORDER_TYPE, orderId,
+                Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("second")), 1);
+        for (List<StoredEvent> snapshot : snapshots) {
+            assertEquals(1, snapshot.size());
+            assertEquals(1L, snapshot.get(0).version());
+            assertThrows(UnsupportedOperationException.class, () -> snapshot.remove(0));
+        }
+    }
+
     /** \u9a8c\u8bc1<code>second</code> \u7b49\u4e8e <code>first</code>\uff0c<code>second.hashCode()</code> \u7b49\u4e8e <code>first.hashCode()</code>\u3002 */
     @Test
     void repeatedReadsShouldReconstructEqualAggregateIds() {

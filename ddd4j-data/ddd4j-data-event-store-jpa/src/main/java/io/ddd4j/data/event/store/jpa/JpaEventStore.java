@@ -28,9 +28,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * 基于 JPA 2.2（javax.persistence）的 {@link EventStore} 适配器。
@@ -300,7 +302,7 @@ public class JpaEventStore implements EventStore {
                         aggregateType, aggregateId.asString())
                 .stream()
                 .map(this::toStoredEvent)
-                .collect(java.util.stream.Collectors.toList()));
+                .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList)));
     }
 
     /**
@@ -320,7 +322,7 @@ public class JpaEventStore implements EventStore {
                         aggregateType, aggregateId.asString(), fromVersion, toVersion)
                 .stream()
                 .map(this::toStoredEvent)
-                .collect(java.util.stream.Collectors.toList()));
+                .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList)));
     }
 
     /**
@@ -343,7 +345,7 @@ public class JpaEventStore implements EventStore {
                 .findByPositionGreaterThanEqualOrderByPositionAsc(fromPosition, limit)
                 .stream()
                 .map(this::toStoredEvent)
-                .collect(java.util.stream.Collectors.toList()));
+                .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList)));
     }
 
     /**
