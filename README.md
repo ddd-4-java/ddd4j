@@ -25,6 +25,10 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
 
 `CommandBus.execute(command)` 和 `CommandExecutor.execute(command)` 统一返回 `io.ddd4j.core.api.R`。原来使用 `Result` 的应用需重新编译命令执行器和调用方。执行器可以返回 `R.ok(data)` 或 `R.fail(code, message)`。调用方通过 `isOk()` 判断成功，通过 `getCode()`、`getMsg()` 和 `getData()` 读取结果。无载荷时 `getData()` 返回 `null`。
 
+### Quarkus 投影启动配置
+
+默认的 `ddd4j.quarkus.cqrs.projection.mode=off` 关闭自动投影。原先依赖自动调度的应用应显式设置 `ddd4j.quarkus.cqrs.projection.mode=legacy` 并引入 `quarkus-quartz`，原 cron 配置继续生效。使用持久化检查点的应用应在构建时设置 `ddd4j.quarkus.cqrs.projection.mode=durable`，提供事件读取器、持久化位置仓储和 JTA。视图处理失败时，本轮视图写入和检查点一起回滚。
+
 ### 🏗️ 三层架构分离
 
 ```

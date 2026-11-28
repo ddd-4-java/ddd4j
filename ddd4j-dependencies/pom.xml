@@ -581,7 +581,10 @@
         <qcloud-cos-api.version>5.6.269</qcloud-cos-api.version>
         <qiniu-java-sdk.version>7.19.0</qiniu-java-sdk.version>
         <qlexpress.version>4.1.2</qlexpress.version>
+        <quarkus-agroal.version>3.2</quarkus-agroal.version>
         <quarkus-bom.version>${quarkus.version}</quarkus-bom.version>
+        <quarkus-hibernate-orm.version>7.4.1.Final</quarkus-hibernate-orm.version>
+        <quarkus-jaxb-runtime.version>4.0.9</quarkus-jaxb-runtime.version>
         <quartz.version>2.5.2</quartz.version>
         <querydsl.version>5.1.0</querydsl.version>
         <r2dbc-h2.version>1.1.0.RELEASE</r2dbc-h2.version>

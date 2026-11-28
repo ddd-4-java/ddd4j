@@ -1,0 +1,261 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.ddd4j.data.event.store.panache;
+
+import jakarta.persistence.PersistenceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.concurrent.ThreadLocalRandom;
+
+/**
+ * Panache EventStore 重试工具：捕获 {@code uk_position} 唯一约束冲突后
+ * 按指数退避自动重试整个 append 操作（保持 {@code expectedVersion} 不变）。
+ *
+ * <p>检测范围（按顺序短路）：
+ * <ol>
+ *   <li>{@link IllegalStateException}（乐观锁版本冲突）— 立即抛，不重试</li>
+ *   <li>{@link PersistenceException} 嵌套 {@link org.hibernate.exception.ConstraintViolationException} 或 {@link SQLException}</li>
+ *   <li>任何 cause 链中的 {@link SQLIntegrityConstraintViolationException}</li>
+ *   <li>消息含 "uk_position"/"unique constraint"/"duplicate key"/"duplicate entry" 的 SQLException</li>
+ * </ol>
+ *
+ * <p>退避：基础 10ms，指数翻倍 + 0-10ms 抖动。默认最多 5 次尝试，总耗时 ~310ms 上限。
+ *
+ * @author ddd4j
+ */
+final class EventStoreRetry {
+
+    /** \u91cd\u8bd5\u7b56\u7565\u5141\u8bb8\u6267\u884c\u64cd\u4f5c\u7684\u9ed8\u8ba4\u6700\u5927\u6b21\u6570\u3002 */
+    static final int DEFAULT_MAX_ATTEMPTS = 5;
+    /** \u6307\u6570\u9000\u907f\u53ca\u968f\u673a\u6296\u52a8\u4f7f\u7528\u7684\u57fa\u51c6\u6beb\u79d2\u6570\u3002 */
+    static final long BASE_DELAY_MILLIS = 10L;
+    /** \u7528\u4e8e\u8bb0\u5f55\u4e8b\u4ef6\u5b58\u50a8\u91cd\u8bd5\u548c\u5931\u8d25\u7684\u65e5\u5fd7\u8bb0\u5f55\u5668\u3002 */
+    private static final Logger LOG = LoggerFactory.getLogger(EventStoreRetry.class);
+    /** \u5f53\u524d\u7b56\u7565\u5141\u8bb8\u6267\u884c\u4e00\u6b21\u4e8b\u4ef6\u5199\u5165\u7684\u6700\u591a\u5c1d\u8bd5\u6b21\u6570\u3002 */
+    private final int maxAttempts;
+    /** \u91cd\u8bd5\u76f8\u90bb\u5c1d\u8bd5\u4e4b\u95f4\u7684\u57fa\u7840\u5ef6\u65f6\uff0c\u5355\u4f4d\u4e3a\u6beb\u79d2\u3002 */
+    private final long baseDelayMillis;
+    /** \u5728\u4e24\u6b21\u91cd\u8bd5\u4e4b\u95f4\u6267\u884c\u7b49\u5f85\u7684\u51fd\u6570\u3002 */
+    private final Sleeper sleeper;
+
+    /** \u4ee5\u9ed8\u8ba4\u5c1d\u8bd5\u6b21\u6570\u3001\u9000\u907f\u914d\u7f6e\u548c\u7ebf\u7a0b\u7b49\u5f85\u884c\u4e3a\u88c5\u914d\u91cd\u8bd5\u7b56\u7565\u3002 */
+    EventStoreRetry() {
+        this(DEFAULT_MAX_ATTEMPTS, BASE_DELAY_MILLIS, Thread::sleep);
+    }
+
+    /**
+     * \u6309\u7ed9\u5b9a\u6b21\u6570\u548c\u7b49\u5f85\u7b56\u7565\u521b\u5efa\u4e8b\u4ef6\u8ffd\u52a0\u91cd\u8bd5\u903b\u8f91\u3002
+     * @param maxAttempts \u64cd\u4f5c\u6700\u591a\u5141\u8bb8\u5c1d\u8bd5\u7684\u6b21\u6570
+     * @param baseDelayMillis \u8ba1\u7b97\u9000\u907f\u7684\u57fa\u7840\u6beb\u79d2\u6570
+     * @param sleeper \u6267\u884c\u91cd\u8bd5\u7b49\u5f85\u7684\u7ec4\u4ef6
+     */
+    EventStoreRetry(int maxAttempts, long baseDelayMillis, Sleeper sleeper) {
+        if (maxAttempts < 1) {
+            throw new IllegalArgumentException("maxAttempts must be >= 1");
+        }
+        if (baseDelayMillis < 0) {
+            throw new IllegalArgumentException("baseDelayMillis must be >= 0");
+        }
+        this.maxAttempts = maxAttempts;
+        this.baseDelayMillis = baseDelayMillis;
+        this.sleeper = sleeper;
+    }
+
+    /**
+     * \u62c6\u5305 checked \u5f02\u5e38\uff1a\u5982\u679c\u5f02\u5e38\u672c\u8eab\u662f RuntimeException \u6216 Error \u76f4\u63a5\u8fd4\u56de\uff1b\u5426\u5219\u5305\u88c5\u3002
+     *  \u5305\u88c5\u65f6\u4f18\u5148\u4fdd\u7559 cause\uff08\u7528\u4e8e isRetriable \u904d\u5386 cause \u94fe\uff09\u3002
+     *
+     * @param raw \u5e95\u5c42\u64cd\u4f5c\u629b\u51fa\u7684\u539f\u59cb\u5f02\u5e38
+     * @return \u89e3\u5305\u540e\u7684\u8fd0\u884c\u65f6\u5f02\u5e38\uff0c\u5fc5\u8981\u65f6\u5305\u88c5\u539f\u5f02\u5e38
+     */
+    private static RuntimeException unwrapToRuntime(Exception raw) {
+        if (raw instanceof RuntimeException) {
+            return (RuntimeException) raw;
+        }
+        return new RuntimeException(raw);
+    }
+
+    /**
+     * \u5c06\u6309\u5c1d\u8bd5\u6b21\u6570\u589e\u957f\u7684\u6307\u6570\u9000\u907f\u4e0e\u968f\u673a\u6296\u52a8\u76f8\u52a0\u3002
+     * @param attempt \u5f53\u524d\u6267\u884c\u5931\u8d25\u540e\u7528\u4e8e\u8ba1\u7b97\u9000\u907f\u7684\u5c1d\u8bd5\u7f16\u53f7\uff0c\u4ece 1 \u5f00\u59cb
+     * @return \u4e0b\u6b21\u5c1d\u8bd5\u524d\u7b49\u5f85\u7684\u6beb\u79d2\u6570
+     */
+    static long computeDelay(int attempt) {
+        long expDelay = BASE_DELAY_MILLIS << (attempt - 1);
+        long jitter = ThreadLocalRandom.current().nextLong(BASE_DELAY_MILLIS + 1);
+        return expDelay + jitter;
+    }
+
+    /**
+     * \u5224\u5b9a\u5f02\u5e38\u662f\u5426\u4e3a\u53ef\u91cd\u8bd5\u7684 {@code uk_position} \u51b2\u7a81\u3002
+     *
+     * @param t \u68c0\u67e5\u662f\u5426\u53ef\u91cd\u8bd5\u7684\u5f02\u5e38
+     * @return \u5f02\u5e38\u94fe\u5305\u542b\u5141\u8bb8\u91cd\u8bd5\u7684\u5f02\u5e38\u65f6\u8fd4\u56de true
+     */
+    static boolean isRetriable(Throwable t) {
+        if (t == null) {
+            return false;
+        }
+        // 乐观锁失败信号：立即抛
+        if (t instanceof IllegalStateException) {
+            return false;
+        }
+        // 嵌套 SQLIntegrityConstraintViolationException
+        if (containsCause(t, SQLIntegrityConstraintViolationException.class)) {
+            return true;
+        }
+        // 遍历 cause 链，匹配两种关键字：
+        //   1. SQLException 嵌套中的标准 SQL 关键字
+        //   2. 任何 RuntimeException（含 PersistenceException）消息中的 uk_position
+        Throwable current = t;
+        while (current != null) {
+            String msg = current.getMessage();
+            if (msg != null) {
+                String lower = msg.toLowerCase();
+                if (lower.contains("uk_position") || lower.contains("unique constraint")
+                        || lower.contains("unique index") || lower.contains("duplicate key")
+                        || lower.contains("duplicate entry")) {
+                    return true;
+                }
+            }
+            if (current.getCause() == current) {
+                break;
+            }
+            current = current.getCause();
+        }
+        // Hibernate ConstraintViolationException（按类名匹配，避免编译期依赖 hibernate-core）
+        if (containsCauseByName(t, "ConstraintViolationException")) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * \u6cbf\u5f02\u5e38\u56e0\u679c\u94fe\u67e5\u627e\u6307\u5b9a\u7c7b\u578b\u3002
+     * @param t \u8981\u68c0\u67e5\u7684\u5f02\u5e38\u6216\u5176\u5f02\u5e38\u94fe\u5165\u53e3
+     * @param target \u8981\u5339\u914d\u7684\u5f02\u5e38\u7c7b\u578b
+     * @return \u5b58\u5728\u5339\u914d\u7684\u5f02\u5e38\u65f6\u8fd4\u56de true
+     */
+    private static boolean containsCause(Throwable t, Class<? extends Throwable> target) {
+        Throwable current = t;
+        while (current != null) {
+            if (target.isInstance(current)) {
+                return true;
+            }
+            if (current.getCause() == current) {
+                break;
+            }
+            current = current.getCause();
+        }
+        return false;
+    }
+
+    /**
+     * \u901a\u8fc7\u7c7b\u540d\u5339\u914d\u8bc6\u522b cause \u94fe\u4e2d\u7684\u7279\u5b9a\u5f02\u5e38\uff08\u907f\u514d\u786c\u4f9d\u8d56 Hibernate\uff09\u3002
+     *
+     *  <p>\u7528\u4e8e\u68c0\u6d4b {@code org.hibernate.exception.ConstraintViolationException}\u2014\u2014\u5b83\u5728
+     *  Hibernate \u552f\u4e00\u7ea6\u675f\u51b2\u7a81\u65f6\u7531 JPA {@code PersistenceException} \u5305\u88c5\uff0c\u4f46\u6a21\u5757\u7684
+     *  compile classpath \u4e0d\u542b hibernate-core\uff08\u5728 test scope\uff09\u3002\u8fd0\u884c\u65f6\u7684 hibernate-core
+     *  \u6765\u81ea {@code quarkus-hibernate-orm-panache} \u4f20\u9012\u4f9d\u8d56\u3002
+     *
+     * @param t \u5f02\u5e38\u94fe\u8d77\u70b9
+     * @param simpleClassName \u5f85\u5339\u914d\u7684\u5f02\u5e38\u7b80\u5355\u7c7b\u540d
+     * @return \u5f02\u5e38\u94fe\u5305\u542b\u6307\u5b9a\u7b80\u5355\u7c7b\u540d\u65f6\u8fd4\u56de true
+     */
+    private static boolean containsCauseByName(Throwable t, String simpleClassName) {
+        Throwable current = t;
+        while (current != null) {
+            if (current.getClass().getSimpleName().equals(simpleClassName)) {
+                return true;
+            }
+            if (current.getCause() == current) {
+                break;
+            }
+            current = current.getCause();
+        }
+        return false;
+    }
+
+    /**
+     * 执行可重试操作。
+     *
+     * @param operation 操作描述（用于日志）
+     * @param action    单次尝试逻辑
+     */
+    void execute(String operation, RetryableAction action) {
+        RuntimeException lastException = null;
+        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+            try {
+                action.run();
+                return;
+            } catch (Exception raw) {
+                RuntimeException e = unwrapToRuntime(raw);
+                lastException = e;
+                if (!isRetriable(e)) {
+                    throw e;
+                }
+                if (attempt >= maxAttempts) {
+                    LOG.warn("EventStore {} exhausted {} attempts due to retriable exception",
+                            operation, maxAttempts);
+                    throw e;
+                }
+                long delay = computeDelay(attempt);
+                LOG.debug("EventStore {} attempt {}/{} failed retriably, retrying after {}ms",
+                        operation, attempt, maxAttempts, delay);
+                try {
+                    sleeper.sleep(delay);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException("EventStore retry sleep interrupted", ie);
+                }
+            }
+        }
+        throw lastException != null ? lastException : new IllegalStateException("unreachable");
+    }
+
+    /**
+     * 单次尝试的业务逻辑。
+     *
+     * @author ddd4j
+     */
+    @FunctionalInterface
+    interface RetryableAction {
+        /**
+         * 执行一次业务逻辑。
+         *
+         * @throws Exception 执行过程中出现的异常，交由重试机制判定是否可重试
+         */
+        void run() throws Exception;
+    }
+
+    /**
+     * 抽象 {@code Thread.sleep} 以便测试不真正等待。
+     *
+     * @author ddd4j
+     */
+    @FunctionalInterface
+    interface Sleeper {
+        /**
+         * 休眠指定时长。
+         *
+         * @param millis 休眠的毫秒数
+         * @throws InterruptedException 休眠过程中线程被中断
+         */
+        void sleep(long millis) throws InterruptedException;
+    }
+}
