@@ -1,10 +1,26 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.mq.kafka;
 
+import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.annotation.MQEventListener;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.serialization.JsonMQEventSerialization;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Container;
@@ -13,6 +29,8 @@ import org.testcontainers.kafka.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -35,7 +53,20 @@ class KafkaMQClientRoundTripTest {
     /** \u4e3a\u5f53\u524d\u96c6\u6210\u6d4b\u8bd5\u63d0\u4f9b\u72ec\u7acb Kafka \u670d\u52a1\u7684\u5bb9\u5668\u3002 */
     @Container
     private static final KafkaContainer KAFKA = new KafkaContainer(
-            DockerImageName.parse("apache/kafka:3.9.1"));
+            DockerImageName.parse("apache/kafka:3.9.1"))
+            .withTmpFs(brokerTmpfs());
+
+    /**
+     * 读取<code>paths</code> 的当前值。
+     *
+     * @return 返回表达式 <code>paths</code>
+     */
+    private static Map<String, String> brokerTmpfs() {
+        Map<String, String> paths = new HashMap<>();
+        paths.put("/tmp/kafka-logs", "rw,size=512m,uid=1000,gid=1000");
+        paths.put("/opt/kafka/logs", "rw,size=64m,uid=1000,gid=1000");
+        return paths;
+    }
 
     /**
      * \u751f\u4ea7/\u6d88\u8d39\u5f80\u8fd4\uff1a\u4e8b\u4ef6\u7ecf Kafka broker \u9001\u8fbe\u76d1\u542c\u5668\u4e14\u8d1f\u8f7d\u5b8c\u6574\u3002
@@ -48,6 +79,7 @@ class KafkaMQClientRoundTripTest {
         KafkaMQProperties kafkaProps = new KafkaMQProperties();
         kafkaProps.setBootstrapServers(KAFKA.getBootstrapServers());
         kafkaProps.setAutoCreateTopics(true);
+        kafkaProps.setGroupIdPrefix("billing");
 
         MQProperties mqProps = new MQProperties();
         mqProps.setEnabled(true);
@@ -65,36 +97,50 @@ class KafkaMQClientRoundTripTest {
 
         // 3. 走框架统一入口 init()：注册序列化器/配置到 BaseContext，
         //    初始化生产者（注册进 publishers Map）并注册消费者
-        client.init(List.of(listener), mqProps, new JsonMQEventSerialization(), null);
+        try {
+            client.init(List.of(listener), mqProps, new JsonMQEventSerialization(), null);
 
-        // 4. 生产：走 MQEvent.publish() 的 BaseContext 路由（与生产环境用法一致）
-        OrderPaidEvent event = new OrderPaidEvent();
-        event.setTopic("ORDER");
-        event.setTag("paid");
-        event.setTenantId("t-100");
-        event.orderId = "o-12345";
-        event.amount = 9900L;
-        event.publish();
+            // 4. 生产：走 MQEvent.publish() 的 BaseContext 路由（与生产环境用法一致）
+            OrderPaidEvent event = new OrderPaidEvent();
+            event.setTopic("ORDER");
+            event.setTag("paid");
+            event.setTenantId("t-100");
+            event.orderId = "o-12345";
+            event.amount = 9900L;
+            event.publish();
 
-        // 5. 断言：监听器在 30s 内收到完整负载
-        assertThat(bean.latch.await(30, TimeUnit.SECONDS))
-                .as("监听器应在 30 秒内收到事件")
-                .isTrue();
-        OrderPaidEvent received = bean.received.get();
-        assertThat(received).isNotNull();
-        assertThat(received.orderId).isEqualTo("o-12345");
-        assertThat(received.amount).isEqualTo(9900L);
-        assertThat(received.getTenantId()).isEqualTo("t-100");
-        assertThat(received.getMsgId()).isEqualTo(event.getMsgId());
+            // 5. 断言：监听器在 30s 内收到完整负载
+            assertThat(bean.latch.await(30, TimeUnit.SECONDS))
+                    .as("监听器应在 30 秒内收到事件")
+                    .isTrue();
+            OrderPaidEvent received = bean.received.get();
+            assertThat(received).isNotNull();
+            assertThat(received.orderId).isEqualTo("o-12345");
+            assertThat(received.amount).isEqualTo(9900L);
+            assertThat(received.getTenantId()).isEqualTo("t-100");
+            assertThat(received.getMsgId()).isEqualTo(event.getMsgId());
+            // 真实 broker 上的组身份及离组结果，证明前缀配置与 consumer.close 均已生效。
+            try (AdminClient admin = AdminClient.create(kafkaProps.adminProperties())) {
+                assertThat(admin.describeConsumerGroups(java.util.Collections.singletonList("billing-onPaid"))
+                        .all().get(10, TimeUnit.SECONDS).get("billing-onPaid").members()).hasSize(1);
+                client.close();
+                client.close();
+                assertThat(admin.describeConsumerGroups(java.util.Collections.singletonList("billing-onPaid"))
+                        .all().get(10, TimeUnit.SECONDS).get("billing-onPaid").members()).isEmpty();
+            }
+        } finally {
+            client.close();
+            BaseContext.clear();
+        }
     }
 
     /**
      * 测试事件：订单已支付（Jackson 需要无参构造 + 公共字段/访问器）。
      */
     public static class OrderPaidEvent extends MQEvent {
-        /** \u8ba2\u5355\u6807\u8bc6\u3002 */
+        /** 字段说明。 */
         public String orderId;
-        /** \u6d4b\u8bd5\u4ea4\u6613\u4f7f\u7528\u7684\u6570\u91cf\u6216\u91d1\u989d\u3002 */
+        /** 字段说明。 */
         public Long amount;
     }
 
@@ -108,8 +154,8 @@ class KafkaMQClientRoundTripTest {
         final AtomicReference<OrderPaidEvent> received = new AtomicReference<>();
 
         /**
-         * \u8c03\u7528 <code>received.set()</code>\u3001<code>latch.countDown()</code> \u6267\u884c\u5f53\u524d\u5939\u5177\u64cd\u4f5c\u3002
-         * @param event \u4ea4\u7ed9\u88ab\u6d4b\u5165\u53e3\u5904\u7406\u7684\u6d4b\u8bd5\u9886\u57df\u4e8b\u4ef6
+         * onPaid() 方法。
+         * @param event 事件消息。
          */
         @MQEventListener(topic = "ORDER", tags = "paid")
         public void onPaid(OrderPaidEvent event) {

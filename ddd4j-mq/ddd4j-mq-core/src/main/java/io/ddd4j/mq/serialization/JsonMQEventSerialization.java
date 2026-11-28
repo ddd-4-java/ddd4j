@@ -1,8 +1,23 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.mq.serialization;
 
 import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.event.MQEventSerialization;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
 
@@ -11,19 +26,17 @@ import java.util.Objects;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j
 public class JsonMQEventSerialization implements MQEventSerialization {
 
     /**
-     * 从消息通道载荷还原事件。
-     *
-     * <p>此实现调用 <code>String.valueOf(src)</code>。</p>
-     *
-     * @param <S> 源类型
-     * @param <T> 目标类型
-     * @param src 原始消息体
-     * @param dist 目标类型
-     * @return 根据执行路径返回<code>null</code>、<code>JsonKit.toObject(text, dist)</code>
-     * @throws RuntimeException 当前操作无法正常完成时
+     * deserialize() 方法。
+     * @param <S> 类型参数。
+     * @param <T> 类型参数。
+     * @param src src 参数。
+     * @param dist 类型字面量。
+     * @return 结果值。
+     * @throws RuntimeException 出现异常时抛出。
      */
     @Override
     public <S, T> T deserialize(S src, Class<T> dist) throws RuntimeException {
@@ -34,22 +47,31 @@ public class JsonMQEventSerialization implements MQEventSerialization {
         if (StrKit.isEmpty(text)) {
             return null;
         }
-        return JsonKit.toObject(text, dist);
+        try {
+            return JsonKit.DEFAULT_OBJECT_MAPPER.readValue(text, dist);
+        } catch (Exception exception) {
+            log.warn("Deserialize MQ event payload failed, return null: {}", exception.getMessage());
+            return null;
+        }
     }
 
     /**
-     * 将传入消息编码为发布通道使用的格式。
-     *
-     * <p>此实现调用 <code>JsonKit.toJson(src)</code>。</p>
-     *
-     * @param <T> 序列化结果类型
-     * @param src 源对象
-     * @return 实际返回<code>(T)JsonKit.toJson(src)</code>
-     * @throws RuntimeException 当前操作无法正常完成时
+     * serialize() 方法。
+     * @param <T> 类型参数。
+     * @param src 对象参数。
+     * @return 结果值。
+     * @throws RuntimeException 出现异常时抛出。
      */
     @Override
     @SuppressWarnings("unchecked")
     public <T> T serialize(Object src) throws RuntimeException {
-        return (T) JsonKit.toJson(src);
+        if (Objects.isNull(src)) {
+            return null;
+        }
+        try {
+            return (T) JsonKit.DEFAULT_OBJECT_MAPPER.writeValueAsString(src);
+        } catch (Exception exception) {
+            throw new IllegalStateException("Serialize MQ event payload failed: " + exception.getMessage(), exception);
+        }
     }
 }

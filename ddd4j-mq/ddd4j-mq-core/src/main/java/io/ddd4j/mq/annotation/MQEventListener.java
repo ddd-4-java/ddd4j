@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.mq.annotation;
 
 import java.lang.annotation.*;
@@ -8,7 +22,7 @@ import java.lang.annotation.*;
  * <p>标注在 Bean 的方法上，声明该方法为 MQ 消费端点。方法的首个参数类型即为
  * 消息反序列化目标类型（通常为 {@code io.ddd4j.core.event.Event} 的子类）。
  *
- * <h3>路由模型</h3>
+ * <h2>路由模型</h2>
  * <pre>
  *   namespace.topic.tag
  *   └───┬───┘ └─┬─┘ └┬┘
@@ -107,4 +121,11 @@ public @interface MQEventListener {
      * @return 分隔符，空串表示使用 Broker 默认值
      */
     String separator() default "";
+
+    /**
+     * 是否为应用启动所必需的消费者。
+     *
+     * @return true表示初始化失败必须阻断应用启动
+     */
+    boolean required() default true;
 }

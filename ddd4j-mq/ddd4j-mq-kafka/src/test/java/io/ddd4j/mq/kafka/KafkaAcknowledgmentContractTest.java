@@ -1,22 +1,61 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.mq.kafka;
 
 import io.ddd4j.mq.message.MessageHeaders;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.common.TopicPartition;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-/** \u901a\u8fc7 <code>mock()</code>\u3001<code>org.mockito.Mockito.doThrow()</code>\u3001<code>anyMap()</code> \u9a8c\u8bc1 <code>KafkaAcknowledgmentContract</code> \u7684\u8fd0\u884c\u884c\u4e3a\u3002 */
+/**
+ * 通过 <code>mock()</code>、<code>org.mockito.Mockito.doThrow()</code>、<code>anyMap()</code> 验证 <code>KafkaAcknowledgmentContract</code> 的运行行为。
+ */
 class KafkaAcknowledgmentContractTest {
 
-    /** \u9a8c\u8bc1<code>acknowledgment.messageId()</code> \u7b49\u4e8e <code>"stable-id"</code>\uff0c<code>acknowledgment.isAcknowledged()</code>\u4e3a\u771f\u3002 */
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，<code>acknowledgment.isAcknowledged()</code>为假，<code>acknowledgment.isAcknowledged()</code>为真。
+     */
+    @Test
+    void failedCommitMustLeaveAcknowledgmentOpenForRetry() {
+        Consumer<?, ?> consumer = mock(Consumer.class);
+        ConsumerRecord<String, String> record = new ConsumerRecord<>("orders", 1, 8L, "key", "body");
+        KafkaMessageAcknowledgment acknowledgment = new KafkaMessageAcknowledgment(consumer, record);
+        org.mockito.Mockito.doThrow(new IllegalStateException("commit unavailable"))
+                .doNothing().when(consumer).commitSync(anyMap());
+
+        assertThrows(IllegalStateException.class, acknowledgment::ack);
+        assertFalse(acknowledgment.isAcknowledged(), "failed commit cannot confirm delivery");
+        acknowledgment.ack();
+        assertTrue(acknowledgment.isAcknowledged());
+        org.mockito.Mockito.verify(consumer, org.mockito.Mockito.times(2)).commitSync(anyMap());
+    }
+
+    /**
+     * 验证<code>acknowledgment.messageId()</code> 等于 <code>"stable-id"</code>，<code>acknowledgment.isAcknowledged()</code>为真。
+     */
     @Test
     void shouldReadStableMessageIdAndCommitOffsetOnAck() {
         ConsumerRecord<String, String> record = new ConsumerRecord<>("orders", 1, 8L, "key", "body");
@@ -27,7 +66,10 @@ class KafkaAcknowledgmentContractTest {
         assertEquals("stable-id", acknowledgment.messageId());
         acknowledgment.ack();
 
-        verify(consumer).commitSync(anyMap());
+        TopicPartition partition = new TopicPartition("orders", 1);
+        verify(consumer).commitSync(argThat((Map<TopicPartition, OffsetAndMetadata> offsets) -> offsets.size() == 1
+                && offsets.containsKey(partition)
+                && offsets.get(partition).offset() == 9L));
         assertTrue(acknowledgment.isAcknowledged());
     }
 }

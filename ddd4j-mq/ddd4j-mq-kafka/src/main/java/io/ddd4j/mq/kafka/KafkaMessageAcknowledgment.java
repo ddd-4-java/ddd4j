@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.mq.kafka;
 
 import io.ddd4j.mq.BrokerType;
@@ -42,9 +56,10 @@ public class KafkaMessageAcknowledgment implements Acknowledgment {
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 
     /**
-     * \u521b\u5efa Kafka \u6d88\u606f\u786e\u8ba4\u53e5\u67c4\u3002
-     * @param consumer Kafka \u6d88\u8d39\u8005
-     * @param record \u5f85\u786e\u8ba4\u7684 Kafka \u8bb0\u5f55
+     * 创建 Kafka 消息确认句柄。
+     *
+     * @param consumer Kafka 消费者
+     * @param record 待确认的 Kafka 记录
      */
     public KafkaMessageAcknowledgment(Consumer<?, ?> consumer, ConsumerRecord<?, ?> record) {
         this.consumer = Objects.requireNonNull(consumer, "Kafka Consumer is required");
@@ -139,11 +154,13 @@ public class KafkaMessageAcknowledgment implements Acknowledgment {
      * @param multiple 是否批量确认至当前 tag
      */
     @Override
-    public void ack(boolean multiple) {
-        if (acknowledged.compareAndSet(false, true)) {
+    public synchronized void ack(boolean multiple) {
+        if (!acknowledged.get()) {
             TopicPartition partition = new TopicPartition(record.topic(), record.partition());
             OffsetAndMetadata offset = new OffsetAndMetadata(record.offset() + 1);
+            // 只有 broker 确认 offset 提交后才设置状态；提交失败仍须允许 seek 和重试。
             consumer.commitSync(Map.of(partition, offset));
+            acknowledged.set(true);
         }
     }
 

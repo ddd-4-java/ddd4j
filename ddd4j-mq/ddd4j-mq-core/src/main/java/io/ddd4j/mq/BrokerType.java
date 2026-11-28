@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.mq;
 
 import io.ddd4j.kit.lang.StrKit;
@@ -11,25 +25,25 @@ import java.util.Locale;
  */
 public enum BrokerType {
 
-    /** \u672a\u542f\u7528 Broker\u3002 */
+    /** 未启用 Broker。 */
     NONE,
     /**
      * 进程内 LMAX Disruptor 本地队列（非分布式 MQ）。
      */
     DISRUPTOR,
-    /** RabbitMQ\u3002 */
+    /** RabbitMQ。 */
     RABBIT,
-    /** Kafka\u3002 */
+    /** Kafka。 */
     KAFKA,
-    /** RocketMQ\u3002 */
+    /** RocketMQ。 */
     ROCKET,
-    /** Pulsar\u3002 */
+    /** Pulsar。 */
     PULSAR,
-    /** Redis Stream\u3002 */
+    /** Redis Stream。 */
     REDIS_STREAM,
-    /** ActiveMQ\u3002 */
+    /** ActiveMQ。 */
     ACTIVEMQ,
-    /** NATS\u3002 */
+    /** NATS。 */
     NATS,
     /**
      * Eclipse Paho MQTT 客户端（连接外部 Broker，非嵌入式服务端）。
@@ -39,18 +53,18 @@ public enum BrokerType {
      * mica-mqtt AIO 客户端（sample mqtt-client2，连接外部 Broker）。
      */
     MQTT_MICA,
-    /** \u963f\u91cc\u4e91 ONS\u3002 */
+    /** 阿里云 ONS。 */
     ONS,
-    /** \u817e\u8baf\u4e91 TDMQ\u3002 */
+    /** 腾讯云 TDMQ。 */
     TDMQ,
-    /** AWS SQS\u3002 */
+    /** AWS SQS。 */
     SQS;
 
     /**
-     * \u89e3\u6790\u914d\u7f6e\u5b57\u7b26\u4e32\u4e3a Broker \u7c7b\u578b\uff08\u517c\u5bb9 redisStream \u7b49\u5386\u53f2\u547d\u540d\uff09\u3002
+     * 解析配置字符串为 Broker 类型（兼容 redisStream 等历史命名）。
      *
-     * @param raw \u539f\u59cb\u914d\u7f6e\u503c
-     * @return \u5339\u914d\u7684 Broker \u7c7b\u578b\uff1b\u672a\u77e5\u503c\u8fd4\u56de NONE
+     * @param raw 原始配置值
+     * @return 匹配的 Broker 类型；未知值返回 NONE
      */
     public static BrokerType from(String raw) {
         if (!StrKit.hasText(raw) || "none".equalsIgnoreCase(raw.trim())) {
@@ -79,9 +93,9 @@ public enum BrokerType {
 
 
     /**
-     * \u8f6c\u4e3a kebab-case \u914d\u7f6e\u503c\uff08\u5982 {@code redis-stream}\uff09\u3002
+     * 转为 kebab-case 配置值（如 {@code redis-stream}）。
      *
-     * @return kebab-case \u914d\u7f6e\u503c
+     * @return kebab-case 配置值
      */
     public String toConfigValue() {
         return name().toLowerCase(Locale.ROOT).replace('_', '-');

@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.mq.kafka;
 
 import io.ddd4j.mq.MQProperties;
@@ -61,6 +75,12 @@ public class KafkaMQProperties extends MQProperties {
      * 自动创建 topic 时的副本数（仅当 autoCreateTopics=true 生效，生产集群建议 ≥3）。
      */
     private short defaultTopicReplication = DEFAULT_TOPIC_REPLICATION;
+    /**
+     * 发布确认等待超时（ms）。Outbox 模式下 publish 会同步阻塞至 broker ack 或超时；
+     * 超时后会抛 IllegalStateException 让上层 Outbox 重试，避免无限阻塞耗尽线程池。
+     * 默认 30s，与 Kafka {@code REQUEST_TIMEOUT_MS_CONFIG} 保持一致。
+     */
+    private long publishAckTimeoutMillis = 30_000L;
 
     /**
      * Producer \u914d\u7f6e\uff08\u5bf9\u9f50 ProducerConfig \u5e38\u91cf\u540d\uff09

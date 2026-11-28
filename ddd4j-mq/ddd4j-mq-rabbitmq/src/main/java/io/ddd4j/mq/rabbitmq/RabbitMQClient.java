@@ -1,14 +1,44 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.mq.rabbitmq;
-
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.Set;
+import java.util.Objects;
+import java.util.Map;
+import java.util.List;
+import java.util.HashMap;
+import java.util.ArrayList;
+import com.rabbitmq.client.Return;
 import com.rabbitmq.client.DeliverCallback;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Channel;
+
+import com.rabbitmq.client.*;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
+import io.ddd4j.mq.delivery.MQDeliveryHeaders;
+import io.ddd4j.mq.lifecycle.MQClientLifecycle;
+import io.ddd4j.mq.lifecycle.MQStartupStatus;
 import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
@@ -16,14 +46,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeoutException;
+import java.util.*;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
@@ -58,11 +82,15 @@ public class RabbitMQClient implements MQClient {
      * 懒构造使用的配置（构造方法 2 传入）
      */
     private final RabbitMQProperties properties;
+    /** \u534f\u8c03\u6d88\u606f\u5ba2\u6237\u7aef\u542f\u52a8\u3001\u521d\u59cb\u5316\u548c\u5173\u95ed\u7684\u751f\u547d\u5468\u671f\u3002 */
+    private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    /** \u7ec4\u4ef6\u7684\u542f\u52a8\u72b6\u6001\u548c\u542f\u52a8\u5931\u8d25\u8bca\u65ad\u4fe1\u606f\u3002 */
+    private final MQStartupStatus startupStatus = new MQStartupStatus("rabbit");
 
     /**
-     * \u6784\u9020\u65b9\u6cd5 1\uff1a\u6ce8\u5165\u539f\u751f connection\uff08runtime \u81ea\u52a8\u88c5\u914d\u7528\uff09\u3002
+     * 构造方法 1：注入原生 connection（runtime 自动装配用）。
      *
-     * @param connection \u5df2\u521b\u5efa\u7684 RabbitMQ \u8fde\u63a5
+     * @param connection 已创建的 RabbitMQ 连接
      */
     public RabbitMQClient(Connection connection) {
         this.connectionRef.set(Objects.requireNonNull(connection, "RabbitMQ Connection is required"));
@@ -70,14 +98,64 @@ public class RabbitMQClient implements MQClient {
     }
 
     /**
-     * \u6784\u9020\u65b9\u6cd5 2\uff1a\u81ea\u884c\u6839\u636e properties \u6784\u9020 connection\uff08lazy\uff09\u3002
+     * 构造方法 2：自行根据 properties 构造 connection（lazy）。
      *
-     * @param properties RabbitMQ \u8fde\u63a5\u914d\u7f6e
+     * @param properties RabbitMQ 连接配置
      */
     public RabbitMQClient(RabbitMQProperties properties) {
         this.connectionRef.set(null);
         this.properties = Objects.requireNonNull(properties, "RabbitMQ Properties is required");
     }
+
+    /**
+     * \u4f18\u5148\u8bfb\u53d6 ddd4j \u6807\u51c6\u6d88\u606f ID\uff0c\u517c\u5bb9\u65e7\u952e\uff0c\u6700\u540e\u56de\u9000\u5230 AMQP \u539f\u751f messageId\u3002
+     *
+     * @param properties \u6536\u5230\u7684 AMQP \u6d88\u606f\u5c5e\u6027
+     * @return AMQP \u6d88\u606f\u5c5e\u6027\u643a\u5e26\u7684\u6807\u8bc6
+     */
+    static String messageId(AMQP.BasicProperties properties) {
+        Map<String, Object> headers = properties.getHeaders();
+        if (Objects.nonNull(headers)) {
+            Object headerValue = headers.get(MessageHeaders.HEADER_MESSAGE_ID);
+            if (Objects.isNull(headerValue)) {
+                headerValue = headers.get(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
+            }
+            if (Objects.nonNull(headerValue)) {
+                return headerValue.toString();
+            }
+        }
+        return properties.getMessageId();
+    }
+
+    /**
+     * \u5173\u95ed RabbitMQ \u4fe1\u9053\uff0c\u5e76\u5904\u7406\u539f\u751f\u5ba2\u6237\u7aef\u629b\u51fa\u7684\u5f02\u5e38\u3002
+     * @param channel \u5f85\u5173\u95ed\u7684 RabbitMQ \u4fe1\u9053
+     */
+    private static void closeChannel(Channel channel) {
+        try {
+            if (channel.isOpen()) {
+                channel.close();
+            }
+        } catch (IOException | TimeoutException exception) {
+            throw new IllegalStateException("Close RabbitMQ channel failed", exception);
+        }
+    }
+
+    /**
+     * \u5173\u95ed\u539f\u751f\u4ee3\u7406\u8fde\u63a5\uff0c\u5e76\u5904\u7406\u539f\u751f\u5ba2\u6237\u7aef\u629b\u51fa\u7684\u5f02\u5e38\u3002
+     * @param connection \u5f85\u91ca\u653e\u6216\u7b49\u5f85\u5b8c\u6210\u7684\u539f\u751f\u8fde\u63a5
+     */
+    private static void closeConnection(Connection connection) {
+        try {
+            if (connection.isOpen()) {
+                connection.close();
+            }
+        } catch (IOException exception) {
+            throw new IllegalStateException("Close RabbitMQ connection failed", exception);
+        }
+    }
+
+    // ========================= 生产者 =========================
 
     /**
      * 返回此消息适配器在 DDD4J 中登记的实现名。
@@ -89,48 +167,150 @@ public class RabbitMQClient implements MQClient {
         return "rabbit";
     }
 
-    // ========================= 生产者 =========================
+    // ========================= 消费者 =========================
+
+    /**
+     * 返回管理连接、生产者和消费者资源的生命周期对象。
+     *
+     * @return 当前消息适配器用于登记和关闭资源的生命周期对象
+     */
+    @Override
+    public MQClientLifecycle lifecycle() {
+        return lifecycle;
+    }
+
+    /**
+     * 返回消息客户端当前记录的启动状态。
+     *
+     * @return 当前消息适配器记录的启动状态
+     */
+    @Override
+    public MQStartupStatus startupStatus() {
+        return startupStatus;
+    }
+
+    // ========================= 生命周期 =========================
 
     /**
      * 准备消息生产者并返回可发布事件的入口。
      *
-     * <p>RabbitMQ 实现调用 <code>connection().createChannel()</code>。</p>
+     * <p>RabbitMQ 实现调用 <code>rabbitProperties.isPublisherConfirmRequired()</code>。</p>
      *
      * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
      * @return 接收待发布事件的函数
      */
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
+        RabbitMQProperties rabbitProperties = mqProperties instanceof RabbitMQProperties
+                ? (RabbitMQProperties) mqProperties : properties;
+        boolean confirmRequired = Objects.nonNull(rabbitProperties) && rabbitProperties.isPublisherConfirmRequired();
+        // 有界 channel 池：Connection 线程安全，Channel 非线程安全。
+        // 用 BlockingQueue 而非 ThreadLocal 是为了在 Java 21+ 虚拟线程场景下避免
+        // 「每虚拟线程独占一个 channel」导致的 fd / broker 连接数爆炸。池容量由
+        // RabbitMQProperties.producerChannelPoolSize 控制（默认 32），超出后发布线程
+        // 阻塞等待池中已有 channel（吞吐降级而非崩溃）；这比单 channel + synchronized
+        // 把所有发布串行化为单线程吞吐要好。
+        // 每个 channel 注册一个 ReturnListener（addReturnListener 是追加语义，只能注册一次），
+        // 写入该 channel 专属的返回状态 holder。由于任何时刻 channel 仅被一个发布借用，
+        // holder 的 set(null) → basicPublish → getAndSet(null) 是安全的。
+        int poolSize = Objects.nonNull(rabbitProperties) ? rabbitProperties.getProducerChannelPoolSize() : 32;
+        BlockingQueue<Channel> channelPool = new ArrayBlockingQueue<>(poolSize);
+        Map<Channel, AtomicReference<Return>> channelReturnHolder = new ConcurrentHashMap<>();
+        int created = 0;
         try {
-            Channel channel = connection().createChannel();
-            String exchange = mqProperties.getExchange();
-            return event -> {
-                String payload = serialization().serialize(event);
-                String topic = resolveTopic(event, mqProperties);
-                try {
-                    Map<String, Object> headers = new HashMap<>();
-                    if (Objects.nonNull(event.getMsgId())) {
-                        headers.put(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
-                    }
-                    if (Objects.nonNull(event.getTenantId())) {
-                        headers.put(MessageHeaders.HEADER_TENANT_ID, event.getTenantId());
-                    }
-                    AMQP.BasicProperties properties = new AMQP.BasicProperties.Builder()
-                            .messageId(event.getMsgId())
-                            .headers(headers)
-                            .build();
-                    channel.basicPublish(exchange, topic, properties, payload.getBytes(StandardCharsets.UTF_8));
-                    log.info("Publish MQ [{}]: {}", topic, payload);
-                } catch (Exception e) {
-                    log.error("Publish MQ [{}]: {} failed!", topic, payload, e);
+            for (; created < poolSize; created++) {
+                Channel ch = connection().createChannel();
+                if (confirmRequired) {
+                    ch.confirmSelect();
                 }
-            };
+                AtomicReference<Return> holder = new AtomicReference<>();
+                channelReturnHolder.put(ch, holder);
+                ch.addReturnListener(holder::set);
+                channelPool.offer(ch);
+                lifecycle.register("rabbit-producer-channel-" + created, () -> closeChannel(ch));
+            }
         } catch (IOException e) {
-            throw new IllegalStateException("Init RabbitMQ producer failed", e);
+            // 部分初始化失败：清理已创建的 channel 避免孤立资源
+            Channel leaked;
+            while ((leaked = channelPool.poll()) != null) {
+                closeChannel(leaked);
+            }
+            channelReturnHolder.clear();
+            throw new IllegalStateException("Failed to create RabbitMQ producer channel (created " + created + " of " + poolSize + ")", e);
         }
+        String exchange = mqProperties.getExchange();
+        return event -> {
+            String payload = serialization().serialize(event);
+            String topic = resolveTopic(event, mqProperties);
+            Channel channel = null;
+            try {
+                // 从池中借用 channel，poll 超时则让 Outbox 重试而非无限等待。
+                // 连接已关闭时 poll 会抛 AlreadyClosedException，统一包装为 IllegalStateException。
+                long borrowTimeoutMillis = Objects.nonNull(rabbitProperties)
+                        ? rabbitProperties.getPublisherConfirmTimeoutMillis() : 5000L;
+                channel = channelPool.poll(borrowTimeoutMillis, TimeUnit.MILLISECONDS);
+                if (Objects.isNull(channel)) {
+                    throw new IllegalStateException(
+                            "RabbitMQ producer channel pool exhausted within " + borrowTimeoutMillis + "ms");
+                }
+                AtomicReference<Return> returned = channelReturnHolder.get(channel);
+                returned.set(null);
+                Map<String, Object> headers = new HashMap<>();
+                headers.putAll(event.headerMap());
+                if (Objects.nonNull(event.getMsgId())) {
+                    headers.put(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
+                }
+                if (Objects.nonNull(event.getTenantId())) {
+                    headers.put(MessageHeaders.HEADER_TENANT_ID, event.getTenantId());
+                }
+                AMQP.BasicProperties props = new AMQP.BasicProperties.Builder()
+                        .messageId(event.getMsgId())
+                        .deliveryMode(Objects.nonNull(rabbitProperties) && rabbitProperties.isDurable() ? 2 : 1)
+                        .headers(headers)
+                        .build();
+                channel.basicPublish(exchange, topic, true, props, payload.getBytes(StandardCharsets.UTF_8));
+                if (confirmRequired) {
+                    channel.waitForConfirmsOrDie(rabbitProperties.getPublisherConfirmTimeoutMillis());
+                }
+                Return brokerReturn = returned.getAndSet(null);
+                if (Objects.nonNull(brokerReturn)) {
+                    throw new IllegalStateException("RabbitMQ message was returned as unroutable: "
+                            + brokerReturn.getReplyText() + " [" + brokerReturn.getRoutingKey() + "]");
+                }
+                log.info("Publish MQ [{}]: {}", topic, payload);
+                channelPool.offer(channel);
+                channel = null;
+            } catch (Exception e) {
+                // channel 异常（连接关闭、IO 错误）时**丢弃**而非归还——已损坏的 channel
+                // 会污染后续借用。先尝试创建替补 channel，成功后才移除旧 channel 的 holder，
+                // 保证池容量不缩减；替补失败时才 remove（此时旧 channel 已从池中取出，不会被误用）。
+                try {
+                    Channel replacement = connection().createChannel();
+                    if (confirmRequired) {
+                        replacement.confirmSelect();
+                    }
+                    AtomicReference<Return> newHolder = new AtomicReference<>();
+                    channelReturnHolder.put(replacement, newHolder);
+                    replacement.addReturnListener(newHolder::set);
+                    channelPool.offer(replacement);
+                    lifecycle.register("rabbit-producer-channel-replaced-" + System.identityHashCode(replacement), () -> closeChannel(replacement));
+                    // 替补创建成功后才移除旧 channel 的 return holder
+                    channelReturnHolder.remove(channel);
+                    log.info("Replaced broken RabbitMQ channel in pool (poolSize={})", channelPool.size());
+                } catch (Exception replaceEx) {
+                    // 替补也失败：旧 channel 已损坏，仅移除其 return holder
+                    // 此时旧 channel 未归还池中（在 borrow 时已取出），池净减1
+                    // 但不会级联缩减——只有当前这一个 channel 被移除
+                    channelReturnHolder.remove(channel);
+                    log.warn("Failed to replace broken RabbitMQ channel in pool (poolSize={}): {}",
+                            channelPool.size(), replaceEx.getMessage());
+                }
+                throw new IllegalStateException("Publish RabbitMQ message failed: " + event.getMsgId(), e);
+            }
+        };
     }
 
-    // ========================= 消费者 =========================
+    // ========================= 连接管理（双构造共享的最小辅助）=========================
 
     /**
      * 为监听器建立消息消费所需的订阅和客户端资源。
@@ -139,7 +319,7 @@ public class RabbitMQClient implements MQClient {
      *
      * @param listener 监听器定义
      * @param mqProperties 本次生产或订阅使用的消息客户端公共配置
-     * @return 此实现返回<code>true</code>
+     * @return 原生消费者完成订阅注册时返回 true
      * @throws Exception 当前框架、存储或底层客户端无法完成此操作时
      */
     @Override
@@ -147,6 +327,7 @@ public class RabbitMQClient implements MQClient {
         Connection connection = connection();
         // 消费者使用独立 channel（长生命周期，basicConsume 需要保持打开）
         Channel channel = connection.createChannel();
+        lifecycle.register("rabbit-consumer-channel", () -> closeChannel(channel));
         // 队列名=group.namespace.className.methodName
         String queue = listener.getGroup() + "." + listener.getNamespace() + "."
                 + listener.getMethod().getDeclaringClass().getSimpleName() + "."
@@ -167,7 +348,9 @@ public class RabbitMQClient implements MQClient {
                 }
             }
         }
-        channel.queueDeclare(queue, true, false, false, null);
+        RabbitMQProperties rabbitProperties = mqProperties instanceof RabbitMQProperties
+                ? (RabbitMQProperties) mqProperties : properties;
+        channel.queueDeclare(queue, Objects.isNull(rabbitProperties) || rabbitProperties.isDurable(), false, false, null);
         String exchange = mqProperties.getExchange();
         for (String routingKey : routingKeys) {
             channel.queueBind(queue, exchange, routingKey);
@@ -202,6 +385,17 @@ public class RabbitMQClient implements MQClient {
             if (Objects.nonNull(messageId)) {
                 event.setMsgId(messageId);
             }
+            Map<String, Object> nativeHeaders = delivery.getProperties().getHeaders();
+            if (Objects.nonNull(nativeHeaders)) {
+                Object correlationId = nativeHeaders.get(MQDeliveryHeaders.CORRELATION_ID);
+                if (Objects.nonNull(correlationId)) {
+                    event.setCorrelationId(correlationId.toString());
+                }
+                Object causationId = nativeHeaders.get(MQDeliveryHeaders.CAUSATION_ID);
+                if (Objects.nonNull(causationId)) {
+                    event.setCausationId(causationId.toString());
+                }
+            }
             // 应用层 tag 过滤（RabbitMQ topic exchange 模式与 ddd4j 表达式不兼容，broker 端不可用）
             if (!TagMatcher.match(event.getTag(), listener.getTags())) {
                 if (!mqProperties.isAutoAck()) {
@@ -212,7 +406,8 @@ public class RabbitMQClient implements MQClient {
                 }
                 return;
             }
-            RabbitAcknowledgment ack = new RabbitAcknowledgment(channel, deliveryTag, event.getMsgId(), null);
+            RabbitAcknowledgment ack = new RabbitAcknowledgment(channel, deliveryTag,
+                    event.getMsgId(), event.getCorrelationId());
             try {
                 consume(listener, event, ack);
                 if (!mqProperties.isAutoAck() && !ack.isAcknowledged()) {
@@ -229,42 +424,22 @@ public class RabbitMQClient implements MQClient {
                 }
             }
         };
-        Executors.newSingleThreadExecutor(r -> {
-            Thread t = new Thread(r, "ddd4j-rabbit-" + listener.getMethod().getName());
-            t.setDaemon(true);
-            return t;
-        }).submit(() -> {
-            try {
-                channel.basicConsume(queue, mqProperties.isAutoAck(), deliverCallback, consumerTag -> {
-                });
-            } catch (Exception e) {
-                log.error("Consume MQ [{}] basicConsume failed", listener.getRouteExpression(this.defaultConcat()), e);
-            }
+        // 等待订阅注册结果，让失败进入 MQClient 的必选回滚或可选降级流程。
+        // 消息回调仍由 RabbitMQ 客户端分发线程执行。
+        channel.basicConsume(queue, mqProperties.isAutoAck(), deliverCallback, consumerTag -> {
         });
         return true;
     }
 
-    /**
-     * \u4f18\u5148\u8bfb\u53d6 ddd4j \u6807\u51c6\u6d88\u606f ID\uff0c\u517c\u5bb9\u65e7\u952e\uff0c\u6700\u540e\u56de\u9000\u5230 AMQP \u539f\u751f messageId\u3002
-     *
-     * @param properties \u6536\u5230\u7684 AMQP \u6d88\u606f\u5c5e\u6027
-     * @return AMQP \u6d88\u606f\u5c5e\u6027\u643a\u5e26\u7684\u6807\u8bc6
-     */
-    static String messageId(AMQP.BasicProperties properties) {
-        Map<String, Object> headers = properties.getHeaders();
-        if (Objects.nonNull(headers)) {
-            Object headerValue = headers.get(MessageHeaders.HEADER_MESSAGE_ID);
-            if (Objects.isNull(headerValue)) {
-                headerValue = headers.get(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
-            }
-            if (Objects.nonNull(headerValue)) {
-                return headerValue.toString();
-            }
+    /** \u91ca\u653e\u6d88\u606f\u5ba2\u6237\u7aef\u62e5\u6709\u7684\u8fd0\u884c\u8d44\u6e90\uff0c\u5e76\u5728\u9000\u51fa\u65f6\u767b\u8bb0\u7ec4\u4ef6\u5df2\u505c\u6b62\u3002 */
+    @Override
+    public void close() {
+        try {
+            lifecycle.close();
+        } finally {
+            startupStatus.stopped();
         }
-        return properties.getMessageId();
     }
-
-    // ========================= 连接管理（双构造共享的最小辅助）=========================
 
     /**
      * \u53d6\u5f97\u5f53\u524d\u9002\u914d\u5668\u4f7f\u7528\u7684\u539f\u751f\u8fde\u63a5\u6216\u5ba2\u6237\u7aef\uff0c\u7f3a\u5c11\u5b9e\u4f8b\u65f6\u5efa\u7acb\u8fde\u63a5\u3002
@@ -278,6 +453,7 @@ public class RabbitMQClient implements MQClient {
                 Connection nc = factory.newConnection();
                 if (connectionRef.compareAndSet(null, nc)) {
                     c = nc;
+                    lifecycle.register("rabbit-connection", () -> closeConnection(nc));
                 } else {
                     c = connectionRef.get();
                     try {

@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.mq.delivery;
 
 import org.junit.jupiter.api.Test;
@@ -10,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** \u9a8c\u8bc1\u6295\u9012\u79df\u7ea6\u3001\u9000\u907f\u548c\u91cd\u8bd5\u8017\u5c3d\u7684\u516c\u5f00\u5951\u7ea6\u3002 */
+/** 验证投递租约、退避和重试耗尽的公开契约。 */
 class MQDeliveryPolicyTest {
 
     /** \u9a8c\u8bc1<code>policy.leaseDuration()</code> \u7b49\u4e8e <code>Duration.ofSeconds(60)</code>\uff0c<code>policy.maxAttempts()</code> \u7b49\u4e8e <code>12</code>\uff0c<code>policy.jitterFactor()</code> \u7b49\u4e8e <code>0.20D</code>\u3002 */
@@ -45,6 +59,16 @@ class MQDeliveryPolicyTest {
 
         assertFalse(policy.exhausted(11));
         assertTrue(policy.exhausted(12));
+    }
+
+    /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalArgumentException.class</code>\uff0c<code>policy.nextAvailableAt( 1, Instant.parse("2026-08-03T00:00:00Z"), Double.NaN)</code> \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
+    @Test
+    void nonFiniteJitter_shouldBeRejectedBeforeScheduling() {
+        assertThrows(IllegalArgumentException.class, () -> new MQDeliveryPolicy(
+                Duration.ofSeconds(60), 3, Duration.ofSeconds(1), Duration.ofSeconds(5), Double.NaN));
+        MQDeliveryPolicy policy = MQDeliveryPolicy.productionDefault();
+        assertThrows(IllegalArgumentException.class, () -> policy.nextAvailableAt(
+                1, Instant.parse("2026-08-03T00:00:00Z"), Double.NaN));
     }
 
     /** \u9a8c\u8bc1\u88ab\u6d4b\u8c03\u7528 \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */

@@ -1,11 +1,24 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.mq.listener;
 
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.annotation.MQEventListener;
 import io.ddd4j.mq.event.MQEvent;
-import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.util.TagMatcher;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,9 +39,7 @@ import java.util.Objects;
  * @since 2.0.x
  */
 @Data
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
 @SuppressWarnings("unchecked")
 public class MQListener {
 
@@ -64,14 +75,62 @@ public class MQListener {
      * namespace/topic/tag 拼接符，为空时由各 broker 决定默认值
      */
     private String separator;
+    /**
+     * 是否为应用启动所必需的消费者。
+     */
+    private boolean required = true;
 
     /**
-     * \u4ece\u6ce8\u89e3\u4e0e\u65b9\u6cd5\u5143\u6570\u636e\u6784\u5efa\u76d1\u542c\u5668\u5b9a\u4e49\u3002
+     * 保留历史八参数构造器（默认 {@code required = true}）。
      *
-     * @param bean \u76ee\u6807 Bean
-     * @param method \u88ab {@link MQEventListener} \u6807\u6ce8\u7684\u76d1\u542c\u65b9\u6cd5
-     * @param ann \u65b9\u6cd5\u4e0a\u7684 {@link MQEventListener} \u6ce8\u89e3
-     * @return \u6784\u5efa\u5b8c\u6210\u7684\u76d1\u542c\u5668\u5b9a\u4e49
+     * @param bean      目标 Bean
+     * @param method    监听方法
+     * @param group     消费者组
+     * @param namespace 命名空间
+     * @param topic     主题
+     * @param tags      标签表达式
+     * @param supports  策略过滤列表
+     * @param separator namespace/topic/tag 拼接符
+     */
+    public MQListener(Object bean, Method method, String group, String namespace, String topic,
+                      String tags, List<String> supports, String separator) {
+        this(bean, method, group, namespace, topic, tags, supports, separator, true);
+    }
+
+    /**
+     * 包含启动必要性的完整构造器（Lombok {@code @Builder} 入口）。
+     *
+     * @param bean      目标 Bean
+     * @param method    监听方法
+     * @param group     消费者组
+     * @param namespace 命名空间
+     * @param topic     主题
+     * @param tags      标签表达式
+     * @param supports  策略过滤列表
+     * @param separator namespace/topic/tag 拼接符
+     * @param required  是否为应用启动所必需的消费者
+     */
+    @Builder
+    public MQListener(Object bean, Method method, String group, String namespace, String topic,
+                      String tags, List<String> supports, String separator, boolean required) {
+        this.bean = bean;
+        this.method = method;
+        this.group = group;
+        this.namespace = namespace;
+        this.topic = topic;
+        this.tags = tags;
+        this.supports = supports;
+        this.separator = separator;
+        this.required = required;
+    }
+
+    /**
+     * 从注解与方法元数据构建监听器定义。
+     *
+     * @param bean   目标 Bean
+     * @param method 被 {@link MQEventListener} 标注的监听方法
+     * @param ann    方法上的 {@link MQEventListener} 注解
+     * @return 构建完成的监听器定义
      */
     public static MQListener of(Object bean, Method method, MQEventListener ann) {
         return MQListener.builder()
@@ -83,13 +142,14 @@ public class MQListener {
                 .tags(ann.tags())
                 .supports(Arrays.asList(ann.supports()))
                 .separator(ann.separator())
+                .required(ann.required())
                 .build();
     }
 
     /**
-     * \u8fd4\u56de\u76d1\u542c\u65b9\u6cd5\u9996\u4e2a\u53c2\u6570\u7c7b\u578b\uff08\u7ea6\u5b9a\u4e3a {@link MQEvent} \u5b50\u7c7b\uff09\uff0c\u7528\u4e8e\u53cd\u5e8f\u5217\u5316\u3002
+     * 返回监听方法首个参数类型（约定为 {@link MQEvent} 子类），用于反序列化。
      *
-     * @return \u6d88\u606f\u8f7d\u8377\u7c7b\u578b\uff0c\u65b9\u6cd5\u65e0\u53c2\u6570\u6216\u9996\u53c2\u975e {@link MQEvent} \u65f6\u8fd4\u56de {@code MQEvent.class}
+     * @return 消息载荷类型，方法无参数或首参非 {@link MQEvent} 时返回 {@code MQEvent.class}
      */
     public Class<? extends MQEvent> payloadType() {
         if (Objects.isNull(method) || method.getParameterCount() == 0) {
@@ -100,35 +160,35 @@ public class MQListener {
     }
 
     /**
-     * \u8fd4\u56de\u7b56\u7565\u5339\u914d\u652f\u6301\u5217\u8868\u3002
+     * 返回策略匹配支持列表。
      *
-     * @return \u652f\u6301\u5217\u8868\uff0c\u672a\u914d\u7f6e\u65f6\u8fd4\u56de\u4e0d\u5339\u914d\u4efb\u4f55\u7b56\u7565\u7684\u4e0d\u53ef\u4fee\u6539\u7a7a\u5217\u8868
+     * @return 支持列表，未配置时返回空列表
      */
     public List<String> supports() {
         return Objects.isNull(supports) ? List.of() : supports;
     }
 
     /**
-     * \u7269\u7406\u8def\u7531\u952e\uff1a{@code namespace.topic[.tag]}\uff08\u4e0e ddd4j Disruptor
-     *  {@code DisruptorEvent.getRouteExpression()} \u7edf\u4e00\u89c4\u5219\uff09\u3002
+     * 物理路由键：{@code namespace.topic[.tag]}（与 ddd4j Disruptor
+     * {@code DisruptorEvent.getRouteExpression()} 统一规则）。
      *
-     *  <h3>\u8def\u7531\u6a21\u578b</h3>
-     *  <pre>
-     *    namespace.topic.tag
-     *    \u2514\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2518 \u2514\u2500\u252c\u2500\u2518 \u2514\u252c\u2518
-     *     \u73af\u5883\u9694\u79bb  \u4e1a\u52a1\u5206\u7c7b  \u7ec6\u5206\u6807\u7b7e
-     *  </pre>
-     *  <ul>
-     *    <li>{@code namespace} \u2014\u2014 \u547d\u540d\u7a7a\u95f4\uff0c\u7528\u4e8e\u591a\u73af\u5883 / \u591a\u79df\u6237\u9694\u79bb</li>
-     *    <li>{@code topic} \u2014\u2014 \u6d88\u8d39\u7ebf\u7a0b\u9694\u79bb\u7ef4\u5ea6\uff0c\u4e0d\u540c topic \u8d70\u4e0d\u540c\u6d88\u8d39\u7ebf\u7a0b\u6c60</li>
-     *    <li>{@code tag} \u2014\u2014 \u540c topic \u4e0b\u5171\u4eab\u6d88\u8d39\u7ebf\u7a0b\uff0c\u505a\u6d88\u606f\u8fc7\u6ee4</li>
-     *  </ul>
+     * <p><b>路由模型</b></p>
+     * <pre>
+     *   namespace.topic.tag
+     *   └───┬───┘ └─┬─┘ └┬┘
+     *    环境隔离  业务分类  细分标签
+     * </pre>
+     * <ul>
+     *   <li>{@code namespace} —— 命名空间，用于多环境 / 多租户隔离</li>
+     *   <li>{@code topic} —— 消费线程隔离维度，不同 topic 走不同消费线程池</li>
+     *   <li>{@code tag} —— 同 topic 下共享消费线程，做消息过滤</li>
+     * </ul>
      *
-     *  <p>tag \u53d6 {@code tags} \u8868\u8fbe\u5f0f\u4e2d\u7b2c\u4e00\u4e2a\u6b63\u5411 include\uff08\u5982 {@code "paid || shipped"} \u2192 {@code "paid"}\uff09\uff0c
-     *  \u4e0e event \u7aef\u5355 tag \u5bf9\u9f50\u3002tag \u4e3a null/\u7a7a/\u901a\u914d {@code "*"} \u65f6\u4e0d\u8ffd\u52a0\u7b2c\u4e09\u6bb5\u3002
-     * @param separator \u62fc\u63a5\u7b26\uff08\u7531 {@link io.ddd4j.mq.MQClient#defaultConcat()} \u4f20\u5165\uff0c\u786e\u4fdd listener \u4e0e event \u540c\u89c4\u5219\uff09
+     * <p>tag 取 {@code tags} 表达式中第一个正向 include（如 {@code "paid || shipped"} → {@code "paid"}），
+     * 与 event 端单 tag 对齐。tag 为 null/空/通配 {@code "*"} 时不追加第三段。
      *
-     * @return \u7269\u7406\u8def\u7531\u952e\u8868\u8fbe\u5f0f
+     * @param separator 拼接符（由 {@link io.ddd4j.mq.MQClient#defaultConcat()} 传入，确保 listener 与 event 同规则）
+     * @return 物理路由键表达式
      */
     public String getRouteExpression(String separator) {
         String sep = StrKit.isEmpty(separator) ? "." : separator;
@@ -143,6 +203,15 @@ public class MQListener {
             return base;
         }
         return base + sep + firstTag;
+    }
+
+    /**
+     * {@link MQListener} 构建器（Lombok {@code @Builder} 生成的骨架，此处显式声明
+     * 以固定 {@code required} 默认值为 {@code true}）。
+     */
+    public static class MQListenerBuilder {
+        /** \u542f\u52a8\u6d88\u606f\u7ec4\u4ef6\u5931\u8d25\u65f6\u662f\u5426\u963b\u6b62\u5e94\u7528\u5c31\u7eea\u3002 */
+        private boolean required = true;
     }
 
 }

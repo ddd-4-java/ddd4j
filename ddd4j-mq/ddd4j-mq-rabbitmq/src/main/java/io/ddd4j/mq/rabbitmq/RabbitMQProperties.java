@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.mq.rabbitmq;
 
 import com.rabbitmq.client.ConnectionFactory;
@@ -37,6 +51,22 @@ public class RabbitMQProperties extends MQProperties {
      * 是否在注册时自动声明 queue / binding
      */
     private boolean autoDeclare = true;
+    /**
+     * 发布后是否等待 broker confirm。
+     */
+    private boolean publisherConfirmRequired = true;
+    /**
+     * broker confirm 最长等待时间。
+     */
+    private long publisherConfirmTimeoutMillis = 5000L;
+    /**
+     * 生产者 channel 池大小上限。Channel 非线程安全，因此 ddd4j-mq 用 {@code ThreadLocal} 让
+     * 每个发布线程独占一个 channel。在 Java 21+ 虚拟线程场景下，每个虚拟线程都会创建独立
+     * channel，可能触发 broker 连接数 / fd 上限。本字段将上限锁定为固定值：
+     * 超出后虚拟线程回退为阻塞等待池中已有 channel（仍保持线程安全，吞吐降级而非崩溃）。
+     * 默认 32 足够覆盖常规 HTTP/Web 工作负载。
+     */
+    private int producerChannelPoolSize = 32;
 
     /**
      * \u57fa\u4e8e\u672c\u914d\u7f6e\uff08\u542b\u7236\u7c7b username/password\uff09\u521b\u5efa\u539f\u751f {@link ConnectionFactory}\u3002

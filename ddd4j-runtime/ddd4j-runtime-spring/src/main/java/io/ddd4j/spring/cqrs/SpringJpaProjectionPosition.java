@@ -67,7 +67,6 @@ public class SpringJpaProjectionPosition implements ProjectionPosition, Serializ
      */
     @Override
     public ProjectionPosition withNextEventNumber(long nextEventNumber) {
-        this.nextEventNumber = nextEventNumber;
-        return this;
+        return new SpringJpaProjectionPosition(this.streamId, nextEventNumber);
     }
 }

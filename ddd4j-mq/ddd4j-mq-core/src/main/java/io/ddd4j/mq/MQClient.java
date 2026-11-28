@@ -1,4 +1,19 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.mq;
+import java.util.Objects;
 
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.BaseContext;
@@ -8,6 +23,10 @@ import io.ddd4j.mq.annotation.MQEventListener;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.event.MQEventSerialization;
 import io.ddd4j.mq.event.MQEventStorer;
+import io.ddd4j.mq.lifecycle.MQClientLifecycle;
+import io.ddd4j.mq.lifecycle.MQInitializationException;
+import io.ddd4j.mq.lifecycle.MQListenerInitializationFailure;
+import io.ddd4j.mq.lifecycle.MQStartupStatus;
 import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.Acknowledgment;
 import io.ddd4j.mq.util.TagMatcher;
@@ -15,7 +34,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 
 import java.util.*;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
@@ -25,7 +43,7 @@ import java.util.function.Consumer;
  * <p>接入新的 MQ 只需实现本接口，每个 broker 模块最终 3 个文件：
  * {@code XxxClient}（impl MQClient）+ {@code XxxAcknowledgment} + {@code XxxProperties}。
  *
- * <h3>核心流程</h3>
+ * <h2>核心流程</h2>
  * <ol>
  *   <li><b>发布</b>：{@link #initProducer(MQProperties)} 返回 {@link Consumer<MQEvent>}，
  *       由 {@link #init(List, MQProperties, MQEventSerialization, MQEventStorer)} 注册到 {@link BaseContext}
@@ -95,6 +113,13 @@ public interface MQClient extends AutoCloseable {
             return;
         }
         Logger log = logger();
+        MQClientLifecycle lifecycle = lifecycle();
+        MQStartupStatus startupStatus = startupStatus();
+        int checkpoint = lifecycle.checkpoint();
+        startupStatus.starting();
+        MQProperties previousProperties = BaseContext.get(MQEvent.MQ_PROPERTIES);
+        MQEventSerialization previousSerialization = BaseContext.get(MQ_SERIALIZATION);
+        MQEventStorer previousStorer = BaseContext.get(MQ_STORER);
         // 注册配置与依赖到 BaseContext
         BaseContext.inject(MQEvent.MQ_PROPERTIES, properties);
         BaseContext.inject(MQ_SERIALIZATION, serialization);
@@ -102,28 +127,87 @@ public interface MQClient extends AutoCloseable {
             BaseContext.inject(MQ_STORER, storer);
         }
         // 初始化生产者，注册到 publishers Map（key=impl()，允许多 broker 共存）
-        Consumer<MQEvent> producer = initProducer(properties);
+        Consumer<MQEvent> producer;
+        try {
+            producer = initProducer(properties);
+        } catch (RuntimeException exception) {
+            MQListenerInitializationFailure failure = failure(null, true, exception);
+            startupStatus.failed(failure);
+            MQInitializationException initializationException = initializationException(failure, exception);
+            rollback(lifecycle, checkpoint, initializationException);
+            restoreContext(previousProperties, previousSerialization, previousStorer);
+            throw initializationException;
+        }
+        Map<String, Consumer<MQEvent>> publishers = null;
+        Consumer<MQEvent> previousPublisher = null;
+        Consumer<MQEvent> registeredProducer = null;
         if (Objects.nonNull(producer)) {
             log.info("Initializing MQEventPublisher for [{}]", impl());
-            Map<String, Consumer<MQEvent>> publishers = BaseContext.get(MQEvent.MQ_EVENT_PUBLISHER);
+            publishers = BaseContext.get(MQEvent.MQ_EVENT_PUBLISHER);
             if (Objects.isNull(publishers)) {
                 publishers = new ConcurrentHashMap<>();
                 BaseContext.inject(MQEvent.MQ_EVENT_PUBLISHER, publishers);
             }
-            publishers.put(impl(), producer);
+            MQPublisherRegistration activeProducer = new MQPublisherRegistration(producer);
+            registeredProducer = activeProducer;
+            previousPublisher = publishers.put(impl(), activeProducer);
+            Map<String, Consumer<MQEvent>> registeredPublishers = publishers;
+            lifecycle.register("publisher:" + impl(), () -> {
+                activeProducer.deactivate();
+                if (registeredPublishers.remove(impl(), activeProducer)
+                        && registeredPublishers.isEmpty()
+                        && BaseContext.get(MQEvent.MQ_EVENT_PUBLISHER) == registeredPublishers) {
+                    BaseContext.remove(MQEvent.MQ_EVENT_PUBLISHER);
+                }
+            });
         }
         // 初始化消费者
         log.info("Initializing MQEventListener for [{}]", impl());
         int success = 0;
-        for (MQListener listener : listeners) {
+        List<MQListener> safeListeners = Objects.isNull(listeners)
+                ? Collections.emptyList() : listeners;
+        for (MQListener listener : safeListeners) {
+            int listenerCheckpoint = lifecycle.checkpoint();
             try {
-                if (initConsumer(listener, properties)) {
-                    success++;
+                if (!initConsumer(listener, properties)) {
+                    throw new IllegalStateException("MQ consumer initialization returned false");
                 }
+                success++;
             } catch (Exception e) {
-                log.error("Listen MQ [{}] failed!", listener.getRouteExpression(this.defaultConcat()), e);
+                MQListenerInitializationFailure failure = failure(listener, listener.isRequired(), e);
+                if (listener.isRequired()) {
+                    startupStatus.failed(failure);
+                    MQInitializationException initializationException = initializationException(failure, e);
+                    rollback(lifecycle, checkpoint, initializationException);
+                    if (Objects.nonNull(publishers)) {
+                        if (publishers.remove(impl(), registeredProducer)
+                                && publishers.isEmpty()
+                                && BaseContext.get(MQEvent.MQ_EVENT_PUBLISHER) == publishers) {
+                            BaseContext.remove(MQEvent.MQ_EVENT_PUBLISHER);
+                        }
+                        if (Objects.nonNull(previousPublisher)
+                                && (!(previousPublisher instanceof MQPublisherRegistration)
+                                || ((MQPublisherRegistration) previousPublisher).isActive())) {
+                            publishers.putIfAbsent(impl(), previousPublisher);
+                            BaseContext.inject(MQEvent.MQ_EVENT_PUBLISHER, publishers);
+                        }
+                    }
+                    restoreContext(previousProperties, previousSerialization, previousStorer);
+                    throw initializationException;
+                }
+                startupStatus.degraded(failure);
+                try {
+                    lifecycle.rollback(listenerCheckpoint);
+                } catch (RuntimeException rollbackFailure) {
+                    log.warn("Optional MQ listener [{}] rollback failed: {}",
+                            listener.getRouteExpression(this.defaultConcat()),
+                            rollbackFailure.getClass().getSimpleName());
+                }
+                log.warn("Optional MQ listener [{}] initialization failed: {}",
+                        listener.getRouteExpression(this.defaultConcat()), failure.reason());
             }
         }
+        startupStatus.ready();
         log.info("MQ [{}] listening {} listener(s)", impl(), success);
 
     }
@@ -164,6 +248,24 @@ public interface MQClient extends AutoCloseable {
     }
 
     /**
+     * 返回当前客户端拥有资源的生命周期。
+     *
+     * @return 生命周期；第三方实现默认不受托管
+     */
+    default MQClientLifecycle lifecycle() {
+        return MQClientLifecycle.unmanaged();
+    }
+
+    /**
+     * 返回当前客户端的结构化启动状态。
+     *
+     * @return 启动状态；第三方实现默认不受托管
+     */
+    default MQStartupStatus startupStatus() {
+        return MQStartupStatus.unmanaged();
+    }
+
+    /**
      * 结束当前组件持有的资源。
      *
      * <p>此实现调用 <code>logger().info("Shutting down MQClient [{}]", impl())</code>。</p>
@@ -171,6 +273,82 @@ public interface MQClient extends AutoCloseable {
     @Override
     default void close() {
         logger().info("Shutting down MQClient [{}]", impl());
+        try {
+            lifecycle().close();
+        } finally {
+            startupStatus().stopped();
+        }
+    }
+
+    /**
+     * \u6839\u636e\u76d1\u542c\u5668\u548c\u4ee3\u7406\u5f02\u5e38\u751f\u6210\u53ef\u8bca\u65ad\u7684\u521d\u59cb\u5316\u5931\u8d25\u8bb0\u5f55\u3002
+     * @param listener \u521d\u59cb\u5316\u5931\u8d25\u7684\u76d1\u542c\u5668
+     * @param required \u8be5\u76d1\u542c\u5668\u662f\u5426\u8981\u6c42\u6210\u529f\u521d\u59cb\u5316
+     * @param exception \u521d\u59cb\u5316\u65f6\u629b\u51fa\u7684\u5f02\u5e38
+     * @return \u5f53\u524d\u76d1\u542c\u5668\u7684\u542f\u52a8\u5931\u8d25\u8bb0\u5f55
+     */
+    private MQListenerInitializationFailure failure(MQListener listener, boolean required,
+                                                    Throwable exception) {
+        String topic = Objects.isNull(listener) ? "" : Objects.toString(listener.getTopic(), "");
+        String group = Objects.isNull(listener) ? "" : Objects.toString(listener.getGroup(), "");
+        String method = Objects.isNull(listener) || Objects.isNull(listener.getMethod())
+                ? "producer" : listener.getMethod().getDeclaringClass().getName() + "#"
+                + listener.getMethod().getName();
+        return new MQListenerInitializationFailure(impl(), topic, group, method, required,
+                exception.getClass().getSimpleName());
+    }
+
+    /**
+     * \u5c06\u76d1\u542c\u5668\u542f\u52a8\u5931\u8d25\u4fe1\u606f\u4e0e\u539f\u59cb\u5f02\u5e38\u5408\u5e76\u4e3a\u521d\u59cb\u5316\u5f02\u5e38\u3002
+     * @param failure \u5df2\u6574\u7406\u7684\u76d1\u542c\u5668\u521d\u59cb\u5316\u5931\u8d25\u4fe1\u606f
+     * @param cause \u539f\u59cb\u5f02\u5e38
+     * @return \u4f9b\u542f\u52a8\u72b6\u6001\u548c\u8c03\u7528\u65b9\u5904\u7406\u7684\u6d88\u606f\u521d\u59cb\u5316\u5f02\u5e38
+     */
+    private MQInitializationException initializationException(MQListenerInitializationFailure failure,
+                                                              Throwable cause) {
+        return new MQInitializationException(failure.broker(), failure.topic(), failure.group(),
+                failure.listenerMethod(), cause);
+    }
+
+    /**
+     * \u56de\u6eda\u5f53\u524d\u521d\u59cb\u5316\u68c0\u67e5\u70b9\u4e4b\u540e\u767b\u8bb0\u7684\u8d44\u6e90\uff0c\u4fdd\u7559\u539f\u6765\u7684\u521d\u59cb\u5316\u5f02\u5e38\u3002
+     * @param lifecycle \u8d1f\u8d23\u56de\u6536\u5df2\u767b\u8bb0\u8d44\u6e90\u7684\u751f\u547d\u5468\u671f
+     * @param checkpoint \u521d\u59cb\u5316\u524d\u8bb0\u5f55\u7684\u8d44\u6e90\u68c0\u67e5\u70b9
+     * @param initializationException \u89e6\u53d1\u56de\u6eda\u7684\u521d\u59cb\u5316\u5f02\u5e38
+     */
+    private void rollback(MQClientLifecycle lifecycle, int checkpoint,
+                          MQInitializationException initializationException) {
+        try {
+            lifecycle.rollback(checkpoint);
+        } catch (RuntimeException rollbackFailure) {
+            initializationException.addSuppressed(rollbackFailure);
+        }
+    }
+
+    /**
+     * 执行 <code>restore Context</code>，调用 <code>BaseContext.remove</code>、<code>BaseContext.inject</code>。
+     *
+     * @param properties 传入此操作的 <code>MQProperties</code> 类型 <code>properties</code>
+     * @param serialization 传入此操作的 <code>MQEventSerialization</code> 类型 <code>serialization</code>
+     * @param storer 传入此操作的 <code>MQEventStorer</code> 类型 <code>storer</code>
+     */
+    private static void restoreContext(MQProperties properties, MQEventSerialization serialization,
+                                       MQEventStorer storer) {
+        if (Objects.isNull(properties)) {
+            BaseContext.remove(MQEvent.MQ_PROPERTIES);
+        } else {
+            BaseContext.inject(MQEvent.MQ_PROPERTIES, properties);
+        }
+        if (Objects.isNull(serialization)) {
+            BaseContext.remove(MQ_SERIALIZATION);
+        } else {
+            BaseContext.inject(MQ_SERIALIZATION, serialization);
+        }
+        if (Objects.isNull(storer)) {
+            BaseContext.remove(MQ_STORER);
+        } else {
+            BaseContext.inject(MQ_STORER, storer);
+        }
     }
 
     /**
@@ -216,14 +394,10 @@ public interface MQClient extends AutoCloseable {
             MQProperties properties = properties();
             if (Objects.nonNull(properties) && properties.isPersist()) {
                 MQEventStorer storer = BaseContext.get(MQ_STORER);
-                if (Objects.nonNull(storer)) {
-                    try {
-                        storer.store(event);
-                    } catch (Exception e) {
-                        logger().error("Persist MQ failed [{}]: {}", listener.getRouteExpression(this.defaultConcat()),
-                                serialization().serialize(event), e);
-                    }
+                if (Objects.isNull(storer)) {
+                    throw new IllegalStateException("persist=true requires an MQEventStorer");
                 }
+                storer.store(event);
             }
             // 反射调用 @MQEventListener 标注的监听方法
             listener.getMethod().invoke(listener.getBean(), event);
@@ -259,7 +433,7 @@ public interface MQClient extends AutoCloseable {
     /**
      * 解析最终的拼接符（concat）。
      *
-     * <p>优先级：{@link MQEvent#getConcat()} &gt; 当前 Client 默认值（{@link #defaultConcat()}）。
+     * <p>优先级：{@code MQEvent#getConcat()} &gt; 当前 Client 默认值（{@link #defaultConcat()}）。
      * 注：不在 properties 层暴露 concat —— 避免全局配置覆盖 broker 惯例（Kafka 习惯 {@code "_"}、
      * Redis 习惯 {@code ":"}、MQTT 习惯 {@code "/"}）。如需差异化，由各 broker 自己的 Properties 类覆写。
      *
@@ -276,7 +450,7 @@ public interface MQClient extends AutoCloseable {
     /**
      * Broker 默认拼接符（各 broker 决定，建议子类覆写）。
      *
-     * <p>对齐 base-mq {@code MQListener.namespaceTopicTags()}：Rabbit/Rocket/Kafka 用 {@code "."}（Kafka 也常用 {@code "_"}），
+     * <p>对齐 base-mq {@code MQListener.namespaceTopicTags()}：Rabbit/Kafka 用 {@code "."}，RocketMQ 用 {@code "_"}（Kafka 也常用 {@code "_"}），
      * Redis Stream 用 {@code ":"}，MQTT 用 {@code "/"}。
      *
      * @return broker 默认 concat
@@ -286,7 +460,7 @@ public interface MQClient extends AutoCloseable {
     }
 
     /**
-     * 解析命名空间：{@link MQEvent#getNamespace()} 优先，回落到 {@link MQProperties#getNamespace()}。
+     * 解析命名空间：{@code MQEvent#getNamespace()} 优先，回落到 {@code MQProperties#getNamespace()}。
      *
      * @param event      MQ 事件（可为 null）
      * @param properties MQ 配置（不可为 null）
@@ -300,7 +474,7 @@ public interface MQClient extends AutoCloseable {
     }
 
     /**
-     * 字符串版命名空间解析（{@link MQListener#getNamespace()} 直接传入）。
+     * 字符串版命名空间解析（{@code MQListener#getNamespace()} 直接传入）。
      *
      * @param namespace  显式命名空间（可为 null）
      * @param properties MQ 配置（可为 null）
@@ -515,25 +689,6 @@ public interface MQClient extends AutoCloseable {
     }
 
     /**
-     * 兼容 {@link #logger()} 的共享 SLF4J 日志持有器。
-     */
-    @Slf4j(topic = "### DDD4J-MQ ###")
-    final class LogHolder {
-
-        /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>LogHolder</code> \u5b9e\u4f8b\u3002 */
-        private LogHolder() {
-        }
-
-        /**
-         * \u8fd4\u56de\u5171\u4eab\u6d88\u606f\u5ba2\u6237\u7aef\u4f7f\u7528\u7684\u65e5\u5fd7\u8bb0\u5f55\u5668\u3002
-         * @return \u6d88\u606f\u5ba2\u6237\u7aef\u65e5\u5fd7\u8bb0\u5f55\u5668
-         */
-        private static Logger logger() {
-            return log;
-        }
-    }
-
-    /**
      * Partition/路由策略枚举（broker 可读取此枚举决定 partitionKey 取值）。
      *
      * <p>NONE：不设 key（轮询路由，性能最佳但无顺序保证）。
@@ -553,5 +708,24 @@ public interface MQClient extends AutoCloseable {
             TAG_TENANT,
             /** \u7531\u4e1a\u52a1\u5b9e\u73b0\u81ea\u5b9a\u4e49\u5206\u533a\u952e\u3002 */
             CUSTOM
+    }
+
+    /**
+     * 兼容 {@link #logger()} 的共享 SLF4J 日志持有器。
+     */
+    @Slf4j(topic = "### DDD4J-MQ ###")
+    final class LogHolder {
+
+        /** \u9650\u5236\u8c03\u7528\u65b9\u76f4\u63a5\u521b\u5efa <code>LogHolder</code> \u5b9e\u4f8b\u3002 */
+        private LogHolder() {
+        }
+
+        /**
+         * \u8fd4\u56de\u5171\u4eab\u6d88\u606f\u5ba2\u6237\u7aef\u4f7f\u7528\u7684\u65e5\u5fd7\u8bb0\u5f55\u5668\u3002
+         * @return \u6d88\u606f\u5ba2\u6237\u7aef\u65e5\u5fd7\u8bb0\u5f55\u5668
+         */
+        private static Logger logger() {
+            return log;
+        }
     }
 }
