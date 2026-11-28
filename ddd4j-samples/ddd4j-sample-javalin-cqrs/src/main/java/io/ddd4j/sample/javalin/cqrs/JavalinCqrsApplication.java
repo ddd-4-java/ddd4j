@@ -2,7 +2,7 @@ package io.ddd4j.sample.javalin.cqrs;
 
 import com.google.common.eventbus.EventBus;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
-import io.ddd4j.guice.command.GuiceCommandBus;
+import io.ddd4j.guice.command.javalin.JavalinCommandBus;
 import io.ddd4j.guice.event.GuiceDomainEventPublisher;
 import io.ddd4j.sample.order.adapter.http.CatalogApi;
 import io.ddd4j.sample.order.adapter.http.CatalogCqrs;
@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.function.Function;
 
 /**
- * Javalin 四表商品交易，使用 Guice 命令总线和领域事件发布器。
+ * Javalin 四表商品交易，使用 Javalin 命令工厂和领域事件发布器。
  */
 @Slf4j
 public final class JavalinCqrsApplication {
@@ -45,7 +45,7 @@ public final class JavalinCqrsApplication {
      */
     static Javalin startCatalog(int port, Function<DomainEventPublisher, CatalogApi> initialize, EventBus events) {
         var api = initialize.apply(new GuiceDomainEventPublisher(events));
-        var catalog = new CatalogCqrs(api, new GuiceCommandBus(List.of(CatalogCqrs.executor(api))));
+        var catalog = new CatalogCqrs(api, JavalinCommandBus.create(List.of(CatalogCqrs.executor(api))));
         Javalin app = Javalin.create(config -> {
             config.startup.showJavalinBanner = false;
             config.routes.apiBuilder(() -> catalogRoutes(catalog));

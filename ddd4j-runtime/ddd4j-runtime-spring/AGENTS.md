@@ -18,3 +18,5 @@ Spring Bean 发现、命令事务与投影调度。
 ./mvnw -pl ddd4j-runtime/ddd4j-runtime-spring -am -Dtest=SpringDddAnnotationFusionTest,SpringRuntimeContractTest -Dsurefire.failIfNoSpecifiedTests=false test
 ./mvnw -pl ddd4j-runtime/ddd4j-runtime-spring -am verify
 ```
+
+通过 `@Import(SpringCommandConfig.class)` 装配标准命令总线。投影入口位于 `io.ddd4j.spring.projection`。

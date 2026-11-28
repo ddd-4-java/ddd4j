@@ -91,7 +91,14 @@ class QuarkusDurableProjectionIT {
         assertThat(ProjectionBeans.readFrom.get()).isEqualTo(7L);
         assertThat(positions.findByStreamId("r08-events").orElseThrow().getNextEventNumber()).isEqualTo(11L);
         assertThat(positions.findByStreamId("r08-read-model").orElseThrow().getNextEventNumber()).isEqualTo(11L);
+        long beforeStart = view.nameReads();
         manager.start();
+        long readsPerStart = view.nameReads() - beforeStart;
+        manager.stop();
+        long beforeRestart = view.nameReads();
+        startups.fire(new io.quarkus.runtime.StartupEvent());
+        // 重放启动事件只重新调度；重新装配会额外读取名称以检测重复视图。
+        assertThat(view.nameReads() - beforeRestart).isEqualTo(readsPerStart);
         manager.start();
         startups.fire(new io.quarkus.runtime.StartupEvent());
         assertThat(scheduler.getJobKeys(GroupMatcher.anyJobGroup())).hasSize(1);
@@ -235,6 +242,13 @@ class QuarkusDurableProjectionIT {
          * 令当前替身在指定测试路径中返回失败。
          */
         volatile boolean fail;
+        /** 核对正常启动和重放启动事件时读取视图名称的次数。 */
+        private final AtomicLong nameReads = new AtomicLong();
+
+        /** @return 装配校验及调度读取视图名称的累计次数 */
+        public long nameReads() {
+            return nameReads.get();
+        }
 
         /**
          * 根据本次调用更新 <code>fail = value</code>，用于后续测试步骤。
@@ -252,6 +266,7 @@ class QuarkusDurableProjectionIT {
          */
         @Override
         public String getName() {
+            nameReads.incrementAndGet();
             return "r08-events";
         }
 
