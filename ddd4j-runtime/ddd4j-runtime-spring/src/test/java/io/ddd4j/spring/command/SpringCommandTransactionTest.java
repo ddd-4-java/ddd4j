@@ -21,7 +21,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * 使用真实 H2 连接与 Spring 事务代理，验证两套公开入口的原有提交和回滚契约。
+ * 使用真实 H2 连接与 Spring 事务代理，验证容器发现与显式注册表两种装配方式的提交和回滚契约。
  */
 class SpringCommandTransactionTest {
     /**
@@ -40,17 +40,17 @@ class SpringCommandTransactionTest {
      * @throws Exception 准备测试数据库、启动框架或执行业务合同失败
      */
     @Test
-    void legacyTransactions() throws Exception {
+    void registryTransactions() throws Exception {
         verify(true);
     }
 
     /**
      * 调用 <code>source.setURL()</code>、<code>UUID.randomUUID()</code>、<code>source.getConnection()</code> 执行当前夹具操作。
      *
-     * @param legacy 本次调用使用的 <code>boolean</code> 参数 <code>legacy</code>
+     * @param explicitRegistry 为真时从显式命令注册表装配，为假时在容器刷新后发现执行器
      * @throws Exception 执行数据库操作时失败
      */
-    private void verify(boolean legacy) throws Exception {
+    private void verify(boolean explicitRegistry) throws Exception {
         JdbcDataSource source = new JdbcDataSource();
         source.setURL("jdbc:h2:mem:" + UUID.randomUUID() + ";DB_CLOSE_DELAY=-1");
         try (Connection connection = source.getConnection()) {
@@ -81,9 +81,9 @@ class SpringCommandTransactionTest {
                     return command.id == 2 ? R.of(409, "expected business failure") : R.ok();
                 }
             });
-            if (legacy) {
-                context.registerBean("springCommandBus", io.ddd4j.data.cqrs.spring.SpringCommandBus.class,
-                        () -> new io.ddd4j.data.cqrs.spring.SpringCommandBus(context, new CommandRegistry()));
+            if (explicitRegistry) {
+                context.registerBean("springCommandBus", SpringCommandBus.class,
+                        () -> new SpringCommandBus(context, new CommandRegistry()));
             } else {
                 context.registerBean("springCommandBus", SpringCommandBus.class, () -> new SpringCommandBus(context));
             }

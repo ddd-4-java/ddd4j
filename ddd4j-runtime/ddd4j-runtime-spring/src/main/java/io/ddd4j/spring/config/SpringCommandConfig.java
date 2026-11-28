@@ -4,13 +4,16 @@ import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.spring.command.SpringCommandBus;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.core.type.AnnotationMetadata;
 
 /**
  * 显式命令启用入口。通过 {@code @Import(SpringCommandConfig.class)} 使用；
- * 在用户配置完成后复用已有总线，否则创建运行时总线，不激活存储或投影。
+ * 在用户配置完成后复用已有总线，否则先于 Boot 的兜底自动配置注册 Spring 总线。
  */
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public final class SpringCommandConfig implements DeferredImportSelector {
     /**
      * 选择当前配置导入的 Spring 组件定义。

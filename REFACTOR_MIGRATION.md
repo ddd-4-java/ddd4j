@@ -1,5 +1,12 @@
 # 多平台接入与迁移
 
+## 2.0.x 的运行时包迁移
+
+Spring 命令总线统一为 `io.ddd4j.spring.command.SpringCommandBus`。使用 `@Import(SpringCommandConfig.class)` 启用发现，也可以显式传入 `ApplicationContext` 和 `CommandRegistry`。正常返回（含业务失败结果）提交事务，运行时异常按 Spring 默认规则回滚。
+
+Spring 调度器和视图管理器改由 `io.ddd4j.spring.projection` 提供。Javalin 工厂位于 `io.ddd4j.guice.command.javalin`，投影位于 `io.ddd4j.guice.projection.javalin`。Guice Injector 继续使用 `Ddd4jCommandGuiceModule`。原来导入 `io.ddd4j.data.*` 下这些类型的应用需要更新 import 并重新编译。下文 R06 等历史记录描述的是迁移前的契约。
+
+
 默认 DDD 应用使用 `ddd4j-core` 的聚合、仓储和应用服务，配上所选框架的运行时与 Web
 适配。查询可以直接读取业务仓储。需要独立读模型时，再接入事件来源、投影和位置存储。Sa-Token 和 Shiro 也可以按业务需要独立选用。
 

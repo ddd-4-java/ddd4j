@@ -4,7 +4,7 @@
 
 启动与路由注册均在 [JavalinCqrsApplication](src/main/java/io/ddd4j/sample/javalin/cqrs/JavalinCqrsApplication.java)。
 
-命令经 `GuiceCommandBus` 派发。新订单第一次 GET 返回 404；调用 `POST /orders/catalog/projections/orders/{orderNo}` 后读取快照。支付提交后，旧投影仍显示上次状态，显式重建才反映已支付。用同一库重启，再重建一次，比较租户、金额与明细。
+命令经 `JavalinCommandBus` 派发。新订单第一次 GET 返回 404；调用 `POST /orders/catalog/projections/orders/{orderNo}` 后读取快照。支付提交后，旧投影仍显示上次状态，显式重建才反映已支付。用同一库重启，再重建一次，比较租户、金额与明细。
 
 ## 从实际入口验收
 

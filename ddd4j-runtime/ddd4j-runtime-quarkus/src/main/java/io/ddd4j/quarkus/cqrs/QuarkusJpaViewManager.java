@@ -29,7 +29,6 @@ import jakarta.transaction.TransactionManager;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.Config;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -181,10 +180,8 @@ public class QuarkusJpaViewManager implements ViewManager {
                 throw new IllegalStateException("Enable durable projection mode during Quarkus augmentation to install its JTA runner");
             }
             // @DefaultBean 被覆盖时其观察者仍会运行：保留能力校验，但仅由 CDI 实际选中的实例装配任务。
-            if (ownsLifecycle()) {
-                List<ProjectionView<Object>> snapshot = new ArrayList<>();
-                views.forEach(snapshot::add);
-                delegate = new DefaultViewManager<>(unique(schedulers, "ViewScheduler"), runner, snapshot);
+            if (ownsLifecycle() && Objects.isNull(delegate)) {
+                delegate = QuarkusProjectionViewManager.assemble(unique(schedulers, "ViewScheduler"), runner, views);
             }
         } else if ("legacy".equals(mode)) {
             QuarkusJpaProjectionService service = unique(legacyServices, "QuarkusJpaProjectionService");
