@@ -14,6 +14,7 @@
  */
 package io.ddd4j.data.projection.javalin;
 
+import io.ddd4j.core.cqrs.readmodel.ProjectionCron;
 import io.ddd4j.core.cqrs.readmodel.ProjectionRunner;
 import io.ddd4j.core.cqrs.readmodel.ProjectionView;
 import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
@@ -21,6 +22,7 @@ import io.javalin.Javalin;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.Executors;
@@ -38,15 +40,14 @@ import java.util.concurrent.TimeUnit;
  * 以 {@code schedule} 单次注册 + 自动重调度（与 Quarkus/Helidon 模式同款）。
  *
  * <p><b>生命周期</b>：Javalin 7.x 的生命周期事件在 {@code Javalin.create(config ->
- * config.events(...))} 装配期内配置，不在已创建实例上后置注册——集成方需在
- * {@code Javalin.create} 装配期内经 {@code config.events(events ->
- * events.serverStopping(scheduler::shutdown))} 注册关闭钩子，或在应用关闭时
+ * config.events.serverStopping(...))} 装配期内配置，不在已创建实例上后置注册——集成方需在
+ * {@code Javalin.create} 装配期内经 {@code config.events.serverStopping(scheduler::shutdown)} 注册关闭钩子，或在应用关闭时
  * 手动调用 {@link #shutdown()}。典型装配模式：
  * <pre>{@code
  * JavalinProjectionScheduler[] holder = new JavalinProjectionScheduler[1];
  * Javalin app = Javalin.create(config -> {
  *     // ... 其它配置
- *     config.events(events -> events.serverStopping(() -> holder[0].shutdown()));
+ *     config.events.serverStopping(() -> holder[0].shutdown());
  * });
  * holder[0] = JavalinProjectionScheduler.create(app, views, runner);
  * }</pre>
@@ -63,7 +64,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class JavalinProjectionScheduler implements ViewScheduler {
 
-    /** \u6309\u8ba1\u5212\u6267\u884c\u5f53\u524d\u7ec4\u4ef6\u540e\u53f0\u4efb\u52a1\u7684\u5b9a\u65f6\u7ebf\u7a0b\u6c60\u3002 */
+    /**
+     * 按计划执行当前组件后台任务的定时线程池。
+     */
     private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(
             Runtime.getRuntime().availableProcessors(),
             r -> {
@@ -72,7 +75,9 @@ public class JavalinProjectionScheduler implements ViewScheduler {
                 return t;
             });
 
-    /** \u521b\u5efa\u4f7f\u7528\u9ed8\u8ba4\u8fd0\u884c\u53c2\u6570\u7684 Javalin \u6295\u5f71\u8c03\u5ea6\u5668\u3002 */
+    /**
+     * 创建使用默认运行参数的 Javalin 投影调度器。
+     */
     private JavalinProjectionScheduler() {
         // 私有构造（静态工厂收口装配）
     }
@@ -87,7 +92,7 @@ public class JavalinProjectionScheduler implements ViewScheduler {
      *
      * <p><b>生命周期注意</b>：Javalin 7.x 的生命周期事件在 {@code Javalin.create}
      * 装配期内配置，不在已创建实例上后置注册——集成方需在 {@code Javalin.create} 装配期内
-     * 经 {@code config.events(events -> events.serverStopping(scheduler::shutdown))}
+     * 经 {@code config.events.serverStopping(scheduler::shutdown)}
      * 注册关闭钩子，或在应用关闭时手动调用 {@link #shutdown()}。
      *
      * @param app    集成方 Javalin 应用实例（装配锚点），非空
@@ -108,7 +113,7 @@ public class JavalinProjectionScheduler implements ViewScheduler {
      * 关闭调度器（释放线程池资源）。
      *
      * <p>Javalin 7.x 模式：集成方需在 {@code Javalin.create} 装配期内经
-     * {@code config.events(events -> events.serverStopping(scheduler::shutdown))}
+     * {@code config.events.serverStopping(scheduler::shutdown)}
      * 注册关闭钩子，或在应用关闭时手动调用本方法。
      */
     public void shutdown() {
@@ -121,8 +126,8 @@ public class JavalinProjectionScheduler implements ViewScheduler {
      * <p>Javalin 实现调用 <code>CronExpression.parse(cron)</code>。</p>
      *
      * @param viewName 视图名称（用于日志 / 调试）
-     * @param cron CRON 表达式
-     * @param task 要执行的任务
+     * @param cron     CRON 表达式
+     * @param task     要执行的任务
      * @return 实际返回<code>handle</code>
      */
     @Override
@@ -141,22 +146,33 @@ public class JavalinProjectionScheduler implements ViewScheduler {
      */
     private static class ReschedulingHandle implements ViewScheduleHandle, Runnable {
 
-        /** \u6309\u8ba1\u5212\u6267\u884c\u5f53\u524d\u7ec4\u4ef6\u540e\u53f0\u4efb\u52a1\u7684\u5b9a\u65f6\u7ebf\u7a0b\u6c60\u3002 */
+        /**
+         * 按计划执行当前组件后台任务的定时线程池。
+         */
         private final ScheduledExecutorService executor;
-        /** \u7528\u6765\u786e\u5b9a\u4efb\u52a1\u4e0b\u6b21\u89e6\u53d1\u65f6\u95f4\u7684 Cron \u8868\u8fbe\u5f0f\u3002 */
+        /**
+         * 用来确定任务下次触发时间的 Cron 表达式。
+         */
         private final CronExpression cron;
-        /** \u7531\u5f53\u524d\u8c03\u5ea6\u53e5\u67c4\u6267\u884c\u7684\u6295\u5f71\u4efb\u52a1\u3002 */
+        /**
+         * 由当前调度句柄执行的投影任务。
+         */
         private final Runnable task;
-        /** \u7528\u4e8e\u8ddf\u8e2a\u548c\u53d6\u6d88\u540e\u53f0\u8c03\u5ea6\u4efb\u52a1\u7684\u53e5\u67c4\u3002 */
+        /**
+         * 用于跟踪和取消后台调度任务的句柄。
+         */
         private volatile ScheduledFuture<?> future;
-        /** \u4efb\u52a1\u662f\u5426\u5df2\u53d6\u6d88\u5e76\u505c\u6b62\u7ee7\u7eed\u5b89\u6392\u65b0\u7684\u89e6\u53d1\u3002 */
+        /**
+         * 任务是否已取消并停止继续安排新的触发。
+         */
         private volatile boolean cancelled = false;
 
         /**
-         * \u7528\u7ed9\u5b9a\u503c\u521d\u59cb\u5316 <code>ReschedulingHandle</code> \u5b9e\u4f8b\u3002
-         * @param executor \u6309\u8ba1\u5212\u6267\u884c\u5f53\u524d\u7ec4\u4ef6\u540e\u53f0\u4efb\u52a1\u7684\u5b9a\u65f6\u7ebf\u7a0b\u6c60
-         * @param cron <code>cron</code> \u5b57\u6bb5
-         * @param task <code>task</code> \u5b57\u6bb5
+         * 用给定值初始化 <code>ReschedulingHandle</code> 实例。
+         *
+         * @param executor 按计划执行当前组件后台任务的定时线程池
+         * @param cron     <code>cron</code> 字段
+         * @param task     <code>task</code> 字段
          */
         ReschedulingHandle(ScheduledExecutorService executor, CronExpression cron, Runnable task) {
             this.executor = executor;
@@ -164,14 +180,16 @@ public class JavalinProjectionScheduler implements ViewScheduler {
             this.task = task;
         }
 
-        /** \u6839\u636e Cron \u8ba1\u7b97\u4e0b\u4e00\u6b21\u6267\u884c\u65f6\u95f4\uff0c\u5e76\u5728\u8ba1\u5212\u4ecd\u6709\u6548\u65f6\u5411\u8c03\u5ea6\u7ebf\u7a0b\u6c60\u6ce8\u518c\u89e6\u53d1\u3002 */
+        /**
+         * 根据 Cron 计算下一次执行时间，并在计划仍有效时向调度线程池注册触发。
+         */
         void scheduleNext() {
             if (cancelled) {
                 return;
             }
             LocalDateTime now = LocalDateTime.now();
             LocalDateTime next = cron.next(now);
-            if (next == null) {
+            if (Objects.isNull(next)) {
                 return;
             }
             long delayMillis = Duration.between(now, next).toMillis();
@@ -207,7 +225,7 @@ public class JavalinProjectionScheduler implements ViewScheduler {
         public void cancel() {
             cancelled = true;
             ScheduledFuture<?> f = future;
-            if (f != null) {
+            if (Objects.nonNull(f)) {
                 f.cancel(false);
             }
         }
@@ -217,7 +235,7 @@ public class JavalinProjectionScheduler implements ViewScheduler {
          *
          * <p>此实现调用 <code>f.isCancelled()</code>。</p>
          *
-         * @return 根据执行路径返回<code>false</code>、<code>f != null &amp;&amp; !f.isCancelled() &amp;&amp; !f.isDone()</code>
+         * @return 根据执行路径返回<code>false</code>、<code>Objects.nonNull(f) &amp;&amp; !f.isCancelled() &amp;&amp; !f.isDone()</code>
          */
         @Override
         public boolean isActive() {
@@ -225,170 +243,47 @@ public class JavalinProjectionScheduler implements ViewScheduler {
                 return false;
             }
             ScheduledFuture<?> f = future;
-            return f != null && !f.isCancelled() && !f.isDone();
+            return Objects.nonNull(f) && !f.isCancelled() && !f.isDone();
         }
     }
 
-    // ======== Minimal CRON parser (6-field: sec min hour dom month dow) ========
-
     /**
-     * Minimal 6-field CRON parser (sec min hour dom month dow).
-     *
-     * <p>Supports: wildcard (*), range (1-5), step ({@code &#42;/5}),
-     * comma list (1,3,5), and literal values.
-     * Does not support L/W/C special characters.
+     * 旧包内测试入口保留，解析和下次时间计算委托共享规则。
      */
     static class CronExpression {
-
-        /** Cron 秒字段允许的取值。 */
-        private final int[] seconds;
-        /** Cron 分字段允许的取值。 */
-        private final int[] minutes;
-        /** Cron 小时字段允许的取值。 */
-        private final int[] hours;
-        /** Cron 月内日期字段允许的取值。 */
-        private final int[] daysOfMonth;
-        /** Cron 月字段允许的取值。 */
-        private final int[] months;
-        /** Cron 星期字段允许的取值。 */
-        private final int[] daysOfWeek;
+        /**
+         * 负责解析 Cron 字段并计算下次触发时间的共用实现。
+         */
+        private final ProjectionCron delegate;
 
         /**
-         * 以各 Cron 字段允许的取值集合构造表达式。
+         * 把已解析的 Cron 计划包装成当前框架的调度表达式。
          *
-         * @param seconds Cron 秒字段允许的取值
-         * @param minutes Cron 分字段允许的取值
-         * @param hours Cron 小时字段允许的取值
-         * @param daysOfMonth Cron 月内日期字段允许的取值
-         * @param months Cron 月字段允许的取值
-         * @param daysOfWeek Cron 星期字段允许的取值
+         * @param delegate 执行共享行为的底层实现
          */
-        private CronExpression(int[] seconds, int[] minutes, int[] hours,
-                               int[] daysOfMonth, int[] months, int[] daysOfWeek) {
-            this.seconds = seconds;
-            this.minutes = minutes;
-            this.hours = hours;
-            this.daysOfMonth = daysOfMonth;
-            this.months = months;
-            this.daysOfWeek = daysOfWeek;
+        private CronExpression(ProjectionCron delegate) {
+            this.delegate = delegate;
         }
 
         /**
-         * 解析按秒、分、时、日、月、星期排列的六段 Cron 表达式。
+         * 将 Cron 文本解析为当前运行时使用的调度表达式。
          *
-         * @param expr 待解析的六字段 Cron 表达式文本
-         * @return 已按六个字段解析的 Cron 表达式
+         * @param expression 待解析的 Cron 或表达式文本
+         * @return 可计算下一次触发时间的表达式
          */
-        static CronExpression parse(String expr) {
-            String[] parts = expr.trim().split("\\s+");
-            if (parts.length != 6) {
-                throw new IllegalArgumentException("CRON expression must have 6 fields (sec min hour dom month dow): " + expr);
-            }
-            return new CronExpression(
-                    parseField(parts[0], 0, 59),
-                    parseField(parts[1], 0, 59),
-                    parseField(parts[2], 0, 23),
-                    parseField(parts[3], 1, 31),
-                    parseField(parts[4], 1, 12),
-                    parseField(parts[5], 0, 7)
-            );
+        static CronExpression parse(String expression) {
+            return new CronExpression(ProjectionCron.parse(expression));
         }
 
         /**
-         * \u4ece\u7ed9\u5b9a\u65f6\u95f4\u4e4b\u540e\u67e5\u627e\u4e0b\u6b21 Cron \u89e6\u53d1\u70b9\u3002
-         * @param from \u8ba1\u7b97\u4e0b\u4e00\u6b21\u89e6\u53d1\u7684\u65f6\u95f4\u57fa\u51c6
-         * @return \u4e0b\u4e00\u6b21\u6ee1\u8db3\u8868\u8fbe\u5f0f\u7684\u65f6\u95f4\uff0c\u6ca1\u6709\u5c06\u6765\u89e6\u53d1\u70b9\u65f6\u4e3a\u7a7a
+         * 从给定时间之后查找下次 Cron 触发点。
+         *
+         * @param from 计算下一次触发的时间基准
+         * @return 下一次满足表达式的时间，没有将来触发点时为空
          */
         LocalDateTime next(LocalDateTime from) {
-            LocalDateTime candidate = from.plusSeconds(1).withNano(0);
-            for (int i = 0; i < 1_000_000; i++) {
-                if (matches(candidate)) {
-                    return candidate;
-                }
-                candidate = candidate.plusSeconds(1);
-            }
-            return null;
-        }
-
-        /**
-         * 检查日期时间是否符合当前 Cron 表达式。
-         *
-         * @param dt 传入此操作的 <code>LocalDateTime</code> 类型 <code>dt</code>
-         * @return 当前时间是否满足全部 Cron 条件
-         */
-        private boolean matches(LocalDateTime dt) {
-            return contains(seconds, dt.getSecond())
-                    && contains(minutes, dt.getMinute())
-                    && contains(hours, dt.getHour())
-                    && contains(daysOfMonth, dt.getDayOfMonth())
-                    && contains(months, dt.getMonthValue())
-                    && matchesDayOfWeek(dt);
-        }
-
-        /**
-         * 按 Cron 星期编号检查给定时间，兼容星期日的两种表示。
-         *
-         * @param dt 传入此操作的 <code>LocalDateTime</code> 类型 <code>dt</code>
-         * @return 当前时间是否符合星期字段
-         */
-        private boolean matchesDayOfWeek(LocalDateTime dt) {
-            int dow = dt.getDayOfWeek().getValue() % 7; // Monday=1 -> 1, Sunday=7 -> 0
-            return contains(daysOfWeek, dow) || contains(daysOfWeek, dt.getDayOfWeek().getValue());
-        }
-
-        /**
-         * 查找指定数值是否属于当前 Cron 字段允许的集合。
-         *
-         * @param values 查找指定值时使用的候选集合
-         * @param v 待检查是否存在的候选值
-         * @return 给定值是否在候选集合中
-         */
-        private static boolean contains(int[] values, int v) {
-            for (int val : values) {
-                if (val == v) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        /**
-         * 展开 Cron 字段的通配符、列表、区间和步长，校验数值边界。
-         *
-         * @param field 当前待展开的 Cron 字段
-         * @param min 此字段允许的最小数值
-         * @param max 此字段允许的最大数值
-         * @return 此字段允许的数值集合
-         */
-        private static int[] parseField(String field, int min, int max) {
-            if ("*".equals(field)) {
-                int[] result = new int[max - min + 1];
-                for (int i = 0; i < result.length; i++) {
-                    result[i] = min + i;
-                }
-                return result;
-            }
-            java.util.List<Integer> values = new java.util.ArrayList<>();
-            for (String part : field.split(",")) {
-                if (part.contains("/")) {
-                    String[] stepParts = part.split("/", 2);
-                    int step = Integer.parseInt(stepParts[1]);
-                    int start = "*".equals(stepParts[0]) ? min : Integer.parseInt(stepParts[0]);
-                    for (int v = start; v <= max; v += step) {
-                        values.add(v);
-                    }
-                } else if (part.contains("-")) {
-                    String[] rangeParts = part.split("-", 2);
-                    int from = Integer.parseInt(rangeParts[0]);
-                    int to = Integer.parseInt(rangeParts[1]);
-                    for (int v = from; v <= to; v++) {
-                        values.add(v);
-                    }
-                } else {
-                    values.add(Integer.parseInt(part));
-                }
-            }
-            return values.stream().mapToInt(Integer::intValue).toArray();
+            java.time.ZonedDateTime next = delegate.next(from.atZone(ZoneId.systemDefault()));
+            return Objects.isNull(next) ? null : next.toLocalDateTime();
         }
     }
 }

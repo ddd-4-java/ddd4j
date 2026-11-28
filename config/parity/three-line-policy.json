@@ -2284,13 +2284,17 @@
     {
       "path": "ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/cqrs/GuiceViewManager.java",
       "sourceSha256": [
-        "a9f2fd7d7a43cc63652755b04697d7ff92158d894e40434d5cd4f6298f24d697",
-        "ffafb37849d663a20392296c11385508fd619f7a19f95dd628dd252be2315eeb",
-        "ffafb37849d663a20392296c11385508fd619f7a19f95dd628dd252be2315eeb"
+        "913e5bd551c70c19abffd20fc8e9a0723f355356e43c2f24c87c20d60932696b",
+        "ee6fb83c3c0d56d0fd20ed516a9a4b554840ef20f1b2534eb2e5b45a799b55de",
+        "9ed12ef002afe42dcb2ce4dbbc557fe3ed3a41fb3bd04f37b6aafa2c58d8604e"
       ],
       "evidence": "ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/cqrs/GuiceViewManagerTest.java",
-      "testSha256": "1e4037cd37f3d0db3592002d79de2087e9ab73e875557f7b2de92b7cb564e07c",
-      "reason": "三线共同测试覆盖 Guice 调度生命周期、视图位置和最近运行指标回填；JDK 8 使用兼容 Bean getter，高两线使用显式值访问方法，业务语义一致"
+      "reason": "三线共同测试覆盖 Guice 调度生命周期、视图位置和最近运行指标回填；JDK 8 使用兼容 Bean getter，高两线使用显式值访问方法，业务语义一致",
+      "testSha256ByJdk": {
+        "8": "70d27f129f0daeafd09215626f91ba137c6e1e984e143c23dd0f18919247cd1f",
+        "17": "5edd54f7ffaa63104a587564476de1558b7828da9242e12676cf2b72774144a6",
+        "21": "70d27f129f0daeafd09215626f91ba137c6e1e984e143c23dd0f18919247cd1f"
+      }
     },
     {
       "path": "ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/cqrs/GuiceInMemoryProjectionPositionRepository.java",
@@ -2856,13 +2860,17 @@
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/DomainEvent.java",
       "sourceSha256": [
-        "b074c687705ae776c33014f7ce08cfe00c16d4837e985a77e3f97e52836ced53",
-        "2408ed8f999831ff370fc08d69420de5d20d2b17226fe9c028398102922f2ab6",
-        "2408ed8f999831ff370fc08d69420de5d20d2b17226fe9c028398102922f2ab6"
+        "e799001993546460c11defdb5aac2747a85f0010ff0e30d8d80f6c51f2aa49f6",
+        "9ac945999e0e3020cf645eafb8eef7532916df6123a9d078b0d86a69094d75ca",
+        "9a225ae64c3a6bd2cf1177f87ef7fb8f620caf14817177bb599194d1ae6bf08e"
       ],
       "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/DomainEventContractTest.java",
-      "testSha256": "ce6434630c0a0652323bb4989b8ac1d6f36a26bad9b8ed224ed19a7437a1bad2",
-      "reason": "JDK 8 使用显式 ClassValue 泛型且不支持 @Serial；高两线使用菱形语法和 @Serial。三线共同测试锁定事件类型缓存、事件源、因果链与策略过滤；其余源码正文一致"
+      "reason": "JDK 8 使用显式 ClassValue 泛型且不支持 @Serial；高两线使用菱形语法和 @Serial。三线共同测试锁定事件类型缓存、事件源、因果链与策略过滤；其余源码正文一致",
+      "testSha256ByJdk": {
+        "8": "21860b0dc0a6953aef6332c9a31997f12f011cd0f9f2800a70a2ce6a3932743a",
+        "17": "39d4d5722673afc349c2ec5edff7578aafbcac23d5d7ef986f0477e8348d355a",
+        "21": "21860b0dc0a6953aef6332c9a31997f12f011cd0f9f2800a70a2ce6a3932743a"
+      }
     },
     {
       "path": "ddd4j-auth/ddd4j-auth-shiro/src/main/java/io/ddd4j/auth/shiro/subject/ShiroSubject.java",
@@ -4358,14 +4366,14 @@
       "path": "ddd4j-samples/ddd4j-sample-javalin/src/test/java/io/ddd4j/sample/javalin/goods/web/GoodsControllerTest.java",
       "productionPath": "ddd4j-samples/ddd4j-sample-javalin/src/main/java/io/ddd4j/sample/javalin/goods/web/GoodsController.java",
       "sourceSha256": [
-        "86fd121dfd5cca1fe9bc8715513495437ff25a850e7aa7f6a506cb00a0f14bfd",
-        "bfaf290bc32c526d6f2a218ec60c5183a3b71a09171df594cf0651298436cd26",
-        "699b608ab52511af697a03419ebdf7f1fddd49809c0c4564905bc6f0b064d502"
+        "4b575c08c02654e7fba70b204df42c50f470697b10d50d1640afaf1ae7634674",
+        "74572bc2b7dac485fc6e527279440b821f4b84225bdf65f41e5c3ec643a1b3b4",
+        "417de5845f3a7af7f0ddfb2af42551c43d15cefd0467b5ef397847cf0a3db629"
       ],
       "productionSha256": [
-        "ccac54974a435c57f207a391b6e36ec12246ae4156a446b34329937fd78ab2bf",
-        "ccac54974a435c57f207a391b6e36ec12246ae4156a446b34329937fd78ab2bf",
-        "ccac54974a435c57f207a391b6e36ec12246ae4156a446b34329937fd78ab2bf"
+        "53dfb836e65b881489f08ea520646b911b41f91c3eb06e94eb16bba31a1a5b63",
+        "3a06c29c40e86aa49542421ea04b28ead90de0746ba18082821c01ac0480217f",
+        "8d4e8f921c1291c4ef3ed0e8549c0187e4696c318fd6d0d926f5d6c55d34278a"
       ],
       "testMethods": [
         "createGoods_shouldReturn201",
@@ -4403,9 +4411,10 @@
         "updateGoods_blankName_shouldReturn4xxOr5xx",
         "createGoods_zeroStock_shouldReturn201",
         "pageQuery_withOrderBys_shouldReturnOk",
+        "queryInvalidNumber_shouldReturnBadRequest",
         "pageQuery_invalidStatusEnum_shouldReturn4xxOr5xx"
       ],
-      "reason": "三线生产 GoodsController.java 字节一致，36 项 HTTP 契约测试的方法及断言一致；JDK 8/Javalin 4 使用 TestHttpClient 和旧配置 API，JDK 17/Javalin 6 与 JDK 21/Javalin 7 使用 JDK HttpClient 及各自 JSON mapper、启动 API。逐线哈希锁定。"
+      "reason": "三线生产 GoodsController.java 词法一致，37 项 HTTP 契约测试的方法及断言一致；JDK 8/Javalin 4 使用 TestHttpClient 和旧配置 API，JDK 17/Javalin 6 与 JDK 21/Javalin 7 使用 JDK HttpClient 及各自 JSON mapper、启动 API。逐线哈希锁定。"
     },
     {
       "path": "ddd4j-samples/ddd4j-sample-javalin/src/test/java/io/ddd4j/sample/javalin/order/web/OrderControllerTest.java",
@@ -4431,14 +4440,14 @@
       "path": "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/DomainEventJsonTest.java",
       "productionPath": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/DomainEvent.java",
       "sourceSha256": [
-        "4a25c936c2b7e71e868309afb8e453732aacf7421e406d9dd391b551f76bab15",
-        "4a25c936c2b7e71e868309afb8e453732aacf7421e406d9dd391b551f76bab15",
-        "ace5e9ee7f2dcb6d220e144dd1914006e2f4a9f7499edd2ca7aec4a53613c1eb"
+        "f34e0e1f3dc12323d090a106c0beb9d268d520f6bab5c5e4092a8f4a407b7db5",
+        "dac6a7de0619941f154dad276eb8e5760f81272dc81498f1ae26ee8aa3cadeeb",
+        "af44c1f9c3ddda4ffed56fc8dd362aa37ee54aa1092ffe578b960fdca1dbff7e"
       ],
       "productionSha256": [
-        "b074c687705ae776c33014f7ce08cfe00c16d4837e985a77e3f97e52836ced53",
-        "2408ed8f999831ff370fc08d69420de5d20d2b17226fe9c028398102922f2ab6",
-        "2408ed8f999831ff370fc08d69420de5d20d2b17226fe9c028398102922f2ab6"
+        "e799001993546460c11defdb5aac2747a85f0010ff0e30d8d80f6c51f2aa49f6",
+        "9ac945999e0e3020cf645eafb8eef7532916df6123a9d078b0d86a69094d75ca",
+        "9a225ae64c3a6bd2cf1177f87ef7fb8f620caf14817177bb599194d1ae6bf08e"
       ],
       "testMethods": [
         "shouldSerializeEventMetadataAsStableScalarValues"
@@ -4446,17 +4455,17 @@
       "reason": "三线验证相同的事件元数据 JSON 标量值契约；JDK 8/17 使用 Jackson 2 并注册 JavaTimeModule，JDK 21 使用 Jackson 3 内建时间模块；生产 DomainEvent 已由平台语法映射锁定。"
     },
     {
-      "path": "ddd4j-data/ddd4j-data-projection-javalin/src/test/java/io/ddd4j/data/projection/javalin/JavalinProjectionSchedulerIT.java",
-      "productionPath": "ddd4j-data/ddd4j-data-projection-javalin/src/main/java/io/ddd4j/data/projection/javalin/JavalinProjectionScheduler.java",
+      "path": "ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/data/projection/javalin/JavalinProjectionSchedulerIT.java",
+      "productionPath": "ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/data/projection/javalin/JavalinProjectionScheduler.java",
       "sourceSha256": [
-        "3b71035272579190afd31b4d2111218fc2e48204672e1916f9d409052eb5e0ce",
-        "a76e6b9f69aaa3127392ab4543aca23871486ec5753be5f9fe49ebc8b90c7cf3",
-        "a76e6b9f69aaa3127392ab4543aca23871486ec5753be5f9fe49ebc8b90c7cf3"
+        "e08211778b91d821daa061781948aebd38e6257a73ad0ac2b7688a7f7c491bb6",
+        "963e9bfe4813aaed8ebbee3f32959acc363dc6a1f84cb3e4593107cb38d3104d",
+        "963e9bfe4813aaed8ebbee3f32959acc363dc6a1f84cb3e4593107cb38d3104d"
       ],
       "productionSha256": [
-        "d4fcbe48cd8e3cd7948d908a234a2ed07145800bf6f7f9cec94628ae471fa92b",
-        "d4fcbe48cd8e3cd7948d908a234a2ed07145800bf6f7f9cec94628ae471fa92b",
-        "d4fcbe48cd8e3cd7948d908a234a2ed07145800bf6f7f9cec94628ae471fa92b"
+        "0a19fc99f68dcd9cfddee2b2a0da9197721d3d7105066c6e2c207e1abfcd7796",
+        "0a19fc99f68dcd9cfddee2b2a0da9197721d3d7105066c6e2c207e1abfcd7796",
+        "0a19fc99f68dcd9cfddee2b2a0da9197721d3d7105066c6e2c207e1abfcd7796"
       ],
       "testMethods": [
         "startJavalin",
@@ -4764,14 +4773,14 @@
       "path": "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/DomainEventRoundTripTest.java",
       "productionPath": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/DomainEvent.java",
       "sourceSha256": [
-        "0d1c4b59858e325c6eb9d7541d4697089dc1a8e013d203513b858981c8220572",
-        "0d1c4b59858e325c6eb9d7541d4697089dc1a8e013d203513b858981c8220572",
-        "261ef34f49d0b30fcbd8f5e6d1e4ed057ca83a299b015e3922a7be644153fb11"
+        "641fe53cf605db9507b68bc1a5166b1ac1459d5489d92e3b72b7e69a39f578a9",
+        "c2e15f8cedfaf0f106be9c5560574d0f699d46b37774279e2c176bb0009f2006",
+        "c39f3d93baedd0e4da8441158a35555f44cba90dc313a8752fba933d87928304"
       ],
       "productionSha256": [
-        "b074c687705ae776c33014f7ce08cfe00c16d4837e985a77e3f97e52836ced53",
-        "2408ed8f999831ff370fc08d69420de5d20d2b17226fe9c028398102922f2ab6",
-        "2408ed8f999831ff370fc08d69420de5d20d2b17226fe9c028398102922f2ab6"
+        "e799001993546460c11defdb5aac2747a85f0010ff0e30d8d80f6c51f2aa49f6",
+        "9ac945999e0e3020cf645eafb8eef7532916df6123a9d078b0d86a69094d75ca",
+        "9a225ae64c3a6bd2cf1177f87ef7fb8f620caf14817177bb599194d1ae6bf08e"
       ],
       "testMethods": [
         "roundTripRestoresIdentityMetadataAndPayload",
@@ -5200,14 +5209,14 @@
       "path": "ddd4j-web/ddd4j-web-vertx/src/test/java/io/ddd4j/web/vertx/Ddd4jVertxContextTest.java",
       "productionPath": "ddd4j-web/ddd4j-web-vertx/src/main/java/io/ddd4j/web/vertx/Ddd4jVertxContext.java",
       "sourceSha256": [
-        "41cde316770bf75079bbadd8ab5416f688902b08396372caeb3e7ca15d85247c",
-        "c6f118925039254d9a50859589df8b2394859b4a97e35cb6b6c17f966c2731bd",
-        "8c17ac2a6774e957eef11d970185ebf51a8441763c3ac3bf8a0c92d240db92d8"
+        "2353187eed8c3a6ae55a6e166221b0badb7af169d6ff0207d1bf92004f36be47",
+        "6caee4fba74b73ddae677a2641ed6791c7d08822abd3a7aa79ea3c6808aac062",
+        "8a373771b3d334c283ed6113d7c8032aeec2c4c882acae1acfab9bf07011f1a5"
       ],
       "productionSha256": [
-        "6825e24c31d4b0fa59783e0693e717591b11355ecc69b48ca6b5679f5d75ac0e",
-        "2472bcc42b635401497ce5cdcbe2c63b005d35adaad6ece7df669cb07ab779d4",
-        "6825e24c31d4b0fa59783e0693e717591b11355ecc69b48ca6b5679f5d75ac0e"
+        "de1da8ddaab329b596d453b726de057daf00fdeb79657fb18c7e1f4e5a786cbc",
+        "556ad6932d935098c564c4b039bd6bdc502e45ced20c7ccb6e8698b631b8190c",
+        "de1da8ddaab329b596d453b726de057daf00fdeb79657fb18c7e1f4e5a786cbc"
       ],
       "testMethods": [
         "requestReturnsStoredContext",
