@@ -837,6 +837,8 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
      *
      * <p>MyBatis 实现调用 <code>modelClass().isInstance(model)</code>。</p>
      *
+     * <p>单个聚合以只读列表交给批量填充扩展点；实现可以修改聚合字段。
+     *
      * @param query 查询条件
      * @param model 待填充聚合根
      */

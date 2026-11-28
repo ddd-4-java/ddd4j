@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -72,6 +73,25 @@ class MybatisAggregateRepositoryCrudTest {
     }
 
     // =================== findById ===================
+
+    /** 单个聚合交给扩展点后可补充字段，同时禁止替换、添加和删除列表元素。 */
+    @Test
+    void singleModelFillAllowsFieldChangesButRejectsListChanges() {
+        Order order = new Order("1", "DRAFT", null);
+        TestRepository fillingRepository = new TestRepository(mapper) {
+            @Override
+            public void fill(Query<Order> query, List<Order> models) {
+                assertThat(models).containsExactly(order);
+                assertThatThrownBy(() -> models.set(0, order)).isInstanceOf(UnsupportedOperationException.class);
+                assertThatThrownBy(() -> models.add(order)).isInstanceOf(UnsupportedOperationException.class);
+                assertThatThrownBy(() -> models.remove(0)).isInstanceOf(UnsupportedOperationException.class);
+                models.get(0).setStatus("PAID");
+            }
+        };
+
+        fillingRepository.fill(new OrderQuery(), order);
+        assertThat(order.getStatus()).isEqualTo("PAID");
+    }
 
     /**
      * 验证<code>result</code>存在值，<code>result.get().id()</code> 等于 <code>"1"</code>，<code>result.get().getStatus()</code> 等于 <code>"PAID"</code>。
@@ -348,7 +368,7 @@ class MybatisAggregateRepositoryCrudTest {
     /**
      * 供测试验证泛型解析和仓储操作的具体仓储实现。
      */
-    static final class TestRepository
+    static class TestRepository
             extends MybatisAggregateRepository<OrderMapper, Order, OrderPO, OrderQuery, String> {
 
         /**
