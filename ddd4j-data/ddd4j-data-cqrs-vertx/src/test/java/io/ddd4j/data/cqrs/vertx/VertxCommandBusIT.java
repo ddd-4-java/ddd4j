@@ -16,7 +16,7 @@ package io.ddd4j.data.cqrs.vertx;
 
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.Result;
+import io.ddd4j.core.api.R;
 import io.vertx.core.Vertx;
 import io.vertx.junit5.VertxTestContext;
 import org.junit.jupiter.api.AfterEach;
@@ -43,7 +43,7 @@ import static org.assertj.core.api.Assertions.catchThrowableOfType;
  * {@code CommandRegistryTest} 及 {@code SpringCommandBusIT}／
  * {@code HelidonCommandBusIT} 对齐：
  * <ol>
- *   <li>execute 在 Vert.x 上下文线程同步返回 Result.success（真实路由到业务
+ *   <li>execute 在 Vert.x 上下文线程同步返回 R.success（真实路由到业务
  *       Handler——证明 DefaultCommandBus 的同步分发不依赖 Vert.x 异步回路）</li>
  *   <li>多类型执行器之一冲突 → 整批拒绝的 ISE 自工厂传播（同 4.4 注册语义）</li>
  *   <li>未注册命令走 ISE（与 ddd4j-core DefaultCommandBus 一致）</li>
@@ -112,7 +112,7 @@ class VertxCommandBusIT {
     }
 
     /**
-     * 验证<code>result.isSuccess()</code>为真，<code>result.data()</code> 包含 <code>SampleCommandHandler.HANDLED</code>，<code>testContext.awaitCompletion(5, TimeUnit.SECONDS)</code>为真。
+     * 验证<code>result.isOk()</code>为真，<code>result.getData()</code> 包含 <code>SampleCommandHandler.HANDLED</code>，<code>testContext.awaitCompletion(5, TimeUnit.SECONDS)</code>为真。
      *
      * @throws Exception 完成 <code>execute Vertx Handler</code> 操作失败
      */
@@ -121,13 +121,13 @@ class VertxCommandBusIT {
         VertxCommandBus bus = assemble();
         VertxTestContext testContext = new VertxTestContext();
 
-        // 装配在 JUnit 线程、分发在 Vert.x 上下文线程：execute 同步返回 Result，
+        // 装配在 JUnit 线程、分发在 Vert.x 上下文线程：execute 同步返回 R，
         // 不经过 Future 回路——验证 DefaultCommandBus 的同步性不依赖 Vert.x 异步链。
         vertx.runOnContext(ignored -> {
-            Result<String> result = bus.execute(new SampleCommand());
+            R<String> result = bus.execute(new SampleCommand());
             testContext.verify(() -> {
-                assertThat(result.isSuccess()).isTrue();
-                assertThat(result.data()).contains(SampleCommandHandler.HANDLED);
+                assertThat(result.isOk()).isTrue();
+                assertThat(result.getData()).isEqualTo(SampleCommandHandler.HANDLED);
             });
             testContext.completeNow();
         });
@@ -199,8 +199,8 @@ class VertxCommandBusIT {
          * @return 成功结果
          */
         @Override
-        public Result execute(Command command) {
-            return Result.ok();
+        public R execute(Command command) {
+            return R.ok();
         }
     }
 }

@@ -32,10 +32,10 @@ package io.ddd4j.core.cqrs.command;
  * &#64;ApplicationService
  * public class CreateOrderCmdExe implements CommandExecutor<CreateOrderCommand> {
  *     &#64;Override
- *     public Result execute(CreateOrderCommand cmd) {
+ *     public R execute(CreateOrderCommand cmd) {
  *         Order order = new Order(cmd.getOrderId(), cmd.getTotal());
  *         orderRepository.save(order);
- *         return Result.ok();
+ *         return R.ok();
  *     }
  * }
  * }</pre>

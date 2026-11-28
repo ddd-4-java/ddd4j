@@ -3,7 +3,7 @@ package io.ddd4j.quarkus.command;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.Result;
+import io.ddd4j.core.api.R;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
@@ -60,7 +60,7 @@ public class QuarkusCommandBus implements CommandBus {
      * @param command 命令对象
      * @return 执行结果
      */
-    public Result<?> executeVoid(Command command) {
+    public R<?> executeVoid(Command command) {
         return execute(command);
     }
 
@@ -68,11 +68,11 @@ public class QuarkusCommandBus implements CommandBus {
      * 执行命令并返回结果。
      *
      * @param command 命令对象
-     * @param <R>     结果类型
+     * @param <T>     结果类型
      * @return 执行结果
      */
     @Override
-    public <R> Result<R> execute(Command command) {
+    public <T> R<T> execute(Command command) {
         if (Objects.isNull(command)) {
             throw new IllegalArgumentException("Command cannot be null");
         }
@@ -81,7 +81,7 @@ public class QuarkusCommandBus implements CommandBus {
         if (Objects.isNull(executor)) {
             throw new IllegalStateException("No executor found for command: " + command.getClass().getName());
         }
-        return (Result<R>) executor.execute(command);
+        return (R<T>) executor.execute(command);
     }
 
     /**

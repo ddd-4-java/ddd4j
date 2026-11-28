@@ -17,7 +17,7 @@ package io.ddd4j.data.cqrs.micronaut;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.CommandHandler;
-import io.ddd4j.core.cqrs.command.Result;
+import io.ddd4j.core.api.R;
 import jakarta.inject.Singleton;
 
 import java.util.Collections;
@@ -62,7 +62,7 @@ class SampleCommandHandler implements CommandExecutor<SampleCommand> {
      * @return 执行结果
      */
     @Override
-    public Result execute(SampleCommand command) {
-        return Result.ok(HANDLED);
+    public R execute(SampleCommand command) {
+        return R.ok(HANDLED);
     }
 }

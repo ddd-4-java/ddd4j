@@ -21,6 +21,10 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
 | **底层依赖** | fuinorg ddd-4-java + cqrs-4-java + esc-api                                                                                                                                         |
 | **铁律**     | core/annotation/mq-core 等基础契约层零 `@AutoConfiguration` · 零 `spring.factories` · 零 starter；Spring/Web/Auth/Extensions 等适配层只保留显式 `@Configuration`/`@Component` 胶水 |
 
+### CQRS 命令返回值迁移
+
+`CommandBus.execute(command)` 和 `CommandExecutor.execute(command)` 统一返回 `io.ddd4j.core.api.R`。原来使用 `Result` 的应用需重新编译命令执行器和调用方。执行器可以返回 `R.ok(data)` 或 `R.fail(code, message)`。调用方通过 `isOk()` 判断成功，通过 `getCode()`、`getMsg()` 和 `getData()` 读取结果。无载荷时 `getData()` 返回 `null`。
+
 ### 🏗️ 三层架构分离
 
 ```

@@ -1,12 +1,45 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.core.cqrs.command;
 
+import io.ddd4j.core.api.R;
+
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 基于显式执行器集合的默认命令路由实现。
+ * <p>
+ * 阶段 6（ADR-0004）：本类是命令分发的唯一实现，运行时适配器
+ * （{@code ddd4j-data-cqrs-spring}／{@code ddd4j-data-cqrs-quarkus}／...）
+ * 以<b>继承</b>方式组装——先在自身构造器内完成执行器收集与
+ * {@code io.ddd4j.core.cqrs.command.CommandRegistry} 注册，再以
+ * {@code super(registry.executors())} 传入本类；适配器不复制路由逻辑，
+ * 也不应 override {@link #execute}（事务等横切用类级注解让容器代理处理）。
+ *
+ * <h2>构造即快照（适配器装配顺序约束）</h2>
+ * <p>
+ * 本类构造时对执行器集合<b>一次性快照</b>（逐个 {@code putIfAbsent}，
+ * 冲突即抛 {@link IllegalStateException}），之后对传入集合的任何变更都不会
+ * 回灌到已构造的总线——因此适配器的收集／注册必须<b>全部发生在
+ * {@code super(...)} 调用之前</b>（不可用容器延迟回调（如
+ * {@code SmartInitializingSingleton}）注册）。为此本类自 2.0.x 起不再
+ * {@code final}：仅放开继承组装点，快照语义与路由逻辑不变。
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class DefaultCommandBus implements CommandBus {
@@ -27,18 +60,38 @@ public class DefaultCommandBus implements CommandBus {
      *
      * <p>此实现调用 <code>executors.get(actual.getClass())</code>。</p>
      *
-     * @param <R> 此操作处理的值或结果的 Java 类型
+     * @param <T> 此操作处理的值或结果的 Java 类型
      * @param command 交由命令总线或执行器处理的命令
-     * @return 实际返回<code>(Result&lt;R&gt;)executor.execute(actual)</code>
+     * @return 实际返回<code>(R&lt;T&gt;)executor.execute(actual)</code>
      */
     @Override
-    public <R> Result<R> execute(Command command) {
+    public <T> R<T> execute(Command command) {
         Command actual = Objects.requireNonNull(command, "command must not be null");
         CommandExecutor executor = executors.get(actual.getClass());
         if (Objects.isNull(executor)) {
+            CommandExecutor<?> discovered = resolveMissingExecutor(actual.getClass(), Collections.unmodifiableCollection(executors.values()));
+            if (Objects.nonNull(discovered)) {
+                CommandExecutor<?> existing = executors.putIfAbsent(actual.getClass(), discovered);
+                executor = Objects.nonNull(existing) ? existing : discovered;
+            }
+        }
+        if (Objects.isNull(executor)) {
             throw new IllegalStateException("No executor found for command: " + actual.getClass().getName());
         }
-        return (Result<R>) executor.execute(actual);
+        return (R<T>) executor.execute(actual);
+    }
+
+    /**
+     * 为已有动态发现平台提供缺失路由钩子；默认快照模式不发现新执行器。
+     * 成功结果由共享总线缓存，异常不改变路由；本钩子不得执行命令。
+     *
+     * @param commandType         未缓存的命令精确类型
+     * @param registeredExecutors 当前路由中执行器的只读实时视图，禁止结构修改
+     * @return 已发现执行器，未发现返回 null
+     */
+    protected CommandExecutor<?> resolveMissingExecutor(Class<? extends Command> commandType,
+                                                        Collection<CommandExecutor<?>> registeredExecutors) {
+        return null;
     }
 
     /**

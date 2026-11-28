@@ -1,6 +1,6 @@
 # ddd4j-core
 
-核心仓储、聚合根与命令执行接口。CommandBus.execute 返回 Result，API 响应 R 由独立接口提供。修改返回值前检查调用方的泛型与异常分支。
+核心仓储、聚合根与命令执行接口。CommandBus.execute 和命令执行器统一返回 io.ddd4j.core.api.R。调用方通过 isOk() 判断业务结果，使用 getData() 和 getMsg() 读取载荷与消息。旧 Result 的方法签名已移除，升级框架时需重新编译执行器及客户端。
 
 ## 实现与调用
 
